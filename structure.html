@@ -1,0 +1,3565 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>โครงสร้างหน่วยงานรัฐไทย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   THEME TOKENS — Dark (default)
+═══════════════════════════════════════ */
+:root {
+  --bg:         #0a0c10;
+  --bg2:        #0f1318;
+  --bg3:        #141922;
+  --border:     #1e2530;
+  --border2:    #2a3344;
+  --gold:       #c9a84c;
+  --gold-dim:   #7a6030;
+  --gold-glow:  rgba(201,168,76,.12);
+  --text:       #d4dbe8;
+  --text-dim:   #5c6878;
+  --text-mid:   #8a97aa;
+  --green:      #3ecf6e;
+  --blue:       #4fa3f7;
+  --purple:     #a78bfa;
+  --orange:     #f59e42;
+  --red:        #f87171;
+  --yellow:     #fbbf24;
+  --canvas-bg:  #0a0c10;
+  --edge-org:   rgba(100,110,120,0.22);
+  --edge-min:   rgba(230,126,34,0.28);
+  --node-text:  #ffffff;
+  --center-fill:#f0e68c;
+  --center-str: #c8b400;
+  --center-txt: #0d1117;
+  --sidebar-w:  268px;
+  --header-h:   56px;
+  --panel-w:    310px;
+  --radius:     8px;
+  --radius-lg:  13px;
+}
+
+/* ═══════════════════════════════════════
+   THEME TOKENS — Light
+═══════════════════════════════════════ */
+[data-theme="light"] {
+  --bg:         #f4f6fa;
+  --bg2:        #ffffff;
+  --bg3:        #edf0f5;
+  --border:     #d8dde8;
+  --border2:    #bec6d4;
+  --gold:       #a07820;
+  --gold-dim:   #c9a84c;
+  --gold-glow:  rgba(160,120,32,.10);
+  --text:       #1a2030;
+  --text-dim:   #8a97aa;
+  --text-mid:   #4a5568;
+  --green:      #0ce760;
+  --blue:       #1a65c0;
+  --purple:     #6d3fb5;
+  --orange:     #b96010;
+  --red:        #c0392b;
+  --yellow:     #b07d10;
+  --canvas-bg:  #f4f6fa;
+  --edge-org:   rgba(60,80,120,0.14);
+  --edge-min:   rgba(180,100,20,0.25);
+  --node-text:  #ffffff;
+  --center-fill:#d4a820;
+  --center-str: #8a6010;
+  --center-txt: #ffffff;
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  overflow: hidden;
+  transition: background .3s, color .3s;
+}
+
+/* Subtle grid */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity .3s;
+}
+[data-theme="light"] body::before { opacity: .5; }
+
+/* ═══════════════════════════════════════
+   APP GRID
+═══════════════════════════════════════ */
+#app {
+  position: relative;
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+}
+
+/* ═══ MOBILE RESPONSIVE ═══ */
+@media (max-width: 640px) {
+  :root { --header-h: 100px; --sidebar-w: 0px; }
+  #app { grid-template-columns: 0 1fr; }
+
+  #sidebar {
+    position: fixed; top: var(--header-h); left: 0;
+    width: 80vw; max-width: 300px;
+    height: calc(100vh - var(--header-h));
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .25s ease, box-shadow .25s;
+    box-shadow: none;
+  }
+  #sidebar.mob-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+  }
+  #mob-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 190;
+    background: rgba(0,0,0,0.4);
+  }
+  #mob-overlay.active { display: block; }
+
+  /* hamburger button */
+  #mob-menu-btn {
+    display: flex !important;
+  }
+
+  /* info panel — bottom sheet on mobile */
+  #info-panel {
+    position: fixed !important;
+    left: 0 !important; right: 0 !important;
+    bottom: 0 !important; top: auto !important;
+    width: 100% !important; max-height: 60vh;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform .3s ease;
+  }
+  #info-panel.visible {
+    transform: translateY(0) !important;
+    display: flex !important;
+  }
+  #info-panel.hidden {
+    transform: translateY(100%) !important;
+  }
+
+  /* bigger touch targets */
+  .action-btn, .fp, button { min-height: 38px; }
+  .filter-row { gap: 6px; padding: 10px 12px; }
+
+  /* ── header: row 1 = [menu · search · actions], row 2 = full-width view switch ── */
+  #header {
+    align-items: flex-start !important;
+    height: var(--header-h);
+    padding: 8px 10px 0;
+    gap: 6px;
+    position: relative;
+  }
+  /* !important needed: this @media block sits before the base rules, which would otherwise win on equal specificity */
+  .hd-brand { display: none !important; }      /* drop brand+title (it overlapped); menu button anchors the left */
+  .hd-center { flex: 1 !important; gap: 6px; padding: 0 !important; min-width: 0; }
+  .search-wrap { flex: 1 1 auto !important; min-width: 0; max-width: none !important; }
+  .stat-chip { display: none !important; }
+  .hd-right { gap: 6px; align-items: center; }
+  #mob-menu-btn { flex-shrink: 0; }
+  #btn-cabinet { font-size: 11px; padding: 4px 10px; min-height: 32px; flex-shrink: 0; }
+
+  /* second row pinned to the header bottom — even segmented control */
+  .view-toggle {
+    position: absolute; left: 10px; right: 10px; bottom: 8px;
+    display: flex; gap: 6px;
+  }
+  .view-btn {
+    flex: 1 !important; display: flex; align-items: center; justify-content: center;
+    padding: 6px 4px !important; font-size: 11.5px; min-height: 34px;
+  }
+  #btn-view-radial::before { content: "◎ "; }
+
+  /* zoom controls — bigger touch targets */
+  #zoom-ctrl { bottom: 62px !important; right: 10px; }
+  #coords    { display: none !important; }
+  .zbtn { width: 42px; height: 42px; font-size: 20px; border-radius: 10px; }
+
+  /* legend bar — scrollable on mobile */
+  #legend-bar { height: 48px !important; min-height: 48px !important; flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  #legend-bar::-webkit-scrollbar { display: none; }
+  .leg-section { padding: 6px 10px; flex-shrink: 0; }
+  .leg-section-title { font-size: 7.5px; margin-bottom: 3px; }
+  .leg-item { font-size: 9px; }
+  .leg-dot { width: 7px; height: 7px; }
+
+  /* filter pills — horizontal scroll */
+  .filter-row {
+    flex-wrap: nowrap; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 10px;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .fp { flex-shrink: 0; white-space: nowrap; font-size: 11px; padding: 5px 10px; }
+
+  /* ministry list rows */
+  .min-row { padding: 8px 12px; }
+  .min-name { font-size: 12px; }
+
+  /* cabinet panel — bottom sheet on mobile */
+  #cab-panel {
+    position: fixed !important;
+    top: auto !important; bottom: 0 !important;
+    left: 0 !important; right: 0 !important;
+    width: 100% !important; max-width: none !important;
+    max-height: 58vh; border-radius: 16px 16px 0 0;
+    overflow-y: auto; z-index: 100;
+  }
+  .cab-header { border-radius: 16px 16px 0 0; cursor: default; }
+  .cab-header::before { display: none; }
+  /* drag indicator pill */
+  .cab-header::after {
+    content: ''; display: block;
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--border2);
+    margin: 0 auto 8px; order: -1;
+  }
+  #cab-size-btns { display: none !important; }
+  #cab-body { display: block !important; max-height: 44vh; overflow-y: auto; }
+
+  /* grid view cards */
+  .grid-card { padding: 10px 12px; }
+  .grid-card-name { font-size: 12px; }
+
+  /* ── Corrupt overlay mobile ── */
+  #corrupt-topbar { padding: 10px 12px 0; }
+  .corrupt-title { font-size: 12px; margin-bottom: 8px; }
+  .corrupt-stats { gap: 6px; margin-bottom: 8px; }
+  .c-stat { padding: 6px 10px; min-width: 0; }
+  .c-stat-val { font-size: 18px; }
+  .corrupt-controls { gap: 6px; margin-bottom: 8px; }
+  #corrupt-scroll { padding: 0 12px 16px; }
+
+  .corrupt-card {
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto auto auto auto;
+    padding: 10px 10px;
+    gap: 0 10px;
+  }
+  .corrupt-rank {
+    font-size: 18px;
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+  .corrupt-name {
+    font-size: 12px;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .corrupt-risk {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 4px;
+  }
+  .corrupt-source {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    font-size: 9px; margin-top: 3px;
+  }
+  .corrupt-bar-wrap {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 5px;
+  }
+  .corrupt-map-btn {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    width: 100%; margin-top: 6px;
+    padding: 8px 0; font-size: 12px;
+    min-height: 36px;
+  }
+  .c-sort-btn { padding: 6px 8px; font-size: 10px; min-height: 32px; }
+  #corrupt-search { padding: 7px 10px; font-size: 13px; }
+  .c-results-count { display: none; }
+}
+
+/* hamburger button (hidden on desktop) */
+#mob-menu-btn {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: none; border: 1px solid var(--border2);
+  border-radius: 8px; cursor: pointer; color: var(--text);
+  flex-shrink: 0;
+}
+#mob-menu-btn:hover { background: var(--bg3); }
+
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+#header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 50;
+  transition: background .3s, border-color .3s;
+}
+#header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent);
+  opacity: .7;
+}
+
+/* Brand */
+.hd-brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 18px;
+  width: var(--sidebar-w);
+  border-right: 1px solid var(--border);
+  height: 100%; flex-shrink: 0;
+  transition: border-color .3s;
+}
+.hd-emblem {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--gold-dim);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  background: var(--gold-glow);
+  flex-shrink: 0;
+  position: relative;
+  transition: background .3s;
+}
+.hd-emblem::before {
+  content: '';
+  position: absolute; inset: 3px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+  opacity: .4;
+}
+.hd-brand-text h1 {
+  font-size: 12.5px; font-weight: 700;
+  color: var(--gold); letter-spacing: .2px; line-height: 1.2;
+}
+.hd-brand-text p {
+  font-size: 9.5px; color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace; letter-spacing: .4px; margin-top: 1px;
+}
+
+/* Center area */
+.hd-center {
+  flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 16px;
+}
+
+/* Search */
+.search-wrap { position: relative; flex: 1; max-width: 380px; }
+.search-wrap input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif; font-size: 13px;
+  padding: 6px 12px 6px 34px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .3s, color .3s;
+}
+.search-wrap input:focus {
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+.search-wrap input::placeholder { color: var(--text-dim); }
+.search-icon {
+  position: absolute; left: 11px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim); font-size: 14px; pointer-events: none;
+}
+
+/* Search dropdown */
+#search-results {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  max-height: 280px; overflow-y: auto;
+  display: none; z-index: 300;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  transition: background .3s;
+}
+#search-results.show { display: block; }
+.sr-item {
+  padding: 8px 14px; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.sr-item:last-child { border-bottom: none; }
+.sr-item:hover { background: var(--bg3); }
+.sr-name { font-size: 12.5px; color: var(--text); }
+.sr-sub  { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+
+/* View toggle */
+.view-toggle {
+  display: flex;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 3px; gap: 2px;
+  transition: background .3s;
+}
+.view-btn {
+  padding: 4px 13px;
+  border-radius: 5px; border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Sarabun', sans-serif; font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.view-btn:hover { color: var(--text); background: var(--border); }
+.view-btn.active {
+  background: var(--gold-glow);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+}
+
+/* Stat chips */
+.stat-chip {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 11px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px; color: var(--text-mid);
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+  transition: background .3s;
+}
+.stat-chip strong { color: var(--gold); font-size: 13px; }
+.stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Header right */
+.hd-right { display: flex; align-items: center; gap: 6px; padding: 0 16px; }
+
+/* Theme toggle button */
+#theme-toggle {
+  width: 64px; height: 30px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: background .3s, border-color .3s;
+  flex-shrink: 0;
+  display: flex; align-items: center;
+}
+#theme-toggle:hover { border-color: var(--gold-dim); }
+#theme-toggle .track {
+  position: absolute; inset: 3px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5px;
+  font-size: 12px; pointer-events: none;
+}
+#theme-toggle .knob {
+  position: absolute;
+  width: 22px; height: 22px;
+  background: var(--gold);
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+[data-theme="light"] #theme-toggle .knob { transform: translateX(34px); }
+
+.action-btn {
+  width: 30px; height: 30px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius); color: var(--text-dim);
+  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.action-btn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
+
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+#sidebar {
+  grid-column: 1; grid-row: 2;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: background .3s, border-color .3s;
+}
+
+.sb-section-hd {
+  padding: 13px 16px 9px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-label {
+  font-size: 9.5px; font-weight: 600;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.1px;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex; align-items: center; gap: 8px;
+}
+.sb-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Filter pills */
+.filter-row {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  padding: 9px 14px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.fp {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px; border: 1px solid var(--border2);
+  background: transparent; color: var(--text-dim);
+  font-family: 'Sarabun', sans-serif; font-size: 10.5px;
+  cursor: pointer; transition: all .14s;
+}
+.fp .sw { width: 6px; height: 6px; border-radius: 50%; }
+.fp:hover { color: var(--text); background: var(--bg3); }
+.fp.on { font-weight: 500; }
+.fp[data-c="01"].on { color:#3ecf6e; border-color:#3ecf6e; background: rgba(62,207,110,.08); }
+.fp[data-c="02"].on { color:#4fa3f7; border-color:#4fa3f7; background: rgba(79,163,247,.08); }
+.fp[data-c="03"].on { color:#a78bfa; border-color:#a78bfa; background: rgba(167,139,250,.08); }
+.fp[data-c="08"].on { color:#f87171; border-color:#f87171; background: rgba(248,113,113,.08); }
+.fp[data-c="09"].on { color:#f59e42; border-color:#f59e42; background: rgba(245,158,66,.08); }
+.fp[data-c="10"].on { color:#fbbf24; border-color:#fbbf24; background: rgba(251,191,36,.08); }
+
+/* Ministry list */
+#ministry-list {
+  flex: 1; overflow-y: auto; padding: 6px 8px;
+}
+#ministry-list::-webkit-scrollbar { width: 3px; }
+#ministry-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.min-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px;
+  border-radius: var(--radius); cursor: pointer;
+  border: 1px solid transparent;
+  margin-bottom: 1px;
+  transition: all .14s;
+  animation: slideIn .3s ease both;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.min-item:hover { background: var(--bg3); border-color: var(--border); }
+.min-item.active { background: var(--gold-glow); border-color: var(--gold-dim); }
+.min-id { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-dim); min-width: 20px; text-align: right; }
+.min-bar { width: 3px; height: 26px; border-radius: 2px; flex-shrink: 0; }
+.min-text { flex: 1; min-width: 0; }
+.min-name { font-size: 11.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.min-count { font-size: 9.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+.min-badge {
+  font-size: 9.5px; font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-dim); background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px;
+}
+
+/* Sidebar footer / legend */
+#sb-footer {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .3s;
+}
+.leg-row { display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: var(--text-mid); }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.leg-sq  { width: 10px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════
+   MAIN CANVAS
+═══════════════════════════════════════ */
+#main {
+  grid-column: 2; grid-row: 2;
+  position: relative; overflow: hidden;
+  background: var(--canvas-bg);
+  transition: background .3s;
+}
+
+canvas {
+  display: block;
+  cursor: grab;
+  position: absolute; top: 0; left: 0;
+}
+canvas:active { cursor: grabbing; }
+
+/* Push zoom controls above legend bar */
+#zoom-ctrl { bottom: 92px !important; }
+#coords    { bottom: 92px !important; }
+
+/* Zoom controls */
+#zoom-ctrl {
+  position: absolute; bottom: 20px; right: 20px;
+  display: flex; flex-direction: column; gap: 4px; z-index: 20;
+}
+.zbtn {
+  width: 32px; height: 32px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius); color: var(--text-mid);
+  font-size: 17px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .14s; line-height: 1;
+}
+.zbtn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
+
+/* Coords bar */
+#coords {
+  position: absolute; bottom: 20px; left: 20px;
+  font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-dim);
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 5px 10px;
+  display: flex; gap: 12px; z-index: 20;
+  transition: background .3s;
+}
+#coords label { color: var(--gold-dim); }
+
+/* ═══════════════════════════════════════
+   INFO PANEL
+═══════════════════════════════════════ */
+#info-panel {
+  position: absolute; top: 18px; right: 18px;
+  width: var(--panel-w);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  z-index: 100; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.45);
+  display: none;
+  transition: background .3s, border-color .3s;
+}
+#info-panel.show { display: block; animation: panelIn .22s ease; }
+@media (max-width: 640px) {
+  #info-panel.show {
+    display: flex !important;
+    flex-direction: column !important;   /* stack header above body — default row squashed the title */
+    transform: translateY(0) !important;
+    animation: none;
+  }
+}
+@keyframes panelIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.ip-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  position: relative;
+  transition: background .3s;
+}
+.ip-header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+}
+
+#info-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 22px; height: 22px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--text-dim);
+  cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .14s;
+}
+#info-close:hover { color: var(--text); background: var(--border); }
+
+#info-badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 9.5px; font-weight: 600; letter-spacing: .5px;
+  margin-bottom: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+#info-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; padding-right: 26px; }
+#info-abbr  { font-size: 10.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+
+.ip-body {
+  padding: 12px 16px; max-height: 380px; overflow-y: auto;
+}
+.ip-body::-webkit-scrollbar { width: 3px; }
+.ip-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.info-row {
+  display: flex; gap: 8px; padding: 6px 0;
+  border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--text-dim); min-width: 68px; flex-shrink: 0; }
+.minister-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 16px 6px; border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.minister-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; color: var(--text);
+  background: var(--gold-glow); border: 1px solid var(--gold-dim);
+  border-radius: 20px; padding: 3px 10px 3px 8px;
+  margin: 2px 3px 2px 0;
+}
+.minister-badge::before { content: "👤"; font-size: 10px; }
+.minister-role {
+  font-size: 9.5px; color: var(--text-dim); font-weight: 400;
+  white-space: nowrap;
+}
+.info-val   { color: var(--text); flex: 1; }
+.info-val a { color: var(--gold); text-decoration: none; }
+.info-val a:hover { text-decoration: underline; }
+
+#info-orgs-list { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+#info-orgs-list h5 {
+  font-size: 9.5px; font-weight: 600; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 1px;
+  font-family: 'IBM Plex Mono', monospace; margin-bottom: 7px;
+}
+.org-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 5px; font-size: 10.5px; color: var(--text-mid);
+  cursor: pointer; transition: all .12s; margin: 2px;
+}
+.org-chip:hover { border-color: var(--border2); color: var(--text); background: var(--border); }
+
+
+/* ── Cabinet 3-state collapse ── */
+#cab-panel.state-compact #cab-body { display: none; }
+#cab-panel.state-mini {
+  width: auto !important;
+  border-radius: 20px !important;
+  overflow: visible !important;
+}
+#cab-panel.state-mini .cab-header {
+  padding: 7px 12px;
+  border-bottom: none;
+  border-radius: 20px;
+  gap: 6px;
+  cursor: pointer;
+}
+#cab-panel.state-mini .cab-header:hover { background: var(--gold-glow); }
+#cab-panel.state-mini .cab-header-title { font-size: 10px; }
+#cab-panel.state-mini #cab-body { display: none; }
+#cab-panel.state-mini #cab-size-btns { display: none; }
+
+/* Size buttons inside header */
+#cab-size-btns {
+  display: flex; gap: 3px; margin-left: 4px; flex-shrink: 0;
+}
+.cab-sz {
+  width: 18px; height: 18px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 4px; color: var(--text-dim);
+  cursor: pointer; font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .14s; flex-shrink: 0;
+  line-height: 1;
+}
+.cab-sz:hover { color: var(--gold); border-color: var(--gold-dim); }
+.cab-sz.active { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+
+/* ═══════════════════════════════════════
+   BOTTOM LEGEND BAR
+═══════════════════════════════════════ */
+#legend-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  min-height: 72px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: stretch; flex-wrap: wrap;
+  z-index: 30;
+  overflow: hidden;
+  transition: background .3s, border-color .3s;
+}
+#legend-bar::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent);
+  opacity: .5;
+}
+.leg-section {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8px 18px;
+  border-right: 1px solid var(--border);
+  min-width: 0;
+}
+.leg-section:last-child { border-right: none; flex: 1; }
+.leg-section-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold); font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 7px;
+}
+.leg-items {
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+}
+.leg-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-mid); white-space: nowrap;
+  font-family: 'Sarabun', sans-serif;
+}
+.leg-item:hover { color: var(--text); cursor: default; }
+
+/* Shape icons */
+.li-circle { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.li-circle-lg { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid; }
+.li-rect { width: 14px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.li-diamond {
+  width: 9px; height: 9px; flex-shrink: 0;
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
+.li-hex {
+  width: 11px; height: 11px; flex-shrink: 0;
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+}
+
+
+
+/* ─── Cabinet Grid Overlay ─── */
+#grid-overlay {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  z-index: 40; display: none;
+  overflow: hidden; flex-direction: column;
+}
+#grid-overlay.show { display: flex; }
+
+.grid-topbar {
+  padding: 14px 20px 10px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.grid-topbar-title {
+  font-size: 13px; font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--gold); letter-spacing: .5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.grid-topbar-title::before {
+  content:''; width:3px; height:18px; background:var(--gold); border-radius:2px; flex-shrink:0;
+}
+.grid-party-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.party-pill {
+  padding: 3px 10px; border-radius: 20px; font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace; border: 1px solid; cursor: pointer;
+  transition: opacity .15s;
+}
+.party-pill.dim { opacity: .35; }
+.party-pill:hover { filter: brightness(1.18); transform: translateY(-1px); }
+.party-pill.active {
+  opacity: 1; font-weight: 600;
+  box-shadow: 0 0 0 2px currentColor inset, 0 4px 12px -4px currentColor;
+}
+.party-pill { transition: opacity .15s, transform .15s, box-shadow .15s, filter .15s; }
+
+#grid-scroll {
+  flex: 1; overflow-y: auto; padding: 16px 20px 24px;
+}
+#grid-scroll::-webkit-scrollbar { width: 4px; }
+#grid-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* PM full-width card */
+.grid-pm-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px; margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px; position: relative; overflow: hidden;
+}
+.grid-pm-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.grid-pm-avatar {
+  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+  background: var(--gold-glow); border: 2px solid var(--gold-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.grid-pm-info { flex: 1; }
+.grid-pm-name { font-size: 16px; font-weight: 800; color: var(--gold); }
+.grid-pm-role { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.grid-pm-meta { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+.grid-pm-badge {
+  padding: 2px 10px; border-radius: 20px; font-size: 9.5px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Section headers */
+.grid-section-hd {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  margin: 10px 0 8px; padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.grid-section-hd::before { content:'⬡'; color: var(--gold); }
+
+/* Minister grid */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px; margin-bottom: 8px;
+}
+.grid-card {
+  padding: 12px 14px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; border-left: 3px solid var(--gcard-color, #888);
+  cursor: pointer; transition: all .15s;
+  animation: fadeInUp .2s ease both;
+  position: relative;
+}
+.grid-card:hover { background: var(--bg3); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+.grid-card-avatar {
+  width: 32px; height: 32px; border-radius: 8px; float: right;
+  background: var(--bg3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; margin-left: 8px; flex-shrink: 0;
+}
+.grid-card-name { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.35; }
+.grid-card-role { font-size: 10px; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+.grid-card-footer { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
+.grid-card-party {
+  font-size: 8.5px; padding: 1px 7px; border-radius: 10px;
+  font-family: 'IBM Plex Mono', monospace; border: 1px solid; flex-shrink: 0;
+}
+.grid-card-min-btn {
+  margin-left: auto; font-size: 9px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--text-dim); cursor: pointer; transition: all .14s;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.grid-card-min-btn:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+/* Footer */
+.grid-footer {
+  flex-shrink: 0; padding: 8px 20px;
+  border-top: 1px solid var(--border); background: var(--bg2);
+  font-size: 9.5px; color: var(--text-dim);
+  display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ═══════════════════════════════════════
+   CORRUPTION VIEW OVERLAY
+═══════════════════════════════════════ */
+#corrupt-overlay {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  z-index: 40;
+  display: none;
+  overflow: hidden;
+  flex-direction: column;
+}
+@media (max-width: 640px) {
+  #corrupt-overlay {
+    position: fixed;
+    top: var(--header-h); left: 0; right: 0; bottom: 0;
+    z-index: 50;
+  }
+}
+#corrupt-overlay.show { display: flex; }
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── Top bar ─── */
+#corrupt-topbar {
+  padding: 14px 20px 0;
+  flex-shrink: 0;
+}
+.corrupt-title {
+  font-size: 13px; font-weight: 700; color: var(--red);
+  letter-spacing: .5px; text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.corrupt-title::before {
+  content: ''; display: block;
+  width: 3px; height: 18px; background: var(--red); border-radius: 2px; flex-shrink:0;
+}
+
+/* Stats row */
+.corrupt-stats {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.c-stat {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 14px; flex: 1; min-width: 100px;
+}
+.c-stat-val { font-size: 22px; font-weight: 900; color: var(--red); font-family:'IBM Plex Mono',monospace; line-height:1; }
+.c-stat-lbl { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+/* search + sort row */
+.corrupt-controls {
+  display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;
+}
+#corrupt-search {
+  flex: 1; min-width: 140px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--text);
+  padding: 6px 10px; font-size: 12px; font-family: 'Sarabun', sans-serif;
+  outline: none; transition: border-color .15s;
+}
+#corrupt-search:focus { border-color: var(--gold-dim); }
+#corrupt-search::placeholder { color: var(--text-dim); }
+.c-sort-btn {
+  padding: 5px 10px; border-radius: 6px;
+  border: 1px solid var(--border2); background: var(--bg2);
+  color: var(--text-mid); font-size: 10.5px; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
+  transition: all .14s;
+}
+.c-sort-btn:hover, .c-sort-btn.active { color: var(--red); border-color: var(--red); background: rgba(248,113,113,.08); }
+.c-results-count {
+  font-size: 10px; color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace; margin-left: auto; white-space: nowrap;
+}
+
+/* ─── Scrollable list ─── */
+#corrupt-scroll {
+  flex: 1; overflow-y: auto; padding: 0 20px 20px;
+}
+#corrupt-scroll::-webkit-scrollbar { width: 4px; }
+#corrupt-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ─── Card ─── */
+.corrupt-card {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 0 12px;
+  padding: 12px 14px;
+  margin-bottom: 7px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ccard-color, var(--red));
+  border-radius: var(--radius);
+  transition: background .15s;
+  animation: fadeInUp .2s ease both;
+}
+.corrupt-card:hover { background: var(--bg3); }
+
+.corrupt-rank {
+  grid-row: 1 / 4;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--ccard-color, var(--red));
+  align-self: center; padding-right: 4px;
+}
+.corrupt-name {
+  font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35;
+  grid-column: 2; grid-row: 1;
+}
+.corrupt-risk {
+  grid-column: 2; grid-row: 2;
+  margin-top: 4px; display: flex; flex-wrap: wrap; gap: 3px;
+}
+.corrupt-risk span {
+  display: inline-block;
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--orange);
+  padding: 1px 7px; border-radius: 10px;
+  font-size: 9.5px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.corrupt-source {
+  grid-column: 2; grid-row: 3;
+  font-size: 9.5px; color: var(--text-dim);
+  margin-top: 4px; font-style: italic;
+}
+.corrupt-bar-wrap {
+  grid-column: 1 / -1; grid-row: 4;
+  margin-top: 8px;
+  background: var(--bg3); border-radius: 3px; height: 3px; overflow: hidden;
+}
+.corrupt-bar {
+  height: 100%; border-radius: 3px;
+  background: var(--ccard-color, var(--red));
+  opacity: .7;
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+/* map link button */
+.corrupt-map-btn {
+  grid-column: 3; grid-row: 1 / 3;
+  align-self: center;
+  padding: 4px 9px; border-radius: 6px;
+  border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--text-dim); font-size: 10px; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
+  transition: all .14s; display: flex; align-items: center; gap: 4px;
+}
+.corrupt-map-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+.corrupt-map-btn:active { transform: scale(0.97); }
+
+/* ─── Footer ─── */
+#corrupt-footer {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  font-size: 9.5px; color: var(--text-dim); font-style: italic;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════
+   TOOLTIP
+═══════════════════════════════════════ */
+#tooltip {
+  position: fixed;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 6px 11px;
+  font-size: 12px; color: var(--text);
+  pointer-events: none; z-index: 999; display: none;
+  max-width: 220px; line-height: 1.4;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  transition: background .3s;
+}
+
+/* ═══════════════════════════════════════
+   CABINET PANEL (มุมขวา)
+═══════════════════════════════════════ */
+#cab-panel {
+  position: absolute; top: 18px; right: 18px;
+  width: var(--panel-w);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  z-index: 99; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.45);
+  display: block;
+  transition: background .3s, border-color .3s, opacity .25s;
+}
+#cab-panel.hidden { display: none; }
+
+.cab-header {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative;
+  cursor: grab;
+  transition: background .3s;
+  user-select: none;
+}
+.cab-header:active { cursor: grabbing; }
+.cab-header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+}
+.cab-header-title {
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  letter-spacing: .5px; text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex; align-items: center; gap: 6px;
+}
+#cab-toggle {
+  width: 20px; height: 20px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--text-dim);
+  cursor: pointer; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .14s; flex-shrink: 0;
+}
+#cab-toggle:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+#cab-body { max-height: 72vh; overflow-y: auto; transition: max-height .25s ease; }
+#cab-body.collapsed { max-height: 0; overflow: hidden; }
+#cab-body::-webkit-scrollbar { width: 3px; }
+#cab-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* PM row */
+.cab-pm {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px;
+  background: var(--gold-glow);
+  border-bottom: 1px solid var(--border2);
+}
+.cab-pm-icon {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0; color: var(--bg);
+}
+.cab-pm-info { flex: 1; min-width: 0; }
+.cab-pm-name { font-size: 12px; font-weight: 700; color: var(--gold); line-height: 1.3; }
+.cab-pm-role { font-size: 9.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+
+/* Section header */
+.cab-section-hd {
+  padding: 7px 14px 4px;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Minister row */
+.cab-row {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .12s;
+}
+.cab-row:last-child { border-bottom: none; }
+.cab-row:hover { background: var(--bg3); }
+.cab-row.active { background: var(--gold-glow); }
+
+.cab-row-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.cab-row-info { flex: 1; min-width: 0; }
+.cab-row-name { font-size: 11.5px; color: var(--text); font-weight: 600; line-height: 1.35; }
+.cab-row-role { font-size: 9.5px; color: var(--text-dim); margin-top: 2px; line-height: 1.3; }
+.cab-row-party {
+  font-size: 8.5px; font-family: 'IBM Plex Mono', monospace;
+  padding: 1px 6px; border-radius: 10px; margin-top: 3px; display: inline-block;
+  background: var(--bg3); color: var(--text-mid); border: 1px solid var(--border2);
+}
+
+/* Action btn for cabinet */
+#btn-cabinet {
+  padding: 4px 11px;
+  border-radius: 5px; border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text-mid); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'Sarabun', sans-serif;
+}
+#btn-cabinet:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+#btn-cabinet.active { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+
+/* ═══════════════════════════════════════════════════════════
+   MODERN REFRESH  ·  v5.2
+   Glassmorphism · elevation system · ambient depth · springs
+═══════════════════════════════════════════════════════════ */
+:root {
+  --radius:     11px;
+  --radius-lg:  18px;
+  --glass:      rgba(15, 19, 26, .68);
+  --glass-2:    rgba(19, 24, 33, .80);
+  --glass-brd:  rgba(255, 255, 255, .07);
+  --sh-1: 0 1px 2px rgba(0,0,0,.35);
+  --sh-2: 0 8px 26px -8px rgba(0,0,0,.55);
+  --sh-3: 0 22px 60px -16px rgba(0,0,0,.66);
+  --ease-spring: cubic-bezier(.34, 1.4, .5, 1);
+}
+[data-theme="light"] {
+  --glass:      rgba(255, 255, 255, .68);
+  --glass-2:    rgba(255, 255, 255, .84);
+  --glass-brd:  rgba(20, 30, 50, .09);
+  --sh-1: 0 1px 2px rgba(25,35,60,.08);
+  --sh-2: 0 8px 26px -8px rgba(25,35,60,.16);
+  --sh-3: 0 22px 60px -16px rgba(25,35,60,.22);
+}
+body {
+  background:
+    radial-gradient(1200px 620px at 80% -12%, rgba(201,168,76,.07), transparent 60%),
+    radial-gradient(950px 520px at -5% 105%, rgba(79,163,247,.055), transparent 55%),
+    var(--bg);
+}
+[data-theme="light"] body {
+  background:
+    radial-gradient(1200px 620px at 80% -12%, rgba(160,120,32,.08), transparent 60%),
+    radial-gradient(950px 520px at -5% 105%, rgba(26,101,192,.06), transparent 55%),
+    var(--bg);
+}
+#header {
+  background: var(--glass-2);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+.hd-emblem {
+  box-shadow: 0 0 0 1px var(--gold-glow), 0 0 20px -4px var(--gold-glow);
+}
+#info-panel, #cab-panel {
+  background: var(--glass-2);
+  border: 1px solid var(--glass-brd);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: var(--sh-3);
+}
+.ip-header, .cab-header { background: transparent; }
+.zbtn, #coords, #search-results, #tooltip, #legend-bar {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+}
+.zbtn { box-shadow: var(--sh-1); }
+#coords, #search-results, #tooltip {
+  border: 1px solid var(--glass-brd);
+  box-shadow: var(--sh-2);
+}
+#legend-bar { border-top: 1px solid var(--glass-brd); }
+.search-wrap input {
+  border-radius: 11px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.view-btn, .fp, .action-btn, #btn-cabinet, .zbtn,
+.stat-chip, .cab-sz, .min-item, .org-chip, .c-sort-btn {
+  transition: transform .2s var(--ease-spring),
+              background .2s ease, border-color .2s ease,
+              color .2s ease, box-shadow .2s ease;
+}
+.action-btn:hover, .zbtn:hover, #btn-cabinet:hover,
+.view-btn:hover, .fp:hover { transform: translateY(-1.5px); }
+.action-btn:active, .zbtn:active, #btn-cabinet:active,
+.view-btn:active { transform: translateY(0); }
+.view-btn.active { box-shadow: 0 4px 14px -4px var(--gold-glow); }
+.min-item:hover { transform: translateX(2px); }
+*::-webkit-scrollbar { width: 7px; height: 7px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border2); border-radius: 10px;
+  border: 2px solid transparent; background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); background-clip: padding-box; }
+* { scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
+.cab-header { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   BEAUTY PASS  ·  v5.3
+   Gradient accents · gentle glow · glass sheen · shimmer
+═══════════════════════════════════════════════════════════ */
+.hd-brand-text h1 {
+  background: linear-gradient(120deg, var(--gold), color-mix(in srgb, var(--gold) 55%, #fff) 55%, var(--gold));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+@keyframes emblemGlow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--gold-glow), 0 0 16px -7px var(--gold); }
+  50%      { box-shadow: 0 0 0 1px var(--gold-glow), 0 0 28px -3px var(--gold); }
+}
+.hd-emblem { animation: emblemGlow 3.6s ease-in-out infinite; }
+#header::after, #legend-bar::before {
+  background: linear-gradient(90deg, transparent, var(--gold-dim) 15%, var(--gold) 50%, var(--gold-dim) 85%, transparent);
+  background-size: 220% 100%;
+  animation: lineShimmer 7s linear infinite;
+}
+@keyframes lineShimmer { to { background-position: -220% 0; } }
+#info-panel, #cab-panel {
+  box-shadow: var(--sh-3), inset 0 1px 0 rgba(255,255,255,.08);
+}
+[data-theme="light"] #info-panel,
+[data-theme="light"] #cab-panel {
+  box-shadow: var(--sh-3), inset 0 1px 0 rgba(255,255,255,.55);
+}
+.view-btn.active {
+  background: linear-gradient(135deg, rgba(201,168,76,.10), rgba(201,168,76,.22));
+  box-shadow: 0 5px 18px -6px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.action-btn:hover, .zbtn:hover, #btn-cabinet:hover {
+  box-shadow: 0 5px 16px -5px var(--gold-glow);
+}
+.fp.on { box-shadow: 0 3px 12px -6px currentColor; }
+.min-item.active {
+  background: linear-gradient(100deg, var(--gold-glow), transparent 70%);
+  box-shadow: 0 6px 18px -10px var(--gold-glow);
+}
+.search-wrap input:focus {
+  box-shadow: 0 0 0 3px var(--gold-glow), 0 6px 20px -8px var(--gold-glow);
+}
+.cab-header-title, .grid-topbar-title, .corrupt-title {
+  background: linear-gradient(120deg, var(--gold), color-mix(in srgb, var(--gold) 50%, #fff) 60%, var(--gold));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.stat-chip strong, .c-stat-val {
+  background: linear-gradient(120deg, var(--gold), color-mix(in srgb, var(--gold) 55%, #fff));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--border2), color-mix(in srgb, var(--gold-dim) 60%, var(--border2)));
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-dim), var(--gold));
+  background-clip: padding-box;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hd-emblem, #header::after, #legend-bar::before { animation: none; }
+}
+
+/* arrow-direction toggle (in zoom cluster) active state */
+.zbtn.active {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  background: var(--gold-glow);
+  box-shadow: 0 4px 14px -5px var(--gold-glow);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UI/UX PRO MAX  ·  v5.4
+   Typography rhythm · a11y focus · press feedback · elevation
+═══════════════════════════════════════════════════════════ */
+
+/* §6 Typography — tabular figures so data never shifts width */
+.stat-chip, #coords, .min-id, .min-count, .min-badge,
+.c-stat-val, #grid-count-label, .c-results-count,
+.corrupt-rank, .sb-label {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* §6 Color — lift secondary-text legibility in dark mode (≈ better contrast) */
+[data-theme="dark"] { --text-dim: #6c7b8f; }
+
+/* §1 Accessibility — visible keyboard focus rings (mouse clicks unaffected) */
+.view-btn:focus-visible, .fp:focus-visible, .action-btn:focus-visible,
+.zbtn:focus-visible, #btn-cabinet:focus-visible, .cab-sz:focus-visible,
+.c-sort-btn:focus-visible, #theme-toggle:focus-visible,
+.org-chip:focus-visible, #info-close:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.search-wrap input:focus-visible { outline: 2px solid var(--gold-dim); outline-offset: 1px; }
+
+/* §7 Animation — subtle press scale for natural, responsive feedback */
+.view-btn:active, .action-btn:active, .zbtn:active,
+#btn-cabinet:active, .fp:active, .cab-sz:active, .c-sort-btn:active {
+  transform: scale(.95);
+}
+
+/* §4 Elevation — content cards share one hover/elevation language */
+.grid-card, .corrupt-card {
+  transition: transform .2s var(--ease-spring), box-shadow .2s ease, border-color .2s ease;
+}
+.grid-card:hover, .corrupt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sh-2);
+  border-color: var(--border2);
+}
+
+/* §4 Consistency — overlay bars adopt the same glass language */
+.grid-topbar, #corrupt-topbar, .grid-footer, #corrupt-footer {
+  background: var(--glass-2);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Search results — clearer, on-brand active row */
+.sr-item:hover, .sr-item:focus-visible { background: var(--gold-glow); }
+
+/* Info panel — readable rhythm + tidy links */
+.info-row { line-height: 1.55; }
+.info-val a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* §1 Reduced-motion — neutralize decorative motion (transitions kept for usability) */
+@media (prefers-reduced-motion: reduce) {
+  .min-item { animation: none !important; }
+  .grid-card:hover, .corrupt-card:hover,
+  .min-item:hover, .view-btn:hover, .fp:hover,
+  .action-btn:hover, .zbtn:hover, #btn-cabinet:hover { transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ปุ่มกลับหน้าหลัก รัฐไทยก้าวหน้า (hub) -->
+<a href="hub/index.html" id="hub-back-btn" style="position:fixed;left:16px;bottom:72px;z-index:99999;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Prompt','Kanit','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14px;font-weight:600;line-height:1;color:#eafcff;text-decoration:none;background:rgba(11,17,26,0.92);border:1px solid rgba(0,229,255,0.55);border-radius:999px;box-shadow:0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 26px rgba(0,0,0,.5),0 0 26px rgba(0,229,255,.5)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25)';">← กลับหน้าหลัก</a>
+
+<div id="app">
+
+  <!-- ══════════════ HEADER ══════════════ -->
+  <header id="header">
+    <div class="hd-brand">
+      <div class="hd-emblem">🏛️</div>
+      <div class="hd-brand-text">
+        <h1>โครงสร้างรัฐไทย</h1>
+        <p>GOVERNMENT MAP · 2569</p>
+      </div>
+    </div>
+
+    <div class="hd-center">
+      <!-- Mobile menu button -->
+    <button id="mob-menu-btn" title="เมนู" onclick="toggleMobSidebar()">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect y="3" width="18" height="2" rx="1" fill="currentColor"/>
+        <rect y="8" width="18" height="2" rx="1" fill="currentColor"/>
+        <rect y="13" width="18" height="2" rx="1" fill="currentColor"/>
+      </svg>
+    </button>
+    <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input id="search" type="text" placeholder="ค้นหาหน่วยงาน, กรม, ตัวย่อ...">
+        <div id="search-results"></div>
+      </div>
+
+      <div class="view-toggle">
+        <button class="view-btn active" id="btn-view-radial">◎ Radial</button>
+        <button class="view-btn" id="btn-view-grid">⊞ ครม.Grid</button>
+        <button class="view-btn" id="btn-view-force">⚠ ทุจริต</button>
+      </div>
+
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--gold)"></div>
+        <strong>20</strong> กระทรวง
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--green)"></div>
+        <strong>413</strong> หน่วยงาน
+      </div>
+    </div>
+
+    <div class="hd-right">
+      <!-- Dark / Light toggle -->
+      <button id="theme-toggle" title="สลับธีมสว่าง/มืด" onclick="toggleTheme()">
+        <div class="track">
+          <span>🌙</span>
+          <span>☀️</span>
+        </div>
+        <div class="knob" id="knob">🌙</div>
+      </button>
+
+      <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()">👑 ครม.</button>
+      <button class="action-btn" id="btn-reset" title="รีเซตมุมมอง">⟳</button>
+    </div>
+  </header>
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside id="sidebar">
+
+    <div class="sb-section-hd">
+      <div class="sb-label">ประเภทหน่วยงาน</div>
+    </div>
+
+    <div class="filter-row">
+      <button class="fp on" data-c="01"><span class="sw" style="background:#3ecf6e"></span>ส่วนราชการ</button>
+      <button class="fp on" data-c="02"><span class="sw" style="background:#4fa3f7"></span>รัฐวิสาหกิจ</button>
+      <button class="fp on" data-c="03"><span class="sw" style="background:#a78bfa"></span>องค์การมหาชน</button>
+      <button class="fp on" data-c="08"><span class="sw" style="background:#f87171"></span>หน่วยงานอิสระ</button>
+      <button class="fp on" data-c="09"><span class="sw" style="background:#f59e42"></span>ม.อุดมศึกษา</button>
+      <button class="fp on" data-c="10"><span class="sw" style="background:#fbbf24"></span>สภาวิชาชีพ</button>
+    </div>
+
+    <div class="sb-section-hd">
+      <div class="sb-label">กระทรวง</div>
+    </div>
+
+    <div id="ministry-list"></div>
+
+    <div id="sb-footer">
+      <div class="sb-label" style="padding:0 0 5px">สัญลักษณ์</div>
+      <div class="leg-row"><div class="leg-sq"  style="background:#e67e22"></div>กระทรวง</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#3ecf6e"></div>ส่วนราชการ</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#4fa3f7"></div>รัฐวิสาหกิจ</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#a78bfa"></div>องค์การมหาชน</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#f87171"></div>หน่วยงานอิสระ / ศาล</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#f59e42"></div>สถาบันอุดมศึกษา</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#fbbf24"></div>สภาวิชาชีพ</div>
+    </div>
+  </aside>
+
+  <!-- ══════════════ CANVAS ══════════════ -->
+  <main id="main">
+    <canvas id="canvas"></canvas>
+
+    <div id="zoom-ctrl">
+      <button class="zbtn" id="zin">+</button>
+      <button class="zbtn" id="zout">−</button>
+      <button class="zbtn" id="zfit" style="font-size:12px" title="Fit">⊡</button>
+      <button class="zbtn active" id="zarrow" style="font-size:14px" title="ทิศทางความสัมพันธ์ (ลูกศร)">➤</button>
+    </div>
+
+    <div id="coords">
+      <span><label>zoom </label><span id="cz">100%</span></span>
+      <span><label>nodes </label><span id="cn">0</span></span>
+    </div>
+
+
+
+    <!-- ══════ CABINET GRID OVERLAY ══════ -->
+    <div id="grid-overlay">
+      <div class="grid-topbar">
+        <div class="grid-topbar-title">⊞ คณะรัฐมนตรี — โครงสร้างผู้นำรัฐบาล 2569</div>
+        <div class="grid-party-pills" id="grid-party-pills"></div>
+      </div>
+      <div id="grid-scroll">
+        <div id="grid-pm-wrap"></div>
+        <div class="grid-section-hd" style="margin-top:4px">รองนายกรัฐมนตรี</div>
+        <div class="grid-cards" id="grid-deputy-cards"></div>
+        <div class="grid-section-hd">รัฐมนตรีว่าการกระทรวง</div>
+        <div class="grid-cards" id="grid-minister-cards"></div>
+      </div>
+      <div class="grid-footer">
+        <span>👑 คณะรัฐมนตรีชุดที่ 66 · รัฐบาลนายอนุทิน ชาญวีรกูล · 2569–ปัจจุบัน</span>
+        <span id="grid-count-label">รมต. 0 คน · พรรค 0 พรรค</span>
+      </div>
+    </div>
+
+    <!-- ══════ CORRUPTION OVERLAY ══════ -->
+    <div id="corrupt-overlay">
+      <div id="corrupt-topbar">
+        <div class="corrupt-title">⚠ ดัชนีความเสี่ยงทุจริต — หน่วยงานรัฐไทย</div>
+        <div class="corrupt-stats">
+          <div class="c-stat"><div class="c-stat-val">10</div><div class="c-stat-lbl">หน่วยงานเสี่ยงสูง</div></div>
+          <div class="c-stat"><div class="c-stat-val">3</div><div class="c-stat-lbl">ความเสี่ยงระดับวิกฤต</div></div>
+          <div class="c-stat"><div class="c-stat-val">5</div><div class="c-stat-lbl">ประเภทความเสี่ยง</div></div>
+          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">10</div><div class="c-stat-lbl">หน่วยงานรัฐที่แสดง</div></div>
+        </div>
+        <div class="corrupt-controls">
+          <input id="corrupt-search" type="text" placeholder="🔍  ค้นหาหน่วยงาน หรือ ความเสี่ยง...">
+          <button class="c-sort-btn active" id="csort-rank" onclick="sortCorrupt('rank')">↑ อันดับ</button>
+          <button class="c-sort-btn" id="csort-name" onclick="sortCorrupt('name')">A–Z ชื่อ</button>
+          <span class="c-results-count" id="c-results-count">แสดง 10 รายการ</span>
+        </div>
+      </div>
+      <div id="corrupt-scroll"><div id="corrupt-list"></div></div>
+      <div id="corrupt-footer">
+        <span>📎 ที่มา: ดัชนีภาพลักษณ์คอร์รัปชัน (CPI) · รายงาน ป.ป.ช. · สวนดุสิตโพล · สตง.</span>
+        <span>⚠ ข้อมูลเพื่อการศึกษาเชิงวิชาการ ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
+      </div>
+    </div>
+
+    <!-- ══════ BOTTOM LEGEND BAR ══════ -->
+    <div id="legend-bar">
+
+      <!-- ผู้บริหาร -->
+      <div class="leg-section">
+        <div class="leg-section-title">👤 ผู้บริหาร</div>
+        <div class="leg-items">
+          <div class="leg-item">
+            <div class="li-circle-lg" style="background:#c9a84c33;border-color:#c9a84c"></div>
+            นายกรัฐมนตรี
+          </div>
+          <div class="leg-item">
+            <div class="li-rect" style="background:#e67e22bb;border:1px solid #e67e22"></div>
+            รัฐมนตรี / กระทรวง
+          </div>
+        </div>
+      </div>
+
+      <!-- ส่วนราชการ -->
+      <div class="leg-section">
+        <div class="leg-section-title">🏛️ ส่วนราชการ</div>
+        <div class="leg-items">
+          <div class="leg-item">
+            <div class="li-circle" style="background:#3ecf6e"></div>
+            ส่วนราชการ / กรม
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#4fa3f7"></div>
+            รัฐวิสาหกิจ
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#a78bfa"></div>
+            องค์การมหาชน
+          </div>
+        </div>
+      </div>
+
+      <!-- องค์กรพิเศษ -->
+      <div class="leg-section">
+        <div class="leg-section-title">⚖️ องค์กรพิเศษ</div>
+        <div class="leg-items">
+          <div class="leg-item">
+            <div class="li-circle" style="background:#f87171"></div>
+            องค์กรอิสระ / ศาล
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#f87171;opacity:.7"></div>
+            รัฐสภา
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#f87171;opacity:.5"></div>
+            หน่วยงานอิสระ
+          </div>
+        </div>
+      </div>
+
+      <!-- สถาบัน / วิชาชีพ -->
+      <div class="leg-section" style="border-right:none">
+        <div class="leg-section-title">🎓 สถาบัน / วิชาชีพ</div>
+        <div class="leg-items">
+          <div class="leg-item">
+            <div class="li-circle" style="background:#f59e42"></div>
+            สถาบันอุดมศึกษา
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#fbbf24"></div>
+            สภาวิชาชีพ
+          </div>
+          <div class="leg-item">
+            <div class="li-circle" style="background:#8a97aa"></div>
+            หน่วยงานอื่น
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /legend-bar -->
+
+  </main>
+</div>
+
+<!-- ══════════════ CABINET PANEL ══════════════ -->
+<div id="cab-panel">
+  <div class="cab-header">
+    <div class="cab-header-title">👑 คณะรัฐมนตรี 2569</div>
+    <div id="cab-size-btns">
+      <button class="cab-sz active" id="csz-full"    title="เต็ม"    onclick="setCabState('full')">▤</button>
+      <button class="cab-sz"        id="csz-compact" title="หัวเท่านั้น" onclick="setCabState('compact')">▬</button>
+      <button class="cab-sz"        id="csz-mini"    title="ย่อสุด"  onclick="setCabState('mini')">●</button>
+    </div>
+  </div>
+  <div id="cab-body"></div>
+</div>
+
+
+<!-- Info Panel -->
+<div id="info-panel">
+  <div class="ip-header">
+    <button id="info-close">✕</button>
+    <div id="info-badge"></div>
+    <div id="info-title"></div>
+    <div id="info-abbr"></div>
+  </div>
+  <div class="ip-body">
+    <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="info-cat"></span></div>
+    <div class="info-row"><span class="info-label">ภารกิจ</span><span class="info-val" id="info-mission"></span></div>
+    <div class="info-row"><span class="info-label">ผู้บริหาร</span><span class="info-val" id="info-exec"></span></div>
+    <div class="info-row" id="info-minister-row" style="display:none"><span class="info-label">รัฐมนตรี</span><div class="info-val" id="info-minister"></div></div>
+    <div class="info-row" id="info-web">
+      <span class="info-label">เว็บไซต์</span><span class="info-val"></span>
+    </div>
+    <div id="info-orgs-list" style="display:none">
+      <h5 id="info-orgs-count"></h5>
+      <div id="info-orgs-chips"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  THEME TOGGLE
+// ═══════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const t = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', t);
+  try { localStorage.setItem('md-theme', t); } catch(e) {}  // sync ข้ามทุกเว็บใน md
+  document.getElementById('knob').textContent = isDark ? '☀️' : '🌙';
+  draw(); // redraw canvas with new colors
+}
+// ให้ปุ่ม knob ตรงกับธีมที่โหลดมา (เผื่อ localStorage บังคับเป็น light)
+document.addEventListener('DOMContentLoaded', function(){
+  var k = document.getElementById('knob');
+  if (k) k.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️';
+});
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function isDark() {
+  return document.documentElement.getAttribute('data-theme') === 'dark';
+}
+
+function getColor(catID, alpha = 1) {
+  const d = isDark();
+  const map = {
+    '01': d ? `rgba(62,207,110,${alpha})`   : `rgba(26,138,68,${alpha})`,
+    '02': d ? `rgba(79,163,247,${alpha})`   : `rgba(26,101,192,${alpha})`,
+    '03': d ? `rgba(167,139,250,${alpha})`  : `rgba(109,63,181,${alpha})`,
+    '04': d ? `rgba(167,139,250,${alpha})`  : `rgba(109,63,181,${alpha})`,
+    '05': d ? `rgba(248,113,113,${alpha})`  : `rgba(192,57,43,${alpha})`,
+    '06': d ? `rgba(248,113,113,${alpha})`  : `rgba(192,57,43,${alpha})`,
+    '07': d ? `rgba(248,113,113,${alpha})`  : `rgba(192,57,43,${alpha})`,
+    '08': d ? `rgba(248,113,113,${alpha})`  : `rgba(192,57,43,${alpha})`,
+    '09': d ? `rgba(245,158,66,${alpha})`   : `rgba(185,96,16,${alpha})`,
+    '10': d ? `rgba(251,191,36,${alpha})`   : `rgba(176,125,16,${alpha})`,
+    '13': d ? `rgba(139,148,158,${alpha})`  : `rgba(100,116,139,${alpha})`,
+  };
+  return map[catID] || (d ? `rgba(139,148,158,${alpha})` : `rgba(100,116,139,${alpha})`);
+}
+
+// ═══════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════
+const MINISTRIES = [{"id":"01","name":"สำนักนายกรัฐมนตรี","orgs":[{"no":"001","name":"สำนักงานปลัดสำนักนายกรัฐมนตรี","abbr":"สปน.","cat":"ส่วนราชการ","catID":"01","web":"www.opm.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"ปลัดกระทรวง"},{"no":"002","name":"กรมประชาสัมพันธ์","abbr":"กปส.","cat":"ส่วนราชการ","catID":"01","web":"www.prd.go.th","mission":"สื่อสารมวลชน","exec":"อธิบดี"},{"no":"003","name":"สำนักงานคณะกรรมการคุ้มครองผู้บริโภค","abbr":"สคบ.","cat":"ส่วนราชการ","catID":"01","web":"www.ocpb.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"004","name":"สำนักเลขาธิการนายกรัฐมนตรี","abbr":"สลน.","cat":"ส่วนราชการ","catID":"01","web":"spm.thaigov.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"เลขาธิการ"},{"no":"005","name":"สำนักเลขาธิการคณะรัฐมนตรี","abbr":"สลค.","cat":"ส่วนราชการ","catID":"01","web":"www.soc.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"เลขาธิการ"},{"no":"006","name":"สำนักข่าวกรองแห่งชาติ","abbr":"สขช.","cat":"ส่วนราชการ","catID":"01","web":"www.nia.go.th","mission":"ความมั่นคง","exec":"ผู้อำนวยการ"},{"no":"007","name":"สำนักงบประมาณ","abbr":"สงป.","cat":"ส่วนราชการ","catID":"01","web":"www.bb.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"ผู้อำนวยการ"},{"no":"008","name":"สำนักงานสภาความมั่นคงแห่งชาติ","abbr":"สมช.","cat":"ส่วนราชการ","catID":"01","web":"www.nsc.go.th","mission":"ความมั่นคง","exec":"เลขาธิการสภา"},{"no":"009","name":"สำนักงานคณะกรรมการกฤษฎีกา","abbr":"สคก.","cat":"ส่วนราชการ","catID":"01","web":"www.ocs.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"010","name":"สำนักงาน ก.พ.","abbr":"สำนักงาน ก.พ.","cat":"ส่วนราชการ","catID":"01","web":"www.ocsc.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"เลขาธิการ"},{"no":"011","name":"สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ","abbr":"สศช.","cat":"ส่วนราชการ","catID":"01","web":"www.nesdc.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"เลขาธิการสภา"},{"no":"012","name":"สำนักงาน ก.พ.ร.","abbr":"สำนักงาน ก.พ.ร.","cat":"ส่วนราชการ","catID":"01","web":"www.opdc.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"เลขาธิการ"},{"no":"013","name":"BOI","abbr":"BOI","cat":"ส่วนราชการ","catID":"01","web":"www.boi.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"014","name":"สำนักงานทรัพยากรน้ำแห่งชาติ","abbr":"สทนช.","cat":"ส่วนราชการ","catID":"01","web":"www.onwr.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"เลขาธิการ"},{"no":"160","name":"กอ.รมน.","abbr":"กอ.รมน.","cat":"ส่วนราชการ","catID":"01","web":"www.isoc.go.th","mission":"ความมั่นคง","exec":"เลขาธิการ"},{"no":"162","name":"บริษัท อสมท จำกัด (มหาชน)","abbr":"MCOT","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.mcot.net","mission":"สื่อสารมวลชน","exec":"กรรมการผู้อำนวยการใหญ่"},{"no":"212","name":"สำนักงานคณะกรรมการสุขภาพแห่งชาติ","abbr":"สช.","cat":"องค์การมหาชน","catID":"03","web":"www.nationalhealth.or.th","mission":"การสาธารณสุข","exec":"เลขาธิการ"},{"no":"213","name":"กองทุนหมู่บ้านและชุมชนเมืองแห่งชาติ","abbr":"กทบ.","cat":"องค์การมหาชน","catID":"03","web":"www.villagefund.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"214","name":"กองทุนสนับสนุนการสร้างเสริมสุขภาพ","abbr":"สสส.","cat":"องค์การมหาชน","catID":"03","web":"www.thaihealth.or.th","mission":"การสาธารณสุข","exec":"ผู้จัดการ"},{"no":"215","name":"สสว.","abbr":"สสว.","cat":"องค์การมหาชน","catID":"03","web":"www.sme.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"241","name":"สกมช.","abbr":"สกมช.","cat":"องค์การมหาชน","catID":"03","web":"www.ncsa.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"เลขาธิการ"},{"no":"247","name":"สสปน.","abbr":"สสปน.","cat":"องค์การมหาชน","catID":"04","web":"www.businesseventsthailand.com","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"248","name":"สบร.","abbr":"สบร.","cat":"องค์การมหาชน","catID":"04","web":"www.okmd.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"251","name":"สพร.","abbr":"สพร.","cat":"องค์การมหาชน","catID":"04","web":"www.dga.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"252","name":"สศส.","abbr":"สศส.","cat":"องค์การมหาชน","catID":"04","web":"www.cea.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"376","name":"ราชวิทยาลัยจุฬาภรณ์","abbr":"CRA","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.cra.ac.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"409","name":"สคทช.","abbr":"สคทช.","cat":"ส่วนราชการ","catID":"01","web":"onlb.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"},{"no":"412","name":"สพค.","abbr":"สพค.","cat":"องค์การมหาชน","catID":"04","web":"pinkanakorn.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"}],"ministers":["อนุทิน ชาญวีรกูล","ศุภมาส อิศรภักดี","นภินทร ศรีสรรพางค์","ภราดร ปริศนานันทกุล","สุขสมรวย วันทนียกุล"]},{"id":"02","name":"กระทรวงกลาโหม","orgs":[{"no":"015","name":"สำนักงานปลัดกระทรวงกลาโหม","abbr":"สป.กห.","cat":"ส่วนราชการ","catID":"01","web":"opsd.mod.go.th","mission":"ความมั่นคง","exec":"ปลัดกระทรวง"},{"no":"016","name":"กองบัญชาการกองทัพไทย","abbr":"บก.ทท.","cat":"ส่วนราชการ","catID":"01","web":"www.rtarf.mi.th","mission":"ความมั่นคง","exec":"ผู้บัญชาการ"},{"no":"017","name":"กองทัพบก","abbr":"ทบ.","cat":"ส่วนราชการ","catID":"01","web":"www.rta.mi.th","mission":"ความมั่นคง","exec":"ผู้บัญชาการ"},{"no":"018","name":"กองทัพเรือ","abbr":"ทร.","cat":"ส่วนราชการ","catID":"01","web":"www.navy.mi.th","mission":"ความมั่นคง","exec":"ผู้บัญชาการ"},{"no":"019","name":"กองทัพอากาศ","abbr":"ทอ.","cat":"ส่วนราชการ","catID":"01","web":"www.rtaf.mi.th","mission":"ความมั่นคง","exec":"ผู้บัญชาการ"},{"no":"240","name":"สถาบันเทคโนโลยีป้องกันประเทศ","abbr":"สทป.","cat":"องค์การมหาชน","catID":"03","web":"www.dti.or.th","mission":"ความมั่นคง","exec":"ผู้อำนวยการ"}],"ministers":["อดุลย์ บุญธรรมเจริญ"]},{"id":"03","name":"กระทรวงการคลัง","orgs":[{"no":"020","name":"สำนักงานปลัดกระทรวงการคลัง","abbr":"สป.กค.","cat":"ส่วนราชการ","catID":"01","web":"palad.mof.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"021","name":"กรมธนารักษ์","abbr":"ธร.","cat":"ส่วนราชการ","catID":"01","web":"www.treasury.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"022","name":"กรมบัญชีกลาง","abbr":"บก.","cat":"ส่วนราชการ","catID":"01","web":"www.cgd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"023","name":"กรมศุลกากร","abbr":"กศก.","cat":"ส่วนราชการ","catID":"01","web":"www.customs.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"024","name":"กรมสรรพสามิต","abbr":"สสพ.","cat":"ส่วนราชการ","catID":"01","web":"www.excise.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"025","name":"กรมสรรพากร","abbr":"สพ.","cat":"ส่วนราชการ","catID":"01","web":"www.rd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"026","name":"สคร.","abbr":"สคร.","cat":"ส่วนราชการ","catID":"01","web":"www.sepo.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"027","name":"สบน.","abbr":"สบน.","cat":"ส่วนราชการ","catID":"01","web":"www.pdmo.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"028","name":"สศค.","abbr":"สศค.","cat":"ส่วนราชการ","catID":"01","web":"www.fpo.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"164","name":"ธนาคารออมสิน","abbr":"GSB","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.gsb.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"165","name":"ธนาคารอาคารสงเคราะห์","abbr":"ธอส.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.ghbank.co.th","mission":"เศรษฐกิจ","exec":"กรรมการผู้จัดการ"},{"no":"166","name":"ธนาคารเพื่อการเกษตรและสหกรณ์","abbr":"ธ.ก.ส.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.baac.or.th","mission":"เศรษฐกิจ","exec":"ผู้จัดการ"},{"no":"167","name":"EXIM Bank","abbr":"EXIM Bank","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.exim.go.th","mission":"เศรษฐกิจ","exec":"กรรมการผู้จัดการ"},{"no":"168","name":"SME Bank","abbr":"SME Bank","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.smebank.co.th","mission":"เศรษฐกิจ","exec":"กรรมการผู้จัดการ"},{"no":"169","name":"ธนาคารอิสลามแห่งประเทศไทย","abbr":"I Bank","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.ibank.co.th","mission":"เศรษฐกิจ","exec":"กรรมการและผู้จัดการ"},{"no":"171","name":"การยาสูบแห่งประเทศไทย","abbr":"ยสท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.thaitobacco.or.th","mission":"เศรษฐกิจ","exec":"ผู้ว่าการ"},{"no":"172","name":"บรรษัทประกันสินเชื่ออุตสาหกรรมขนาดย่อม","abbr":"บสย.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.tcg.or.th","mission":"เศรษฐกิจ","exec":"กรรมการและผู้จัดการ"},{"no":"219","name":"กบข.","abbr":"กบข.","cat":"องค์การมหาชน","catID":"03","web":"www.gpf.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"220","name":"กอช.","abbr":"กอช.","cat":"องค์การมหาชน","catID":"03","web":"www.nsf.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"396","name":"ธนาคารแห่งประเทศไทย","abbr":"ธปท.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.bot.or.th","mission":"เศรษฐกิจ","exec":"ผู้ว่าการ"},{"no":"397","name":"สำนักงาน ก.ล.ต.","abbr":"สำนักงาน ก.ล.ต.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.sec.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"398","name":"สำนักงาน คปภ.","abbr":"สำนักงาน คปภ.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.oic.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"399","name":"สถาบันคุ้มครองเงินฝาก","abbr":"สคฝ.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.dpa.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"405","name":"ตลาดหลักทรัพย์แห่งประเทศไทย","abbr":"SET","cat":"หน่วยงานอื่น","catID":"13","web":"www.set.or.th","mission":"เศรษฐกิจ","exec":"กรรมการและผู้จัดการ"}],"ministers":["เอกนิติ นิติทัณฑ์ประภาศ"]},{"id":"04","name":"กระทรวงการต่างประเทศ","orgs":[{"no":"029","name":"สำนักงานปลัดกระทรวงการต่างประเทศ","abbr":"สป.กต.","cat":"ส่วนราชการ","catID":"01","web":"www.mfa.go.th","mission":"การต่างประเทศ","exec":"ปลัดกระทรวง"},{"no":"030","name":"กรมการกงสุล","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"consular.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"031","name":"กรมความร่วมมือระหว่างประเทศ","abbr":"TICA","cat":"ส่วนราชการ","catID":"01","web":"tica-thaigov.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"032","name":"กรมพิธีการทูต","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"protocol.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"033","name":"กรมยุโรป","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"europetouch.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"034","name":"กรมเศรษฐกิจระหว่างประเทศ","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"business.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"035","name":"กรมสนธิสัญญาและกฎหมาย","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"treaties.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"036","name":"กรมสารนิเทศ","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"info.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"037","name":"กรมองค์การระหว่างประเทศ","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"thai-inter-org.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"038","name":"กรมอเมริกาและแปซิฟิกใต้","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"aspa.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"039","name":"กรมอาเซียน","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"asean.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"040","name":"กรมเอเชียตะวันออก","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"eastasia.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"},{"no":"041","name":"กรมเอเชียใต้ ตะวันออกกลางและแอฟริกา","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"sameaf.mfa.go.th","mission":"การต่างประเทศ","exec":"อธิบดี"}],"ministers":["สีหศักดิ์ พวงเกตุแก้ว"]},{"id":"05","name":"กระทรวงการท่องเที่ยวและกีฬา","orgs":[{"no":"042","name":"สำนักงานปลัดกระทรวงการท่องเที่ยวและกีฬา","abbr":"สป.กก.","cat":"ส่วนราชการ","catID":"01","web":"secretary.mots.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"043","name":"กรมพลศึกษา","abbr":"กพล.","cat":"ส่วนราชการ","catID":"01","web":"www.dpe.go.th","mission":"กีฬา","exec":"อธิบดี"},{"no":"044","name":"กรมการท่องเที่ยว","abbr":"กทท.","cat":"ส่วนราชการ","catID":"01","web":"www.dot.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"174","name":"การท่องเที่ยวแห่งประเทศไทย","abbr":"ททท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.tat.or.th","mission":"เศรษฐกิจ","exec":"ผู้ว่าการ"},{"no":"175","name":"การกีฬาแห่งประเทศไทย","abbr":"กกท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.sat.or.th","mission":"กีฬา","exec":"ผู้ว่าการ"},{"no":"254","name":"อพท.","abbr":"อพท.","cat":"องค์การมหาชน","catID":"04","web":"www.dasta.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"377","name":"มหาวิทยาลัยการกีฬาแห่งชาติ","abbr":"มกช.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.tnsu.ac.th","mission":"กีฬา","exec":"อธิการบดี"}],"ministers":["สุรศักดิ์ พันธ์เจริญวรกุล"]},{"id":"06","name":"กระทรวงการพัฒนาสังคมและความมั่นคงของมนุษย์","orgs":[{"no":"045","name":"สำนักงานปลัดกระทรวงการพัฒนาสังคมฯ","abbr":"สป.พม.","cat":"ส่วนราชการ","catID":"01","web":"www.m-society.go.th","mission":"สังคม","exec":"ปลัดกระทรวง"},{"no":"046","name":"กรมกิจการเด็กและเยาวชน","abbr":"ดย.","cat":"ส่วนราชการ","catID":"01","web":"www.dcy.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"047","name":"กรมกิจการผู้สูงอายุ","abbr":"ผส.","cat":"ส่วนราชการ","catID":"01","web":"www.dop.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"048","name":"กรมกิจการสตรีและสถาบันครอบครัว","abbr":"สค.","cat":"ส่วนราชการ","catID":"01","web":"www.dwf.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"049","name":"กรมพัฒนาสังคมและสวัสดิการ","abbr":"พส.","cat":"ส่วนราชการ","catID":"01","web":"dsdw.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"050","name":"กรมส่งเสริมและพัฒนาคุณภาพชีวิตคนพิการ","abbr":"พก.","cat":"ส่วนราชการ","catID":"01","web":"dep.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"176","name":"การเคหะแห่งชาติ","abbr":"กคช.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.nha.co.th","mission":"สังคม","exec":"ผู้ว่าการ"},{"no":"255","name":"พอช.","abbr":"พอช.","cat":"องค์การมหาชน","catID":"04","web":"web.codi.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"393","name":"สภาวิชาชีพสังคมสงเคราะห์","abbr":"สวชส.","cat":"สภาวิชาชีพ","catID":"10","web":"swpc.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"}],"ministers":["นิกร โสมกลาง"]},{"id":"07","name":"กระทรวงเกษตรและสหกรณ์","orgs":[{"no":"055","name":"สำนักงานปลัดกระทรวงเกษตรและสหกรณ์","abbr":"สป.กษ","cat":"ส่วนราชการ","catID":"01","web":"www.opsmoac.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"056","name":"กรมการข้าว","abbr":"กข.","cat":"ส่วนราชการ","catID":"01","web":"www.ricethailand.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"057","name":"กรมชลประทาน","abbr":"ชป.","cat":"ส่วนราชการ","catID":"01","web":"www.rid.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"058","name":"กรมตรวจบัญชีสหกรณ์","abbr":"กตส.","cat":"ส่วนราชการ","catID":"01","web":"www.cad.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"059","name":"กรมประมง","abbr":"กปม.","cat":"ส่วนราชการ","catID":"01","web":"www4.fisheries.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"060","name":"กรมปศุสัตว์","abbr":"กปศ.","cat":"ส่วนราชการ","catID":"01","web":"www.dld.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"061","name":"กรมฝนหลวงและการบินเกษตร","abbr":"ฝล.","cat":"ส่วนราชการ","catID":"01","web":"www.royalrain.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"062","name":"กรมพัฒนาที่ดิน","abbr":"พด.","cat":"ส่วนราชการ","catID":"01","web":"www.ldd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"063","name":"กรมวิชาการเกษตร","abbr":"กวก.","cat":"ส่วนราชการ","catID":"01","web":"www.doa.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"064","name":"กรมส่งเสริมการเกษตร","abbr":"กสก.","cat":"ส่วนราชการ","catID":"01","web":"www.doae.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"065","name":"กรมส่งเสริมสหกรณ์","abbr":"กสส.","cat":"ส่วนราชการ","catID":"01","web":"www.cpd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"066","name":"กรมหม่อนไหม","abbr":"มม.","cat":"ส่วนราชการ","catID":"01","web":"qsds.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"067","name":"ส.ป.ก.","abbr":"ส.ป.ก.","cat":"ส่วนราชการ","catID":"01","web":"www.alro.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"068","name":"มกอช.","abbr":"มกอช.","cat":"ส่วนราชการ","catID":"01","web":"www.acfs.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"069","name":"สศก.","abbr":"สศก.","cat":"ส่วนราชการ","catID":"01","web":"www.oae.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"177","name":"อ.ต.ก.","abbr":"อ.ต.ก.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.mof.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"179","name":"อ.ส.ค.","abbr":"อ.ส.ค.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.dpo.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"180","name":"การยางแห่งประเทศไทย","abbr":"กยท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.raot.co.th","mission":"เศรษฐกิจ","exec":"ผู้ว่าการ"},{"no":"256","name":"สวก.","abbr":"สวก.","cat":"องค์การมหาชน","catID":"04","web":"www.arda.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"257","name":"สวพส.","abbr":"สวพส.","cat":"องค์การมหาชน","catID":"04","web":"www.hrdi.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"390","name":"สัตวแพทยสภา","abbr":"สพ.สภ.","cat":"สภาวิชาชีพ","catID":"10","web":"www.vetcouncil.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการ"}],"ministers":["สุริยะ จึงรุ่งเรืองกิจ","วัชระพล ขาวขำ","ปิยะรัฐชย์ ติยะไพรัช"]},{"id":"08","name":"กระทรวงคมนาคม","orgs":[{"no":"070","name":"สำนักงานปลัดกระทรวงคมนาคม","abbr":"สป.คค.","cat":"ส่วนราชการ","catID":"01","web":"www.mot.go.th","mission":"โครงสร้างพื้นฐาน","exec":"ปลัดกระทรวง"},{"no":"071","name":"กรมเจ้าท่า","abbr":"จท.","cat":"ส่วนราชการ","catID":"01","web":"www.md.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"072","name":"กรมการขนส่งทางบก","abbr":"ขบ.","cat":"ส่วนราชการ","catID":"01","web":"www.dlt.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"073","name":"กรมการขนส่งทางราง","abbr":"ขร.","cat":"ส่วนราชการ","catID":"01","web":"www.drt.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"074","name":"กรมท่าอากาศยาน","abbr":"ทย.","cat":"ส่วนราชการ","catID":"01","web":"www.airports.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"075","name":"กรมทางหลวง","abbr":"ทล.","cat":"ส่วนราชการ","catID":"01","web":"www.doh.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"076","name":"กรมทางหลวงชนบท","abbr":"ทช.","cat":"ส่วนราชการ","catID":"01","web":"drr.go.th","mission":"โครงสร้างพื้นฐาน","exec":"อธิบดี"},{"no":"077","name":"สนข.","abbr":"สนข.","cat":"ส่วนราชการ","catID":"01","web":"www.otp.go.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้อำนวยการ"},{"no":"181","name":"การท่าเรือแห่งประเทศไทย","abbr":"กทท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.port.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้อำนวยการ"},{"no":"182","name":"การรถไฟแห่งประเทศไทย","abbr":"รฟท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.railway.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"183","name":"ขสมก.","abbr":"ขสมก.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.bmta.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้อำนวยการ"},{"no":"184","name":"บริษัท ท่าอากาศยานไทย จำกัด (มหาชน)","abbr":"ทอท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.airportthai.co.th","mission":"โครงสร้างพื้นฐาน","exec":"กรรมการผู้อำนวยการใหญ่"},{"no":"185","name":"บริษัท วิทยุการบินแห่งประเทศไทย จำกัด","abbr":"บวท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.aerothai.co.th","mission":"โครงสร้างพื้นฐาน","exec":"กรรมการผู้อำนวยการใหญ่"},{"no":"187","name":"การทางพิเศษแห่งประเทศไทย","abbr":"กทพ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.exat.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"188","name":"การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย","abbr":"รฟม.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.mrta.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"404","name":"กพท.","abbr":"กพท.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.caat.or.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้อำนวยการ"},{"no":"410","name":"สทร.","abbr":"สทร.","cat":"องค์การมหาชน","catID":"04","web":"www.rtrda.or.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้อำนวยการ"}],"ministers":["พิพัฒน์ รัชกิจประการ","สิริพงศ์ อังคสกุลเกียรติ","ภัทรพงศ์ ภัทรประสิทธิ์","สรรเพชญ บุญญามณี"]},{"id":"09","name":"กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม","orgs":[{"no":"082","name":"สำนักงานปลัดกระทรวงทรัพยากรฯ","abbr":"สป.ทส.","cat":"ส่วนราชการ","catID":"01","web":"www.mnre.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"ปลัดกระทรวง"},{"no":"083","name":"กรมควบคุมมลพิษ","abbr":"คพ.","cat":"ส่วนราชการ","catID":"01","web":"www.pcd.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"084","name":"กรมทรัพยากรทางทะเลและชายฝั่ง","abbr":"ทช.","cat":"ส่วนราชการ","catID":"01","web":"www.dmcr.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"085","name":"กรมทรัพยากรธรณี","abbr":"ทธ.","cat":"ส่วนราชการ","catID":"01","web":"www.dmr.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"086","name":"กรมทรัพยากรน้ำ","abbr":"ทน.","cat":"ส่วนราชการ","catID":"01","web":"www.dwr.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"087","name":"กรมทรัพยากรน้ำบาดาล","abbr":"ทบ.","cat":"ส่วนราชการ","catID":"01","web":"www.dgr.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"088","name":"กรมป่าไม้","abbr":"ปม.","cat":"ส่วนราชการ","catID":"01","web":"www.forest.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"089","name":"กรมการเปลี่ยนแปลงสภาพภูมิอากาศฯ","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"www.dcce.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"090","name":"กรมอุทยานแห่งชาติ สัตว์ป่า และพันธุ์พืช","abbr":"อส.","cat":"ส่วนราชการ","catID":"01","web":"portal.dnp.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"091","name":"สผ.","abbr":"สผ.","cat":"ส่วนราชการ","catID":"01","web":"www.onep.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"เลขาธิการ"},{"no":"194","name":"องค์การอุตสาหกรรมป่าไม้","abbr":"อ.อ.ป.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.fio.co.th","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"},{"no":"195","name":"องค์การสวนพฤกษศาสตร์","abbr":"อ.ส.พ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.qsbg.org","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"},{"no":"196","name":"องค์การสวนสัตว์แห่งประเทศไทย","abbr":"ZOPT","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.zoothailand.org","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"},{"no":"259","name":"สพภ.","abbr":"สพภ.","cat":"องค์การมหาชน","catID":"04","web":"www.bedo.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"260","name":"อบก.","abbr":"อบก.","cat":"องค์การมหาชน","catID":"04","web":"www.tgo.or.th","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"}],"ministers":["สุชาติ ชมกลิ่น"]},{"id":"11","name":"กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม","orgs":[{"no":"078","name":"สำนักงานปลัดกระทรวงดิจิทัลฯ","abbr":"สป.ดศ.","cat":"ส่วนราชการ","catID":"01","web":"www.mdes.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ปลัดกระทรวง"},{"no":"079","name":"กรมอุตุนิยมวิทยา","abbr":"อต.","cat":"ส่วนราชการ","catID":"01","web":"www.tmd.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"080","name":"สดช.","abbr":"สดช.","cat":"ส่วนราชการ","catID":"01","web":"www.onde.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"เลขาธิการ"},{"no":"081","name":"สำนักงานสถิติแห่งชาติ","abbr":"สสช.","cat":"ส่วนราชการ","catID":"01","web":"www.nso.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"192","name":"บริษัท ไปรษณีย์ไทย จำกัด","abbr":"ปณท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.thailandpost.co.th","mission":"โครงสร้างพื้นฐาน","exec":"กรรมการผู้จัดการใหญ่"},{"no":"222","name":"DEPA","abbr":"DEPA","cat":"องค์การมหาชน","catID":"03","web":"www.depa.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"225","name":"สพธอ.","abbr":"สพธอ.","cat":"องค์การมหาชน","catID":"03","web":"www.etda.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"242","name":"สคส.","abbr":"สคส.","cat":"องค์การมหาชน","catID":"03","web":"www.pdpc.or.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"408","name":"NT","abbr":"NT","cat":"รัฐวิสาหกิจ","catID":"02","web":"ntplc.co.th","mission":"โครงสร้างพื้นฐาน","exec":"กรรมการผู้จัดการใหญ่"},{"no":"413","name":"สขญ.","abbr":"สขญ.","cat":"องค์การมหาชน","catID":"04","web":"bdi.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"}],"ministers":["ไชยชนก ชิดชอบ","แนน บุณย์ธิดา สมชัย"]},{"id":"12","name":"กระทรวงพลังงาน","orgs":[{"no":"092","name":"สำนักงานปลัดกระทรวงพลังงาน","abbr":"สป.พน.","cat":"ส่วนราชการ","catID":"01","web":"ops.energy.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"093","name":"กรมเชื้อเพลิงธรรมชาติ","abbr":"ชธ.","cat":"ส่วนราชการ","catID":"01","web":"dmf.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"094","name":"กรมธุรกิจพลังงาน","abbr":"ธพ.","cat":"ส่วนราชการ","catID":"01","web":"www.doeb.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"095","name":"กรมพัฒนาพลังงานทดแทนฯ","abbr":"พพ.","cat":"ส่วนราชการ","catID":"01","web":"www.dede.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"096","name":"สนพ.","abbr":"สนพ.","cat":"ส่วนราชการ","catID":"01","web":"www.eppo.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"197","name":"การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย","abbr":"กฟผ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.egat.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"198","name":"บริษัท ปตท. จำกัด (มหาชน)","abbr":"ปตท.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.pttplc.com","mission":"เศรษฐกิจ","exec":"ประธานเจ้าหน้าที่บริหาร"},{"no":"199","name":"ปตท.สผ.","abbr":"ปตท.สผ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.pttep.com","mission":"เศรษฐกิจ","exec":"ประธานเจ้าหน้าที่บริหาร"},{"no":"243","name":"สกนช.","abbr":"สกนช.","cat":"องค์การมหาชน","catID":"03","web":"www.offo.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"407","name":"EGATi","abbr":"EGATi","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.egati.co.th","mission":"โครงสร้างพื้นฐาน","exec":"กรรมการผู้จัดการใหญ่"}],"ministers":["เอกนัฏ พร้อมพันธุ์"]},{"id":"13","name":"กระทรวงพาณิชย์","orgs":[{"no":"097","name":"สำนักงานปลัดกระทรวงพาณิชย์","abbr":"สป.พณ.","cat":"ส่วนราชการ","catID":"01","web":"www.ops.moc.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"098","name":"กรมการค้าต่างประเทศ","abbr":"คต.","cat":"ส่วนราชการ","catID":"01","web":"www.dft.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"099","name":"กรมการค้าภายใน","abbr":"คน.","cat":"ส่วนราชการ","catID":"01","web":"www.dit.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"100","name":"กรมเจรจาการค้าระหว่างประเทศ","abbr":"จร.","cat":"ส่วนราชการ","catID":"01","web":"www.dtn.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"101","name":"กรมทรัพย์สินทางปัญญา","abbr":"ทป.","cat":"ส่วนราชการ","catID":"01","web":"www.ipthailand.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"102","name":"DBD","abbr":"DBD","cat":"ส่วนราชการ","catID":"01","web":"www.dbd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"103","name":"กรมส่งเสริมการค้าระหว่างประเทศ","abbr":"สค.","cat":"ส่วนราชการ","catID":"01","web":"www.ditp.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"104","name":"สนค.","abbr":"สนค.","cat":"ส่วนราชการ","catID":"01","web":"tpso.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"200","name":"อคส.","abbr":"อคส.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.pwo.co.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"261","name":"สศท.","abbr":"สศท.","cat":"องค์การมหาชน","catID":"04","web":"www.sacit.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"262","name":"สวอ.","abbr":"สวอ.","cat":"องค์การมหาชน","catID":"04","web":"www.git.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"263","name":"สคพ.","abbr":"สคพ.","cat":"องค์การมหาชน","catID":"04","web":"www.itd.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"391","name":"สภาวิชาชีพบัญชี","abbr":"สวบช.","cat":"สภาวิชาชีพ","catID":"10","web":"www.tfac.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"}],"ministers":["ศุภจี สุธรรมพันธุ์"]},{"id":"14","name":"กระทรวงมหาดไทย","orgs":[{"no":"105","name":"สำนักงานปลัดกระทรวงมหาดไทย","abbr":"สป.มท.","cat":"ส่วนราชการ","catID":"01","web":"smoi.moi.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"ปลัดกระทรวง"},{"no":"106","name":"กรมการปกครอง","abbr":"ปค.","cat":"ส่วนราชการ","catID":"01","web":"www.dopa.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"อธิบดี"},{"no":"107","name":"กรมการพัฒนาชุมชน","abbr":"พช.","cat":"ส่วนราชการ","catID":"01","web":"www.cdd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"108","name":"กรมที่ดิน","abbr":"ทด.","cat":"ส่วนราชการ","catID":"01","web":"www.dol.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"109","name":"กรมป้องกันและบรรเทาสาธารณภัย","abbr":"ปภ.","cat":"ส่วนราชการ","catID":"01","web":"www.disaster.go.th","mission":"ทรัพยากรธรรมชาติ","exec":"อธิบดี"},{"no":"110","name":"กรมโยธาธิการและผังเมือง","abbr":"ยผ.","cat":"ส่วนราชการ","catID":"01","web":"www.dpt.go.th","mission":"ความมั่นคง","exec":"อธิบดี"},{"no":"111","name":"กรมส่งเสริมการปกครองท้องถิ่น","abbr":"สถ.","cat":"ส่วนราชการ","catID":"01","web":"www.dla.go.th","mission":"การบริหารราชการแผ่นดิน","exec":"อธิบดี"},{"no":"201","name":"การไฟฟ้านครหลวง","abbr":"กฟน.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.mea.or.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"202","name":"การไฟฟ้าส่วนภูมิภาค","abbr":"กฟภ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.pea.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"204","name":"การประปานครหลวง","abbr":"กปน.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.mwa.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"205","name":"การประปาส่วนภูมิภาค","abbr":"กปภ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.pwa.co.th","mission":"โครงสร้างพื้นฐาน","exec":"ผู้ว่าการ"},{"no":"206","name":"อจน.","abbr":"อจน.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.wma.or.th","mission":"ทรัพยากรธรรมชาติ","exec":"ผู้อำนวยการ"},{"no":"394","name":"สภาวิศวกร","abbr":"COE","cat":"สภาวิชาชีพ","catID":"10","web":"www.coe.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"},{"no":"395","name":"สภาสถาปนิก","abbr":"สภส.","cat":"สภาวิชาชีพ","catID":"10","web":"act.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"}],"ministers":["พลพีร์ สุวรรณฉวี","เจเศรษฐ์ ไทยเศรษฐ์","วรศิษฎ์ เลียงประสิทธิ์"]},{"id":"15","name":"กระทรวงยุติธรรม","orgs":[{"no":"112","name":"สำนักงานปลัดกระทรวงยุติธรรม","abbr":"สป.ยธ.","cat":"ส่วนราชการ","catID":"01","web":"www.moj.go.th","mission":"กฎหมาย","exec":"ปลัดกระทรวง"},{"no":"113","name":"กรมคุมประพฤติ","abbr":"คป.","cat":"ส่วนราชการ","catID":"01","web":"www.probation.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"114","name":"กรมคุ้มครองสิทธิและเสรีภาพ","abbr":"กคส.","cat":"ส่วนราชการ","catID":"01","web":"www.rlpd.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"115","name":"กรมบังคับคดี","abbr":"กบค.","cat":"ส่วนราชการ","catID":"01","web":"www.led.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"116","name":"กรมพินิจและคุ้มครองเด็กและเยาวชน","abbr":"กพน.","cat":"ส่วนราชการ","catID":"01","web":"www.djop.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"117","name":"กรมราชทัณฑ์","abbr":"รท.","cat":"ส่วนราชการ","catID":"01","web":"www.correct.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"118","name":"DSI","abbr":"DSI","cat":"ส่วนราชการ","catID":"01","web":"www.dsi.go.th","mission":"กฎหมาย","exec":"อธิบดี"},{"no":"119","name":"สกธ.","abbr":"สกธ.","cat":"ส่วนราชการ","catID":"01","web":"www.oja.go.th","mission":"กฎหมาย","exec":"ผู้อำนวยการ"},{"no":"120","name":"สถาบันนิติวิทยาศาสตร์","abbr":"สนว.","cat":"ส่วนราชการ","catID":"01","web":"www.cifs.go.th","mission":"กฎหมาย","exec":"ผู้อำนวยการ"},{"no":"121","name":"สำนักงาน ป.ป.ส.","abbr":"สำนักงาน ป.ป.ส.","cat":"ส่วนราชการ","catID":"01","web":"www.oncb.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"264","name":"สธท.","abbr":"สธท.","cat":"องค์การมหาชน","catID":"04","web":"www.tijthailand.org","mission":"กฎหมาย","exec":"ผู้อำนวยการ"},{"no":"380","name":"สภาทนายความ","abbr":"สภาทนายความ","cat":"สภาวิชาชีพ","catID":"10","web":"www.lawyerscouncil.or.th","mission":"การควบคุมวิชาชีพ","exec":"นายก"},{"no":"381","name":"เนติบัณฑิตยสภา","abbr":"เนฯ","cat":"สภาวิชาชีพ","catID":"10","web":"www.thethaibar.or.th","mission":"การควบคุมวิชาชีพ","exec":"นายก"}],"ministers":["รุทธพล เนาวรัตน์"]},{"id":"16","name":"กระทรวงแรงงาน","orgs":[{"no":"122","name":"สำนักงานปลัดกระทรวงแรงงาน","abbr":"สป.รง.","cat":"ส่วนราชการ","catID":"01","web":"www.mol.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"123","name":"กรมการจัดหางาน","abbr":"กกจ.","cat":"ส่วนราชการ","catID":"01","web":"www.doe.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"124","name":"กรมพัฒนาฝีมือแรงงาน","abbr":"กพร.","cat":"ส่วนราชการ","catID":"01","web":"www.dsd.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"125","name":"กรมสวัสดิการและคุ้มครองแรงงาน","abbr":"กสร.","cat":"ส่วนราชการ","catID":"01","web":"www.labour.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"126","name":"สำนักงานประกันสังคม","abbr":"สปส.","cat":"ส่วนราชการ","catID":"01","web":"www.sso.go.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"265","name":"สสปท.","abbr":"สสปท.","cat":"องค์การมหาชน","catID":"04","web":"www.tosh.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"}],"ministers":["จุลพันธ์ อมรวิวัฒน์"]},{"id":"17","name":"กระทรวงวัฒนธรรม","orgs":[{"no":"127","name":"สำนักงานปลัดกระทรวงวัฒนธรรม","abbr":"สป.วธ.","cat":"ส่วนราชการ","catID":"01","web":"permanent.m-culture.go.th","mission":"สังคม","exec":"ปลัดกระทรวง"},{"no":"128","name":"กรมการศาสนา","abbr":"ศน.","cat":"ส่วนราชการ","catID":"01","web":"www.dra.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"129","name":"กรมศิลปากร","abbr":"ศก.","cat":"ส่วนราชการ","catID":"01","web":"www.finearts.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"130","name":"กรมส่งเสริมวัฒนธรรม","abbr":"สวธ.","cat":"ส่วนราชการ","catID":"01","web":"www.culture.go.th","mission":"สังคม","exec":"อธิบดี"},{"no":"131","name":"สศร.","abbr":"สศร.","cat":"ส่วนราชการ","catID":"01","web":"ocac.go.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"266","name":"ศมส.","abbr":"ศมส.","cat":"องค์การมหาชน","catID":"04","web":"www.sac.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"267","name":"หอภาพยนตร์","abbr":"หภ.","cat":"องค์การมหาชน","catID":"04","web":"www.fapot.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"268","name":"ศูนย์คุณธรรม","abbr":"ศคธ.","cat":"องค์การมหาชน","catID":"04","web":"www.moralcenter.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"378","name":"สถาบันบัณฑิตพัฒนศิลป์","abbr":"BPI","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.bpi.ac.th","mission":"สังคม","exec":"อธิการบดี"}],"ministers":["ซาบีดา ไทยเศรษฐ์"]},{"id":"18","name":"กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม","orgs":[{"no":"051","name":"สำนักงานปลัดกระทรวงการอุดมศึกษาฯ","abbr":"สป.อว.","cat":"ส่วนราชการ","catID":"01","web":"www.ops.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ปลัดกระทรวง"},{"no":"052","name":"กรมวิทยาศาสตร์บริการ","abbr":"วศ.","cat":"ส่วนราชการ","catID":"01","web":"www.dss.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"อธิบดี"},{"no":"053","name":"สำนักงานการวิจัยแห่งชาติ","abbr":"วช.","cat":"ส่วนราชการ","catID":"01","web":"www.nrct.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"054","name":"ปส.","abbr":"ปส.","cat":"ส่วนราชการ","catID":"01","web":"www.oap.go.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"เลขาธิการ"},{"no":"208","name":"วว.","abbr":"วว.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.tistr.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้ว่าการ"},{"no":"228","name":"สวทช.","abbr":"สวทช.","cat":"องค์การมหาชน","catID":"03","web":"www.nstda.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"229","name":"มว.","abbr":"มว.","cat":"องค์การมหาชน","catID":"03","web":"www.nimt.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"230","name":"สอวช.","abbr":"สอวช.","cat":"องค์การมหาชน","catID":"03","web":"www.nxpo.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"231","name":"สกสว.","abbr":"สกสว.","cat":"องค์การมหาชน","catID":"03","web":"www.tsri.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"269","name":"สทอภ.","abbr":"สทอภ.","cat":"องค์การมหาชน","catID":"04","web":"www.gistda.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"270","name":"สทน.","abbr":"สทน.","cat":"องค์การมหาชน","catID":"04","web":"www.tint.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"273","name":"สนช.","abbr":"สนช.","cat":"องค์การมหาชน","catID":"04","web":"www.nia.or.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"350","name":"จุฬาลงกรณ์มหาวิทยาลัย","abbr":"จุฬา","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.chula.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"351","name":"มหาวิทยาลัยเกษตรศาสตร์","abbr":"มก.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.ku.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"352","name":"มหาวิทยาลัยขอนแก่น","abbr":"มข.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.kku.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"353","name":"มหาวิทยาลัยธรรมศาสตร์","abbr":"มธ.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.tu.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"354","name":"มหาวิทยาลัยสงขลานครินทร์","abbr":"มอ.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.psu.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"356","name":"สจล.","abbr":"สจล.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.kmitl.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"357","name":"มจพ.","abbr":"มจพ.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.kmutnb.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"358","name":"NIDA","abbr":"NIDA","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.nida.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"360","name":"มหาวิทยาลัยเทคโนโลยีสุรนารี","abbr":"มทส.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.sut.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"362","name":"มจธ.","abbr":"มจธ.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.kmutt.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"364","name":"มหาวิทยาลัยมหิดล","abbr":"มม.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"mahidol.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"369","name":"มหาวิทยาลัยเชียงใหม่","abbr":"มช.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.cmu.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"372","name":"มหาวิทยาลัยศิลปากร","abbr":"มศก.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.su.ac.th","mission":"สังคม","exec":"อธิการบดี"},{"no":"392","name":"สภาวิชาชีพวิทยาศาสตร์และเทคโนโลยี","abbr":"สชวท.","cat":"สภาวิชาชีพ","catID":"10","web":"www.cstp.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"}],"ministers":["ยศชนัน วงศ์สวัสดิ์"]},{"id":"19","name":"กระทรวงศึกษาธิการ","orgs":[{"no":"132","name":"สำนักงานปลัดกระทรวงศึกษาธิการ","abbr":"สป.ศธ.","cat":"ส่วนราชการ","catID":"01","web":"www.ops.moe.go.th","mission":"สังคม","exec":"ปลัดกระทรวง"},{"no":"133","name":"สกศ.","abbr":"สกศ.","cat":"ส่วนราชการ","catID":"01","web":"www.onec.go.th","mission":"สังคม","exec":"เลขาธิการสภา"},{"no":"134","name":"สพฐ.","abbr":"สพฐ.","cat":"ส่วนราชการ","catID":"01","web":"www.obec.go.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"135","name":"สอศ.","abbr":"สอศ.","cat":"ส่วนราชการ","catID":"01","web":"www.vec.go.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"233","name":"คุรุสภา","abbr":"คส.","cat":"องค์การมหาชน","catID":"03","web":"www.ksp.or.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"235","name":"สสวท.","abbr":"สสวท.","cat":"องค์การมหาชน","catID":"03","web":"www.ipst.ac.th","mission":"วิทยาศาสตร์เทคโนโลยี","exec":"ผู้อำนวยการ"},{"no":"277","name":"สทศ.","abbr":"สทศ.","cat":"องค์การมหาชน","catID":"04","web":"www.niets.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"278","name":"สมศ.","abbr":"สมศ.","cat":"องค์การมหาชน","catID":"04","web":"www.onesqa.or.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"411","name":"สกร.","abbr":"สกร.","cat":"ส่วนราชการ","catID":"01","web":"dole.go.th","mission":"สังคม","exec":"อธิบดี"}],"ministers":["ประเสริฐ จันทรรวงทอง","อัครนันท์ กัณณ์กิตตินันท์"]},{"id":"21","name":"กระทรวงสาธารณสุข","orgs":[{"no":"136","name":"สำนักงานปลัดกระทรวงสาธารณสุข","abbr":"สป.สธ.","cat":"ส่วนราชการ","catID":"01","web":"ops.moph.go.th","mission":"การสาธารณสุข","exec":"ปลัดกระทรวง"},{"no":"137","name":"กรมการแพทย์","abbr":"กพ.","cat":"ส่วนราชการ","catID":"01","web":"www.dms.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"138","name":"กรมควบคุมโรค","abbr":"คร.","cat":"ส่วนราชการ","catID":"01","web":"ddc.moph.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"139","name":"กรมการแพทย์แผนไทยและการแพทย์ทางเลือก","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"www.dtam.moph.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"140","name":"กรมวิทยาศาสตร์การแพทย์","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"www3.dmsc.moph.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"141","name":"สบส.","abbr":"สบส.","cat":"ส่วนราชการ","catID":"01","web":"hss.moph.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"142","name":"กรมสุขภาพจิต","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"www.dmh.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"143","name":"กรมอนามัย","abbr":"-","cat":"ส่วนราชการ","catID":"01","web":"www.anamai.moph.go.th","mission":"การสาธารณสุข","exec":"อธิบดี"},{"no":"144","name":"อย.","abbr":"อย.","cat":"ส่วนราชการ","catID":"01","web":"www.fda.moph.go.th","mission":"การสาธารณสุข","exec":"เลขาธิการ"},{"no":"210","name":"องค์การเภสัชกรรม","abbr":"อภ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.gpo.or.th","mission":"การสาธารณสุข","exec":"ผู้อำนวยการ"},{"no":"236","name":"สวรส.","abbr":"สวรส.","cat":"องค์การมหาชน","catID":"03","web":"www.hsri.or.th","mission":"การสาธารณสุข","exec":"ผู้อำนวยการ"},{"no":"237","name":"สปสช.","abbr":"สปสช.","cat":"องค์การมหาชน","catID":"03","web":"www.nhso.go.th","mission":"การสาธารณสุข","exec":"เลขาธิการ"},{"no":"238","name":"สพฉ.","abbr":"สพฉ.","cat":"องค์การมหาชน","catID":"03","web":"www.niems.go.th","mission":"การสาธารณสุข","exec":"เลขาธิการ"},{"no":"239","name":"สวช.","abbr":"สวช.","cat":"องค์การมหาชน","catID":"03","web":"www.nvi.go.th","mission":"การสาธารณสุข","exec":"ผู้อำนวยการ"},{"no":"279","name":"รพ.บ้านแพ้ว","abbr":"รพบ.","cat":"องค์การมหาชน","catID":"04","web":"www.bphosp.or.th","mission":"การสาธารณสุข","exec":"ผู้อำนวยการ"},{"no":"280","name":"สรพ.","abbr":"สรพ.","cat":"องค์การมหาชน","catID":"04","web":"www.ha.or.th","mission":"การสาธารณสุข","exec":"ผู้อำนวยการ"},{"no":"379","name":"สถาบันพระบรมราชชนก","abbr":"สบช.","cat":"สถาบันอุดมศึกษา","catID":"09","web":"www.pi.ac.th","mission":"การสาธารณสุข","exec":"อธิการบดี"},{"no":"383","name":"แพทยสภา","abbr":"tmc","cat":"สภาวิชาชีพ","catID":"10","web":"tmc.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการ"},{"no":"385","name":"สภาการพยาบาล","abbr":"สพ.","cat":"สภาวิชาชีพ","catID":"10","web":"www.tnmc.or.th","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"},{"no":"389","name":"สภาเภสัชกรรม","abbr":"สภ.","cat":"สภาวิชาชีพ","catID":"10","web":"www.pharmacycouncil.org","mission":"การควบคุมวิชาชีพ","exec":"เลขาธิการสภา"}],"ministers":["พัฒนา พร้อมพัฒน์"]},{"id":"22","name":"กระทรวงอุตสาหกรรม","orgs":[{"no":"145","name":"สำนักงานปลัดกระทรวงอุตสาหกรรม","abbr":"สป.อก.","cat":"ส่วนราชการ","catID":"01","web":"www.industry.go.th","mission":"เศรษฐกิจ","exec":"ปลัดกระทรวง"},{"no":"146","name":"กรมโรงงานอุตสาหกรรม","abbr":"กรอ.","cat":"ส่วนราชการ","catID":"01","web":"www.diw.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"147","name":"กรมส่งเสริมอุตสาหกรรม","abbr":"กสอ.","cat":"ส่วนราชการ","catID":"01","web":"www.dip.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"148","name":"กรมอุตสาหกรรมพื้นฐานและการเหมืองแร่","abbr":"กพร.","cat":"ส่วนราชการ","catID":"01","web":"www.dpim.go.th","mission":"เศรษฐกิจ","exec":"อธิบดี"},{"no":"149","name":"สอน.","abbr":"สอน.","cat":"ส่วนราชการ","catID":"01","web":"www.ocsb.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"150","name":"สมอ.","abbr":"สมอ.","cat":"ส่วนราชการ","catID":"01","web":"www.tisi.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"151","name":"สศอ.","abbr":"สศอ.","cat":"ส่วนราชการ","catID":"01","web":"www.oie.go.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"},{"no":"211","name":"การนิคมอุตสาหกรรมแห่งประเทศไทย","abbr":"กนอ.","cat":"รัฐวิสาหกิจ","catID":"02","web":"www.ieat.go.th","mission":"เศรษฐกิจ","exec":"ผู้ว่าการ"}],"ministers":["วราวุธ ศิลปอาชา"]},{"id":"23","name":"ส่วนราชการไม่สังกัดกระทรวง","orgs":[{"no":"152","name":"สำนักงานพระพุทธศาสนาแห่งชาติ","abbr":"พศ.","cat":"ส่วนราชการ","catID":"01","web":"www.onab.go.th","mission":"สังคม","exec":"ผู้อำนวยการ"},{"no":"153","name":"สำนักงาน กปร.","abbr":"สำนักงาน กปร.","cat":"ส่วนราชการ","catID":"01","web":"www.rdpb.go.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"154","name":"สำนักงานราชบัณฑิตยสภา","abbr":"รภ.","cat":"ส่วนราชการ","catID":"01","web":"www.orst.go.th","mission":"สังคม","exec":"เลขาธิการ"},{"no":"155","name":"สำนักงานตำรวจแห่งชาติ","abbr":"สตช.","cat":"ส่วนราชการ","catID":"01","web":"www.royalthaipolice.go.th","mission":"กฎหมาย","exec":"ผู้บัญชาการตำรวจแห่งชาติ"},{"no":"156","name":"สำนักงาน ปปง.","abbr":"สำนักงาน ปปง.","cat":"ส่วนราชการ","catID":"01","web":"www.amlo.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"157","name":"สำนักงาน ป.ป.ท.","abbr":"สำนักงาน ป.ป.ท.","cat":"ส่วนราชการ","catID":"01","web":"www.pacc.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"159","name":"ศอ.บต.","abbr":"ศอ.บต.","cat":"ส่วนราชการ","catID":"01","web":"www.sbpac.go.th","mission":"ความมั่นคง","exec":"เลขาธิการ"},{"no":"245","name":"สกพอ.","abbr":"สกพอ.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.eeco.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"246","name":"สวส.","abbr":"สวส.","cat":"องค์การมหาชน","catID":"03","web":"www.osep.or.th","mission":"เศรษฐกิจ","exec":"ผู้อำนวยการ"}],"ministers":[]},{"id":"24","name":"หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร","orgs":[{"no":"281","name":"สำนักงานเลขาธิการวุฒิสภา","abbr":"สว.","cat":"รัฐสภา","catID":"05","web":"www.senate.go.th","mission":"นิติบัญญัติ","exec":"เลขาธิการ"},{"no":"282","name":"สำนักงานเลขาธิการสภาผู้แทนราษฎร","abbr":"สผ.","cat":"รัฐสภา","catID":"05","web":"web.parliament.go.th","mission":"นิติบัญญัติ","exec":"เลขาธิการ"},{"no":"284","name":"สำนักงานศาลรัฐธรรมนูญ","abbr":"ศร.","cat":"ศาล","catID":"06","web":"www.constitutionalcourt.or.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"285","name":"สำนักงานศาลยุติธรรม","abbr":"ศย.","cat":"ศาล","catID":"06","web":"www.coj.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"286","name":"สำนักงานศาลปกครอง","abbr":"ศป.","cat":"ศาล","catID":"06","web":"www.admincourt.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"287","name":"สำนักงาน กกต.","abbr":"สำนักงาน กกต.","cat":"องค์กรอิสระ","catID":"07","web":"www.ect.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"288","name":"สำนักงานผู้ตรวจการแผ่นดิน","abbr":"สผผ.","cat":"องค์กรอิสระ","catID":"07","web":"www.ombudsman.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"289","name":"สำนักงาน ป.ป.ช.","abbr":"สำนักงาน ป.ป.ช.","cat":"องค์กรอิสระ","catID":"07","web":"www.nacc.go.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"290","name":"สตง.","abbr":"สตง.","cat":"องค์กรอิสระ","catID":"07","web":"www.audit.go.th","mission":"กฎหมาย","exec":"ผู้ว่าการ"},{"no":"291","name":"สำนักงาน กสม.","abbr":"สำนักงาน กสม.","cat":"องค์กรอิสระ","catID":"07","web":"www.nhrc.or.th","mission":"กฎหมาย","exec":"เลขาธิการ"},{"no":"292","name":"สำนักงานอัยการสูงสุด","abbr":"อส.","cat":"องค์กรอิสระ","catID":"07","web":"www.ago.go.th","mission":"กฎหมาย","exec":"อัยการสูงสุด"},{"no":"400","name":"สำนักงาน กกพ.","abbr":"สำนักงาน กกพ.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.erc.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"},{"no":"401","name":"สำนักงาน กสทช.","abbr":"สำนักงาน กสทช.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.nbtc.go.th","mission":"โครงสร้างพื้นฐาน","exec":"เลขาธิการ"},{"no":"402","name":"ส.ส.ท. (Thai PBS)","abbr":"ส.ส.ท.","cat":"หน่วยงานอิสระ","catID":"08","web":"www.thaipbs.or.th","mission":"สื่อสารมวลชน","exec":"ผู้อำนวยการ"},{"no":"406","name":"สภากาชาดไทย","abbr":"-","cat":"หน่วยงานอิสระ","catID":"08","web":"www.redcross.or.th","mission":"สังคม","exec":"เลขาธิการสภา"}],"ministers":[]},{"id":"25","name":"หน่วยงานอื่นของรัฐ","orgs":[{"no":"216","name":"สำนักงานสภาเกษตรกรแห่งชาติ","abbr":"สกช.","cat":"หน่วยงานอื่น","catID":"13","web":"www.nfc.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการสภา"},{"no":"403","name":"สขค.","abbr":"สขค.","cat":"หน่วยงานอื่น","catID":"13","web":"www.tcct.or.th","mission":"เศรษฐกิจ","exec":"เลขาธิการ"}],"ministers":[]}];
+
+// Ministry colors
+const MIN_COLORS = ['#f59e42','#ef4444','#3ecf6e','#4fa3f7','#a78bfa','#4fa3f7','#22c55e','#fbbf24','#10b981','#6366f1','#f97316','#16a34a','#dc2626','#7c3aed','#0891b2','#d97706','#f59e42','#16a34a','#ef4444','#8b5cf6','#78716c','#ef4444','#78716c','#e879f9','#64748b'];
+
+// ═══════════════════════════════════════
+//  BUILD SIDEBAR MINISTRY LIST
+// ═══════════════════════════════════════
+const listEl = document.getElementById('ministry-list');
+MINISTRIES.forEach((m, i) => {
+  const color = MIN_COLORS[i] || '#8a97aa';
+  const item = document.createElement('div');
+  item.className = 'min-item';
+  item.style.animationDelay = `${i * 0.025}s`;
+  item.dataset.id = m.id;
+  item.innerHTML = `
+    <span class="min-id">${m.id}</span>
+    <div class="min-bar" style="background:${color}"></div>
+    <div class="min-text">
+      <div class="min-name">${m.name.replace('กระทรวง','').replace('สำนักนายกรัฐมนตรี','สนร.').replace('ส่วนราชการไม่สังกัดกระทรวง','ไม่สังกัดกระทรวง').replace('หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร','ไม่อยู่ในบังคับบัญชาฝ่ายบริหาร') || m.name}</div>
+      <div class="min-count">${m.orgs.length} หน่วยงาน</div>
+    </div>
+    <span class="min-badge">${m.orgs.length}</span>
+  `;
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.min-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    // focus on ministry node in canvas
+    const n = nodes.find(nd => nd.isMinistry && nd.data?.id === m.id);
+    if (n) {
+      const MAIN = document.getElementById('main');
+      const cW = MAIN.clientWidth, cH = MAIN.clientHeight;
+      offsetX = cW/2 - n.x * scale;
+      offsetY = cH/2 - n.y * scale;
+      draw();
+      showPanel(n);
+    }
+  });
+  listEl.appendChild(item);
+});
+
+// ═══════════════════════════════════════
+//  FILTER PILLS
+// ═══════════════════════════════════════
+let activeFilters = new Set(['01','02','03','04','05','06','07','08','09','10','13']);
+document.querySelectorAll('.fp').forEach(pill => {
+  pill.addEventListener('click', () => {
+    pill.classList.toggle('on');
+    const c = pill.dataset.c;
+    if (activeFilters.has(c)) activeFilters.delete(c);
+    else activeFilters.add(c);
+    draw();
+  });
+});
+
+// ═══════════════════════════════════════
+//  CANVAS ENGINE
+// ═══════════════════════════════════════
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+let offsetX = 0, offsetY = 0, scale = 1;
+let isDragging = false, dragStartX, dragStartY, dragOffX, dragOffY;
+let nodes = [], hoveredNode = null, selectedNode = null;
+let connectedSet = null;  // used in draw() for highlighting connections
+let currentView = 'radial';
+let showArrows = true;     // directional arrowheads on relationship edges
+
+/* Draw a triangular arrowhead pointing toward (tx,ty), coming from (fx,fy).
+   The tip is pulled back by `inset` world-units so it sits just outside the
+   target node instead of being hidden under it. */
+function drawArrowHead(fx, fy, tx, ty, color, size, inset) {
+  const dx = tx - fx, dy = ty - fy;
+  const len = Math.hypot(dx, dy);
+  if (len < 1) return;
+  const ux = dx / len, uy = dy / len;           // unit vector parent→child
+  const tipX = tx - ux * inset;                  // pull tip back to node edge
+  const tipY = ty - uy * inset;
+  const px = -uy, py = ux;                        // perpendicular
+  const back = size * 1.7;                        // length of the head
+  const half = size * 0.95;                       // half-width of the head
+  ctx.beginPath();
+  ctx.moveTo(tipX, tipY);
+  ctx.lineTo(tipX - ux * back + px * half, tipY - uy * back + py * half);
+  ctx.lineTo(tipX - ux * back - px * half, tipY - uy * back - py * half);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function resize() {
+  const MAIN = document.getElementById('main');
+  const LEG  = document.getElementById('legend-bar');
+  const legH = LEG ? LEG.offsetHeight : 72;
+  // keep zoom controls / coords above the (possibly wrapped, taller) legend bar
+  ['zoom-ctrl','coords'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.setProperty('bottom', (legH + 16) + 'px', 'important');
+  });
+  const dpr = window.devicePixelRatio || 1;
+  W = MAIN.clientWidth;
+  H = MAIN.clientHeight - legH;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  buildLayout();
+  fitView();
+  draw();
+}
+
+// ── RADIAL LAYOUT — Concentric Rings ──
+let ringGuides = []; // stored for draw function
+
+function buildRadialLayout() {
+  nodes = [];
+  ringGuides = [];
+  const cx = W/2, cy = H/2;
+
+  // Standalone IDs: not in main ring, not connected to center
+  const STANDALONE_IDS = new Set(['24']);
+  const RING_MINS = MINISTRIES.filter(m => !STANDALONE_IDS.has(m.id));
+  const STANDALONE_MINS = MINISTRIES.filter(m => STANDALONE_IDS.has(m.id));
+  const N = RING_MINS.length;
+
+  // Ministry ring: compute radius so labels don't overlap
+  // Each ministry rect needs ~46px arc length
+  const R_min = Math.max((N * 46) / (2 * Math.PI), 120); // ~169px for N=23
+
+  // Outer rings: spaced proportionally outward
+  const step = R_min * 0.63;
+  const RING_DEFS = [
+    { cats:['01'],                  r: R_min + step*1.0, label:'ส่วนราชการ',      color:'rgba(62,207,110,0.09)'   },
+    { cats:['02'],                  r: R_min + step*1.75, label:'รัฐวิสาหกิจ',    color:'rgba(79,163,247,0.09)'   },
+    { cats:['03','04'],             r: R_min + step*2.45, label:'องค์การมหาชน',  color:'rgba(167,139,250,0.09)'  },
+    { cats:['05','06','07','08'],   r: R_min + step*3.05, label:'องค์กรอิสระ/ศาล', color:'rgba(248,113,113,0.08)' },
+    { cats:['09'],                  r: R_min + step*3.58, label:'อุดมศึกษา',      color:'rgba(245,158,66,0.08)'   },
+    { cats:['10','13'],             r: R_min + step*4.05, label:'วิชาชีพ/อื่นๆ',  color:'rgba(251,191,36,0.07)'   },
+  ];
+  const CAT_RING_MAP = {};
+  RING_DEFS.forEach(rd => rd.cats.forEach(c => CAT_RING_MAP[c] = rd.r));
+
+  ringGuides.push({ r:R_min, label:'กระทรวง', catColor:'rgba(201,168,76,0.13)' });
+  RING_DEFS.forEach(rd => ringGuides.push({ r:rd.r, label:rd.label, catColor:rd.color }));
+
+  const sectorAngle = (2*Math.PI) / N;
+
+  nodes.push({ type:'center', x:cx, y:cy, r:20, label:'นายกรัฐมนตรี', data:null, isMinistry:false });
+
+  RING_MINS.forEach((min, i) => {
+    const sectorMid = (2*Math.PI*i/N) - Math.PI/2;
+    const mx = cx + R_min * Math.cos(sectorMid);
+    const my = cy + R_min * Math.sin(sectorMid);
+    const origIdx = MINISTRIES.indexOf(min);
+    const col = MIN_COLORS[origIdx]||'#e67e22';
+
+    nodes.push({
+      type:'ministry', x:mx, y:my, r:14,
+      label:min.name, data:min, isMinistry:true,
+      ministryID:min.id, angle:sectorMid, color:col
+    });
+
+    const byCat = {};
+    min.orgs.forEach(org => {
+      const cid = String(org.catID);
+      if(!byCat[cid]) byCat[cid] = [];
+      byCat[cid].push(org);
+    });
+
+    Object.entries(byCat).forEach(([catID, orgs]) => {
+      const ringR = CAT_RING_MAP[catID] || R_min + step*2;
+      const spread = sectorAngle * 0.88;
+      orgs.forEach((org, j) => {
+        const t = orgs.length > 1 ? (j/(orgs.length-1) - 0.5)*spread : 0;
+        const angle = sectorMid + t;
+        nodes.push({
+          type:'org',
+          x: cx + ringR * Math.cos(angle),
+          y: cy + ringR * Math.sin(angle),
+          r: 5.5, label:org.name,
+          color: getColor(org.catID),
+          data:org, isMinistry:false,
+          ministryID:min.id,
+          parentX:mx, parentY:my,
+          catID:org.catID, angle
+        });
+      });
+    });
+  });
+
+  // ── Standalone ministries (องค์กรอิสระ / สตช.) — placed as cluster below diagram ──
+  const outerR = ringGuides[ringGuides.length - 1]?.r || R_min + step * 4;
+  const clusterCY = cy + outerR + step * 2.0;
+
+  // Pre-compute org radii for each standalone ministry
+  const standOrgR = STANDALONE_MINS.map(min => {
+    const oc = min.orgs.length;
+    return Math.max(60, Math.ceil(oc / 2) * 20);
+  });
+
+  // Compute center X positions so clusters don't overlap
+  const clusterXs = [];
+  let xCursor = 0;
+  standOrgR.forEach((r, si) => {
+    if (si === 0) {
+      clusterXs.push(0);
+      xCursor = r;
+    } else {
+      const gap = xCursor + 80 + r;
+      clusterXs.push(gap);
+      xCursor = gap + r;
+    }
+  });
+  const totalW = xCursor;
+  const clusterOffsetX = cx - totalW / 2 + (standOrgR[0] || 0);
+
+  STANDALONE_MINS.forEach((min, si) => {
+    const bx = clusterOffsetX + clusterXs[si];
+    const by = clusterCY;
+    const origIdx = MINISTRIES.indexOf(min);
+    const col = MIN_COLORS[origIdx] || '#f87171';
+
+    nodes.push({
+      type: 'ministry', x: bx, y: by, r: 14,
+      label: min.name, data: min, isMinistry: true,
+      ministryID: min.id, angle: Math.PI / 2, color: col,
+      standalone: true
+    });
+
+    const orgCount = min.orgs.length;
+    const orgR = standOrgR[si];
+    min.orgs.forEach((org, j) => {
+      const angle = orgCount > 1 ? (2 * Math.PI * j / orgCount) - Math.PI / 2 : 0;
+      const dist = orgCount > 1 ? orgR : 0;
+      nodes.push({
+        type: 'org',
+        x: bx + dist * Math.cos(angle),
+        y: by + dist * Math.sin(angle),
+        r: 5.5, label: org.name,
+        color: getColor(org.catID),
+        data: org, isMinistry: false,
+        ministryID: min.id,
+        parentX: bx, parentY: by,
+        catID: org.catID, angle,
+        standalone: true
+      });
+    });
+  });
+}
+
+// ── AUTO-FIT VIEW ──
+function fitView() {
+  if(!nodes.length) return;
+  const isMob = window.innerWidth <= 640;
+  const legH  = isMob ? 48 : 72;
+  let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+  nodes.forEach(n => {
+    const pad = n.type==='ministry' ? 28 : n.r+4;
+    minX=Math.min(minX,n.x-pad); maxX=Math.max(maxX,n.x+pad);
+    minY=Math.min(minY,n.y-pad); maxY=Math.max(maxY,n.y+pad);
+  });
+  const gW=maxX-minX, gH=maxY-minY;
+  const avH = H - legH;
+  scale = Math.min(W/gW, avH/gH) * (isMob ? 0.88 : 0.93);
+  offsetX = W/2 - (minX+gW/2)*scale;
+  offsetY = H/2 - (minY+gH/2)*scale;
+}
+
+// ── FORCE LAYOUT ──
+function buildForceLayout() {
+  nodes = [];
+  const cx=W/2, cy=H/2;
+  const STANDALONE_IDS_F = new Set(['24']);
+  const RING_MINS_F = MINISTRIES.filter(m => !STANDALONE_IDS_F.has(m.id));
+  const STANDALONE_MINS_F = MINISTRIES.filter(m => STANDALONE_IDS_F.has(m.id));
+  nodes.push({ type:'center', x:cx, y:cy, r:20, label:'นายกรัฐมนตรี', data:null, isMinistry:false, vx:0,vy:0, fixed:true });
+  RING_MINS_F.forEach((min,i) => {
+    const a=(2*Math.PI*i/RING_MINS_F.length)-Math.PI/2;
+    const d=155+Math.random()*30;
+    const mx=cx+d*Math.cos(a), my=cy+d*Math.sin(a);
+    const origIdx = MINISTRIES.indexOf(min);
+    nodes.push({ type:'ministry', x:mx, y:my, r:14, label:min.name, data:min, isMinistry:true, ministryID:min.id, color:MIN_COLORS[origIdx]||'#e67e22', vx:0,vy:0 });
+    min.orgs.forEach(org => {
+      nodes.push({ type:'org', x:mx+(Math.random()-.5)*80, y:my+(Math.random()-.5)*80, r:4.5, label:org.name, color:getColor(org.catID), data:org, isMinistry:false, ministryID:min.id, parentX:mx, parentY:my, catID:org.catID, vx:0,vy:0 });
+    });
+  });
+  // Add standalone ministries at bottom with proper spacing
+  const forceStandOrgR = STANDALONE_MINS_F.map(m => Math.max(60, Math.ceil(m.orgs.length/2)*20));
+  let fxCursor = 0;
+  const fxOffsets = STANDALONE_MINS_F.map((m, si) => {
+    if(si===0) { fxCursor = forceStandOrgR[0]; return 0; }
+    const off = fxCursor + 80 + forceStandOrgR[si];
+    fxCursor = off + forceStandOrgR[si]; return off;
+  });
+  const fTotalW = fxCursor;
+  const fBaseX = cx - fTotalW/2 + (forceStandOrgR[0]||0);
+  const fBaseY = cy + 350;
+  STANDALONE_MINS_F.forEach((min, si) => {
+    const bx = fBaseX + fxOffsets[si];
+    const by = fBaseY;
+    const origIdx = MINISTRIES.indexOf(min);
+    nodes.push({ type:'ministry', x:bx, y:by, r:14, label:min.name, data:min, isMinistry:true, ministryID:min.id, color:MIN_COLORS[origIdx]||'#f87171', vx:0,vy:0, standalone:true, fixed:true });
+    min.orgs.forEach(org => {
+      nodes.push({ type:'org', x:bx+(Math.random()-.5)*60, y:by+(Math.random()-.5)*60, r:4.5, label:org.name, color:getColor(org.catID), data:org, isMinistry:false, ministryID:min.id, parentX:bx, parentY:by, catID:org.catID, vx:0,vy:0, standalone:true });
+    });
+  });
+  for(let i=0;i<90;i++) forceStep(.1);
+}
+
+function forceStep(dt) {
+  nodes.forEach(n => {
+    if(n.fixed) return;
+    if(n.type==='ministry' && !n.standalone) {
+      const c=nodes[0]; const dx=c.x-n.x, dy=c.y-n.y;
+      const dist=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=(dist-160)*.02;
+      n.vx+=(dx/dist)*f; n.vy+=(dy/dist)*f;
+    }
+    if(n.type==='org') {
+      const p=nodes.find(m=>m.type==='ministry'&&m.ministryID===n.ministryID);
+      if(p) { const dx=p.x-n.x,dy=p.y-n.y,dist=Math.sqrt(dx*dx+dy*dy)||1;
+        const tgt=50+Math.sqrt(MINISTRIES.find(m=>m.id===n.ministryID)?.orgs.length||1)*4;
+        const f=(dist-tgt)*.04; n.vx+=(dx/dist)*f; n.vy+=(dy/dist)*f; }
+    }
+    nodes.forEach(m => {
+      if(m===n) return;
+      const dx=n.x-m.x, dy=n.y-m.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+      const md=(n.r+m.r)*3;
+      if(d<md) { const f=(md-d)*.1/d; n.vx+=dx*f; n.vy+=dy*f; }
+    });
+    n.vx*=.7; n.vy*=.7;
+    n.x+=n.vx*dt*10; n.y+=n.vy*dt*10;
+  });
+}
+
+function buildLayout() {
+  if(currentView==='radial') buildRadialLayout();
+  else buildForceLayout();
+}
+
+// ── DRAW ──
+function draw() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0,0,W,H);
+
+  const bg = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(scale, scale);
+
+  const dark = isDark();
+  const cx = nodes[0]?.x ?? W/2;
+  const cy = nodes[0]?.y ?? H/2;
+
+  // ── Concentric ring guides (radial mode only) ──
+  if(currentView === 'radial' && ringGuides.length) {
+    ringGuides.forEach((rg, idx) => {
+      // วงกลมประ (วาดใน world space ตามปกติ)
+      ctx.beginPath();
+      ctx.arc(cx, cy, rg.r, 0, Math.PI*2);
+      ctx.strokeStyle = dark
+        ? `rgba(255,255,255,${idx===0?0.06:0.035})`
+        : `rgba(0,0,0,${idx===0?0.07:0.04})`;
+      ctx.lineWidth = 1 / scale;
+      ctx.setLineDash([4/scale, 8/scale]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // (label ย้ายไปวาดใน screen space หลัง ctx.restore แล้ว)
+    });
+  }
+
+  // ── Sector dividers (faint wedges) ──
+  if(currentView === 'radial' && ringGuides.length) {
+    const N = MINISTRIES.filter(m => !new Set(['24']).has(m.id)).length;
+    const outerR = ringGuides[ringGuides.length-1].r;
+    for(let i=0; i<N; i++) {
+      const a = (2*Math.PI*i/N) - Math.PI/2 - Math.PI/N;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + outerR*1.04*Math.cos(a), cy + outerR*1.04*Math.sin(a));
+      ctx.strokeStyle = dark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.04)';
+      ctx.lineWidth = 1/scale;
+      ctx.stroke();
+    }
+  }
+
+  const edgeOrg = dark ? 'rgba(120,130,145,0.18)'  : 'rgba(60,80,120,0.12)';
+  const edgeMin = dark ? 'rgba(220,140,40,0.30)'   : 'rgba(180,100,20,0.25)';
+
+  // ── Compute selection-related sets ──
+  const ministryMap = {};
+  nodes.forEach(n => { if(n.type==='ministry') ministryMap[n.ministryID] = n; });
+
+  let connectedSet = null; // set of nodes connected to selectedNode
+  if(selectedNode) {
+    connectedSet = new Set();
+    connectedSet.add(selectedNode);
+    if(selectedNode.type==='org') {
+      // parent ministry (+ center only if not standalone)
+      const mn = ministryMap[selectedNode.ministryID];
+      if(mn) {
+        connectedSet.add(mn);
+        if(!selectedNode.standalone) connectedSet.add(nodes[0]);
+      }
+    } else if(selectedNode.type==='ministry') {
+      // all orgs in this ministry (+ center only if not standalone)
+      if(!selectedNode.standalone) connectedSet.add(nodes[0]);
+      nodes.forEach(n => { if(n.type==='org'&&n.ministryID===selectedNode.ministryID) connectedSet.add(n); });
+    } else if(selectedNode.type==='center') {
+      // all ministries
+      nodes.forEach(n => { if(n.type==='ministry') connectedSet.add(n); });
+    }
+  }
+  const dimAlpha = connectedSet ? 0.07 : 1;
+
+  // helper: is this node faded?
+  function isFaded(n) { return connectedSet && !connectedSet.has(n); }
+  function isHighlighted(n) { return connectedSet && connectedSet.has(n); }
+
+  // ── org → ministry edges ──
+  ctx.lineWidth = 0.4;
+  nodes.forEach(n => {
+    if(n.type==='org' && activeFilters.has(n.catID||'01')) {
+      const mn = ministryMap[n.ministryID];
+      const tx = mn ? mn.x : n.parentX;
+      const ty = mn ? mn.y : n.parentY;
+      if(tx===undefined) return;
+      // highlight edge if both endpoints are connected
+      const edgeConnected = connectedSet && connectedSet.has(n) && mn && connectedSet.has(mn);
+      if(connectedSet && !edgeConnected) return; // dim → skip drawing
+      ctx.beginPath();
+      if(edgeConnected) {
+        ctx.strokeStyle = mn.color+'dd';
+        ctx.lineWidth = 1.9 / scale;          // ~1.9px on screen at any zoom
+      } else {
+        // tint faint edges by their ministry colour → clearer grouping
+        ctx.strokeStyle = mn ? mn.color+'4d' : edgeOrg;
+        ctx.lineWidth = 0.95 / scale;         // crisp hairline, never sub-pixel
+      }
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      // directional arrowhead: ministry → org (points to the child)
+      if (showArrows && (edgeConnected || scale > 1.15)) {
+        const aSize = edgeConnected ? Math.max(2.4, n.r * 0.85)
+                                    : Math.max(1.7, n.r * 0.62);
+        const aCol  = edgeConnected ? (mn.color + 'ee')
+                                    : (mn ? mn.color + 'b0' : edgeOrg);
+        drawArrowHead(tx, ty, n.x, n.y, aCol, aSize, n.r + 1.5);
+      }
+    }
+  });
+
+  // ── ministry → center edges (colored by ministry) ──
+  ctx.lineWidth = 1.1;
+  nodes.forEach(n => {
+    if(n.type==='ministry') {
+      if(n.standalone) return; // องค์กรอิสระ — ไม่เชื่อมต่อ
+      const c = nodes[0];
+      const edgeConnected = connectedSet && connectedSet.has(n) && connectedSet.has(c);
+      if(connectedSet && !edgeConnected) return;
+      ctx.beginPath();
+      ctx.strokeStyle = edgeConnected
+        ? (n.color||'#e67e22') + 'ee'
+        : (n.color||'#e67e22') + '9a';     // clearer default spokes
+      ctx.lineWidth = (edgeConnected ? 2.6 : 1.6) / scale;
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(c.x, c.y);
+      ctx.stroke();
+      // directional arrowhead: center → ministry (points to the ministry)
+      if (showArrows) {
+        const mhh = (n.r || 8) * 0.75;            // ministry rect half-height
+        const aCol = edgeConnected ? ((n.color||'#e67e22') + 'ee')
+                                   : ((n.color||'#e67e22') + 'aa');
+        drawArrowHead(c.x, c.y, n.x, n.y, aCol, edgeConnected ? 3.4 : 2.6, mhh + 3);
+      }
+    }
+  });
+
+  // ── Independent cluster bounding rectangle ──
+  {
+    const indNodes = nodes.filter(n => n.standalone);
+    if (indNodes.length > 0) {
+      let bx1 = Infinity, bx2 = -Infinity, by1 = Infinity, by2 = -Infinity;
+      indNodes.forEach(n => {
+        const pr = n.type === 'ministry' ? 20 : (n.r + 8);
+        bx1 = Math.min(bx1, n.x - pr);
+        bx2 = Math.max(bx2, n.x + pr);
+        by1 = Math.min(by1, n.y - pr);
+        by2 = Math.max(by2, n.y + pr);
+      });
+      const pad = 24;
+      bx1 -= pad; bx2 += pad; by1 -= pad; by2 += pad;
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(bx1, by1, bx2 - bx1, by2 - by1, 14);
+      else ctx.rect(bx1, by1, bx2 - bx1, by2 - by1);
+      ctx.fillStyle   = dark ? 'rgba(248,113,113,0.05)' : 'rgba(192,57,43,0.04)';
+      ctx.strokeStyle = dark ? 'rgba(248,113,113,0.60)' : 'rgba(192,57,43,0.50)';
+      ctx.lineWidth   = 1.8 / scale;
+      ctx.setLineDash([8 / scale, 5 / scale]);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Label inside top-left corner
+      const lblFs = Math.min(11, 11 / scale);
+      ctx.font = `bold ${lblFs}px Sarabun, sans-serif`;
+      ctx.fillStyle   = dark ? 'rgba(248,113,113,0.90)' : 'rgba(192,57,43,0.85)';
+      ctx.textAlign   = 'left';
+      ctx.textBaseline = 'top';
+      ctx.shadowColor  = dark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+      ctx.shadowBlur   = 4 / scale;
+      ctx.fillText('⬡ องค์กรอิสระ / หน่วยอิสระ', bx1 + 10, by1 + 8);
+      // Secondary label at bottom-right
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.font = `${Math.min(9, 9/scale)}px Sarabun, sans-serif`;
+      ctx.fillStyle = dark ? 'rgba(248,113,113,0.55)' : 'rgba(192,57,43,0.55)';
+      ctx.fillText('ไม่อยู่ภายใต้การบังคับบัญชาของฝ่ายบริหาร', bx2 - 10, by2 - 6);
+      ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+      ctx.restore();
+    }
+  }
+
+  // ── Draw nodes ──
+  nodes.forEach(n => {
+    if(n.type==='org' && !activeFilters.has(n.catID||'01')) return;
+
+    const faded = isFaded(n);
+    const selected = n === selectedNode;
+    const hover = n === hoveredNode;
+    const r = (hover || selected) ? n.r*1.4 : n.r;
+
+    ctx.globalAlpha = faded ? 0.1 : 1.0;
+
+    if(n.type==='center') {
+      const cf = getComputedStyle(document.documentElement).getPropertyValue('--center-fill').trim();
+      const cs = getComputedStyle(document.documentElement).getPropertyValue('--center-str').trim();
+      const ct = getComputedStyle(document.documentElement).getPropertyValue('--center-txt').trim();
+      if(hover || selected) {
+        ctx.beginPath(); ctx.arc(n.x,n.y,r+6,0,Math.PI*2);
+        ctx.fillStyle='rgba(201,168,76,0.18)'; ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+      ctx.fillStyle=cf; ctx.fill();
+      ctx.strokeStyle = selected ? '#fff' : cs; ctx.lineWidth = selected ? 3 : 1.8; ctx.stroke();
+      ctx.beginPath(); ctx.arc(n.x,n.y,r*0.6,0,Math.PI*2);
+      ctx.strokeStyle=cs+'66'; ctx.lineWidth=0.8; ctx.stroke();
+      if(scale > 0.4) {
+        ctx.font=`bold ${Math.min(9,9/scale)}px Sarabun,sans-serif`;
+        ctx.shadowColor='rgba(0,0,0,0.9)'; ctx.shadowBlur=4/scale;
+        ctx.fillStyle=ct; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('นายกฯ',n.x,n.y);
+        ctx.shadowBlur=0; ctx.shadowColor='transparent';
+      }
+
+    } else if(n.type==='ministry') {
+      const mc = n.color||'#e67e22';
+      const hw = r*1.8, hh = r*0.75;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(n.x-hw, n.y-hh, hw*2, hh*2, 5);
+      else ctx.rect(n.x-hw, n.y-hh, hw*2, hh*2);
+      ctx.fillStyle = (hover||selected) ? mc+'ff' : mc+'cc';
+      ctx.fill();
+      ctx.strokeStyle = selected ? '#fff' : mc;
+      ctx.lineWidth = selected ? 2.5 : (hover ? 2 : 1.2);
+      if(n.standalone) { ctx.setLineDash([4/scale, 2/scale]); ctx.lineWidth = hover ? 1.8 : 1.2; }
+      ctx.stroke();
+      if(n.standalone) ctx.setLineDash([]);
+      // Selection glow ring
+      if(selected) {
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(n.x-hw-4, n.y-hh-4, hw*2+8, hh*2+8, 8);
+        else ctx.rect(n.x-hw-4, n.y-hh-4, hw*2+8, hh*2+8);
+        ctx.strokeStyle = mc+'66'; ctx.lineWidth=1.5; ctx.stroke();
+      }
+      if(scale > 0.32) {
+        const fs = Math.min(9, 9/scale);
+        ctx.font = `bold ${fs}px Sarabun,sans-serif`;
+        ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 4/scale;
+        ctx.fillStyle = '#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        const short = n.label
+          .replace('กระทรวง','')
+          .replace('สำนักนายกรัฐมนตรี','สนร.')
+          .replace('ส่วนราชการไม่สังกัดกระทรวง','ไม่สังกัด')
+          .replace('หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร','อิสระ');
+        const dispLbl = short.length>13 ? short.slice(0,12)+'…' : short;
+        ctx.fillText(dispLbl, n.x, n.y);
+        ctx.shadowBlur=0; ctx.shadowColor='transparent';
+      }
+
+    } else {
+      // Org node
+      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+      ctx.fillStyle = n.color;
+      ctx.fill();
+      if(hover || selected) {
+        ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+        ctx.beginPath(); ctx.arc(n.x,n.y,r+4,0,Math.PI*2);
+        ctx.strokeStyle=n.color+'66'; ctx.lineWidth=2; ctx.stroke();
+      } else {
+        ctx.strokeStyle = n.color+'88'; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1.0;
+  });
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  // Store connectedSet state for UI reference
+  window._lastConnectedSet = connectedSet;
+
+  // ── Ring labels — screen space (อยู่นิ่ง ไม่เลื่อนตามกราฟ) ──
+  if(currentView === 'radial' && ringGuides.length && nodes[0]) {
+    const LABEL_COLORS = [
+      '#c9a84c',  // กระทรวง
+      '#3ecf6e',  // ส่วนราชการ
+      '#4fa3f7',  // รัฐวิสาหกิจ
+      '#a78bfa',  // องค์การมหาชน
+      '#f87171',  // องค์กรอิสระ/ศาล
+      '#f59e42',  // อุดมศึกษา
+      '#fbbf24',  // วิชาชีพ/อื่นๆ
+    ];
+    const isDk = isDark();
+
+    // วาด label แต่ละ ring ที่มุมขวาบนของ canvas คงที่
+    const padRight = 16;
+    const padTop   = 16;
+    const lineH    = 22;
+    const dotR     = 4.5;
+    const labelX   = W - padRight;
+
+    ringGuides.forEach((rg, i) => {
+      const col = LABEL_COLORS[i] || '#aaa';
+      const sy  = padTop + i * lineH + dotR;
+
+      // dot
+      ctx.beginPath();
+      ctx.arc(labelX - 86, sy, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+
+      // text
+      ctx.font = 'bold 12px Sarabun, sans-serif';
+      ctx.shadowColor = isDk ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+      ctx.shadowBlur = 3;
+      ctx.fillStyle = isDk ? 'rgba(255,255,255,0.85)' : 'rgba(10,10,60,0.75)';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(rg.label, labelX - 77, sy);
+      ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+    });
+  }
+
+  document.getElementById('cz').textContent = Math.round(scale*100)+'%';
+  document.getElementById('cn').textContent = nodes.filter(n=>n.type!=='center').length;
+}
+
+// ── HIT TEST ──
+function hitTest(ex, ey) {
+  const wx=(ex-offsetX)/scale, wy=(ey-offsetY)/scale;
+  let best=null, bestD=Infinity;
+  for(const n of nodes) {
+    if(n.type==='org' && !activeFilters.has(n.catID||'01')) continue;
+    const dx=wx-n.x, dy=wy-n.y, d=Math.sqrt(dx*dx+dy*dy);
+    const hitR=Math.max(n.r*1.6,9);
+    if(d<hitR&&d<bestD) { best=n; bestD=d; }
+  }
+  return best;
+}
+
+// ── MOUSE EVENTS ──
+let draggedNode = null;
+let nodeDragOffX = 0, nodeDragOffY = 0;
+
+canvas.addEventListener('mousedown', e => {
+  const MAIN=document.getElementById('main');
+  const r=MAIN.getBoundingClientRect();
+  const hit=hitTest(e.clientX-r.left, e.clientY-r.top);
+  dragStartX=e.clientX; dragStartY=e.clientY;
+  if(hit) {
+    // drag a specific node
+    draggedNode=hit;
+    const wx=(e.clientX-r.left-offsetX)/scale;
+    const wy=(e.clientY-r.top-offsetY)/scale;
+    nodeDragOffX=wx-hit.x;
+    nodeDragOffY=wy-hit.y;
+    canvas.style.cursor='grabbing';
+  } else {
+    // pan the canvas
+    isDragging=true;
+    dragOffX=offsetX; dragOffY=offsetY;
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  const MAIN=document.getElementById('main');
+  const r=MAIN.getBoundingClientRect();
+
+  if(draggedNode) {
+    const wx=(e.clientX-r.left-offsetX)/scale;
+    const wy=(e.clientY-r.top-offsetY)/scale;
+    const nx=wx-nodeDragOffX;
+    const ny=wy-nodeDragOffY;
+    const dx=nx-draggedNode.x, dy=ny-draggedNode.y;
+
+    draggedNode.x=nx; draggedNode.y=ny;
+    hideTooltip();
+    draw(); return;
+  }
+
+  if(isDragging) {
+    offsetX=dragOffX+(e.clientX-dragStartX);
+    offsetY=dragOffY+(e.clientY-dragStartY);
+    draw(); return;
+  }
+
+  const hit=hitTest(e.clientX-r.left, e.clientY-r.top);
+  canvas.style.cursor = hit ? 'grab' : 'default';
+  if(hit!==hoveredNode) {
+    hoveredNode=hit; draw();
+    hit ? showTooltip(e.clientX,e.clientY,hit.label) : hideTooltip();
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  const MAIN=document.getElementById('main');
+  const r=MAIN.getBoundingClientRect();
+  const moved=Math.abs(e.clientX-dragStartX)>4||Math.abs(e.clientY-dragStartY)>4;
+  if(draggedNode) {
+    if(!moved) showPanel(draggedNode);
+    draggedNode=null;
+    canvas.style.cursor='default';
+    return;
+  }
+  isDragging=false;
+  if(!moved) {
+    const hit=hitTest(e.clientX-r.left,e.clientY-r.top);
+    if(hit) { showPanel(hit); }
+    else { selectedNode=null; panel.classList.remove('show', 'visible'); draw(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); }
+  }
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const MAIN=document.getElementById('main');
+  const r=MAIN.getBoundingClientRect();
+  const delta=e.deltaY>0?.88:1.12;
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  offsetX=mx-(mx-offsetX)*delta;
+  offsetY=my-(my-offsetY)*delta;
+  scale=Math.max(.12,Math.min(6,scale*delta));
+  draw();
+}, {passive:false});
+canvas.addEventListener('mouseleave', () => {
+  if(!draggedNode) { hoveredNode=null; draw(); hideTooltip(); }
+});
+
+// ── TOUCH EVENTS (single-touch pan + pinch-to-zoom) ──
+let pinchDist0 = 0, pinchScale0 = 1, pinchMidX = 0, pinchMidY = 0;
+
+function getTouchDist(t) {
+  const dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+canvas.addEventListener('touchstart', e => {
+  const MAIN = document.getElementById('main');
+  const r = MAIN.getBoundingClientRect();
+  if (e.touches.length === 2) {
+    // Pinch start
+    isDragging = false; draggedNode = null;
+    pinchDist0  = getTouchDist(e.touches);
+    pinchScale0 = scale;
+    pinchMidX   = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - r.left;
+    pinchMidY   = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - r.top;
+    e.preventDefault(); return;
+  }
+  if (e.touches.length !== 1) return;
+  const t = e.touches[0];
+  const hit = hitTest(t.clientX - r.left, t.clientY - r.top);
+  dragStartX = t.clientX; dragStartY = t.clientY;
+  if (hit) {
+    draggedNode = hit;
+    const wx = (t.clientX - r.left - offsetX) / scale;
+    const wy = (t.clientY - r.top  - offsetY) / scale;
+    nodeDragOffX = wx - hit.x; nodeDragOffY = wy - hit.y;
+  } else {
+    isDragging = true; dragOffX = offsetX; dragOffY = offsetY;
+  }
+  e.preventDefault();
+}, {passive: false});
+
+canvas.addEventListener('touchmove', e => {
+  const MAIN = document.getElementById('main');
+  const r = MAIN.getBoundingClientRect();
+  if (e.touches.length === 2) {
+    // Pinch zoom
+    const dist = getTouchDist(e.touches);
+    const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - r.left;
+    const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - r.top;
+    const newScale = Math.min(8, Math.max(0.08, pinchScale0 * (dist / pinchDist0)));
+    // Zoom around midpoint
+    const wx = (pinchMidX - offsetX) / scale;
+    const wy = (pinchMidY - offsetY) / scale;
+    scale = newScale;
+    offsetX = pinchMidX - wx * scale + (midX - pinchMidX);
+    offsetY = pinchMidY - wy * scale + (midY - pinchMidY);
+    pinchMidX = midX; pinchMidY = midY;
+    draw(); e.preventDefault(); return;
+  }
+  if (e.touches.length !== 1) return;
+  const t = e.touches[0];
+  if (draggedNode) {
+    const wx = (t.clientX - r.left - offsetX) / scale;
+    const wy = (t.clientY - r.top  - offsetY) / scale;
+    draggedNode.x = wx - nodeDragOffX; draggedNode.y = wy - nodeDragOffY;
+    draw();
+  } else if (isDragging) {
+    offsetX = dragOffX + (t.clientX - dragStartX);
+    offsetY = dragOffY + (t.clientY - dragStartY);
+    draw();
+  }
+  e.preventDefault();
+}, {passive: false});
+
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length > 0) { pinchDist0 = 0; return; }
+  const moved = e.changedTouches.length &&
+    (Math.abs(e.changedTouches[0].clientX - dragStartX) > 8 ||
+     Math.abs(e.changedTouches[0].clientY - dragStartY) > 8);
+  if (draggedNode) { if (!moved) showPanel(draggedNode); draggedNode = null; }
+  isDragging = false; pinchDist0 = 0;
+});
+
+// ── Mobile: tap canvas to close cab-panel ──
+canvas.addEventListener('touchstart', e => {
+  const cp = document.getElementById('cab-panel');
+  if (cabVisible && window.innerWidth <= 640 && e.touches.length === 1) {
+    const rect = cp.getBoundingClientRect();
+    const t = e.touches[0];
+    if (t.clientY < rect.top) {
+      toggleCabinet();
+    }
+  }
+}, { passive: true, capture: true });
+
+// ── MOBILE SIDEBAR TOGGLE ──
+function toggleMobSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('mob-overlay');
+  const open = sb.classList.toggle('mob-open');
+  ov.classList.toggle('active', open);
+}
+
+// Close sidebar when clicking ministry in list (mobile)
+document.getElementById('sidebar').addEventListener('click', e => {
+  if (window.innerWidth <= 640 && e.target.closest('.min-item, .fp')) {
+    setTimeout(() => {
+      const sb = document.getElementById('sidebar');
+      const ov = document.getElementById('mob-overlay');
+      sb.classList.remove('mob-open');
+      ov.classList.remove('active');
+    }, 200);
+  }
+});
+
+// ── TOOLTIP ──
+const tooltip = document.getElementById('tooltip');
+function showTooltip(x,y,text) {
+  tooltip.style.display='block';
+  tooltip.style.left=(x+16)+'px'; tooltip.style.top=(y-10)+'px';
+  tooltip.textContent=text;
+}
+function hideTooltip() { tooltip.style.display='none'; }
+
+// ── INFO PANEL ──
+const panel = document.getElementById('info-panel');
+const BADGES = {'01':'ส่วนราชการ','02':'รัฐวิสาหกิจ','03':'องค์การมหาชน','04':'องค์การมหาชน','05':'รัฐสภา','06':'ศาล','07':'องค์กรอิสระ','08':'หน่วยงานอิสระ','09':'สถาบันอุดมศึกษา','10':'สภาวิชาชีพ','13':'หน่วยงานอื่น'};
+const BADGE_COLORS = {'01':'#3ecf6e','02':'#4fa3f7','03':'#a78bfa','04':'#a78bfa','05':'#f87171','06':'#f87171','07':'#f87171','08':'#f87171','09':'#f59e42','10':'#fbbf24','13':'#8a97aa'};
+
+function showPanel(node) {
+  selectedNode = node;
+  draw();
+  // Mobile bottom-sheet
+  if (window.innerWidth <= 640) {
+    panel.classList.remove('hidden');
+    panel.classList.add('show', 'visible');
+  }
+  // ── Center (PM) node special handling ──
+  if(node.type === 'center') {
+    panel.classList.add('show');
+    document.getElementById('info-minister-row').style.display='none';
+    document.getElementById('info-minister').innerHTML='';
+    document.getElementById('info-orgs-list').style.display='none';
+    document.getElementById('info-abbr').textContent='นายกรัฐมนตรี · ภูมิใจไทย';
+    const b=document.getElementById('info-badge');
+    b.textContent='นายกรัฐมนตรี';
+    b.style.cssText='background:#c9a84c22;color:#c9a84c;border:1px solid #c9a84c55;';
+    document.getElementById('info-title').textContent=CABINET_PM.name;
+    document.getElementById('info-cat').textContent='ผู้นำรัฐบาล';
+    document.getElementById('info-mission').textContent='บริหารราชการแผ่นดิน กำกับดูแลคณะรัฐมนตรีทั้งหมด';
+    document.getElementById('info-exec').textContent=`ควบคุม ${MINISTRIES.filter(m=>m.name.startsWith('กระทรวง')||m.name==='สำนักนายกรัฐมนตรี').length} กระทรวง · ${MINISTRIES.reduce((a,m)=>a+m.orgs.length,0)} หน่วยงาน`;
+    document.getElementById('info-web').querySelector('.info-val').innerHTML='<a href="https://www.thaigov.go.th" target="_blank">www.thaigov.go.th</a>';
+
+    // Show all deputy PMs and Cabinet summary in minister row
+    document.getElementById('info-minister-row').style.display='flex';
+    document.getElementById('info-minister-row').querySelector('.info-label').textContent='ครม.';
+    const deputies=[
+      {name:'นายพิพัฒน์ รัชกิจประการ', role:'รองนายกฯ + รมว.คมนาคม', party:'ภูมิใจไทย'},
+      {name:'นายทรงศักดิ์ ทองศรี', role:'รองนายกรัฐมนตรี', party:'ภูมิใจไทย'},
+      {name:'นายเอกนิติ นิติทัณฑ์ประภาศ', role:'รองนายกฯ + รมว.คลัง', party:'ภูมิใจไทย'},
+      {name:'นายสีหศักดิ์ พวงเกตุแก้ว', role:'รองนายกฯ + รมว.ต่างประเทศ', party:'ภูมิใจไทย'},
+      {name:'นางศุภจี สุธรรมพันธุ์', role:'รองนายกฯ + รมว.พาณิชย์', party:'ภูมิใจไทย'},
+      {name:'นายปกรณ์ นิลประพันธ์', role:'รองนายกรัฐมนตรี', party:'ภูมิใจไทย'},
+      {name:'นายยศชนัน วงศ์สวัสดิ์', role:'รองนายกฯ + รมว.อุดมศึกษา', party:'เพื่อไทย'},
+    ];
+    document.getElementById('info-minister').innerHTML = `
+      <div style="margin-bottom:6px;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">รองนายกรัฐมนตรี (${deputies.length} คน)</div>
+      ${deputies.map(p=>{const pc=PARTY_COLORS[p.party]||'#8a97aa';return `<div style="margin-bottom:5px"><div style="font-size:11px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size:9.5px;color:var(--text-dim)">${p.role}</div><span style="font-size:8px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;}).join('')}
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">สัดส่วนพรรค</div>
+      <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">
+        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644">ภูมิใจไทย (หลัก)</span>
+        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#ef444422;color:#ef4444;border:1px solid #ef444444">เพื่อไทย</span>
+        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">รวมไทยสร้างชาติ</span>
+        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#10b98122;color:#10b981;border:1px solid #10b98144">ชาติไทยพัฒนา</span>
+      </div>`;
+    // Reset cabinet panel highlight
+    document.querySelectorAll('.cab-row').forEach(r=>r.classList.remove('active'));
+    return;
+  }
+  const d=node.data; if(!d) return;
+  panel.classList.add('show'); document.getElementById('cab-panel').classList.add('hidden');
+  document.getElementById('info-title').textContent=node.label;
+
+  document.getElementById('info-minister-row').style.display='none';
+  document.getElementById('info-minister').innerHTML='';
+  if(node.isMinistry) {
+    const cabMins = CABINET[node.data.id]||[];
+    if(cabMins.length>0) {
+      document.getElementById('info-minister-row').style.display='flex';
+      document.getElementById('info-minister').innerHTML = cabMins.map(p=>{
+        const pc=PARTY_COLORS[p.party]||'#8a97aa';
+        return `<div style="margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size:10px;color:var(--text-dim)">${p.role}</div><span style="font-size:8.5px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;
+      }).join('');
+    }
+    highlightCabRow(node.data.id);
+    document.getElementById('info-abbr').textContent='';
+    const b=document.getElementById('info-badge');
+    const minType=(d.name.startsWith('กระทรวง')||d.name==='สำนักนายกรัฐมนตรี')?'กระทรวง':'อื่นๆ';
+    b.textContent=minType; b.style.cssText=`background:${node.color||'#e67e22'}22;color:${node.color||'#e67e22'};border:1px solid ${node.color||'#e67e22'}55;`;
+    document.getElementById('info-cat').textContent=minType;
+    document.getElementById('info-mission').textContent='-';
+    const cabList = CABINET[node.data.id]||[];
+    const primaryMin = cabList.length > 0 ? cabList[0].name.replace(/^(นาย|นาง(?:สาว)?|ดร\.?|พล(?:โท|ตรี|เอก|อากาศ(?:เอก|โท|ตรี))?(?:ตำรวจ(?:เอก|โท|ตรี))?\s*)/,'').trim() : '-';
+    document.getElementById('info-exec').textContent = primaryMin + (cabList.length > 1 ? ` +${cabList.length-1}` : '');
+    document.getElementById('info-web').querySelector('.info-val').innerHTML='-';
+    const ol=document.getElementById('info-orgs-list'); ol.style.display='block';
+    document.getElementById('info-orgs-count').textContent=`หน่วยงานในสังกัด (${d.orgs.length})`;
+    const chips=document.getElementById('info-orgs-chips'); chips.innerHTML='';
+    d.orgs.forEach(o=>{
+      const chip=document.createElement('span'); chip.className='org-chip';
+      const col=getColor(o.catID);
+      chip.innerHTML=`<span style="width:5px;height:5px;border-radius:50%;background:${col};display:inline-block"></span>${o.abbr&&o.abbr!=='-'&&o.abbr!='N/A'?o.abbr:o.name.substring(0,10)}`;
+      chip.title=o.name;
+      chip.onclick=()=>{ const on=nodes.find(n=>n.data&&n.data.no===o.no); if(on) showPanel(on); };
+      chips.appendChild(chip);
+    });
+  } else {
+    document.getElementById('info-abbr').textContent=d.abbr&&d.abbr!=='-'&&d.abbr!=='N/A'?d.abbr:'';
+    const cid=String(d.catID);
+    const b=document.getElementById('info-badge');
+    b.textContent=BADGES[cid]||d.cat;
+    const bc=BADGE_COLORS[cid]||'#8a97aa';
+    b.style.cssText=`background:${bc}22;color:${bc};border:1px solid ${bc}44;`;
+    document.getElementById('info-cat').textContent=d.cat||'-';
+    document.getElementById('info-mission').textContent=d.mission||'-';
+    document.getElementById('info-exec').textContent=d.exec||'-';
+    const wv=document.getElementById('info-web').querySelector('.info-val');
+    if(d.web&&d.web!=='N/A'&&d.web!=='-') {
+      const url=d.web.startsWith('http')?d.web:'https://'+d.web;
+      wv.innerHTML=`<a href="${url}" target="_blank" rel="noopener">${d.web}</a>`;
+    } else wv.innerHTML='-';
+    document.getElementById('info-orgs-list').style.display='none';
+  }
+}
+document.getElementById('info-close').onclick=()=>{ panel.classList.remove('show', 'visible'); selectedNode=null; draw(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); };
+
+// ── SEARCH ──
+const searchEl=document.getElementById('search');
+const srEl=document.getElementById('search-results');
+searchEl.addEventListener('input',()=>{
+  const q=searchEl.value.trim();
+  if(!q){srEl.classList.remove('show');return;}
+  const all=[];
+  MINISTRIES.forEach(m=>{
+    all.push({name:m.name,abbr:'',sub:'กระทรวง',id:m.id,isMin:true});
+    m.orgs.forEach(o=>all.push({name:o.name,abbr:o.abbr,sub:m.name,no:o.no,isMin:false}));
+  });
+  const res=all.filter(x=>x.name.includes(q)||(x.abbr&&x.abbr.includes(q))).slice(0,10);
+  srEl.innerHTML='';
+  if(!res.length){srEl.classList.remove('show');return;}
+  res.forEach(r=>{
+    const div=document.createElement('div'); div.className='sr-item';
+    div.innerHTML=`<div class="sr-name">${r.name}</div><div class="sr-sub">${r.sub}</div>`;
+    div.onclick=()=>{
+      srEl.classList.remove('show'); searchEl.value='';
+      const MAIN=document.getElementById('main');
+      const found=nodes.find(n=>r.isMin?(n.isMinistry&&n.data?.id===r.id):(n.data&&n.data.no===r.no));
+      if(found){ offsetX=MAIN.clientWidth/2-found.x*scale; offsetY=MAIN.clientHeight/2-found.y*scale; draw(); showPanel(found); }
+    };
+    srEl.appendChild(div);
+  });
+  srEl.classList.add('show');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))srEl.classList.remove('show');});
+
+// ── VIEW SWITCH ──
+document.getElementById('btn-view-grid').onclick=()=>{
+  currentView='grid';
+  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='grid'));
+  showGridView(true);
+  showCorruptView(false);
+};
+document.getElementById('btn-view-radial').onclick=()=>{
+  currentView='radial';
+  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='radial'));
+  showGridView(false);
+  showCorruptView(false);
+  buildLayout(); fitView(); draw();
+};
+document.getElementById('btn-view-force').onclick=()=>{
+  currentView='force';
+  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='force'));
+  showGridView(false);
+  showCorruptView(true);
+};
+
+function resetView(){ buildLayout(); fitView(); }
+document.getElementById('btn-reset').onclick=()=>{ resetView(); draw(); };
+
+// ── ZOOM ──
+document.getElementById('zin').onclick=()=>{
+  const MAIN=document.getElementById('main');
+  scale=Math.min(6,scale*1.2);
+  offsetX=MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*1.2;
+  offsetY=MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*1.2;
+  draw();
+};
+document.getElementById('zout').onclick=()=>{
+  const MAIN=document.getElementById('main');
+  scale=Math.max(.12,scale*.83);
+  offsetX=MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*.83;
+  offsetY=MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*.83;
+  draw();
+};
+document.getElementById('zfit').onclick=()=>{ resetView(); draw(); };
+document.getElementById('zarrow').onclick=function(){
+  showArrows = !showArrows;
+  this.classList.toggle('active', showArrows);
+  this.style.opacity = showArrows ? '1' : '.45';
+  draw();
+};
+
+
+// ═══════════════════════════════════════
+//  CABINET DATA (คณะรัฐมนตรี)
+// ═══════════════════════════════════════
+const CABINET_PM = {name:"นายอนุทิน ชาญวีรกูล", party:"ภูมิใจไทย", role:"นายกรัฐมนตรี"};
+
+const CABINET = {
+  "01": [
+    {name:"นางสาวศุภมาส อิศรภักดี", role:"รัฐมนตรีประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย"},
+    {name:"นายนภินทร ศรีสรรพางค์",   role:"รัฐมนตรีประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย"},
+    {name:"นายภราดร ปริศนานันทกุล",   role:"รัฐมนตรีประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย"},
+    {name:"นางสุขสมรวย วันทนียกุล",   role:"รัฐมนตรีประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย"}
+  ],
+  "02": [{name:"พลโท อดุลย์ บุญธรรมเจริญ", role:"รมว.กลาโหม", party:"ภูมิใจไทย (โควตาคนนอก)"}],
+  "03": [{name:"นายเอกนิติ นิติทัณฑ์ประภาศ", role:"รองนายกรัฐมนตรี และ รมว.คลัง", party:"ภูมิใจไทย (โควตาคนนอก)"}],
+  "04": [{name:"นายสีหศักดิ์ พวงเกตุแก้ว", role:"รองนายกรัฐมนตรี และ รมว.ต่างประเทศ", party:"ภูมิใจไทย (โควตาคนนอก)"}],
+  "05": [{name:"นายสุรศักดิ์ พันธ์เจริญวรกุล", role:"รมว.การท่องเที่ยวและกีฬา", party:"ภูมิใจไทย"}],
+  "06": [{name:"นายนิกร โสมกลาง", role:"รมว.การพัฒนาสังคมและความมั่นคงของมนุษย์", party:"เพื่อไทย"}],
+  "07": [
+    {name:"นายสุริยะ จึงรุ่งเรืองกิจ",     role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"},
+    {name:"นายวัชระพล ขาวขำ",           role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"},
+    {name:"นางสาวปิยะรัฐชย์ ติยะไพรัช", role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"}
+  ],
+  "08": [
+    {name:"นายพิพัฒน์ รัชกิจประการ",      role:"รองนายกรัฐมนตรี และ รมว.คมนาคม", party:"ภูมิใจไทย"},
+    {name:"นายสิริพงศ์ อังคสกุลเกียรติ",  role:"รมช.คมนาคม", party:"ภูมิใจไทย"},
+    {name:"นายภัทรพงศ์ ภัทรประสิทธิ์",   role:"รมช.คมนาคม", party:"ภูมิใจไทย"},
+    {name:"นายสรรเพชญ บุญญามณี",        role:"รมช.คมนาคม", party:"ภูมิใจไทย"}
+  ],
+  "09": [{name:"นายสุชาติ ชมกลิ่น", role:"รมว.ทรัพยากรธรรมชาติและสิ่งแวดล้อม", party:"รวมไทยสร้างชาติ"}],
+  "11": [
+    {name:"นายไชยชนก ชิดชอบ",         role:"รมว.ดิจิทัลเพื่อเศรษฐกิจและสังคม", party:"ภูมิใจไทย"},
+    {name:"นางสาวแนน บุณย์ธิดา สมชัย", role:"รมช.ดิจิทัลเพื่อเศรษฐกิจและสังคม", party:"ภูมิใจไทย"}
+  ],
+  "12": [{name:"นายเอกนัฏ พร้อมพัฒน์", role:"รมว.พลังงาน", party:"รวมไทยสร้างชาติ"}],
+  "13": [{name:"นางศุภจี สุธรรมพันธุ์", role:"รองนายกรัฐมนตรี และ รมว.พาณิชย์", party:"ภูมิใจไทย (โควตาคนนอก)"}],
+  "14": [
+    {name:"นายอนุทิน ชาญวีรกูล",    role:"นายกรัฐมนตรี และ รมว.มหาดไทย", party:"ภูมิใจไทย"},
+    {name:"นายพลพีร์ สุวรรณฉวี",    role:"รมช.มหาดไทย", party:"ภูมิใจไทย"},
+    {name:"นายเจเศรษฐ์ ไทยเศรษฐ์", role:"รมช.มหาดไทย", party:"ภูมิใจไทย"},
+    {name:"นายวรศิษฏ์ เลียงประสิทธิ์", role:"รมช.มหาดไทย", party:"ภูมิใจไทย"}
+  ],
+  "15": [{name:"พลตำรวจโท รุทธพล เนาวรัตน์", role:"รมว.ยุติธรรม", party:"ภูมิใจไทย (โควตาคนนอก)"}],
+  "16": [{name:"นายจุลพันธ์ อมรวิวัฒน์", role:"รมว.แรงงาน", party:"เพื่อไทย"}],
+  "17": [{name:"นางสาวซาบีดา ไทยเศรษฐ", role:"รมว.วัฒนธรรม", party:"ภูมิใจไทย"}],
+  "18": [{name:"นายยศชนัน วงศ์สวัสดิ์", role:"รองนายกรัฐมนตรี และ รมว.การอุดมศึกษาฯ", party:"เพื่อไทย"}],
+  "19": [
+    {name:"นายประเสริฐ จันทรรวงทอง",     role:"รมว.ศึกษาธิการ", party:"เพื่อไทย"},
+    {name:"นายอัครนันท์ กัณณ์กิตตินันท์", role:"รมช.ศึกษาธิการ", party:"เพื่อไทย"}
+  ],
+  "21": [{name:"นายพัฒนา พร้อมพัฒน์", role:"รมว.สาธารณสุข", party:"เพื่อไทย"}],
+  "22": [{name:"นายวราวุธ ศิลปอาชา", role:"รมว.อุตสาหกรรม", party:"ชาติไทยพัฒนา"}]
+};
+
+const PARTY_COLORS = {
+  "ภูมิใจไทย": "#3b82f6",
+  "ภูมิใจไทย (โควตาคนนอก)": "#60a5fa",
+  "เพื่อไทย": "#ef4444",
+  "รวมไทยสร้างชาติ": "#f59e0b",
+  "ชาติไทยพัฒนา": "#10b981"
+};
+
+// ═══════════════════════════════════════
+//  CABINET PANEL FUNCTIONS
+// ═══════════════════════════════════════
+let cabState = 'full'; // 'full' | 'compact' | 'mini'
+let cabVisible = true;
+
+function setCabState(state) {
+  cabState = state;
+  const p = document.getElementById('cab-panel');
+  p.classList.remove('state-compact','state-mini');
+  if (state === 'compact') p.classList.add('state-compact');
+  if (state === 'mini')    p.classList.add('state-mini');
+  ['full','compact','mini'].forEach(s => {
+    const btn = document.getElementById('csz-' + s);
+    if (btn) btn.classList.toggle('active', s === state);
+  });
+  // In mini state the size buttons are hidden, so hint that tapping the
+  // header restores the panel (fixes "ย่อสุดแล้วกดกลับมาไม่ได้").
+  const hdr = document.querySelector('.cab-header');
+  if (hdr) hdr.title = state === 'mini' ? 'คลิกเพื่อขยายแผงคณะรัฐมนตรี' : '';
+}
+
+
+// ═══════════════════════════════════════
+//  CABINET PANEL DRAG (ลาก ขึ้น-ลง)
+// ═══════════════════════════════════════
+(function() {
+  let dragging = false, startY = 0, startTop = 0, startTY = 0, sheet = false, moved = false;
+  const cabEl = document.getElementById('cab-panel');
+  const cabHdr = document.querySelector('.cab-header');
+
+  // Init position from CSS (top:18px, right:18px already set)
+  cabEl.style.top = '18px';
+
+  // On mobile the panel is a bottom sheet (position:fixed; bottom:0; top:auto !important),
+  // so dragging via `top` is ignored by CSS — use translateY instead, swipe-down to dismiss.
+  const isSheet = () => getComputedStyle(cabEl).position === 'fixed';
+  const curTY = () => {
+    const m = /translateY\(\s*([-\d.]+)px\s*\)/.exec(cabEl.style.transform || '');
+    return m ? parseFloat(m[1]) : 0;
+  };
+
+  function dragStart(y, target) {
+    if (target && target.id === 'cab-toggle') return false; // ignore toggle btn
+    dragging = true; startY = y; sheet = isSheet(); moved = false;
+    if (sheet) { startTY = curTY(); cabEl.style.transition = 'none'; }
+    else { startTop = parseInt(cabEl.style.top) || 18; }
+    return true;
+  }
+  function dragMove(y) {
+    if (!dragging) return;
+    const dy = y - startY;
+    if (Math.abs(dy) > 6) moved = true;
+    if (sheet) {
+      cabEl.style.transform = 'translateY(' + Math.max(0, startTY + dy) + 'px)'; // downward only
+    } else {
+      cabEl.style.top = Math.max(8, Math.min(window.innerHeight - 60, startTop + dy)) + 'px';
+    }
+  }
+  function dragEnd() {
+    if (!dragging) return;
+    dragging = false; document.body.style.userSelect = '';
+    // Tap (no drag) on a minimized panel → restore it to full size
+    if (!moved && cabState === 'mini') {
+      setCabState('full');
+      if (sheet) { cabEl.style.transition = ''; cabEl.style.transform = ''; }
+      return;
+    }
+    if (!sheet) return;
+    const dismiss = curTY() > Math.min(140, cabEl.offsetHeight * 0.35);
+    cabEl.style.transition = 'transform .22s ease';
+    if (dismiss) {
+      cabEl.style.transform = 'translateY(100%)';          // slide out
+      setTimeout(() => {
+        if (cabVisible) toggleCabinet();                   // hide first (avoids flash)
+        cabEl.style.transition = ''; cabEl.style.transform = '';
+      }, 220);
+    } else {
+      cabEl.style.transform = 'translateY(0)';             // snap back
+      setTimeout(() => { cabEl.style.transition = ''; cabEl.style.transform = ''; }, 220);
+    }
+  }
+
+  cabHdr.addEventListener('mousedown', e => {
+    if (!dragStart(e.clientY, e.target)) return;
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => dragMove(e.clientY));
+  document.addEventListener('mouseup', dragEnd);
+
+  // Touch support
+  cabHdr.addEventListener('touchstart', e => {
+    if (!dragStart(e.touches[0].clientY, e.target)) return;
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    dragMove(e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchend', dragEnd);
+})();
+
+function buildCabPanel() {
+  const body = document.getElementById('cab-body');
+  body.innerHTML = '';
+
+  // PM row
+  const pmDiv = document.createElement('div');
+  pmDiv.className = 'cab-pm';
+  pmDiv.innerHTML = `
+    <div class="cab-pm-icon">👑</div>
+    <div class="cab-pm-info">
+      <div class="cab-pm-name">${CABINET_PM.name}</div>
+      <div class="cab-pm-role">${CABINET_PM.role}</div>
+      <span class="cab-row-party" style="background:${PARTY_COLORS[CABINET_PM.party]||'#555'}33;color:${PARTY_COLORS[CABINET_PM.party]||'#888'};border-color:${PARTY_COLORS[CABINET_PM.party]||'#555'}55">${CABINET_PM.party}</span>
+    </div>
+  `;
+  body.appendChild(pmDiv);
+
+  // Deputy PMs section
+  const dpHd = document.createElement('div');
+  dpHd.className = 'cab-section-hd';
+  dpHd.textContent = '⬡ รองนายกรัฐมนตรี';
+  body.appendChild(dpHd);
+
+  const deputies = [
+    {name:"นายพิพัฒน์ รัชกิจประการ",      role:"รองนายกฯ และ รมว.คมนาคม", party:"ภูมิใจไทย", minId:"08"},
+    {name:"นายทรงศักดิ์ ทองศรี",           role:"รองนายกรัฐมนตรี",          party:"ภูมิใจไทย", minId:null},
+    {name:"นายเอกนิติ นิติทัณฑ์ประภาศ",   role:"รองนายกฯ และ รมว.คลัง",   party:"ภูมิใจไทย (โควตาคนนอก)", minId:"03"},
+    {name:"นายสีหศักดิ์ พวงเกตุแก้ว",      role:"รองนายกฯ และ รมว.ต่างประเทศ", party:"ภูมิใจไทย (โควตาคนนอก)", minId:"04"},
+    {name:"นางศุภจี สุธรรมพันธุ์",          role:"รองนายกฯ และ รมว.พาณิชย์", party:"ภูมิใจไทย (โควตาคนนอก)", minId:"13"},
+    {name:"นายปกรณ์ นิลประพันธ์",           role:"รองนายกรัฐมนตรี",          party:"ภูมิใจไทย (โควตาคนนอก)", minId:null},
+    {name:"นายยศชนัน วงศ์สวัสดิ์",         role:"รองนายกฯ และ รมว.อุดมศึกษา", party:"เพื่อไทย", minId:"18"}
+  ];
+  deputies.forEach(p => {
+    const row = makeCabRow(p);
+    body.appendChild(row);
+  });
+
+  // Ministers section
+  const minHd = document.createElement('div');
+  minHd.className = 'cab-section-hd';
+  minHd.textContent = '⬡ รัฐมนตรีว่าการกระทรวง';
+  body.appendChild(minHd);
+
+  MINISTRIES.forEach(m => {
+    const ministers = CABINET[m.id];
+    if (!ministers) return;
+    // Only show รมว. (not deputies already shown)
+    const rmv = ministers.filter(p => p.role.includes('รมว.') || p.role.includes('รัฐมนตรีประจำ'));
+    if (!rmv.length) return;
+    rmv.forEach(p => {
+      const row = makeCabRow({...p, minId: m.id});
+      body.appendChild(row);
+    });
+  });
+}
+
+function makeCabRow(p) {
+  const row = document.createElement('div');
+  row.className = 'cab-row';
+  row.id = 'cab-row-' + (p.minId||'');
+  const pColor = PARTY_COLORS[p.party] || '#8a97aa';
+  row.innerHTML = `
+    <div class="cab-row-dot" style="background:${pColor}"></div>
+    <div class="cab-row-info">
+      <div class="cab-row-name">${p.name}</div>
+      <div class="cab-row-role">${p.role}</div>
+      <span class="cab-row-party" style="background:${pColor}22;color:${pColor};border-color:${pColor}44">${p.party}</span>
+    </div>
+  `;
+  if (p.minId) {
+    row.addEventListener('click', () => {
+      const n = nodes.find(nd => nd.isMinistry && nd.data?.id === p.minId);
+      if (n) {
+        const MAIN = document.getElementById('main');
+        offsetX = MAIN.clientWidth/2 - n.x * scale;
+        offsetY = MAIN.clientHeight/2 - n.y * scale;
+        draw();
+        showPanel(n);
+        document.querySelectorAll('.min-item').forEach(el => el.classList.remove('active'));
+        const mi = document.querySelector(`.min-item[data-id="${p.minId}"]`);
+        if (mi) mi.classList.add('active');
+      }
+    });
+  }
+  return row;
+}
+
+function highlightCabRow(minId) {
+  document.querySelectorAll('.cab-row').forEach(r => r.classList.remove('active'));
+  const r = document.getElementById('cab-row-' + minId);
+  if (r) {
+    r.classList.add('active');
+    r.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+}
+
+
+
+function toggleCabinet() {
+  cabVisible = !cabVisible;
+  const p = document.getElementById('cab-panel');
+  const btn = document.getElementById('btn-cabinet');
+  p.classList.toggle('hidden', !cabVisible);
+  btn.classList.toggle('active', cabVisible);
+}
+
+
+
+// ═══════════════════════════════════════
+//  CABINET GRID VIEW
+// ═══════════════════════════════════════
+const GRID_DEPUTIES = [
+  {name:"นายพิพัฒน์ รัชกิจประการ",  role:"รองนายกฯ + รมว.คมนาคม",     party:"ภูมิใจไทย",              minId:"08", emoji:"🚂"},
+  {name:"นายทรงศักดิ์ ทองศรี",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย",              minId:null, emoji:"⚖️"},
+  {name:"นายเอกนิติ นิติทัณฑ์ประภาศ",role:"รองนายกฯ + รมว.คลัง",       party:"ภูมิใจไทย (คนนอก)",      minId:"03", emoji:"💰"},
+  {name:"นายสีหศักดิ์ พวงเกตุแก้ว",  role:"รองนายกฯ + รมว.ต่างประเทศ",  party:"ภูมิใจไทย (คนนอก)",      minId:"04", emoji:"🌐"},
+  {name:"นางศุภจี สุธรรมพันธุ์",      role:"รองนายกฯ + รมว.พาณิชย์",    party:"ภูมิใจไทย (คนนอก)",      minId:"13", emoji:"📦"},
+  {name:"นายปกรณ์ นิลประพันธ์",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย (คนนอก)",      minId:null, emoji:"📜"},
+  {name:"นายยศชนัน วงศ์สวัสดิ์",     role:"รองนายกฯ + รมว.อุดมศึกษา",  party:"เพื่อไทย",               minId:"18", emoji:"🎓"},
+];
+const GRID_MINISTERS = [
+  {name:"นางสาวศุภมาส อิศรภักดี",     role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
+  {name:"นายนภินทร ศรีสรรพางค์",      role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
+  {name:"นายภราดร ปริศนานันทกุล",      role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
+  {name:"พลโท อดุลย์ บุญธรรมเจริญ",   role:"รมว.กลาโหม",                 party:"ภูมิใจไทย (คนนอก)",      minId:"02", emoji:"🛡️"},
+  {name:"นายสุรศักดิ์ พันธ์เจริญวรกุล",role:"รมว.การท่องเที่ยวและกีฬา",  party:"ภูมิใจไทย",              minId:"05", emoji:"✈️"},
+  {name:"นายนิกร โสมกลาง",             role:"รมว.การพัฒนาสังคมฯ",         party:"เพื่อไทย",               minId:"06", emoji:"🏘️"},
+  {name:"นายสุริยะ จึงรุ่งเรืองกิจ",  role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",               minId:"07", emoji:"🌾"},
+  {name:"นายไชยชนก ชิดชอบ",           role:"รมว.ดิจิทัลเพื่อเศรษฐกิจฯ",  party:"ภูมิใจไทย",              minId:"11", emoji:"💻"},
+  {name:"นายสุชาติ ชมกลิ่น",           role:"รมว.ทรัพยากรธรรมชาติฯ",      party:"รวมไทยสร้างชาติ",        minId:"09", emoji:"🌿"},
+  {name:"นายเอกนัฏ พร้อมพัฒน์",       role:"รมว.พลังงาน",                 party:"รวมไทยสร้างชาติ",        minId:"12", emoji:"⚡"},
+  {name:"นายพลพีร์ สุวรรณฉวี",        role:"รมช.มหาดไทย",                party:"ภูมิใจไทย",              minId:"14", emoji:"🏙️"},
+  {name:"พลตำรวจโท รุทธพล เนาวรัตน์", role:"รมว.ยุติธรรม",               party:"ภูมิใจไทย (คนนอก)",      minId:"15", emoji:"⚖️"},
+  {name:"นายจุลพันธ์ อมรวิวัฒน์",     role:"รมว.แรงงาน",                 party:"เพื่อไทย",               minId:"16", emoji:"👷"},
+  {name:"นางสาวซาบีดา ไทยเศรษฐ",      role:"รมว.วัฒนธรรม",               party:"ภูมิใจไทย",              minId:"17", emoji:"🎭"},
+  {name:"นายประเสริฐ จันทรรวงทอง",    role:"รมว.ศึกษาธิการ",             party:"เพื่อไทย",               minId:"19", emoji:"📚"},
+  {name:"นายพัฒนา พร้อมพัฒน์",        role:"รมว.สาธารณสุข",              party:"เพื่อไทย",               minId:"21", emoji:"🏥"},
+  {name:"นายวราวุธ ศิลปอาชา",          role:"รมว.อุตสาหกรรม",             party:"ชาติไทยพัฒนา",           minId:"22", emoji:"🏭"},
+];
+
+function buildGridCard(p) {
+  const pc = PARTY_COLORS[p.party] || '#8a97aa';
+  const card = document.createElement('div');
+  card.className = 'grid-card';
+  card.dataset.party = p.party;
+  card.style.setProperty('--gcard-color', pc);
+  card.innerHTML = `
+    <div class="grid-card-avatar">${p.emoji}</div>
+    <div class="grid-card-name">${p.name}</div>
+    <div class="grid-card-role">${p.role}</div>
+    <div class="grid-card-footer">
+      <span class="grid-card-party" style="background:${pc}22;color:${pc};border-color:${pc}44">${p.party}</span>
+      ${p.minId ? `<button class="grid-card-min-btn" onclick="goToMinistryFromGrid('${p.minId}')">⊙ ดูกระทรวง</button>` : ''}
+    </div>`;
+  return card;
+}
+
+function buildGridView() {
+  gridPartyFilter = null;   // always open showing the full cabinet
+  // PM card
+  const pmWrap = document.getElementById('grid-pm-wrap');
+  const pc = PARTY_COLORS['ภูมิใจไทย'];
+  pmWrap.innerHTML = `
+    <div class="grid-pm-card" data-party="${CABINET_PM.party}">
+      <div class="grid-pm-avatar">👑</div>
+      <div class="grid-pm-info">
+        <div class="grid-pm-name">${CABINET_PM.name}</div>
+        <div class="grid-pm-role">${CABINET_PM.role} · พรรค${CABINET_PM.party}</div>
+        <div class="grid-pm-meta">
+          <span class="grid-pm-badge" style="background:${pc}22;color:${pc};border:1px solid ${pc}44">${CABINET_PM.party}</span>
+          <span class="grid-pm-badge" style="background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2)">ควบ รมว.มหาดไทย</span>
+          <span class="grid-pm-badge" style="background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2)">ครม.ชุดที่ 66</span>
+        </div>
+      </div>
+      <button class="grid-card-min-btn" style="align-self:flex-start;font-size:11px;padding:5px 12px" onclick="goToMinistryFromGrid('14')">⊙ ดูกระทรวงมหาดไทย</button>
+    </div>`;
+  // Deputy PMs
+  const depCont = document.getElementById('grid-deputy-cards');
+  depCont.innerHTML = '';
+  GRID_DEPUTIES.forEach(p => depCont.appendChild(buildGridCard(p)));
+  // Ministers
+  const minCont = document.getElementById('grid-minister-cards');
+  minCont.innerHTML = '';
+  GRID_MINISTERS.forEach(p => minCont.appendChild(buildGridCard(p)));
+  // Party pills
+  const pills = document.getElementById('grid-party-pills');
+  pills.innerHTML = '';
+  const parties = [...new Set([...GRID_DEPUTIES, ...GRID_MINISTERS].map(p => p.party))];
+  parties.forEach(party => {
+    const pc2 = PARTY_COLORS[party] || '#8a97aa';
+    const btn = document.createElement('div');
+    btn.className = 'party-pill';
+    btn.dataset.party = party;
+    btn.style.cssText = `background:${pc2}22;color:${pc2};border-color:${pc2}55`;
+    btn.title = `กรองเฉพาะพรรค${party} (กดซ้ำเพื่อยกเลิก)`;
+    btn.textContent = party;
+    btn.onclick = () => filterGridByParty(party);
+    pills.appendChild(btn);
+  });
+  // Apply current party filter (also refreshes the count label)
+  applyGridFilter();
+}
+
+// ── Clickable party-pill filtering for the cabinet grid ──
+let gridPartyFilter = null;
+function filterGridByParty(party) {
+  gridPartyFilter = (gridPartyFilter === party) ? null : party;
+  applyGridFilter();
+}
+function applyGridFilter() {
+  const f = gridPartyFilter;
+  // pills: highlight the active one, dim the rest
+  document.querySelectorAll('#grid-party-pills .party-pill').forEach(p => {
+    const match = !f || p.dataset.party === f;
+    p.classList.toggle('dim', !match);
+    p.classList.toggle('active', !!f && p.dataset.party === f);
+  });
+  // cards: show only the matching party
+  let shown = 0;
+  document.querySelectorAll('.grid-pm-card[data-party], .grid-card[data-party]').forEach(c => {
+    const match = !f || c.dataset.party === f;
+    c.style.display = match ? '' : 'none';
+    if (match) shown++;
+  });
+  // section headers: hide a section whose cards are all filtered out
+  const depCont = document.getElementById('grid-deputy-cards');
+  const minCont = document.getElementById('grid-minister-cards');
+  const hasVisible = cont => !!cont && [...cont.querySelectorAll('[data-party]')]
+    .some(c => c.style.display !== 'none');
+  if (depCont && depCont.previousElementSibling)
+    depCont.previousElementSibling.style.display = hasVisible(depCont) ? '' : 'none';
+  if (minCont && minCont.previousElementSibling)
+    minCont.previousElementSibling.style.display = hasVisible(minCont) ? '' : 'none';
+  // count label reflects the active filter
+  const label = document.getElementById('grid-count-label');
+  if (label) {
+    if (f) {
+      label.textContent = `กรอง: พรรค${f} · ${shown} คน · กดป้ายซ้ำเพื่อดูทั้งหมด`;
+    } else {
+      const allMins = [CABINET_PM, ...GRID_DEPUTIES, ...GRID_MINISTERS];
+      const uniqueParties = new Set(allMins.map(p => p.party)).size;
+      label.textContent = `รมต. ${allMins.length} คน · ${uniqueParties} พรรค`;
+    }
+  }
+}
+
+function goToMinistryFromGrid(minId) {
+  showGridView(false);
+  document.getElementById('btn-view-radial').classList.add('active');
+  document.getElementById('btn-view-grid').classList.remove('active');
+  currentView = 'radial';
+  setTimeout(() => {
+    buildLayout(); fitView(); draw();
+    const n = nodes.find(nd => nd.isMinistry && nd.data?.id === minId);
+    if (n) {
+      const MAIN = document.getElementById('main');
+      offsetX = MAIN.clientWidth/2 - n.x * scale;
+      offsetY = MAIN.clientHeight/2 - n.y * scale;
+      draw(); showPanel(n);
+    }
+  }, 60);
+}
+
+function showGridView(on) {
+  const overlay  = document.getElementById('grid-overlay');
+  const canvas   = document.getElementById('canvas');
+  const zoomCtrl = document.getElementById('zoom-ctrl');
+  const coords   = document.getElementById('coords');
+  const sidebar  = document.getElementById('sidebar');
+  if (on) {
+    buildGridView();
+    overlay.classList.add('show');
+    canvas.style.display = 'none';
+    zoomCtrl.style.display = 'none';
+    coords.style.display = 'none';
+    sidebar.style.display = 'none';
+    if (cabVisible) document.getElementById('cab-panel').classList.add('hidden');
+  } else {
+    overlay.classList.remove('show');
+    canvas.style.display = '';
+    zoomCtrl.style.display = '';
+    coords.style.display = '';
+    sidebar.style.display = '';
+    if (cabVisible) document.getElementById('cab-panel').classList.remove('hidden');
+  }
+}
+
+
+
+// ═══════════════════════════════════════
+//  CORRUPTION DATA
+// ═══════════════════════════════════════
+const CORRUPT_DATA = [
+  {rank:1, name:"ตำรวจ (National Police)", risk:"ส่วย · การเรียกรับเงินสินบน · การแต่งตั้งโยกย้าย", source:"ดัชนีภาพลักษณ์คอร์รัปชัน (CPI)"},
+  {rank:2, name:"กรมการปกครอง / ท้องถิ่น", risk:"งบประมาณก่อสร้าง · การอนุมัติใบอนุญาต", source:"สวนดุสิตโพล / นิด้าโพล"},
+  {rank:3, name:"กรมศุลกากร (Customs)", risk:"การหลีกเลี่ยงภาษีนำเข้า · การตรวจปล่อยสินค้า", source:"รายงาน ป.ป.ช. / ป.ป.ท."},
+  {rank:4, name:"กรมที่ดิน (Land Department)", risk:"การออกเอกสารสิทธิ์มิชอบ · การประเมินราคา", source:"รายงาน ป.ป.ช."},
+  {rank:5, name:"กรมขนส่งทางบก (Transport)", risk:"การทำใบขับขี่ · การตรวจสภาพรถ", source:"สถิติการร้องเรียนผู้บริโภค"},
+  {rank:6, name:"หน่วยงานจัดซื้อจัดจ้างภาครัฐ", risk:"การฮั้วประมูล · เงินทอนโครงการ", source:"ข่าวเจาะลึกงบประมาณรัฐ"},
+  {rank:7, name:"กรมสรรพากร (Revenue Dept.)", risk:"การต่อรองภาษี · คืนภาษีเท็จ", source:"กรณีศึกษาการทุจริตในอดีต"},
+  {rank:8, name:"รัฐวิสาหกิจขนาดใหญ่", risk:"โครงการลงทุนขนาดใหญ่ · ผลประโยชน์ทับซ้อน", source:"รายงานการตรวจสอบสตง."},
+  {rank:9, name:"อปท. (องค์กรปกครองส่วนท้องถิ่น)", risk:"การจัดซื้อวัสดุอุปกรณ์ · การจ้างงาน", source:"สถิติคดีทุจริตศาลอาญาคดีทุจริตฯ"},
+  {rank:10, name:"ระบบราชการส่วนกลาง", risk:"การทุจริตเชิงนโยบาย · งบสัมมนา/ดูงาน", source:"งานวิจัยด้านรัฐศาสตร์"},
+];
+
+// Corruption mapping: index → {ministryId, orgNo} or null
+// For specific organizations, map to both; for general departments, map to ministry only
+const CORRUPT_MIN_MAP = {
+  1:{minId:'23',orgNo:'155'},      // National Police Office
+  2:{minId:'14',orgNo:'106,111'},  // DOPA / DLA in Interior
+  3:{minId:'03',orgNo:'023'},      // Customs in Finance
+  4:{minId:'14',orgNo:'108'},      // Land Department in Interior
+  5:{minId:'08',orgNo:'072'},      // Transport in Transport Ministry
+  6:null,                          // General procurements (no specific org)
+  7:{minId:'03',orgNo:'025'},      // Revenue Dept in Finance
+  8:null,                          // Large SOEs (no specific org)
+  9:null,                          // Local government (no specific org)
+  10:null                          // Central bureaucracy (no specific org)
+};
+
+let corruptSort = 'rank';
+let corruptQuery = '';
+
+const RANK_COLORS = ['#ff2222','#ff3a3a','#ff5555','#ff7043','#ff8c00','#ffaa00','#ffc200','#e8d44d','#c0c060','#90b090'];
+
+function buildCorruptView(data) {
+  data = data || CORRUPT_DATA;
+  const list = document.getElementById('corrupt-list');
+  list.innerHTML = '';
+  document.getElementById('c-filtered-n').textContent = data.length;
+  document.getElementById('c-results-count').textContent = `แสดง ${data.length} รายการ`;
+  data.forEach((d, i) => {
+    const barW = Math.round(100 - (d.rank - 1) * 8.5);
+    const color = RANK_COLORS[d.rank - 1] || '#888';
+    const risks = d.risk.split('·').map(r => `<span>${r.trim()}</span>`).join('');
+    const mapping = CORRUPT_MIN_MAP[d.rank];
+    const orgArg = mapping?.orgNo || '';
+    const mapBtn = mapping
+      ? `<button class="corrupt-map-btn" onclick="goToMinistryFromCorrupt('${mapping.minId}','${orgArg}')">⊙ ดูแผนที่</button>`
+      : '';
+    const card = document.createElement('div');
+    card.className = 'corrupt-card';
+    card.style.setProperty('--ccard-color', color);
+    card.style.animationDelay = (i * 0.045) + 's';
+    card.dataset.rank = d.rank;
+    card.dataset.name = d.name;
+    card.innerHTML = `
+      <div class="corrupt-rank">${d.rank}</div>
+      <div class="corrupt-name">${d.name}</div>
+      ${mapBtn}
+      <div class="corrupt-risk">${risks}</div>
+      <div class="corrupt-source">📎 ${d.source}</div>
+      <div class="corrupt-bar-wrap"><div class="corrupt-bar" style="width:${barW}%"></div></div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function sortCorrupt(by) {
+  corruptSort = by;
+  document.querySelectorAll('.c-sort-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('csort-'+by).classList.add('active');
+  renderCorruptFiltered();
+}
+
+function renderCorruptFiltered() {
+  let data = [...CORRUPT_DATA];
+  if (corruptQuery) {
+    const q = corruptQuery.toLowerCase();
+    data = data.filter(d => d.name.toLowerCase().includes(q) || d.risk.toLowerCase().includes(q) || d.source.toLowerCase().includes(q));
+  }
+  if (corruptSort === 'name') data.sort((a,b) => a.name.localeCompare(b.name, 'th'));
+  else data.sort((a,b) => a.rank - b.rank);
+  buildCorruptView(data);
+}
+
+function goToMinistryFromCorrupt(minId, orgNo) {
+  showCorruptView(false);
+  currentView = 'radial';
+  ['radial','force','grid'].forEach(v =>
+    document.getElementById('btn-view-'+v).classList.toggle('active', v==='radial'));
+  buildLayout();
+  draw();
+
+  const performNavigation = () => {
+    const MAIN = document.getElementById('main');
+    const orgNos = orgNo ? orgNo.split(',').map(s => s.trim()).filter(Boolean) : [];
+    let targetNode = null;
+
+    if (orgNos.length) {
+      for (const no of orgNos) {
+        targetNode = nodes.find(nd => nd.data?.no === no);
+        if (targetNode) break;
+      }
+    }
+
+    if (!targetNode && orgNo) {
+      const normalized = orgNo.trim();
+      targetNode = nodes.find(nd => nd.data?.no === normalized);
+    }
+
+    if (!targetNode) {
+      targetNode = nodes.find(nd => nd.isMinistry && nd.data?.id === minId);
+    }
+
+    if (!targetNode) {
+      console.warn('goToMinistryFromCorrupt: target node not found', minId, orgNo);
+      return;
+    }
+
+    const isOrg = !targetNode.isMinistry;
+    scale = isOrg ? 3.5 : 2.0;
+    offsetX = MAIN.clientWidth / 2 - targetNode.x * scale;
+    offsetY = MAIN.clientHeight / 2 - targetNode.y * scale;
+
+    selectedNode = targetNode;
+    connectedSet = new Set([targetNode]);
+
+    if (isOrg) {
+      const mn = nodes.find(n => n.isMinistry && n.data?.id === targetNode.ministryID);
+      if (mn) {
+        connectedSet.add(mn);
+        if (!mn.standalone) connectedSet.add(nodes[0]);
+        nodes.forEach(n => { if (n.ministryID === targetNode.ministryID) connectedSet.add(n); });
+      }
+      if (orgNos.length) {
+        orgNos.forEach(no => {
+          const orgNode = nodes.find(nd => nd.data?.no === no);
+          if (orgNode) connectedSet.add(orgNode);
+        });
+      }
+    } else {
+      if (!targetNode.standalone) connectedSet.add(nodes[0]);
+      nodes.forEach(n => { if (n.ministryID === targetNode.data?.id) connectedSet.add(n); });
+    }
+
+    draw();
+    showPanel(targetNode);
+
+    const origR = targetNode.r;
+    let step = 0;
+    const pulse = setInterval(() => {
+      step++;
+      targetNode.r = origR + Math.sin(step * 0.4) * origR * 0.9;
+      draw();
+      if (step >= 22) { targetNode.r = origR; clearInterval(pulse); draw(); }
+    }, 40);
+
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('mob-overlay');
+    if (sb && sb.classList.contains('mob-open')) {
+      sb.classList.remove('mob-open');
+      if (ov) ov.classList.remove('active');
+    }
+  };
+
+  if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(() => window.requestAnimationFrame(performNavigation));
+  } else {
+    setTimeout(performNavigation, 150);
+  }
+}
+
+function showCorruptView(on) {
+  const overlay  = document.getElementById('corrupt-overlay');
+  const canvas   = document.getElementById('canvas');
+  const zoomCtrl = document.getElementById('zoom-ctrl');
+  const coords   = document.getElementById('coords');
+  const sidebar  = document.getElementById('sidebar');
+  if (on) {
+    corruptQuery = ''; corruptSort = 'rank';
+    document.querySelectorAll('.c-sort-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('csort-rank').classList.add('active');
+    renderCorruptFiltered();
+    overlay.classList.add('show');
+    canvas.style.display = 'none';
+    zoomCtrl.style.display = 'none';
+    coords.style.display = 'none';
+    // Close mobile sidebar when opening corrupt view
+    const sb2 = document.getElementById('sidebar');
+    const ov2 = document.getElementById('mob-overlay');
+    if (sb2) { sb2.classList.remove('mob-open'); }
+    if (ov2) { ov2.classList.remove('active'); }
+    sidebar.style.display = 'none';
+    if (cabVisible) document.getElementById('cab-panel').classList.add('hidden');
+    // wire search
+    const srch = document.getElementById('corrupt-search');
+    srch.value = '';
+    srch.oninput = () => { corruptQuery = srch.value.trim(); renderCorruptFiltered(); };
+  } else {
+    overlay.classList.remove('show');
+    canvas.style.display = '';
+    zoomCtrl.style.display = '';
+    coords.style.display = '';
+    sidebar.style.display = '';
+    if (cabVisible) document.getElementById('cab-panel').classList.remove('hidden');
+  }
+}
+
+// ── INIT ──
+window.addEventListener('resize',resize);
+resize();
+buildCabPanel();
+// On mobile the cabinet is a full bottom sheet — start it closed so the diagram is visible on load
+if (window.matchMedia('(max-width: 640px)').matches) {
+  cabVisible = false;
+  document.getElementById('cab-panel').classList.add('hidden');
+} else {
+  document.getElementById('btn-cabinet').classList.add('active');
+}
+</script>
+<div id="mob-overlay" onclick="toggleMobSidebar()"></div>
+</body>
+</html>

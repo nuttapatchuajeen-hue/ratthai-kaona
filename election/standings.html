@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>คะแนนพรรค · ว่าที่ ส.ส. 500 · เลือกตั้ง 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<script>
+function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+mdThemeIcon();
+</script>
+
+<nav class="navpill">
+  <a href="../hub/index.html" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="กลับหน้าหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+</nav>
+
+<div class="subpage">
+  <header class="pagehead">
+    <svg class="tri" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="29" y="5" width="16" height="2.4" rx="1.2" fill="#A51931"/><rect x="29" y="8.4" width="16" height="3.2" rx="1.2" fill="#2D2A4A"/><rect x="29" y="12.6" width="16" height="2.4" rx="1.2" fill="#A51931"/><g transform="rotate(-7 21 13)"><rect x="12" y="3" width="18.5" height="17" rx="2.2" fill="#fff" stroke="#2D2A4A" stroke-width="1.6"/><path d="M16.5 11.3 l3.2 3.3 L26.5 8" stroke="#1FA463" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M6.5 22 H41.5 L38 41 H10 Z" fill="#2D2A4A"/><path d="M6.5 22 H41.5 L38.7 27 H9.3 Z" fill="#3b366a"/><rect x="17" y="22.6" width="14" height="3.4" rx="1.7" fill="#fff" opacity=".9"/></svg>
+    <div class="bt">ว่าที่ ส.ส. 500<small>เลือกตั้ง 2569</small></div>
+    <div class="ballot"><span class="b46">เลือกตั้ง</span><span class="bx">✕</span></div>
+  </header>
+
+  <div class="wrap">
+    <div class="statrow">
+      <div class="tile"><div class="v num" data-count="500">0</div><div class="l">ที่นั่งทั้งหมด</div></div>
+      <div class="tile"><div class="v num" data-count="400">0</div><div class="l">แบบแบ่งเขต</div></div>
+      <div class="tile"><div class="v num" data-count="100">0</div><div class="l">แบบบัญชีรายชื่อ</div></div>
+      <div class="tile alt"><div class="v num" data-count="22">0</div><div class="l">พรรคการเมือง</div></div>
+    </div>
+    <div class="sec-head">
+      <div><span class="kick">Party Standings</span><h1>จำนวน<span class="o">ที่นั่ง</span>รายพรรค</h1></div>
+      <p>เรียงตามจำนวนที่นั่งรวม แยกส่วนแบ่งเขตและบัญชีรายชื่อในแต่ละแถบ</p>
+    </div>
+    <div class="panelbox">
+      <div class="bars" id="bars"></div>
+      <div class="legend-split"><span><i></i> แบบแบ่งเขต</span><span><i class="l2"></i> แบบบัญชีรายชื่อ</span></div>
+      <div class="minor" id="minor"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="fcol"><h4>ว่าที่ ส.ส. 500 · 2569</h4><p>แสดงผลข้อมูลรายชื่อว่าที่สมาชิกสภาผู้แทนราษฎร แบบแบ่งเขต 400 และบัญชีรายชื่อ 100 พร้อมแผนที่ผลการเลือกตั้งรายจังหวัด</p></div>
+      <div class="fcol"><h4>แหล่งข้อมูล</h4><ul>
+        <li>• รายชื่อ ส.ส.: ไฟล์ รายชื่อว่าที่สส_500_ครบถ้วน.xlsx</li>
+        <li>• แผนที่จังหวัด: simplemaps.com/gis/country/th</li>
+        <li>• ภาพถ่าย ส.ส.: สำนักงานเลขาธิการสภาผู้แทนราษฎร (<a href="https://www.parliament.go.th" target="_blank" rel="noopener">www.parliament.go.th</a>)</li></ul>
+        <p class="cite">สำนักงานเลขาธิการสภาผู้แทนราษฎร. (2569). [ชื่อ-นามสกุล ส.ส.] สมาชิกสภาผู้แทนราษฎร ชุดที่ 27. สืบค้นเมื่อ 2 มิถุนายน 2569, จาก https://www.parliament.go.th</p></div>
+      <div class="fcol"><h4>หมายเหตุ</h4><p>หน้านี้จัดทำเพื่อการแสดงผลข้อมูลเท่านั้น</p></div>
+    </div>
+  </footer>
+</div>
+
+<nav class="mobnav" aria-label="เมนูหลัก">
+  <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+</nav>
+
+<script>window.DATA = {"partyMeta":{"PPC":{"th":"พรรคประชาชน","short":"ประชาชน","color":"#FF6A13"},"BJT":{"th":"พรรคภูมิใจไทย","short":"ภูมิใจไทย","color":"#0E2F6B"},"PT":{"th":"พรรคเพื่อไทย","short":"เพื่อไทย","color":"#ED1C24"},"KLT2":{"th":"พรรคกล้าธรรม","short":"กล้าธรรม","color":"#14A07A"},"DEM":{"th":"พรรคประชาธิปัตย์","short":"ประชาธิปัตย์","color":"#27AAE1"},"TRP":{"th":"พรรคไทรวมพลัง","short":"ไทรวมพลัง","color":"#8E44AD"},"PCC":{"th":"พรรคประชาชาติ","short":"ประชาชาติ","color":"#0B6E4F"},"PPR":{"th":"พรรคพลังประชารัฐ","short":"พลังประชารัฐ","color":"#3F51B5"},"ECO":{"th":"พรรคเศรษฐกิจ","short":"เศรษฐกิจ","color":"#B7791F"},"TST2":{"th":"พรรคไทยสร้างไทย","short":"ไทยสร้างไทย","color":"#E0218A"},"UTN":{"th":"พรรครวมไทยสร้างชาติ","short":"รวมไทยสร้างชาติ","color":"#C81E3A"},"PCT":{"th":"พรรคเพื่อชาติไทย","short":"เพื่อชาติไทย","color":"#6D4C41"},"OKM":{"th":"พรรคโอกาสใหม่","short":"โอกาสใหม่","color":"#7F8C8D"},"RJT":{"th":"พรรครวมใจไทย","short":"รวมใจไทย","color":"#95A5A6"},"NEW":{"th":"พรรคใหม่","short":"ใหม่","color":"#7F8C8D"},"TST":{"th":"พรรคไทยทรัพย์ทวี","short":"ไทยทรัพย์ทวี","color":"#95A5A6"},"NDP":{"th":"พรรคประชาธิปไตยใหม่","short":"ประชาธิปไตยใหม่","color":"#7F8C8D"},"NDM":{"th":"พรรคมิติใหม่","short":"มิติใหม่","color":"#95A5A6"},"TPD":{"th":"พรรคไทยภักดี","short":"ไทยภักดี","color":"#7F8C8D"},"RPP":{"th":"พรรครวมพลังประชาชน","short":"รวมพลังประชาชน","color":"#95A5A6"},"SRT":{"th":"พรรคเสรีรวมไทย","short":"เสรีรวมไทย","color":"#7F8C8D"},"NAP":{"th":"พรรคทางเลือกใหม่","short":"ทางเลือกใหม่","color":"#95A5A6"}},"seatTotals":{"BJT":193,"PPC":118,"PT":74,"KLT2":58,"DEM":22,"PCC":5,"TST2":2,"PPR":5,"TRP":6,"OKM":1,"ECO":3,"UTN":2,"PCT":2,"RJT":1,"NEW":1,"TST":1,"NDP":1,"NDM":1,"TPD":1,"RPP":1,"SRT":1,"NAP":1},"seatByType":{"BJT":{"zone":174,"list":19},"PPC":{"zone":87,"list":31},"PT":{"zone":58,"list":16},"KLT2":{"zone":56,"list":2},"DEM":{"zone":10,"list":12},"PCC":{"zone":4,"list":1},"TST2":{"zone":1,"list":1},"PPR":{"zone":4,"list":1},"TRP":{"zone":5,"list":1},"OKM":{"zone":1,"list":0},"ECO":{"zone":0,"list":3},"UTN":{"zone":0,"list":2},"PCT":{"zone":0,"list":2},"RJT":{"zone":0,"list":1},"NEW":{"zone":0,"list":1},"TST":{"zone":0,"list":1},"NDP":{"zone":0,"list":1},"NDM":{"zone":0,"list":1},"TPD":{"zone":0,"list":1},"RPP":{"zone":0,"list":1},"SRT":{"zone":0,"list":1},"NAP":{"zone":0,"list":1}},"meta":{"totalSeats":500,"zone":400,"list":100,"parties":22}};</script>
+<script>
+(function(){
+  const D=window.DATA, PM=D.partyMeta;
+  const shortOf=c=>(PM[c]&&PM[c].short)||c, colorOf=c=>(PM[c]&&PM[c].color)||'#B9AFA4';
+  // count-up
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.dataset.count,t0=performance.now();
+    (function step(t){const p=Math.min(1,(t-t0)/1000),e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e).toLocaleString('en-US');if(p<1)requestAnimationFrame(step);})(t0);
+  });
+  const totals=Object.entries(D.seatTotals).sort((a,b)=>b[1]-a[1]), max=totals[0][1];
+  const barsEl=document.getElementById('bars');
+  totals.filter(([c,n])=>n>=10).forEach(([code,n],i)=>{
+    const sb=D.seatByType[code],col=colorOf(code),row=document.createElement('div');row.className='barrow';
+    row.innerHTML=`<div class="rk">${i+1}</div><div class="pn"><span class="sw" style="background:${col}"></span><span>${shortOf(code)}</span></div>
+      <div class="track"><div class="seg" style="width:0;background:${col}" data-w="${sb.zone/max*100}"></div><div class="seg list" style="width:0;background:${col}" data-w="${sb.list/max*100}"></div></div>
+      <div class="ct">${n}<small>เขต ${sb.zone} · บัญชี ${sb.list}</small></div>`;
+    barsEl.appendChild(row);
+  });
+  requestAnimationFrame(()=>barsEl.querySelectorAll('.seg').forEach(s=>setTimeout(()=>s.style.width=s.dataset.w+'%',80)));
+  const minorEl=document.getElementById('minor');
+  totals.filter(([c,n])=>n<10).forEach(([code,n])=>{const d=document.createElement('span');d.className='mp';
+    d.innerHTML=`<span class="sw" style="background:${colorOf(code)}"></span>${shortOf(code)} <b>${n}</b>`;minorEl.appendChild(d);});
+})();
+</script>
+</body>
+</html>

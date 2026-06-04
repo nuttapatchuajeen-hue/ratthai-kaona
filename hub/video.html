@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>วิดีโอ — เทคโนโลยีภาครัฐ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400&family=Prompt:wght@700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep:       #020508;
+      --bg-dark:       #070D14;
+      --accent-cyan:   #00E5FF;
+      --accent-orange: #FF5C1A;
+      --text-primary:  #DCE8F0;
+      --text-muted:    #4A6070;
+      --font-display:  'Bebas Neue', 'Prompt', sans-serif;
+      --font-sub:      'Rajdhani', 'Sarabun', sans-serif;
+      --font-mono:     'IBM Plex Mono', 'Sarabun', monospace;
+    }
+
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    html { 
+      scroll-behavior: smooth; 
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-sub);
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(2,5,8,0.95) 0%, rgba(2,5,8,0) 100%);
+      padding: 0 5vw;
+    }
+
+    .site-header nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4rem;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      padding: 0 1.1rem;
+      height: 4rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-muted);
+      transition: color 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-tab:hover, .nav-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+
+    /* ── VIDEO CONTAINER ── */
+    .video-container {
+      min-height: 100vh;
+      padding-top: 5rem;
+      padding-bottom: 3rem;
+      background: linear-gradient(135deg, rgba(2,5,8,1) 0%, rgba(7,13,20,1) 100%);
+    }
+
+    .video-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 5vw;
+    }
+
+    .video-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .video-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .video-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .video-description {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── VIDEO PLAYER ── */
+    .video-player-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 4rem auto 0;
+      aspect-ratio: 16 / 9;
+      background: var(--bg-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,229,255,0.2);
+      border: 1px solid rgba(0,229,255,0.1);
+    }
+
+    .video-player-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-now-playing {
+      max-width: 1000px;
+      margin: 1.25rem auto 0;
+      text-align: center;
+      font-family: var(--font-sub);
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .video-now-playing .np-link {
+      display: inline-block;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(0,229,255,0.4);
+      border-radius: 4px;
+      padding: 0.15rem 0.6rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .video-now-playing .np-link:hover {
+      background: var(--accent-cyan);
+      color: var(--bg-deep);
+    }
+
+    /* ── VIDEO GRID ── */
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 6rem;
+      padding-top: 4rem;
+      border-top: 1px solid rgba(0,229,255,0.1);
+    }
+
+    .video-grid-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(0,229,255,0.05);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .video-grid-item:hover {
+      background: rgba(0,229,255,0.1);
+      border-color: var(--accent-cyan);
+      transform: translateY(-4px);
+    }
+
+    .video-grid-thumbnail {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(255,92,26,0.1));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .video-grid-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .video-grid-date {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER (ข่าวสารทั่วไป) ── */
+    .footer {
+      border-top: 1px solid rgba(0,229,255,0.1);
+      margin-top: 6rem;
+      background: linear-gradient(to bottom, rgba(7,13,20,0) 0%, rgba(7,13,20,0.6) 100%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-news {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 5vw 3rem;
+    }
+
+    .footer-news-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-news-heading {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+    }
+
+    .footer-news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .footer-news-item {
+      padding: 1.25rem;
+      background: rgba(0,229,255,0.04);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-news-item:hover {
+      background: rgba(0,229,255,0.08);
+      border-color: rgba(0,229,255,0.25);
+      transform: translateY(-3px);
+    }
+
+    .footer-news-date {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent-cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-news-title {
+      font-family: var(--font-sub);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-news-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding: 2rem 5vw;
+      border-top: 1px solid rgba(0,229,255,0.08);
+    }
+
+    .footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: var(--accent-orange);
+    }
+
+    /* ── พื้นที่ว่างด้านล่างสุด ── */
+    .page-bottom-space {
+      height: 12rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 2rem;
+      transition: gap 0.3s;
+    }
+
+    .back-link:hover {
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .video-title {
+        font-size: 2rem;
+      }
+      
+      .videos-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .site-header nav {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <nav>
+      <a href="index.html" class="nav-logo">รัฐไทยก้าวหน้า</a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-tab">← กลับหน้าแรก</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Video Container -->
+  <div class="video-container">
+    <div class="video-content">
+      <a href="index.html" class="back-link">← กลับหน้าแรก</a>
+      
+      <div class="video-header">
+        <span class="video-label">วิดีโอข่าว</span>
+        <h1 class="video-title">ข่าวเทคโนโลยี<br>ภาครัฐไทย</h1>
+        <p class="video-description">ติดตามข่าวและการอัปเดตเทคโนโลยีล่าสุดจากภาครัฐไทยเพื่อการพัฒนาดิจิทัล</p>
+      </div>
+
+      <!-- Main Video Player -->
+      <div class="video-player-wrap">
+        <iframe
+          id="main-video"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          title="Thailand Digital Government News"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen="">
+        </iframe>
+      </div>
+      <p class="video-now-playing" id="now-playing"></p>
+
+      <!-- Other Videos Grid (ดึงสดจาก YouTube RSS — ดูสคริปต์ท้ายไฟล์) -->
+      <h2 style="font-family: var(--font-display); font-size: 2rem; margin-top: 6rem; color: var(--text-primary);">ข่าวและวิดีโออื่น ๆ</h2>
+      <div class="videos-grid" id="videos-grid">
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">📹</div>
+          <span class="video-grid-date">02 มิถุนายน 2026</span>
+          <h3 class="video-grid-title">นโยบายเทคโนโลยีภาครัฐไทยใหม่</h3>
+        </div>
+
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">🎥</div>
+          <span class="video-grid-date">01 มิถุนายน 2026</span>
+          <h3 class="video-grid-title">การอัปเดตระบบดิจิทัลล่าสุด</h3>
+        </div>
+
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">📺</div>
+          <span class="video-grid-date">31 พฤษภาคม 2026</span>
+          <h3 class="video-grid-title">บรรยาย: อธิปไตยดิจิทัล</h3>
+        </div>
+
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">🎬</div>
+          <span class="video-grid-date">28 พฤษภาคม 2026</span>
+          <h3 class="video-grid-title">สัมมนาเทคโนโลยีภาครัฐ 2026</h3>
+        </div>
+
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">📹</div>
+          <span class="video-grid-date">25 พฤษภาคม 2026</span>
+          <h3 class="video-grid-title">เปิดตัวแพลตฟอร์ม รัฐไทยก้าวหน้า</h3>
+        </div>
+
+        <div class="video-grid-item">
+          <div class="video-grid-thumbnail">🎥</div>
+          <span class="video-grid-date">20 พฤษภาคม 2026</span>
+          <h3 class="video-grid-title">การปกครองด้วย AI ที่ชาญฉลาด</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer — พื้นที่ข่าวสารทั่วไป -->
+  <footer class="footer">
+    <div class="footer-news">
+      <span class="footer-news-label">ข่าวสารทั่วไป</span>
+      <h2 class="footer-news-heading">อัปเดตและประกาศล่าสุด</h2>
+      <div class="footer-news-grid">
+        <div class="footer-news-item">
+          <span class="footer-news-date">02 มิถุนายน 2026</span>
+          <h3 class="footer-news-title">เปิดให้บริการระบบยืนยันตัวตนดิจิทัล</h3>
+          <p class="footer-news-text">ประชาชนสามารถยืนยันตัวตนผ่านแอปกลางภาครัฐได้แล้วทั่วประเทศ</p>
+        </div>
+
+        <div class="footer-news-item">
+          <span class="footer-news-date">31 พฤษภาคม 2026</span>
+          <h3 class="footer-news-title">แผนพัฒนาโครงสร้างพื้นฐานดิจิทัล</h3>
+          <p class="footer-news-text">ประกาศแผน 5 ปี เพื่อยกระดับบริการภาครัฐสู่ระบบออนไลน์เต็มรูปแบบ</p>
+        </div>
+
+        <div class="footer-news-item">
+          <span class="footer-news-date">28 พฤษภาคม 2026</span>
+          <h3 class="footer-news-title">อบรมทักษะดิจิทัลสำหรับเจ้าหน้าที่</h3>
+          <p class="footer-news-text">เปิดหลักสูตรอบรมฟรีสำหรับบุคลากรภาครัฐทั่วประเทศ เริ่มลงทะเบียนแล้ว</p>
+        </div>
+
+        <div class="footer-news-item">
+          <span class="footer-news-date">25 พฤษภาคม 2026</span>
+          <h3 class="footer-news-title">ช่องทางรับเรื่องร้องเรียนออนไลน์</h3>
+          <p class="footer-news-text">เพิ่มช่องทางติดต่อและติดตามสถานะคำร้องผ่านระบบกลางตลอด 24 ชั่วโมง</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 รัฐไทยก้าวหน้า — เทคโนโลยีภาครัฐ | <a href="index.html">กลับหน้าแรก</a></p>
+    </div>
+  </footer>
+
+  <!-- พื้นที่ว่างด้านล่างสุด -->
+  <div class="page-bottom-space" aria-hidden="true"></div>
+
+  <!-- ดึงวิดีโอสดจาก YouTube (ถูกกฎหมาย: RSS สาธารณะ + embed iframe ทางการ) -->
+  <script>
+  (function () {
+    // ช่อง YouTube หน่วยงานรัฐ/เทคโนโลยีไทย (ไม่ต้องใช้ API key)
+    var CHANNELS = [
+      'UCwXHoijhO-aJQpIlEmUxB0w', // depa Thailand — สนง.ส่งเสริมเศรษฐกิจดิจิทัล
+      'UCvF4DIEWOnx9eiU0b7ghjIA', // Thai PBS (สำรอง)
+    ];
+    var feedUrl = function (cid) {
+      return 'https://api.rss2json.com/v1/api.json?rss_url=' +
+        encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + cid);
+    };
+
+    var MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    function thaiDate(str) {
+      var d = new Date((str || '').replace(' ', 'T'));
+      if (isNaN(d)) return str || '';
+      return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    }
+    function decode(html) {
+      var t = document.createElement('textarea');
+      t.innerHTML = html || '';
+      return t.value;
+    }
+    function videoId(item) {
+      var m = (item.guid || '').match(/yt:video:([\w-]+)/);
+      if (m) return m[1];
+      m = (item.link || '').match(/[?&]v=([\w-]+)/) || (item.link || '').match(/\/(?:shorts|embed)\/([\w-]+)/);
+      return m ? m[1] : '';
+    }
+
+    var mainVideo = document.getElementById('main-video');
+    var nowPlaying = document.getElementById('now-playing');
+    var grid = document.getElementById('videos-grid');
+
+    function embedUrl(id) {
+      // youtube-nocookie + origin ช่วยลดปัญหา "configuration error" เมื่อรันผ่าน http
+      return 'https://www.youtube-nocookie.com/embed/' + id +
+        '?rel=0&modestbranding=1&origin=' + encodeURIComponent(location.origin);
+    }
+    function watchUrl(id) { return 'https://www.youtube.com/watch?v=' + id; }
+    function isLive(title) { return /\blive\b|🔴|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
+
+    function setMain(v, scroll) {
+      if (!v || !v.id) return;
+      mainVideo.src = embedUrl(v.id);
+      if (nowPlaying) {
+        nowPlaying.innerHTML = 'กำลังเล่น: ' + v.title +
+          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener">▶ เปิดบน YouTube</a>';
+      }
+      if (scroll) document.querySelector('.video-player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function render(items) {
+      var vids = items.map(function (it) {
+        return { id: videoId(it), title: decode(it.title), date: thaiDate(it.pubDate),
+                 thumb: it.thumbnail || (it.enclosure && it.enclosure.link) || '',
+                 live: isLive(decode(it.title)) };
+      }).filter(function (v) { return v.id; });
+      if (!vids.length) return false;
+
+      // จัดวิดีโอที่ไม่ใช่ Live ขึ้นก่อน (Live มักฝังเล่นไม่ติด)
+      vids.sort(function (a, b) { return (a.live ? 1 : 0) - (b.live ? 1 : 0); });
+
+      // วิดีโอแรก (ไม่ใช่ Live) = เล่นบน player หลัก โดยไม่เลื่อนจอ
+      setMain(vids[0], false);
+
+      grid.innerHTML = vids.map(function (v) {
+        var thumb = v.thumb
+          ? '<div class="video-grid-thumbnail" style="background-image:url(\'' + v.thumb + '\');background-size:cover;background-position:center;"></div>'
+          : '<div class="video-grid-thumbnail">📹</div>';
+        return '<div class="video-grid-item" data-id="' + v.id + '" data-title="' + v.title.replace(/"/g, '&quot;') + '">' +
+          thumb +
+          '<span class="video-grid-date">' + v.date + '</span>' +
+          '<h3 class="video-grid-title">' + v.title + '</h3>' +
+        '</div>';
+      }).join('');
+      return true;
+    }
+
+    // คลิกการ์ดเพื่อเล่นบน player หลัก
+    grid.addEventListener('click', function (e) {
+      var card = e.target.closest('.video-grid-item');
+      if (!card || !card.dataset.id) return;
+      setMain({ id: card.dataset.id, title: card.dataset.title }, true);
+    });
+
+    (function tryFeeds(i) {
+      if (i >= CHANNELS.length) return; // ล้มเหลวทั้งหมด → คงการ์ด placeholder เดิม
+      fetch(feedUrl(CHANNELS[i]))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.status === 'ok' && d.items && d.items.length && render(d.items)) return;
+          tryFeeds(i + 1);
+        })
+        .catch(function () { tryFeeds(i + 1); });
+    })(0);
+  })();
+  </script>
+
+</body>
+</html>

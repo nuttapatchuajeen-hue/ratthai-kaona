@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>ชุดคณะรัฐมนตรี · รัฐบาลอนุทิน ชาญวีรกูล — รัฐไทยก้าวหน้า</title>
+<meta name="description" content="ทำเนียบคณะรัฐมนตรีไทย — รายชื่อรัฐมนตรีรายกระทรวง นโยบายรัฐบาล และโครงสร้างฝ่ายบริหาร 20 กระทรวง ในชุดแดชบอร์ด รัฐไทยก้าวหน้า" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ink-950:#070810;
+  --ink-900:#0A0C15;
+  --ink-850:#0E101A;
+  --ink-800:#13161F;
+  --ink-750:#191C28;
+  --ink-700:#222637;
+  --gold:#C9A227;
+  --gold-bright:#E7CD6F;
+  --gold-deep:#9A7B1A;
+  --gold-soft:rgba(201,162,39,.12);
+  --gold-line:rgba(201,162,39,.22);
+  --cream:#ECE6D4;
+  --cream-2:#CFC8B4;
+  --dim:#8C8775;
+  --muted:#605D52;
+  --steel:#5E84C4;
+  --steel-soft:rgba(94,132,196,.14);
+  --line-soft:rgba(255,255,255,.06);
+  /* spotlight pointer — ตั้งค่าโดย JS · ค่าเริ่มต้น = กลางจอ */
+  --x:0; --y:0; --xp:.5; --yp:.5;
+  --maxw:1220px;
+  --serif:"Noto Serif Thai",serif;
+  --sans:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --label:"Archivo","IBM Plex Sans Thai",sans-serif;
+  --display:"Bebas Neue","Archivo",sans-serif;
+}
+/* ===== LIGHT MODE — โหมดสว่าง (ปุ่ม 🌙/☀️ · จำค่าไว้ที่ localStorage 'md-theme') ===== */
+html[data-theme="light"]{
+  --ink-950:#F5F0E3; --ink-900:#EFE8D8; --ink-850:#EAE2D0; --ink-800:#E0D7C0; --ink-750:#D6CBB0; --ink-700:#C7BB99;
+  --cream:#211C14; --cream-2:#473F2E; --dim:#5C5644; --muted:#857E66;
+  --gold:#A9851C; --gold-bright:#876913; --gold-deep:#6E5510;
+  --gold-soft:rgba(169,133,28,.12); --gold-line:rgba(169,133,28,.40);
+  --steel:#3F66A8; --steel-soft:rgba(63,102,168,.12);
+  --line-soft:rgba(40,30,10,.12);
+}
+html[data-theme="light"] body::before{
+  background:radial-gradient(120% 80% at 50% -10%, rgba(201,162,39,.16), transparent 55%),
+             radial-gradient(90% 60% at 100% 100%, rgba(63,102,168,.10), transparent 60%),
+             radial-gradient(100% 100% at 50% 120%, rgba(120,90,20,.06), transparent 60%);
+}
+html[data-theme="light"] body::after{opacity:.28;mix-blend-mode:multiply}
+.md-theme-toggle{position:fixed;right:18px;bottom:18px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;
+  border-radius:50%;cursor:pointer;font-size:19px;line-height:1;padding:0;background:var(--ink-850);color:var(--cream);
+  border:1px solid var(--gold-line);box-shadow:0 8px 24px -12px rgba(0,0,0,.5);transition:transform .15s, border-color .2s}
+.md-theme-toggle:hover{transform:translateY(-2px);border-color:var(--gold)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink-950);
+  color:var(--cream);
+  font-family:var(--sans);
+  font-weight:400;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+/* warm vignette + faint gold dust */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(201,162,39,.10), transparent 55%),
+    radial-gradient(90% 60% at 100% 100%, rgba(94,132,196,.06), transparent 60%),
+    radial-gradient(100% 100% at 50% 120%, rgba(0,0,0,.6), transparent 60%);
+}
+/* film grain */
+body::after{
+  content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--gold);color:var(--ink-950)}
+img{max-width:100%;display:block}
+
+/* ============ TOPBAR + NAV ============ */
+.topline{height:3px;background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright) 45%,var(--gold) 60%,var(--steel));position:relative;z-index:50}
+.site-header{
+  position:sticky;top:0;z-index:40;
+  background:linear-gradient(to bottom,rgba(7,8,16,.94),rgba(7,8,16,.72) 70%,rgba(7,8,16,0));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  /* the bar bg is hardcoded dark glass — keep the light-on-dark palette even in โหมดสว่าง so the brand + links stay readable (was dark-on-dark in light mode) */
+  --cream:#ECE6D4; --cream-2:#CFC8B4; --dim:#8C8775; --muted:#605D52;
+  --gold:#C9A227; --gold-bright:#E7CD6F; --gold-deep:#9A7B1A;
+  --gold-soft:rgba(201,162,39,.12); --gold-line:rgba(201,162,39,.22);
+}
+.nav{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;height:62px}
+.brand-link{display:flex;align-items:center;gap:12px;flex:none}
+.brand-seal{width:40px;height:40px;flex:none;object-fit:contain}
+.brand-name{display:flex;flex-direction:column;line-height:1}
+.brand-name b{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:.01em;color:var(--cream)}
+.brand-name small{font-family:var(--label);font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:3px}
+.nav-links{list-style:none;display:flex;align-items:center;gap:2px}
+.nav-links a{
+  display:inline-flex;align-items:center;padding:8px 13px;border-radius:7px;
+  font-size:13.5px;font-weight:500;color:var(--cream-2);white-space:nowrap;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover{color:var(--cream);background:rgba(255,255,255,.04)}
+.nav-links a.active{color:var(--gold-bright);background:var(--gold-soft)}
+.nav-toggle{display:none}
+
+/* ============ LAYOUT ============ */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+section{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.eyebrow .idx{color:var(--muted)}
+
+/* ============ HERO ============ */
+.hero{padding:64px 0 30px;position:relative;overflow:hidden}
+.hero-grid{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;
+}
+.hero-emblem{display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.hero-emblem svg{width:64px;height:64px;flex:none;filter:drop-shadow(0 6px 20px rgba(201,162,39,.25))}
+.hero-emblem .em-seal{width:74px;height:74px;flex:none;object-fit:cover;background:#fff;border-radius:16px;
+  border:1px solid var(--gold-line);box-shadow:0 8px 24px -6px rgba(201,162,39,.40),0 2px 6px rgba(0,0,0,.3)}
+.hero-emblem .em-txt{font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);line-height:1.7}
+.hero-emblem .em-txt b{display:block;color:var(--gold);font-size:12px;letter-spacing:.2em}
+.hero h1{
+  font-family:var(--serif);font-weight:900;letter-spacing:-.01em;line-height:.98;
+  font-size:clamp(46px,8.2vw,92px);color:var(--cream);
+  margin:6px 0 4px;
+}
+.hero h1 .line2{
+  display:block;font-size:clamp(20px,3vw,34px);font-weight:600;color:var(--gold-bright);
+  letter-spacing:.01em;margin-top:14px;
+}
+.hero-meta{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:18px;font-family:var(--label);font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--dim)}
+.hm-chip{display:inline-flex;align-items:center;font-family:var(--serif);font-weight:700;font-size:13px;letter-spacing:.02em;color:#1a1402;background:linear-gradient(135deg,var(--gold-bright),var(--gold));padding:4px 12px;border-radius:20px}
+.hero-sub{font-size:16px;color:var(--cream-2);max-width:46ch;margin:22px 0 0;line-height:1.8}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:9px;
+  font-weight:600;font-size:14px;letter-spacing:.01em;cursor:pointer;border:1px solid transparent;
+  transition:transform .25s,background .25s,border-color .25s,box-shadow .25s,color .25s;
+}
+.btn .ar{transition:transform .25s}
+.btn:hover .ar{transform:translateX(4px)}
+.btn-gold{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#1a1402;box-shadow:0 10px 30px -12px rgba(201,162,39,.6)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 40px -14px rgba(201,162,39,.75)}
+.btn-ghost{background:transparent;border-color:var(--gold-line);color:var(--gold-bright)}
+.btn-ghost:hover{border-color:var(--gold);background:var(--gold-soft);transform:translateY(-2px)}
+
+/* PM feature card */
+.pm-card{
+  position:relative;border:1px solid var(--gold-line);border-radius:18px;
+  background:
+    radial-gradient(var(--c-spot) var(--c-spot) at calc(var(--x)*1px) calc(var(--y)*1px),
+      hsl(var(--c-hue) 96% 62% / .14), transparent 66%) center/100% 100% fixed no-repeat,
+    linear-gradient(180deg,rgba(201,162,39,.07),rgba(201,162,39,0) 40%),
+    linear-gradient(180deg,var(--ink-850),var(--ink-900));
+  padding:32px 30px 28px;overflow:hidden;
+  box-shadow:0 30px 70px -40px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.pm-card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(80% 50% at 80% 0%,rgba(201,162,39,.16),transparent 60%);
+}
+.pm-tag{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--label);font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;
+}
+.pm-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(201,162,39,.5);animation:pmpulse 2.4s infinite}
+@keyframes pmpulse{0%{box-shadow:0 0 0 0 rgba(201,162,39,.5)}70%{box-shadow:0 0 0 8px rgba(201,162,39,0)}100%{box-shadow:0 0 0 0 rgba(201,162,39,0)}}
+.pm-body{display:flex;align-items:center;gap:22px;position:relative}
+.portrait{
+  width:96px;height:120px;flex:none;border-radius:12px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#2a2410,#15130b);
+  border:1px solid var(--gold-line);overflow:hidden;
+}
+.portrait::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(201,162,39,.16))}
+.portrait .mono{position:relative;z-index:1;font-family:var(--serif);font-weight:900;font-size:46px;color:var(--gold-bright);text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.portrait .pf{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;object-position:50% 16%;opacity:0;transition:opacity .45s ease}
+.portrait .pf.loaded{opacity:1}
+.portrait.no-photo .pf{display:none}
+.pm-card .portrait{width:118px;height:148px}
+.pm-card .portrait .mono{font-size:60px}
+.pm-meta .role{font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.pm-meta .name{font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.6vw,31px);color:var(--cream);line-height:1.1;margin:8px 0 6px}
+.pm-meta .pos{font-size:14px;color:var(--gold-bright);font-weight:600}
+.pm-meta .pill{display:inline-block;margin-top:14px;font-family:var(--label);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cream-2);border:1px solid var(--line-soft);padding:4px 10px;border-radius:20px}
+
+/* ============ STAT BAND ============ */
+.statband{margin-top:44px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:30px 26px;border-left:1px solid var(--line-soft);position:relative}
+.stat:first-child{border-left:none}
+.stat .num{font-family:var(--display);font-size:clamp(48px,6vw,72px);line-height:.9;color:var(--cream);letter-spacing:.01em}
+.stat .num .u{color:var(--gold);font-size:.5em;margin-left:4px;letter-spacing:0}
+.stat .lab{font-family:var(--label);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:8px}
+.stat .sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+/* ============ SECTION HEAD ============ */
+.sec{padding:74px 0 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:30px}
+.sec-head .t{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1.05;color:var(--cream);margin-top:14px}
+.sec-head .d{font-size:14.5px;color:var(--cream-2);max-width:42ch;line-height:1.75}
+
+/* ============ ROSTER CONTROLS ============ */
+.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:24px}
+.search{position:relative;flex:1;min-width:240px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--dim)}
+.search input{
+  width:100%;padding:13px 16px 13px 42px;border-radius:11px;
+  background:var(--ink-850);border:1px solid var(--line-soft);color:var(--cream);
+  font-family:var(--sans);font-size:14.5px;outline:none;transition:border-color .2s,background .2s;
+}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{border-color:var(--gold-line);background:var(--ink-800)}
+.count-chip{font-family:var(--label);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--gold);white-space:nowrap}
+.count-chip b{color:var(--cream)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}
+.chip{
+  font-size:12.5px;font-weight:500;padding:7px 14px;border-radius:20px;cursor:pointer;
+  background:var(--ink-800);border:1px solid var(--line-soft);color:var(--cream-2);
+  transition:all .2s;white-space:nowrap;user-select:none;
+}
+.chip:hover{border-color:var(--gold-line);color:var(--cream)}
+.chip.active{background:var(--gold);border-color:var(--gold);color:#1a1402;font-weight:600}
+
+/* ============ ROSTER GRID ============ */
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.mcard{
+  display:flex;gap:15px;align-items:center;padding:16px;border-radius:14px;
+  background:
+    radial-gradient(var(--c-spot) var(--c-spot) at calc(var(--x)*1px) calc(var(--y)*1px),
+      hsl(var(--c-hue) 96% 62% / .16), transparent 68%) center/100% 100% fixed no-repeat,
+    linear-gradient(180deg,var(--ink-800),var(--ink-850));
+  border:1px solid var(--line-soft);position:relative;overflow:hidden;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s;
+}
+.mcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));opacity:0;transition:opacity .3s}
+.mcard:hover{transform:translateY(-4px);border-color:var(--gold-line);box-shadow:0 24px 50px -34px rgba(0,0,0,.9), 0 0 34px -10px hsl(var(--c-hue) 92% 55% / .28)}
+.mcard:hover::before{opacity:1}
+.mcard .portrait{width:62px;height:78px}
+.mcard .portrait .mono{font-size:32px}
+.mcard.is-pm .portrait{border-color:var(--gold);background:linear-gradient(160deg,#3a3012,#1a1609)}
+.mc-info{min-width:0}
+.mc-info .nm{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--cream);line-height:1.25}
+.mc-info .rl{font-size:12.5px;color:var(--gold-bright);font-weight:600;margin-top:3px}
+.mc-info .mn{font-size:11.5px;color:var(--dim);margin-top:5px;display:flex;align-items:center;gap:5px}
+.mc-info .mn::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);flex:none;opacity:.7}
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);font-size:14.5px}
+
+/* ============ SPOTLIGHT GLOW — แสงสปอตไลต์เหลืองทองวิ่งตามเคอร์เซอร์ ============
+   ดัดแปลงจากคอมโพเนนต์ GlowCard (spotlight-card) ให้เป็น CSS/JS ล้วน · รีคัลเลอร์เป็นโทนเหลืองทอง
+   ใช้ตัวแปร --x/--y/--xp (พิกัด pointer บน :root · ตั้งค่าโดย JS) คู่กับ background-attachment:fixed
+   → การ์ดทุกใบเรืองแสงต่อเนื่องตามตำแหน่งเมาส์จริงบนหน้าจอ */
+.mcard, .pm-card{
+  --c-base:44;            /* hue เริ่มต้น ≈ ทอง */
+  --c-spread:16;          /* ช่วงไล่สีให้อยู่ในโทนเหลืองทอง (hue ≈ 44–60) */
+  --c-size:190;           /* เส้นผ่านศูนย์กลางสปอตไลต์ (px) */
+  --c-border:2;           /* ความหนาขอบเรืองแสง (px) */
+  --c-spot:calc(var(--c-size)*1px);
+  --c-hue:calc(var(--c-base) + (var(--xp,.5) * var(--c-spread)));
+}
+/* ขอบเรืองแสงที่ลุกตามเคอร์เซอร์ — เผยเฉพาะวงขอบด้วยเทคนิค mask-composite */
+.mcard::after, .pm-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+  border:calc(var(--c-border)*1px) solid transparent;border-radius:inherit;
+  background:
+    radial-gradient(calc(var(--c-spot)*.5) calc(var(--c-spot)*.5) at calc(var(--x)*1px) calc(var(--y)*1px),
+      hsl(0 0% 100% / .9), transparent 100%) center/100% 100% fixed no-repeat,
+    radial-gradient(calc(var(--c-spot)*.75) calc(var(--c-spot)*.75) at calc(var(--x)*1px) calc(var(--y)*1px),
+      hsl(var(--c-hue) 96% 60% / 1), transparent 100%) center/100% 100% fixed no-repeat;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          mask:linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  filter:brightness(1.35);
+}
+@media (prefers-reduced-motion:reduce){
+  .mcard::after, .pm-card::after{display:none}
+}
+
+/* ============ POLICY ============ */
+.policy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pol{
+  padding:26px 24px;border-radius:16px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,var(--ink-800),var(--ink-850));
+  border:1px solid var(--line-soft);transition:transform .3s,border-color .3s,background .3s;
+}
+.pol:hover{transform:translateY(-4px);border-color:var(--gold-line)}
+.pol .pn{font-family:var(--display);font-size:40px;line-height:1;color:var(--gold);opacity:.55;letter-spacing:.02em}
+.pol h3{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--cream);margin:12px 0 9px;line-height:1.3}
+.pol p{font-size:13.5px;color:var(--cream-2);line-height:1.7}
+.pol .ic{position:absolute;top:24px;right:22px;width:26px;height:26px;color:var(--gold);opacity:.5}
+.note{margin-top:18px;font-size:12.5px;color:var(--muted);font-style:italic;display:flex;gap:8px;align-items:flex-start}
+.note svg{width:15px;height:15px;flex:none;margin-top:2px;color:var(--gold);opacity:.7}
+
+/* ============ MINISTRY DIRECTORY ============ */
+.mins{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.minrow{
+  display:grid;grid-template-columns:34px 1fr auto;gap:16px;align-items:center;
+  padding:16px 20px;border-radius:13px;cursor:pointer;
+  background:var(--ink-850);border:1px solid var(--line-soft);
+  transition:background .25s,border-color .25s,transform .25s;
+}
+.minrow:hover{background:var(--ink-800);border-color:var(--gold-line);transform:translateX(3px)}
+.minrow .mid{font-family:var(--display);font-size:24px;color:var(--gold);opacity:.7;line-height:1}
+.minrow .mtitle{font-family:var(--serif);font-weight:600;font-size:15.5px;color:var(--cream);line-height:1.25}
+.minrow .mdesc{font-size:12px;color:var(--dim);margin-top:3px;line-height:1.5}
+.minrow .mstat{text-align:right;flex:none}
+.minrow .mstat .a{font-family:var(--display);font-size:22px;color:var(--cream);line-height:1}
+.minrow .mstat .b{font-family:var(--label);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* ============ OTHERS / RELATED ============ */
+.others-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.milestones{list-style:none;position:relative;padding-left:8px}
+.milestones li{position:relative;padding:0 0 26px 30px;border-left:1px solid var(--gold-line)}
+.milestones li:last-child{border-left-color:transparent;padding-bottom:0}
+.milestones li::before{content:"";position:absolute;left:-6px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--ink-900);border:2px solid var(--gold)}
+.milestones li.done::before{background:var(--gold)}
+.milestones .ms-t{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--cream)}
+.milestones .ms-d{font-size:13px;color:var(--cream-2);margin-top:4px;line-height:1.65}
+.milestones .ms-k{font-family:var(--label);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px}
+
+.rel-cards{display:flex;flex-direction:column;gap:12px}
+.rel{
+  display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:14px;
+  background:linear-gradient(135deg,var(--ink-800),var(--ink-850));border:1px solid var(--line-soft);
+  transition:transform .25s,border-color .25s,background .25s;
+}
+.rel:hover{transform:translateY(-3px);border-color:var(--steel);background:var(--ink-800)}
+.rel .ri{width:42px;height:42px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--steel-soft);color:var(--steel)}
+.rel:hover .ri{color:#9bb8e6}
+.rel .rt b{display:block;font-family:var(--serif);font-weight:600;font-size:15.5px;color:var(--cream)}
+.rel .rt span{font-size:12.5px;color:var(--dim)}
+.rel .rarrow{margin-left:auto;color:var(--dim);transition:transform .25s,color .25s}
+.rel:hover .rarrow{transform:translateX(4px);color:var(--steel)}
+
+/* ============ FOOTER ============ */
+.footer{margin-top:84px;border-top:1px solid var(--gold-line);background:linear-gradient(180deg,transparent,rgba(201,162,39,.03))}
+.foot-in{max-width:var(--maxw);margin:0 auto;padding:46px 28px 40px;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+.foot-brand{display:flex;align-items:center;gap:14px}
+.foot-brand svg{width:44px;height:44px}
+.foot-brand b{font-family:var(--serif);font-weight:700;font-size:18px;color:var(--cream);display:block}
+.foot-brand small{font-size:12.5px;color:var(--dim)}
+.foot-back{
+  display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:9px;
+  border:1px solid var(--gold-line);color:var(--gold-bright);font-weight:600;font-size:13.5px;
+  transition:background .25s,transform .25s;
+}
+.foot-back:hover{background:var(--gold-soft);transform:translateX(-3px)}
+.foot-note{width:100%;border-top:1px solid var(--line-soft);margin-top:8px;padding-top:22px;font-size:12px;color:var(--muted);line-height:1.7}
+.foot-note b{color:var(--dim)}
+
+/* ============ REVEAL ============ */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ============ RESPONSIVE (after base, per house rule) ============ */
+@media (max-width:920px){
+  .hero-grid{grid-template-columns:1fr;gap:34px}
+  .policy-grid{grid-template-columns:repeat(2,1fr)}
+  .others-grid{grid-template-columns:1fr;gap:40px}
+  .mins{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .nav-links{
+    position:fixed;inset:62px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;
+    background:rgba(8,9,18,.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--gold-line);
+    padding:8px 18px 16px;transform:translateY(-130%);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{padding:13px 10px;border-radius:8px;font-size:15px}
+  .nav-toggle{display:inline-flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .nav-toggle span{width:24px;height:2px;background:var(--cream);transition:.3s}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-toggle.open span:nth-child(2){opacity:0}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat{border-left:none;border-top:1px solid var(--line-soft)}
+  .stat:first-child,.stat:nth-child(2){border-top:none}
+  .policy-grid{grid-template-columns:1fr}
+  .roster{grid-template-columns:1fr}
+  .hero{padding:40px 0 20px}
+  .wrap{padding:0 20px}
+  .nav{padding:0 18px}
+}
+</style>
+</head>
+<body>
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<script>
+function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+mdThemeIcon();
+</script>
+
+<div class="topline"></div>
+
+<!-- ============ HEADER / FAMILY NAV ============ -->
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand-link" href="../hub/index.html" aria-label="รัฐไทยก้าวหน้า">
+      <img class="brand-seal" src="../hub/images/logo.png" alt="รัฐไทยก้าวหน้า" />
+      <span class="brand-name"><b>รัฐไทยก้าวหน้า</b><small>Cabinet</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="เมนู" aria-expanded="false"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../hub/index.html">หน้าแรก</a></li>
+      <li><a href="../structure.html">แผนผังโครงสร้าง</a></li>
+      <li><a href="../election/index.html">ส.ส. ผู้แทนราษฎร</a></li>
+      <li><a href="#top" class="active">ชุดคณะรัฐมนตรี</a></li>
+      <li><a href="../stats/index.html">ข้อมูลสถิติ</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-left rv">
+        <div class="hero-emblem">
+          <img class="em-seal" src="3629a889-55ea-446d-9531-11012d347606.png" alt="ตราสัญลักษณ์รัฐบาลแห่งประเทศไทย" />
+          <span class="em-txt">ฝ่ายบริหารของรัฐ<b>The Executive Branch</b>ราชอาณาจักรไทย</span>
+        </div>
+        <span class="eyebrow"><span class="idx">๐๑</span> ทำเนียบคณะรัฐมนตรี</span>
+        <h1>คณะรัฐมนตรี<span class="line2">รัฐบาล อนุทิน ชาญวีรกูล</span></h1>
+        <div class="hero-meta"><span class="hm-chip">คณะที่ ๖๖</span> ๓๐ มีนาคม ๒๕๖๙ – ปัจจุบัน</div>
+        <p class="hero-sub">รวมรายชื่อรัฐมนตรีรายกระทรวง นโยบายเร่งด่วนของรัฐบาล และโครงสร้างฝ่ายบริหารทั้ง <b>20 กระทรวง</b> — เรียบเรียงเป็นส่วนหนึ่งของชุดแดชบอร์ด รัฐไทยก้าวหน้า</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="#roster">ดูรายชื่อทั้งคณะ <span class="ar">→</span></a>
+          <a class="btn btn-ghost" href="#policy">นโยบายรัฐบาล <span class="ar">→</span></a>
+        </div>
+      </div>
+      <div class="hero-right rv">
+        <div class="pm-card" id="pm-card"><!-- injected by JS --></div>
+      </div>
+    </div>
+
+    <!-- STAT BAND -->
+    <div class="statband rv">
+      <div class="stats" id="stats">
+        <div class="stat"><div class="num" data-count="1">0</div><div class="lab">นายกรัฐมนตรี</div><div class="sub">ประมุขฝ่ายบริหาร</div></div>
+        <div class="stat"><div class="num" data-count="20">0</div><div class="lab">กระทรวง</div><div class="sub">ส่วนราชการระดับกระทรวง</div></div>
+        <div class="stat"><div class="num" id="stat-min" data-count="0">0</div><div class="lab">สมาชิก ครม.</div><div class="sub">รวมนายกฯ · ไม่เกิน ๓๖ ตาม รธน.</div></div>
+        <div class="stat"><div class="num" id="stat-org" data-count="0">0</div><div class="lab">หน่วยงานในกำกับ</div><div class="sub">กรม/หน่วยงานรัฐ</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROSTER ============ -->
+<section class="sec" id="roster">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow"><span class="idx">๐๒</span> รายชื่อคณะรัฐมนตรี</span>
+        <h2 class="t">รัฐมนตรีทั้งคณะ</h2>
+      </div>
+      <p class="d">ค้นหาด้วยชื่อ หรือกรองตามกระทรวง — ลำดับตำแหน่ง (รมว./รมช.) เรียงตามบัญชีรายชื่อของแต่ละกระทรวง</p>
+    </div>
+
+    <div class="controls rv">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="ค้นหาชื่อรัฐมนตรี หรือกระทรวง…" autocomplete="off" />
+      </div>
+      <span class="count-chip">แสดง <b id="rcount">0</b> ตำแหน่ง</span>
+    </div>
+    <div class="chips rv" id="chips"></div>
+
+    <div class="roster" id="roster-grid"></div>
+  </div>
+</section>
+
+<!-- ============ POLICY ============ -->
+<section class="sec" id="policy">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow"><span class="idx">๐๓</span> นโยบายรัฐบาล</span>
+        <h2 class="t">กรอบนโยบายเร่งด่วน</h2>
+      </div>
+      <p class="d">ทิศทางการทำงานหลักของคณะรัฐมนตรี จัดกลุ่มเป็น 6 เสาหลัก ครอบคลุมเศรษฐกิจ การเมือง สังคม และธรรมาภิบาล</p>
+    </div>
+    <div class="policy-grid rv" id="policy-grid"></div>
+    <p class="note rv">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>
+       กรอบนโยบายข้างต้นเรียบเรียงเพื่อการนำเสนอในชุดแดชบอร์ด รัฐไทยก้าวหน้า 
+    </p>
+  </div>
+</section>
+
+<!-- ============ MINISTRY DIRECTORY ============ -->
+<section class="sec" id="ministries">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow"><span class="idx">๐๔</span> โครงสร้างฝ่ายบริหาร</span>
+        <h2 class="t">20 กระทรวง</h2>
+      </div>
+      <p class="d">ทำเนียบกระทรวง พร้อมจำนวนรัฐมนตรีและหน่วยงานในกำกับ — คลิกเพื่อกรองรายชื่อเฉพาะกระทรวงนั้น</p>
+    </div>
+    <div class="mins rv" id="mins"></div>
+  </div>
+</section>
+
+<!-- ============ OTHERS ============ -->
+<section class="sec" id="others">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <span class="eyebrow"><span class="idx">๐๕</span> อื่นๆ</span>
+        <h2 class="t">หมุดหมาย & เชื่อมต่อ</h2>
+      </div>
+      <p class="d">หมุดหมายสำคัญของรัฐบาล และทางลัดสู่แดชบอร์ดพี่น้องในชุด รัฐไทยก้าวหน้า</p>
+    </div>
+    <div class="others-grid rv">
+      <div>
+        <ul class="milestones">
+          <li class="done"><span class="ms-k">หมุดหมาย 01</span><div class="ms-t">จัดตั้งรัฐบาล</div><div class="ms-d">โปรดเกล้าฯ แต่งตั้งนายกรัฐมนตรีและคณะรัฐมนตรี เข้าบริหารราชการแผ่นดิน</div></li>
+          <li class="done"><span class="ms-k">หมุดหมาย 02</span><div class="ms-t">แถลงนโยบายต่อรัฐสภา</div><div class="ms-d">คณะรัฐมนตรีแถลงนโยบายและกรอบการทำงานต่อที่ประชุมรัฐสภา</div></li>
+          <li><span class="ms-k">หมุดหมาย 03</span><div class="ms-t">ขับเคลื่อนนโยบายเร่งด่วน</div><div class="ms-d">เดินหน้ามาตรการเศรษฐกิจปากท้องและการปฏิรูปตามกรอบนโยบาย</div></li>
+          <li><span class="ms-k">หมุดหมาย 04</span><div class="ms-t">กระบวนการรัฐธรรมนูญ & เลือกตั้ง</div><div class="ms-d">ผลักดันกระบวนการจัดทำรัฐธรรมนูญและเตรียมการเลือกตั้งทั่วไป</div></li>
+        </ul>
+      </div>
+      <div class="rel-cards">
+        <a class="rel" href="../structure.html">
+          <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          <span class="rt"><b>แผนผังโครงสร้างรัฐ</b><span>20 กระทรวง · 278 หน่วยงานในกำกับ</span></span>
+          <span class="rarrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="rel" href="../election/index.html">
+          <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></span>
+          <span class="rt"><b>ส.ส. ผู้แทนราษฎร</b><span>สมาชิกสภาผู้แทนราษฎร 500 ที่นั่ง</span></span>
+          <span class="rarrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="rel" href="../stats/index.html">
+          <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+          <span class="rt"><b>สถิติข้อมูลรัฐและข่าว</b><span>ข้อมูลเปิดภาครัฐ · งบประมาณ · เศรษฐกิจ</span></span>
+          <span class="rarrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="foot-in">
+    <div class="foot-brand">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" stroke="#C9A227" stroke-width="1.3"/>
+        <path d="M24 11l2.7 8.2h8.6l-7 5.1 2.7 8.2L24 35.6l-7 4.9 2.7-8.2-7-5.1h8.6L24 11z" fill="#C9A227" opacity=".85"/>
+      </svg>
+      <div><b>ชุดคณะรัฐมนตรี</b><small>ส่วนหนึ่งของแดชบอร์ด รัฐไทยก้าวหน้า</small></div>
+    </div>
+    <a class="foot-back" href="../hub/index.html"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> กลับสู่เว็บหลัก</a>
+    <p class="foot-note">
+      <b>คณะรัฐมนตรีคณะที่ ๖๖</b> (รัฐบาลอนุทิน ชาญวีรกูล · ๓๐ มีนาคม ๒๕๖๙ – ปัจจุบัน) ·
+      <b>แหล่งข้อมูล:</b> รายชื่อและโครงสร้างกระทรวงอ้างอิงชุดข้อมูล “โครงสร้างรัฐไทย” ในชุดแดชบอร์ดเดียวกัน เทียบกับรายชื่อ ครม.66 · ตำแหน่ง (รมว./รมช./รัฐมนตรีประจำสำนักนายกฯ) จัดเรียงตามบัญชีรายชื่อของแต่ละกระทรวง<br>
+      <b>เครดิตภาพ:</b> ภาพรัฐมนตรีส่วนใหญ่จาก <a href="https://commons.wikimedia.org/wiki/Category:Cabinet_of_Anutin_Charnvirakul" target="_blank" rel="noopener" style="color:var(--steel)">วิกิมีเดียคอมมอนส์</a> (สัญญาอนุญาตเสรี/ครีเอทีฟคอมมอนส์) และบางส่วนเป็นภาพทางการที่จัดเตรียมเพิ่มเติม โดยอ้างอิงแหล่งราชการ เช่น <a href="https://www.soc.go.th/" target="_blank" rel="noopener" style="color:var(--steel)">สำนักเลขาธิการคณะรัฐมนตรี (soc.go.th)</a> ตามหลักการใช้งานโดยชอบและให้เครดิตที่ถูกต้อง — เครดิตรายภาพดูได้ที่ <b style="color:var(--dim)">photos/credits.json</b> · รัฐมนตรีที่ยังไม่มีภาพจะแสดงเป็นอักษรย่อ · ข้อมูลจัดทำเพื่อการศึกษาและนำเสนอ ไม่ใช่เอกสารราชการ
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   ข้อมูลคณะรัฐมนตรี (อ้างอิงชุดข้อมูล โครงสร้างรัฐไทย)
+   role: pm | pmo | minister | deputy
+   orgs = จำนวนหน่วยงานในกำกับของกระทรวง
+   ============================================================ */
+const MINISTRIES = [
+  {id:"01",name:"สำนักนายกรัฐมนตรี",short:"สำนักนายกฯ",desc:"ศูนย์กลางการบริหารราชการแผ่นดินและการสื่อสารภาครัฐ",orgs:28,
+    ministers:[["อนุทิน ชาญวีรกูล","pm"],["ทรงศักดิ์ ทองศรี","dpm"],["ปกรณ์ นิลประพันธ์","dpm"],["ศุภมาส อิศรภักดี","pmo"],["นภินทร ศรีสรรพางค์","pmo"],["ภราดร ปริศนานันทกุล","pmo"],["สุขสมรวย วันทนียกุล","pmo"]]},
+  {id:"02",name:"กระทรวงกลาโหม",short:"กลาโหม",desc:"ความมั่นคงและการป้องกันประเทศ",orgs:6,
+    ministers:[["อดุลย์ บุญธรรมเจริญ","minister"]]},
+  {id:"03",name:"กระทรวงการคลัง",short:"การคลัง",desc:"การเงิน การคลัง ภาษี และงบประมาณแผ่นดิน",orgs:24,
+    ministers:[["เอกนิติ นิติทัณฑ์ประภาศ","minister"]]},
+  {id:"04",name:"กระทรวงการต่างประเทศ",short:"การต่างประเทศ",desc:"การทูตและความสัมพันธ์ระหว่างประเทศ",orgs:13,
+    ministers:[["สีหศักดิ์ พวงเกตุแก้ว","minister"]]},
+  {id:"05",name:"กระทรวงการท่องเที่ยวและกีฬา",short:"ท่องเที่ยวฯ",desc:"ส่งเสริมการท่องเที่ยวและการกีฬา",orgs:7,
+    ministers:[["สุรศักดิ์ พันธ์เจริญวรกุล","minister"]]},
+  {id:"06",name:"กระทรวงการพัฒนาสังคมและความมั่นคงของมนุษย์",short:"พม.",desc:"สวัสดิการสังคมและคุณภาพชีวิตประชาชน",orgs:9,
+    ministers:[["นิกร โสมกลาง","minister"]]},
+  {id:"07",name:"กระทรวงเกษตรและสหกรณ์",short:"เกษตรฯ",desc:"เกษตรกรรม ชลประทาน และระบบสหกรณ์",orgs:21,
+    ministers:[["สุริยะ จึงรุ่งเรืองกิจ","minister"],["วัชระพล ขาวขำ","deputy"],["ปิยะรัฐชย์ ติยะไพรัช","deputy"]]},
+  {id:"08",name:"กระทรวงคมนาคม",short:"คมนาคม",desc:"โครงสร้างพื้นฐานการขนส่งและจราจร",orgs:17,
+    ministers:[["พิพัฒน์ รัชกิจประการ","minister"],["สิริพงศ์ อังคสกุลเกียรติ","deputy"],["ภัทรพงศ์ ภัทรประสิทธิ์","deputy"],["สรรเพชญ บุญญามณี","deputy"]]},
+  {id:"09",name:"กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม",short:"ทรัพยากรฯ",desc:"อนุรักษ์ทรัพยากรธรรมชาติและสิ่งแวดล้อม",orgs:15,
+    ministers:[["สุชาติ ชมกลิ่น","minister"]]},
+  {id:"11",name:"กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม",short:"ดิจิทัลฯ",desc:"เศรษฐกิจดิจิทัลและโครงสร้างพื้นฐานข้อมูล",orgs:10,
+    ministers:[["ไชยชนก ชิดชอบ","minister"],["บุณย์ธิดา สมชัย","deputy"]]},
+  {id:"12",name:"กระทรวงพลังงาน",short:"พลังงาน",desc:"บริหารจัดการพลังงานของประเทศ",orgs:10,
+    ministers:[["เอกนัฏ พร้อมพันธุ์","minister"]]},
+  {id:"13",name:"กระทรวงพาณิชย์",short:"พาณิชย์",desc:"การค้าภายในและการค้าระหว่างประเทศ",orgs:13,
+    ministers:[["ศุภจี สุธรรมพันธุ์","minister"]]},
+  {id:"14",name:"กระทรวงมหาดไทย",short:"มหาดไทย",desc:"การปกครองท้องที่และความสงบเรียบร้อย",orgs:14,
+    ministers:[["พลพีร์ สุวรรณฉวี","deputy"],["เจเศรษฐ์ ไทยเศรษฐ์","deputy"],["วรศิษฎ์ เลียงประสิทธิ์","deputy"]]},
+  {id:"15",name:"กระทรวงยุติธรรม",short:"ยุติธรรม",desc:"กระบวนการยุติธรรมและการคุ้มครองสิทธิ",orgs:13,
+    ministers:[["รุทธพล เนาวรัตน์","minister"]]},
+  {id:"16",name:"กระทรวงแรงงาน",short:"แรงงาน",desc:"แรงงานสัมพันธ์และการจ้างงาน",orgs:6,
+    ministers:[["จุลพันธ์ อมรวิวัฒน์","minister"]]},
+  {id:"17",name:"กระทรวงวัฒนธรรม",short:"วัฒนธรรม",desc:"ศิลปวัฒนธรรมและมรดกของชาติ",orgs:9,
+    ministers:[["ซาบีดา ไทยเศรษฐ์","minister"]]},
+  {id:"18",name:"กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",short:"อว.",desc:"อุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",orgs:26,
+    ministers:[["ยศชนัน วงศ์สวัสดิ์","minister"]]},
+  {id:"19",name:"กระทรวงศึกษาธิการ",short:"ศึกษาธิการ",desc:"การศึกษาขั้นพื้นฐานและการพัฒนาครู",orgs:9,
+    ministers:[["ประเสริฐ จันทรรวงทอง","minister"],["อัครนันท์ กัณณ์กิตตินันท์","deputy"]]},
+  {id:"21",name:"กระทรวงสาธารณสุข",short:"สาธารณสุข",desc:"ระบบสุขภาพและบริการสาธารณสุข",orgs:20,
+    ministers:[["พัฒนา พร้อมพัฒน์","minister"]]},
+  {id:"22",name:"กระทรวงอุตสาหกรรม",short:"อุตสาหกรรม",desc:"พัฒนาภาคอุตสาหกรรมและผู้ประกอบการ",orgs:8,
+    ministers:[["วราวุธ ศิลปอาชา","minister"]]}
+];
+
+const POLICIES = [
+  {n:"01",t:"เศรษฐกิจปากท้อง",d:"บรรเทาค่าครองชีพ ลดภาระด้านพลังงาน และกระตุ้นกำลังซื้อของเศรษฐกิจฐานราก",ic:'<path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-5"/>'},
+  {n:"02",t:"รัฐธรรมนูญ & ประชาชน",d:"เดินหน้ากระบวนการจัดทำรัฐธรรมนูญและการมีส่วนร่วม มุ่งสู่การเลือกตั้งทั่วไป",ic:'<path d="M6 3h12l-1 7H7L6 3z"/><path d="M5 21h14M12 10v11"/>'},
+  {n:"03",t:"ความมั่นคง & อธิปไตย",d:"ดูแลชายแดน รักษาเสถียรภาพ และความสงบเรียบร้อยภายในประเทศ",ic:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>'},
+  {n:"04",t:"รัฐบาลดิจิทัล & โปร่งใส",d:"ยกระดับบริการภาครัฐสู่ดิจิทัล เปิดเผยข้อมูล และตรวจสอบได้",ic:'<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/>'},
+  {n:"05",t:"คุณภาพชีวิต & สวัสดิการ",d:"สาธารณสุขถ้วนหน้า การศึกษา และการดูแลกลุ่มเปราะบางในสังคม",ic:'<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/>'},
+  {n:"06",t:"ปราบทุจริต & ธรรมาภิบาล",d:"บังคับใช้กฎหมายอย่างเป็นธรรม สร้างความเชื่อมั่นและธรรมาภิบาลในภาครัฐ",ic:'<path d="M12 3v18M5 7l7-4 7 4M5 7l2 7h-4l2-7zM19 7l2 7h-4l2-7z"/>'}
+];
+
+/* ---------- helpers ---------- */
+const LEAD_VOWELS = new Set(["เ","แ","โ","ใ","ไ"]);
+function monogram(name){
+  const first = name.trim().split(/\s+/)[0] || name;
+  let ch = first[0];
+  if(LEAD_VOWELS.has(ch) && first.length>1) ch = first[1];
+  return ch;
+}
+
+/* รูปรัฐมนตรี (วิกิมีเดียคอมมอนส์ · สัญญาอนุญาตเสรี) — ไฟล์ใน photos/
+   ผู้ที่ไม่มีรูปจะใช้อักษรย่อ (monogram) แทนอัตโนมัติ
+   เติมรูปเพิ่ม/รีเฟรชได้ด้วย:  node "tools-fetch-photos.js" */
+const PHOTOS = {
+  "อนุทิน ชาญวีรกูล":"01-1.jpg","ศุภมาส อิศรภักดี":"01-2.jpg","นภินทร ศรีสรรพางค์":"01-3.jpg","ภราดร ปริศนานันทกุล":"01-4.jpg","สุขสมรวย วันทนียกุล":"01-5.jpg",
+  "อดุลย์ บุญธรรมเจริญ":"02-1.jpg","เอกนิติ นิติทัณฑ์ประภาศ":"03-1.jpg","สีหศักดิ์ พวงเกตุแก้ว":"04-1.jpg","สุรศักดิ์ พันธ์เจริญวรกุล":"05-1.jpg","นิกร โสมกลาง":"06-1.jpg",
+  "สุริยะ จึงรุ่งเรืองกิจ":"07-1.jpg","วัชระพล ขาวขำ":"07-2.jpg","ปิยะรัฐชย์ ติยะไพรัช":"07-3.jpg",
+  "พิพัฒน์ รัชกิจประการ":"08-1.jpg","สิริพงศ์ อังคสกุลเกียรติ":"08-2.jpg","ภัทรพงศ์ ภัทรประสิทธิ์":"08-3.jpg","สรรเพชญ บุญญามณี":"08-4.jpg",
+  "สุชาติ ชมกลิ่น":"09-1.jpg","ไชยชนก ชิดชอบ":"11-1.jpg","บุณย์ธิดา สมชัย":"11-2.jpg","เอกนัฏ พร้อมพันธุ์":"12-1.jpg","ศุภจี สุธรรมพันธุ์":"13-1.jpg",
+  "พลพีร์ สุวรรณฉวี":"14-1.jpg","เจเศรษฐ์ ไทยเศรษฐ์":"14-2.jpg","วรศิษฎ์ เลียงประสิทธิ์":"14-3.jpg","รุทธพล เนาวรัตน์":"15-1.jpg","จุลพันธ์ อมรวิวัฒน์":"16-1.jpg",
+  "ซาบีดา ไทยเศรษฐ์":"17-1.jpg","ยศชนัน วงศ์สวัสดิ์":"18-1.jpg","ประเสริฐ จันทรรวงทอง":"19-1.jpg","อัครนันท์ กัณณ์กิตตินันท์":"19-2.jpg","พัฒนา พร้อมพัฒน์":"21-1.jpg","วราวุธ ศิลปอาชา":"22-1.png"
+};
+function portrait(name){
+  const f = PHOTOS[name];
+  const cls = "portrait" + (f ? "" : " no-photo");
+  const img = f ? `<img class="pf" src="photos/${f}" alt="${name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.parentElement.classList.add('no-photo');this.remove()">` : "";
+  return `<div class="${cls}">${img}<span class="mono">${monogram(name)}</span></div>`;
+}
+/* รองนายกรัฐมนตรี 7 ท่านของ ครม.66 (2 ท่านหลังคุมเฉพาะรองนายกฯ ไม่มีกระทรวง) */
+const DEPUTY_PM = new Set(["พิพัฒน์ รัชกิจประการ","ทรงศักดิ์ ทองศรี","เอกนิติ นิติทัณฑ์ประภาศ","สีหศักดิ์ พวงเกตุแก้ว","ศุภจี สุธรรมพันธุ์","ปกรณ์ นิลประพันธ์","ยศชนัน วงศ์สวัสดิ์"]);
+function roleLabel(role, m, name){
+  if(role==="pm") return name==="อนุทิน ชาญวีรกูล" ? "นายกรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทย" : "นายกรัฐมนตรี";
+  if(role==="dpm") return "รองนายกรัฐมนตรี";
+  let base;
+  if(role==="pmo") base="รัฐมนตรีประจำสำนักนายกรัฐมนตรี";
+  else if(role==="deputy") base="รัฐมนตรีช่วยว่าการ"+m.name;
+  else base=(m.id==="01" ? "รัฐมนตรี" : "รัฐมนตรีว่าการ"+m.name);
+  return DEPUTY_PM.has(name) ? "รองนายกรัฐมนตรี และ"+base : base;
+}
+function roleShort(role, name){
+  if(role==="pm") return name==="อนุทิน ชาญวีรกูล" ? "นายกรัฐมนตรี · รมว.มหาดไทย" : "นายกรัฐมนตรี";
+  if(role==="dpm") return "รองนายกรัฐมนตรี";
+  const base = role==="pmo" ? "รมต.ประจำสำนักนายกฯ" : role==="deputy" ? "รัฐมนตรีช่วยว่าการ" : "รัฐมนตรีว่าการ";
+  return DEPUTY_PM.has(name) ? "รองนายกฯ · "+base : base;
+}
+
+/* ---------- flatten roster ---------- */
+const ROSTER = [];
+MINISTRIES.forEach(m=>{
+  m.ministers.forEach(([name,role])=>{
+    ROSTER.push({name,role,mid:m.id,mname:m.name,mshort:m.short,full:roleLabel(role,m,name)});
+  });
+});
+const TOTAL_MIN = ROSTER.length;
+const TOTAL_ORG = MINISTRIES.reduce((s,m)=>s+m.orgs,0);
+
+/* ---------- PM card ---------- */
+(function(){
+  const pm = ROSTER.find(r=>r.role==="pm");
+  document.getElementById("pm-card").innerHTML = `
+    <div class="pm-tag"><span class="dot"></span> ประมุขฝ่ายบริหาร</div>
+    <div class="pm-body">
+      ${portrait(pm.name)}
+      <div class="pm-meta">
+        <div class="role">นายกรัฐมนตรี · คนที่ ๓๒</div>
+        <div class="name">${pm.name}</div>
+        <div class="pos">หัวหน้าคณะรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทย</div>
+        <span class="pill">สำนักนายกรัฐมนตรี</span>
+      </div>
+    </div>`;
+})();
+
+/* ---------- stats counts ---------- */
+document.getElementById("stat-min").dataset.count = TOTAL_MIN;
+document.getElementById("stat-org").dataset.count = TOTAL_ORG;
+
+/* ---------- filter chips ---------- */
+const chipsEl = document.getElementById("chips");
+let activeFilter = "all";
+function buildChips(){
+  let html = `<div class="chip active" data-f="all">ทั้งหมด</div>`;
+  MINISTRIES.forEach(m=>{
+    html += `<div class="chip" data-f="${m.id}">${m.short}</div>`;
+  });
+  chipsEl.innerHTML = html;
+  chipsEl.querySelectorAll(".chip").forEach(c=>{
+    c.addEventListener("click",()=>{
+      chipsEl.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+      c.classList.add("active");
+      activeFilter = c.dataset.f;
+      renderRoster();
+    });
+  });
+}
+
+/* ---------- render roster ---------- */
+const grid = document.getElementById("roster-grid");
+const searchEl = document.getElementById("search");
+const rcount = document.getElementById("rcount");
+function renderRoster(){
+  const q = searchEl.value.trim().toLowerCase();
+  const list = ROSTER.filter(r=>{
+    const okF = activeFilter==="all" || r.mid===activeFilter;
+    const okQ = !q || r.name.toLowerCase().includes(q) || r.mname.toLowerCase().includes(q) || r.mshort.toLowerCase().includes(q);
+    return okF && okQ;
+  });
+  rcount.textContent = list.length;
+  if(!list.length){
+    grid.innerHTML = `<div class="empty">ไม่พบรายชื่อที่ตรงกับเงื่อนไข — ลองค้นหาด้วยคำอื่น</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(r=>`
+    <div class="mcard ${r.role==="pm"?"is-pm":""}">
+      ${portrait(r.name)}
+      <div class="mc-info">
+        <div class="nm">${r.name}</div>
+        <div class="rl">${roleShort(r.role, r.name)}</div>
+        <div class="mn">${r.mshort}</div>
+      </div>
+    </div>`).join("");
+}
+searchEl.addEventListener("input",renderRoster);
+
+/* ---------- policies ---------- */
+document.getElementById("policy-grid").innerHTML = POLICIES.map(p=>`
+  <div class="pol">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${p.ic}</svg>
+    <div class="pn">${p.n}</div>
+    <h3>${p.t}</h3>
+    <p>${p.d}</p>
+  </div>`).join("");
+
+/* ---------- ministry directory ---------- */
+const minsEl = document.getElementById("mins");
+minsEl.innerHTML = MINISTRIES.map(m=>`
+  <div class="minrow" data-f="${m.id}">
+    <div class="mid">${m.id}</div>
+    <div>
+      <div class="mtitle">${m.name}</div>
+      <div class="mdesc">${m.desc}</div>
+    </div>
+    <div class="mstat">
+      <div class="a">${m.ministers.length}</div>
+      <div class="b">รัฐมนตรี · ${m.orgs} หน่วยงาน</div>
+    </div>
+  </div>`).join("");
+minsEl.querySelectorAll(".minrow").forEach(row=>{
+  row.addEventListener("click",()=>{
+    const id = row.dataset.f;
+    activeFilter = id;
+    chipsEl.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.f===id));
+    searchEl.value = "";
+    renderRoster();
+    document.getElementById("roster").scrollIntoView({behavior:"smooth"});
+  });
+});
+
+/* ---------- count-up ---------- */
+function countUp(el){
+  const target = +el.dataset.count;
+  if(!target){el.textContent="0";return;}
+  const dur = 1100, t0 = performance.now();
+  (function tick(t){
+    const p = Math.min(1,(t-t0)/dur);
+    const e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(target*e).toLocaleString("th-TH");
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* ---------- reveal + count observers ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+  });
+},{threshold:.12,rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+const cio = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){ countUp(en.target); cio.unobserve(en.target); }
+  });
+},{threshold:.5});
+document.querySelectorAll("[data-count]").forEach(el=>cio.observe(el));
+
+/* ---------- mobile nav ---------- */
+const toggle = document.querySelector(".nav-toggle");
+const links = document.querySelector(".nav-links");
+toggle.addEventListener("click",()=>{
+  const open = links.classList.toggle("open");
+  toggle.classList.toggle("open",open);
+  toggle.setAttribute("aria-expanded",open);
+});
+links.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
+  links.classList.remove("open"); toggle.classList.remove("open");
+}));
+
+/* ---------- spotlight glow: ติดตามเมาส์ → ตั้งค่า --x/--y/--xp/--yp บน :root ---------- */
+(function(){
+  const s = document.documentElement.style;
+  let px = null, py = null, moved = false, queued = false;
+  function write(){
+    queued = false;
+    const w = innerWidth || document.documentElement.clientWidth || 1;
+    const h = innerHeight || document.documentElement.clientHeight || 1;
+    const x = (moved && px != null) ? px : w / 2;   // ก่อนขยับเมาส์ = กึ่งกลางจอ
+    const y = (moved && py != null) ? py : h / 2;
+    s.setProperty("--x",  x.toFixed(1));
+    s.setProperty("--y",  y.toFixed(1));
+    s.setProperty("--xp", (x / w).toFixed(3));
+    s.setProperty("--yp", (y / h).toFixed(3));
+  }
+  write();
+  addEventListener("pointermove", e=>{
+    px = e.clientX; py = e.clientY; moved = true;
+    if(!queued){ queued = true; requestAnimationFrame(write); }
+  }, {passive:true});
+  addEventListener("resize", write, {passive:true});
+  addEventListener("load", write);
+})();
+
+/* ---------- init ---------- */
+buildChips();
+renderRoster();
+</script>
+</body>
+</html>

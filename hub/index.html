@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รัฐไทยก้าวหน้า — เทคโนโลยีภาครัฐไทย</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400&family=Prompt:wght@700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-brand">รัฐไทยก้าวหน้า</div>
+    <div class="loader-bar-wrap">
+      <div id="loader-bar"></div>
+    </div>
+    <div id="loader-percent">0%</div>
+  </div>
+
+  <!-- Fixed Header -->
+  <header class="site-header">
+    <nav>
+      <span class="nav-logo">
+        <img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" />
+      </span>
+      <ul class="nav-links">
+        <li><a href="#" class="nav-tab" data-target="home">หน้าแรก</a></li>
+        <li><a href="../structure.html" class="nav-tab" data-target="infrastructure">แผนผังโครงสร้าง</a></li>
+        <li><a href="../election/index.html" class="nav-tab" data-target="representatives">ส.ส. ผู้แทนราษฎร</a></li>
+        <li><a href="../cabinet/index.html" class="nav-tab" data-target="cabinet">ชุดคณะรัฐมนตรี</a></li>
+        <li><a href="../stats/index.html" class="nav-tab" data-target="statistics">ข้อมูลสถิติ</a></li>
+        <li><a href="about.html" class="nav-tab" data-target="about">เกี่ยวกับเรา</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Standalone -->
+  <section class="hero-standalone" id="hero">
+    <canvas id="hero-globe" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <span class="section-label">001 / รัฐไทยก้าวหน้า</span>
+      <h1 class="hero-heading">
+        <span class="word">นิยามใหม่</span>
+        <span class="word">ภาครัฐ</span>
+        <span class="word">เทคโนโลยี</span>
+      </h1>
+      <p class="hero-tagline">ขับเคลื่อนการเปลี่ยนแปลงดิจิทัลของประเทศไทย</p>
+      <div class="hero-actions">
+        <a href="#" class="hero-btn-primary">สำรวจเลย</a>
+        <a href="about.html" class="hero-btn-ghost">เรียนรู้เพิ่มเติม</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>เลื่อน</span>
+      <div class="scroll-arrow"></div>
+    </div>
+    <div class="hero-grid-overlay"></div>
+  </section>
+
+  <!-- Canvas -->
+  <div class="canvas-wrap" id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- Dark Overlay -->
+  <div id="dark-overlay"></div>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap" id="marquee-1" data-scroll-speed="-22">
+    <div class="marquee-text">แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp;</div>
+  </div>
+
+  <!-- Infinite Logo Slider -->
+  <section class="infinite-logo-slider">
+    <div class="slider-track" id="infinite-track">
+      <div class="slider-item"><img src="images/img1.png" alt="รูปที่ 1"></div>
+      <div class="slider-item"><img src="images/img2.png" alt="รูปที่ 2"></div>
+      <div class="slider-item"><img src="images/img3.png" alt="รูปที่ 3"></div>
+      <div class="slider-item"><img src="images/img4.png" alt="รูปที่ 4"></div>
+      <div class="slider-item"><img src="images/img6.png" alt="รูปที่ 6"></div>
+      <!-- Cloned for seamless loop -->
+      <div class="slider-item"><img src="images/img1.png" alt="รูปที่ 1"></div>
+      <div class="slider-item"><img src="images/img2.png" alt="รูปที่ 2"></div>
+      <div class="slider-item"><img src="images/img3.png" alt="รูปที่ 3"></div>
+      <div class="slider-item"><img src="images/img4.png" alt="รูปที่ 4"></div>
+      <div class="slider-item"><img src="images/img6.png" alt="รูปที่ 6"></div>
+    </div>
+  </section>
+
+  <!-- Scroll Container -->
+  <div id="scroll-container">
+
+    <!-- Section 1: Infrastructure -->
+    <section class="scroll-section section-content align-left"
+             data-enter="13" data-leave="23" data-animation="slide-left">
+      <div class="section-inner">
+        <span class="section-label">002 / โครงสร้างพื้นฐาน</span>
+        <h2 class="section-heading">ชาติที่<br>เชื่อมต่อ</h2>
+        <p class="section-body">กระดูกสันหลังดิจิทัลที่ไร้รอยต่อ เชื่อมโยงทุกกระทรวง จังหวัด และบริการสาธารณะทั่ว 77 จังหวัดของประเทศไทย</p>
+        <a class="dash-link" href="../structure.html">เปิดแผนผังโครงสร้างรัฐ <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- Section 2: Intelligence -->
+    <section class="scroll-section section-content align-right"
+             data-enter="24" data-leave="34" data-animation="slide-right">
+      <div class="section-inner">
+        <span class="section-label">003 / ปัญญาประดิษฐ์</span>
+        <h2 class="section-heading">การปกครอง<br>ด้วย AI</h2>
+        <p class="section-body">กระแสข้อมูลแบบเรียลไทม์ขับเคลื่อนการตัดสินใจที่ฉลาดขึ้นในทุกระดับโครงสร้างรัฐบาลไทย</p>
+      </div>
+    </section>
+
+    <!-- Section 3: Representatives (ส.ส.ผู้แทนราษฎร) -->
+    <section class="scroll-section section-content align-left"
+             data-enter="35" data-leave="45" data-animation="fade-up">
+      <div class="section-inner">
+        <span class="section-label">004 / ส.ส.ผู้แทนราษฎร</span>
+        <h2 class="section-heading">เสียงของ<br>ประชาชน</h2>
+        <p class="section-body">ผู้แทนราษฎร 500 คนจาก 400 เขตเลือกตั้ง — พันธกิจของพลเมืองไทยทุกคนถูกติดตาม โปร่งใส และรับผิดชอบผ่าน รัฐไทยก้าวหน้า</p>
+        <a class="dash-link" href="../election/index.html">ดูว่าที่ ส.ส. รายเขต <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="scroll-section section-stats"
+             data-enter="46" data-leave="57" data-animation="stagger-up">
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-number" data-value="77" data-decimals="0">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">จังหวัด</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-value="500" data-decimals="0">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">ส.ส. ผู้แทนราษฎร</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-value="35" data-decimals="0">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">คณะรัฐมนตรี</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-value="20" data-decimals="0">0</span>
+          <span class="stat-suffix"></span>
+          <span class="stat-label">กระทรวง</span>
+        </div>
+      </div>
+      <div class="stats-cta">
+        <a class="dash-link" href="../stats/index.html">เปิดแดชบอร์ดสถิติข้อมูลรัฐ <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- Section 4: Cabinet (คณะรัฐมนตรี) -->
+    <section class="scroll-section section-content align-right"
+             data-enter="58" data-leave="67" data-animation="rotate-in">
+      <div class="section-inner">
+        <span class="section-label">005 / คณะรัฐมนตรี</span>
+        <h2 class="section-heading">โครงสร้าง<br>คณะรัฐมนตรี</h2>
+        <p class="section-body">คณะรัฐมนตรี 35 คน (รวมนายกฯ) ใน 20 กระทรวง ขับเคลื่อนวาระนโยบายของไทยด้วยความโปร่งใสอย่างเต็มรูปแบบผ่านแดชบอร์ดข้อมูลรวม</p>
+        <a class="dash-link" href="../cabinet/index.html">เปิดทำเนียบคณะรัฐมนตรี <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- Section 5: Security -->
+    <section class="scroll-section section-content align-left"
+             data-enter="68" data-leave="77" data-animation="scale-up">
+      <div class="section-inner">
+        <span class="section-label">006 / ความปลอดภัย</span>
+        <h2 class="section-heading">ข้อมูล<br>อธิปไตย</h2>
+        <p class="section-body">ระบบเข้ารหัสครบวงจรปกป้องทุกธุรกรรม การตัดสินใจ และบันทึกของพลเมืองโดยไม่มีการประนีประนอม</p>
+      </div>
+    </section>
+
+    <!-- Section 6: Updates (ข่าวทั่วไป) -->
+    <section class="scroll-section section-content align-right"
+             data-enter="78" data-leave="87" data-animation="clip-reveal">
+      <div class="section-inner">
+        <span class="section-label">007 / ข่าวทั่วไป</span>
+        <h2 class="section-heading">อัปเดต<br>เรียลไทม์</h2>
+        <p class="section-body">ข้อมูลการปกครองสด ประกาศนโยบาย และข่าวด้านนิติบัญญัติ — รวมศูนย์ผ่านแพลตฟอร์มปัญญาของ รัฐไทยก้าวหน้า</p>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="scroll-section section-cta"
+             data-enter="88" data-leave="100" data-animation="fade-up" data-persist="true">
+      <div class="cta-inner">
+        <span class="section-label">008 / เกี่ยวกับเรา </span>
+        <h2 class="cta-heading">กำหนด<br>อนาคต<br>ไทย</h2>
+        <p class="cta-sub">ร่วมมือกับ รัฐไทยก้าวหน้า เพื่อนำพาบทถัดไปของการปกครองดิจิทัล</p>
+        <div class="cta-actions">
+          <a href="about.html" class="cta-button">เกี่ยวกับเรา</a>
+          <a href="#" class="cta-button-ghost">ดูแพลตฟอร์ม</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── ส่วนข่าวสารทั่วไป (พื้นที่ใหม่ด้านล่างสุด) ── -->
+  <section class="news-area" id="news">
+    <div class="news-inner">
+      <span class="section-label">009 / ข่าวสารทั่วไป</span>
+      <h2 class="news-heading">ข่าวสาร<br>และอัปเดต</h2>
+      <p class="news-intro">ข่าวการเมืองและภาครัฐล่าสุด — ดึงสดผ่าน RSS จาก Sanook และ workpointTODAY · คลิกการ์ดเพื่ออ่านต่อที่เว็บต้นทาง</p>
+
+      <!-- การ์ดข่าวจะถูกดึงสดจาก RSS โดย js/app.js -> initNews()
+           เนื้อหาด้านล่างเป็น fallback กรณีโหลดไม่สำเร็จ -->
+      <div class="news-grid" id="news-grid" aria-live="polite">
+        <article class="news-card">
+          <span class="news-date">กำลังโหลด…</span>
+          <h3 class="news-card-title">กำลังดึงข่าวล่าสุด</h3>
+          <p class="news-card-text">ระบบกำลังเชื่อมต่อกับสำนักข่าวเพื่อแสดงข่าวการเมืองและภาครัฐล่าสุด</p>
+        </article>
+      </div>
+
+      <div class="news-more">
+        <a href="video.html" class="news-more-link">ดูวิดีโอข่าวทั้งหมด →</a>
+      </div>
+    </div>
+
+    <!-- พื้นที่ว่างด้านล่างสุด -->
+    <div class="page-bottom-space" aria-hidden="true"></div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/globe.js"></script>
+</body>

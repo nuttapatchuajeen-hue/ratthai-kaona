@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>สถิติข้อมูลรัฐและข่าว · ข้อมูลเปิดภาครัฐไทย งบประมาณ และข่าวสาร</title>
+<meta name="description" content="แดชบอร์ดรวมสถิติข้อมูลเปิดภาครัฐไทย (data.go.th) ตัวเลขงบประมาณ/เศรษฐกิจของไทย (ธนาคารโลก) และสถิติข่าวสารแบบเรียลไทม์ พร้อมกราฟ — ใช้ API เปิดที่ถูกต้องตามกฎหมาย ไม่ต้องใช้ API key" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F6F2E7;
+    --paper-2:#EFEADA;
+    --paper-3:#E7E0CC;
+    --ink:#16170F;
+    --ink-2:#3B3B30;
+    --ink-soft:#6A6A5B;
+    --rule:#D8D0BB;
+    --rule-strong:#C3B89C;
+    --green:#1F54C7;       /* สีหลัก (น้ำเงิน ตามโลโก้) */
+    --green-deep:#14307A;  /* น้ำเงินเข้ม (navy) */
+    --green-soft:#E3ECFB;
+    --red:#D7263D;
+    --gold:#B07F22;
+    --shadow:18px 22px 40px -28px rgba(20,20,10,.55);
+    --maxw:1240px;
+  }
+  /* ===== DARK MODE — โหมดมืด (ปุ่ม 🌙/☀️ · จำค่าไว้ที่ localStorage 'md-theme') ===== */
+  html[data-theme="dark"]{
+    --paper:#12130D; --paper-2:#181911; --paper-3:#202117;
+    --ink:#ECEAD9; --ink-2:#C7C5B4; --ink-soft:#928F7E;
+    --rule:#2B2C21; --rule-strong:#3C3D2D;
+    --green-soft:rgba(31,84,199,.22);
+    --shadow:18px 22px 40px -28px rgba(0,0,0,.8);
+  }
+  html[data-theme="dark"] body::before{mix-blend-mode:screen;opacity:.05}
+  .md-theme-toggle{position:fixed;right:18px;bottom:18px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;
+    border-radius:50%;cursor:pointer;font-size:19px;line-height:1;padding:0;background:var(--paper-2);color:var(--ink);
+    border:1px solid var(--rule-strong);box-shadow:0 8px 24px -12px rgba(0,0,0,.45);transition:transform .15s, border-color .2s}
+  .md-theme-toggle:hover{transform:translateY(-2px);border-color:var(--green)}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans Thai",system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* paper grain overlay */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--green);color:#fff}
+
+  .topbar{height:6px;background:linear-gradient(90deg,var(--green-deep),var(--green) 50%,var(--red));position:relative;z-index:2}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---------- MASTHEAD ---------- */
+  .masthead{padding:26px 0 0}
+  .mast-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:flex-start;gap:16px}
+  .brand-mark{flex:none;height:64px;display:flex;align-items:center}
+  .brand-mark .logo-svg{height:64px;width:auto;display:block;filter:drop-shadow(8px 10px 14px rgba(20,30,80,.18))}
+  .brand h1{
+    margin:0;font-family:"Noto Serif Thai",serif;font-weight:900;letter-spacing:-.01em;
+    font-size:clamp(28px,4.4vw,46px);line-height:.98;color:var(--ink);
+  }
+  .brand h1 .dot{color:var(--green)}
+  .brand .sub{margin-top:7px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tag-unofficial{
+    font-family:"Archivo",sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--red);border:1.5px solid var(--red);
+    padding:3px 8px 2px;border-radius:4px;
+  }
+  .brand .sub-th{font-size:13.5px;color:var(--ink-soft);font-weight:500;letter-spacing:.01em}
+
+  .mast-meta{text-align:right;min-width:230px}
+  .dateline{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:15px;color:var(--ink-2)}
+  .status{display:flex;align-items:center;gap:9px;justify-content:flex-end;margin-top:10px}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);position:relative;box-shadow:0 0 0 0 rgba(31,84,199,.55);animation:pulse 2s infinite}
+  .live-dot.err{background:var(--red);animation:none}
+  .live-dot.load{background:var(--gold)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,84,199,.5)}70%{box-shadow:0 0 0 9px rgba(31,84,199,0)}100%{box-shadow:0 0 0 0 rgba(31,84,199,0)}}
+  .status-txt{font-family:"Archivo",sans-serif;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .btn-refresh{
+    margin-top:12px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    background:var(--ink);color:var(--paper);border:none;border-radius:7px;
+    font-family:"IBM Plex Sans Thai",sans-serif;font-weight:600;font-size:13px;
+    padding:9px 14px;transition:transform .2s,background .2s;
+  }
+  .btn-refresh:hover{background:var(--green-deep);transform:translateY(-1px)}
+  .btn-refresh:active{transform:translateY(0)}
+  .btn-refresh svg{width:14px;height:14px}
+  .btn-refresh.spinning svg{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .mast-rule{margin:22px 0 0;border:0;border-top:3px solid var(--ink);position:relative}
+  .mast-rule::after{content:"";position:absolute;left:0;right:0;top:4px;border-top:1px solid var(--ink)}
+  .ticker{
+    display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--rule);
+    font-size:12.5px;color:var(--ink-soft);overflow:hidden;white-space:nowrap;
+  }
+  .ticker b{font-family:"Archivo",sans-serif;font-weight:800;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--red);padding:3px 7px;border-radius:3px;flex:none}
+  .ticker .track{display:inline-flex;gap:30px;animation:marq 38s linear infinite}
+  .ticker:hover .track{animation-play-state:paused}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ticker .track span{opacity:.85}
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  main{padding:30px 0 10px}
+  .sec{margin-top:40px;opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .sec:nth-of-type(1){animation-delay:.05s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+  .sec-idx{font-family:"Archivo",sans-serif;font-weight:800;font-size:12px;color:var(--green);letter-spacing:.1em}
+  .sec-title{font-family:"Noto Serif Thai",serif;font-weight:700;font-size:clamp(19px,2.4vw,25px);margin:0;line-height:1.1}
+  .sec-sub{font-size:12.5px;color:var(--ink-soft);margin-left:auto;text-align:right;max-width:340px;font-weight:500}
+
+  /* ---------- KPI ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule-strong);background:var(--paper-2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .kpi{padding:22px 22px 20px;position:relative;border-right:1px solid var(--rule)}
+  .kpi:last-child{border-right:0}
+  .kpi-idx{font-family:"Archivo",sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--ink-soft);text-transform:uppercase}
+  .kpi-num{font-family:"Archivo",sans-serif;font-weight:800;font-size:clamp(38px,5vw,56px);line-height:1;letter-spacing:-.02em;margin:14px 0 6px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .kpi-num .unit{font-size:.42em;color:var(--green);font-weight:700;margin-left:4px}
+  .kpi-label{font-size:13px;color:var(--ink-2);font-weight:500}
+  .kpi-spark{position:absolute;right:18px;top:20px;color:var(--green)}
+  .kpi-spark svg{width:26px;height:26px;opacity:.85}
+
+  /* ---------- CHART CARD ---------- */
+  .card{background:var(--paper-2);border:1px solid var(--rule-strong);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+  .cap-note{font-size:12px;color:var(--ink-soft);margin:-2px 0 16px;font-weight:500;line-height:1.55}
+  .grid-2{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:start}
+
+  /* ---------- GOV / ECON ---------- */
+  .grid-econ{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
+  .grid-econ .card{display:flex;flex-direction:column}
+  .src-tag{display:inline-flex;align-items:center;gap:7px;font-family:"Archivo",sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin-top:auto;padding-top:13px}
+  .src-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);flex:none}
+  .src-tag b{color:var(--green);font-weight:800}
+  .ybars{display:flex;gap:7px;align-items:flex-end;height:172px;margin-top:10px}
+  .ybar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+  .ybar .vval{font-family:"Archivo",sans-serif;font-size:9.5px;font-weight:700;color:var(--ink-2);margin-bottom:5px;white-space:nowrap}
+  .ybar .vfill{width:100%;max-width:30px;background:linear-gradient(180deg,var(--green),var(--green-deep));border-radius:4px 4px 0 0;height:0;transition:height 1.1s cubic-bezier(.2,.8,.2,1);min-height:3px}
+  .ybar.last .vfill{background:linear-gradient(180deg,var(--gold),#8a6418)}
+  .ybar .vlab{font-family:"Archivo",sans-serif;font-size:9px;color:var(--ink-soft);margin-top:6px;font-weight:600}
+  .ybar:hover .vfill{filter:brightness(1.08)}
+  .linechart{margin-top:6px}
+  .linechart svg{display:block;width:100%;height:auto}
+  .line-legend{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
+  .line-legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);font-weight:500}
+  .line-legend i{width:16px;height:3px;border-radius:2px;flex:none}
+  .gap-note{font-size:11.5px;color:var(--ink-soft);font-weight:500;line-height:1.55}
+
+  /* hourly bars */
+  .hours{display:grid;grid-template-columns:repeat(24,1fr);gap:5px;align-items:end;height:200px;margin-top:6px}
+  .hbar{position:relative;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+  .hbar .fill{width:100%;background:linear-gradient(180deg,var(--green),var(--green-deep));border-radius:3px 3px 0 0;height:0;transition:height 1s cubic-bezier(.2,.8,.2,1);min-height:2px}
+  .hbar.peak .fill{background:linear-gradient(180deg,var(--red),#8e2a20)}
+  .hbar .hl{font-family:"Archivo",sans-serif;font-size:9px;color:var(--ink-soft);text-align:center;margin-top:5px;font-weight:600}
+  .hbar .cnt{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:"Archivo",sans-serif;font-size:9.5px;font-weight:700;color:var(--ink);opacity:0;transition:opacity .2s}
+  .hbar:hover .cnt{opacity:1}
+  .hbar:hover .fill{filter:brightness(1.12)}
+  .axis-note{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);margin-top:12px;font-weight:500;border-top:1px solid var(--rule);padding-top:8px}
+
+  /* category ranking */
+  .cats{display:flex;flex-direction:column;gap:13px;margin-top:4px}
+  .catrow{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center}
+  .cat-rank{font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;color:var(--ink-soft)}
+  .cat-main{min-width:0}
+  .cat-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
+  .cat-name{font-weight:600;font-size:14px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-val{font-family:"Archivo",sans-serif;font-weight:700;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums;flex:none;padding-left:10px}
+  .cat-track{height:9px;background:var(--paper-3);border-radius:5px;overflow:hidden}
+  .cat-bar{height:100%;width:0;border-radius:5px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+  .cat-pct{font-family:"Archivo",sans-serif;font-size:12px;color:var(--ink-soft);font-weight:600;font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
+
+  /* keyword cloud */
+  .cloud{display:flex;flex-wrap:wrap;gap:9px 11px;align-content:flex-start;margin-top:4px}
+  .kw{font-family:"Noto Serif Thai",serif;font-weight:600;line-height:1;cursor:default;color:var(--ink-2);transition:color .2s,transform .2s;border-bottom:2px solid transparent}
+  .kw:hover{color:var(--green);transform:translateY(-2px);border-color:var(--green)}
+  .kw .n{font-family:"Archivo",sans-serif;font-size:.5em;color:var(--ink-soft);margin-left:3px;vertical-align:super;font-weight:700}
+
+  /* donut */
+  .donut-wrap{display:flex;align-items:center;gap:20px;margin-top:8px;flex-wrap:wrap}
+  .donut{width:148px;height:148px;flex:none;border-radius:50%;position:relative;background:var(--paper-3)}
+  .donut::after{content:"";position:absolute;inset:30px;background:var(--paper-2);border-radius:50%;box-shadow:inset 0 0 0 1px var(--rule)}
+  .donut .center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;z-index:2}
+  .donut .center .big{font-family:"Archivo",sans-serif;font-weight:800;font-size:26px;line-height:1;color:var(--ink)}
+  .donut .center .sm{font-size:10.5px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+  .legend{display:flex;flex-direction:column;gap:7px;flex:1;min-width:140px}
+  .leg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2)}
+  .leg i{width:11px;height:11px;border-radius:3px;flex:none}
+  .leg b{font-family:"Archivo",sans-serif;margin-left:auto;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+
+  /* ---------- HEADLINES ---------- */
+  .heads{column-count:2;column-gap:32px}
+  .headitem{break-inside:avoid;padding:15px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px;transition:background .2s}
+  .headitem:hover{background:rgba(31,84,199,.06)}
+  .head-thumb{flex:none;width:78px;height:62px;border-radius:7px;object-fit:cover;background:var(--paper-3);box-shadow:0 2px 8px -4px rgba(0,0,0,.4)}
+  .head-body{min-width:0;flex:1}
+  .head-tagrow{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+  .cat-chip{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:#fff;padding:2px 7px;border-radius:4px;font-family:"IBM Plex Sans Thai",sans-serif}
+  .head-time{font-family:"Archivo",sans-serif;font-size:10.5px;color:var(--ink-soft);font-weight:600;letter-spacing:.03em}
+  .ds-fmt{font-family:"Archivo",sans-serif;font-size:9.5px;font-weight:700;color:var(--green);letter-spacing:.04em;margin-left:auto;white-space:nowrap}
+  #datasets .headitem:first-child{padding-top:2px}
+  .head-title{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:15px;line-height:1.32;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s}
+  .headitem:hover .head-title{color:var(--green-deep)}
+  .head-src{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--green);font-weight:600;margin-top:6px;opacity:0;transform:translateX(-4px);transition:.2s}
+  .headitem:hover .head-src{opacity:1;transform:none}
+
+  /* loading + states */
+  .skeleton{position:relative;overflow:hidden;background:var(--paper-3);border-radius:6px}
+  .skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);animation:shim 1.3s infinite}
+  @keyframes shim{to{transform:translateX(100%)}}
+  .state-msg{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:14px}
+  .state-msg.err{color:var(--red)}
+  .hidden{display:none!important}
+
+  /* ---------- FOOTER ---------- */
+  footer{margin-top:54px;border-top:3px solid var(--ink);background:var(--paper-2)}
+  footer::before{content:"";display:block;height:1px;background:var(--ink);margin-top:4px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:30px;padding:30px 0 14px}
+  .foot-legal h4{font-family:"Noto Serif Thai",serif;font-size:15px;margin:0 0 9px;font-weight:700}
+  .foot-legal p{font-size:12.5px;color:var(--ink-soft);margin:0 0 9px;line-height:1.65;max-width:620px}
+  .foot-legal a.src{color:var(--green);font-weight:600;border-bottom:1px solid var(--green)}
+  .foot-badges{display:flex;flex-direction:column;gap:9px}
+  .badge{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink-2)}
+  .badge .ico{flex:none;width:18px;height:18px;color:var(--green);margin-top:1px}
+  .foot-bottom{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 0 26px;border-top:1px solid var(--rule);font-size:11.5px;color:var(--ink-soft)}
+  .foot-bottom .made{font-family:"Archivo",sans-serif;letter-spacing:.04em;text-transform:uppercase;font-weight:600;font-size:10.5px}
+
+  /* responsive */
+  @media(max-width:980px){
+    .grid-2{grid-template-columns:1fr}
+    .grid-econ{grid-template-columns:1fr}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .kpi:nth-child(2){border-right:0}
+    .kpi:nth-child(1),.kpi:nth-child(2){border-bottom:1px solid var(--rule)}
+    .foot-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:720px){
+    .wrap{padding:0 18px}
+    .heads{column-count:1}
+    .ybars{height:144px;gap:4px}
+    .ybar .vval{display:none}
+    .hours{height:150px;gap:3px}
+    .hbar .hl{display:none}
+    .hbar:nth-child(4n+1) .hl{display:block}
+    .mast-meta{text-align:left;min-width:0}
+    .status,.brand .sub{justify-content:flex-start}
+    .sec-sub{display:none}
+  }
+  @media(max-width:430px){
+    .kpis{grid-template-columns:1fr;}
+    .kpi{border-right:0;border-bottom:1px solid var(--rule)}
+    .kpi:last-child{border-bottom:0}
+  }
+</style>
+</head>
+<body>
+  <!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+  <button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+  <script>
+  function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+  function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+  mdThemeIcon();
+  </script>
+  <!-- ปุ่มกลับหน้าหลัก รัฐไทยก้าวหน้า (hub) -->
+  <a href="../hub/index.html" id="hub-back-btn" style="position:fixed;left:16px;bottom:16px;z-index:99999;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Prompt','Kanit','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14px;font-weight:600;line-height:1;color:#eafcff;text-decoration:none;background:rgba(11,17,26,0.92);border:1px solid rgba(0,229,255,0.55);border-radius:999px;box-shadow:0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 26px rgba(0,0,0,.5),0 0 26px rgba(0,229,255,.5)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25)';">← กลับหน้าหลัก</a>
+  <div class="topbar"></div>
+
+  <header class="masthead">
+    <div class="wrap">
+      <div class="mast-top">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="logo-svg" viewBox="0 0 112 66" role="img" aria-label="โลโก้ สถิติข้อมูลรัฐและข่าว">
+              <defs>
+                <linearGradient id="lgBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#3b7bf0"/><stop offset="1" stop-color="#16307a"/>
+                </linearGradient>
+              </defs>
+              <path d="M4 49 C 28 61, 70 61, 95 49" fill="none" stroke="#1f54c7" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M68 56 C 87 60, 102 54, 109 46" fill="none" stroke="#D7263D" stroke-width="4.5" stroke-linecap="round"/>
+              <g fill="url(#lgBar)">
+                <rect x="6" y="36" width="7" height="14" rx="1.2"/>
+                <rect x="15" y="30" width="7" height="20" rx="1.2"/>
+                <rect x="24" y="22" width="7" height="28" rx="1.2"/>
+                <rect x="33" y="15" width="7" height="35" rx="1.2"/>
+              </g>
+              <polyline points="9.5,33 18.5,27 27.5,19 36.5,12" fill="none" stroke="#16307a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <g fill="#16307a">
+                <circle cx="9.5" cy="33" r="2.3"/><circle cx="18.5" cy="27" r="2.3"/><circle cx="27.5" cy="19" r="2.3"/><circle cx="36.5" cy="12" r="2.3"/>
+              </g>
+              <g fill="#16307a">
+                <rect x="43" y="46" width="36" height="5" rx="1"/>
+                <rect x="44.5" y="32" width="2.6" height="14"/><rect x="50.4" y="32" width="2.6" height="14"/><rect x="56.3" y="32" width="2.6" height="14"/><rect x="62.2" y="32" width="2.6" height="14"/><rect x="68.1" y="32" width="2.6" height="14"/>
+                <rect x="42.5" y="29" width="37" height="3.2"/>
+                <polygon points="43,29 61,18 79,29"/>
+                <path d="M55 18 A 6.4 9 0 0 1 67 18 Z"/>
+                <rect x="59.7" y="6" width="2.6" height="8" rx="1"/><circle cx="61" cy="5" r="1.6"/>
+              </g>
+              <g>
+                <rect x="82" y="23" width="26" height="27" rx="3" fill="#ffffff" stroke="#1f54c7" stroke-width="2"/>
+                <path d="M82 26 a3 3 0 0 1 3-3 h20 a3 3 0 0 1 3 3 v6 h-26 z" fill="#1f54c7"/>
+                <text x="95" y="30.6" font-family="Archivo, sans-serif" font-size="5.4" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.3">NEWS</text>
+                <rect x="85" y="36" width="8" height="8" rx="1" fill="#bcd3f7"/>
+                <rect x="95.5" y="36.5" width="10.5" height="2.2" rx="1" fill="#2f6bed"/>
+                <rect x="95.5" y="40.3" width="10.5" height="2.2" rx="1" fill="#9cbdf2"/>
+                <rect x="85" y="46" width="21" height="2.2" rx="1" fill="#9cbdf2"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <h1>สถิติข้อมูลรัฐ<span class="dot">·</span>และข่าว</h1>
+            <div class="sub">
+              <span class="tag-unofficial">Unofficial</span>
+              <span class="sub-th">ข้อมูลเปิดภาครัฐไทย · งบประมาณ/เศรษฐกิจ · และข้อมูลเปิดมาใหม่ แบบเรียลไทม์</span>
+            </div>
+          </div>
+        </div>
+        <div class="mast-meta">
+          <div class="dateline" id="dateline">—</div>
+          <div class="status">
+            <span class="live-dot load" id="liveDot"></span>
+            <span class="status-txt" id="statusTxt">กำลังเชื่อมต่อ…</span>
+          </div>
+          <button class="btn-refresh" id="btnRefresh" aria-label="รีเฟรชข้อมูล">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            รีเฟรช
+          </button>
+        </div>
+      </div>
+      <hr class="mast-rule" />
+      <div class="ticker">
+        <b>สด</b>
+        <div class="track" id="ticker"><span>กำลังดึงชุดข้อมูลเปิดล่าสุดจากภาครัฐ…</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- KPI -->
+    <section class="sec" style="animation-delay:.05s">
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="kpi-idx">01 / GDP</div><div class="kpi-num" data-k="gdp">—<span class="unit">ลล.฿</span></div><div class="kpi-label">GDP ไทย ราคาปัจจุบัน (ปีล่าสุด)</div>
+          <div class="kpi-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 3 6-8"/></svg></div></div>
+        <div class="kpi"><div class="kpi-idx">02 / งบรัฐ</div><div class="kpi-num" data-k="exp">—<span class="unit">% GDP</span></div><div class="kpi-label">รายจ่ายภาครัฐต่อ GDP</div>
+          <div class="kpi-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg></div></div>
+        <div class="kpi"><div class="kpi-idx">03 / OPEN DATA</div><div class="kpi-num" data-k="ds">—</div><div class="kpi-label">ชุดข้อมูลเปิดภาครัฐ · data.go.th</div>
+          <div class="kpi-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.7 4 3 9 3s9-1.3 9-3V5M3 11v6c0 1.7 4 3 9 3s9-1.3 9-3v-6"/></svg></div></div>
+        <div class="kpi"><div class="kpi-idx">04 / อัปเดต</div><div class="kpi-num" data-k="fresh">—</div><div class="kpi-label">ชุดข้อมูลอัปเดตใน 7 วันล่าสุด</div>
+          <div class="kpi-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div></div>
+      </div>
+    </section>
+
+    <!-- GOV ECON (World Bank) -->
+    <section class="sec">
+      <div class="sec-head">
+        <span class="sec-idx">§ 01</span>
+        <h2 class="sec-title">เศรษฐกิจและงบประมาณภาครัฐไทย</h2>
+        <span class="sec-sub">ตัวเลขเศรษฐกิจ-การคลังของประเทศไทยย้อนหลังหลายปี เพื่อดูขนาดเศรษฐกิจและสัดส่วนการคลังของรัฐ</span>
+      </div>
+      <div class="grid-econ">
+        <div class="card">
+          <div class="cap-note" id="econCap">ผลิตภัณฑ์มวลรวมในประเทศ (GDP) ราคาปัจจุบัน · หน่วย: ล้านล้านบาท · ปี พ.ศ.</div>
+          <div class="ybars" id="gdpBars" aria-label="กราฟ GDP รายปี"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="src-tag">ที่มา · <b>World Bank Open Data</b> · NY.GDP.MKTP.CN</div>
+        </div>
+        <div class="card">
+          <div class="cap-note">รายจ่ายภาครัฐ เทียบกับ รายได้จากภาษี (สัดส่วนต่อ GDP) — ช่องว่างระหว่างเส้นสะท้อนภาวะการคลังของรัฐ</div>
+          <div class="linechart" id="fiscalChart" aria-label="กราฟรายจ่ายและรายได้ภาษีต่อ GDP"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="line-legend">
+            <span><i style="background:#D7263D"></i>รายจ่ายภาครัฐ (% GDP)</span>
+            <span><i style="background:#1F54C7"></i>รายได้ภาษี (% GDP)</span>
+          </div>
+          <div class="src-tag">ที่มา · <b>World Bank Open Data</b> · GC.XPN / GC.TAX</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPEN DATA (data.go.th) -->
+    <section class="sec">
+      <div class="sec-head">
+        <span class="sec-idx">§ 02</span>
+        <h2 class="sec-title">ข้อมูลเปิดภาครัฐไทย — data.go.th</h2>
+        <span class="sec-sub">ชุดข้อมูลเปิด (Open Government Data) ที่หน่วยงานรัฐไทยเผยแพร่ผ่านศูนย์กลางข้อมูลเปิดภาครัฐ</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="cap-note">หน่วยงานรัฐที่เผยแพร่ชุดข้อมูลเปิดมากที่สุด (จำนวนชุดข้อมูลบน data.go.th)</div>
+            <div class="cats" id="orgs"><div class="state-msg">กำลังเชื่อมต่อ data.go.th…</div></div>
+            <div class="src-tag">ที่มา · <b>data.go.th</b> · CKAN API (สพร./DGA)</div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="text-align:center;padding:30px 24px">
+            <div class="kpi-idx" style="letter-spacing:.14em">ชุดข้อมูลเปิดทั้งหมด</div>
+            <div class="kpi-num" id="dsTotal" style="font-size:clamp(40px,6vw,62px);margin:16px 0 4px">—</div>
+            <div class="kpi-label" style="font-size:13px">ชุดข้อมูลจากหน่วยงานรัฐทั่วประเทศ</div>
+            <div style="margin-top:18px;border-top:1px solid var(--rule);padding-top:16px;text-align:left">
+              <div class="gap-note">ข้อมูลเปิดภาครัฐเผยแพร่ภายใต้นโยบาย Open Government Data ของไทย ให้ประชาชนนำไปใช้ต่อได้อย่างเสรี ไม่ต้องขออนุญาตและไม่ต้องใช้ API key</div>
+            </div>
+            <div class="src-tag" style="justify-content:center">ที่มา · <b>data.go.th</b> · package_search</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LATEST OPEN DATASETS (data.go.th) -->
+    <section class="sec">
+      <div class="sec-head">
+        <span class="sec-idx">§ 03</span>
+        <h2 class="sec-title">ข้อมูลเปิดมาใหม่จากภาครัฐ</h2>
+        <span class="sec-sub">ชุดข้อมูลที่หน่วยงานรัฐเพิ่งเผยแพร่/อัปเดตล่าสุดบน data.go.th — คลิกเพื่อดูและดาวน์โหลดที่ต้นทาง</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div id="datasets"><div class="state-msg">กำลังโหลดชุดข้อมูลล่าสุด…</div></div>
+            <div class="src-tag">ที่มา · <b>data.go.th</b> · package_search · เรียงตามวันที่อัปเดตล่าสุด</div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="min-height:300px">
+            <div class="cap-note">คำเด่นในชื่อชุดข้อมูลเปิดล่าสุด — สะท้อนหัวข้อที่ภาครัฐกำลังเปิดเผยมากที่สุด</div>
+            <div class="cloud" id="cloud"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-legal">
+          <h4>ที่มาของข้อมูล &amp; เงื่อนไขการใช้งาน</h4>
+          <p>
+            แดชบอร์ดนี้ใช้ <strong>เฉพาะแหล่งข้อมูลเปิดสาธารณะที่ถูกต้องตามกฎหมาย 2 แหล่ง</strong> โดยไม่ต้องใช้ API key และไม่มีการขูดข้อมูล (scraping) ใด ๆ —
+            ① <strong><a class="src" href="https://data.go.th" target="_blank" rel="noopener">data.go.th</a></strong>
+            ศูนย์กลางข้อมูลเปิดภาครัฐของไทย (โดย สพร./DGA) เผยแพร่ภายใต้นโยบาย Open Government Data ให้ประชาชนนำไปใช้ต่อได้อย่างเสรี — ใช้ทั้งสถิติชุดข้อมูล รายชื่อหน่วยงาน และรายการข้อมูลเปิดที่อัปเดตล่าสุด ·
+            ② <strong><a class="src" href="https://data.worldbank.org" target="_blank" rel="noopener">World Bank Open Data</a></strong>
+            ตัวเลขเศรษฐกิจ-การคลังของประเทศไทย ที่เปิดให้ใช้งานสาธารณะ
+          </p>
+          <p>
+            ทุกชุดข้อมูลลิงก์กลับไปยังหน้าต้นทางบน data.go.th เพื่อให้ตรวจสอบและดาวน์โหลดได้โดยตรง ·
+            <strong>คำชี้แจง:</strong> เว็บนี้เป็นโครงการสาธิตเชิงสถิติที่จัดทำขึ้นอย่างอิสระ
+            <strong>ไม่ได้เป็นเว็บไซต์ทางการของหน่วยงานรัฐใด ๆ</strong> ·
+            ตัวเลขเศรษฐกิจ/งบประมาณอ้างอิงปีล่าสุดเท่าที่ World Bank เผยแพร่
+          </p>
+        </div>
+        <div class="foot-badges">
+          <div class="badge"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 5-3.5 7.5-9 9-5.5-1.5-9-4-9-9V5l9-3 9 3z"/></svg></span><span>ข้อมูลเปิดภาครัฐไทยจาก <b>data.go.th</b> (Open Government Data)</span></div>
+          <div class="badge"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span><span>ตัวเลขเศรษฐกิจ/งบประมาณไทยจาก <b>World Bank</b> Open Data</span></div>
+          <div class="badge"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></span><span>ทุกชุดข้อมูลลิงก์กลับ <b>data.go.th</b> · 100% แหล่งข้อมูลเปิด ไม่มี scraping ไม่ต้องใช้ API key</span></div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year"></span> โครงการสาธิตสถิติข้อมูลรัฐและข่าว · ข้อมูลอัปเดตอัตโนมัติทุก 15 นาที</span>
+        <span class="made">data.go.th · World Bank · 100% open data · No API key · No tracking</span>
+      </div>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // แดชบอร์ดนี้ใช้ "เฉพาะแหล่งข้อมูลเปิดภาครัฐ" — data.go.th + World Bank (ไม่ดึงข่าวจากสื่อพาณิชย์)
+
+  // ---- พร็อกซี CORS สาธารณะ (ไล่ลองทีละตัวจนกว่าจะสำเร็จ) ----
+  // corsproxy ก่อน (ผ่าน WAF ของ data.go.th สำหรับ query หนักได้ดีสุด) แล้วค่อย allorigins / codetabs
+  var XML_PROXIES = [
+    function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); },
+    function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
+    function(u){ return "https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u); }
+  ];
+
+  var $ = function(s,r){ return (r||document).querySelector(s); };
+  var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+  // เรียก fn หลังเฟรมถัดไป (เพื่อ trigger CSS transition) แต่การันตีว่าทำงานแม้ rAF ไม่ยิง (แท็บพื้นหลัง)
+  function afterPaint(fn){ requestAnimationFrame(fn); setTimeout(fn, 60); }
+
+  function fetchTimeout(url, ms){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, ms||9000);
+    return fetch(url, { signal: ctrl.signal }).finally(function(){ clearTimeout(t); });
+  }
+
+  // ---- ดึง JSON ทั่วไป (World Bank / data.go.th) พร้อม fallback: ลองตรงก่อน แล้วค่อยผ่านพร็อกซี ----
+  function fetchJSON(url, directFirst){
+    // directFirst=false → ข้ามการเรียกตรง (เช่น data.go.th ที่บล็อก CORS อยู่แล้ว) ไปใช้พร็อกซีเลย
+    var chain = (directFirst === false ? [] : [url]).concat(XML_PROXIES.map(function(p){ return p(url); }));
+    var i = 0;
+    function attempt(){
+      if(i >= chain.length) return Promise.reject(new Error("all sources failed"));
+      var u = chain[i++];
+      return fetchTimeout(u, 15000)
+        .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+        .then(function(t){ return JSON.parse(t); })
+        .catch(function(){ return attempt(); });
+    }
+    return attempt();
+  }
+  function fmtInt(n){ return (n==null||isNaN(n)) ? "—" : Math.round(n).toLocaleString("en-US"); }
+
+  // ---- World Bank Open Data (ตัวชี้วัดของประเทศไทย THA) ----
+  function wbUrl(ind){ return "https://api.worldbank.org/v2/country/THA/indicator/" + ind + "?format=json&per_page=80"; }
+  function wbSeries(json){
+    if(!Array.isArray(json) || !Array.isArray(json[1])) return [];
+    return json[1].filter(function(d){ return d.value != null; })
+      .map(function(d){ return { year:+d.date, value:+d.value }; })
+      .sort(function(a,b){ return a.year - b.year; });
+  }
+
+  // แปลง pubDate ให้เป็น Date ที่ถูกต้อง (รองรับทั้ง RFC822 และรูปแบบของ rss2json)
+  function parseDate(s){
+    if(!s) return null;
+    if(/[+-]\d{2}:?\d{2}\s*$|Z\s*$|GMT/i.test(s)) return new Date(s);
+    var m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+    if(m) return new Date(s.replace(" ","T")+"+07:00"); // rss2json = เวลาไทยอยู่แล้ว
+    var d = new Date(s); return isNaN(d) ? null : d;
+  }
+  function bangkokHour(d){
+    try{ return parseInt(new Intl.DateTimeFormat("en-GB",{hour:"2-digit",hour12:false,timeZone:"Asia/Bangkok"}).format(d),10); }
+    catch(e){ return d.getHours(); }
+  }
+
+  // หนีอักขระพิเศษก่อนใส่ลง HTML (ชื่อชุดข้อมูล/หน่วยงานอาจมี & < >)
+  function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+  // วันเวลาแบบ CKAN (ISO ไม่มี timezone = UTC) → Date
+  function parseCkanDate(s){
+    if(!s) return null;
+    var iso = /(Z|[+-]\d{2}:?\d{2})$/.test(s) ? s : s.replace(" ","T") + "Z";
+    var d = new Date(iso); return isNaN(d) ? null : d;
+  }
+  // สีป้ายหน่วยงาน (คงที่ต่อชื่อ) จากจานสีเดียวกับกราฟ
+  function orgColor(name){
+    var h = 0; for(var i=0;i<(name||"").length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    return GOVPAL[h % GOVPAL.length];
+  }
+
+  // ---------- RENDERING ----------
+  function setStatus(state, txt){
+    var d = $("#liveDot"); d.className = "live-dot" + (state==="ok"?"":(" "+state));
+    $("#statusTxt").textContent = txt;
+  }
+
+  function animateCount(el, to){
+    to = (typeof to === "number" && isFinite(to)) ? to : 0;
+    var dur = 900, t0 = performance.now(), done = false, node = el.childNodes[0];
+    node.nodeValue = "0";
+    function finish(){ if(done) return; done = true; node.nodeValue = Math.round(to).toLocaleString("en-US"); }
+    function step(now){
+      if(done) return;
+      var p = Math.min(1,(now-t0)/dur);
+      node.nodeValue = Math.round(to*(1-Math.pow(1-p,3))).toLocaleString("en-US");
+      if(p<1) requestAnimationFrame(step); else finish();
+    }
+    requestAnimationFrame(step);
+    setTimeout(finish, dur+250); // การันตีค่าสุดท้ายแม้ rAF ไม่ทำงาน
+  }
+
+  function timeAgo(d){
+    if(!d) return "";
+    var s = (Date.now()-d.getTime())/1000;
+    if(s<60) return "เมื่อสักครู่";
+    if(s<3600) return Math.floor(s/60)+" นาทีที่แล้ว";
+    if(s<86400) return Math.floor(s/3600)+" ชั่วโมงที่แล้ว";
+    if(s<172800) return "เมื่อวานนี้";
+    return Math.floor(s/86400)+" วันก่อน";
+  }
+
+  // คำหยุด (stopword) ภาษาไทย/อังกฤษ สำหรับกรองคำเด่นจากพาดหัว
+  var STOP = {};
+  ("ที่ การ ความ และ ของ ใน เป็น ได้ ให้ มา ไป กับ จะ ไม่ มี ก็ ว่า แต่ หรือ จาก ถึง โดย ด้วย แล้ว นี้ นั้น คือ ต่อ เพื่อ ทำ อยู่ ขึ้น ลง อย่าง เมื่อ พร้อม ทั้ง ยัง ตาม เรื่อง คน ครั้ง หลัง วัน ปี เดือน ล่าสุด ข่าว ใหม่ กว่า เพิ่ม รับ ออก เข้า อีก ทุก หนึ่ง สอง สาม มิ วันนี้ เปิด เผย ระบุ ชี้ คาด หลังจาก ราย กำลัง ข้อมูล ชุดข้อมูล รายการ ประจำปี ประจำเดือน ประจำ สรุป พศ ระดับ the a an of to in on for and or is are with at by from as new data set").split(" ").forEach(function(w){ STOP[w]=1; });
+
+  function tokens(title){
+    return title
+      .replace(/[“”"'’‘()\[\]{}…–—\-_/\\|!?.,:;<>@#%^&*+=~`ๆฯ]/g," ")
+      .split(/\s+/)
+      .map(function(w){ return w.trim(); })
+      .filter(function(w){
+        if(!w) return false;
+        if(STOP[w.toLowerCase()]) return false;
+        if(/^\d+$/.test(w)) return false;
+        var thai = /[฀-๿]/.test(w);
+        return thai ? w.length>=2 : w.length>=3;
+      });
+  }
+
+  function renderDatasets(list){
+    if(!list || !list.length){
+      setStatus("err","เชื่อมต่อไม่สำเร็จ");
+      $("#datasets").innerHTML = '<div class="state-msg err">ดึงชุดข้อมูลล่าสุดไม่สำเร็จ (พร็อกซีสาธารณะอาจไม่ว่าง) — ลองกดปุ่มรีเฟรช</div>';
+      $("#cloud").innerHTML = "";
+      return;
+    }
+    var items = list.map(function(d){
+      var org = (d.organization && (d.organization.title || d.organization.name)) || "หน่วยงานรัฐ";
+      return {
+        title: (d.title || d.name || "").trim(),
+        org: org,
+        date: parseCkanDate(d.metadata_modified || d.metadata_created),
+        link: "https://data.go.th/dataset/" + (d.name || ""),
+        formats: (d.resources || []).map(function(r){ return (r.format||"").toUpperCase().trim(); }).filter(Boolean)
+      };
+    }).filter(function(x){ return x.title; });
+    items.sort(function(a,b){ return (b.date?b.date.getTime():0)-(a.date?a.date.getTime():0); });
+
+    var now = Date.now();
+    var fresh7 = items.filter(function(x){ return x.date && (now-x.date.getTime())<7*86400000; }).length;
+    setKpi("fresh", fresh7);
+
+    renderDatasetList(items);
+    renderCloud(items);
+    renderTicker(items);
+
+    var hhmm = new Intl.DateTimeFormat("th-TH",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Bangkok"}).format(new Date());
+    setStatus("ok","อัปเดต "+hhmm+" น.");
+  }
+
+  // ดึง "ชุดข้อมูลเปิดล่าสุด" จาก data.go.th (เรียงตามวันที่อัปเดต) — มี fallback เผื่อ sort ไม่รองรับ
+  function loadDatasets(){
+    setStatus("load","กำลังดึงข้อมูล…");
+    $("#btnRefresh").classList.add("spinning");
+    var sorted = "https://data.go.th/api/3/action/package_search?rows=20&sort=metadata_modified desc";
+    var plain  = "https://data.go.th/api/3/action/package_search?rows=20";
+    fetchJSON(sorted, false)
+      .then(function(j){
+        var list = (j && j.result && Array.isArray(j.result.results)) ? j.result.results : [];
+        if(list.length) return list;
+        return fetchJSON(plain, false).then(function(j2){ return (j2 && j2.result && j2.result.results) || []; });
+      })
+      .then(function(list){ renderDatasets(list); })
+      .catch(function(){ renderDatasets([]); })
+      .finally(function(){ $("#btnRefresh").classList.remove("spinning"); });
+  }
+
+  function setKpi(key, val){
+    var el = $('[data-k="'+key+'"]');
+    if(!el) return;
+    // ให้ childNodes[0] เป็น text node เสมอ
+    if(el.childNodes.length===0 || el.childNodes[0].nodeType!==3){
+      el.insertBefore(document.createTextNode("0"), el.firstChild);
+    }
+    animateCount(el, val);
+  }
+
+  // รายการชุดข้อมูลเปิดล่าสุด (แทนช่อง "พาดหัวข่าว" เดิม)
+  function renderDatasetList(items){
+    $("#datasets").innerHTML = items.slice(0,20).map(function(x){
+      var col = orgColor(x.org);
+      var uniqFmt = [];
+      x.formats.forEach(function(f){ if(f && uniqFmt.indexOf(f)<0) uniqFmt.push(f); });
+      var fmt = uniqFmt.length ? '<span class="ds-fmt">'+esc(uniqFmt.slice(0,3).join(" · "))+'</span>' : '';
+      return '<a class="headitem" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+
+        '<div class="head-body">'+
+          '<div class="head-tagrow"><span class="cat-chip" style="background:'+col+'">'+esc(x.org)+'</span>'+
+            '<span class="head-time">'+timeAgo(x.date)+'</span>'+fmt+'</div>'+
+          '<div class="head-title">'+esc(x.title)+'</div>'+
+          '<span class="head-src">ดูชุดข้อมูลที่ data.go.th ↗</span>'+
+        '</div></a>';
+    }).join("");
+  }
+
+  function renderCloud(items){
+    var freq = {};
+    items.forEach(function(x){ tokens(x.title).forEach(function(w){ freq[w]=(freq[w]||0)+1; }); });
+    var arr = Object.keys(freq).map(function(k){ return {w:k,n:freq[k]}; })
+      .filter(function(x){ return x.n>=2; })
+      .sort(function(a,b){ return b.n-a.n; })
+      .slice(0,30);
+    if(arr.length<8){ // ถ้าคำซ้ำน้อย ใช้คำที่ยาวสุดมาเสริม
+      arr = Object.keys(freq).map(function(k){ return {w:k,n:freq[k]}; })
+        .sort(function(a,b){ return b.n-a.n || b.w.length-a.w.length; }).slice(0,28);
+    }
+    var max = arr.length?arr[0].n:1, min = arr.length?arr[arr.length-1].n:1;
+    $("#cloud").innerHTML = arr.map(function(x){
+      var t = (max===min)?0.5:(x.n-min)/(max-min);
+      var size = (15 + t*22).toFixed(1);
+      var op = (0.62 + t*0.38).toFixed(2);
+      return '<span class="kw" style="font-size:'+size+'px;opacity:'+op+'" title="พบ '+x.n+' ครั้ง">'+x.w+'<span class="n">'+x.n+'</span></span>';
+    }).join("");
+  }
+
+  function renderTicker(items){
+    var top = items.slice(0,10).map(function(x){ return '<span>'+x.title+'</span>'; });
+    // ทำซ้ำเพื่อให้ marquee วนต่อเนื่อง
+    $("#ticker").innerHTML = top.concat(top).join("");
+  }
+
+  // ---------- GOVERNMENT DATA RENDERING ----------
+  function setKpiText(key, txt){
+    var el = $('[data-k="'+key+'"]'); if(!el) return;
+    if(el.childNodes.length===0 || el.childNodes[0].nodeType!==3)
+      el.insertBefore(document.createTextNode(""), el.firstChild);
+    el.childNodes[0].nodeValue = txt;
+  }
+
+  // กราฟแท่งรายปี (เช่น GDP เป็นล้านล้านบาท)
+  function renderYearBars(data, sel){
+    if(!data.length){ $(sel).innerHTML = '<div class="state-msg err">ไม่มีข้อมูล</div>'; return; }
+    var max = Math.max.apply(null, data.map(function(d){ return d.value; })) || 1;
+    var lastI = data.length - 1;
+    $(sel).innerHTML = data.map(function(d,i){
+      return '<div class="ybar'+(i===lastI?' last':'')+'" title="พ.ศ. '+(d.year+543)+' — '+d.value.toFixed(2)+' ล้านล้านบาท">'+
+        '<span class="vval">'+d.value.toFixed(1)+'</span>'+
+        '<div class="vfill" data-h="'+(d.value/max*100)+'"></div>'+
+        '<span class="vlab">’'+String((d.year+543)%100)+'</span></div>';
+    }).join("");
+    afterPaint(function(){
+      $$(sel+" .vfill").forEach(function(f){ f.style.height = f.getAttribute("data-h")+"%"; });
+    });
+  }
+
+  // กราฟเส้น SVG (หลายชุดข้อมูล) — สเกลอัตโนมัติ
+  function lineChart(series){
+    var pts = [];
+    series.forEach(function(s){ s.data.forEach(function(d){ pts.push(d); }); });
+    if(!pts.length) return '<div class="state-msg err">ไม่มีข้อมูล</div>';
+    var W=520,H=210,Pl=40,Pr=14,Pt=16,Pb=28;
+    var years = pts.map(function(d){ return d.year; });
+    var vals = pts.map(function(d){ return d.value; });
+    var minY=Math.min.apply(null,years), maxY=Math.max.apply(null,years);
+    var minV=Math.min.apply(null,vals), maxV=Math.max.apply(null,vals);
+    var pd=(maxV-minV)*0.15||1; minV-=pd; maxV+=pd;
+    var pW=W-Pl-Pr, pH=H-Pt-Pb;
+    function X(y){ return Pl + (maxY===minY?0.5:(y-minY)/(maxY-minY))*pW; }
+    function Y(v){ return Pt + (1-(v-minV)/(maxV-minV))*pH; }
+    var g='';
+    for(var i=0;i<=4;i++){
+      var gv=minV+(maxV-minV)*i/4, gy=Y(gv);
+      g+='<line x1="'+Pl+'" y1="'+gy.toFixed(1)+'" x2="'+(W-Pr)+'" y2="'+gy.toFixed(1)+'" stroke="#D8D0BB" stroke-width="1"/>';
+      g+='<text x="'+(Pl-6)+'" y="'+(gy+3).toFixed(1)+'" text-anchor="end" font-size="9" fill="#6A6A5B" font-family="Archivo">'+gv.toFixed(0)+'</text>';
+    }
+    g+='<text x="'+X(minY).toFixed(1)+'" y="'+(H-8)+'" text-anchor="start" font-size="9.5" fill="#6A6A5B" font-family="IBM Plex Sans Thai">พ.ศ. '+(minY+543)+'</text>';
+    g+='<text x="'+X(maxY).toFixed(1)+'" y="'+(H-8)+'" text-anchor="end" font-size="9.5" fill="#6A6A5B" font-family="IBM Plex Sans Thai">'+(maxY+543)+'</text>';
+    series.forEach(function(s){
+      var d=s.data.slice().sort(function(a,b){ return a.year-b.year; });
+      if(!d.length) return;
+      var poly=d.map(function(p){ return X(p.year).toFixed(1)+','+Y(p.value).toFixed(1); }).join(' ');
+      g+='<polyline points="'+poly+'" fill="none" stroke="'+s.color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      d.forEach(function(p){ g+='<circle cx="'+X(p.year).toFixed(1)+'" cy="'+Y(p.value).toFixed(1)+'" r="2.8" fill="#EFEADA" stroke="'+s.color+'" stroke-width="2"/>'; });
+      var lp=d[d.length-1];
+      g+='<text x="'+(X(lp.year)-5).toFixed(1)+'" y="'+(Y(lp.value)-9).toFixed(1)+'" text-anchor="end" font-size="10.5" font-weight="700" fill="'+s.color+'" font-family="Archivo">'+lp.value.toFixed(1)+'%</text>';
+    });
+    return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="กราฟเส้นแสดงแนวโน้ม">'+g+'</svg>';
+  }
+
+  function renderEcon(gdp, growth, exp, tax){
+    if(gdp.length){
+      var last = gdp[gdp.length-1];
+      setKpiText("gdp", (last.value/1e12).toFixed(1));
+      renderYearBars(gdp.slice(-10).map(function(d){ return { year:d.year, value:d.value/1e12 }; }), "#gdpBars");
+      var cap = "ผลิตภัณฑ์มวลรวมในประเทศ (GDP) ราคาปัจจุบัน · หน่วย: ล้านล้านบาท · ปี พ.ศ.";
+      if(growth.length){ var gl=growth[growth.length-1]; cap += " · ปี "+(gl.year+543)+" เศรษฐกิจเติบโต "+gl.value.toFixed(1)+"%"; }
+      $("#econCap").textContent = cap;
+    } else {
+      setKpiText("gdp","n/a");
+      $("#gdpBars").innerHTML = '<div class="state-msg err">โหลดข้อมูล GDP ไม่สำเร็จ — ลองรีเฟรช</div>';
+    }
+    if(exp.length) setKpiText("exp", exp[exp.length-1].value.toFixed(1));
+    if(exp.length || tax.length){
+      $("#fiscalChart").innerHTML = lineChart([
+        { name:"exp", color:"#D7263D", data:exp.slice(-12) },
+        { name:"tax", color:"#1F54C7", data:tax.slice(-12) }
+      ]);
+    } else {
+      $("#fiscalChart").innerHTML = '<div class="state-msg err">โหลดข้อมูลการคลังไม่สำเร็จ</div>';
+    }
+  }
+
+  var GOVPAL = ["#0E7A3C","#1C6E8C","#5A6B2F","#B07F22","#2E7D7A","#7A4DA0","#A23E73","#B5392B","#0A4D27","#46606B"];
+  function renderOpenData(count, orgs){
+    if(count != null){ setKpi("ds", count); $("#dsTotal").textContent = fmtInt(count); }
+    else { $("#dsTotal").textContent = "—"; }
+    var rows = (orgs||[]).filter(function(o){ return (o.package_count||0) > 0; })
+      .sort(function(a,b){ return (b.package_count||0)-(a.package_count||0); })
+      .slice(0,10);
+    if(!rows.length){ $("#orgs").innerHTML = '<div class="state-msg err">เชื่อมต่อ data.go.th ไม่สำเร็จ — ลองรีเฟรช</div>'; return; }
+    var max = rows[0].package_count || 1;
+    $("#orgs").innerHTML = rows.map(function(o,i){
+      var name = o.title || o.display_name || o.name || "—";
+      var col = GOVPAL[i % GOVPAL.length];
+      return '<div class="catrow">'+
+        '<span class="cat-rank">'+(i+1<10?'0'+(i+1):i+1)+'</span>'+
+        '<div class="cat-main">'+
+          '<div class="cat-top"><span class="cat-name" title="'+name+'">'+name+'</span><span class="cat-val">'+o.package_count+' ชุด</span></div>'+
+          '<div class="cat-track"><div class="cat-bar" data-w="'+(o.package_count/max*100)+'" style="background:'+col+'"></div></div>'+
+        '</div></div>';
+    }).join("");
+    afterPaint(function(){
+      $$("#orgs .cat-bar").forEach(function(b){ b.style.width = b.getAttribute("data-w")+"%"; });
+    });
+  }
+
+  function loadGov(){
+    // World Bank — เศรษฐกิจ/งบประมาณของไทย
+    Promise.all([
+      fetchJSON(wbUrl("NY.GDP.MKTP.CN")).catch(function(){ return null; }),
+      fetchJSON(wbUrl("NY.GDP.MKTP.KD.ZG")).catch(function(){ return null; }),
+      fetchJSON(wbUrl("GC.XPN.TOTL.GD.ZS")).catch(function(){ return null; }),
+      fetchJSON(wbUrl("GC.TAX.TOTL.GD.ZS")).catch(function(){ return null; })
+    ]).then(function(r){
+      renderEcon(wbSeries(r[0]), wbSeries(r[1]), wbSeries(r[2]), wbSeries(r[3]));
+    });
+
+    // data.go.th — ข้อมูลเปิดภาครัฐไทย
+    Promise.all([
+      fetchJSON("https://data.go.th/api/3/action/package_search?rows=0", false).catch(function(){ return null; }),
+      fetchJSON("https://data.go.th/api/3/action/organization_list?all_fields=true&include_dataset_count=true&limit=400", false).catch(function(){ return null; })
+    ]).then(function(r){
+      var count = (r[0] && r[0].result && typeof r[0].result.count==="number") ? r[0].result.count : null;
+      var orgs = (r[1] && r[1].success && Array.isArray(r[1].result)) ? r[1].result : [];
+      renderOpenData(count, orgs);
+    });
+  }
+
+  // ---------- BOOT ----------
+  function refreshAll(){ loadDatasets(); loadGov(); }
+
+  // วันที่ภาษาไทย (พ.ศ.)
+  try{
+    $("#dateline").textContent = new Intl.DateTimeFormat("th-TH-u-ca-buddhist",
+      { weekday:"long", day:"numeric", month:"long", year:"numeric", timeZone:"Asia/Bangkok" }).format(new Date());
+  }catch(e){ $("#dateline").textContent = new Date().toLocaleDateString("th-TH"); }
+  $("#year").textContent = new Date().getFullYear()+543;
+
+  $("#btnRefresh").addEventListener("click", refreshAll);
+  refreshAll();
+  setInterval(refreshAll, 15*60*1000); // รีเฟรชอัตโนมัติทุก 15 นาที
+})();
+</script>
+</body>
+</html>
