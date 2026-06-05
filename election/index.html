@@ -204,10 +204,13 @@ mdThemeIcon();
     tip.classList.add('on');moveTip(evt);}
   function moveTip(evt){const pad=14;let x=evt.clientX+pad,y=evt.clientY+pad;const r=tip.getBoundingClientRect();
     if(x+r.width>innerWidth-8)x=evt.clientX-r.width-pad;if(y+r.height>innerHeight-8)y=evt.clientY-r.height-pad;tip.style.left=x+'px';tip.style.top=y+'px';}
+  const canHover=matchMedia('(hover:hover) and (pointer:fine)').matches; // hover tooltip = desktop only; on touch a tap fires mouseenter but no mouseleave → tip sticks
   Object.values(pathEls).forEach(p=>{
-    p.addEventListener('mouseenter',e=>showTip(p.dataset.en,e));
-    p.addEventListener('mousemove',moveTip);
-    p.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+    if(canHover){
+      p.addEventListener('mouseenter',e=>showTip(p.dataset.en,e));
+      p.addEventListener('mousemove',moveTip);
+      p.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+    }
     p.addEventListener('click',()=>{if(moved||Date.now()-lastTapTime<500)return;const th=en2th[p.dataset.en];if(th&&provStats[th])selectProvince(th);});
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}

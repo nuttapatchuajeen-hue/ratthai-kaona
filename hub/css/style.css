@@ -260,8 +260,8 @@ body {
     right: 50%;
     top: 38%;
     transform: translate(50%, -50%);
-    opacity: 0.32;
-    pointer-events: none;  /* decorative on mobile — never block scroll */
+    opacity: 0.5;
+    pointer-events: auto;  /* draggable on mobile too; touch-action:pan-y keeps vertical scroll */
   }
 }
 

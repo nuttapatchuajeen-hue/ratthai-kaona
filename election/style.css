@@ -38,6 +38,12 @@ button{font-family:inherit}
 /* ===== MAP PAGE ===== */
 .stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 54% 38%, var(--wash), var(--paper) 72%)}
 .maparea{position:absolute;inset:0}
+/* Desktop: center the portrait Thailand map in the space beside the left panel
+   (panel + searchcard occupy the left 14+384 = 398px) so its left/right margins
+   match, instead of floating mid-viewport with a big empty gap on the right.
+   Pan/zoom reads the live SVG rect, so shifting the map area is safe; mobile
+   (≤860px, bottom-sheet panel) keeps the full-width map. */
+@media(min-width:861px){ .maparea{ left:398px } }
 svg.thmap{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 svg.thmap.grabbing{cursor:grabbing}
 svg.thmap path.pv{stroke:#fff;stroke-width:.7;transition:fill .15s,opacity .12s}

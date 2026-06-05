@@ -18,11 +18,13 @@
   let width = 0, height = 0, radius = 0, dpr = 1;
   let projection, path;
   const rotation = [0, -12];           // start tilted a touch
-  const rotationSpeed = reduceMotion ? 0 : 0.16;
+  // Keep a gentle spin even under reduced-motion. iOS Low Power Mode forces
+  // prefers-reduced-motion:reduce, which previously froze the globe on phones.
+  const rotationSpeed = reduceMotion ? 0.05 : 0.16;
   const allDots = [];
   let landFeatures = null;
   let timer = null;
-  let autoRotate = !reduceMotion;
+  let autoRotate = true;
   let dragging = false;
 
   /* ── geometry helpers (point-in-polygon land sampling) ── */
@@ -179,7 +181,7 @@
       dragging = false;
       canvas.classList.remove("dragging");
       try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
-      if (!reduceMotion) setTimeout(function () { autoRotate = true; }, 1500);
+      setTimeout(function () { autoRotate = true; }, 1500);   // resume spin after a beat
     }
     canvas.addEventListener("pointerup", endDrag);
     canvas.addEventListener("pointercancel", endDrag);
@@ -203,8 +205,7 @@
       landFeatures = geo;
       geo.features.forEach((f) => buildDots(f, 18));
       render();
-      if (reduceMotion) return;            // static globe, no spin
-      timer = d3.timer(tick);
+      timer = d3.timer(tick);              // always animate (gentle under reduced-motion)
     })
     .catch(() => {
       // keep the bare glowing sphere; never break the hero
