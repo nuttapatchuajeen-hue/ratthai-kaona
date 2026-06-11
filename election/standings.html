@@ -24,6 +24,7 @@ mdThemeIcon();
   <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
   <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
   <a href="standings.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
 </nav>
 
 <div class="subpage">
@@ -49,6 +50,13 @@ mdThemeIcon();
       <div class="legend-split"><span><i></i> แบบแบ่งเขต</span><span><i class="l2"></i> แบบบัญชีรายชื่อ</span></div>
       <div class="minor" id="minor"></div>
     </div>
+    <div class="sec-head">
+      <div><span class="kick">Party Anthems</span><h1>เพลง<span class="o">ประจำพรรค</span></h1></div>
+      <p>เพลงหาเสียงของ 5 พรรคอันดับสูงสุด กดปุ่มเพื่อฟังได้ทันที หรือเปิดมิวสิกวิดีโอบน YouTube</p>
+    </div>
+    <div class="panelbox">
+      <div class="songs" id="songs"></div>
+    </div>
   </div>
 
   <footer>
@@ -68,7 +76,8 @@ mdThemeIcon();
   <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
   <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
   <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
-  <a href="standings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="standings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
+  <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
 </nav>
 
 <script>window.DATA = {"partyMeta":{"PPC":{"th":"พรรคประชาชน","short":"ประชาชน","color":"#FF6A13"},"BJT":{"th":"พรรคภูมิใจไทย","short":"ภูมิใจไทย","color":"#0E2F6B"},"PT":{"th":"พรรคเพื่อไทย","short":"เพื่อไทย","color":"#ED1C24"},"KLT2":{"th":"พรรคกล้าธรรม","short":"กล้าธรรม","color":"#14A07A"},"DEM":{"th":"พรรคประชาธิปัตย์","short":"ประชาธิปัตย์","color":"#27AAE1"},"TRP":{"th":"พรรคไทรวมพลัง","short":"ไทรวมพลัง","color":"#8E44AD"},"PCC":{"th":"พรรคประชาชาติ","short":"ประชาชาติ","color":"#0B6E4F"},"PPR":{"th":"พรรคพลังประชารัฐ","short":"พลังประชารัฐ","color":"#3F51B5"},"ECO":{"th":"พรรคเศรษฐกิจ","short":"เศรษฐกิจ","color":"#B7791F"},"TST2":{"th":"พรรคไทยสร้างไทย","short":"ไทยสร้างไทย","color":"#E0218A"},"UTN":{"th":"พรรครวมไทยสร้างชาติ","short":"รวมไทยสร้างชาติ","color":"#C81E3A"},"PCT":{"th":"พรรคเพื่อชาติไทย","short":"เพื่อชาติไทย","color":"#6D4C41"},"OKM":{"th":"พรรคโอกาสใหม่","short":"โอกาสใหม่","color":"#7F8C8D"},"RJT":{"th":"พรรครวมใจไทย","short":"รวมใจไทย","color":"#95A5A6"},"NEW":{"th":"พรรคใหม่","short":"ใหม่","color":"#7F8C8D"},"TST":{"th":"พรรคไทยทรัพย์ทวี","short":"ไทยทรัพย์ทวี","color":"#95A5A6"},"NDP":{"th":"พรรคประชาธิปไตยใหม่","short":"ประชาธิปไตยใหม่","color":"#7F8C8D"},"NDM":{"th":"พรรคมิติใหม่","short":"มิติใหม่","color":"#95A5A6"},"TPD":{"th":"พรรคไทยภักดี","short":"ไทยภักดี","color":"#7F8C8D"},"RPP":{"th":"พรรครวมพลังประชาชน","short":"รวมพลังประชาชน","color":"#95A5A6"},"SRT":{"th":"พรรคเสรีรวมไทย","short":"เสรีรวมไทย","color":"#7F8C8D"},"NAP":{"th":"พรรคทางเลือกใหม่","short":"ทางเลือกใหม่","color":"#95A5A6"}},"seatTotals":{"BJT":193,"PPC":118,"PT":74,"KLT2":58,"DEM":22,"PCC":5,"TST2":2,"PPR":5,"TRP":6,"OKM":1,"ECO":3,"UTN":2,"PCT":2,"RJT":1,"NEW":1,"TST":1,"NDP":1,"NDM":1,"TPD":1,"RPP":1,"SRT":1,"NAP":1},"seatByType":{"BJT":{"zone":174,"list":19},"PPC":{"zone":87,"list":31},"PT":{"zone":58,"list":16},"KLT2":{"zone":56,"list":2},"DEM":{"zone":10,"list":12},"PCC":{"zone":4,"list":1},"TST2":{"zone":1,"list":1},"PPR":{"zone":4,"list":1},"TRP":{"zone":5,"list":1},"OKM":{"zone":1,"list":0},"ECO":{"zone":0,"list":3},"UTN":{"zone":0,"list":2},"PCT":{"zone":0,"list":2},"RJT":{"zone":0,"list":1},"NEW":{"zone":0,"list":1},"TST":{"zone":0,"list":1},"NDP":{"zone":0,"list":1},"NDM":{"zone":0,"list":1},"TPD":{"zone":0,"list":1},"RPP":{"zone":0,"list":1},"SRT":{"zone":0,"list":1},"NAP":{"zone":0,"list":1}},"meta":{"totalSeats":500,"zone":400,"list":100,"parties":22}};</script>
@@ -94,6 +103,64 @@ mdThemeIcon();
   const minorEl=document.getElementById('minor');
   totals.filter(([c,n])=>n<10).forEach(([code,n])=>{const d=document.createElement('span');d.className='mp';
     d.innerHTML=`<span class="sw" style="background:${colorOf(code)}"></span>${shortOf(code)} <b>${n}</b>`;minorEl.appendChild(d);});
+})();
+</script>
+<script>
+/* ===== เพลงประจำพรรค — ไฟล์ mp3 ใน ../songs/ + ลิงก์ MV บน YouTube ===== */
+(function(){
+  const PM=window.DATA.partyMeta;
+  const SONGS=[
+    {code:'BJT', file:'bhumjaithai.mp3', title:'เพลงแคมเปญหาเสียง พรรคภูมิใจไทย · นิติพงษ์ ห่อนาค', yt:'https://youtu.be/gbYT1lmJ9uo'},
+    {code:'PPC', file:'peoples.mp3',     title:'MV เพลงประชาชน (Official)',                       yt:'https://youtu.be/VozRnFsUYHM'},
+    {code:'PT',  file:'pheuthai.mp3',    title:'เพื่อไทยแลนด์สไลด์ (Official MV)',                 yt:'https://youtu.be/A3Fm138GC1Q'},
+    {code:'KLT2',file:'klatham.mp3',     title:'เพลงประจำพรรคกล้าธรรม',                            yt:'https://youtu.be/EMbQMrGUSWw'},
+    {code:'DEM', file:'democrat.mp3',    title:'ประชาธิปัตย์มาแล้ว',                               yt:'https://youtu.be/_XHP2_m3T1I'}
+  ];
+  const wrap=document.getElementById('songs');
+  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+  let current=null; // {audio,row}
+  SONGS.forEach(sg=>{
+    const m=PM[sg.code], col=m.color;
+    const row=document.createElement('div');
+    row.className='songrow'; row.style.setProperty('--pc',col);
+    row.innerHTML=`
+      <button class="playbtn" type="button" aria-label="เล่นเพลง ${m.short}">
+        <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+      </button>
+      <div class="sg-meta">
+        <div class="sg-party"><span class="sw" style="background:${col}"></span>${m.short}</div>
+        <div class="sg-title">${sg.title}</div>
+      </div>
+      <div class="sg-mid">
+        <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
+        <div class="sg-time num"><b>0:00</b><span> / –:––</span></div>
+      </div>
+      <a class="ytlink" href="${sg.yt}" target="_blank" rel="noopener" title="เปิดมิวสิกวิดีโอ ${m.short} บน YouTube">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
+    const audio=new Audio('../songs/'+sg.file); audio.preload='metadata';
+    const btn=row.querySelector('.playbtn'), fill=row.querySelector('.sg-fill'),
+          tCur=row.querySelector('.sg-time b'), tDur=row.querySelector('.sg-time span'),
+          track=row.querySelector('.sg-track');
+    audio.addEventListener('loadedmetadata',()=>{tDur.textContent=' / '+fmt(audio.duration);});
+    audio.addEventListener('timeupdate',()=>{
+      tCur.textContent=fmt(audio.currentTime);
+      if(audio.duration)fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+    });
+    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';current=null;});
+    btn.addEventListener('click',()=>{
+      if(audio.paused){
+        if(current&&current.audio!==audio){current.audio.pause();current.row.classList.remove('playing');}
+        audio.play();row.classList.add('playing');current={audio,row};
+      }else{audio.pause();row.classList.remove('playing');}
+    });
+    track.addEventListener('click',e=>{
+      if(!audio.duration)return;
+      const r=track.getBoundingClientRect();
+      audio.currentTime=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*audio.duration;
+    });
+    wrap.appendChild(row);
+  });
 })();
 </script>
 </body>

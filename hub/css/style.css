@@ -123,6 +123,13 @@ body {
   border-bottom-color: transparent;
 }
 
+/* ไฮไลต์ "หน้าปัจจุบัน" แบบคงที่ (สไตล์เดียวกับหน้าเกี่ยวกับเรา) — ไม่วิ่งตาม scroll */
+.nav-tab[aria-current="page"],
+.nav-tab[aria-current="page"]:hover {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
 /* ── HERO ── */
 .hero-standalone {
   position: relative;
@@ -332,12 +339,12 @@ body {
 }
 
 /* ── MARQUEE ── */
+/* ชิดขอบล่างสุดแบบ ticker — ไม่ทับลูกบอล Local Administration ในแผนผัง */
 .marquee-wrap {
   position: fixed;
   z-index: 3;
-  top: 86%; left: 0;
+  bottom: 0.5vh; left: 0;
   width: 200%;
-  transform: translateY(-50%);
   pointer-events: none;
   opacity: 0;
   overflow: hidden;
@@ -346,7 +353,7 @@ body {
 
 .marquee-text {
   font-family: var(--font-display);
-  font-size: 9vw;
+  font-size: 4vw;
   white-space: nowrap;
   color: var(--accent-cyan);
   text-shadow: 0 0 14px rgba(0,229,255,0.45), 0 0 28px rgba(0,229,255,0.25);
@@ -524,6 +531,19 @@ body {
 .align-left .section-inner,
 .align-right .section-inner {
   max-width: 36vw;
+}
+
+/* ฝั่งขวา: ดันบล็อกข้อความชิดขอบขวา + จัดข้อความชิดขวา (กระจกเงากับฝั่งซ้าย) */
+.align-right .section-inner {
+  margin-left: auto;
+  text-align: right;
+}
+.align-right .section-body {
+  margin-left: auto;
+}
+.align-right .section-inner::before {
+  background: radial-gradient(115% 100% at 72% 42%,
+              rgba(2,5,8,0.86), rgba(2,5,8,0.48) 52%, transparent 78%);
 }
 
 /* ── SECTION TEXT ── */
@@ -975,12 +995,21 @@ body::before {
     padding: 2rem;
   }
 
+  /* จอแคบ: ยกเลิกการชิดขวา กลับมาเรียงชิดซ้ายทุก section */
+  .align-right .section-inner {
+    margin-left: 0;
+    text-align: left;
+  }
+  .align-right .section-body {
+    margin-left: 0;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     width: 90vw;
   }
 
-  .marquee-text { font-size: 18vw; }
+  .marquee-text { font-size: 8vw; }
   .nav-links {
     overflow-x: auto;
     scrollbar-width: none;

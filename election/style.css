@@ -1,13 +1,17 @@
 /* ===== ว่าที่ ส.ส. 500 · 2569 — shared styles ===== */
+/* โทนสีเน้น = เทา-เงิน (silver/steel) เป็นกลางทางการเมือง — เดิมเป็นส้ม hub แต่ใกล้สีพรรคประชาชน
+   ตัวแปรยังชื่อ --orange* เพื่อไม่ต้องแก้ทุกไฟล์ แต่ค่าเป็นสีเงินแล้ว · cyan hub ใช้เฉพาะ accent h1
+   (สีพรรคในข้อมูล เช่น ประชาชน #FF6A13 ไม่เกี่ยวกับธีม — คงเดิม) */
 :root{
-  --orange:#FF6A13; --orange-deep:#E8550B; --orange-ink:#8A3300;
-  --green:#1FA463; --green-deep:#178A52;
-  --orange-soft:#FFF3EA; --orange-line:#FFD3B0;
-  --ink:#1A1410; --ink-2:#4A4038; --muted:#938A80;
-  --paper:#FFFFFF; --wash:#FFF8F2; --card:#FFFFFF; --line:#F0E7DC; --line-2:#E7D9C9;
-  --navy:#14110D; --pink:#FF4D9D; --mk:#16243F; --th-red:#A51931; --th-blue:#2D2A4A;
-  --shadow:0 1px 2px rgba(90,55,20,.05), 0 10px 30px -16px rgba(120,70,20,.18);
-  --shadow-lg:0 18px 50px -22px rgba(120,70,20,.30);
+  --orange:#5E7488; --orange-deep:#435A6D; --orange-ink:#243646;
+  --green:#0089A9; --green-deep:#055A75;
+  --orange-soft:#E9F0F5; --orange-line:#BFD0DC;
+  --ink:#0A1822; --ink-2:#2C4356; --muted:#5C7686;
+  --paper:#FFFFFF; --wash:#EFF5F9; --card:#FFFFFF; --line:#DEEAF1; --line-2:#C6D9E3;
+  --navy:#020508; --pink:#FF4D9D; --mk:#16243F; --th-red:#A51931; --th-blue:#2D2A4A;
+  --glow-base:#E2EDF3; --glow-1:#00ACD1; --glow-2:#8FA9BD;
+  --shadow:0 1px 2px rgba(10,40,60,.05), 0 10px 30px -16px rgba(10,40,60,.20);
+  --shadow-lg:0 18px 50px -22px rgba(10,40,60,.32);
   --radius:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -50,7 +54,7 @@ svg.thmap path.pv{stroke:#fff;stroke-width:.7;transition:fill .15s,opacity .12s}
 svg.thmap path.pv:hover{opacity:.85}
 svg.thmap path.pv.sel{stroke:var(--ink);stroke-width:1.8}
 svg.thmap path.pv.dim{opacity:.25}
-.plabel{font-family:'Kanit';font-weight:500;fill:#fff;stroke:rgba(40,26,12,.78);paint-order:stroke;
+.plabel{font-family:'Kanit';font-weight:500;fill:#fff;stroke:rgba(4,16,26,.78);paint-order:stroke;
   stroke-linejoin:round;text-anchor:middle;pointer-events:none;opacity:0;transition:opacity .15s}
 .plabel.show{opacity:1}
 .mkg .mk{cursor:pointer}
@@ -66,10 +70,10 @@ svg.thmap path.pv.dim{opacity:.25}
 .searchcard .brand .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.7rem;color:var(--muted)}
 .searchcard .brand .ballot{margin-left:auto}
 .searchbox{position:relative;isolation:isolate}
-/* tricolor glow (แดง-ขาว-น้ำเงิน): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส */
+/* glow cyan-ส้ม (ตามหน้าหลัก): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส */
 @property --sb-a{syntax:"<angle>";initial-value:0deg;inherits:false}
 .searchbox::before,.searchbox::after{content:"";position:absolute;pointer-events:none;z-index:-1;--sb-a:0deg;
-  background:conic-gradient(from var(--sb-a),#ECEEF4,#E11D3A 45deg,#ECEEF4 110deg,#ECEEF4 180deg,#2647D6 235deg,#ECEEF4 300deg,#ECEEF4);
+  background:conic-gradient(from var(--sb-a),var(--glow-base),var(--glow-1) 45deg,var(--glow-base) 110deg,var(--glow-base) 180deg,var(--glow-2) 235deg,var(--glow-base) 300deg,var(--glow-base));
   transition:--sb-a 2.4s cubic-bezier(.4,0,.2,1),opacity .45s,filter .45s}
 .searchbox::before{inset:-4px;border-radius:17px;filter:blur(7px);opacity:.58}
 .searchbox::after{inset:-2px;border-radius:15px;filter:blur(1.2px);opacity:.85}
@@ -78,8 +82,8 @@ svg.thmap path.pv.dim{opacity:.25}
 .searchbox:focus-within::after{--sb-a:360deg;opacity:1;filter:blur(1px);transition-duration:4s}
 .searchbox input{width:100%;font-family:'Sarabun';font-size:.95rem;padding:13px 14px 13px 42px;border:1px solid var(--line-2);
   border-radius:13px;background:var(--paper);color:var(--ink);outline:none;position:relative;z-index:0;transition:border-color .15s,box-shadow .15s}
-.searchbox input:focus{border-color:#fff;box-shadow:0 2px 16px -7px rgba(45,42,74,.28)}
-.searchbox svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--th-blue);z-index:1}
+.searchbox input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
+.searchbox svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--green);z-index:1}
 
 /* floating panel (desktop left column / mobile bottom sheet) */
 .panel{position:absolute;left:14px;top:166px;bottom:14px;width:384px;z-index:45;
@@ -113,8 +117,8 @@ svg.thmap path.pv.dim{opacity:.25}
 
 .ccard{display:flex;gap:13px;align-items:center;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin:0 8px 10px;background:var(--card);box-shadow:var(--shadow);cursor:pointer;transition:.13s}
 .ccard:hover{border-color:var(--orange-line);background:var(--orange-soft)}
-.ccard.flash{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,106,19,.22)}
-.cav{position:relative;width:46px;height:46px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:1.25rem;box-shadow:0 0 0 3px #fff,0 0 0 4px var(--line-2)}
+.ccard.flash{border-color:var(--orange);box-shadow:0 0 0 3px rgba(94,116,136,.25)}
+.cav{position:relative;width:46px;height:46px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:1.25rem;box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--line-2)}
 .cavno{position:absolute;bottom:-5px;right:-5px;background:var(--mk);color:#fff;font-family:'Kanit';font-weight:600;font-size:.6rem;min-width:19px;height:19px;border-radius:10px;display:grid;place-items:center;border:2px solid var(--card);padding:0 4px;line-height:1}
 .cinfo{flex:1 1 auto;min-width:0}
 .ctop{display:flex;align-items:baseline;gap:8px}
@@ -181,9 +185,9 @@ svg.thmap path.pv.dim{opacity:.25}
 
 .lcontrols{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
 .lcontrols .search{flex:1 1 230px;position:relative;isolation:isolate}
-/* tricolor glow (แดง-ขาว-น้ำเงิน) — เหมือนช่องค้นหาหน้ารายเขต (.searchbox): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส (--sb-a ลงทะเบียนไว้แล้วด้านบน) */
+/* glow cyan-ส้ม (ตามหน้าหลัก) — เหมือนช่องค้นหาหน้ารายเขต (.searchbox): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส (--sb-a ลงทะเบียนไว้แล้วด้านบน) */
 .lcontrols .search::before,.lcontrols .search::after{content:"";position:absolute;pointer-events:none;z-index:-1;--sb-a:0deg;
-  background:conic-gradient(from var(--sb-a),#ECEEF4,#E11D3A 45deg,#ECEEF4 110deg,#ECEEF4 180deg,#2647D6 235deg,#ECEEF4 300deg,#ECEEF4);
+  background:conic-gradient(from var(--sb-a),var(--glow-base),var(--glow-1) 45deg,var(--glow-base) 110deg,var(--glow-base) 180deg,var(--glow-2) 235deg,var(--glow-base) 300deg,var(--glow-base));
   transition:--sb-a 2.4s cubic-bezier(.4,0,.2,1),opacity .45s,filter .45s}
 .lcontrols .search::before{inset:-4px;border-radius:16px;filter:blur(7px);opacity:.58}
 .lcontrols .search::after{inset:-2px;border-radius:14px;filter:blur(1.2px);opacity:.85}
@@ -191,11 +195,11 @@ svg.thmap path.pv.dim{opacity:.25}
 .lcontrols .search:focus-within::before{--sb-a:360deg;opacity:.9;filter:blur(8px);transition-duration:4s}
 .lcontrols .search:focus-within::after{--sb-a:360deg;opacity:1;filter:blur(1px);transition-duration:4s}
 .lcontrols .search input{width:100%;font-family:'Sarabun';font-size:.95rem;padding:12px 14px 12px 40px;border:1px solid var(--line-2);border-radius:12px;background:var(--card);color:var(--ink);outline:none;position:relative;z-index:0;transition:border-color .15s,box-shadow .15s}
-.lcontrols .search input:focus{border-color:#fff;box-shadow:0 2px 16px -7px rgba(45,42,74,.28)}
-.lcontrols .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--th-blue);z-index:1}
+.lcontrols .search input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
+.lcontrols .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--green);z-index:1}
 .sel{position:relative}
 .sel select{appearance:none;font-family:'Sarabun';font-size:.92rem;padding:12px 38px 12px 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--card);cursor:pointer;outline:none;min-width:170px}
-.sel select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,106,19,.15)}
+.sel select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(94,116,136,.18)}
 .sel::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .listgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
@@ -211,18 +215,18 @@ svg.thmap path.pv.dim{opacity:.25}
 .pcard ol li.hl .pl-nm{font-weight:600}
 .pcard ol::-webkit-scrollbar{width:8px}.pcard ol::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
 
-footer{background:var(--navy);color:#cfc8bf;margin-top:46px}
+footer{background:var(--navy);color:#A9BFCD;margin-top:46px}
 .foot-in{max-width:1100px;margin:0 auto;padding:32px 24px;display:flex;gap:24px;flex-wrap:wrap}
 .foot-in .fcol{flex:1 1 240px}
 .foot-in h4{font-family:'Kanit';color:#fff;font-weight:600;font-size:.95rem;margin-bottom:8px}
-.foot-in p,.foot-in li{font-size:.83rem;line-height:1.7;color:#b3aaa0}
+.foot-in p,.foot-in li{font-size:.83rem;line-height:1.7;color:#8DA4B4}
 .foot-in ul{list-style:none}
 
 /* ===== RESPONSIVE: mobile ===== */
 @media(max-width:860px){
   .navpill{display:none}
   .mobnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:120;background:var(--paper);
-    border-top:1px solid var(--line-2);box-shadow:0 -6px 24px -10px rgba(120,70,20,.20);
+    border-top:1px solid var(--line-2);box-shadow:0 -6px 24px -10px rgba(10,40,60,.22);
     padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px))}
   .mobnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);
     font-family:'Kanit';font-weight:500;font-size:.74rem;padding:7px 4px;border-radius:13px;transition:.15s}
@@ -260,35 +264,75 @@ footer{background:var(--navy);color:#cfc8bf;margin-top:46px}
 
 /* ===== candidate photos ===== */
 .cav .cphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;background:inherit}
-.plav{width:32px;height:32px;border-radius:50%;flex:0 0 auto;overflow:hidden;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:.78rem;box-shadow:0 0 0 2px #fff,0 0 0 3px var(--line-2)}
+.plav{width:32px;height:32px;border-radius:50%;flex:0 0 auto;overflow:hidden;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:.78rem;box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--line-2)}
 .plav img{width:100%;height:100%;object-fit:cover}
 .pcard ol li{align-items:center}
 
 /* ===== source credits ===== */
-.foot-in a{color:#ffb27a;text-decoration:underline}
-.foot-in .cite{font-size:.76rem;color:#8f867c;margin-top:12px;line-height:1.65;font-style:italic;max-width:560px}
+.foot-in a{color:#56D9F2;text-decoration:underline}
+.foot-in .cite{font-size:.76rem;color:#6E8696;margin-top:12px;line-height:1.65;font-style:italic;max-width:560px}
 .panel-foot{flex:0 0 auto;padding:9px 14px;border-top:1px solid var(--line);background:var(--wash);font-size:.7rem;color:var(--muted);line-height:1.5}
 .panel-foot a{color:var(--orange-deep);text-decoration:underline}
+
+/* ===== เพลงประจำพรรค (standings) — สีปุ่ม/แถบตามสีพรรคผ่าน --pc ===== */
+.songs{display:flex;flex-direction:column;gap:10px}
+.songrow{display:grid;grid-template-columns:46px minmax(170px,250px) 1fr auto;align-items:center;gap:16px;
+  padding:11px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);transition:border-color .15s, box-shadow .15s}
+.songrow:hover{border-color:var(--line-2)}
+.songrow.playing{border-color:var(--pc);box-shadow:0 0 0 1px var(--pc), var(--shadow)}
+.playbtn{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;
+  background:var(--pc);color:#fff;box-shadow:0 8px 18px -8px var(--pc);transition:transform .12s,filter .12s}
+.playbtn:hover{transform:scale(1.07);filter:brightness(1.08)}
+.playbtn:active{transform:scale(.97)}
+.playbtn svg{width:20px;height:20px}
+.songrow .ic-pause{display:none}
+.songrow.playing .ic-play{display:none}
+.songrow.playing .ic-pause{display:block}
+.sg-meta{min-width:0}
+.sg-party{font-family:'Kanit';font-weight:600;font-size:.97rem;display:flex;align-items:center;gap:7px}
+.sg-party .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.sg-title{font-size:.77rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+.sg-mid{display:flex;align-items:center;gap:12px;min-width:0}
+.sg-track{flex:1;height:9px;border-radius:99px;background:var(--wash);border:1px solid var(--line);cursor:pointer;overflow:hidden}
+.sg-fill{height:100%;width:0;background:var(--pc);border-radius:99px;transition:width .25s linear}
+.sg-time{font-size:.79rem;color:var(--ink-2);white-space:nowrap}
+.sg-time b{font-weight:600}
+.sg-time span{color:var(--muted)}
+.ytlink{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.8rem;color:var(--ink-2);
+  border:1px solid var(--line);border-radius:999px;padding:7px 14px;transition:color .13s,background .13s,border-color .13s}
+.ytlink:hover{color:#fff;background:#E62117;border-color:#E62117}
+.ytlink svg{width:17px;height:17px}
+@media (max-width:760px){
+  .songrow{grid-template-columns:42px minmax(0,1fr) auto;grid-template-areas:"btn meta yt" "btn mid mid";gap:8px 12px;padding:10px 12px}
+  .playbtn{grid-area:btn;width:42px;height:42px}
+  .sg-meta{grid-area:meta}
+  .sg-mid{grid-area:mid}
+  .ytlink{grid-area:yt;padding:6px 11px}
+}
 
 /* ============================================================
    DARK MODE — โหมดมืด (สลับด้วยปุ่ม 🌙/☀️ · จำค่าไว้ด้วย localStorage 'md-theme')
    ============================================================ */
 html[data-theme="dark"]{
-  --ink:#F4EFE8; --ink-2:#CABFB2; --muted:#9A9082;
-  --paper:#161210; --wash:#1E1813; --card:#201B16;
-  --line:#2C2620; --line-2:#3A322A;
-  --orange-soft:rgba(255,106,19,.15); --orange-line:rgba(255,106,19,.34);
-  --navy:#0B0907;
+  --ink:#DCE8F0; --ink-2:#A9BFCD; --muted:#7B92A3;
+  --paper:#070D14; --wash:#0D1822; --card:#0E1A26;
+  --line:#13283A; --line-2:#1E3A50;
+  --orange:#8FA9BD; --orange-deep:#AEC4D6; --orange-ink:#CDDCE8;
+  --orange-soft:rgba(148,175,196,.14); --orange-line:rgba(148,175,196,.38);
+  --green:#00E5FF; --green-deep:#00B5D6;
+  --glow-base:#0E1E2A; --glow-1:#00E5FF; --glow-2:#9FB7CA;
+  --navy:#020508;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px -16px rgba(0,0,0,.72);
-  --shadow-lg:0 20px 54px -22px rgba(0,0,0,.82);
+  --shadow-lg:0 20px 54px -22px rgba(0,0,0,.82), 0 0 24px rgba(0,229,255,.05);
 }
 /* fixes for spots that hard-coded #fff / var(--ink) on light assumptions */
-html[data-theme="dark"] .navpill a.active{background:var(--orange-deep);color:#fff}
-html[data-theme="dark"] .ballot .bx{background:#0f0c0a;color:#fff}
+html[data-theme="dark"] .navpill a.active{background:var(--orange);color:#081019}
+html[data-theme="dark"] .ballot .bx{background:#081019;color:#fff}
 html[data-theme="dark"] .searchbox input{background:var(--card)}
-html[data-theme="dark"] .stage{background:radial-gradient(circle at 54% 38%, var(--wash), #100d0b 72%)}
-html[data-theme="dark"] svg.thmap path.pv[fill="#E6DCCF"]{fill:#332c24}
-html[data-theme="dark"] .track{background:rgba(255,106,19,.16)}
+html[data-theme="dark"] .stage{background:radial-gradient(circle at 54% 38%, var(--wash), #020508 72%)}
+html[data-theme="dark"] svg.thmap path.pv[fill="#D9E5EC"]{fill:#223647}
+html[data-theme="dark"] .track{background:rgba(148,175,196,.16)}
+html[data-theme="dark"] .maptip{background:#0E1C29;border:1px solid var(--line-2)}
 html[data-theme="dark"] .sel select,
 html[data-theme="dark"] .lcontrols .search input{background:var(--card);color:var(--ink)}
 

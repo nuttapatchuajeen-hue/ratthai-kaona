@@ -1779,6 +1779,7 @@ function toggleTheme() {
   html.setAttribute('data-theme', t);
   try { localStorage.setItem('md-theme', t); } catch(e) {}  // sync ข้ามทุกเว็บใน md
   document.getElementById('knob').textContent = isDark ? '☀️' : '🌙';
+  refreshThemeCache();   // re-read CSS vars + drop sprite cache for the new theme
   draw(); // redraw canvas with new colors
 }
 // ให้ปุ่ม knob ตรงกับธีมที่โหลดมา (เผื่อ localStorage บังคับเป็น light)
@@ -1847,9 +1848,7 @@ MINISTRIES.forEach((m, i) => {
     if (n) {
       const MAIN = document.getElementById('main');
       const cW = MAIN.clientWidth, cH = MAIN.clientHeight;
-      offsetX = cW/2 - n.x * scale;
-      offsetY = cH/2 - n.y * scale;
-      draw();
+      flyTo(cW/2 - n.x * scale, cH/2 - n.y * scale, scale);
       showPanel(n);
     }
   });
@@ -1891,8 +1890,9 @@ function drawArrowHead(fx, fy, tx, ty, color, size, inset) {
   const len = Math.hypot(dx, dy);
   if (len < 1) return;
   const ux = dx / len, uy = dy / len;           // unit vector parent→child
-  const tipX = tx - ux * inset;                  // pull tip back to node edge
-  const tipY = ty - uy * inset;
+  const ins = Math.min(inset, len * 0.8);        // never overshoot a short edge
+  const tipX = tx - ux * ins;                    // pull tip back to node edge
+  const tipY = ty - uy * ins;
   const px = -uy, py = ux;                        // perpendicular
   const back = size * 1.7;                        // length of the head
   const half = size * 0.95;                       // half-width of the head
@@ -2155,13 +2155,62 @@ function buildLayout() {
   else buildForceLayout();
 }
 
+// ═══════════════════════════════════════════════════════════
+//  CANVAS VISUAL HELPERS — colour utils · theme cache · org sprites
+//  (static visual polish only; no motion)
+// ═══════════════════════════════════════════════════════════
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// colour utils — accept both #hex (ministries) and rgb/rgba() (orgs)
+function _parse(c){
+  if(!c) return [136,136,136,1];
+  if(c[0]==='#'){ let h=c.slice(1); if(h.length===3) h=h.split('').map(x=>x+x).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16),1]; }
+  const m=c.match(/rgba?\(([^)]+)\)/); if(m){ const p=m[1].split(',').map(s=>parseFloat(s)); return [p[0]|0,p[1]|0,p[2]|0,p[3]==null?1:p[3]]; }
+  return [136,136,136,1];
+}
+function _lighten(c,a){ const [r,g,b]=_parse(c); return `rgb(${Math.round(lerp(r,255,a))},${Math.round(lerp(g,255,a))},${Math.round(lerp(b,255,a))})`; }
+function _darken(c,a){ const [r,g,b]=_parse(c); return `rgb(${Math.round(lerp(r,0,a))},${Math.round(lerp(g,0,a))},${Math.round(lerp(b,0,a))})`; }
+function _rgba(c,a){ const [r,g,b]=_parse(c); return `rgba(${r},${g},${b},${a})`; }
+
+// theme colour cache — avoids getComputedStyle() on every animation frame
+const _theme = {};
+function refreshThemeCache(){
+  const cs = getComputedStyle(document.documentElement);
+  _theme.bg   = cs.getPropertyValue('--canvas-bg').trim();
+  _theme.cf   = cs.getPropertyValue('--center-fill').trim();
+  _theme.cs   = cs.getPropertyValue('--center-str').trim();
+  _theme.ct   = cs.getPropertyValue('--center-txt').trim();
+  _theme.gold = cs.getPropertyValue('--gold').trim() || '#c9a84c';
+  _spriteCache = {};                     // org colours shift per theme
+}
+
+// org-node sprite cache (supersampled radial-gradient disc), keyed by colour
+let _spriteCache = {};
+function orgSprite(color){
+  if(_spriteCache[color]) return _spriteCache[color];
+  const SZ = 40, cv = document.createElement('canvas');
+  cv.width = cv.height = SZ;
+  const g = cv.getContext('2d'), m = SZ/2, R = SZ/2 - 3;
+  const grd = g.createRadialGradient(m - R*0.32, m - R*0.32, R*0.1, m, m, R);
+  grd.addColorStop(0,   _lighten(color, 0.55));
+  grd.addColorStop(0.5, color);
+  grd.addColorStop(1,   _darken(color, 0.22));
+  g.beginPath(); g.arc(m, m, R, 0, Math.PI*2); g.fillStyle = grd; g.fill();
+  g.lineWidth = 1.3; g.strokeStyle = _rgba(_lighten(color, 0.3), 0.8); g.stroke();
+  _spriteCache[color] = cv;
+  return cv;
+}
+
+// camera setter — jump to a target offset + scale, then repaint
+function flyTo(ox, oy, s){ offsetX = ox; offsetY = oy; scale = s; draw(); }
+
 // ── DRAW ──
 function draw() {
   const dpr = window.devicePixelRatio || 1;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0,0,W,H);
 
-  const bg = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
+  const bg = _theme.bg || getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
   ctx.fillStyle = bg;
   ctx.fillRect(0,0,W,H);
 
@@ -2173,10 +2222,30 @@ function draw() {
   const cx = nodes[0]?.x ?? W/2;
   const cy = nodes[0]?.y ?? H/2;
 
+  // ── Center bloom — soft golden depth glow behind นายกฯ ──
+  if(currentView === 'radial' && ringGuides.length){
+    const bloomR = (ringGuides[0].r || 180) * 1.15;
+    const bgrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, bloomR);
+    const gold = _theme.gold || '#c9a84c';
+    bgrd.addColorStop(0,    _rgba(gold, dark ? 0.18 : 0.12));
+    bgrd.addColorStop(0.45, _rgba(gold, dark ? 0.06 : 0.04));
+    bgrd.addColorStop(1,    _rgba(gold, 0));
+    ctx.fillStyle = bgrd;
+    ctx.fillRect(cx - bloomR, cy - bloomR, bloomR*2, bloomR*2);
+  }
+
   // ── Concentric ring guides (radial mode only) ──
   if(currentView === 'radial' && ringGuides.length) {
     ringGuides.forEach((rg, idx) => {
       // วงกลมประ (วาดใน world space ตามปกติ)
+      // soft category-tinted lane (sits under the dashed guide)
+      if(rg.catColor){
+        ctx.beginPath();
+        ctx.arc(cx, cy, rg.r, 0, Math.PI*2);
+        ctx.strokeStyle = rg.catColor;
+        ctx.lineWidth = 16 / scale;
+        ctx.stroke();
+      }
       ctx.beginPath();
       ctx.arc(cx, cy, rg.r, 0, Math.PI*2);
       ctx.strokeStyle = dark
@@ -2261,13 +2330,12 @@ function draw() {
       ctx.moveTo(n.x, n.y);
       ctx.lineTo(tx, ty);
       ctx.stroke();
-      // directional arrowhead: ministry → org (points to the child)
-      if (showArrows && (edgeConnected || scale > 1.15)) {
-        const aSize = edgeConnected ? Math.max(2.4, n.r * 0.85)
-                                    : Math.max(1.7, n.r * 0.62);
+      // directional arrowhead: ministry → org — always on, screen-constant size
+      if (showArrows) {
+        const aSize = (edgeConnected ? 3.4 : 2.3) / scale;   // ~constant px at any zoom
         const aCol  = edgeConnected ? (mn.color + 'ee')
-                                    : (mn ? mn.color + 'b0' : edgeOrg);
-        drawArrowHead(tx, ty, n.x, n.y, aCol, aSize, n.r + 1.5);
+                                    : (mn ? mn.color + 'c0' : edgeOrg);
+        drawArrowHead(tx, ty, n.x, n.y, aCol, aSize, n.r + 2.5/scale);
       }
     }
   });
@@ -2281,19 +2349,21 @@ function draw() {
       const edgeConnected = connectedSet && connectedSet.has(n) && connectedSet.has(c);
       if(connectedSet && !edgeConnected) return;
       ctx.beginPath();
-      ctx.strokeStyle = edgeConnected
-        ? (n.color||'#e67e22') + 'ee'
-        : (n.color||'#e67e22') + '9a';     // clearer default spokes
+      // gradient spoke: gold at the centre → ministry colour at the rim
+      const _sg = ctx.createLinearGradient(c.x, c.y, n.x, n.y);
+      _sg.addColorStop(0, _rgba(_theme.gold||'#c9a84c', edgeConnected ? 0.85 : 0.42));
+      _sg.addColorStop(1, (n.color||'#e67e22') + (edgeConnected ? 'ee' : '9a'));
+      ctx.strokeStyle = _sg;
       ctx.lineWidth = (edgeConnected ? 2.6 : 1.6) / scale;
       ctx.moveTo(n.x, n.y);
       ctx.lineTo(c.x, c.y);
       ctx.stroke();
-      // directional arrowhead: center → ministry (points to the ministry)
+      // directional arrowhead: center → ministry — always on, screen-constant size
       if (showArrows) {
         const mhh = (n.r || 8) * 0.75;            // ministry rect half-height
         const aCol = edgeConnected ? ((n.color||'#e67e22') + 'ee')
-                                   : ((n.color||'#e67e22') + 'aa');
-        drawArrowHead(c.x, c.y, n.x, n.y, aCol, edgeConnected ? 3.4 : 2.6, mhh + 3);
+                                   : ((n.color||'#e67e22') + 'bb');
+        drawArrowHead(c.x, c.y, n.x, n.y, aCol, (edgeConnected ? 4.2 : 3.4)/scale, mhh + 3.5/scale);
       }
     }
   });
@@ -2355,15 +2425,17 @@ function draw() {
     ctx.globalAlpha = faded ? 0.1 : 1.0;
 
     if(n.type==='center') {
-      const cf = getComputedStyle(document.documentElement).getPropertyValue('--center-fill').trim();
-      const cs = getComputedStyle(document.documentElement).getPropertyValue('--center-str').trim();
-      const ct = getComputedStyle(document.documentElement).getPropertyValue('--center-txt').trim();
+      const cf = _theme.cf || getComputedStyle(document.documentElement).getPropertyValue('--center-fill').trim();
+      const cs = _theme.cs || getComputedStyle(document.documentElement).getPropertyValue('--center-str').trim();
+      const ct = _theme.ct || getComputedStyle(document.documentElement).getPropertyValue('--center-txt').trim();
       if(hover || selected) {
         ctx.beginPath(); ctx.arc(n.x,n.y,r+6,0,Math.PI*2);
         ctx.fillStyle='rgba(201,168,76,0.18)'; ctx.fill();
       }
       ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
-      ctx.fillStyle=cf; ctx.fill();
+      const _cg = ctx.createRadialGradient(n.x-r*0.35, n.y-r*0.35, r*0.1, n.x, n.y, r);
+      _cg.addColorStop(0, _lighten(cf, 0.5)); _cg.addColorStop(1, cf);
+      ctx.fillStyle=_cg; ctx.fill();
       ctx.strokeStyle = selected ? '#fff' : cs; ctx.lineWidth = selected ? 3 : 1.8; ctx.stroke();
       ctx.beginPath(); ctx.arc(n.x,n.y,r*0.6,0,Math.PI*2);
       ctx.strokeStyle=cs+'66'; ctx.lineWidth=0.8; ctx.stroke();
@@ -2381,7 +2453,10 @@ function draw() {
       ctx.beginPath();
       if(ctx.roundRect) ctx.roundRect(n.x-hw, n.y-hh, hw*2, hh*2, 5);
       else ctx.rect(n.x-hw, n.y-hh, hw*2, hh*2);
-      ctx.fillStyle = (hover||selected) ? mc+'ff' : mc+'cc';
+      const _mg = ctx.createLinearGradient(n.x, n.y-hh, n.x, n.y+hh);
+      _mg.addColorStop(0, _lighten(mc, (hover||selected) ? 0.34 : 0.18));
+      _mg.addColorStop(1, (hover||selected) ? mc : _rgba(mc, 0.85));
+      ctx.fillStyle = _mg;
       ctx.fill();
       ctx.strokeStyle = selected ? '#fff' : mc;
       ctx.lineWidth = selected ? 2.5 : (hover ? 2 : 1.2);
@@ -2411,16 +2486,14 @@ function draw() {
       }
 
     } else {
-      // Org node
-      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
-      ctx.fillStyle = n.color;
-      ctx.fill();
+      // Org node — cached gradient sprite + focus ring
+      const _sr = r + 1.6;
+      ctx.drawImage(orgSprite(n.color), n.x - _sr, n.y - _sr, _sr*2, _sr*2);
       if(hover || selected) {
-        ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
         ctx.beginPath(); ctx.arc(n.x,n.y,r+4,0,Math.PI*2);
-        ctx.strokeStyle=n.color+'66'; ctx.lineWidth=2; ctx.stroke();
-      } else {
-        ctx.strokeStyle = n.color+'88'; ctx.lineWidth = 0.5; ctx.stroke();
+        ctx.strokeStyle = _rgba(n.color, 0.5); ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.3; ctx.stroke();
       }
     }
     ctx.globalAlpha = 1.0;
@@ -2428,6 +2501,15 @@ function draw() {
 
   ctx.globalAlpha = 1;
   ctx.restore();
+
+  // ── Vignette — gently darken the edges to focus the centre ──
+  {
+    const _vg = ctx.createRadialGradient(W/2, H/2, Math.min(W,H)*0.32, W/2, H/2, Math.max(W,H)*0.72);
+    _vg.addColorStop(0, 'rgba(0,0,0,0)');
+    _vg.addColorStop(1, dark ? 'rgba(0,0,0,0.40)' : 'rgba(20,32,64,0.07)');
+    ctx.fillStyle = _vg;
+    ctx.fillRect(0,0,W,H);
+  }
 
   // Store connectedSet state for UI reference
   window._lastConnectedSet = connectedSet;
@@ -2828,7 +2910,7 @@ searchEl.addEventListener('input',()=>{
       srEl.classList.remove('show'); searchEl.value='';
       const MAIN=document.getElementById('main');
       const found=nodes.find(n=>r.isMin?(n.isMinistry&&n.data?.id===r.id):(n.data&&n.data.no===r.no));
-      if(found){ offsetX=MAIN.clientWidth/2-found.x*scale; offsetY=MAIN.clientHeight/2-found.y*scale; draw(); showPanel(found); }
+      if(found){ flyTo(MAIN.clientWidth/2-found.x*scale, MAIN.clientHeight/2-found.y*scale, scale); showPanel(found); }
     };
     srEl.appendChild(div);
   });
@@ -2858,24 +2940,29 @@ document.getElementById('btn-view-force').onclick=()=>{
 };
 
 function resetView(){ buildLayout(); fitView(); }
-document.getElementById('btn-reset').onclick=()=>{ resetView(); draw(); };
+function flyToFit(){
+  const oX=offsetX, oY=offsetY, oS=scale;
+  buildLayout(); fitView();                 // fitView writes the target into offset/scale
+  const tX=offsetX, tY=offsetY, tS=scale;
+  offsetX=oX; offsetY=oY; scale=oS;          // restore current, then glide to the fitted target
+  flyTo(tX, tY, tS);
+}
+document.getElementById('btn-reset').onclick=()=>{ flyToFit(); };
 
 // ── ZOOM ──
 document.getElementById('zin').onclick=()=>{
   const MAIN=document.getElementById('main');
-  scale=Math.min(6,scale*1.2);
-  offsetX=MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*1.2;
-  offsetY=MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*1.2;
-  draw();
+  const _ns=Math.min(6,scale*1.2);
+  flyTo(MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*1.2,
+        MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*1.2, _ns);
 };
 document.getElementById('zout').onclick=()=>{
   const MAIN=document.getElementById('main');
-  scale=Math.max(.12,scale*.83);
-  offsetX=MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*.83;
-  offsetY=MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*.83;
-  draw();
+  const _ns=Math.max(.12,scale*.83);
+  flyTo(MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*.83,
+        MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*.83, _ns);
 };
-document.getElementById('zfit').onclick=()=>{ resetView(); draw(); };
+document.getElementById('zfit').onclick=()=>{ flyToFit(); };
 document.getElementById('zarrow').onclick=function(){
   showArrows = !showArrows;
   this.classList.toggle('active', showArrows);
@@ -3123,9 +3210,7 @@ function makeCabRow(p) {
       const n = nodes.find(nd => nd.isMinistry && nd.data?.id === p.minId);
       if (n) {
         const MAIN = document.getElementById('main');
-        offsetX = MAIN.clientWidth/2 - n.x * scale;
-        offsetY = MAIN.clientHeight/2 - n.y * scale;
-        draw();
+        flyTo(MAIN.clientWidth/2 - n.x * scale, MAIN.clientHeight/2 - n.y * scale, scale);
         showPanel(n);
         document.querySelectorAll('.min-item').forEach(el => el.classList.remove('active'));
         const mi = document.querySelector(`.min-item[data-id="${p.minId}"]`);
@@ -3305,9 +3390,8 @@ function goToMinistryFromGrid(minId) {
     const n = nodes.find(nd => nd.isMinistry && nd.data?.id === minId);
     if (n) {
       const MAIN = document.getElementById('main');
-      offsetX = MAIN.clientWidth/2 - n.x * scale;
-      offsetY = MAIN.clientHeight/2 - n.y * scale;
-      draw(); showPanel(n);
+      flyTo(MAIN.clientWidth/2 - n.x * scale, MAIN.clientHeight/2 - n.y * scale, scale);
+      showPanel(n);
     }
   }, 60);
 }
@@ -3460,9 +3544,8 @@ function goToMinistryFromCorrupt(minId, orgNo) {
     }
 
     const isOrg = !targetNode.isMinistry;
-    scale = isOrg ? 3.5 : 2.0;
-    offsetX = MAIN.clientWidth / 2 - targetNode.x * scale;
-    offsetY = MAIN.clientHeight / 2 - targetNode.y * scale;
+    const _navS = isOrg ? 3.5 : 2.0;
+    flyTo(MAIN.clientWidth / 2 - targetNode.x * _navS, MAIN.clientHeight / 2 - targetNode.y * _navS, _navS);
 
     selectedNode = targetNode;
     connectedSet = new Set([targetNode]);
@@ -3485,17 +3568,7 @@ function goToMinistryFromCorrupt(minId, orgNo) {
       nodes.forEach(n => { if (n.ministryID === targetNode.data?.id) connectedSet.add(n); });
     }
 
-    draw();
-    showPanel(targetNode);
-
-    const origR = targetNode.r;
-    let step = 0;
-    const pulse = setInterval(() => {
-      step++;
-      targetNode.r = origR + Math.sin(step * 0.4) * origR * 0.9;
-      draw();
-      if (step >= 22) { targetNode.r = origR; clearInterval(pulse); draw(); }
-    }, 40);
+    showPanel(targetNode);   // selection spring + flowing chain provide the "found it" emphasis
 
     const sb = document.getElementById('sidebar');
     const ov = document.getElementById('mob-overlay');
@@ -3550,6 +3623,7 @@ function showCorruptView(on) {
 
 // ── INIT ──
 window.addEventListener('resize',resize);
+refreshThemeCache();   // prime colour cache before the first paint
 resize();
 buildCabPanel();
 // On mobile the cabinet is a full bottom sheet — start it closed so the diagram is visible on load

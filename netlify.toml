@@ -1,0 +1,4 @@
+# รวมงานเว็บ md — static site, ไม่มีขั้นตอน build
+# โฮสต์บน Netlify (ย้ายจาก GitHub Pages 2026-06-11 เพื่อให้ repo เป็น private ได้)
+[build]
+  publish = "."

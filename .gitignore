@@ -1,3 +1,9 @@
+# ไฟล์ดิบขนาดใหญ่ — เกินลิมิต GitHub 100MB (รูปย่อแล้วอยู่ที่ election/senators/)
+senator_images_200.zip
+
+# Netlify CLI local state (site id อยู่ในเครื่องพอ)
+.netlify/
+
 # OS / editor junk
 .DS_Store
 Thumbs.db

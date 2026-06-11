@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>รัฐสภา · ส.ส. 500 + สว. 200 · ผังที่นั่งกดดูได้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== PARLIAMENT PAGE ===== */
+.pwrap{max-width:1190px;margin:0 auto;padding:84px 20px 96px}
+@media(max-width:860px){.pwrap{padding:16px 12px 110px}}
+
+.phead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.phead .pico{width:46px;height:46px;flex:0 0 auto}
+.phead .bt{font-family:'Kanit';font-weight:600;font-size:1.25rem;line-height:1.1}
+.phead .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.74rem;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;box-shadow:var(--shadow)}
+.tabs button{font-family:'Kanit';font-weight:500;font-size:.9rem;color:var(--ink-2);background:none;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap}
+.tabs button:hover{background:var(--orange-soft);color:var(--orange-deep)}
+.tabs button.active{background:var(--ink);color:var(--paper)}
+.tabs button b{font-family:'Kanit';font-weight:700}
+@media(max-width:860px){
+  .phead .bt{font-size:1.05rem}
+  .tabs{margin-left:0;width:100%;justify-content:stretch}
+  .tabs button{flex:1;justify-content:center;padding:8px 6px;font-size:.8rem}
+}
+
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) 364px;gap:16px;align-items:start}
+@media(max-width:980px){.pgrid{grid-template-columns:1fr}}
+
+/* chamber */
+.chamber{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.chamber-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:13px 18px 4px}
+.chamber-head .cn{font-family:'Kanit';font-weight:600;font-size:1.02rem}
+.chamber-head .cm{font-size:.78rem;color:var(--muted)}
+#hemi{width:100%;height:auto;display:block}
+.seat{cursor:pointer;stroke:rgba(8,22,34,.22);stroke-width:.7;transition:transform .13s,opacity .15s;transform-box:fill-box;transform-origin:center}
+.seat:hover{stroke:var(--ink);stroke-width:1.5;transform:scale(1.45)}
+.seat.dim{opacity:.13;pointer-events:auto}
+.seat.sel{stroke:var(--ink);stroke-width:2.6;transform:scale(1.3)}
+html[data-theme="dark"] .seat{stroke:rgba(0,0,0,.4)}
+.seat.flash{animation:seatflash 1.2s ease 2}
+@keyframes seatflash{0%,100%{stroke:rgba(0,0,0,0)}50%{stroke:var(--orange);stroke-width:5}}
+.dais-el{cursor:pointer}
+.dais-el rect{fill:var(--wash);stroke:var(--line-2);stroke-width:1.2;transition:.15s}
+.dais-el:hover rect{stroke:var(--orange);fill:var(--orange-soft)}
+.dais-el.sel rect{stroke:var(--orange-deep);stroke-width:2}
+.dais-el text{font-family:'Kanit';font-weight:500;fill:var(--ink-2);pointer-events:none}
+.dais-el .dnum{font-weight:700;fill:var(--orange-deep)}
+.dais-el.gold rect{fill:url(#goldGrad);stroke:#A8842E}
+.dais-el.gold text{fill:#3A2C08}
+.dais-el.gold .dnum{fill:#6b4d0e}
+.dais-el.gold:hover rect{stroke:var(--orange-deep);fill:url(#goldGrad)}
+.dais-name{font-family:'Kanit';font-weight:500;font-size:10.5px;fill:var(--muted);text-anchor:middle;pointer-events:none}
+.sidelabel{font-family:'Kanit';font-weight:600;fill:var(--muted);opacity:.85}
+
+/* officer bar — ผู้ดำรงตำแหน่งปัจจุบัน */
+.offbar{display:flex;flex-wrap:wrap;gap:8px;padding:11px 16px 0}
+.offchip{display:inline-flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);
+  border-radius:999px;padding:4px 14px 4px 5px;cursor:pointer;transition:.14s;box-shadow:var(--shadow);text-align:left}
+.offchip:hover{border-color:#C9A84C;background:rgba(201,168,76,.08);transform:translateY(-1px)}
+.offchip img,.offchip .oav{width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:top;flex:0 0 auto;
+  box-shadow:0 0 0 2px var(--card),0 0 0 3.5px #C9A84C}
+.offchip .oav{display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:.95rem}
+.offchip .ot{line-height:1.15}
+.offchip .ot b{display:block;font-family:'Kanit';font-weight:600;font-size:.8rem;color:var(--ink)}
+.offchip .ot small{font-size:.64rem;color:var(--muted)}
+.legendwrap{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px 15px;border-top:1px dashed var(--line)}
+.lchip{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.8rem;color:var(--ink-2);
+  background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;transition:.13s}
+.lchip .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.lchip b{font-family:'Kanit';font-weight:700;color:var(--ink)}
+.lchip:hover{border-color:var(--orange-line);background:var(--orange-soft)}
+.lchip.on{border-color:var(--orange-deep);background:var(--orange-soft);box-shadow:0 0 0 2px rgba(143,169,189,.22)}
+.chamber-note{padding:0 18px 14px;font-size:.76rem;color:var(--muted);line-height:1.6}
+
+/* tooltip */
+.ptip{position:fixed;z-index:90;pointer-events:none;background:var(--ink);color:var(--paper);border-radius:11px;
+  padding:8px 12px;font-size:.8rem;box-shadow:var(--shadow-lg);max-width:240px;opacity:0;transform:translateY(4px);transition:opacity .1s}
+.ptip.on{opacity:1}
+.ptip .tn{font-family:'Kanit';font-weight:600;font-size:.88rem}
+.ptip .tp{display:flex;align-items:center;gap:6px;margin-top:2px}
+.ptip .tp .sw{width:8px;height:8px;border-radius:2px}
+
+/* side panel */
+.pside{position:sticky;top:84px;display:flex;flex-direction:column;gap:14px}
+@media(max-width:980px){.pside{position:static}}
+.scard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+.scard .sb-head{font-family:'Kanit';font-weight:600;font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.scard .sb-head svg{color:var(--orange-deep)}
+.psearchbox{position:relative}
+.psearchbox input{width:100%;font-family:'Sarabun';font-size:.92rem;padding:11px 13px 11px 38px;border:1px solid var(--line-2);border-radius:12px;background:var(--paper);color:var(--ink);outline:none}
+.psearchbox input:focus{border-color:var(--orange)}
+.psearchbox>svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.sresults{margin-top:6px;display:flex;flex-direction:column}
+.srow{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:10px;cursor:pointer;font-size:.88rem}
+.srow:hover{background:var(--orange-soft)}
+.srow .sw{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.srow .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .bd{font-family:'Kanit';font-size:.68rem;font-weight:600;color:var(--muted);background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:2px 8px;flex:0 0 auto}
+
+/* member detail */
+.mview{display:flex;gap:13px}
+.mview .ph{width:104px;height:128px;border-radius:14px;object-fit:cover;object-position:top;flex:0 0 auto;background:var(--wash);border:1px solid var(--line)}
+.mview .avt{width:104px;height:128px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:2.5rem}
+.mview .mi{flex:1 1 auto;min-width:0}
+.mview .mn{font-family:'Kanit';font-weight:600;font-size:1.08rem;line-height:1.25}
+.mview .chip{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--ink-2);background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin-top:7px}
+.mview .chip .sw{width:9px;height:9px;border-radius:3px}
+.mrows{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;gap:8px;font-size:.84rem;color:var(--ink-2);line-height:1.5}
+.mrow svg{flex:0 0 auto;margin-top:2px;color:var(--muted)}
+.mrow b{color:var(--ink);font-weight:600}
+.mlink{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.84rem;color:var(--orange-deep);
+  background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:10px;padding:7px 13px;margin-top:12px}
+.mlink:hover{filter:brightness(1.05)}
+.mempty{color:var(--muted);font-size:.85rem;line-height:1.7;padding:4px 2px}
+.mempty b{color:var(--ink-2)}
+
+/* rules section */
+.rules{margin-top:26px}
+.rules h2{font-family:'Kanit';font-weight:600;font-size:1.15rem;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.rules .sub{font-size:.82rem;color:var(--muted);margin-bottom:14px}
+.rulegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:11px}
+@media(max-width:740px){.rulegrid{grid-template-columns:1fr}}
+.rcard{display:flex;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow)}
+.rcard .rno{font-family:'Kanit';font-weight:700;font-size:1.5rem;color:var(--orange);line-height:1;flex:0 0 30px;text-align:center;padding-top:2px}
+.rcard p{font-size:.86rem;color:var(--ink-2);line-height:1.65}
+.rcard p b{color:var(--ink)}
+.rcard.note{background:var(--wash);border-style:dashed}
+.rcard.note .rno{color:var(--th-blue)}
+html[data-theme="dark"] .rcard.note .rno{color:#8FA8FF}
+
+.pfoot{margin-top:22px;font-size:.72rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
+.pfoot a{color:var(--orange-deep);text-decoration:underline}
+</style>
+</head>
+<body>
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<script>
+function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+mdThemeIcon();
+</script>
+
+<!-- desktop nav -->
+<nav class="navpill">
+  <a href="../hub/index.html" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="กลับหน้าหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="parliament.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+</nav>
+
+<div class="pwrap">
+
+  <div class="phead">
+    <svg class="pico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M6 36a18 18 0 0 1 36 0" fill="none" stroke="#2D2A4A" stroke-width="3"/>
+      <circle cx="24" cy="14" r="2.6" fill="#A51931"/><circle cx="14.5" cy="18.5" r="2.6" fill="#FF6A13"/><circle cx="33.5" cy="18.5" r="2.6" fill="#0E2F6B"/>
+      <circle cx="10" cy="27" r="2.6" fill="#1FA463"/><circle cx="38" cy="27" r="2.6" fill="#ED1C24"/>
+      <rect x="17" y="36" width="14" height="6" rx="2" fill="#C9A84C"/>
+    </svg>
+    <div class="bt">รัฐสภาไทย — ผังที่นั่งกดดูได้<small>สภาผู้แทนราษฎร (ว่าที่ ส.ส. เลือกตั้ง 2569) · วุฒิสภา (ชุด 2567) · ประชุมร่วม</small></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-mp" class="active" onclick="setView('mp')">ส.ส. <b>500</b></button>
+      <button id="tab-sv" onclick="setView('sv')">สว. <b>200</b></button>
+      <button id="tab-joint" onclick="setView('joint')">ประชุมร่วม <b>700</b></button>
+    </div>
+  </div>
+
+  <div class="pgrid">
+
+    <!-- ห้องประชุม -->
+    <section class="chamber">
+      <div class="chamber-head">
+        <span class="cn" id="chName"></span>
+        <span class="cm" id="chMeta"></span>
+      </div>
+      <svg id="hemi" viewBox="0 0 1000 574" xmlns="http://www.w3.org/2000/svg" aria-label="ผังที่นั่งรัฐสภา">
+        <defs id="pdefs">
+          <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#EAD088"/><stop offset=".5" stop-color="#C9A84C"/><stop offset="1" stop-color="#A07F28"/>
+          </linearGradient>
+          <radialGradient id="hallWash" cx="50%" cy="56%" r="62%">
+            <stop offset="0" stop-color="rgba(201,168,76,.10)"/>
+            <stop offset=".55" stop-color="rgba(201,168,76,.045)"/>
+            <stop offset="1" stop-color="rgba(201,168,76,0)"/>
+          </radialGradient>
+        </defs>
+        <g id="bgG"></g>
+        <g id="seatsG"></g>
+        <g id="daisG"></g>
+      </svg>
+      <div class="offbar" id="offbar"></div>
+      <div class="legendwrap" id="legend"></div>
+      <div class="chamber-note" id="chNote"></div>
+    </section>
+
+    <!-- ค้นหา + รายละเอียด -->
+    <aside class="pside">
+      <div class="scard">
+        <div class="psearchbox">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="psearch" placeholder="ค้นหา ส.ส. / สว. ทั้ง 700 คน" autocomplete="off">
+        </div>
+        <div class="sresults" id="sresults"></div>
+      </div>
+      <div class="scard" id="detail">
+        <div class="sb-head"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>รายละเอียดที่นั่ง</div>
+        <div id="detailBody"><div class="mempty">แตะ/คลิกที่นั่งในผัง เพื่อดูข้อมูลสมาชิกรายคน หรือกดที่ <b>บัลลังก์ประธาน · ที่นั่งนายกฯ · ครม.</b> ด้านล่างของผังเพื่อดูหน้าที่ของแต่ละตำแหน่ง</div></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- กติกาการจัดที่นั่ง -->
+  <section class="rules">
+    <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange-deep)" stroke-width="2"><path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="M5 10.5V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-5.5"/></svg>การจัดที่นั่งภายในห้องประชุมรัฐสภา</h2>
+    <div class="sub">อ้างอิงระเบียบการจัดที่นั่งของสภาผู้แทนราษฎรและวุฒิสภา — กดหมายเลข ๑–๖ ในผังด้านบนได้</div>
+    <div class="rulegrid">
+      <div class="rcard"><div class="rno">๑</div><p>ที่นั่งตรงกลางของบัลลังก์ เป็นที่นั่งของ<b>ประธานในที่ประชุม</b></p></div>
+      <div class="rcard"><div class="rno">๒</div><p>ที่นั่งด้านขวามือของประธาน เป็นที่นั่งของ<b>รองประธานคนที่หนึ่ง</b> และที่นั่งด้านซ้ายมือของประธาน เป็นที่นั่งของ<b>รองประธานคนที่สอง</b></p></div>
+      <div class="rcard"><div class="rno">๓</div><p>ที่นั่งแถวบนทางด้านขวามือของประธานที่นั่งแรก เป็นที่นั่งของ<b>นายกรัฐมนตรี</b></p></div>
+      <div class="rcard"><div class="rno">๔</div><p>ที่นั่งถัดจากนายกรัฐมนตรีทั้งสองแถว เป็นที่นั่งของ<b>คณะรัฐมนตรี</b></p></div>
+      <div class="rcard"><div class="rno">๕</div><p>ที่นั่ง ๒ แถวด้านซ้ายมือของประธาน เป็นที่นั่งของ<b>คณะกรรมาธิการ</b> ที่ต้องขึ้นไปชี้แจงเรื่องต่าง ๆ ให้ที่ประชุมรับทราบ</p></div>
+      <div class="rcard"><div class="rno">๖</div><p>ที่นั่งถัดจากบัลลังก์ลงมาด้านซ้ายมือของประธาน เป็นที่นั่งของ<b>เลขาธิการ</b> ส่วนด้านขวามือเป็นที่นั่งของ<b>รองเลขาธิการ</b> ซึ่งทำหน้าที่เป็นเลขานุการของที่ประชุม</p></div>
+      <div class="rcard"><div class="rno">๗</div><p>การจัดที่นั่งในการประชุม<b>สภาผู้แทนราษฎร</b> จะนั่งตามพรรคการเมือง — พรรคที่เป็น<b>พรรคร่วมรัฐบาล</b>นั่งทางด้านขวามือของประธาน และ<b>พรรคร่วมฝ่ายค้าน</b>นั่งทางด้านซ้ายมือของประธาน</p></div>
+      <div class="rcard note"><div class="rno">สว.</div><p>การจัดที่นั่งในการประชุม<b>วุฒิสภา</b> สมาชิกวุฒิสภาจะนั่งเรียงตาม<b>ลำดับตัวอักษรชื่อ ตั้งแต่ ก – ฮ</b></p></div>
+      <div class="rcard note"><div class="rno">ร่วม</div><p>การประชุม<b>ร่วมกันของรัฐสภา</b> ใช้ห้องประชุมของสภาผู้แทนราษฎร โดย<b>สมาชิกวุฒิสภานั่งด้านขวามือ</b>ของประธานรัฐสภา และ<b>สมาชิกสภาผู้แทนราษฎรนั่งทางซ้ายมือ</b>ของประธานรัฐสภา</p></div>
+    </div>
+  </section>
+
+  <!-- คณะกรรมาธิการ ๕ ประเภท -->
+  <section class="rules">
+    <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange-deep)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>คณะกรรมาธิการ (กมธ.) — ๕ ประเภท</h2>
+    <div class="sub">กลไกทำงานละเอียดของรัฐสภา — กดบล็อก "๕ คณะกรรมาธิการ" ในผังด้านบนเพื่อดูตำแหน่งที่นั่ง</div>
+    <div class="rulegrid">
+      <div class="rcard"><div class="rno">๑</div><p><b>คณะกรรมาธิการสามัญ</b> (Standing Committee) — ตั้งขึ้นเป็นการถาวร เพื่อพิจารณาร่างกฎหมาย ควบคุมการบริหารราชการแผ่นดิน และติดตามผลงานของรัฐบาลตามกรอบกระทรวงหรือภารกิจต่าง ๆ เช่น กมธ.การทหาร · กมธ.การเกษตรและสหกรณ์ · กมธ.การต่างประเทศ</p></div>
+      <div class="rcard"><div class="rno">๒</div><p><b>คณะกรรมาธิการวิสามัญ</b> (Select / Ad-hoc Committee) — ตั้งขึ้นเป็นการชั่วคราวเพื่อทำหน้าที่เฉพาะกิจ เช่น พิจารณาร่างพระราชบัญญัติเฉพาะฉบับ หรือศึกษาปัญหาเร่งด่วนที่สภามอบหมาย เมื่อเสร็จสิ้นภารกิจจะยุบเลิกไป</p></div>
+      <div class="rcard"><div class="rno">๓</div><p><b>คณะกรรมาธิการร่วมกันของรัฐสภา</b> (Joint Committee) — ตั้งขึ้นเมื่อร่างพระราชบัญญัติผ่านสภาผู้แทนราษฎรแล้ว แต่วุฒิสภามีการแก้ไขเพิ่มเติม ประกอบด้วยสมาชิกจาก<b>ทั้งสองสภาจำนวนเท่ากัน</b> เพื่อเจรจาหาข้อตกลงร่วมกัน</p></div>
+      <div class="rcard"><div class="rno">๔</div><p><b>คณะกรรมาธิการของรัฐสภา</b> (Parliamentary Committee) — การรวมตัวของสมาชิกทั้งสองสภา เพื่อพิจารณาเรื่องที่มีผลกระทบต่อรัฐสภาโดยรวม เช่น การพิจารณากฎหมายประกอบรัฐธรรมนูญ</p></div>
+      <div class="rcard"><div class="rno">๕</div><p><b>คณะกรรมาธิการเต็มสภา</b> (Committee of the Whole) — การประชุมสภาในวาระที่สอง โดยให้<b>สมาชิกทุกคนในสภา</b>เปลี่ยนสถานะเป็นกรรมาธิการ เพื่อพิจารณาร่างกฎหมายไปพร้อมกันทีละมาตรา</p></div>
+      <div class="rcard note"><div class="rno">🔗</div><p>ดูรายชื่อและผลงานแต่ละคณะได้ที่เว็บไซต์คณะกรรมาธิการ <a href="https://www.parliament.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">สภาผู้แทนราษฎร</a> และ <a href="https://www.senate.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">วุฒิสภา</a></p></div>
+    </div>
+  </section>
+
+  <div class="pfoot">
+    ภาพถ่าย ส.ส.: สำนักงานเลขาธิการสภาผู้แทนราษฎร · <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a>
+    &nbsp;·&nbsp; ภาพถ่าย สว.: สำนักงานเลขาธิการวุฒิสภา · <a href="https://www.senate.go.th" target="_blank" rel="noopener">senate.go.th</a><br>
+    ผังที่นั่งเป็นแผนภาพอย่างง่ายเพื่อการเรียนรู้ — จำนวนแถว/ตำแหน่งที่นั่งจริงในห้องประชุมสุริยันอาจแตกต่างจากแผนภาพนี้ ·
+    ส.ส. ชุดนี้เป็น <b>ว่าที่ ส.ส.</b> จากผลการเลือกตั้ง 2569 (ยังไม่จัดตั้งรัฐบาล จึงเรียงที่นั่งตามขนาดพรรคแทนการแบ่งฝ่ายรัฐบาล/ฝ่ายค้าน)
+  </div>
+</div>
+
+<!-- mobile nav -->
+<nav class="mobnav" aria-label="เมนูหลัก">
+  <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีฯ</a>
+  <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
+  <a href="parliament.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+</nav>
+
+<div class="ptip" id="ptip"></div>
+
+<script src="parliament-data.js"></script>
+<script>
+'use strict';
+const D = window.PDATA, PM = D.partyMeta;
+const colorOf = c => (PM[c] && PM[c].color) || '#B9AFA4';
+const shortOf = c => (PM[c] && PM[c].short) || c;
+const SV_COLOR_LIGHT = '#9AA3AE', SV_COLOR_DARK = '#6B7480';
+const svColor = () => document.documentElement.getAttribute('data-theme') === 'dark' ? SV_COLOR_DARK : SV_COLOR_LIGHT;
+const NS = 'http://www.w3.org/2000/svg';
+const fmtN = n => (n == null ? '' : Number(n).toLocaleString('en-US'));
+const pad3 = n => String(n).padStart(3, '0');
+
+/* ── สมาชิก ── */
+// strip คำนำหน้า เพื่อหาอักษรย่อ avatar
+const TITLES = ['ว่าที่ร้อยตรีหญิง','ว่าที่ร้อยตรี','ว่าที่ร้อยโท','ว่าที่ร้อยเอก','ว่าที่พันตรี','พลตำรวจเอก','พลตำรวจโท','พลตำรวจตรี','พันตำรวจเอก','พันตำรวจโท','พันตำรวจตรี','ร้อยตำรวจเอก','ร้อยตำรวจโท','พลอากาศเอก','พลอากาศโท','พลอากาศตรี','พลเรือเอก','พลเรือโท','พลเรือตรี','พลเอก','พลโท','พลตรี','พันเอก','พันโท','พันตรี','ร้อยเอก','ร้อยโท','ร้อยตรี','เรืออากาศเอก','เรืออากาศโท','นาวาอากาศเอก','นาวาอากาศโท','นาวาเอก','นาวาโท','นาวาตรี','เรือเอก','เรือโท','เรือตรี','จ่าสิบเอก','จ่าสิบโท','จ่าเอก','จ่าโท','สิบเอก','สิบโท','สิบตรี','รองศาสตราจารย์','ผู้ช่วยศาสตราจารย์','ศาสตราจารย์','นายแพทย์','แพทย์หญิง','ทันตแพทย์หญิง','ทันตแพทย์','เภสัชกรหญิง','เภสัชกร','หม่อมราชวงศ์','หม่อมหลวง','คุณหญิง','ท่านผู้หญิง','นางสาว','นาง','นาย','ดร.'];
+function initialOf(name){
+  let s = name.trim();
+  for(const t of TITLES){ if(s.startsWith(t)){ s = s.slice(t.length); break; } }
+  s = s.trim();
+  return s.charAt(0) || 'ส';
+}
+
+// ส.ส. 500: จัดพรรคแบบ "ลิ่ม" จากริมสองข้างเข้าหากลาง (พรรคใหญ่สุดขวาสุด · ใหญ่อันดับสองซ้ายสุด — แบบเดียวกับแผนภาพผลเลือกตั้ง)
+function mpMembers(){
+  const totals = {};
+  D.zone.forEach(r => totals[r.code] = (totals[r.code] || 0) + 1);
+  D.list.forEach(r => totals[r.code] = (totals[r.code] || 0) + 1);
+  const parties = Object.keys(totals).sort((a,b) => totals[b] - totals[a] || shortOf(a).localeCompare(shortOf(b),'th'));
+  const left = [], right = [];
+  parties.forEach((p,i) => (i % 2 === 0 ? right : left).push(p));
+  const order = left.concat(right.reverse());      // ซ้าย→ขวา
+  const byParty = {};
+  order.forEach(p => byParty[p] = []);
+  D.list.forEach(r => byParty[r.code].push({ kind:'list', name:r.name, code:r.code, no:+r.no }));
+  D.zone.slice().sort((a,b) => a.prov.localeCompare(b.prov,'th') || (+a.no)-(+b.no))
+        .forEach(r => byParty[r.code].push({ kind:'zone', name:r.name, code:r.code, prov:r.prov, no:+r.no, votes:r.votes }));
+  byParty[order[0]] && order.forEach(p => byParty[p].sort((a,b) => (a.kind===b.kind) ? 0 : (a.kind==='list' ? -1 : 1)));
+  const out = [];
+  order.forEach(p => byParty[p].forEach(m => out.push(m)));
+  return out;
+}
+function svMembers(){
+  return D.senators.map((name,i) => ({ kind:'sv', name, no:i+1 }));
+}
+const MEMBERS = { mp: mpMembers(), sv: svMembers() };
+MEMBERS.joint = MEMBERS.mp.concat(MEMBERS.sv);   // สว. ต่อท้าย = ฝั่งขวามือประธาน (ตามข้อบังคับประชุมร่วม)
+
+const memberColor = m => m.kind === 'sv' ? svColor() : colorOf(m.code);
+const memberPhoto = m => m.kind === 'sv' ? ('senators/' + pad3(m.no) + '.jpg') : (D.photos[m.name] ? 'photos/' + D.photos[m.name] : null);
+const memberMeta = m => m.kind === 'sv' ? `สว. ลำดับที่ ${m.no}` :
+  m.kind === 'list' ? `${shortOf(m.code)} · บัญชีรายชื่อ #${m.no}` : `${shortOf(m.code)} · ${m.prov} เขต ${m.no}`;
+
+/* ── ผู้ดำรงตำแหน่งปัจจุบัน (ชุดเปิดสมัยประชุม 2569) ── */
+const findMP = q => { const i = MEMBERS.mp.findIndex(m => m.name.includes(q)); return i >= 0 ? { view:'mp', idx:i, m:MEMBERS.mp[i] } : null; };
+const findSV = q => { const i = MEMBERS.sv.findIndex(m => m.name.includes(q)); return i >= 0 ? { view:'sv', idx:i, m:MEMBERS.sv[i] } : null; };
+const OFFICERS = {
+  mp: [
+    { dais:'president', role:'ประธานสภาผู้แทนราษฎร', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)', ref:findMP('โสภณ ซารัมย์') },
+    { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', ref:findMP('มัลลิกา จิระพันธุ์วาณิช') },
+    { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', ref:findMP('เลิศศักดิ์ พัฒนชัยกุล') }
+  ],
+  sv: [
+    { dais:'president', role:'ประธานวุฒิสภา', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)', ref:findSV('มงคล สุระสัจจะ') }
+  ],
+  joint: [
+    { dais:'president', role:'ประธานรัฐสภา', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง', ref:findMP('โสภณ ซารัมย์') },
+    { dais:'vice1', role:'รองประธานรัฐสภา', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง', ref:findSV('มงคล สุระสัจจะ') }
+  ]
+};
+const officerFor = (v, daisId) => (OFFICERS[v] || []).find(o => o.dais === daisId && o.ref);
+// index ของสมาชิกในผังของ view ปัจจุบัน (ประชุมร่วม: สว. ต่อท้าย 500)
+const officerSeatIdx = (v, o) => (v === 'joint' && o.ref.view === 'sv') ? 500 + o.ref.idx : o.ref.idx;
+
+/* ── สีไล่เฉดที่นั่ง (สวยขึ้นแบบ static — ไม่มี animation) ── */
+const _hx = c => { let h = c.replace('#',''); if(h.length === 3) h = h.split('').map(x => x + x).join(''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; };
+const _mix = (c, t, a) => { const [r,g,b] = _hx(c); const [r2,g2,b2] = t; return `rgb(${Math.round(r+(r2-r)*a)},${Math.round(g+(g2-g)*a)},${Math.round(b+(b2-b)*a)})`; };
+const lighten = (c,a) => _mix(c, [255,255,255], a), darken = (c,a) => _mix(c, [0,0,0], a);
+const _grads = {};
+function gradFor(color){
+  if(_grads[color]) return _grads[color];
+  const id = 'sg' + color.replace(/[^A-Za-z0-9]/g, '');
+  const g = document.createElementNS(NS, 'radialGradient');
+  g.setAttribute('id', id); g.setAttribute('cx', '33%'); g.setAttribute('cy', '28%'); g.setAttribute('r', '80%');
+  [[0, lighten(color, .48)], ['0.55', color], [1, darken(color, .26)]].forEach(([o, c]) => {
+    const s = document.createElementNS(NS, 'stop');
+    s.setAttribute('offset', o); s.setAttribute('stop-color', c); g.appendChild(s);
+  });
+  document.getElementById('pdefs').appendChild(g);
+  return _grads[color] = `url(#${id})`;
+}
+
+/* ── เรขาคณิตผังที่นั่ง (พัดกว้าง ~230° ตามห้องประชุมสุริยัน · บัลลังก์อยู่ช่องว่างด้านล่าง) ── */
+const CX = 500, CY = 318;
+const A0 = (205 * Math.PI) / 180, A1 = (-25 * Math.PI) / 180;   // ซ้ายล่าง → ขวาล่าง
+const CFG = {
+  mp:    { rows: 10, r0: 148, r1: 308, seatR: 7.0 },
+  sv:    { rows: 6,  r0: 158, r1: 296, seatR: 10.4 },
+  joint: { rows: 12, r0: 142, r1: 310, seatR: 6.2 }
+};
+function buildSeats(N, cfg){
+  const radii = [];
+  for(let i = 0; i < cfg.rows; i++) radii.push(cfg.r0 + i * (cfg.r1 - cfg.r0) / (cfg.rows - 1));
+  const sum = radii.reduce((a,b) => a+b, 0);
+  // largest remainder → จำนวนที่นั่งต่อแถวรวมตรง N พอดี
+  const targets = radii.map(r => N * r / sum);
+  const counts = targets.map(Math.floor);
+  let rem = N - counts.reduce((a,b) => a+b, 0);
+  targets.map((t,i) => ({ i, f: t - Math.floor(t) })).sort((a,b) => b.f - a.f)
+         .slice(0, rem).forEach(o => counts[o.i]++);
+  const seats = [];
+  counts.forEach((n, row) => {
+    const r = radii[row];
+    for(let j = 0; j < n; j++){
+      const th = A0 - (j + 0.5) * (A0 - A1) / n;
+      seats.push({ x: CX + r * Math.cos(th), y: CY - r * Math.sin(th), th, r, row });
+    }
+  });
+  seats.sort((a,b) => b.th - a.th || a.r - b.r);   // ซ้าย→ขวา เกิดลิ่มพรรคตามแนวรัศมี
+  return seats;
+}
+
+/* ── บัลลังก์ + ตำแหน่งพิเศษ (๑–๖) ── */
+const DAIS_INFO = {
+  president: { num:'๑', title:'ประธานในที่ประชุม',
+    body: v => v==='sv' ? 'ที่นั่งตรงกลางของบัลลังก์ เป็นที่นั่งของประธานในที่ประชุม — การประชุมวุฒิสภา ประธานคือ <b>ประธานวุฒิสภา</b>'
+       : v==='joint' ? 'ที่นั่งตรงกลางของบัลลังก์ เป็นที่นั่งของประธานในที่ประชุม — การประชุมร่วมกันของรัฐสภา ประธานคือ <b>ประธานรัฐสภา</b> (ประธานสภาผู้แทนราษฎรโดยตำแหน่ง)'
+       : 'ที่นั่งตรงกลางของบัลลังก์ เป็นที่นั่งของประธานในที่ประชุม — การประชุมสภาผู้แทนราษฎร ประธานคือ <b>ประธานสภาผู้แทนราษฎร</b>' },
+  vice1: { num:'๒', title:'รองประธาน คนที่หนึ่ง', body: () => 'ที่นั่งด้าน<b>ขวามือของประธาน</b> เป็นที่นั่งของรองประธานคนที่หนึ่ง' },
+  vice2: { num:'๒', title:'รองประธาน คนที่สอง', body: () => 'ที่นั่งด้าน<b>ซ้ายมือของประธาน</b> เป็นที่นั่งของรองประธานคนที่สอง' },
+  pm: { num:'๓', title:'นายกรัฐมนตรี', body: () => 'ที่นั่งแถวบนทางด้านขวามือของประธาน <b>ที่นั่งแรก</b> เป็นที่นั่งของนายกรัฐมนตรี', link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
+  cabinet: { num:'๔', title:'คณะรัฐมนตรี', body: () => 'ที่นั่งถัดจากนายกรัฐมนตรี<b>ทั้งสองแถว</b> เป็นที่นั่งของคณะรัฐมนตรี (รัฐมนตรีไม่จำเป็นต้องเป็น ส.ส. จึงมีที่นั่งแยกจากผัง 500 ที่นั่ง)', link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
+  committee: { num:'๕', title:'คณะกรรมาธิการ', body: () => 'ที่นั่ง <b>๒ แถวด้านซ้ายมือของประธาน</b> เป็นที่นั่งของคณะกรรมาธิการ ที่ต้องขึ้นไปชี้แจงเรื่องต่าง ๆ ให้ที่ประชุมรับทราบ — คณะกรรมาธิการมี <b>๕ ประเภท</b> (สามัญ · วิสามัญ · ร่วมกันของรัฐสภา · ของรัฐสภา · เต็มสภา) ดูรายละเอียดในส่วน "คณะกรรมาธิการ" ท้ายหน้า' },
+  secretary: { num:'๖', title:'เลขาธิการ · รองเลขาธิการ', body: () => 'ที่นั่งถัดจากบัลลังก์ลงมา <b>ด้านซ้ายมือ</b>ของประธานเป็นที่นั่งของเลขาธิการ ส่วน<b>ด้านขวามือ</b>เป็นที่นั่งของรองเลขาธิการ ซึ่งทำหน้าที่เป็นเลขานุการของที่ประชุม' }
+};
+// rect ตำแหน่ง (ในพิกัด viewBox) — มุมมองแปลน: ประธานหันหน้าเข้าหาที่นั่งสมาชิก → ขวามือประธาน = ขวาของจอ
+// ประชุมร่วม: รัฐธรรมนูญกำหนด "รองประธานรัฐสภา" คนเดียว (ประธานวุฒิสภา) → ซ่อน vice2 ใน joint
+const DAIS_LAYOUT = [
+  { id:'committee', x:248, y:468, w:130, h:34, label:'คณะกรรมาธิการ', num:'๕', views:['mp','joint'] },
+  { id:'secretary', x:404, y:430, w:74,  h:26, label:'เลขาฯ', num:'๖', views:['mp','sv','joint'] },
+  { id:'vice2',     x:386, y:468, w:92,  h:34, label:'รองประธาน ๒', num:'๒', views:['mp','sv'] },
+  { id:'president', x:452, y:506, w:96,  h:44, label:'ประธาน', num:'๑', views:['mp','sv','joint'], gold:true },
+  { id:'vice1',     x:522, y:468, w:92,  h:34, label:'รองประธาน ๑', num:'๒', views:['mp','sv','joint'], labels:{ joint:'รองปธ.รัฐสภา' } },
+  { id:'pm',        x:622, y:468, w:64,  h:34, label:'นายกฯ', num:'๓', views:['mp','joint'] },
+  { id:'cabinet',   x:694, y:468, w:130, h:34, label:'คณะรัฐมนตรี', num:'๔', views:['mp','joint'] }
+];
+
+/* ── สถานะ ── */
+let view = 'mp';
+let filterParty = null;          // กรองพรรคจาก legend
+let selected = -1;               // index สมาชิกที่เลือก
+let seatEls = [];                // circle elements ตาม index สมาชิก
+
+const $ = id => document.getElementById(id);
+const seatsG = $('seatsG'), daisG = $('daisG'), bgG = $('bgG'), tip = $('ptip');
+
+/* ── ฉากหลังห้องประชุม (กำแพงโค้ง · แนวแถว · พื้นกลาง — เลียนแบบแปลนห้องสุริยัน) ── */
+function arcPath(r, stroke, w, dash, op){
+  const p = document.createElementNS(NS, 'path');
+  const x0 = CX + r * Math.cos(A0), y0 = CY - r * Math.sin(A0);
+  const x1 = CX + r * Math.cos(A1), y1 = CY - r * Math.sin(A1);
+  p.setAttribute('d', `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 1 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`);
+  p.setAttribute('fill', 'none');
+  p.setAttribute('stroke', stroke);
+  p.setAttribute('stroke-width', w);
+  if(dash) p.setAttribute('stroke-dasharray', dash);
+  p.setAttribute('opacity', op);
+  return p;
+}
+function drawBackdrop(cfg){
+  bgG.innerHTML = '';
+  // แสงนวลทองกลางห้อง
+  const wash = document.createElementNS(NS, 'circle');
+  wash.setAttribute('cx', CX); wash.setAttribute('cy', CY);
+  wash.setAttribute('r', cfg.r1 + 30);
+  wash.setAttribute('fill', 'url(#hallWash)');
+  bgG.appendChild(wash);
+  // แนวแถวที่นั่ง (เส้นประจาง ๆ ใต้เก้าอี้ เหมือนแปลนสถาปนิก)
+  for(let i = 0; i < cfg.rows; i++){
+    const r = cfg.r0 + i * (cfg.r1 - cfg.r0) / (cfg.rows - 1);
+    bgG.appendChild(arcPath(r, 'var(--line-2)', 1, '2 6', .5));
+  }
+  // กำแพงห้องประชุมโค้งคู่ + เส้นทอง
+  bgG.appendChild(arcPath(cfg.r1 + 16, 'var(--line-2)', 1.6, null, .95));
+  bgG.appendChild(arcPath(cfg.r1 + 22, '#C9A84C', 1.1, null, .55));
+  // ขอบพื้นที่อภิปรายกลางห้อง
+  bgG.appendChild(arcPath(cfg.r0 - 16, 'var(--line-2)', 1.1, '1 5', .8));
+}
+
+/* ── แถบผู้ดำรงตำแหน่ง (กดเพื่อกระโดดไปที่นั่งจริงในผัง) ── */
+function drawOfficerBar(){
+  const ob = $('offbar');
+  ob.innerHTML = '';
+  (OFFICERS[view] || []).forEach(o => {
+    if(!o.ref) return;
+    const m = o.ref.m;
+    const col = m.kind === 'sv' ? svColor() : colorOf(m.code);
+    const photo = memberPhoto(m);
+    const chip = document.createElement('button');
+    chip.className = 'offchip';
+    chip.title = 'ดูที่นั่งของ ' + m.name + ' ในผัง';
+    chip.innerHTML = (photo
+        ? `<img src="${photo}" alt="" loading="lazy">`
+        : `<span class="oav" style="background:${col}">${initialOf(m.name)}</span>`)
+      + `<span class="ot"><b>${m.name}</b><small>${o.role}</small></span>`;
+    const img = chip.querySelector('img');
+    if(img) img.addEventListener('error', () => {
+      const fb = document.createElement('span');
+      fb.className = 'oav'; fb.style.background = col; fb.textContent = initialOf(m.name);
+      img.replaceWith(fb);
+    });
+    chip.onclick = () => select(officerSeatIdx(view, o), true);
+    ob.appendChild(chip);
+  });
+}
+
+/* ── วาดผัง ── */
+function render(){
+  const members = MEMBERS[view];
+  const seats = buildSeats(members.length, CFG[view]);
+  drawBackdrop(CFG[view]);
+  seatsG.innerHTML = '';
+  seatEls = [];
+  members.forEach((m, i) => {
+    const s = seats[i];
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', s.x.toFixed(1));
+    c.setAttribute('cy', s.y.toFixed(1));
+    c.setAttribute('r', CFG[view].seatR);
+    c.setAttribute('fill', gradFor(memberColor(m)));
+    c.setAttribute('class', 'seat');
+    c.dataset.i = i;
+    c.addEventListener('click', ev => { ev.stopPropagation(); select(i, false); });
+    c.addEventListener('mousemove', ev => showTip(ev, m));
+    c.addEventListener('mouseleave', hideTip);
+    seatsG.appendChild(c);
+    seatEls.push(c);
+  });
+  drawDais();
+  drawOfficerBar();
+  drawLegend();
+  applyFilter();
+  // หัวการ์ด
+  const names = { mp:'สภาผู้แทนราษฎร', sv:'วุฒิสภา', joint:'ประชุมร่วมกันของรัฐสภา' };
+  const metas = {
+    mp:`500 ที่นั่ง · ${Object.keys(PM).filter(c=>MEMBERS.mp.some(m=>m.code===c)).length} พรรค (เขต 400 + บัญชีรายชื่อ 100)`,
+    sv:'200 ที่นั่ง · อิสระ ไม่สังกัดพรรค · เรียงตามอักษร ก–ฮ',
+    joint:'700 ที่นั่ง = ส.ส. 500 (ซ้ายมือประธาน) + สว. 200 (ขวามือประธาน)'
+  };
+  const notes = {
+    mp:'ยังไม่มีการจัดตั้งรัฐบาลจากผลเลือกตั้ง 2569 — ผังนี้จึงเรียง "ลิ่มพรรค" ตามขนาด (ใหญ่สุดขวาสุด) เมื่อเปิดสภาจริง พรรคร่วมรัฐบาลจะนั่งขวามือประธาน และฝ่ายค้านนั่งซ้ายมือ (ข้อ ๗)',
+    sv:'สมาชิกวุฒิสภา 200 คน มาจากการเลือกกันเองของกลุ่มอาชีพ ไม่สังกัดพรรคการเมือง ที่นั่งจึงเป็นสีเทาทั้งหมด และเรียงตามลำดับตัวอักษรชื่อ ก–ฮ เริ่มจากซ้ายมือประธาน',
+    joint:'การประชุมร่วมกันของรัฐสภาใช้ห้องประชุมสภาผู้แทนราษฎร (ห้องสุริยัน) — สว. ทั้ง 200 คน นั่งฝั่งขวามือของประธานรัฐสภา'
+  };
+  $('chName').textContent = names[view];
+  $('chMeta').textContent = metas[view];
+  $('chNote').textContent = notes[view];
+}
+
+function drawDais(){
+  daisG.innerHTML = '';
+  // แท่นฐาน
+  const base = document.createElementNS(NS,'rect');
+  base.setAttribute('x', 238); base.setAttribute('y', 458);
+  base.setAttribute('width', 524); base.setAttribute('height', 96);
+  base.setAttribute('rx', 16);
+  base.setAttribute('fill', 'none');
+  base.setAttribute('stroke', 'var(--line-2)');
+  base.setAttribute('stroke-dasharray', '5 5');
+  daisG.appendChild(base);
+  // ป้ายฝั่งซ้าย/ขวา
+  const mkLabel = (x, y, txt, anchor) => {
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x', x); t.setAttribute('y', y);
+    t.setAttribute('class', 'sidelabel');
+    t.setAttribute('font-size', '13');
+    t.setAttribute('text-anchor', anchor);
+    t.textContent = txt;
+    daisG.appendChild(t);
+  };
+  if(view === 'mp'){ mkLabel(108, 545, '← ซ้ายมือประธาน (ฝ่ายค้าน เมื่อเปิดสภา)', 'start'); mkLabel(892, 545, 'ขวามือประธาน (รัฐบาล เมื่อเปิดสภา) →', 'end'); }
+  if(view === 'joint'){ mkLabel(108, 545, '← ส.ส. 500 คน (ซ้ายมือประธาน)', 'start'); mkLabel(892, 545, 'สว. 200 คน (ขวามือประธาน) →', 'end'); }
+  if(view === 'sv'){ mkLabel(108, 545, '← เริ่ม ก', 'start'); mkLabel(892, 545, 'จบ ฮ →', 'end'); }
+  // เส้นแบ่งเขต ส.ส. | สว. ในผังประชุมร่วม (แนวรัศมีที่สัดส่วน 500/700)
+  if(view === 'joint'){
+    const thB = A0 - (500 / 700) * (A0 - A1);
+    const cfg = CFG.joint;
+    const dv = document.createElementNS(NS, 'path');
+    const xi = CX + (cfg.r0 - 22) * Math.cos(thB), yi = CY - (cfg.r0 - 22) * Math.sin(thB);
+    const xo = CX + (cfg.r1 + 24) * Math.cos(thB), yo = CY - (cfg.r1 + 24) * Math.sin(thB);
+    dv.setAttribute('d', `M ${xi.toFixed(1)} ${yi.toFixed(1)} L ${xo.toFixed(1)} ${yo.toFixed(1)}`);
+    dv.setAttribute('stroke', '#C9A84C'); dv.setAttribute('stroke-width', '1.6');
+    dv.setAttribute('stroke-dasharray', '6 5'); dv.setAttribute('opacity', '.75');
+    daisG.appendChild(dv);
+  }
+  // บล็อกตำแหน่ง ๑–๖
+  DAIS_LAYOUT.filter(d => d.views.includes(view)).forEach(d => {
+    const g = document.createElementNS(NS,'g');
+    g.setAttribute('class', 'dais-el' + (d.gold ? ' gold' : ''));
+    g.dataset.dais = d.id;
+    const r = document.createElementNS(NS,'rect');
+    r.setAttribute('x', d.x); r.setAttribute('y', d.y);
+    r.setAttribute('width', d.w); r.setAttribute('height', d.h);
+    r.setAttribute('rx', 9);
+    g.appendChild(r);
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x', d.x + d.w/2); t.setAttribute('y', d.y + d.h/2 + 4);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-size', d.w < 80 ? '11' : '12.5');
+    const num = document.createElementNS(NS,'tspan');
+    num.setAttribute('class','dnum'); num.textContent = d.num + ' ';
+    t.appendChild(num);
+    t.appendChild(document.createTextNode((d.labels && d.labels[view]) || d.label));
+    g.appendChild(t);
+    // ชื่อผู้ดำรงตำแหน่งจริงใต้บล็อก — เฉพาะประธาน (ชื่อรองฯ ยาว จะชนบล็อกข้างเคียง → ดูที่ officer bar)
+    const off = officerFor(view, d.id);
+    if(off && d.id === 'president'){
+      const nm = document.createElementNS(NS,'text');
+      nm.setAttribute('x', d.x + d.w/2);
+      nm.setAttribute('y', d.y + d.h + 13);
+      nm.setAttribute('class', 'dais-name');
+      nm.textContent = off.ref.m.name;
+      g.appendChild(nm);
+    }
+    g.addEventListener('click', ev => { ev.stopPropagation(); selectDais(d.id); });
+    daisG.appendChild(g);
+  });
+}
+
+function drawLegend(){
+  const lg = $('legend');
+  lg.innerHTML = '';
+  const members = MEMBERS[view];
+  const counts = {};
+  members.forEach(m => { const k = m.kind === 'sv' ? '_sv' : m.code; counts[k] = (counts[k] || 0) + 1; });
+  const keys = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+  keys.forEach(k => {
+    const chip = document.createElement('button');
+    chip.className = 'lchip' + (filterParty === k ? ' on' : '');
+    const col = k === '_sv' ? svColor() : colorOf(k);
+    const nm = k === '_sv' ? 'สว. อิสระ' : shortOf(k);
+    chip.innerHTML = `<span class="sw" style="background:${col}"></span>${nm} <b>${counts[k]}</b>`;
+    chip.onclick = () => { filterParty = (filterParty === k ? null : k); drawLegend(); applyFilter(); };
+    lg.appendChild(chip);
+  });
+}
+
+function applyFilter(){
+  const members = MEMBERS[view];
+  seatEls.forEach((el, i) => {
+    const m = members[i];
+    const k = m.kind === 'sv' ? '_sv' : m.code;
+    el.classList.toggle('dim', !!filterParty && k !== filterParty);
+    el.classList.toggle('sel', i === selected);
+  });
+}
+
+/* ── tooltip ── */
+function showTip(ev, m){
+  const col = memberColor(m);
+  const sub = m.kind === 'sv' ? `สว. ลำดับที่ ${m.no}` :
+              m.kind === 'list' ? `${shortOf(m.code)} · บัญชีรายชื่อ #${m.no}` :
+              `${shortOf(m.code)} · ${m.prov} เขต ${m.no}`;
+  tip.innerHTML = `<div class="tn">${m.name}</div><div class="tp"><span class="sw" style="background:${col}"></span>${sub}</div>`;
+  tip.classList.add('on');
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = ev.clientX + pad, y = ev.clientY - h - 6;
+  if(x + w > innerWidth - 8) x = ev.clientX - w - pad;
+  if(y < 8) y = ev.clientY + pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function hideTip(){ tip.classList.remove('on'); }
+
+/* ── เลือกสมาชิก ── */
+function select(i, flash){
+  selected = i;
+  applyFilter();
+  const m = MEMBERS[view][i];
+  const col = memberColor(m);
+  const photo = memberPhoto(m);
+  const avatar = photo
+    ? `<img class="ph" src="${photo}" alt="${m.name}" loading="lazy">`
+    : `<div class="avt" style="background:${col}">${initialOf(m.name)}</div>`;
+  const chip = m.kind === 'sv'
+    ? `<span class="chip"><span class="sw" style="background:${col}"></span>วุฒิสภา · อิสระ</span>`
+    : `<span class="chip"><span class="sw" style="background:${col}"></span>${(PM[m.code] && PM[m.code].th) || m.code}</span>`;
+  const rows = [];
+  const icoUser = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+  const icoPin  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+  const icoBox  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 4v8m0-8 3 3m-3-3-3 3"/></svg>';
+  const icoHash = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>';
+  if(m.kind === 'zone'){
+    rows.push(`<div class="mrow">${icoUser}<span>ว่าที่ ส.ส. <b>แบบแบ่งเขต</b></span></div>`);
+    rows.push(`<div class="mrow">${icoPin}<span>จังหวัด<b>${m.prov}</b> เขตเลือกตั้งที่ <b>${m.no}</b></span></div>`);
+    if(m.votes != null) rows.push(`<div class="mrow">${icoBox}<span>คะแนน <b>${fmtN(m.votes)}</b> เสียง</span></div>`);
+  } else if(m.kind === 'list'){
+    rows.push(`<div class="mrow">${icoUser}<span>ว่าที่ ส.ส. <b>แบบบัญชีรายชื่อ</b></span></div>`);
+    rows.push(`<div class="mrow">${icoHash}<span>ลำดับที่ <b>${m.no}</b> ของพรรค${shortOf(m.code)}</span></div>`);
+  } else {
+    rows.push(`<div class="mrow">${icoUser}<span>สมาชิกวุฒิสภา (สว. ชุด 2567)</span></div>`);
+    rows.push(`<div class="mrow">${icoHash}<span>ลำดับที่ <b>${m.no}</b> จาก 200 คน (เรียงอักษร ก–ฮ)</span></div>`);
+  }
+  $('detailBody').innerHTML = `
+    <div class="mview">${avatar}<div class="mi"><div class="mn">${m.name}</div>${chip}</div></div>
+    <div class="mrows">${rows.join('')}</div>`;
+  const img = $('detailBody').querySelector('img.ph');
+  if(img) img.addEventListener('error', () => {
+    const fb = document.createElement('div');
+    fb.className = 'avt'; fb.style.background = col; fb.textContent = initialOf(m.name);
+    img.replaceWith(fb);
+  });
+  if(flash){
+    const el = seatEls[i];
+    el.classList.remove('flash'); void el.getBoundingClientRect();
+    el.classList.add('flash');
+    el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  }
+}
+
+function selectDais(id){
+  selected = -1; applyFilter();
+  daisG.querySelectorAll('.dais-el').forEach(e => e.classList.toggle('sel', e.dataset.dais === id));
+  const inf = DAIS_INFO[id];
+  const off = officerFor(view, id);
+  const link = inf.link ? `<a class="mlink" href="${inf.link.href}">${inf.link.label}</a>` : '';
+  if(off){
+    // มีผู้ดำรงตำแหน่งจริง → การ์ดบุคคล + กติกา + ปุ่มไปที่นั่ง
+    const m = off.ref.m;
+    const col = m.kind === 'sv' ? svColor() : colorOf(m.code);
+    const photo = memberPhoto(m);
+    const avatar = photo
+      ? `<img class="ph" src="${photo}" alt="${m.name}" loading="lazy">`
+      : `<div class="avt" style="background:${col}">${initialOf(m.name)}</div>`;
+    $('detailBody').innerHTML = `
+      <div class="mview">${avatar}<div class="mi"><div class="mn">${m.name}</div>
+        <span class="chip" style="border-color:#C9A84C;background:rgba(201,168,76,.12)">${inf.num} ${off.role}</span>
+        <span class="chip"><span class="sw" style="background:${col}"></span>${m.kind === 'sv' ? 'วุฒิสภา · อิสระ' : ((PM[m.code] && PM[m.code].th) || m.code)}</span>
+      </div></div>
+      <div class="mrows">
+        ${off.note ? `<div class="mrow"><span>📜 ${off.note}</span></div>` : ''}
+        <div class="mrow"><span>ที่นั่งสมาชิก: <b>${memberMeta(m)}</b></span></div>
+        <div class="mrow"><span>${inf.body(view)}</span></div>
+      </div>
+      <button class="mlink" type="button" onclick="jumpOfficer('${id}')">ดูที่นั่งของท่านในผัง →</button>${link}`;
+    const img = $('detailBody').querySelector('img.ph');
+    if(img) img.addEventListener('error', () => {
+      const fb = document.createElement('div');
+      fb.className = 'avt'; fb.style.background = col; fb.textContent = initialOf(m.name);
+      img.replaceWith(fb);
+    });
+    return;
+  }
+  $('detailBody').innerHTML = `
+    <div class="mview"><div class="avt" style="background:linear-gradient(135deg,#C9A84C,#8a6d22);font-size:2rem">${inf.num}</div>
+    <div class="mi"><div class="mn">${inf.title}</div><span class="chip">ตำแหน่งบนบัลลังก์ / แท่นประชุม</span></div></div>
+    <div class="mrows"><div class="mrow"><span>${inf.body(view)}</span></div></div>${link}`;
+}
+function jumpOfficer(id){
+  const off = officerFor(view, id);
+  if(off) select(officerSeatIdx(view, off), true);
+}
+
+/* ── สลับมุมมอง ── */
+function setView(v){
+  view = v; filterParty = null; selected = -1;
+  ['mp','sv','joint'].forEach(k => $('tab-' + k).classList.toggle('active', k === v));
+  hideTip();
+  render();
+  $('detailBody').innerHTML = '<div class="mempty">แตะ/คลิกที่นั่งในผัง เพื่อดูข้อมูลสมาชิกรายคน หรือกดที่ <b>บัลลังก์ประธาน · ที่นั่งนายกฯ · ครม.</b> ด้านล่างของผังเพื่อดูหน้าที่ของแต่ละตำแหน่ง</div>';
+}
+
+/* ── ค้นหา (ทั้ง ส.ส. + สว.) ── */
+const SEARCH_POOL = MEMBERS.mp.map((m,i) => ({ m, view:'mp', i }))
+  .concat(MEMBERS.sv.map((m,i) => ({ m, view:'sv', i })));
+$('psearch').addEventListener('input', function(){
+  const q = this.value.trim();
+  const box = $('sresults');
+  box.innerHTML = '';
+  if(q.length < 2) return;
+  const hits = SEARCH_POOL.filter(o => o.m.name.includes(q) || (o.m.prov && o.m.prov.includes(q))).slice(0, 9);
+  hits.forEach(o => {
+    const col = memberColor(o.m);
+    const badge = o.m.kind === 'sv' ? 'สว.' : shortOf(o.m.code);
+    const row = document.createElement('div');
+    row.className = 'srow';
+    row.innerHTML = `<span class="sw" style="background:${col}"></span><span class="nm">${o.m.name}</span><span class="bd">${badge}</span>`;
+    row.onclick = () => {
+      // ถ้าอยู่หน้าประชุมร่วม ใช้ index ในผังร่วม (ส.ส. index เดิม / สว. ต่อท้าย 500)
+      let targetView = view, idx;
+      if(view === 'joint'){ idx = o.view === 'mp' ? o.i : 500 + o.i; }
+      else { targetView = o.view; idx = o.i; }
+      if(targetView !== view) setView(targetView);
+      select(idx, true);
+      box.innerHTML = '';
+    };
+    box.appendChild(row);
+  });
+});
+
+/* คลิกพื้นว่าง = ล้างการเลือก */
+$('hemi').addEventListener('click', () => {
+  selected = -1; applyFilter();
+  daisG.querySelectorAll('.dais-el').forEach(e => e.classList.remove('sel'));
+});
+
+/* ธีมเปลี่ยน → สีเทา สว. เปลี่ยนตาม */
+new MutationObserver(() => { if(MEMBERS[view].some(m => m.kind === 'sv') || true) render(); })
+  .observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+render();
+</script>
+</body>
+</html>

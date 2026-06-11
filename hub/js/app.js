@@ -3,11 +3,11 @@
 // ── CONFIG ────────────────────────────────────────────────
 const FRAME_COUNT  = 240;
 const FRAME_SPEED  = 2.0;   // product finishes by ~50% scroll
-const IMAGE_SCALE  = 0.86;  // padded-cover mode
+const IMAGE_SCALE  = 1.0;   // full-cover mode — ภาพเต็มจอ ไม่เหลือขอบว่างซ้าย-ขวา
 const PRELOAD_FAST = 12;    // frames to load before hiding loader
 const DARK_ENTER   = 0.45;  // stats section dark overlay start
 const DARK_LEAVE   = 0.58;  // stats section dark overlay end
-const MARQUEE_SHOW = [0.20, 0.30]; // scroll range marquee is visible (โผล่แป๊ปเดียว)
+const MARQUEE_SHOW = [0.21, 0.28]; // scroll range marquee is visible (โผล่แป๊ปเดียวแล้วหายไป)
 const HERO_SCROLL  = 0.10;  // hero fades out by this scroll %
 
 // ── STATE ─────────────────────────────────────────────────

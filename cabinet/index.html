@@ -104,13 +104,15 @@ img{max-width:100%;display:block}
 .brand-name b{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:.01em;color:var(--cream)}
 .brand-name small{font-family:var(--label);font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:3px}
 .nav-links{list-style:none;display:flex;align-items:center;gap:2px}
+/* แท็บเมนูโทนเดียวกับหน้าหลัก hub — ตัวขาว + หน้าปัจจุบันเป็น cyan ขีดเส้นใต้ (#00E5FF) */
 .nav-links a{
-  display:inline-flex;align-items:center;padding:8px 13px;border-radius:7px;
-  font-size:13.5px;font-weight:500;color:var(--cream-2);white-space:nowrap;
-  transition:color .2s,background .2s;
+  display:inline-flex;align-items:center;padding:8px 13px;
+  font-size:13.5px;font-weight:500;color:#ffffff;white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s,opacity .2s;
 }
-.nav-links a:hover{color:var(--cream);background:rgba(255,255,255,.04)}
-.nav-links a.active{color:var(--gold-bright);background:var(--gold-soft)}
+.nav-links a:hover{color:#ffffff;opacity:.7}
+.nav-links a.active{color:#00E5FF;border-bottom-color:#00E5FF}
 .nav-toggle{display:none}
 
 /* ============ LAYOUT ============ */
@@ -384,6 +386,7 @@ section{position:relative;z-index:1}
   }
   .nav-links.open{transform:translateY(0)}
   .nav-links a{padding:13px 10px;border-radius:8px;font-size:15px}
+  .nav-links a.active{border-bottom-color:transparent;background:rgba(0,229,255,.10)}
   .nav-toggle{display:inline-flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
   .nav-toggle span{width:24px;height:2px;background:var(--cream);transition:.3s}
   .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
