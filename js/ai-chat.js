@@ -34,14 +34,26 @@
     'html[data-theme="dark"] #mdai-root{--mdai-accent:#00B5D6;--mdai-accent2:#00E5FF;--mdai-on-accent:#06121c;--mdai-surface:#12141a;--mdai-surface2:#1a1e27;--mdai-text:#e8eaf0;',
     "--mdai-dim:#9aa3b2;--mdai-border:rgba(255,255,255,.12);--mdai-shadow:0 18px 50px -12px rgba(0,0,0,.6)}",
     // ปุ่มลอยแบบ pill ✨ (ดำ-เงิน ตามแบบที่ผู้ใช้เลือก — คงโทนเดียวกันทั้งโหมดสว่าง/มืด)
+    // ลากย้ายได้ (touch-action:none ให้ pointer events คุมการลากบนจอสัมผัส)
+    "@property --mdai-a{syntax:'<angle>';inherits:false;initial-value:0deg}",
     "#mdai-fab{position:fixed;right:18px;bottom:20px;z-index:99998;display:inline-flex;align-items:center;gap:9px;height:48px;",
-    "padding:0 20px 0 16px;border:1px solid rgba(159,180,199,.35);border-radius:999px;cursor:pointer;",
+    "padding:0 20px 0 16px;border:1px solid rgba(159,180,199,.35);border-radius:999px;cursor:pointer;touch-action:none;",
     "background:linear-gradient(140deg,#0D1722 0%,#16222F 55%,#0B141F 100%);",
     "box-shadow:0 12px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);",
-    "transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}",
-    "#mdai-fab:hover{transform:translateY(-2px);border-color:rgba(0,229,255,.5);",
+    "transition:box-shadow .18s ease, border-color .18s ease}",
+    "#mdai-fab:hover{border-color:rgba(0,229,255,.5);",
     "box-shadow:0 16px 36px -12px rgba(0,0,0,.65),0 0 18px rgba(0,229,255,.2),inset 0 1px 0 rgba(255,255,255,.1)}",
     "#mdai-fab:active{transform:scale(.97)}",
+    // แสงฟ้าวิ่งรอบขอบปุ่ม — วงแหวน conic-gradient หมุนด้วย @property (mask เจาะให้เหลือเฉพาะขอบ)
+    "#mdai-fab::before{content:'';position:absolute;inset:-2.5px;border-radius:999px;padding:2.5px;pointer-events:none;",
+    "background:conic-gradient(from var(--mdai-a),transparent 0 62%,rgba(0,229,255,.55) 74%,#9FF1FF 82%,rgba(0,229,255,.55) 90%,transparent 100%);",
+    "-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;",
+    "animation:mdai-spin 3s linear infinite}",
+    "#mdai-fab::after{content:'';position:absolute;inset:-7px;border-radius:999px;padding:7px;pointer-events:none;",
+    "background:conic-gradient(from var(--mdai-a),transparent 0 64%,rgba(0,229,255,.85) 80%,transparent 96%);",
+    "-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;",
+    "filter:blur(5px);opacity:.7;animation:mdai-spin 3s linear infinite}",
+    "@keyframes mdai-spin{to{--mdai-a:360deg}}",
     "#mdai-fab svg{width:19px;height:19px;color:#7FE8FF;filter:drop-shadow(0 0 6px rgba(0,229,255,.55));flex:0 0 auto}",
     "#mdai-fab b{font-family:'Kanit','IBM Plex Sans Thai',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;white-space:nowrap;",
     "background:linear-gradient(180deg,#F4F8FC 25%,#9FB4C7 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}",
@@ -81,7 +93,10 @@
     "@media(max-width:480px){#mdai-panel{right:10px;left:10px;width:auto;height:76vh}}",
     // หน้าที่มีปุ่มสลับธีม 🌙: เดสก์ท็อปปุ่มธีมลอยสูง (bottom:118) ไม่ชนกัน / จอแคบปุ่มธีมอยู่ bottom:72 → ย้าย pill ไปเคียงซ้าย
     "@media(max-width:860px){#mdai-root.mdai-avoid #mdai-fab{right:62px;bottom:72px}#mdai-root.mdai-avoid #mdai-panel{bottom:132px}}",
-    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel{transition:none}.mdai-typing i{animation:none}}",
+    // ตอน snap ติดขอบให้ลื่น ๆ (ใส่ class ชั่วคราว เพราะตอนลากต้องขยับทันทีไม่หน่วง)
+    "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease}",
+    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i{animation:none}",
+    "#mdai-fab::before,#mdai-fab::after{animation:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
@@ -126,7 +141,75 @@
     // เลี่ยงปุ่มสลับธีมลอยมุมขวาล่าง — จัดตำแหน่งผ่าน CSS class (ดู @media ด้านบน)
     if (document.querySelector(".md-theme-toggle")) root.classList.add("mdai-avoid");
 
-    fab.addEventListener("click", toggle);
+    // ---- ลากย้ายปุ่มได้ (pointer events ครอบทั้งเมาส์/นิ้ว) — ขยับเกิน 7px ถึงนับเป็นลาก ----
+    var drag = { active: false, moved: false, px: 0, py: 0, bx: 0, by: 0 };
+    function setFabPos(l, t) {
+      var r = fab.getBoundingClientRect();
+      l = Math.min(Math.max(8, l), window.innerWidth - r.width - 8);
+      t = Math.min(Math.max(8, t), window.innerHeight - r.height - 8);
+      fab.style.left = l + "px";
+      fab.style.top = t + "px";
+      fab.style.right = "auto";
+      fab.style.bottom = "auto";
+    }
+    fab.addEventListener("pointerdown", function (e) {
+      drag.active = true;
+      drag.moved = false;
+      drag.px = e.clientX;
+      drag.py = e.clientY;
+      var r = fab.getBoundingClientRect();
+      drag.bx = r.left;
+      drag.by = r.top;
+      try { fab.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    fab.addEventListener("pointermove", function (e) {
+      if (!drag.active) return;
+      var dx = e.clientX - drag.px, dy = e.clientY - drag.py;
+      if (!drag.moved && dx * dx + dy * dy < 49) return;
+      drag.moved = true;
+      setFabPos(drag.bx + dx, drag.by + dy);
+    });
+    // ปล่อยแล้วเด้งไปติดขอบซ้าย/ขวาที่ใกล้สุด (วางกลางจอแล้วบังเนื้อหา) — แนวตั้งคงตามที่วาง
+    function snapFab(animate) {
+      var r = fab.getBoundingClientRect(), W = window.innerWidth;
+      var l = r.left + r.width / 2 < W / 2 ? 12 : W - r.width - 12;
+      if (animate) {
+        fab.classList.add("mdai-snap");
+        setTimeout(function () { fab.classList.remove("mdai-snap"); }, 320);
+      }
+      fab.style.left = l + "px";
+      fab.style.right = "auto";
+    }
+    fab.addEventListener("pointerup", function () {
+      if (drag.active && drag.moved) {
+        snapFab(true);
+        try {
+          localStorage.setItem("mdai-pos", JSON.stringify({ l: parseFloat(fab.style.left), t: parseFloat(fab.style.top) }));
+        } catch (err) {}
+        if (opened) placePanel();
+      }
+      drag.active = false;
+    });
+    fab.addEventListener("click", function () {
+      if (drag.moved) { drag.moved = false; return; } // จบการลาก — ไม่นับเป็นกดเปิด/ปิด
+      toggle();
+    });
+    // คืนตำแหน่งที่เคยลากไว้ (จำข้ามหน้า/ข้ามครั้งด้วย localStorage)
+    try {
+      var sp = JSON.parse(localStorage.getItem("mdai-pos") || "null");
+      if (sp && typeof sp.l === "number" && typeof sp.t === "number") {
+        setFabPos(sp.l, sp.t);
+        snapFab(false); // จอเปลี่ยนขนาดไปจากครั้งก่อนก็ยังติดขอบพอดี
+      }
+    } catch (err) {}
+    window.addEventListener("resize", function () {
+      if (fab.style.left) {
+        setFabPos(parseFloat(fab.style.left), parseFloat(fab.style.top));
+        snapFab(false);
+      }
+      if (opened) placePanel();
+    });
+
     panel.querySelector("#mdai-close").addEventListener("click", close);
     var form = panel.querySelector("#mdai-form");
     var input = panel.querySelector("#mdai-input");
@@ -155,9 +238,36 @@
   function toggle() {
     opened ? close() : open();
   }
+  // วางหน้าต่างแชตไว้ข้างปุ่ม (ปุ่มลากย้ายได้ ตำแหน่งเลยไม่ตายตัว) — จอ ≤480 ใช้แบบเต็มกว้างจาก CSS
+  function placePanel() {
+    var p = document.getElementById("mdai-panel");
+    var fab = document.getElementById("mdai-fab");
+    if (!p || !fab) return;
+    if (window.innerWidth <= 480) {
+      p.style.left = p.style.right = p.style.top = p.style.bottom = "";
+      return;
+    }
+    var r = fab.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    var pw = Math.min(380, W - 36), ph = Math.min(560, H * 0.7);
+    if (r.left + r.width / 2 < W / 2) {
+      p.style.left = Math.max(10, Math.min(r.left, W - pw - 10)) + "px";
+      p.style.right = "auto";
+    } else {
+      p.style.right = Math.max(10, W - r.right) + "px";
+      p.style.left = "auto";
+    }
+    if (r.top - ph - 12 >= 10) {
+      p.style.bottom = (H - r.top + 12) + "px";
+      p.style.top = "auto";
+    } else {
+      p.style.top = Math.min(r.bottom + 12, H - ph - 10) + "px";
+      p.style.bottom = "auto";
+    }
+  }
   function open() {
     opened = true;
     var p = document.getElementById("mdai-panel");
+    placePanel();
     p.classList.add("mdai-show");
     document.getElementById("mdai-input").focus();
   }
