@@ -8,9 +8,8 @@
 (function () {
   "use strict";
 
-  // ⬇️⬇️⬇️ แก้บรรทัดเดียวนี้: ใส่ URL proxy ของคุณหลัง deploy ขึ้น Netlify ⬇️⬇️⬇️
-  var PROXY_URL = "https://YOUR-SITE.netlify.app/api/chat";
-  // ⬆️⬆️⬆️ เช่น https://md-ai-proxy.netlify.app/api/chat ⬆️⬆️⬆️
+  // proxy จริง (Netlify Functions — site md-ai-proxy-nook, key อยู่ใน env var ฝั่งโน้น)
+  var PROXY_URL = "https://md-ai-proxy-nook.netlify.app/api/chat";
 
   // คำสั่งระบบ (บุคลิก/ขอบเขตของผู้ช่วย)
   // 📌 เฟสต่อไป: เอาข้อมูลจริง (ครม./กระทรวง/ส.ส.) มาต่อท้ายตรงนี้ เพื่อให้ตอบแม่นขึ้น
@@ -219,7 +218,9 @@
       .then(function (data) {
         hideTyping();
         var reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-        reply = (reply || "").trim() || "ขออภัย ไม่ได้รับคำตอบครับ";
+        // โมเดล ThaiLLM ใส่ก้อนเหตุผลภายใน <think>...</think> มาด้วย — ตัดทิ้งก่อนแสดง
+        reply = (reply || "").replace(/<think>[\s\S]*?(<\/think>|$)/g, "");
+        reply = reply.trim() || "ขออภัย ไม่ได้รับคำตอบครับ";
         messages.push({ role: "assistant", content: reply });
         addBubble("ai", reply);
       })
