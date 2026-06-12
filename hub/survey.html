@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แบบประเมินความพึงพอใจ — รัฐไทยก้าวหน้า</title>
+  <meta name="description" content="แบบประเมินความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์รัฐไทยก้าวหน้า เพื่อนำผลไปวิเคราะห์ด้วยค่าร้อยละ ค่าเฉลี่ย และส่วนเบี่ยงเบนมาตรฐาน" />
+  <link rel="icon" href="images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+  :root {
+    --bg-deep:       #020508;
+    --bg-dark:       #070D14;
+    --accent-cyan:   #00E5FF;
+    --accent-orange: #FF5C1A;
+    --text-primary:  #DCE8F0;
+    --text-body:     #A7BDCC;
+    --text-muted:    #4A6070;
+    --line:          rgba(0,229,255,0.12);
+    --font-display:  'Bebas Neue', 'Prompt', sans-serif;
+    --font-thai:     'Prompt', 'Sarabun', sans-serif;
+    --font-sub:      'Rajdhani', 'Sarabun', sans-serif;
+    --font-mono:     'IBM Plex Mono', 'Sarabun', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-sub);
+    overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bg-field {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 80% -10%, rgba(0,229,255,0.10), transparent 55%),
+      radial-gradient(90% 70% at 0% 105%, rgba(255,92,26,0.07), transparent 55%);
+  }
+  .bg-field::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 500; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.035) 2px, rgba(0,0,0,0.035) 4px);
+  }
+
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
+
+  /* ── HEADER / NAV ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: linear-gradient(to bottom, rgba(2,5,8,0.94) 0%, rgba(2,5,8,0.6) 70%, rgba(2,5,8,0) 100%);
+    padding: 0 5vw;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .site-header nav { display: flex; justify-content: space-between; align-items: stretch; height: 4rem; }
+  .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
+  .nav-logo-img { height: 2.6rem; width: auto; display: block; }
+  .nav-links { list-style: none; display: flex; gap: 0; align-items: stretch; }
+  .nav-tab {
+    display: flex; align-items: center; padding: 0 1.0rem;
+    font-family: var(--font-sub); font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.04em; color: #fff; text-decoration: none;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s, opacity 0.2s;
+  }
+  .nav-tab:hover { opacity: 0.7; }
+  .nav-tab[aria-current="page"] { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+
+  .section-label {
+    display: inline-block; font-family: var(--font-mono);
+    font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent-cyan); margin-bottom: 1.3rem;
+  }
+
+  main { position: relative; z-index: 1; }
+  .wrap { max-width: 980px; margin: 0 auto; padding-inline: 6vw; }
+
+  /* ── HERO ── */
+  .hero { padding: 9.5rem 0 3.2rem; position: relative; }
+  .hero h1 {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(3rem, 9vw, 7rem); line-height: 0.9; letter-spacing: 0.01em;
+  }
+  .hero h1 .accent {
+    font-family: var(--font-thai); font-weight: 900; display: block;
+    background: linear-gradient(100deg, var(--accent-cyan), #6df3ff 60%, var(--accent-cyan));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-tagline {
+    font-family: var(--font-mono); font-size: clamp(0.72rem, 1.2vw, 0.92rem);
+    letter-spacing: 0.1em; color: var(--text-body); margin-top: 1.6rem;
+    max-width: 62ch; line-height: 1.9;
+  }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 0.7rem; margin: 1.2rem 0 2.6rem; flex-wrap: wrap; }
+  .tab-btn {
+    font-family: var(--font-thai); font-weight: 700; font-size: 0.95rem;
+    padding: 0.65rem 1.5rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: rgba(0,229,255,0.04); color: var(--text-body);
+    transition: all 0.25s;
+  }
+  .tab-btn:hover { border-color: rgba(0,229,255,0.5); color: var(--text-primary); }
+  .tab-btn.active {
+    background: rgba(0,229,255,0.14); color: var(--accent-cyan);
+    border-color: rgba(0,229,255,0.65); box-shadow: 0 0 18px rgba(0,229,255,0.18);
+  }
+
+  /* ── PANEL ── */
+  .panel {
+    border: 1px solid var(--line); border-radius: 14px;
+    background: linear-gradient(180deg, rgba(0,229,255,0.045), rgba(2,5,8,0.4));
+    padding: 1.8rem 1.7rem; margin-bottom: 1.6rem; position: relative; overflow: hidden;
+  }
+  .panel-num {
+    font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 0.4rem;
+  }
+  .panel h2 { font-family: var(--font-thai); font-weight: 700; font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .panel .hint { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.1rem; }
+
+  .notice-list { list-style: none; }
+  .notice-list li {
+    display: flex; gap: 0.7rem; padding: 0.45rem 0; color: var(--text-body); font-size: 0.95rem;
+  }
+  .notice-list li::before { content: '▸'; color: var(--accent-cyan); }
+  .scale-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  .scale-chips span {
+    font-family: var(--font-mono); font-size: 0.72rem; padding: 0.3rem 0.7rem;
+    border: 1px solid var(--line); border-radius: 999px; color: var(--text-body);
+  }
+  .scale-chips b { color: var(--accent-cyan); font-weight: 500; }
+
+  /* ── ตอนที่ 1: chip radios ── */
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem 2rem; }
+  .demo-q { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; }
+  .demo-q .q-text { font-family: var(--font-thai); font-weight: 500; font-size: 0.98rem; margin-bottom: 0.7rem; }
+  .demo-q .q-text .req { color: var(--accent-orange); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .chips label { position: relative; cursor: pointer; }
+  .chips input { position: absolute; opacity: 0; pointer-events: none; }
+  .chips .chip {
+    display: inline-block; padding: 0.38rem 0.95rem; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(0,229,255,0.03);
+    font-size: 0.88rem; color: var(--text-body); transition: all 0.2s; user-select: none;
+  }
+  .chips label:hover .chip { border-color: rgba(0,229,255,0.5); color: var(--text-primary); }
+  .chips input:checked + .chip {
+    background: rgba(0,229,255,0.16); border-color: var(--accent-cyan);
+    color: var(--accent-cyan); box-shadow: 0 0 12px rgba(0,229,255,0.15);
+  }
+  .chips input:focus-visible + .chip { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+
+  /* ── ตอนที่ 2: Likert ── */
+  .likert-head, .likert-row {
+    display: grid; grid-template-columns: 1fr repeat(5, 56px); gap: 0 6px; align-items: center;
+  }
+  .likert-head { padding: 0.4rem 0 0.7rem; border-bottom: 1px solid var(--line); }
+  .likert-head .col {
+    text-align: center; font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.04em; color: var(--text-muted); line-height: 1.4;
+  }
+  .likert-head .col b { display: block; font-size: 0.95rem; color: var(--accent-cyan); font-weight: 500; }
+  .likert-row { padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.045); }
+  .likert-row:last-child { border-bottom: none; }
+  .likert-row.missing { background: rgba(255,92,26,0.07); border-radius: 8px; }
+  .likert-row .item-text { font-size: 0.95rem; color: var(--text-body); padding-right: 0.8rem; }
+  .likert-row .item-text .no { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-right: 0.5rem; }
+  .likert-cell { display: flex; justify-content: center; }
+  .likert-cell label { cursor: pointer; position: relative; display: block; }
+  .likert-cell input { position: absolute; opacity: 0; pointer-events: none; }
+  .likert-cell .dot {
+    display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid rgba(0,229,255,0.28); color: var(--text-muted);
+    font-family: var(--font-mono); font-size: 0.72rem; transition: all 0.18s; user-select: none;
+  }
+  .likert-cell label:hover .dot { border-color: var(--accent-cyan); color: var(--text-primary); }
+  .likert-cell input:checked + .dot {
+    background: var(--accent-cyan); border-color: var(--accent-cyan); color: #02151a;
+    font-weight: 600; box-shadow: 0 0 14px rgba(0,229,255,0.45);
+  }
+  .likert-cell input:focus-visible + .dot { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+
+  /* ── ตอนที่ 3 ── */
+  textarea {
+    width: 100%; min-height: 110px; resize: vertical;
+    background: rgba(2,5,8,0.6); border: 1px solid var(--line); border-radius: 10px;
+    color: var(--text-primary); font-family: var(--font-sub); font-size: 0.95rem;
+    padding: 0.9rem 1rem; line-height: 1.7;
+  }
+  textarea:focus { outline: none; border-color: rgba(0,229,255,0.55); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
+
+  /* honeypot กันบอท — ซ่อนจากคนจริง */
+  .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* ── SUBMIT ── */
+  .submit-bar { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin: 0.4rem 0 4rem; }
+  .btn-submit {
+    font-family: var(--font-thai); font-weight: 700; font-size: 1.05rem;
+    padding: 0.85rem 2.6rem; border-radius: 999px; cursor: pointer; border: none;
+    background: linear-gradient(100deg, var(--accent-cyan), #6df3ff);
+    color: #02151a; transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 24px rgba(0,229,255,0.25);
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(0,229,255,0.4); }
+  .btn-submit:disabled { opacity: 0.55; cursor: wait; transform: none; }
+  .form-msg { font-size: 0.92rem; color: var(--text-body); }
+  .form-msg.err { color: #ff8d66; }
+
+  /* ── THANK YOU ── */
+  .thanks {
+    text-align: center; padding: 3.5rem 1.5rem; border: 1px solid rgba(0,229,255,0.35);
+    border-radius: 16px; background: radial-gradient(80% 120% at 50% 0%, rgba(0,229,255,0.12), rgba(2,5,8,0.3));
+    margin-bottom: 4rem;
+  }
+  .thanks .big { font-size: 2.6rem; margin-bottom: 0.6rem; }
+  .thanks h2 { font-family: var(--font-thai); font-weight: 700; font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .thanks p { color: var(--text-body); max-width: 48ch; margin: 0 auto 1.4rem; }
+
+  /* ── RESULTS ── */
+  .stat-band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
+  .stat-card {
+    border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem 1.5rem;
+    background: linear-gradient(180deg, rgba(0,229,255,0.05), rgba(2,5,8,0.4));
+  }
+  .stat-card .v { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1; }
+  .stat-card .v small { font-size: 45%; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.06em; }
+  .stat-card .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.55rem; }
+  .stat-card .interp { color: var(--accent-cyan); font-family: var(--font-thai); font-weight: 700; font-size: 1rem; margin-top: 0.2rem; }
+
+  .bar-row { display: grid; grid-template-columns: minmax(150px, 1fr) 2fr 110px; gap: 0.9rem; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.045); }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-row .lbl { font-size: 0.92rem; color: var(--text-body); }
+  .bar-track { height: 8px; border-radius: 999px; background: rgba(0,229,255,0.07); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, rgba(0,229,255,0.5), var(--accent-cyan)); box-shadow: 0 0 10px rgba(0,229,255,0.35); }
+  .bar-row .val { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-primary); text-align: right; white-space: nowrap; }
+  .bar-row .val small { color: var(--text-muted); }
+
+  table.items { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  table.items th, table.items td { padding: 0.55rem 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+  table.items th { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  table.items td.t { text-align: left; color: var(--text-body); }
+  table.items td.num { font-family: var(--font-mono); font-size: 0.8rem; }
+  table.items td.interp { color: var(--accent-cyan); font-size: 0.85rem; white-space: nowrap; }
+  table.items tr.sec-head td {
+    text-align: left; font-family: var(--font-thai); font-weight: 700; color: var(--text-primary);
+    background: rgba(0,229,255,0.05); border-top: 1px solid var(--line); font-size: 0.95rem;
+  }
+
+  .comment-item { border-top: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 0; }
+  .comment-item:first-of-type { border-top: none; }
+  .comment-item .when { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+  .comment-item .txt { color: var(--text-body); font-size: 0.94rem; white-space: pre-wrap; }
+
+  .results-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .btn-ghost {
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
+    padding: 0.55rem 1.2rem; border-radius: 999px; cursor: pointer; text-decoration: none;
+    border: 1px solid var(--line); background: transparent; color: var(--text-body); transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+  .loading, .empty { text-align: center; color: var(--text-muted); padding: 3rem 0; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.08em; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1; border-top: 1px solid var(--line);
+    margin-top: 3rem; padding: 2.2rem 6vw 5rem; text-align: center;
+    color: var(--text-muted); font-size: 0.82rem; font-family: var(--font-mono);
+  }
+  footer a { color: var(--accent-cyan); text-decoration: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .nav-links { overflow-x: auto; scrollbar-width: none; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-tab { font-size: 0.74rem; padding: 0 0.72rem; }
+  }
+  @media (max-width: 760px) {
+    .demo-grid { grid-template-columns: 1fr; }
+    .likert-head, .likert-row { grid-template-columns: 1fr repeat(5, 38px); gap: 0 3px; }
+    .likert-head .col { font-size: 0.5rem; }
+    .likert-cell .dot { width: 26px; height: 26px; font-size: 0.66rem; }
+    .stat-band { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 1fr; gap: 0.3rem; }
+    .bar-row .val { text-align: left; }
+  }
+  </style>
+</head>
+<body>
+
+  <div class="bg-field" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav>
+      <span class="nav-logo">
+        <a href="index.html"><img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" /></a>
+      </span>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-tab">หน้าแรก</a></li>
+        <li><a href="../structure.html" class="nav-tab">แผนผังโครงสร้าง</a></li>
+        <li><a href="../election/index.html" class="nav-tab">ส.ส. ผู้แทนราษฎร</a></li>
+        <li><a href="../cabinet/index.html" class="nav-tab">ชุดคณะรัฐมนตรี</a></li>
+        <li><a href="../stats/index.html" class="nav-tab">ข้อมูลสถิติ</a></li>
+        <li><a href="about.html" class="nav-tab">เกี่ยวกับเรา</a></li>
+        <li><a href="survey.html" class="nav-tab" aria-current="page">แบบประเมิน</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <span class="section-label">010 / แบบประเมินออนไลน์</span>
+      <h1>SURVEY<span class="accent">แบบประเมินความพึงพอใจ</span></h1>
+      <p class="hero-tagline">แบบประเมินความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์ "รัฐไทยก้าวหน้า" — ข้อมูลจะถูกนำไปวิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) เพื่อพัฒนาเว็บไซต์ให้ดียิ่งขึ้น</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" id="tab-form" type="button">📝 ทำแบบประเมิน</button>
+        <button class="tab-btn" id="tab-results" type="button">📊 ผลการประเมิน (สด)</button>
+      </div>
+    </section>
+
+    <!-- ════ VIEW 1: FORM ════ -->
+    <section class="wrap" id="view-form">
+
+      <div class="panel">
+        <span class="panel-num">คำชี้แจง</span>
+        <h2>ก่อนเริ่มทำแบบประเมิน</h2>
+        <ul class="notice-list">
+          <li>แบบประเมินนี้จัดทำขึ้นเพื่อศึกษาความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์ ใช้เวลาตอบประมาณ 3 นาที</li>
+          <li>ไม่มีการเก็บข้อมูลส่วนบุคคล (ชื่อ อีเมล หรือ IP) — คำตอบทั้งหมดเป็นนิรนามและใช้เพื่อการศึกษาเท่านั้น</li>
+          <li><span>โปรดตอบให้ครบทุกข้อ ข้อที่มีเครื่องหมาย <span style="color:var(--accent-orange)">*</span> จำเป็นต้องตอบ</span></li>
+        </ul>
+        <div class="scale-chips" aria-hidden="true">
+          <span><b>5</b> = มากที่สุด</span>
+          <span><b>4</b> = มาก</span>
+          <span><b>3</b> = ปานกลาง</span>
+          <span><b>2</b> = น้อย</span>
+          <span><b>1</b> = น้อยที่สุด</span>
+        </div>
+      </div>
+
+      <form id="survey-form" novalidate>
+
+        <!-- ตอนที่ 1 -->
+        <div class="panel">
+          <span class="panel-num">ตอนที่ 1</span>
+          <h2>ข้อมูลทั่วไปของผู้ตอบแบบสอบถาม</h2>
+          <p class="hint">วิเคราะห์ด้วยค่าร้อยละ (Percentage)</p>
+          <div class="demo-grid" id="demo-grid"><!-- สร้างด้วย JS --></div>
+        </div>
+
+        <!-- ตอนที่ 2 -->
+        <div class="panel">
+          <span class="panel-num">ตอนที่ 2</span>
+          <h2>ความพึงพอใจต่อเว็บไซต์ "รัฐไทยก้าวหน้า"</h2>
+          <p class="hint">มาตราส่วนประมาณค่า 5 ระดับ (Rating Scale) — วิเคราะห์ด้วยค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.)</p>
+          <div id="likert-area"><!-- สร้างด้วย JS --></div>
+        </div>
+
+        <!-- ตอนที่ 3 -->
+        <div class="panel">
+          <span class="panel-num">ตอนที่ 3</span>
+          <h2>ข้อเสนอแนะเพิ่มเติม</h2>
+          <p class="hint">ความคิดเห็นปลายเปิด (ไม่บังคับ)</p>
+          <textarea id="comment" maxlength="2000" placeholder="ข้อเสนอแนะเพื่อปรับปรุงเว็บไซต์…"></textarea>
+          <!-- honeypot: คนจริงมองไม่เห็น บอทชอบกรอก -->
+          <div class="hp-field" aria-hidden="true">
+            <label>เว็บไซต์ของคุณ <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+        </div>
+
+        <div class="submit-bar">
+          <button type="submit" class="btn-submit" id="btn-submit">ส่งแบบประเมิน</button>
+          <span class="form-msg" id="form-msg"></span>
+        </div>
+      </form>
+
+      <div class="thanks" id="thanks" hidden>
+        <div class="big">🙏</div>
+        <h2>ขอบคุณสำหรับการประเมิน</h2>
+        <p>ระบบบันทึกคำตอบของท่านเรียบร้อยแล้ว ความคิดเห็นของท่านจะถูกนำไปวิเคราะห์ทางสถิติเพื่อพัฒนาเว็บไซต์ต่อไป</p>
+        <button class="tab-btn active" type="button" id="btn-see-results">📊 ดูผลการประเมินรวม</button>
+        <button class="btn-ghost" type="button" id="btn-again" style="margin-left:0.6rem">ทำแบบประเมินอีกชุด (สำหรับผู้ตอบคนถัดไป)</button>
+      </div>
+    </section>
+
+    <!-- ════ VIEW 2: RESULTS ════ -->
+    <section class="wrap" id="view-results" hidden>
+      <div class="results-actions">
+        <button class="btn-ghost" type="button" id="btn-refresh">⟳ โหลดผลล่าสุด</button>
+        <a class="btn-ghost" id="csv-link" href="#" download>⬇ ดาวน์โหลดข้อมูลดิบ (CSV สำหรับ Excel/SPSS)</a>
+      </div>
+      <div class="loading" id="res-loading">กำลังโหลดผลการประเมิน…</div>
+      <div id="res-body" hidden>
+
+        <div class="stat-band">
+          <div class="stat-card">
+            <div class="v" id="r-n">0</div>
+            <div class="k">ผู้ตอบแบบประเมิน (คน)</div>
+          </div>
+          <div class="stat-card">
+            <div class="v" id="r-mean">0 <small>/ 5.00</small></div>
+            <div class="k">ค่าเฉลี่ยรวม (x̄)</div>
+            <div class="interp" id="r-interp">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="v" id="r-sd">0</div>
+            <div class="k">ส่วนเบี่ยงเบนมาตรฐานรวม (S.D.)</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="panel-num">สรุปรายด้าน</span>
+          <h2>ค่าเฉลี่ยความพึงพอใจรายด้าน</h2>
+          <div id="r-sections"></div>
+        </div>
+
+        <div class="panel">
+          <span class="panel-num">รายข้อ</span>
+          <h2>ค่าเฉลี่ย (x̄) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) รายข้อ</h2>
+          <div style="overflow-x:auto">
+            <table class="items">
+              <thead>
+                <tr><th style="text-align:left">รายการประเมิน</th><th>x̄</th><th>S.D.</th><th>แปลผล</th></tr>
+              </thead>
+              <tbody id="r-items"></tbody>
+            </table>
+          </div>
+          <p class="hint" style="margin-top:0.9rem">เกณฑ์แปลผล: 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด</p>
+        </div>
+
+        <div class="panel">
+          <span class="panel-num">ข้อมูลทั่วไป</span>
+          <h2>ข้อมูลทั่วไปของผู้ตอบ (ร้อยละ)</h2>
+          <div id="r-demo"></div>
+        </div>
+
+        <div class="panel" id="r-comments-panel" hidden>
+          <span class="panel-num">เสียงผู้ใช้</span>
+          <h2>ข้อเสนอแนะล่าสุด</h2>
+          <div id="r-comments"></div>
+        </div>
+
+      </div>
+      <div class="empty" id="res-empty" hidden>ยังไม่มีผู้ตอบแบบประเมิน — เป็นคนแรกได้เลย!</div>
+    </section>
+  </main>
+
+  <footer>
+    แบบประเมินความพึงพอใจ · ส่วนหนึ่งของโครงงานเว็บไซต์ "รัฐไทยก้าวหน้า" · <a href="index.html">กลับหน้าแรก</a>
+  </footer>
+
+  <script>
+  // ── config ──
+  // override ตอนทดสอบในเครื่องได้ด้วย ?api=http://localhost:8888
+  const API = (new URLSearchParams(location.search).get('api') || 'https://md-ai-proxy-nook.netlify.app') + '/api/survey';
+
+  // ตัวเลือก + ข้อคำถาม (ต้องตรงกับ survey.mjs ฝั่ง server)
+  const DEMO_QUESTIONS = [
+    { id: 'gender', text: '1. เพศ', choices: ['ชาย', 'หญิง', 'ไม่ระบุ'] },
+    { id: 'age', text: '2. อายุ', choices: ['ต่ำกว่า 18 ปี', '18 – 25 ปี', '26 – 35 ปี', '36 – 45 ปี', '46 ปีขึ้นไป'] },
+    { id: 'status', text: '3. สถานภาพ', choices: ['นักเรียน / นักศึกษา', 'ข้าราชการ / พนักงานของรัฐ', 'พนักงานบริษัทเอกชน', 'ประกอบอาชีพอิสระ / ค้าขาย', 'อื่น ๆ'] },
+    { id: 'freq', text: '4. ความถี่ในการใช้งานเว็บไซต์นี้', choices: ['ใช้งานครั้งแรก', 'เดือนละ 1 – 2 ครั้ง', 'สัปดาห์ละ 1 – 2 ครั้ง', 'เกือบทุกวัน'] },
+  ];
+
+  const SECTIONS = [
+    { name: 'ด้านเนื้อหา', items: [
+      'เนื้อหามีความถูกต้อง ครบถ้วน และเป็นปัจจุบัน',
+      'การจัดหมวดหมู่ข้อมูลเป็นระบบ ค้นหาง่าย',
+      'ปริมาณเนื้อหาในแต่ละหน้ามีความเหมาะสม',
+      'ภาษาที่ใช้อ่านเข้าใจง่าย เหมาะกับผู้ใช้ทั่วไป',
+    ]},
+    { name: 'ด้านการออกแบบและการจัดรูปแบบเว็บไซต์', items: [
+      'การออกแบบหน้าเว็บสวยงาม ทันสมัย',
+      'สี ขนาดตัวอักษร และความคมชัดเหมาะสม อ่านง่าย',
+      'รูปภาพ กราฟิก และแผนภาพประกอบสื่อความหมายชัดเจน',
+      'แสดงผลได้เหมาะสมทั้งบนคอมพิวเตอร์และโทรศัพท์มือถือ',
+    ]},
+    { name: 'ด้านการใช้งาน', items: [
+      'เว็บไซต์ใช้งานง่าย ไม่ซับซ้อน',
+      'เมนูและลิงก์เชื่อมโยงไปยังหน้าต่าง ๆ ชัดเจน',
+      'ความเร็วในการโหลดและแสดงผลเหมาะสม',
+      'ผู้ช่วย AI ช่วยให้ค้นหาข้อมูลที่ต้องการได้สะดวกขึ้น',
+    ]},
+    { name: 'ด้านประโยชน์และการนำไปใช้', items: [
+      'ได้รับความรู้ความเข้าใจเกี่ยวกับโครงสร้างภาครัฐไทยเพิ่มขึ้น',
+      'สามารถนำข้อมูลไปใช้อ้างอิงหรือประกอบการเรียน/การทำงานได้',
+      'เว็บไซต์ช่วยส่งเสริมการเข้าถึงข้อมูลภาครัฐที่โปร่งใส',
+      'โดยภาพรวมท่านพึงพอใจต่อเว็บไซต์ "รัฐไทยก้าวหน้า"',
+    ]},
+  ];
+  const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
+  const SCALE = [['5','มากที่สุด'],['4','มาก'],['3','ปานกลาง'],['2','น้อย'],['1','น้อยที่สุด']];
+
+  function interp(m) {
+    if (m >= 4.51) return 'มากที่สุด';
+    if (m >= 3.51) return 'มาก';
+    if (m >= 2.51) return 'ปานกลาง';
+    if (m >= 1.51) return 'น้อย';
+    return 'น้อยที่สุด';
+  }
+  const fmt = (x) => Number(x).toFixed(2);
+
+  // ── สร้างฟอร์มตอนที่ 1 ──
+  const demoGrid = document.getElementById('demo-grid');
+  for (const q of DEMO_QUESTIONS) {
+    const div = document.createElement('div');
+    div.className = 'demo-q';
+    div.id = 'q-' + q.id;
+    const p = document.createElement('p');
+    p.className = 'q-text';
+    p.innerHTML = q.text + ' <span class="req">*</span>';
+    div.appendChild(p);
+    const chips = document.createElement('div');
+    chips.className = 'chips';
+    for (const c of q.choices) {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      input.type = 'radio'; input.name = q.id; input.value = c;
+      const span = document.createElement('span');
+      span.className = 'chip'; span.textContent = c;
+      label.append(input, span);
+      chips.appendChild(label);
+    }
+    div.appendChild(chips);
+    demoGrid.appendChild(div);
+  }
+
+  // ── สร้างฟอร์มตอนที่ 2 ──
+  const likertArea = document.getElementById('likert-area');
+  let qNo = 0;
+  SECTIONS.forEach((sec, sIdx) => {
+    const h = document.createElement('h3');
+    h.style.cssText = 'font-family:var(--font-thai);font-weight:700;font-size:1.05rem;color:var(--accent-cyan);margin:1.4rem 0 0.2rem;';
+    h.textContent = `ด้านที่ ${sIdx + 1} ${sec.name}`;
+    likertArea.appendChild(h);
+
+    const head = document.createElement('div');
+    head.className = 'likert-head';
+    head.innerHTML = '<div></div>' + SCALE.map(([n, t]) => `<div class="col"><b>${n}</b>${t}</div>`).join('');
+    likertArea.appendChild(head);
+
+    sec.items.forEach((text) => {
+      const i = qNo++;
+      const row = document.createElement('div');
+      row.className = 'likert-row';
+      row.id = 'row-q' + i;
+      const t = document.createElement('div');
+      t.className = 'item-text';
+      t.innerHTML = `<span class="no">${i + 1}.</span>${text}`;
+      row.appendChild(t);
+      for (const [n] of SCALE) {
+        const cell = document.createElement('div');
+        cell.className = 'likert-cell';
+        const label = document.createElement('label');
+        label.title = `${n} คะแนน`;
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = 'q' + i; input.value = n;
+        const dot = document.createElement('span');
+        dot.className = 'dot'; dot.textContent = n;
+        label.append(input, dot);
+        cell.appendChild(label);
+        row.appendChild(cell);
+      }
+      likertArea.appendChild(row);
+    });
+  });
+
+  // ── tabs ──
+  const tabForm = document.getElementById('tab-form');
+  const tabResults = document.getElementById('tab-results');
+  const viewForm = document.getElementById('view-form');
+  const viewResults = document.getElementById('view-results');
+  let resultsLoadedOnce = false;
+
+  function showView(which) {
+    const isForm = which === 'form';
+    viewForm.hidden = !isForm;
+    viewResults.hidden = isForm;
+    tabForm.classList.toggle('active', isForm);
+    tabResults.classList.toggle('active', !isForm);
+    if (!isForm && !resultsLoadedOnce) loadResults();
+  }
+  tabForm.addEventListener('click', () => showView('form'));
+  tabResults.addEventListener('click', () => showView('results'));
+
+  // ── submit ──
+  const form = document.getElementById('survey-form');
+  const msg = document.getElementById('form-msg');
+  const btnSubmit = document.getElementById('btn-submit');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.className = 'form-msg';
+    document.querySelectorAll('.likert-row.missing').forEach(r => r.classList.remove('missing'));
+
+    const data = { ratings: [], comment: document.getElementById('comment').value, website: document.getElementById('hp-website').value };
+
+    for (const q of DEMO_QUESTIONS) {
+      const sel = form.querySelector(`input[name="${q.id}"]:checked`);
+      if (!sel) return showError(`กรุณาตอบตอนที่ 1 ${q.text}`, document.getElementById('q-' + q.id));
+      data[q.id] = sel.value;
+    }
+    for (let i = 0; i < ALL_ITEMS.length; i++) {
+      const sel = form.querySelector(`input[name="q${i}"]:checked`);
+      if (!sel) {
+        const row = document.getElementById('row-q' + i);
+        row.classList.add('missing');
+        return showError(`กรุณาให้คะแนนตอนที่ 2 ข้อ ${i + 1}`, row);
+      }
+      data.ratings.push(Number(sel.value));
+    }
+
+    btnSubmit.disabled = true;
+    msg.textContent = 'กำลังส่งคำตอบ…';
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      localStorage.setItem('md-survey-done', new Date().toISOString());
+      form.hidden = true;
+      document.querySelector('#view-form .panel').hidden = true; // ซ่อนคำชี้แจง
+      document.getElementById('thanks').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      resultsLoadedOnce = false; // ให้ดึงผลใหม่รวมคำตอบเรา
+    } catch (err) {
+      msg.className = 'form-msg err';
+      msg.textContent = 'ส่งไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (' + err.message + ')';
+    } finally {
+      btnSubmit.disabled = false;
+    }
+  });
+
+  function showError(text, scrollTarget) {
+    msg.className = 'form-msg err';
+    msg.textContent = text;
+    if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+
+  document.getElementById('btn-see-results').addEventListener('click', () => showView('results'));
+  document.getElementById('btn-again').addEventListener('click', () => {
+    form.reset();
+    form.hidden = false;
+    document.querySelector('#view-form .panel').hidden = false;
+    document.getElementById('thanks').hidden = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // เคยตอบจากเครื่องนี้แล้ว -> แจ้งเตือนเบา ๆ (ยังตอบเพิ่มได้ เผื่อใช้เครื่องร่วมกัน)
+  if (localStorage.getItem('md-survey-done')) {
+    msg.textContent = 'ℹ เครื่องนี้เคยส่งแบบประเมินแล้ว — ตอบซ้ำได้กรณีเป็นผู้ใช้คนละคน';
+  }
+
+  // ── results ──
+  const csvLink = document.getElementById('csv-link');
+  csvLink.href = API + '?format=csv';
+  document.getElementById('btn-refresh').addEventListener('click', loadResults);
+
+  async function loadResults() {
+    const loading = document.getElementById('res-loading');
+    const body = document.getElementById('res-body');
+    const empty = document.getElementById('res-empty');
+    loading.hidden = false; body.hidden = true; empty.hidden = true;
+    try {
+      const res = await fetch(API);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const d = await res.json();
+      resultsLoadedOnce = true;
+      loading.hidden = true;
+      if (!d.n) { empty.hidden = false; return; }
+      body.hidden = false;
+      renderResults(d);
+    } catch (err) {
+      loading.textContent = 'โหลดผลไม่สำเร็จ (' + err.message + ') — กด "โหลดผลล่าสุด" เพื่อลองใหม่';
+    }
+  }
+
+  function renderResults(d) {
+    document.getElementById('r-n').textContent = d.n;
+    document.getElementById('r-mean').innerHTML = fmt(d.overall.mean) + ' <small>/ 5.00</small>';
+    document.getElementById('r-interp').textContent = 'ระดับ: ' + interp(d.overall.mean);
+    document.getElementById('r-sd').textContent = fmt(d.overall.sd);
+
+    // รายด้าน
+    const secWrap = document.getElementById('r-sections');
+    secWrap.innerHTML = '';
+    d.sections.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="lbl">ด้านที่ ${i + 1} ${s.name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(s.mean / 5) * 100}%"></div></div>
+        <div class="val">x̄ ${fmt(s.mean)} <small>S.D. ${fmt(s.sd)}</small></div>`;
+      secWrap.appendChild(row);
+    });
+
+    // รายข้อ
+    const tbody = document.getElementById('r-items');
+    tbody.innerHTML = '';
+    let idx = 0;
+    SECTIONS.forEach((sec, sIdx) => {
+      const trh = document.createElement('tr');
+      trh.className = 'sec-head';
+      trh.innerHTML = `<td colspan="4">ด้านที่ ${sIdx + 1} ${sec.name}</td>`;
+      tbody.appendChild(trh);
+      sec.items.forEach((text) => {
+        const it = d.items[idx];
+        const tr = document.createElement('tr');
+        const tdT = document.createElement('td');
+        tdT.className = 't';
+        tdT.textContent = `${idx + 1}. ${text}`;
+        tr.appendChild(tdT);
+        tr.insertAdjacentHTML('beforeend',
+          `<td class="num">${fmt(it.mean)}</td><td class="num">${fmt(it.sd)}</td><td class="interp">${interp(it.mean)}</td>`);
+        tbody.appendChild(tr);
+        idx++;
+      });
+    });
+
+    // ข้อมูลทั่วไป (ร้อยละ)
+    const demoWrap = document.getElementById('r-demo');
+    demoWrap.innerHTML = '';
+    const demoTitles = { gender: 'เพศ', age: 'อายุ', status: 'สถานภาพ', freq: 'ความถี่การใช้งาน' };
+    for (const [field, title] of Object.entries(demoTitles)) {
+      const h = document.createElement('h3');
+      h.style.cssText = 'font-family:var(--font-thai);font-weight:700;font-size:1rem;color:var(--text-primary);margin:1.1rem 0 0.3rem;';
+      h.textContent = title;
+      demoWrap.appendChild(h);
+      for (const c of d.demographics[field]) {
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        const lbl = document.createElement('div');
+        lbl.className = 'lbl'; lbl.textContent = c.label;
+        row.appendChild(lbl);
+        row.insertAdjacentHTML('beforeend',
+          `<div class="bar-track"><div class="bar-fill" style="width:${c.percent}%"></div></div>
+           <div class="val">${fmt(c.percent)}% <small>(${c.count})</small></div>`);
+        demoWrap.appendChild(row);
+      }
+    }
+
+    // ข้อเสนอแนะ
+    const cPanel = document.getElementById('r-comments-panel');
+    const cWrap = document.getElementById('r-comments');
+    cWrap.innerHTML = '';
+    if (d.comments && d.comments.length) {
+      cPanel.hidden = false;
+      for (const c of d.comments) {
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        const when = document.createElement('div');
+        when.className = 'when';
+        when.textContent = new Date(c.ts).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+        const txt = document.createElement('div');
+        txt.className = 'txt';
+        txt.textContent = c.text; // textContent กัน XSS
+        div.append(when, txt);
+        cWrap.appendChild(div);
+      }
+    } else {
+      cPanel.hidden = true;
+    }
+  }
+  </script>
+  <script src="../js/ai-chat.js"></script>
+</body>
+</html>
