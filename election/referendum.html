@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>ประชามติรัฐธรรมนูญ · เลือกตั้ง 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== หน้าประชามติ — สีผลโหวต (คงที่ทั้งโหมดสว่าง/มืด เหมือนสีพรรค) ===== */
+:root{ --ryes:#00A65A; --rno:#E5484D; --rab:#B4C3CF; --ryes-deep:#067D46; --rno-deep:#C03338 }
+html[data-theme="dark"]{ --rab:#54718A }
+
+/* ---- hero: วงแหวน + คำถาม ---- */
+.refhero{display:grid;grid-template-columns:minmax(280px,420px) minmax(0,1fr);gap:34px;align-items:center}
+.ringwrap{position:relative;max-width:400px;margin:0 auto;width:100%}
+.ringwrap svg.ring{width:100%;height:auto;display:block}
+.ringinner{position:absolute;inset:11%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;pointer-events:none}
+.ringinner .monu{width:62%;max-width:185px;height:auto}
+.ringinner .qk{font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--green);letter-spacing:.02em}
+.ringinner .q{font-family:'Kanit';font-weight:600;font-size:clamp(.86rem,2.1vw,1.05rem);line-height:1.4;color:var(--ink)}
+.heroR .hkick{font-family:'Kanit';font-weight:500;font-size:.78rem;letter-spacing:.1em;color:var(--orange-deep);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.heroR .hkick .live{display:inline-flex;align-items:center;gap:6px;background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);font-size:.72rem;letter-spacing:0;text-transform:none}
+.heroR .hkick .live i{width:8px;height:8px;border-radius:50%;background:var(--rno);display:inline-block;animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.bigcards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--rab)}
+.bcard.y{border-top-color:var(--ryes)} .bcard.n{border-top-color:var(--rno)}
+.bcard .t{font-family:'Kanit';font-weight:600;font-size:.92rem}
+.bcard.y .t{color:var(--ryes)} .bcard.n .t{color:var(--rno)} .bcard.a .t{color:var(--muted)}
+.bcard .p{font-family:'Kanit';font-weight:800;font-size:clamp(1.7rem,3.2vw,2.4rem);line-height:1.1;letter-spacing:-.02em}
+.bcard .p small{font-size:.55em;font-weight:600}
+.bcard .c{font-size:.82rem;color:var(--muted);margin-top:2px}
+.margin-chip{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:rgba(0,166,90,.1);border:1px solid rgba(0,166,90,.35);color:var(--ryes-deep);border-radius:999px;padding:7px 14px;font-family:'Kanit';font-weight:500;font-size:.86rem}
+html[data-theme="dark"] .margin-chip{color:#3FD68F}
+.turnout{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line-2)}
+.turnout .tl{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.turnout .tl .lab{font-weight:600;font-size:.9rem}
+.turnout .tl .v{font-family:'Kanit';font-weight:700;font-size:1.45rem}
+.turnout .tl .of{color:var(--muted);font-size:.86rem}
+.turnout .tl .pc{margin-left:auto;font-family:'Kanit';font-weight:700;font-size:1.45rem}
+.tnbar{height:13px;border-radius:99px;background:var(--wash);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+.tnfill{height:100%;width:0;background:var(--th-blue);border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+html[data-theme="dark"] .tnfill{background:var(--green)}
+.turnout .sub{margin-top:8px;font-size:.8rem;color:var(--muted)}
+
+/* ---- แถบรายภาค ---- */
+.regbars{display:flex;flex-direction:column;gap:13px}
+.regrow{display:grid;grid-template-columns:172px minmax(0,1fr);gap:14px;align-items:center}
+.regrow .rn{font-family:'Kanit';font-weight:500;font-size:.95rem;text-align:left}
+.regrow .rn small{display:block;font-family:'Sarabun';font-size:.7rem;color:var(--muted)}
+.rtrack{display:flex;gap:4px;height:30px}
+.rseg{height:100%;border-radius:7px;display:flex;align-items:center;padding:0 9px;color:#fff;font-family:'Kanit';font-weight:600;font-size:.82rem;min-width:0;overflow:hidden;white-space:nowrap;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.rseg.y{background:var(--ryes)} .rseg.n{background:var(--rno)} .rseg.a{background:var(--rab);color:var(--ink-2)}
+html[data-theme="dark"] .rseg.a{color:#DCE8F0}
+.regnote{margin-top:16px;padding-top:13px;border-top:1px dashed var(--line-2);font-size:.78rem;color:var(--muted)}
+
+/* ---- แผนที่ ---- */
+.maplay{display:grid;grid-template-columns:236px minmax(0,1fr) 332px;gap:18px;align-items:stretch}
+.mapside{display:flex;flex-direction:column;gap:8px}
+.mapsearch{position:relative;margin-bottom:4px}
+.mapsearch input{width:100%;font-family:'Sarabun';font-size:.92rem;padding:11px 12px 11px 38px;border:1px solid var(--line-2);border-radius:12px;background:var(--card);color:var(--ink);outline:none}
+.mapsearch input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
+.mapsearch>svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--green)}
+.sugg{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:30;background:var(--card);border:1px solid var(--line-2);border-radius:12px;box-shadow:var(--shadow-lg);overflow:hidden;display:none}
+.sugg.on{display:block}
+.sugg button{display:flex;width:100%;align-items:center;gap:8px;padding:9px 12px;border:0;background:none;cursor:pointer;font-family:'Sarabun';font-size:.9rem;color:var(--ink);text-align:left}
+.sugg button:hover{background:var(--orange-soft)}
+.sugg button .sw{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.rbtn{display:flex;align-items:center;gap:9px;padding:10px 13px;border:1px solid transparent;border-radius:11px;background:none;cursor:pointer;font-family:'Kanit';font-weight:500;font-size:.93rem;color:var(--ink-2);text-align:left;transition:.13s}
+.rbtn:hover{background:var(--orange-soft)}
+.rbtn.active{background:var(--ink);color:#fff}
+html[data-theme="dark"] .rbtn.active{background:var(--orange);color:#081019}
+.rbtn .pcv{margin-left:auto;font-size:.8rem;font-weight:600;color:var(--ryes)}
+.rbtn.active .pcv{color:inherit;opacity:.85}
+.maplegend{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line-2);display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--ink-2)}
+.maplegend span{display:flex;align-items:center;gap:7px}
+.maplegend .sw{width:12px;height:12px;border-radius:4px}
+.maplegend b{font-family:'Kanit';font-weight:600;margin-left:auto}
+.mapbox{background:radial-gradient(circle at 50% 42%, var(--wash), transparent 75%);border:1px solid var(--line);border-radius:var(--radius);padding:10px;display:grid;place-items:center;min-height:420px}
+svg.refmap{width:100%;height:auto;max-height:720px;display:block}
+svg.refmap path.pv{stroke:var(--paper);stroke-width:1;cursor:pointer;transition:opacity .14s,filter .14s}
+svg.refmap path.pv:hover{filter:brightness(.88)}
+svg.refmap path.pv.sel{stroke:var(--ink);stroke-width:2.6}
+svg.refmap path.pv.dim{opacity:.16}
+svg.refmap path.pv.nodata{cursor:default}
+.mapdetail{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:13px;align-self:start;position:sticky;top:80px}
+.mapdetail .crumb{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.mapdetail .crumb b{color:var(--ink);font-family:'Kanit';font-weight:500}
+.mapdetail .dname{font-family:'Kanit';font-weight:700;font-size:1.5rem;line-height:1.1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vchip{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-weight:500;font-size:.74rem;border-radius:999px;padding:4px 11px;color:#fff}
+.vchip.y{background:var(--ryes)} .vchip.n{background:var(--rno)}
+.mapdetail .dmeta{font-size:.8rem;color:var(--muted);margin-top:-6px}
+.dstat .dl{display:flex;align-items:baseline;gap:8px;font-size:.86rem;font-weight:600}
+.dstat .dl .pc{margin-left:auto;font-family:'Kanit';font-weight:700;font-size:1.06rem}
+.dstat .dl .cnt{font-size:.76rem;color:var(--muted);font-weight:400}
+.dstat .dbar{height:9px;border-radius:99px;background:var(--wash);border:1px solid var(--line);overflow:hidden;margin-top:4px}
+.dstat .dbar i{display:block;height:100%;border-radius:99px}
+.dstat.y .dl .pc{color:var(--ryes)} .dstat.y .dbar i{background:var(--ryes)}
+.dstat.n .dl .pc{color:var(--rno)} .dstat.n .dbar i{background:var(--rno)}
+.dstat.a .dl .pc{color:var(--muted)} .dstat.a .dbar i{background:var(--rab)}
+.dxtra{font-size:.79rem;color:var(--muted);border-top:1px dashed var(--line-2);padding-top:11px;line-height:1.7}
+.dsrc{font-size:.7rem;color:var(--muted);background:var(--wash);border:1px dashed var(--line-2);border-radius:9px;padding:7px 10px}
+.dsrc.real{color:var(--ryes-deep);border-color:rgba(0,166,90,.4);background:rgba(0,166,90,.07)}
+html[data-theme="dark"] .dsrc.real{color:#3FD68F}
+.maptip .tt-row{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:.78rem}
+.maptip .tt-row .sw{width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.maptip .tt-row b{font-family:'Kanit';margin-left:auto;padding-left:10px}
+
+/* ---- ตารางรายจังหวัด ---- */
+.tbl{display:flex;flex-direction:column}
+.tbl-head,.trow{display:grid;grid-template-columns:38px minmax(130px,200px) minmax(0,1fr) 150px;gap:14px;align-items:center}
+.tbl-head{padding:0 12px 10px;font-size:.74rem;color:var(--muted);font-weight:600}
+.tbl-head .num-h{text-align:right}
+.trow{padding:9px 12px;border-radius:12px;cursor:pointer;transition:background .12s}
+.trow:hover{background:var(--orange-soft)}
+.trow .rk{font-family:'Kanit';font-weight:600;color:var(--muted);text-align:center;font-size:.9rem}
+.trow .pv-n{min-width:0}
+.trow .pv-n .nm{font-weight:600;font-size:.93rem;display:flex;align-items:center;gap:6px}
+.trow .pv-n .nm .star{color:#E8A33D;font-size:.78rem}
+.trow .pv-n small{display:block;font-size:.7rem;color:var(--muted)}
+.ttrack{display:flex;gap:3px;height:18px}
+.tseg{height:100%;border-radius:5px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.tseg.y{background:var(--ryes)} .tseg.n{background:var(--rno)} .tseg.a{background:var(--rab)}
+.trow .nums{text-align:right;font-family:'Kanit';white-space:nowrap}
+.trow .nums .gy{color:var(--ryes);font-weight:700;font-size:.98rem}
+.trow .nums .rd{color:var(--rno);font-weight:600;font-size:.86rem;margin-left:8px}
+.trow .nums small{display:block;font-family:'Sarabun';font-size:.68rem;color:var(--muted)}
+.tfoot{margin-top:14px;padding-top:13px;border-top:1px dashed var(--line-2);font-size:.78rem;color:var(--muted)}
+
+@media(max-width:1080px){
+  .maplay{grid-template-columns:minmax(0,1fr) 320px}
+  .mapside{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center}
+  .mapsearch{flex:1 1 240px;margin-bottom:0}
+  #regbtns{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 100%}
+  .rbtn{padding:8px 12px;border:1px solid var(--line)}
+  .rbtn .pcv{margin-left:6px}
+  .maplegend{margin-top:0;margin-left:auto;padding-top:0;border-top:0;flex-direction:row;gap:14px}
+  .maplegend b{margin-left:6px}
+}
+@media(max-width:860px){
+  .refhero{grid-template-columns:1fr;gap:22px}
+  .maplay{grid-template-columns:1fr}
+  .mapdetail{position:static}
+  .regrow{grid-template-columns:1fr;gap:5px}
+  .rseg{font-size:.74rem;padding:0 6px}
+  .bigcards{gap:8px}
+  .bcard{padding:11px 8px}
+  .bcard .t{font-size:.74rem}
+  .tbl-head,.trow{grid-template-columns:30px minmax(96px,130px) minmax(0,1fr);gap:9px}
+  .tbl-head .num-h,.trow .nums{display:none}
+  .panelbox{padding:18px}
+}
+</style>
+</head>
+<body>
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<script>
+function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+mdThemeIcon();
+</script>
+
+<nav class="navpill">
+  <a href="../hub/index.html" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="กลับหน้าหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="referendum.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+</nav>
+
+<div class="subpage">
+  <header class="pagehead">
+    <svg class="tri" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="29" y="5" width="16" height="2.4" rx="1.2" fill="#A51931"/><rect x="29" y="8.4" width="16" height="3.2" rx="1.2" fill="#2D2A4A"/><rect x="29" y="12.6" width="16" height="2.4" rx="1.2" fill="#A51931"/><g transform="rotate(-7 21 13)"><rect x="12" y="3" width="18.5" height="17" rx="2.2" fill="#fff" stroke="#2D2A4A" stroke-width="1.6"/><path d="M16.5 11.3 l3.2 3.3 L26.5 8" stroke="#1FA463" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M6.5 22 H41.5 L38 41 H10 Z" fill="#2D2A4A"/><path d="M6.5 22 H41.5 L38.7 27 H9.3 Z" fill="#3b366a"/><rect x="17" y="22.6" width="14" height="3.4" rx="1.7" fill="#fff" opacity=".9"/></svg>
+    <div class="bt">ประชามติรัฐธรรมนูญ<small>14 กุมภาพันธ์ 2569 · ข้อมูล กกต. รวบรวมโดย iLaw</small></div>
+    <div class="ballot"><span class="b46">ประชามติ</span><span class="bx">✓</span></div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- ===== สรุปคะแนน ทั่วประเทศ ===== -->
+    <div class="sec-head">
+      <div><span class="kick">Referendum 2569</span><h1>คำถาม<span class="o">ประชามติ</span> · สรุปคะแนนทั่วประเทศ</h1></div>
+      <p>ผลการออกเสียงประชามติว่าสมควรมีรัฐธรรมนูญฉบับใหม่หรือไม่ — นับครบทุกหน่วย อย่างไม่เป็นทางการ</p>
+    </div>
+    <div class="panelbox refhero">
+      <div class="ringwrap">
+        <svg class="ring" viewBox="0 0 360 360" id="ringsvg" aria-hidden="true"></svg>
+        <div class="ringinner">
+          <svg class="monu" viewBox="0 0 260 172" aria-label="อนุสาวรีย์ประชาธิปไตย">
+            <g stroke="#B9B5AB" stroke-width="1.4">
+              <!-- ปีกซ้ายนอก/ใน -->
+              <g>
+                <path d="M38 148 L38 70 Q38 34 64 24 L70 32 Q52 44 52 148 Z" fill="#F4F2ED"/>
+                <path d="M84 148 L84 88 Q84 58 103 50 L108 57 Q95 66 95 148 Z" fill="#EDEBE6"/>
+                <path d="M44 60 60 42M44 74 58 52M44 88 57 64M44 102 56 78M88 78 100 62M88 92 99 74" stroke="#C9C4BA" stroke-width="1.1" fill="none"/>
+                <rect x="32" y="130" width="44" height="18" rx="2" fill="#E6E3DC"/>
+                <rect x="80" y="134" width="22" height="14" rx="2" fill="#E6E3DC"/>
+              </g>
+              <!-- ปีกขวา (สะท้อน) -->
+              <g transform="translate(260 0) scale(-1 1)">
+                <path d="M38 148 L38 70 Q38 34 64 24 L70 32 Q52 44 52 148 Z" fill="#F4F2ED"/>
+                <path d="M84 148 L84 88 Q84 58 103 50 L108 57 Q95 66 95 148 Z" fill="#EDEBE6"/>
+                <path d="M44 60 60 42M44 74 58 52M44 88 57 64M44 102 56 78M88 78 100 62M88 92 99 74" stroke="#C9C4BA" stroke-width="1.1" fill="none"/>
+                <rect x="32" y="130" width="44" height="18" rx="2" fill="#E6E3DC"/>
+                <rect x="80" y="134" width="22" height="14" rx="2" fill="#E6E3DC"/>
+              </g>
+              <!-- ป้อมกลาง + พานรัฐธรรมนูญ -->
+              <rect x="126" y="44" width="8" height="11" fill="#F4F2ED"/>
+              <path d="M118 43 Q130 52 142 43" fill="#E8A33D" stroke="#D08A2A"/>
+              <ellipse cx="130" cy="41.5" rx="10" ry="3.6" fill="#E8A33D" stroke="#D08A2A"/>
+              <rect x="126" y="30" width="8" height="9" rx="2.4" fill="#D08A2A" stroke="none"/>
+              <path d="M108 118 L108 84 Q108 60 130 54 Q152 60 152 84 L152 118 Z" fill="#F4F2ED"/>
+              <circle cx="116.5" cy="76" r="2.6" fill="#2D2A4A" stroke="none"/>
+              <circle cx="130" cy="73" r="2.8" fill="#2D2A4A" stroke="none"/>
+              <circle cx="143.5" cy="76" r="2.6" fill="#2D2A4A" stroke="none"/>
+              <rect x="112.5" y="92" width="7" height="24" rx="3" fill="#E5484D" stroke="none"/>
+              <rect x="126" y="88" width="8" height="28" rx="3.5" fill="#E5484D" stroke="none"/>
+              <rect x="140" y="92" width="7" height="24" rx="3" fill="#E5484D" stroke="none"/>
+              <rect x="103" y="116" width="54" height="14" rx="2" fill="#E6E3DC"/>
+              <rect x="97" y="130" width="66" height="10" rx="2" fill="#EDEBE6"/>
+              <rect x="91" y="140" width="78" height="8" rx="2" fill="#E6E3DC"/>
+              <!-- ฐานรวม -->
+              <rect x="22" y="148" width="216" height="8" rx="2.5" fill="#EDEBE6"/>
+              <rect x="10" y="156" width="240" height="9" rx="3" fill="#DBD8D0"/>
+            </g>
+          </svg>
+          <span class="qk">คำถามประชามติ</span>
+          <span class="q">ท่านเห็นชอบว่าสมควร<br>มีรัฐธรรมนูญ<br>ฉบับใหม่หรือไม่?</span>
+        </div>
+      </div>
+      <div class="heroR">
+        <div class="hkick">สรุปคะแนน › ทั่วประเทศ <span class="live"><i></i>นับแล้ว 100% · อย่างไม่เป็นทางการ</span></div>
+        <div class="bigcards">
+          <div class="bcard y"><div class="t">เห็นชอบ</div><div class="p" id="pcyes">0<small>%</small></div><div class="c num" data-count="21621638">0</div></div>
+          <div class="bcard n"><div class="t">ไม่เห็นชอบ</div><div class="p" id="pcno">0<small>%</small></div><div class="c num" data-count="11241653">0</div></div>
+          <div class="bcard a"><div class="t">ไม่แสดงความคิดเห็น</div><div class="p" id="pcab">0<small>%</small></div><div class="c num" data-count="3074330">0</div></div>
+        </div>
+        <div class="margin-chip" id="marginchip"></div>
+        <div class="turnout">
+          <div class="tl"><span class="lab">ผู้มาใช้สิทธิประชามติ</span><span class="v num" id="tnv"></span><span class="of num" id="tne"></span><span class="pc num" id="tnp"></span></div>
+          <div class="tnbar"><div class="tnfill" id="tnfill"></div></div>
+          <div class="sub" id="tnsub"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ผลตามภูมิภาค ===== -->
+    <div class="sec-head">
+      <div><span class="kick">By Region</span><h1>ผลประชามติตาม<span class="o">ภูมิภาค</span></h1></div>
+      <p>สัดส่วนเสียงเห็นชอบ (เขียว) ไม่เห็นชอบ (แดง) และไม่แสดงความคิดเห็น (เทา) ของแต่ละภูมิภาค</p>
+    </div>
+    <div class="panelbox">
+      <div class="regbars" id="regbars"></div>
+      <div class="regnote">หมายเหตุ: กรุงเทพมหานครนับรวมอยู่ในภาคกลางด้วย · แบ่งภูมิภาคตามการรายงานผลของ กกต. (6 ภูมิภาค + นอกราชอาณาจักร)</div>
+    </div>
+
+    <!-- ===== แผนที่รายจังหวัด ===== -->
+    <div class="sec-head">
+      <div><span class="kick">Province Map</span><h1>ผลคะแนนตาม<span class="o">พื้นที่</span> รายจังหวัด</h1></div>
+      <p>แตะหรือคลิกจังหวัดบนแผนที่เพื่อดูคะแนน — เขียว = ส่วนมากเห็นชอบ · แดง = ส่วนมากไม่เห็นชอบ</p>
+    </div>
+    <div class="maplay">
+      <div class="mapside" id="mapside">
+        <div class="mapsearch">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+          <input type="text" id="mapsearch" placeholder="ค้นหาจังหวัด..." autocomplete="off">
+          <div class="sugg" id="sugg"></div>
+        </div>
+        <div id="regbtns"></div>
+        <div class="maplegend" id="maplegend"></div>
+      </div>
+      <div class="mapbox"><svg class="refmap" id="refmap"></svg></div>
+      <div class="mapdetail" id="mapdetail"></div>
+    </div>
+
+    <!-- ===== ตารางรายจังหวัด ===== -->
+    <div class="sec-head">
+      <div><span class="kick">All Provinces</span><h1>คะแนนราย<span class="o">จังหวัด</span> ทั้ง 77 จังหวัด</h1></div>
+      <p>★ = 5 จังหวัดที่มีสัดส่วนเสียงเห็นชอบสูงสุดของประเทศ (ข้อมูลจริงจาก iLaw)</p>
+    </div>
+    <div class="lcontrols">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        <input type="text" id="tsearch" placeholder="ค้นหาจังหวัด...">
+      </div>
+      <div class="sel"><select id="tregion"><option value="">ทุกภูมิภาค</option></select></div>
+      <div class="sel"><select id="tsort">
+        <option value="yes">เรียงตาม % เห็นชอบ</option>
+        <option value="no">เรียงตาม % ไม่เห็นชอบ</option>
+        <option value="votes">เรียงตามผู้ลงคะแนน</option>
+        <option value="name">เรียงตามชื่อ ก-ฮ</option>
+      </select></div>
+    </div>
+    <div class="panelbox">
+      <div class="tbl">
+        <div class="tbl-head"><span>#</span><span>จังหวัด</span><span>สัดส่วนคะแนน</span><span class="num-h">เห็นชอบ / ไม่เห็นชอบ</span></div>
+        <div id="trows"></div>
+      </div>
+      <div class="tfoot" id="tfoot"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="fcol"><h4>ประชามติรัฐธรรมนูญ · 2569</h4><p>แสดงผลการออกเสียงประชามติ "ท่านเห็นชอบว่าสมควรมีรัฐธรรมนูญฉบับใหม่หรือไม่?" เมื่อ 14 กุมภาพันธ์ 2569 ทั้งภาพรวมประเทศ รายภูมิภาค และรายจังหวัด</p></div>
+      <div class="fcol"><h4>แหล่งข้อมูล</h4><ul>
+        <li>• ผลคะแนนรวม/รายภาค/จังหวัดเด่น: iLaw (<a href="https://www.ilaw.or.th" target="_blank" rel="noopener">www.ilaw.or.th</a>) จากข้อมูล กกต. อย่างไม่เป็นทางการ</li>
+        <li>• แผนที่จังหวัด: simplemaps.com/gis/country/th</li></ul>
+        <p class="cite">ตัวเลขรายจังหวัดนอกเหนือจาก 5 อันดับแรกและ 7 จังหวัดที่เสียงส่วนใหญ่ไม่เห็นชอบ เป็นการประมาณการเชิงสถิติถ่วงน้ำหนักตามจำนวนเขตเลือกตั้ง โดยควบคุมให้ผลรวมรายภูมิภาคตรงตามรายงานจริงทุกภาค</p></div>
+      <div class="fcol"><h4>หมายเหตุ</h4><p>หน้านี้จัดทำเพื่อการแสดงผลข้อมูลเท่านั้น ไม่ใช่การรายงานผลอย่างเป็นทางการของ กกต.</p></div>
+    </div>
+  </footer>
+</div>
+
+<nav class="mobnav" aria-label="เมนูหลัก">
+  <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
+  <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="referendum.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+</nav>
+
+<div class="maptip" id="maptip"></div>
+
+<script src="referendum-data.js"></script>
+<script>
+(function(){
+  const R=window.REFDATA, P=R.prov, RG=R.regions, T=R.totals;
+  const NS='http://www.w3.org/2000/svg';
+  const fmt=n=>n.toLocaleString('en-US');
+  const tot=p=>p.yes+p.no+p.ab;
+  const pcOf=(v,b)=>v/b*100;
+  const CY='var(--ryes)', CN='var(--rno)', CA='var(--rab)';
+  const validAll=T.yes+T.no+T.ab;            // ฐานคำนวณ % = บัตรดี + ไม่แสดงความคิดเห็น
+  const ballots=validAll+T.invalid;          // บัตรทั้งหมดที่ใช้
+  const pYes=pcOf(T.yes,validAll), pNo=pcOf(T.no,validAll), pAb=pcOf(T.ab,validAll);
+
+  /* ---------- การ์ดสรุป + นับเลขวิ่ง ---------- */
+  document.getElementById('pcyes').innerHTML=pYes.toFixed(2)+'<small>%</small>';
+  document.getElementById('pcno').innerHTML=pNo.toFixed(2)+'<small>%</small>';
+  document.getElementById('pcab').innerHTML=pAb.toFixed(2)+'<small>%</small>';
+  document.getElementById('marginchip').innerHTML=
+    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4.5 4.5L19 8"/></svg>
+     เสียงเห็นชอบมากกว่าไม่เห็นชอบ +${fmt(T.yes-T.no)} เสียง (${(pYes-pNo).toFixed(2)}%)`;
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.dataset.count,t0=performance.now();
+    (function step(t){const p=Math.min(1,(t-t0)/1200),e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(target*e));if(p<1)requestAnimationFrame(step);})(t0);
+  });
+
+  /* ---------- ผู้มาใช้สิทธิ ---------- */
+  const tnPct=ballots/T.eligible*100;
+  document.getElementById('tnv').textContent=fmt(ballots);
+  document.getElementById('tne').textContent='/ '+fmt(T.eligible);
+  document.getElementById('tnp').textContent=tnPct.toFixed(1)+'%';
+  document.getElementById('tnsub').innerHTML=`บัตรเสีย <b class="num">${fmt(T.invalid)}</b> ใบ (${(T.invalid/ballots*100).toFixed(1)}% ของบัตรที่ใช้ทั้งหมด)`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{document.getElementById('tnfill').style.width=tnPct.toFixed(1)+'%';}));
+
+  /* ---------- วงแหวนรอบอนุสาวรีย์ ---------- */
+  (function(){
+    const svg=document.getElementById('ringsvg'), gap=1.4, scale=(100-3*gap)/100;
+    const segs=[[pYes,CY],[pNo,CN],[pAb,CA]];
+    [[168,17,1],[148,6,.85]].forEach(([r,w,op])=>{
+      let off=0;
+      segs.forEach(([pc,col])=>{
+        const len=pc*scale;
+        const c=document.createElementNS(NS,'circle');
+        c.setAttribute('cx',180);c.setAttribute('cy',180);c.setAttribute('r',r);
+        c.setAttribute('fill','none');c.setAttribute('stroke',col);c.setAttribute('stroke-width',w);
+        c.setAttribute('pathLength',100);c.setAttribute('stroke-dasharray',`${len} ${100-len}`);
+        c.setAttribute('stroke-dashoffset',-off);c.setAttribute('opacity',op);
+        c.setAttribute('transform','rotate(-90 180 180)');
+        svg.appendChild(c); off+=len+gap;
+      });
+    });
+  })();
+
+  /* ---------- แถบรายภาค ---------- */
+  const REGORDER=['N','S','C','E','W','NE'];
+  const bkk=P['กรุงเทพมหานคร'];
+  const regRows=REGORDER.map(k=>({name:RG[k].name,sub:`${RG[k].provs.length} จังหวัด · ${RG[k].zones} เขต`,yes:RG[k].yes,no:RG[k].no,ab:RG[k].ab}));
+  regRows.push({name:'กรุงเทพมหานคร',sub:'นับรวมในภาคกลาง',yes:bkk.yes,no:bkk.no,ab:bkk.ab});
+  regRows.push({name:'นอกราชอาณาจักร',sub:'ทุกประเทศรวมกัน',yes:R.abroad.yes,no:R.abroad.no,ab:R.abroad.ab});
+  const rb=document.getElementById('regbars');
+  regRows.forEach(g=>{
+    const b=tot(g), y=pcOf(g.yes,b), n=pcOf(g.no,b), a=pcOf(g.ab,b);
+    const row=document.createElement('div'); row.className='regrow';
+    row.innerHTML=`<div class="rn">${g.name}<small>${g.sub}</small></div>
+      <div class="rtrack" title="เห็นชอบ ${fmt(g.yes)} · ไม่เห็นชอบ ${fmt(g.no)} · ไม่แสดงความคิดเห็น ${fmt(g.ab)}">
+        <div class="rseg y" data-w="${y}">${y.toFixed(1)}%</div>
+        <div class="rseg n" data-w="${n}">${n.toFixed(1)}%</div>
+        <div class="rseg a" data-w="${a}"></div>
+      </div>`;
+    rb.appendChild(row);
+  });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    rb.querySelectorAll('.rseg').forEach(s=>s.style.width=s.dataset.w+'%');
+  }));
+
+  /* ---------- แผนที่ ---------- */
+  const svg=document.getElementById('refmap');
+  svg.setAttribute('viewBox',`0 0 ${R.map.width} ${R.map.height}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  const tip=document.getElementById('maptip');
+  const pathEls={};
+  Object.entries(R.map.paths).forEach(([en,d])=>{
+    const th=R.en2th[en], st=th?P[th]:null;
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',d); p.setAttribute('class','pv'+(st?'':' nodata'));
+    p.setAttribute('fill', st ? (st.yes>=st.no?'#00A65A':'#E5484D') : '#D9E5EC');
+    if(th){p.dataset.th=th; pathEls[th]=p;}
+    svg.appendChild(p);
+  });
+
+  /* state: {type:'all'} | {type:'region',key} | {type:'prov',name} + ค้นหา */
+  let state={type:'all'}, q='';
+  const sideBtns={};
+
+  function visibleSet(){
+    let names=Object.keys(P);
+    if(state.type==='region') names=names.filter(n=>P[n].r===state.key);
+    if(q) names=names.filter(n=>n.includes(q));
+    return new Set(names);
+  }
+  function applyMap(){
+    const vis=visibleSet(), filtering=(state.type==='region'||q);
+    Object.entries(pathEls).forEach(([th,p])=>{
+      p.classList.toggle('dim', filtering&&!vis.has(th));
+      p.classList.toggle('sel', state.type==='prov'&&state.name===th);
+    });
+    Object.entries(sideBtns).forEach(([k,b])=>b.classList.toggle('active',(state.type==='region'&&state.key===k)||(state.type==='all'&&k==='ALL')));
+  }
+  function statRows(o,b){
+    return `
+      <div class="dstat y"><div class="dl">เห็นชอบ<span class="cnt num">${fmt(o.yes)}</span><span class="pc">${pcOf(o.yes,b).toFixed(1)}%</span></div><div class="dbar"><i style="width:${pcOf(o.yes,b)}%"></i></div></div>
+      <div class="dstat n"><div class="dl">ไม่เห็นชอบ<span class="cnt num">${fmt(o.no)}</span><span class="pc">${pcOf(o.no,b).toFixed(1)}%</span></div><div class="dbar"><i style="width:${pcOf(o.no,b)}%"></i></div></div>
+      <div class="dstat a"><div class="dl">ไม่แสดงความคิดเห็น<span class="cnt num">${fmt(o.ab)}</span><span class="pc">${pcOf(o.ab,b).toFixed(1)}%</span></div><div class="dbar"><i style="width:${pcOf(o.ab,b)}%"></i></div></div>`;
+  }
+  function renderDetail(){
+    const d=document.getElementById('mapdetail');
+    if(state.type==='prov'){
+      const o=P[state.name], b=tot(o), win=o.yes>=o.no;
+      d.innerHTML=`<div class="crumb">สรุปคะแนน › ${RG[o.r].name} › <b>${state.name}</b></div>
+        <div class="dname">${state.name} <span class="vchip ${win?'y':'n'}">${win?'✓ ส่วนมากเห็นชอบ':'✕ ส่วนมากไม่เห็นชอบ'}</span></div>
+        <div class="dmeta">${RG[o.r].name} · เขตเลือกตั้ง ${o.z} เขต · ผู้ลงคะแนน ${fmt(b)} คน</div>
+        ${statRows(o,b)}
+        <div class="dsrc ${o.real?'real':''}">${o.real?'★ ตัวเลขจริงจากตาราง iLaw (5 อันดับเห็นชอบสูงสุด)':'ตัวเลขประมาณการ — ควบคุมผลรวมรายภาคให้ตรงรายงานจริง'}</div>`;
+    }else if(state.type==='region'){
+      const g=RG[state.key], b=g.yes+g.no+g.ab;
+      d.innerHTML=`<div class="crumb">สรุปคะแนน › <b>${g.name}</b></div>
+        <div class="dname">${g.name} <span class="vchip ${g.yes>=g.no?'y':'n'}">${g.yes>=g.no?'✓ ส่วนมากเห็นชอบ':'✕ ส่วนมากไม่เห็นชอบ'}</span></div>
+        <div class="dmeta">${g.provs.length} จังหวัด · ${g.zones} เขตเลือกตั้ง · ผู้ลงคะแนน ${fmt(b)} คน</div>
+        ${statRows(g,b)}
+        <div class="dxtra">จังหวัดที่เสียงส่วนใหญ่ไม่เห็นชอบ: ${g.provs.filter(n=>P[n].no>P[n].yes).join(', ')||'ไม่มี'}</div>`;
+    }else{
+      const o={yes:T.yes,no:T.no,ab:T.ab}, b=validAll;
+      const reds=Object.keys(P).filter(n=>P[n].no>P[n].yes);
+      d.innerHTML=`<div class="crumb">สรุปคะแนน › <b>ทั่วประเทศ</b></div>
+        <div class="dname">ทั่วประเทศ <span class="vchip y">✓ ส่วนมากเห็นชอบ</span></div>
+        <div class="dmeta">77 จังหวัด · 400 เขต + นอกราชอาณาจักร</div>
+        ${statRows(o,b)}
+        <div class="dxtra">จังหวัดที่เสียงส่วนใหญ่ไม่เห็นชอบมี ${reds.length} จังหวัด (ภาคใต้ทั้งหมด): ${reds.join(', ')}</div>`;
+    }
+  }
+
+  /* ปุ่มภูมิภาคด้านข้าง */
+  const regbtns=document.getElementById('regbtns');
+  function addBtn(key,label,pcv){
+    const b=document.createElement('button'); b.type='button'; b.className='rbtn';
+    b.innerHTML=`${label}<span class="pcv">${pcv}</span>`;
+    b.onclick=()=>{state=(key==='ALL')?{type:'all'}:{type:'region',key};q='';document.getElementById('mapsearch').value='';hideSugg();applyMap();renderDetail();};
+    regbtns.appendChild(b); sideBtns[key]=b;
+  }
+  addBtn('ALL','ทั่วประเทศ',pYes.toFixed(1)+'%');
+  REGORDER.forEach(k=>addBtn(k,RG[k].name.replace('ภาคตะวันออกเฉียงเหนือ','ภาคอีสาน'),pcOf(RG[k].yes,tot(RG[k])).toFixed(1)+'%'));
+
+  /* สัญลักษณ์สี + จำนวนจังหวัด */
+  const redCount=Object.values(P).filter(p=>p.no>p.yes).length;
+  document.getElementById('maplegend').innerHTML=
+    `<span><span class="sw" style="background:#00A65A"></span>ส่วนมากเห็นชอบ<b>${77-redCount} จว.</b></span>
+     <span><span class="sw" style="background:#E5484D"></span>ส่วนมากไม่เห็นชอบ<b>${redCount} จว.</b></span>`;
+
+  /* tooltip + คลิกเลือกบนแผนที่ */
+  svg.addEventListener('mousemove',e=>{
+    const th=e.target.dataset&&e.target.dataset.th;
+    if(!th){tip.classList.remove('on');return;}
+    const o=P[th], b=tot(o);
+    tip.innerHTML=`<div class="tt-prov">${th}</div>
+      <div class="tt-row"><span class="sw" style="background:#00A65A"></span>เห็นชอบ<b>${pcOf(o.yes,b).toFixed(1)}%</b></div>
+      <div class="tt-row"><span class="sw" style="background:#E5484D"></span>ไม่เห็นชอบ<b>${pcOf(o.no,b).toFixed(1)}%</b></div>
+      <div class="tt-row"><span class="sw" style="background:#9AAFC0"></span>ไม่แสดงความคิดเห็น<b>${pcOf(o.ab,b).toFixed(1)}%</b></div>`;
+    const w=tip.offsetWidth||200;
+    tip.style.left=Math.min(e.clientX+16,innerWidth-w-10)+'px';
+    tip.style.top=(e.clientY+14)+'px';
+    tip.classList.add('on');
+  });
+  svg.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+  svg.addEventListener('click',e=>{
+    const th=e.target.dataset&&e.target.dataset.th; if(!th)return;
+    state=(state.type==='prov'&&state.name===th)?{type:'all'}:{type:'prov',name:th};
+    applyMap();renderDetail();
+  });
+
+  /* ค้นหาจังหวัดบนแผนที่ */
+  const inp=document.getElementById('mapsearch'), sg=document.getElementById('sugg');
+  function hideSugg(){sg.classList.remove('on');sg.innerHTML='';}
+  inp.addEventListener('input',()=>{
+    q=inp.value.trim();
+    if(state.type==='prov')state={type:'all'};
+    applyMap();
+    if(!q){hideSugg();renderDetail();return;}
+    const hits=Object.keys(P).filter(n=>n.includes(q)).slice(0,8);
+    sg.innerHTML=hits.map(n=>`<button type="button" data-n="${n}"><span class="sw" style="background:${P[n].yes>=P[n].no?'#00A65A':'#E5484D'}"></span>${n}</button>`).join('');
+    sg.classList.toggle('on',hits.length>0);
+    sg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      q='';inp.value='';hideSugg();
+      state={type:'prov',name:b.dataset.n};applyMap();renderDetail();
+      document.getElementById('refmap').scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+  document.addEventListener('click',e=>{if(!e.target.closest('.mapsearch'))hideSugg();});
+
+  applyMap(); renderDetail();
+
+  /* ---------- ตารางรายจังหวัด ---------- */
+  const allRows=Object.entries(P).map(([n,o])=>({n,o,b:tot(o),y:pcOf(o.yes,tot(o)),no:pcOf(o.no,tot(o))}));
+  const tsel=document.getElementById('tregion');
+  REGORDER.forEach(k=>{const op=document.createElement('option');op.value=k;op.textContent=RG[k].name;tsel.appendChild(op);});
+  const trows=document.getElementById('trows'), tfoot=document.getElementById('tfoot');
+  let firstRender=true;
+  function renderTable(){
+    const qq=document.getElementById('tsearch').value.trim();
+    const rk=tsel.value, sort=document.getElementById('tsort').value;
+    let rows=allRows.filter(r=>(!rk||r.o.r===rk)&&(!qq||r.n.includes(qq)));
+    rows.sort((a,b)=>sort==='no'?b.no-a.no:sort==='votes'?b.b-a.b:sort==='name'?a.n.localeCompare(b.n,'th'):b.y-a.y);
+    trows.innerHTML=rows.map((r,i)=>{
+      const ap=100-r.y-r.no;
+      return `<div class="trow" data-n="${r.n}">
+        <div class="rk">${i+1}</div>
+        <div class="pv-n"><div class="nm">${r.o.real?'<span class="star">★</span>':''}${r.n}</div><small>${RG[r.o.r].name} · ${fmt(r.b)} คน</small></div>
+        <div class="ttrack"><div class="tseg y" data-w="${r.y}"></div><div class="tseg n" data-w="${r.no}"></div><div class="tseg a" data-w="${ap}"></div></div>
+        <div class="nums"><span class="gy">${r.y.toFixed(1)}%</span><span class="rd">${r.no.toFixed(1)}%</span><small>${fmt(r.o.yes)} / ${fmt(r.o.no)}</small></div>
+      </div>`;}).join('');
+    tfoot.textContent=`แสดง ${rows.length} จาก 77 จังหวัด · ★ ตัวเลขจริงจาก iLaw · จังหวัดอื่นเป็นประมาณการให้ผลรวมรายภาคตรงรายงานจริง`;
+    const apply=()=>trows.querySelectorAll('.tseg').forEach(s=>s.style.width=s.dataset.w+'%');
+    if(firstRender){firstRender=false;requestAnimationFrame(()=>requestAnimationFrame(apply));}
+    else apply();
+    trows.querySelectorAll('.trow').forEach(row=>row.onclick=()=>{
+      state={type:'prov',name:row.dataset.n};applyMap();renderDetail();
+      document.querySelector('.maplay').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  }
+  ['tsearch','tregion','tsort'].forEach(id=>document.getElementById(id).addEventListener('input',renderTable));
+  renderTable();
+})();
+</script>
+<script src="../js/ai-chat.js"></script>
+</body>
+</html>

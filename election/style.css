@@ -261,6 +261,11 @@ footer{background:var(--navy);color:#A9BFCD;margin-top:46px}
 @media(max-width:560px){
   .legendbar{display:none}
 }
+/* เมนูล่างมือถือมี 6 รายการแล้ว (เพิ่มประชามติ) — บีบฟอนต์บนจอแคบไม่ให้ล้น */
+@media(max-width:420px){
+  .mobnav a{font-size:.64rem;padding:7px 1px;gap:2px}
+  .mobnav a svg{width:21px;height:21px}
+}
 
 /* ===== candidate photos ===== */
 .cav .cphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;background:inherit}
