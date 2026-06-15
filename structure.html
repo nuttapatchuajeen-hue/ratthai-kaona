@@ -116,7 +116,9 @@ body::before {
 /* ═══ MOBILE RESPONSIVE ═══ */
 @media (max-width: 640px) {
   :root { --header-h: 138px; --sidebar-w: 0px; }
-  #app { grid-template-columns: 0 1fr; }
+  /* z-index:auto บนมือถือ: ไม่งั้น z-index:1 ของ #app ขัง #sidebar(z200) ไว้ในกล่องตัวเอง
+     แล้ว #mob-overlay(z190) ที่อยู่นอก #app เลยทับ sidebar ทั้งแถบ → กดฟิลเตอร์/รายการไม่ได้ */
+  #app { grid-template-columns: 0 1fr; z-index: auto; }
 
   #sidebar {
     position: fixed; top: var(--header-h); left: 0;
@@ -2858,9 +2860,9 @@ function toggleMobSidebar() {
   ov.classList.toggle('active', open);
 }
 
-// Close sidebar when clicking ministry in list (mobile)
+// Close sidebar when clicking ministry in list (mobile) — แต่ไม่ปิดตอนกดฟิลเตอร์ประเภท (.fp) จะได้สลับหลายอันรวด
 document.getElementById('sidebar').addEventListener('click', e => {
-  if (window.innerWidth <= 640 && e.target.closest('.min-item, .fp')) {
+  if (window.innerWidth <= 640 && e.target.closest('.min-item')) {
     setTimeout(() => {
       const sb = document.getElementById('sidebar');
       const ov = document.getElementById('mob-overlay');
