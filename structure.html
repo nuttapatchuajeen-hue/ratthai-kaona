@@ -115,7 +115,7 @@ body::before {
 
 /* ═══ MOBILE RESPONSIVE ═══ */
 @media (max-width: 640px) {
-  :root { --header-h: 100px; --sidebar-w: 0px; }
+  :root { --header-h: 138px; --sidebar-w: 0px; }
   #app { grid-template-columns: 0 1fr; }
 
   #sidebar {
@@ -178,7 +178,14 @@ body::before {
   /* !important needed: this @media block sits before the base rules, which would otherwise win on equal specificity */
   .hd-brand { display: none !important; }      /* drop brand+title (it overlapped); menu button anchors the left */
   .hd-center { flex: 1 !important; gap: 6px; padding: 0 !important; min-width: 0; }
-  .search-wrap { flex: 1 1 auto !important; min-width: 0; max-width: none !important; }
+  /* ค้นหา = แถวเต็มความกว้างของตัวเอง (เดิมแย่งที่กับปุ่มขวาจนแคบเกินไป) */
+  .search-wrap {
+    position: absolute !important;
+    left: 10px; right: 10px; top: 48px;
+    flex: none !important; min-width: 0; max-width: none !important; z-index: 60;
+  }
+  .search-wrap input { font-size: 15px !important; padding: 9px 12px 9px 36px !important; }
+  .search-icon { font-size: 16px; }
   .stat-chip { display: none !important; }
   .hd-right { gap: 6px; align-items: center; }
   #mob-menu-btn { flex-shrink: 0; }

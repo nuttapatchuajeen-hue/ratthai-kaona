@@ -35,27 +35,25 @@
     "--mdai-dim:#9aa3b2;--mdai-border:rgba(255,255,255,.12);--mdai-shadow:0 18px 50px -12px rgba(0,0,0,.6)}",
     // ปุ่มลอยแบบ pill ✨ (ดำ-เงิน ตามแบบที่ผู้ใช้เลือก — คงโทนเดียวกันทั้งโหมดสว่าง/มืด)
     // ลากย้ายได้ (touch-action:none ให้ pointer events คุมการลากบนจอสัมผัส)
-    "@property --mdai-a{syntax:'<angle>';inherits:false;initial-value:0deg}",
     "#mdai-fab{position:fixed;right:18px;bottom:20px;z-index:99998;display:inline-flex;align-items:center;gap:9px;height:48px;",
-    "padding:0 20px 0 16px;border:1px solid rgba(159,180,199,.35);border-radius:999px;cursor:pointer;touch-action:none;",
-    "background:linear-gradient(140deg,#0D1722 0%,#16222F 55%,#0B141F 100%);",
-    "box-shadow:0 12px 30px -10px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);",
-    "transition:box-shadow .18s ease, border-color .18s ease}",
-    "#mdai-fab:hover{border-color:rgba(0,229,255,.5);",
-    "box-shadow:0 16px 36px -12px rgba(0,0,0,.65),0 0 18px rgba(0,229,255,.2),inset 0 1px 0 rgba(255,255,255,.1)}",
+    "padding:0 20px 0 16px;border:0;border-radius:999px;cursor:pointer;touch-action:none;overflow:hidden;isolation:isolate;",
+    "-webkit-tap-highlight-color:transparent;",
+    "background:linear-gradient(140deg,rgba(159,180,199,.42),rgba(159,180,199,.14));",
+    "box-shadow:0 12px 30px -10px rgba(0,0,0,.55),0 0 16px rgba(0,229,255,.14);",
+    "transition:box-shadow .18s ease, transform .12s ease}",
+    "#mdai-fab:hover{box-shadow:0 16px 36px -12px rgba(0,0,0,.65),0 0 22px rgba(0,229,255,.3)}",
     "#mdai-fab:active{transform:scale(.97)}",
-    // แสงฟ้าวิ่งรอบขอบปุ่ม — วงแหวน conic-gradient หมุนด้วย @property (mask เจาะให้เหลือเฉพาะขอบ)
-    "#mdai-fab::before{content:'';position:absolute;inset:-2.5px;border-radius:999px;padding:2.5px;pointer-events:none;",
-    "background:conic-gradient(from var(--mdai-a),transparent 0 62%,rgba(0,229,255,.55) 74%,#9FF1FF 82%,rgba(0,229,255,.55) 90%,transparent 100%);",
-    "-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;",
+    // แสงฟ้าวิ่งรอบขอบปุ่ม — ใบพัด conic หมุนด้วย transform (ลื่นทั้ง iOS/Android ไม่พึ่ง @property ที่ iOS ไม่รีเพนต์)
+    "#mdai-fab::before{content:'';position:absolute;z-index:0;left:50%;top:50%;width:320px;height:320px;pointer-events:none;",
+    "transform:translate(-50%,-50%);",
+    "background:conic-gradient(from 0deg,transparent 0 60%,rgba(0,229,255,.5) 72%,#9FF1FF 82%,rgba(0,229,255,.5) 92%,transparent 100%);",
     "animation:mdai-spin 3s linear infinite}",
-    "#mdai-fab::after{content:'';position:absolute;inset:-7px;border-radius:999px;padding:7px;pointer-events:none;",
-    "background:conic-gradient(from var(--mdai-a),transparent 0 64%,rgba(0,229,255,.85) 80%,transparent 96%);",
-    "-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;",
-    "filter:blur(5px);opacity:.7;animation:mdai-spin 3s linear infinite}",
-    "@keyframes mdai-spin{to{--mdai-a:360deg}}",
-    "#mdai-fab svg{width:19px;height:19px;color:#7FE8FF;filter:drop-shadow(0 0 6px rgba(0,229,255,.55));flex:0 0 auto}",
-    "#mdai-fab b{font-family:'Kanit','IBM Plex Sans Thai',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;white-space:nowrap;",
+    // เนื้อปุ่มสีเข้มทับตรงกลาง เหลือเฉพาะกรอบบาง ๆ ให้แสงวิ่ง (overflow:hidden ที่ตัวปุ่มตัดใบพัดเป็นทรง pill)
+    "#mdai-fab::after{content:'';position:absolute;z-index:1;inset:1.5px;border-radius:999px;pointer-events:none;",
+    "background:linear-gradient(140deg,#0D1722 0%,#16222F 55%,#0B141F 100%)}",
+    "@keyframes mdai-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}",
+    "#mdai-fab svg{position:relative;z-index:2;width:19px;height:19px;color:#7FE8FF;filter:drop-shadow(0 0 6px rgba(0,229,255,.55));flex:0 0 auto}",
+    "#mdai-fab b{position:relative;z-index:2;font-family:'Kanit','IBM Plex Sans Thai',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;white-space:nowrap;",
     "background:linear-gradient(180deg,#F4F8FC 25%,#9FB4C7 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}",
     // หน้าต่างแชต
     "#mdai-panel{position:fixed;right:18px;bottom:88px;z-index:99999;width:380px;max-width:calc(100vw - 36px);height:70vh;max-height:560px;",
@@ -96,7 +94,7 @@
     // ตอน snap ติดขอบให้ลื่น ๆ (ใส่ class ชั่วคราว เพราะตอนลากต้องขยับทันทีไม่หน่วง)
     "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease}",
     "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i{animation:none}",
-    "#mdai-fab::before,#mdai-fab::after{animation:none}}",
+    "#mdai-fab::before{animation:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
@@ -142,7 +140,7 @@
     if (document.querySelector(".md-theme-toggle")) root.classList.add("mdai-avoid");
 
     // ---- ลากย้ายปุ่มได้ (pointer events ครอบทั้งเมาส์/นิ้ว) — ขยับเกิน 7px ถึงนับเป็นลาก ----
-    var drag = { active: false, moved: false, px: 0, py: 0, bx: 0, by: 0 };
+    var drag = { active: false, moved: false, touch: false, px: 0, py: 0, bx: 0, by: 0 };
     function setFabPos(l, t) {
       var r = fab.getBoundingClientRect();
       l = Math.min(Math.max(8, l), window.innerWidth - r.width - 8);
@@ -155,6 +153,7 @@
     fab.addEventListener("pointerdown", function (e) {
       drag.active = true;
       drag.moved = false;
+      drag.touch = e.pointerType === "touch"; // นิ้วสั่นง่ายกว่าเมาส์ → ต้องใช้ระยะกันลากพลาดมากกว่า
       drag.px = e.clientX;
       drag.py = e.clientY;
       var r = fab.getBoundingClientRect();
@@ -165,7 +164,9 @@
     fab.addEventListener("pointermove", function (e) {
       if (!drag.active) return;
       var dx = e.clientX - drag.px, dy = e.clientY - drag.py;
-      if (!drag.moved && dx * dx + dy * dy < 49) return;
+      // ขยับน้อยกว่าระยะกันพลาดยังนับเป็น "แตะ" (touch 12px / เมาส์ 5px) — กันแตะเปิดแล้วโดนตีความเป็นลาก ปุ่มเลยกดไม่ติด
+      var thr = drag.touch ? 144 : 25;
+      if (!drag.moved && dx * dx + dy * dy < thr) return;
       drag.moved = true;
       setFabPos(drag.bx + dx, drag.by + dy);
     });
@@ -184,7 +185,7 @@
       if (drag.active && drag.moved) {
         snapFab(true);
         try {
-          localStorage.setItem("mdai-pos", JSON.stringify({ l: parseFloat(fab.style.left), t: parseFloat(fab.style.top) }));
+          localStorage.setItem("mdai-pos-v2", JSON.stringify({ l: parseFloat(fab.style.left), t: parseFloat(fab.style.top) }));
         } catch (err) {}
         if (opened) placePanel();
       }
@@ -196,7 +197,7 @@
     });
     // คืนตำแหน่งที่เคยลากไว้ (จำข้ามหน้า/ข้ามครั้งด้วย localStorage)
     try {
-      var sp = JSON.parse(localStorage.getItem("mdai-pos") || "null");
+      var sp = JSON.parse(localStorage.getItem("mdai-pos-v2") || "null");
       if (sp && typeof sp.l === "number" && typeof sp.t === "number") {
         setFabPos(sp.l, sp.t);
         snapFab(false); // จอเปลี่ยนขนาดไปจากครั้งก่อนก็ยังติดขอบพอดี
