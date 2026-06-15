@@ -2427,6 +2427,8 @@ function draw() {
   // ── Compute selection-related sets ──
   const ministryMap = {};
   nodes.forEach(n => { if(n.type==='ministry') ministryMap[n.ministryID] = n; });
+  const ministerMap = {};
+  nodes.forEach(n => { if(n.type==='minister') ministerMap[n.ministryID] = n; });
 
   let connectedSet = null; // set of nodes connected to selectedNode
   let pmEdgeNodes = null;  // โหนดที่นายกฯ สั่งตรง → วาดเส้นทองจากศูนย์กลางตรงไปหา
@@ -2448,9 +2450,14 @@ function draw() {
         if(!selectedNode.standalone) connectedSet.add(nodes[0]);
       }
     } else if(selectedNode.type==='ministry') {
-      // all orgs in this ministry (+ center only if not standalone)
+      // all orgs in this ministry (+ center only if not standalone) + its minister
       if(!selectedNode.standalone) connectedSet.add(nodes[0]);
       nodes.forEach(n => { if(n.type==='org'&&n.ministryID===selectedNode.ministryID) connectedSet.add(n); });
+      const _mnM = ministerMap[selectedNode.ministryID]; if(_mnM) connectedSet.add(_mnM);
+    } else if(selectedNode.type==='minister') {
+      // ลูกโซ่ นายกฯ → รัฐมนตรี → กระทรวง
+      connectedSet.add(nodes[0]);
+      const _mnMin = ministryMap[selectedNode.ministryID]; if(_mnMin) connectedSet.add(_mnMin);
     } else if(selectedNode.type==='center') {
       // all ministries
       nodes.forEach(n => { if(n.type==='ministry') connectedSet.add(n); });
@@ -2503,22 +2510,29 @@ function draw() {
       const c = nodes[0];
       const edgeConnected = connectedSet && connectedSet.has(n) && connectedSet.has(c);
       if(connectedSet && !edgeConnected) return;
-      ctx.beginPath();
       // gradient spoke: gold at the centre → ministry colour at the rim
       const _sg = ctx.createLinearGradient(c.x, c.y, n.x, n.y);
       _sg.addColorStop(0, _rgba(_theme.gold||'#c9a84c', edgeConnected ? 0.85 : 0.42));
       _sg.addColorStop(1, (n.color||'#e67e22') + (edgeConnected ? 'ee' : '9a'));
       ctx.strokeStyle = _sg;
       ctx.lineWidth = (edgeConnected ? 2.6 : 1.6) / scale;
-      ctx.moveTo(n.x, n.y);
-      ctx.lineTo(c.x, c.y);
-      ctx.stroke();
-      // directional arrowhead: center → ministry — always on, screen-constant size
-      if (showArrows) {
-        const mhh = (n.r || 8) * 0.75;            // ministry rect half-height
-        const aCol = edgeConnected ? ((n.color||'#e67e22') + 'ee')
-                                   : ((n.color||'#e67e22') + 'bb');
-        drawArrowHead(c.x, c.y, n.x, n.y, aCol, (edgeConnected ? 4.2 : 3.4)/scale, mhh + 3.5/scale);
+      const mhh = (n.r || 8) * 0.75;            // ministry rect half-height
+      const _mnst = ministerMap[n.ministryID]; // ข้อต่อคนบริหาร
+      if(_mnst){
+        // ลูกโซ่: นายกฯ →(ลูกศร) รัฐมนตรี →(ลูกศร) กระทรวง
+        ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(_mnst.x, _mnst.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(_mnst.x, _mnst.y); ctx.lineTo(n.x, n.y); ctx.stroke();
+        if(showArrows){
+          const aw = (edgeConnected ? 3.8 : 3.0)/scale;
+          drawArrowHead(c.x, c.y, _mnst.x, _mnst.y, _rgba(_mnst.color||'#888', edgeConnected?0.95:0.72), aw, _mnst.r + 2.6/scale);
+          drawArrowHead(_mnst.x, _mnst.y, n.x, n.y, (n.color||'#e67e22') + (edgeConnected?'ee':'bb'), aw, mhh + 3.5/scale);
+        }
+      } else {
+        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(c.x, c.y); ctx.stroke();
+        if (showArrows) {
+          const aCol = edgeConnected ? ((n.color||'#e67e22') + 'ee') : ((n.color||'#e67e22') + 'bb');
+          drawArrowHead(c.x, c.y, n.x, n.y, aCol, (edgeConnected ? 4.2 : 3.4)/scale, mhh + 3.5/scale);
+        }
       }
     }
   });
