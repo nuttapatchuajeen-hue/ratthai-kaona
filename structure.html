@@ -638,6 +638,24 @@ canvas:active { cursor: grabbing; }
 }
 .zbtn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
 
+/* ปุ่มเลนส์ "นายกฯ สั่งตรง" — ลอยมุมซ้ายบนของแคนวาส */
+#pm-lens-btn {
+  position: absolute; top: 14px; left: 14px; z-index: 20;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; font-family: 'Sarabun', sans-serif; font-size: 12.5px; font-weight: 600;
+  line-height: 1; color: var(--text-mid); background: var(--bg2);
+  border: 1px solid var(--border2); border-radius: 999px; cursor: pointer;
+  box-shadow: 0 2px 10px -4px rgba(0,0,0,.4); transition: all .15s;
+}
+#pm-lens-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+#pm-lens-btn.active {
+  color: var(--center-txt); background: var(--gold); border-color: var(--gold);
+  box-shadow: 0 4px 16px -4px var(--gold);
+}
+@media (max-width: 640px) {
+  #pm-lens-btn { top: 10px; left: 10px; padding: 6px 11px; font-size: 11px; }
+}
+
 /* Coords bar */
 #coords {
   position: absolute; bottom: 20px; left: 20px;
@@ -1695,6 +1713,10 @@ body {
   <main id="main">
     <canvas id="canvas"></canvas>
 
+    <button id="pm-lens-btn" title="ไฮไลต์เฉพาะหน่วยงานที่นายกรัฐมนตรีสั่งการได้โดยตรง (ขึ้นตรงนายกฯ)">
+      👑 <span>นายกฯ สั่งตรง</span>
+    </button>
+
     <div id="zoom-ctrl">
       <button class="zbtn" id="zin">+</button>
       <button class="zbtn" id="zout">−</button>
@@ -1985,6 +2007,16 @@ let nodes = [], hoveredNode = null, selectedNode = null;
 let connectedSet = null;  // used in draw() for highlighting connections
 let currentView = 'radial';
 let showArrows = true;     // directional arrowheads on relationship edges
+
+// ── เลนส์ "นายกฯ สั่งตรง" : หน่วยงานที่หัวหน้า "ขึ้นตรงต่อนายกรัฐมนตรี" (สั่งได้ไม่ผ่านรัฐมนตรี) ──
+// key = ministryID|org.no  (อ้างอิง พ.ร.บ.ปรับปรุงกระทรวง ทบวง กรม ฯ + หน่วยที่ตั้งเพิ่มภายหลัง)
+const PM_DIRECT = new Set([
+  '01|004','01|005','01|006','01|007','01|008','01|009','01|010','01|011','01|012','01|013','01|014','01|409', // ส่วนราชการในสำนักนายกฯ ที่ขึ้นตรงนายกฯ (สลน./สลค./สขช./สงป./สมช./สคก./ก.พ./สศช./ก.พ.ร./BOI/สทนช./สคทช.)
+  '01|160',                                                                                                     // กอ.รมน. (นายกฯ เป็น ผอ.รมน. โดยตำแหน่ง)
+  '23|152','23|153','23|154','23|155'                                                                           // ส่วนราชการไม่สังกัดกระทรวงที่ขึ้นตรงนายกฯ: พศ./กปร./ราชบัณฑิตยสภา/สตช.
+]);
+function isPmDirect(n){ return !!(n && n.type==='org' && n.data && PM_DIRECT.has(n.ministryID + '|' + n.data.no)); }
+let pmLens = false;
 
 /* Draw a triangular arrowhead pointing toward (tx,ty), coming from (fx,fy).
    The tip is pulled back by `inset` world-units so it sits just outside the
@@ -2386,7 +2418,12 @@ function draw() {
   nodes.forEach(n => { if(n.type==='ministry') ministryMap[n.ministryID] = n; });
 
   let connectedSet = null; // set of nodes connected to selectedNode
-  if(selectedNode) {
+  let pmEdgeNodes = null;  // โหนดที่นายกฯ สั่งตรง → วาดเส้นทองจากศูนย์กลางตรงไปหา
+  if(pmLens && currentView==='radial' && nodes[0]) {
+    connectedSet = new Set([nodes[0]]);
+    pmEdgeNodes = [];
+    nodes.forEach(n => { if(isPmDirect(n) && activeFilters.has(n.catID||'01')) { connectedSet.add(n); pmEdgeNodes.push(n); } });
+  } else if(selectedNode) {
     connectedSet = new Set();
     connectedSet.add(selectedNode);
     if(selectedNode.type==='org') {
@@ -2471,6 +2508,23 @@ function draw() {
       }
     }
   });
+
+  // ── เลนส์ "นายกฯ สั่งตรง": เส้นทองจากศูนย์กลางตรงไปยังหน่วยที่ขึ้นตรงนายกฯ ──
+  if(pmEdgeNodes && pmEdgeNodes.length) {
+    const c = nodes[0];
+    const goldc = _theme.gold || '#c9a84c';
+    pmEdgeNodes.forEach(n => {
+      ctx.beginPath();
+      const _pg = ctx.createLinearGradient(c.x, c.y, n.x, n.y);
+      _pg.addColorStop(0, _rgba(goldc, 0.95));
+      _pg.addColorStop(1, _rgba(goldc, 0.5));
+      ctx.strokeStyle = _pg;
+      ctx.lineWidth = 1.9 / scale;
+      ctx.moveTo(c.x, c.y); ctx.lineTo(n.x, n.y);
+      ctx.stroke();
+      if(showArrows) drawArrowHead(c.x, c.y, n.x, n.y, _rgba(goldc, 0.95), 3.4/scale, n.r + 2.5/scale);
+    });
+  }
 
   // ── Independent cluster bounding rectangle ──
   {
@@ -2593,6 +2647,13 @@ function draw() {
       // Org node — cached gradient sprite + focus ring
       const _sr = r + 1.6;
       ctx.drawImage(orgSprite(n.color), n.x - _sr, n.y - _sr, _sr*2, _sr*2);
+      if(pmLens && isPmDirect(n)) {
+        const goldc = _theme.gold || '#c9a84c';
+        ctx.beginPath(); ctx.arc(n.x, n.y, r+6, 0, Math.PI*2);
+        ctx.fillStyle = _rgba(goldc, 0.16); ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x, n.y, r+3.5, 0, Math.PI*2);
+        ctx.strokeStyle = _rgba(goldc, 0.95); ctx.lineWidth = 2.2; ctx.stroke();
+      }
       if(hover || selected) {
         ctx.beginPath(); ctx.arc(n.x,n.y,r+4,0,Math.PI*2);
         ctx.strokeStyle = _rgba(n.color, 0.5); ctx.lineWidth = 2; ctx.stroke();
@@ -3023,8 +3084,14 @@ searchEl.addEventListener('input',()=>{
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))srEl.classList.remove('show');});
 
 // ── VIEW SWITCH ──
+// เลนส์ "นายกฯ สั่งตรง" ใช้ได้เฉพาะมุมมอง radial → ออกจาก radial เมื่อไหร่ให้ปิดเลนส์+ซ่อนปุ่ม
+function exitPmLens(){
+  pmLens = false;
+  const b = document.getElementById('pm-lens-btn');
+  if(b){ b.classList.remove('active'); b.style.display = 'none'; }
+}
 document.getElementById('btn-view-grid').onclick=()=>{
-  currentView='grid';
+  currentView='grid'; exitPmLens();
   ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='grid'));
   showGridView(true);
   showCorruptView(false);
@@ -3032,15 +3099,25 @@ document.getElementById('btn-view-grid').onclick=()=>{
 document.getElementById('btn-view-radial').onclick=()=>{
   currentView='radial';
   ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='radial'));
+  const b = document.getElementById('pm-lens-btn'); if(b) b.style.display = '';
   showGridView(false);
   showCorruptView(false);
   buildLayout(); fitView(); draw();
 };
 document.getElementById('btn-view-force').onclick=()=>{
-  currentView='force';
+  currentView='force'; exitPmLens();
   ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='force'));
   showGridView(false);
   showCorruptView(true);
+};
+
+// ── ปุ่มเลนส์ "นายกฯ สั่งตรง" ──
+document.getElementById('pm-lens-btn').onclick = function(){
+  if(currentView !== 'radial') document.getElementById('btn-view-radial').onclick();
+  pmLens = !pmLens;
+  this.classList.toggle('active', pmLens);
+  if(pmLens) selectedNode = null;   // เริ่มจากภาพสะอาด
+  draw();
 };
 
 function resetView(){ buildLayout(); fitView(); }
