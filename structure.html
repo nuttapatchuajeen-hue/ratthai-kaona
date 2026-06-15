@@ -2058,7 +2058,7 @@ function resize() {
   canvas.style.width  = W + 'px';
   canvas.style.height = H + 'px';
   buildLayout();
-  fitView();
+  if(pmLens && currentView==='radial') frameLensView(); else fitView();
   draw();
 }
 
@@ -2289,6 +2289,34 @@ function forceStep(dt) {
 function buildLayout() {
   if(currentView==='radial') buildRadialLayout();
   else buildForceLayout();
+  if(pmLens && currentView==='radial') applyPmLensLayout();
+}
+
+// เลนส์ "นายกฯ สั่งตรง": ย้าย 17 หน่วยมาเรียงเป็นวงแหวนแน่นรอบนายกฯ (เลียนแบบ machineryofgovernment.uk)
+function applyPmLensLayout(){
+  if(!nodes.length) return;
+  const c = nodes[0];
+  const pm = nodes.filter(isPmDirect)
+    .sort((a,b)=> a.ministryID===b.ministryID ? (a.data.no<b.data.no?-1:1) : (a.ministryID<b.ministryID?-1:1));
+  const R = 150;
+  pm.forEach((n,i)=>{
+    const a = -Math.PI/2 + 2*Math.PI*i/pm.length;
+    n.x = c.x + R*Math.cos(a);
+    n.y = c.y + R*Math.sin(a);
+    n.angle = a;
+  });
+}
+// จัดกล้องให้กรอบพอดีกับนายกฯ + วงแหวน 17 หน่วย (ไม่ให้ซูมออกไปเล็กจิ๋ว)
+function frameLensView(){
+  const c = nodes[0]; if(!c) return fitView();
+  const sel = [c].concat(nodes.filter(isPmDirect));
+  const legH = (window.innerWidth <= 640) ? 48 : 72;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  sel.forEach(n=>{ const pad=72; minX=Math.min(minX,n.x-pad);maxX=Math.max(maxX,n.x+pad);minY=Math.min(minY,n.y-pad);maxY=Math.max(maxY,n.y+pad); });
+  const gW=maxX-minX, gH=maxY-minY, avH=H-legH;
+  scale = Math.min(W/gW, avH/gH) * 0.92;
+  offsetX = W/2 - (minX+gW/2)*scale;
+  offsetY = H/2 - (minY+gH/2)*scale;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2653,6 +2681,19 @@ function draw() {
         ctx.fillStyle = _rgba(goldc, 0.16); ctx.fill();
         ctx.beginPath(); ctx.arc(n.x, n.y, r+3.5, 0, Math.PI*2);
         ctx.strokeStyle = _rgba(goldc, 0.95); ctx.lineWidth = 2.2; ctx.stroke();
+        // ป้ายชื่อย่อ — วางพ้นโหนดออกด้านนอกตามแนวรัศมีจากนายกฯ
+        const _o = n.data;
+        const _lbl = (_o.abbr && _o.abbr!=='-' && _o.abbr!=='N/A') ? _o.abbr : (_o.name||'').slice(0,10);
+        const _c0 = nodes[0];
+        const _dx = n.x-_c0.x, _dy = n.y-_c0.y, _dd = Math.hypot(_dx,_dy)||1;
+        ctx.font = 'bold ' + Math.min(13, 12/scale) + 'px Sarabun, sans-serif';
+        ctx.textAlign = _dx>=0 ? 'left' : 'right';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = dark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)';
+        ctx.shadowBlur = 4/scale;
+        ctx.fillStyle = dark ? '#ffe9a8' : '#7a5c00';
+        ctx.fillText(_lbl, n.x + _dx/_dd*(r+7), n.y + _dy/_dd*(r+7));
+        ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
       }
       if(hover || selected) {
         ctx.beginPath(); ctx.arc(n.x,n.y,r+4,0,Math.PI*2);
@@ -3089,6 +3130,7 @@ function exitPmLens(){
   pmLens = false;
   const b = document.getElementById('pm-lens-btn');
   if(b){ b.classList.remove('active'); b.style.display = 'none'; }
+  panel.classList.remove('show','visible');
 }
 document.getElementById('btn-view-grid').onclick=()=>{
   currentView='grid'; exitPmLens();
@@ -3102,7 +3144,7 @@ document.getElementById('btn-view-radial').onclick=()=>{
   const b = document.getElementById('pm-lens-btn'); if(b) b.style.display = '';
   showGridView(false);
   showCorruptView(false);
-  buildLayout(); fitView(); draw();
+  buildLayout(); if(pmLens) frameLensView(); else fitView(); draw();
 };
 document.getElementById('btn-view-force').onclick=()=>{
   currentView='force'; exitPmLens();
@@ -3113,12 +3155,52 @@ document.getElementById('btn-view-force').onclick=()=>{
 
 // ── ปุ่มเลนส์ "นายกฯ สั่งตรง" ──
 document.getElementById('pm-lens-btn').onclick = function(){
-  if(currentView !== 'radial') document.getElementById('btn-view-radial').onclick();
   pmLens = !pmLens;
   this.classList.toggle('active', pmLens);
-  if(pmLens) selectedNode = null;   // เริ่มจากภาพสะอาด
+  selectedNode = null;
+  if(pmLens && currentView !== 'radial'){
+    currentView = 'radial';
+    ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='radial'));
+    this.style.display = '';
+    showGridView(false); showCorruptView(false);
+  }
+  buildLayout();                                  // จัด layout (รวม applyPmLensLayout เมื่อเปิดเลนส์)
+  if(pmLens){ frameLensView(); showPmLensInfo(); }
+  else { fitView(); panel.classList.remove('show','visible'); }
   draw();
 };
+
+// แผงสรุปตอนเปิดเลนส์ — รายชื่อ 17 หน่วยที่นายกฯ สั่งตรง (กดชิปไปดูรายหน่วยได้)
+function showPmLensInfo(){
+  document.getElementById('cab-panel').classList.add('hidden');
+  if(window.innerWidth <= 640){ panel.classList.remove('hidden'); panel.classList.add('show','visible'); }
+  else panel.classList.add('show');
+  const gold = _theme.gold || '#c9a84c';
+  const pm = nodes.filter(isPmDirect)
+    .sort((a,b)=> a.ministryID===b.ministryID ? (a.data.no<b.data.no?-1:1) : (a.ministryID<b.ministryID?-1:1));
+  document.getElementById('info-title').textContent = '👑 นายกฯ สั่งการได้โดยตรง';
+  document.getElementById('info-abbr').textContent = '';
+  const b = document.getElementById('info-badge');
+  b.textContent = pm.length + ' หน่วย';
+  b.style.cssText = `background:${_rgba(gold,0.14)};color:${gold};border:1px solid ${_rgba(gold,0.5)};`;
+  document.getElementById('info-cat').textContent = 'ขึ้นตรงต่อนายกรัฐมนตรี';
+  document.getElementById('info-mission').textContent = 'หน่วยงานที่หัวหน้าขึ้นตรงต่อนายกรัฐมนตรี สั่งการได้โดยไม่ผ่านรัฐมนตรี — อ้างอิง พ.ร.บ.ปรับปรุงกระทรวง ทบวง กรมฯ + หน่วยที่ตั้งเพิ่มภายหลัง';
+  document.getElementById('info-exec').textContent = 'นายกรัฐมนตรี';
+  document.getElementById('info-web').querySelector('.info-val').innerHTML = '-';
+  document.getElementById('info-minister-row').style.display = 'none';
+  document.getElementById('info-minister').innerHTML = '';
+  document.getElementById('info-orgs-list').style.display = 'block';
+  document.getElementById('info-orgs-count').textContent = `หน่วยงานที่สั่งตรง (${pm.length})`;
+  const chips = document.getElementById('info-orgs-chips'); chips.innerHTML = '';
+  pm.forEach(n=>{
+    const o = n.data, chip = document.createElement('span'); chip.className = 'org-chip';
+    const col = getColor(o.catID);
+    chip.innerHTML = `<span style="width:5px;height:5px;border-radius:50%;background:${col};display:inline-block"></span>${(o.abbr&&o.abbr!=='-'&&o.abbr!=='N/A')?o.abbr:o.name.substring(0,10)}`;
+    chip.title = o.name;
+    chip.onclick = ()=> showPanel(n);
+    chips.appendChild(chip);
+  });
+}
 
 function resetView(){ buildLayout(); fitView(); }
 function flyToFit(){
