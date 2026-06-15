@@ -25,6 +25,7 @@ mdThemeIcon();
   <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
   <a href="standings.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
   <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
   <a href="referendum.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
 </nav>
 
@@ -58,6 +59,13 @@ mdThemeIcon();
     <div class="panelbox">
       <div class="songs" id="songs"></div>
     </div>
+    <div class="sec-head">
+      <div><span class="kick">Anthems of the Past</span><h1>เพลง<s class="o strike-x">พรรค</s>ในอดีต</h1></div>
+      <p>เพลงของอดีตพรรคการเมืองที่ถูกยุบไปแล้ว — จึงขีดฆ่าคำว่า "พรรค" ไว้เป็นที่ระลึก กดปุ่มเพื่อฟังได้ทันที (เสียงสตรีมจาก YouTube) หรือเปิดมิวสิกวิดีโอบน YouTube</p>
+    </div>
+    <div class="panelbox">
+      <div class="songs" id="pastsongs"></div>
+    </div>
   </div>
 
   <footer>
@@ -79,6 +87,7 @@ mdThemeIcon();
   <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
   <a href="standings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
   <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
   <a href="referendum.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
 </nav>
 
@@ -120,7 +129,6 @@ mdThemeIcon();
   ];
   const wrap=document.getElementById('songs');
   const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  let current=null; // {audio,row}
   SONGS.forEach(sg=>{
     const m=PM[sg.code], col=m.color;
     const row=document.createElement('div');
@@ -149,17 +157,125 @@ mdThemeIcon();
       tCur.textContent=fmt(audio.currentTime);
       if(audio.duration)fill.style.width=(audio.currentTime/audio.duration*100)+'%';
     });
-    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';current=null;});
+    // ตัวหยุดประจำแถว — ล้างการลงทะเบียนเฉพาะเมื่อยังเป็นของตัวเอง (กันลบของแถวอื่นทับ)
+    const myStop=()=>{audio.pause();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
+    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';if(window.__mdStop===myStop)window.__mdStop=null;});
     btn.addEventListener('click',()=>{
       if(audio.paused){
-        if(current&&current.audio!==audio){current.audio.pause();current.row.classList.remove('playing');}
-        audio.play();row.classList.add('playing');current={audio,row};
-      }else{audio.pause();row.classList.remove('playing');}
+        if(window.__mdStop&&window.__mdStop!==myStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (รวมหมวดเพลงพรรคในอดีต)
+        audio.play();row.classList.add('playing');
+        window.__mdStop=myStop;
+      }else{myStop();}
     });
     track.addEventListener('click',e=>{
       if(!audio.duration)return;
       const r=track.getBoundingClientRect();
       audio.currentTime=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*audio.duration;
+    });
+    wrap.appendChild(row);
+  });
+})();
+</script>
+<script>
+/* ===== เพลงพรรคในอดีต — พรรคถูกยุบแล้ว (ขีดฆ่าคำว่า "พรรค") เครื่องเล่นหน้าตาเดียวกับด้านบน
+   ไม่มีไฟล์ mp3 — เสียงสตรีมจาก YouTube ผ่าน IFrame API โดยซ่อนตัวเล่นไว้นอกจอ ===== */
+(function(){
+  const PAST=[
+    {name:'อนาคตใหม่', year:'ยุบ พ.ศ. 2563', color:'#F47920', title:'The Future of Our Country', id:'wAvkRPrsliw'},
+    {name:'ก้าวไกล',   year:'ยุบ พ.ศ. 2567', color:'#FF6A13', title:'ก้าวไกลก้าวหน้า · วงสามัญชน x ส.ส.คำพอง เทพาคำ (Lyric Video)', id:'99KfzrvfIns'},
+    {name:'ไทยรักไทย', year:'ยุบ พ.ศ. 2550', color:'#1B3C8F', title:'บทเพลงแห่งนโยบาย · Song of the Policy', id:'Uurw_CC3VbQ'},
+    {name:'เสรีมนังคศิลา', year:'ยุบ พ.ศ. 2500',   color:'#B08D57', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', id:'qjIDGTX5NUE'},
+    {name:'สหประชาไทย',   year:'สิ้นสุด พ.ศ. 2514', color:'#5E7A99', title:'มาร์ชสหประชาไทย', id:'Qv_SY27Uh5U'},
+    {name:'กิจสังคม',     year:'พ.ศ. 2517–2561',   color:'#1F8A70', title:'หัวหน้าและเลขาธิการพรรคกิจสังคม (2517–2561)', id:'lcxJxVxkMxo'},
+    {name:'ความหวังใหม่', year:'ยุบรวม พ.ศ. 2545', color:'#3949AB', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', id:'NlVsqCH8s_k'},
+    {name:'พลังประชาชน',  year:'ยุบ พ.ศ. 2551',    color:'#C0392B', title:'พลังประชาชน · กี้ อริสมันต์ (MV)', id:'FNur5U-Y710'}
+  ];
+  const wrap=document.getElementById('pastsongs');
+  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+  let apiReady=null;
+  function loadAPI(){
+    if(apiReady)return apiReady;
+    apiReady=new Promise(res=>{
+      if(window.YT&&YT.Player)return res();
+      const prev=window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady=()=>{if(prev)prev();res();};
+      const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
+    });
+    return apiReady;
+  }
+  const dock=document.createElement('div');dock.className='yt-audio-dock';dock.setAttribute('aria-hidden','true');document.body.appendChild(dock);
+  PAST.forEach(p=>{
+    const row=document.createElement('div');
+    row.className='songrow past'; row.style.setProperty('--pc',p.color);
+    row.innerHTML=`
+      <button class="playbtn" type="button" aria-label="เล่นเพลงอดีตพรรค${p.name}">
+        <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+      </button>
+      <div class="sg-meta">
+        <div class="sg-party"><span class="sw" style="background:${p.color}"></span><span><s>พรรค</s>${p.name}</span><small class="gone">· ${p.year}</small></div>
+        <div class="sg-title">${p.title}</div>
+      </div>
+      <div class="sg-mid">
+        <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
+        <div class="sg-time num"><b>0:00</b><span> / –:––</span></div>
+      </div>
+      <a class="ytlink" href="https://youtu.be/${p.id}" target="_blank" rel="noopener" title="เปิดเพลงอดีตพรรค${p.name} บน YouTube">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
+    const btn=row.querySelector('.playbtn'), fill=row.querySelector('.sg-fill'),
+          tCur=row.querySelector('.sg-time b'), tDur=row.querySelector('.sg-time span'),
+          track=row.querySelector('.sg-track');
+    let player=null, ready=false, timer=null, watchdog=null;
+    const tick=()=>{
+      if(!ready)return;
+      const d=player.getDuration()||0, t=player.getCurrentTime()||0;
+      if(d){tDur.textContent=' / '+fmt(d);fill.style.width=(t/d*100)+'%';}
+      tCur.textContent=fmt(t);
+    };
+    const stopTick=()=>{if(timer){clearInterval(timer);timer=null;}};
+    const startTick=()=>{stopTick();timer=setInterval(tick,250);tick();};
+    const clearDog=()=>{if(watchdog){clearTimeout(watchdog);watchdog=null;}};
+    // ตัวหยุดประจำแถว — ล้างการลงทะเบียนเฉพาะเมื่อยังเป็นของตัวเอง (กันลบของแถวอื่นทับ)
+    const myStop=()=>{clearDog();stopTick();if(player&&ready)player.pauseVideo();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
+    btn.addEventListener('click',()=>{
+      if(row.classList.contains('playing')){myStop();return;} // หยุด/ยกเลิกได้แม้ยังโหลดไม่เสร็จ
+      if(window.__mdStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (ทั้งสองหมวด)
+      window.__mdStop=myStop;
+      row.classList.add('playing'); // ติดไฟทันทีระหว่างรอโหลด
+      if(player){if(ready)player.playVideo();return;}
+      loadAPI().then(()=>{
+        if(player)return;
+        if(!row.classList.contains('playing'))return; // ผู้ใช้กดยกเลิกไปแล้วระหว่างรอโหลด
+        const host=document.createElement('div');dock.appendChild(host);
+        player=new YT.Player(host,{videoId:p.id,width:200,height:200,
+          playerVars:{playsinline:1},
+          events:{
+            onReady:e=>{
+              ready=true;
+              if(!row.classList.contains('playing'))return; // ถูกยกเลิก/ถูกแถวอื่นแย่งระหว่างโหลด
+              e.target.playVideo();tick();
+              // มือถือบางเครื่อง (iOS) บล็อกการเล่นที่ไม่ได้เริ่มในจังหวะแตะ — ถ้าไม่เริ่มใน 4 วิ รีเซตให้กดใหม่ได้
+              watchdog=setTimeout(()=>{
+                watchdog=null;
+                const st=player.getPlayerState();
+                if(st!==YT.PlayerState.PLAYING&&st!==YT.PlayerState.BUFFERING)myStop();
+              },4000);
+            },
+            onStateChange:e=>{
+              if(e.data===YT.PlayerState.PLAYING){clearDog();row.classList.add('playing');startTick();}
+              else if(e.data===YT.PlayerState.PAUSED){row.classList.remove('playing');stopTick();tick();}
+              else if(e.data===YT.PlayerState.ENDED){stopTick();fill.style.width='0';tCur.textContent='0:00';row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;}
+            },
+            onError:()=>{myStop();tDur.textContent=' / เล่นไม่ได้ · กดปุ่ม YouTube';}
+          }});
+      });
+    });
+    track.addEventListener('click',e=>{
+      if(!player||!ready)return;
+      const d=player.getDuration(); if(!d)return;
+      const r=track.getBoundingClientRect();
+      player.seekTo(Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*d,true);
+      tick();
     });
     wrap.appendChild(row);
   });

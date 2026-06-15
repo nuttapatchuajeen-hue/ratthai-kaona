@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>คณะกรรมาธิการ สภาผู้แทนราษฎร ชุดที่ 27 · 38 คณะ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== COMMITTEES PAGE ===== */
+.cmt-wrap{max-width:1180px;margin:0 auto;padding:84px 20px 96px}
+@media(max-width:860px){.cmt-wrap{padding:16px 12px 110px}}
+
+.cmt-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.cmt-head .cico{width:48px;height:48px;flex:0 0 auto}
+.cmt-head .bt{font-family:'Kanit';font-weight:600;font-size:1.35rem;line-height:1.08}
+.cmt-head .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.78rem;color:var(--muted);margin-top:2px}
+@media(max-width:860px){.cmt-head .bt{font-size:1.08rem}}
+
+/* stat strip */
+.cmt-stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.cmt-stat{flex:1 1 130px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px}
+.cmt-stat .n{font-family:'Kanit';font-weight:700;font-size:1.6rem;line-height:1;color:var(--ink)}
+.cmt-stat .l{font-size:.76rem;color:var(--muted);margin-top:4px}
+.cmt-stat .n .u{font-size:.85rem;font-weight:500;color:var(--muted)}
+
+/* controls */
+.cmt-tools{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
+.cmt-searchbox{position:relative;margin-bottom:12px}
+.cmt-searchbox input{width:100%;font-family:'Sarabun';font-size:.95rem;padding:12px 14px 12px 42px;border:1px solid var(--line-2);border-radius:13px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
+.cmt-searchbox input:focus{border-color:var(--orange)}
+.cmt-searchbox>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+html[data-theme="dark"] .cmt-searchbox input{background:var(--card)}
+
+.cmt-filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.cmt-filters .grp-label{font-size:.72rem;color:var(--muted);font-weight:600;margin-right:2px}
+.cmt-filters .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 5px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.82rem;color:var(--ink-2);
+  background:var(--paper);border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;cursor:pointer;transition:.13s;-webkit-tap-highlight-color:transparent}
+.chip:hover{border-color:var(--orange-line);background:var(--orange-soft)}
+.chip .sw{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.chip .ct{font-family:'Kanit';font-weight:700;font-size:.74rem;color:var(--muted);background:var(--wash);border-radius:999px;padding:0 7px;line-height:1.5}
+.chip.on{color:#fff;border-color:transparent;background:var(--chip-col,var(--ink))}
+.chip.on .ct{background:rgba(255,255,255,.25);color:#fff}
+.chip.on .sw{box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+html[data-theme="dark"] .chip{background:var(--card)}
+html[data-theme="dark"] .chip.on{color:#06101a}
+html[data-theme="dark"] .chip.on .ct{background:rgba(0,0,0,.18);color:#06101a}
+
+/* grid */
+.cmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(335px,1fr));gap:14px}
+@media(max-width:560px){.cmt-grid{grid-template-columns:1fr}}
+.cmt-card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow);padding:16px 16px 14px;overflow:hidden;transition:transform .14s,border-color .14s,box-shadow .14s}
+.cmt-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--pc,var(--orange))}
+.cmt-card:hover{transform:translateY(-2px);border-color:var(--orange-line);box-shadow:var(--shadow-lg)}
+.cmt-card .toprow{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.cmt-card .cnum{font-family:'Kanit';font-weight:700;font-size:.86rem;color:var(--muted);flex:0 0 auto;
+  min-width:30px;height:24px;display:grid;place-items:center;background:var(--wash);border-radius:8px;padding:0 6px}
+.cmt-card .cname{font-family:'Kanit';font-weight:600;font-size:1rem;line-height:1.32;flex:1 1 auto}
+.cmt-card .tbadge{flex:0 0 auto;font-family:'Kanit';font-weight:600;font-size:.66rem;letter-spacing:.02em;
+  padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted);background:var(--paper);white-space:nowrap;align-self:flex-start}
+.cmt-card .tbadge.wisaman{color:#8a5a00;border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.12)}
+html[data-theme="dark"] .cmt-card .tbadge.wisaman{color:#e7c977}
+
+.cmt-card .chair{display:flex;align-items:center;gap:11px;margin-top:auto;padding-top:12px;border-top:1px dashed var(--line)}
+.cmt-card .av{width:38px;height:38px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;
+  font-family:'Kanit';font-weight:600;font-size:1.05rem;background:var(--pc,var(--orange));box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--line-2)}
+.cmt-card .chmeta{min-width:0;flex:1 1 auto}
+.cmt-card .chmeta .role{font-size:.68rem;color:var(--muted)}
+.cmt-card .chmeta .chname{font-family:'Kanit';font-weight:600;font-size:.95rem;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmt-card .pbadge{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:.7rem;color:var(--ink-2)}
+.cmt-card .pbadge .sw{width:9px;height:9px;border-radius:50%;background:var(--pc)}
+
+.cmt-count{font-size:.8rem;color:var(--muted);margin:0 2px 12px}
+.cmt-count b{font-family:'Kanit';color:var(--ink)}
+.cmt-empty{text-align:center;color:var(--muted);padding:48px 16px;font-size:.95rem}
+
+.cmt-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:var(--muted);line-height:1.7}
+.cmt-foot a{color:var(--orange-deep);text-decoration:underline}
+.cmt-back{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.86rem;color:var(--orange-deep);
+  background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:10px;padding:8px 14px;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<script>
+function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
+function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
+mdThemeIcon();
+</script>
+
+<!-- desktop nav -->
+<nav class="navpill">
+  <a href="../hub/index.html" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="กลับหน้าหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
+  <a href="referendum.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+</nav>
+
+<div class="cmt-wrap">
+
+  <a class="cmt-back" href="parliament.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>กลับหน้ารัฐสภา</a>
+
+  <div class="cmt-head">
+    <svg class="cico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect x="6" y="40" width="36" height="4" rx="1.5" fill="#C9A84C"/>
+      <path d="M8 40V22h32v18" stroke="var(--orange-deep)" stroke-width="2.4" fill="none"/>
+      <path d="M24 6 6 18h36L24 6Z" fill="var(--orange-soft)" stroke="var(--orange-deep)" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="24" cy="14" r="2.2" fill="#C9A84C"/>
+      <path d="M14 22v18M24 22v18M34 22v18" stroke="var(--orange-deep)" stroke-width="2.4"/>
+    </svg>
+    <div class="bt">คณะกรรมาธิการ สภาผู้แทนราษฎร
+      <small>ชุดที่ 27 · คณะกรรมาธิการสามัญและวิสามัญ พร้อมประธานและสังกัดพรรค</small>
+    </div>
+  </div>
+
+  <div class="cmt-stats" id="cmtStats"></div>
+
+  <div class="cmt-tools">
+    <div class="cmt-searchbox">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="cmtSearch" placeholder="ค้นหาชื่อคณะกรรมาธิการ หรือชื่อประธาน…" autocomplete="off">
+    </div>
+    <div class="cmt-filters" id="cmtTypeFilters"></div>
+    <div class="cmt-filters" id="cmtPartyFilters" style="margin-top:10px"></div>
+  </div>
+
+  <div class="cmt-count" id="cmtCount"></div>
+  <div class="cmt-grid" id="cmtGrid"></div>
+
+  <div class="cmt-foot">
+    ที่มา: รายชื่อคณะกรรมาธิการสามัญและวิสามัญ สภาผู้แทนราษฎร ชุดที่ 27 ·
+    ดูข้อมูลและผลงานของแต่ละคณะเพิ่มเติมที่ <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a><br>
+    สังกัดพรรคหมายถึงพรรคต้นสังกัดของ <b>ประธานคณะกรรมาธิการ</b> เท่านั้น — สมาชิกในแต่ละคณะมาจากหลายพรรคตามสัดส่วนในสภา ·
+    คณะกรรมาธิการวิสามัญที่ระบุ "คณะรัฐมนตรี" หมายถึงคณะที่ตั้งตามข้อเสนอของ ครม.
+  </div>
+</div>
+
+<!-- mobile nav -->
+<nav class="mobnav" aria-label="เมนูหลัก">
+  <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีฯ</a>
+  <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
+  <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
+  <a href="referendum.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+</nav>
+
+<script>
+/* ===== ข้อมูลคณะกรรมาธิการ สภาผู้แทนราษฎร ชุดที่ 27 (สามัญ 35 + วิสามัญ 3) ===== */
+const PARTY_COL = {
+  'ประชาชน':'#FF6A13', 'เพื่อไทย':'#ED1C24', 'ภูมิใจไทย':'#0E2F6B',
+  'กล้าธรรม':'#14A07A', 'ประชาธิปัตย์':'#27AAE1', 'ไทรวมพลัง':'#8E44AD',
+  'คณะรัฐมนตรี':'#C9A84C'
+};
+const COMMITTEES = [
+  {t:'สามัญ', n:'คณะกรรมาธิการการกฎหมาย การยุติธรรมและสิทธิมนุษยชน', c:'รังสิมันต์ โรม', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการสภาผู้แทนราษฎร', c:'บุญยิ่ง นิติกาญจนา', p:'กล้าธรรม'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการศาล องค์กรอิสระ องค์กรอัยการ รัฐวิสาหกิจ องค์การมหาชน และกองทุน', c:'วาโย อัศวรุ่งเรือง', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกีฬา', c:'จักพันธ์ ปิยพรไพบูลย์', p:'กล้าธรรม'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการเด็ก เยาวชน สตรี ผู้สูงอายุ ผู้พิการ กลุ่มชาติพันธุ์ และผู้มีความหลากหลายทางเพศ', c:'โอชิษฐ์ เกียรติก้องชูชัย', p:'เพื่อไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการแก้ไขปัญหาหนี้สินแห่งชาติ ความยากจนและลดความเหลื่อมล้ำ', c:'สฤษดิ์ บุตรเนียร', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการเกษตรและสหกรณ์', c:'นพพล เหลืองทองนารา', p:'เพื่อไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการคมนาคม', c:'ศุภณัฐ มีนชัยนันท์', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการความมั่นคงแห่งรัฐ กิจการชายแดนไทย ยุทธศาสตร์ชาติและการปฏิรูปประเทศ', c:'มณเฑียร สงฆ์ประชา', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการคุ้มครองผู้บริโภค', c:'อรรถพล ไตรศรี', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการเงิน การคลัง การธนาคาร สถาบันการเงินและตลาดการเงิน', c:'จุติ ไกรฤกษ์', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการต่างประเทศ', c:'จิตรวรรณ หวังศุภกิจโกศล', p:'ไทรวมพลัง'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการการตำรวจ', c:'วัชรพงศ์ คูวิจิตรสุวรรณ', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการศึกษาการจัดทำและติดตามการบริหารงบประมาณ', c:'รักชนก ศรีนอก', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการทหาร', c:'เอกราช อุดมอำนวย', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการท่องเที่ยว', c:'พันโท สินธพ แก้วพิจิตร', p:'กล้าธรรม'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการที่ดิน ทรัพยากรธรรมชาติและสิ่งแวดล้อม', c:'กุลวลี นพอมรบดี', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการปกครอง', c:'ธนยศ ทิมสุวรรณ', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการกระจายอำนาจ การปกครองส่วนท้องถิ่น และการบริหารราชการรูปแบบพิเศษ', c:'คงกฤษ ฉัตรมาลีรัตน์', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันปราบปรามการฟอกเงินและยาเสพติด', c:'พิทักษ์เดช เดชเดโช', p:'ประชาธิปัตย์'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและบรรเทาผลกระทบจากภัยธรรมชาติและสาธารณภัย', c:'ภัทรพงษ์ ลีลาภัทร์', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและปราบปรามการทุจริตประพฤติมิชอบ', c:'อาสพลธ์ สรรณ์ไตรภพ', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพลังงาน', c:'สุพล จุลใส', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาการเมือง การสื่อสารมวลชน และการมีส่วนร่วมของประชาชน', c:'ภคมน หนุนอนันต์', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาเศรษฐกิจ', c:'วีระยุทธ กาญจน์ชูฉัตร', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพาณิชย์และทรัพย์สินทางปัญญา', c:'สัมฤทธิ์ แทนทรัพย์', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการแรงงาน', c:'วีระพล จิตสัมฤทธิ์', p:'เพื่อไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการอุดมศึกษา วิทยาศาสตร์ เทคโนโลยี วิจัยและนวัตกรรม', c:'ฐิติมา ฉายแสง', p:'เพื่อไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการบริหารจัดการทรัพยากรน้ำ', c:'ภาคภูมิ บูลย์ประมุข', p:'กล้าธรรม'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการศาสนา ศิลปะและวัฒนธรรม', c:'ธิวัลรัตน์ อังกินันทน์', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการศึกษา', c:'จิรวัฒน์ ศิริพานิชย์', p:'เพื่อไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสวัสดิการสังคม', c:'รัชนก สุขประเสริฐ', p:'ประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสาธารณสุข', c:'สกลธี ภัททิยกุล', p:'ประชาธิปัตย์'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสื่อสาร โทรคมนาคม และดิจิทัลเพื่อเศรษฐกิจและสังคม', c:'อลงกต มณีกาศ', p:'ภูมิใจไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการอุตสาหกรรม', c:'ศุภโชค ศรีสุขจร', p:'ภูมิใจไทย'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษามาตรการและแนวทางการบริหารจัดการแก้ไขปัญหาไฟป่า และติดตามปัญหาวิกฤตฝุ่นละอองขนาดเล็ก (PM 2.5)', c:'พิมพ์ภัทรา วิชัยกุล', p:'ภูมิใจไทย'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษาและติดตามการปฏิรูปกฎหมายและการยกเลิกกฎระเบียบที่ล้าสมัย', c:'สมคิด เลิศไพฑูรย์', p:'คณะรัฐมนตรี'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญติดตามและตรวจสอบการใช้จ่ายเงินกู้ตามพระราชกำหนดให้อำนาจกระทรวงการคลังกู้เงินเพื่อแก้ไขปัญหาผลกระทบจากสถานการณ์วิกฤตด้านพลังงานและสร้างการเปลี่ยนผ่านด้านพลังงานของประเทศ พ.ศ. 2569', c:'ศุภชัย ใจสมุทร', p:'คณะรัฐมนตรี'}
+];
+
+const colOf = p => PARTY_COL[p] || '#5E7488';
+const initialOf = name => { const parts = name.trim().split(/\s+/); const first = parts.length>1 ? parts[1] : parts[0]; return (first||'?').charAt(0); };
+const cleanName = n => n.replace(/^คณะกรรมาธิการ/, '').trim();
+
+let state = { q:'', type:'all', party:'all' };
+
+/* ---- stat strip ---- */
+function renderStats(){
+  const total = COMMITTEES.length;
+  const saman = COMMITTEES.filter(c=>c.t==='สามัญ').length;
+  const wisaman = COMMITTEES.filter(c=>c.t==='วิสามัญ').length;
+  const parties = new Set(COMMITTEES.map(c=>c.p)); parties.delete('คณะรัฐมนตรี');
+  const stats = [
+    {n:total, l:'คณะกรรมาธิการทั้งหมด'},
+    {n:saman, l:'คณะกรรมาธิการสามัญ'},
+    {n:wisaman, l:'คณะกรรมาธิการวิสามัญ'},
+    {n:parties.size, l:'พรรคของประธาน', u:'พรรค'}
+  ];
+  document.getElementById('cmtStats').innerHTML = stats.map(s=>
+    `<div class="cmt-stat"><div class="n">${s.n}${s.u?` <span class="u">${s.u}</span>`:''}</div><div class="l">${s.l}</div></div>`
+  ).join('');
+}
+
+/* ---- filter chips ---- */
+function renderFilters(){
+  // type
+  const types = [['all','ทั้งหมด'],['สามัญ','สามัญ'],['วิสามัญ','วิสามัญ']];
+  document.getElementById('cmtTypeFilters').innerHTML =
+    `<span class="grp-label">ประเภท</span>` +
+    types.map(([v,label])=>{
+      const cnt = v==='all' ? COMMITTEES.length : COMMITTEES.filter(c=>c.t===v).length;
+      return `<button class="chip${state.type===v?' on':''}" data-type="${v}">${label}<span class="ct">${cnt}</span></button>`;
+    }).join('');
+
+  // party — เรียงตามจำนวนคณะมาก→น้อย
+  const counts = {};
+  COMMITTEES.forEach(c=> counts[c.p]=(counts[c.p]||0)+1);
+  const parties = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  document.getElementById('cmtPartyFilters').innerHTML =
+    `<span class="grp-label">พรรคของประธาน</span>` +
+    `<button class="chip${state.party==='all'?' on':''}" data-party="all">ทุกพรรค<span class="ct">${COMMITTEES.length}</span></button>` +
+    `<span class="sep"></span>` +
+    parties.map(p=>{
+      const col = colOf(p);
+      const on = state.party===p;
+      return `<button class="chip${on?' on':''}" data-party="${p}" style="${on?`--chip-col:${col};`:''}">`+
+             `<span class="sw" style="background:${col}"></span>${p}<span class="ct">${counts[p]}</span></button>`;
+    }).join('');
+
+  document.querySelectorAll('[data-type]').forEach(b=> b.onclick=()=>{ state.type=b.dataset.type; renderFilters(); renderGrid(); });
+  document.querySelectorAll('[data-party]').forEach(b=> b.onclick=()=>{ state.party=b.dataset.party; renderFilters(); renderGrid(); });
+}
+
+/* ---- card grid ---- */
+function renderGrid(){
+  const q = state.q.trim().toLowerCase();
+  const list = COMMITTEES.filter(c=>{
+    if(state.type!=='all' && c.t!==state.type) return false;
+    if(state.party!=='all' && c.p!==state.party) return false;
+    if(q && !(c.n.toLowerCase().includes(q) || c.c.toLowerCase().includes(q) || c.p.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  document.getElementById('cmtCount').innerHTML =
+    list.length===COMMITTEES.length
+      ? `แสดงทั้งหมด <b>${list.length}</b> คณะ`
+      : `พบ <b>${list.length}</b> คณะ จากทั้งหมด ${COMMITTEES.length} คณะ`;
+
+  const grid = document.getElementById('cmtGrid');
+  if(!list.length){ grid.innerHTML = `<div class="cmt-empty">ไม่พบคณะกรรมาธิการที่ตรงกับการค้นหา</div>`; return; }
+
+  grid.innerHTML = list.map(c=>{
+    const col = colOf(c.p);
+    const isW = c.t==='วิสามัญ';
+    const idx = COMMITTEES.indexOf(c)+1;
+    return `<article class="cmt-card" style="--pc:${col}">
+      <div class="toprow">
+        <span class="cnum">${idx}</span>
+        <h3 class="cname" title="${c.n}">${cleanName(c.n)}</h3>
+        <span class="tbadge${isW?' wisaman':''}">${c.t}</span>
+      </div>
+      <div class="chair">
+        <span class="av">${initialOf(c.c)}</span>
+        <div class="chmeta">
+          <div class="role">ประธานคณะกรรมาธิการ</div>
+          <div class="chname" title="${c.c}">${c.c}</div>
+          <span class="pbadge"><span class="sw"></span>${c.p}</span>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+document.getElementById('cmtSearch').addEventListener('input', e=>{ state.q=e.target.value; renderGrid(); });
+renderStats(); renderFilters(); renderGrid();
+</script>
+
+<script src="../js/ai-chat.js"></script>
+</body>
+</html>

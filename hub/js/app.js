@@ -445,6 +445,21 @@ function initNavScroll() {
     });
   });
 
+  // ปุ่ม "สำรวจเลย" บน hero → เริ่มเลื่อนสำรวจเนื้อหา (ไปยัง section แรก: โครงสร้างพื้นฐาน)
+  const exploreBtn = document.querySelector('.hero-btn-primary');
+  if (exploreBtn) {
+    exploreBtn.addEventListener('click', e => {
+      e.preventDefault();
+      // เลื่อนไปยัง "กึ่งกลาง" ของ section แรก เพื่อให้เนื้อหาโผล่ชัด (ไม่ใช่จุดเริ่มเข้าเฟรม)
+      const first = scrollCont.querySelector('.scroll-section');
+      const p = first
+        ? (parseFloat(first.dataset.enter) + parseFloat(first.dataset.leave)) / 200
+        : NAV_TARGETS.infrastructure;
+      const scrollable = scrollCont.offsetHeight - window.innerHeight;
+      lenis.scrollTo(scrollCont.offsetTop + p * scrollable, { duration: 1.6 });
+    });
+  }
+
   // ปิดการไฮไลต์แท็บตามการเลื่อน — ไม่ให้สี/เส้นใต้ "วิ่งตาม" scroll
 }
 

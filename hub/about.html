@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
@@ -476,6 +476,43 @@
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .reveal.in { opacity: 1; transform: none; }
 
+  /* ── TOOLS LOGO MARQUEE ── */
+  .tools-block .block-head { margin-bottom: 2.6rem; }
+  .lm-cap {
+    font-family: var(--font-mono); font-size: 0.62rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 1rem;
+  }
+  .lm-cap .tagk { color: var(--accent-cyan); }
+  .lm-band + .lm-band { margin-top: 2.8rem; }
+  .lm-rail {
+    overflow: hidden; padding: 0.4rem 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .lm-track { display: flex; width: max-content; animation: marq var(--lm-dur, 34s) linear infinite; }
+  .lm-rail.rev .lm-track { animation-direction: reverse; }
+  .lm-rail:hover .lm-track { animation-play-state: paused; }
+  .lm-group { display: flex; align-items: stretch; gap: 1.1rem; padding-right: 1.1rem; }
+  .lm-chip {
+    display: flex; align-items: center; gap: 0.8rem;
+    height: 66px; padding: 0 1.5rem; flex-shrink: 0;
+    background: #EAF2F7; border-radius: 14px;
+    box-shadow: 0 0 0 1px var(--line), 0 12px 28px rgba(0,0,0,0.35);
+  }
+  .lm-chip img { height: 38px; width: auto; max-width: 170px; object-fit: contain; }
+  .lm-chip .ic { height: 28px; }
+  .lm-name {
+    font-family: var(--font-sub); font-weight: 700; font-size: 0.95rem;
+    color: #15242E; letter-spacing: 0.02em; white-space: nowrap;
+  }
+  @media (max-width: 768px) {
+    .lm-chip { height: 54px; padding: 0 1.1rem; gap: 0.6rem; border-radius: 11px; }
+    .lm-chip img { height: 30px; max-width: 130px; }
+    .lm-chip .ic { height: 22px; }
+    .lm-name { font-size: 0.83rem; }
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .story-grid, .creator-grid { grid-template-columns: 1fr; gap: 2.4rem; }
@@ -512,6 +549,7 @@
         <li><a href="../cabinet/index.html" class="nav-tab">ชุดคณะรัฐมนตรี</a></li>
         <li><a href="../stats/index.html" class="nav-tab">ข้อมูลสถิติ</a></li>
         <li><a href="about.html" class="nav-tab" aria-current="page">เกี่ยวกับเรา</a></li>
+        <li><a href="survey.html" class="nav-tab">แบบประเมิน</a></li>
       </ul>
     </nav>
   </header>
@@ -686,11 +724,80 @@
       </div>
     </section>
 
+    <!-- Tools marquee -->
+    <section class="block tools-block" id="tools" style="padding-top:0;">
+      <div class="wrap">
+        <div class="block-head reveal">
+          <span class="section-label">014 / เบื้องหลังการสร้าง</span>
+          <h2 class="h-display">เครื่องมือที่ใช้สร้างเว็บนี้</h2>
+          <p class="lead">AI และเทคโนโลยีทั้งหมดที่อยู่เบื้องหลัง “รัฐไทยก้าวหน้า” — ตั้งแต่ช่วยคิด ช่วยเขียนโค้ด ไปจนถึงเผยแพร่ขึ้นออนไลน์</p>
+        </div>
+
+        <div class="lm-band reveal">
+          <p class="lm-cap"><span class="tagk">AI</span> // เครื่องมือ AI ทั้งหมดที่ใช้ทำเว็บและโครงสร้าง</p>
+          <div class="lm-rail" style="--lm-dur:30s;">
+            <div class="lm-track">
+              <div class="lm-group">
+                <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="Claude AI" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="" /><span class="lm-name">OpenAI Codex</span></div>
+                <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="Gemini + Nano Banana" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="NotebookLM" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="" /><span class="lm-name">Manus</span></div>
+                <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="Canva" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="" /><span class="lm-name">ThaiLLM</span></div>
+              </div>
+              <div class="lm-group" aria-hidden="true">
+                <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="" /><span class="lm-name">OpenAI Codex</span></div>
+                <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="" /><span class="lm-name">Manus</span></div>
+                <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="" /></div>
+                <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="" /><span class="lm-name">ThaiLLM</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lm-band reveal">
+          <p class="lm-cap"><span class="tagk">DEV</span> // เทคโนโลยีที่ใช้ในการพัฒนาเว็บ</p>
+          <div class="lm-rail rev" style="--lm-dur:38s;">
+            <div class="lm-track">
+              <div class="lm-group">
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-githubpages.svg" alt="" /><span class="lm-name">GitHub Pages</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
+              </div>
+              <div class="lm-group" aria-hidden="true">
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-githubpages.svg" alt="" /><span class="lm-name">GitHub Pages</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
+                <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section class="block" id="contact" style="padding-top:0;">
       <div class="wrap">
         <div class="block-head reveal">
-          <span class="section-label">014 / ช่องทางการติดต่อ</span>
+          <span class="section-label">015 / ช่องทางการติดต่อ</span>
           <h2 class="h-display">ติดต่อเรา</h2>
           <p class="lead">มีคำถาม ข้อเสนอแนะ หรืออยากพูดคุย — ทักมาได้เลย</p>
         </div>

@@ -1487,6 +1487,69 @@ body {
   .grid-card:hover, .corrupt-card:hover,
   .min-item:hover, .view-btn:hover, .fp:hover,
   .action-btn:hover, .zbtn:hover, #btn-cabinet:hover { transform: none !important; }
+  #sitenav-menu.show { animation: none !important; }
+}
+
+/* ═══════════════════════════════════════
+   SITE NAV — เมนูไปหน้าอื่นของ รัฐไทยก้าวหน้า
+═══════════════════════════════════════ */
+#btn-sitenav {
+  padding: 4px 11px;
+  border-radius: 5px; border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text-mid); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'Sarabun', sans-serif;
+}
+#btn-sitenav:hover, #btn-sitenav.active {
+  color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow);
+}
+#sitenav-menu {
+  position: fixed;
+  top: calc(var(--header-h) + 8px); right: 12px;
+  min-width: 235px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 38px rgba(0,0,0,.45), 0 0 0 1px var(--gold-glow);
+  z-index: 400;
+  padding: 6px;
+  display: none;
+}
+#sitenav-menu.show { display: block; animation: navDrop .18s ease; }
+@keyframes navDrop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+.sitenav-label {
+  padding: 7px 12px 5px;
+  font-size: 9px; font-weight: 600;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.1px;
+  font-family: 'IBM Plex Mono', monospace;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 5px;
+}
+.sitenav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 6px;
+  color: var(--text-mid); text-decoration: none;
+  font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 500;
+  transition: background .14s, color .14s;
+}
+.sitenav-item:hover { background: var(--gold-glow); color: var(--gold); }
+.sitenav-item.current { color: var(--gold); background: var(--gold-glow); cursor: default; }
+.sitenav-ico { width: 20px; text-align: center; flex-shrink: 0; }
+.sitenav-now {
+  margin-left: auto;
+  font-size: 8.5px; font-family: 'IBM Plex Mono', monospace;
+  color: var(--gold); border: 1px solid var(--gold-dim);
+  border-radius: 20px; padding: 2px 7px; letter-spacing: .5px;
+}
+@media (max-width: 640px) {
+  #btn-sitenav { font-size: 14px; padding: 4px 9px; min-height: 32px; flex-shrink: 0; }
+  #btn-sitenav .snv-txt { display: none; } /* จอแคบ: เหลือไอคอน ▤ อย่างเดียว กันเบียดช่องค้นหา */
+  #sitenav-menu { left: 8px; right: 8px; min-width: 0; }
 }
 </style>
 </head>
@@ -1550,8 +1613,40 @@ body {
 
       <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()">👑 ครม.</button>
       <button class="action-btn" id="btn-reset" title="รีเซตมุมมอง">⟳</button>
+      <button id="btn-sitenav" title="เมนูหน้าอื่นๆ ของ รัฐไทยก้าวหน้า" aria-expanded="false" aria-controls="sitenav-menu" onclick="toggleSiteNav(event)">▤<span class="snv-txt"> เมนู</span></button>
     </div>
   </header>
+
+  <!-- ══════════════ SITE NAV DROPDOWN ══════════════ -->
+  <nav id="sitenav-menu" aria-label="เมนูหลัก รัฐไทยก้าวหน้า">
+    <div class="sitenav-label">รัฐไทยก้าวหน้า · เมนูหลัก</div>
+    <a class="sitenav-item" href="hub/index.html"><span class="sitenav-ico">🏠</span>หน้าแรก</a>
+    <a class="sitenav-item current" href="structure.html" aria-current="page" onclick="return false;"><span class="sitenav-ico">🗺️</span>แผนผังโครงสร้าง<span class="sitenav-now">หน้านี้</span></a>
+    <a class="sitenav-item" href="election/index.html"><span class="sitenav-ico">🗳️</span>ส.ส. ผู้แทนราษฎร</a>
+    <a class="sitenav-item" href="cabinet/index.html"><span class="sitenav-ico">👑</span>ชุดคณะรัฐมนตรี</a>
+    <a class="sitenav-item" href="stats/index.html"><span class="sitenav-ico">📊</span>ข้อมูลสถิติ</a>
+    <a class="sitenav-item" href="hub/about.html"><span class="sitenav-ico">👤</span>เกี่ยวกับเรา</a>
+    <a class="sitenav-item" href="hub/survey.html"><span class="sitenav-ico">📋</span>แบบประเมิน</a>
+  </nav>
+  <script>
+  (function(){
+    const btn  = document.getElementById('btn-sitenav');
+    const menu = document.getElementById('sitenav-menu');
+    function closeNav(){ menu.classList.remove('show'); btn.classList.remove('active'); btn.setAttribute('aria-expanded','false'); }
+    window.toggleSiteNav = function(e){
+      if (e) e.stopPropagation();
+      const open = menu.classList.toggle('show');
+      btn.classList.toggle('active', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    document.addEventListener('click', function(e){
+      if (menu.classList.contains('show') && !menu.contains(e.target) && !btn.contains(e.target)) closeNav();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && menu.classList.contains('show')) closeNav();
+    });
+  })();
+  </script>
 
   <!-- ══════════════ SIDEBAR ══════════════ -->
   <aside id="sidebar">

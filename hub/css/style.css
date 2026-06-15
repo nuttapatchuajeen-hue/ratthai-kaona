@@ -984,15 +984,44 @@ body::before {
 @media (max-width: 768px) {
   #scroll-container { height: 600vh; }
 
+  /* ── มือถือ: ตรึง section ไว้กลางจอ (ไม่ให้ "ลอย" ตามตำแหน่ง absolute
+        ที่ JS คำนวณไว้สำหรับเดสก์ท็อป ซึ่งทำให้เนื้อหาเลื่อนไปทับ header
+        บ้าง/ตรงบ้าง) — โชว์/ซ่อนด้วย opacity ตามเดิม จึงนิ่งทุกครั้ง ── */
+  .scroll-section {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0; right: 0;
+    bottom: auto !important;
+    height: 100vh;
+    height: 100dvh;
+    transform: none !important;
+    align-items: center;
+  }
+
   .align-left, .align-right {
-    padding: 3rem 6vw;
+    /* เผื่อพื้นที่บน 5.5rem ให้พ้น header (4rem) เสมอ */
+    padding: 5.5rem 6vw 3rem;
   }
 
   .align-left .section-inner,
   .align-right .section-inner {
     max-width: 100%;
-    background: rgba(2,5,8,0.86);
-    padding: 2rem;
+    width: 100%;
+    background: transparent;        /* เอากล่องทึบออก → ใช้ "แสงนวล" แบบเดสก์ท็อปแทน */
+    padding: 1.5rem 1.4rem;
+    border-radius: 14px;
+  }
+  /* มือถือ: สครีมนวลเหมือนในคอม แต่ดึงมาไว้กลาง + ขยายให้คลุมข้อความเต็มความกว้าง
+     (เดสก์ท็อปวางเยื้อง 28%/72% เพราะข้อความชิดข้าง) — center opacity เข้มพอให้
+     อ่านออกชัดทั้งบนเฟรมพื้นหลังสว่างและมืด ขณะที่ขอบฟุ้งหายไปไม่เป็นกล่องแข็ง */
+  .align-left .section-inner::before,
+  .align-right .section-inner::before {
+    inset: -0.8rem -1.1rem;
+    background: radial-gradient(130% 116% at 50% 48%,
+                rgba(2,5,8,0.92) 0%, rgba(2,5,8,0.82) 58%,
+                rgba(2,5,8,0.36) 84%, transparent 100%);
+    filter: blur(11px);
+    border-radius: 20px;
   }
 
   /* จอแคบ: ยกเลิกการชิดขวา กลับมาเรียงชิดซ้ายทุก section */
@@ -1003,16 +1032,49 @@ body::before {
   .align-right .section-body {
     margin-left: 0;
   }
+  .section-body { max-width: none; }
 
+  /* ── STATS: การ์ด 2×2 จัดกึ่งกลาง ตัวเลขไม่ถูกตัดขอบ ป้ายไม่ขึ้นบรรทัดมั่ว ── */
+  .section-stats {
+    flex-direction: column;
+    gap: 1.8rem;
+    padding: 5.5rem 5vw 3rem;
+  }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    width: 90vw;
+    width: 100%;
+    max-width: 420px;
+    gap: 1px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
   }
+  .stat {
+    padding: 1.4rem 0.6rem;
+    border-left: none;
+    background: rgba(2,5,8,0.86);
+    align-items: center;
+    text-align: center;
+  }
+  .stat:first-child { border-left: none; }
+  .stat-number { font-size: clamp(2.4rem, 12vw, 3.2rem); }
+  .stat-label {
+    font-size: 0.6rem;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .stats-cta { width: 100%; text-align: center; }
+
+  /* ตัวบอกให้เลื่อน (ข้อความแนวตั้ง) — ซ่อนบนมือถือ กันล้นทับเนื้อหา */
+  .scroll-indicator { display: none; }
 
   .marquee-text { font-size: 8vw; }
   .nav-links {
     overflow-x: auto;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
   .nav-links::-webkit-scrollbar { display: none; }
   .nav-tab { font-size: 0.72rem; padding: 0 0.75rem; }

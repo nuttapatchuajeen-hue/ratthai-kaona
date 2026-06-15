@@ -70,16 +70,20 @@ svg.thmap path.pv.dim{opacity:.25}
 .searchcard .brand .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.7rem;color:var(--muted)}
 .searchcard .brand .ballot{margin-left:auto}
 .searchbox{position:relative;isolation:isolate}
-/* glow cyan-ส้ม (ตามหน้าหลัก): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส */
+/* glow cyan-ส้ม (ตามหน้าหลัก): แสงวิ่งรอบช่องตลอดเวลา (มือถือไม่มี hover จึงต้องวิ่งเอง),
+   หมุนเร็ว+สว่างขึ้นเมื่อแตะ/โฟกัส */
 @property --sb-a{syntax:"<angle>";initial-value:0deg;inherits:false}
-.searchbox::before,.searchbox::after{content:"";position:absolute;pointer-events:none;z-index:-1;--sb-a:0deg;
+@keyframes sb-spin{to{--sb-a:360deg}}
+.searchbox::before,.searchbox::after{content:"";position:absolute;pointer-events:none;z-index:-1;
   background:conic-gradient(from var(--sb-a),var(--glow-base),var(--glow-1) 45deg,var(--glow-base) 110deg,var(--glow-base) 180deg,var(--glow-2) 235deg,var(--glow-base) 300deg,var(--glow-base));
-  transition:--sb-a 2.4s cubic-bezier(.4,0,.2,1),opacity .45s,filter .45s}
+  animation:sb-spin 9s linear infinite;transition:opacity .45s,filter .45s}
 .searchbox::before{inset:-4px;border-radius:17px;filter:blur(7px);opacity:.58}
 .searchbox::after{inset:-2px;border-radius:15px;filter:blur(1.2px);opacity:.85}
-.searchbox:hover::before,.searchbox:hover::after{--sb-a:-150deg;opacity:.85}
-.searchbox:focus-within::before{--sb-a:360deg;opacity:.9;filter:blur(8px);transition-duration:4s}
-.searchbox:focus-within::after{--sb-a:360deg;opacity:1;filter:blur(1px);transition-duration:4s}
+.searchbox:hover::before,.searchbox:hover::after{opacity:.9}
+.searchbox:focus-within::before,.searchbox:focus-within::after{animation-duration:3s}
+.searchbox:focus-within::before{opacity:.95;filter:blur(8px)}
+.searchbox:focus-within::after{opacity:1;filter:blur(1px)}
+@media (prefers-reduced-motion:reduce){.searchbox::before,.searchbox::after{animation:none}}
 .searchbox input{width:100%;font-family:'Sarabun';font-size:.95rem;padding:13px 14px 13px 42px;border:1px solid var(--line-2);
   border-radius:13px;background:var(--paper);color:var(--ink);outline:none;position:relative;z-index:0;transition:border-color .15s,box-shadow .15s}
 .searchbox input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
@@ -190,14 +194,15 @@ svg.thmap path.pv.dim{opacity:.25}
 .lcontrols{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
 .lcontrols .search{flex:1 1 230px;position:relative;isolation:isolate}
 /* glow cyan-ส้ม (ตามหน้าหลัก) — เหมือนช่องค้นหาหน้ารายเขต (.searchbox): นิ่งเป็นรัศมีตอนปกติ, หมุน+สว่างขึ้นเมื่อ hover/โฟกัส (--sb-a ลงทะเบียนไว้แล้วด้านบน) */
-.lcontrols .search::before,.lcontrols .search::after{content:"";position:absolute;pointer-events:none;z-index:-1;--sb-a:0deg;
+.lcontrols .search::before,.lcontrols .search::after{content:"";position:absolute;pointer-events:none;z-index:-1;
   background:conic-gradient(from var(--sb-a),var(--glow-base),var(--glow-1) 45deg,var(--glow-base) 110deg,var(--glow-base) 180deg,var(--glow-2) 235deg,var(--glow-base) 300deg,var(--glow-base));
-  transition:--sb-a 2.4s cubic-bezier(.4,0,.2,1),opacity .45s,filter .45s}
+  animation:sb-spin 9s linear infinite;transition:opacity .45s,filter .45s}
 .lcontrols .search::before{inset:-4px;border-radius:16px;filter:blur(7px);opacity:.58}
 .lcontrols .search::after{inset:-2px;border-radius:14px;filter:blur(1.2px);opacity:.85}
-.lcontrols .search:hover::before,.lcontrols .search:hover::after{--sb-a:-150deg;opacity:.85}
-.lcontrols .search:focus-within::before{--sb-a:360deg;opacity:.9;filter:blur(8px);transition-duration:4s}
-.lcontrols .search:focus-within::after{--sb-a:360deg;opacity:1;filter:blur(1px);transition-duration:4s}
+.lcontrols .search:hover::before,.lcontrols .search:hover::after{opacity:.9}
+.lcontrols .search:focus-within::before,.lcontrols .search:focus-within::after{animation-duration:3s}
+.lcontrols .search:focus-within::before{opacity:.95;filter:blur(8px)}
+.lcontrols .search:focus-within::after{opacity:1;filter:blur(1px)}
 .lcontrols .search input{width:100%;font-family:'Sarabun';font-size:.95rem;padding:12px 14px 12px 40px;border:1px solid var(--line-2);border-radius:12px;background:var(--card);color:var(--ink);outline:none;position:relative;z-index:0;transition:border-color .15s,box-shadow .15s}
 .lcontrols .search input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
 .lcontrols .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--green);z-index:1}
@@ -311,6 +316,14 @@ footer{background:var(--navy);color:#A9BFCD;margin-top:46px}
   border:1px solid var(--line);border-radius:999px;padding:7px 14px;transition:color .13s,background .13s,border-color .13s}
 .ytlink:hover{color:#fff;background:#E62117;border-color:#E62117}
 .ytlink svg{width:17px;height:17px}
+
+/* ===== เพลงพรรคในอดีต — พรรคถูกยุบแล้ว จึงขีดฆ่าคำว่า "พรรค" · เสียงสตรีมจาก YouTube (ตัวเล่นซ่อนใน .yt-audio-dock) ===== */
+.strike-x,.songrow.past .sg-party s{text-decoration:line-through;text-decoration-thickness:.13em;text-decoration-color:#D7263D}
+.songrow.past .sg-party s{opacity:.72;font-weight:500}
+.songrow.past .sg-party{flex-wrap:wrap;row-gap:1px}
+.songrow.past .sg-party .gone{font-family:'Sarabun';font-weight:400;font-size:.72rem;color:var(--muted);white-space:nowrap}
+.yt-audio-dock{position:fixed;left:-9999px;bottom:0;width:1px;height:1px;overflow:hidden;pointer-events:none}
+
 @media (max-width:760px){
   .songrow{grid-template-columns:42px minmax(0,1fr) auto;grid-template-areas:"btn meta yt" "btn mid mid";gap:8px 12px;padding:10px 12px}
   .playbtn{grid-area:btn;width:42px;height:42px}

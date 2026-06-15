@@ -19,7 +19,7 @@ html[data-theme="dark"]{ --rab:#54718A }
 .ringwrap{position:relative;max-width:400px;margin:0 auto;width:100%}
 .ringwrap svg.ring{width:100%;height:auto;display:block}
 .ringinner{position:absolute;inset:11%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;pointer-events:none}
-.ringinner .monu{width:62%;max-width:185px;height:auto}
+.ringinner .monu{width:72%;max-width:215px;height:auto}
 .ringinner .qk{font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--green);letter-spacing:.02em}
 .ringinner .q{font-family:'Kanit';font-weight:600;font-size:clamp(.86rem,2.1vw,1.05rem);line-height:1.4;color:var(--ink)}
 .heroR .hkick{font-family:'Kanit';font-weight:500;font-size:.78rem;letter-spacing:.1em;color:var(--orange-deep);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -171,6 +171,7 @@ mdThemeIcon();
   <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
   <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
   <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
   <a href="referendum.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
 </nav>
 
@@ -192,44 +193,7 @@ mdThemeIcon();
       <div class="ringwrap">
         <svg class="ring" viewBox="0 0 360 360" id="ringsvg" aria-hidden="true"></svg>
         <div class="ringinner">
-          <svg class="monu" viewBox="0 0 260 172" aria-label="อนุสาวรีย์ประชาธิปไตย">
-            <g stroke="#B9B5AB" stroke-width="1.4">
-              <!-- ปีกซ้ายนอก/ใน -->
-              <g>
-                <path d="M38 148 L38 70 Q38 34 64 24 L70 32 Q52 44 52 148 Z" fill="#F4F2ED"/>
-                <path d="M84 148 L84 88 Q84 58 103 50 L108 57 Q95 66 95 148 Z" fill="#EDEBE6"/>
-                <path d="M44 60 60 42M44 74 58 52M44 88 57 64M44 102 56 78M88 78 100 62M88 92 99 74" stroke="#C9C4BA" stroke-width="1.1" fill="none"/>
-                <rect x="32" y="130" width="44" height="18" rx="2" fill="#E6E3DC"/>
-                <rect x="80" y="134" width="22" height="14" rx="2" fill="#E6E3DC"/>
-              </g>
-              <!-- ปีกขวา (สะท้อน) -->
-              <g transform="translate(260 0) scale(-1 1)">
-                <path d="M38 148 L38 70 Q38 34 64 24 L70 32 Q52 44 52 148 Z" fill="#F4F2ED"/>
-                <path d="M84 148 L84 88 Q84 58 103 50 L108 57 Q95 66 95 148 Z" fill="#EDEBE6"/>
-                <path d="M44 60 60 42M44 74 58 52M44 88 57 64M44 102 56 78M88 78 100 62M88 92 99 74" stroke="#C9C4BA" stroke-width="1.1" fill="none"/>
-                <rect x="32" y="130" width="44" height="18" rx="2" fill="#E6E3DC"/>
-                <rect x="80" y="134" width="22" height="14" rx="2" fill="#E6E3DC"/>
-              </g>
-              <!-- ป้อมกลาง + พานรัฐธรรมนูญ -->
-              <rect x="126" y="44" width="8" height="11" fill="#F4F2ED"/>
-              <path d="M118 43 Q130 52 142 43" fill="#E8A33D" stroke="#D08A2A"/>
-              <ellipse cx="130" cy="41.5" rx="10" ry="3.6" fill="#E8A33D" stroke="#D08A2A"/>
-              <rect x="126" y="30" width="8" height="9" rx="2.4" fill="#D08A2A" stroke="none"/>
-              <path d="M108 118 L108 84 Q108 60 130 54 Q152 60 152 84 L152 118 Z" fill="#F4F2ED"/>
-              <circle cx="116.5" cy="76" r="2.6" fill="#2D2A4A" stroke="none"/>
-              <circle cx="130" cy="73" r="2.8" fill="#2D2A4A" stroke="none"/>
-              <circle cx="143.5" cy="76" r="2.6" fill="#2D2A4A" stroke="none"/>
-              <rect x="112.5" y="92" width="7" height="24" rx="3" fill="#E5484D" stroke="none"/>
-              <rect x="126" y="88" width="8" height="28" rx="3.5" fill="#E5484D" stroke="none"/>
-              <rect x="140" y="92" width="7" height="24" rx="3" fill="#E5484D" stroke="none"/>
-              <rect x="103" y="116" width="54" height="14" rx="2" fill="#E6E3DC"/>
-              <rect x="97" y="130" width="66" height="10" rx="2" fill="#EDEBE6"/>
-              <rect x="91" y="140" width="78" height="8" rx="2" fill="#E6E3DC"/>
-              <!-- ฐานรวม -->
-              <rect x="22" y="148" width="216" height="8" rx="2.5" fill="#EDEBE6"/>
-              <rect x="10" y="156" width="240" height="9" rx="3" fill="#DBD8D0"/>
-            </g>
-          </svg>
+          <img class="monu" src="images/constitution-2569.png" alt="อนุสาวรีย์ประชาธิปไตย — รัฐธรรมนูญ 2569" width="480" height="320">
           <span class="qk">คำถามประชามติ</span>
           <span class="q">ท่านเห็นชอบว่าสมควร<br>มีรัฐธรรมนูญ<br>ฉบับใหม่หรือไม่?</span>
         </div>
@@ -325,6 +289,7 @@ mdThemeIcon();
   <a href="partylist.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
   <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
   <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="committees.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>กมธ.</a>
   <a href="referendum.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
 </nav>
 
