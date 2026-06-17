@@ -2437,6 +2437,7 @@ function draw() {
     pmEdgeNodes = [];
     nodes.forEach(n => {
       if(n.type==='ministry') connectedSet.add(n);                                   // โชว์กระทรวงไปพร้อมกัน (ไม่หรี่)
+      if(n.type==='minister') connectedSet.add(n);                                   // โชว์วงแหวน ครม. (รัฐมนตรี) พร้อมชื่อทั้งหมดพร้อมกัน — ไม่หรี่
       if(isPmDirect(n) && activeFilters.has(n.catID||'01')) { connectedSet.add(n); pmEdgeNodes.push(n); }
     });
   } else if(selectedNode) {
