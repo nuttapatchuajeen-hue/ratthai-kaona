@@ -1431,7 +1431,8 @@ body {
   background-clip: padding-box;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hd-emblem, #header::after, #legend-bar::before { animation: none; }
+  /* คงแสงวิ่ง (เส้นทอง shimmer + emblem glow) ให้วิ่งต่อบนมือถือแม้เปิด Reduce Motion */
+  .hd-emblem, #header::after, #legend-bar::before { animation-play-state: running; }
 }
 
 /* arrow-direction toggle (in zoom cluster) active state */

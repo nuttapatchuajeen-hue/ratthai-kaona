@@ -530,6 +530,12 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
     .reveal { opacity: 1; transform: none; }
+    /* คงแสงวิ่ง/ambient ให้วิ่งต่อบนมือถือแม้เปิด Reduce Motion (ตั้งใจให้เป็นแสงประดับ) */
+    .marquee-track { animation-duration: 26s !important; animation-iteration-count: infinite !important; }
+    .lm-track { animation-duration: var(--lm-dur, 34s) !important; animation-iteration-count: infinite !important; }
+    .portrait-grid { animation-duration: 18s !important; animation-iteration-count: infinite !important; }
+    .spark-btn .dots-border::before { animation-duration: 2s !important; animation-iteration-count: infinite !important; }
+    .back-home .orbit::before { animation-duration: 2.8s !important; animation-iteration-count: infinite !important; }
   }
   </style>
 </head>
