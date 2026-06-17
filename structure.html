@@ -2672,20 +2672,32 @@ function draw() {
       }
 
     } else if(n.type==='minister') {
-      // คนบริหาร — วงกลมสีพรรค + ขอบขาว (รองนายกฯ = วงแหวนทอง) · ชื่อโชว์ตอน hover/เลือก
+      // คนบริหาร — วงกลมสีพรรค + ขอบขาว (รองนายกฯ = วงแหวนทอง) · ชื่อโชว์ตอน hover/เลือก/กดนายกฯ
+      const _lensOn = pmLens && currentView==='radial';
       ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI*2);
       const _pg = ctx.createRadialGradient(n.x-r*0.35, n.y-r*0.35, r*0.1, n.x, n.y, r);
       _pg.addColorStop(0, _lighten(n.color, 0.45)); _pg.addColorStop(1, n.color);
       ctx.fillStyle = _pg; ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = (hover||selected) ? 2 : 1.3; ctx.stroke();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = (hover||selected||_lensOn) ? 2 : 1.3; ctx.stroke();
       if(n.isDeputy){ ctx.beginPath(); ctx.arc(n.x, n.y, r+2.6, 0, Math.PI*2); ctx.strokeStyle = _rgba(_theme.gold||'#c9a84c', 0.9); ctx.lineWidth = 1.6; ctx.stroke(); }
-      if(hover||selected){ ctx.beginPath(); ctx.arc(n.x, n.y, r+4.5, 0, Math.PI*2); ctx.strokeStyle = _rgba(n.color, 0.5); ctx.lineWidth = 2; ctx.stroke(); }
+      if(hover||selected||_lensOn){ ctx.beginPath(); ctx.arc(n.x, n.y, r+4.5, 0, Math.PI*2); ctx.strokeStyle = _rgba(n.color, (hover||selected)?0.5:0.78); ctx.lineWidth = 2; ctx.stroke(); }
       if((hover||selected) && scale > 0.25){
         ctx.font = 'bold ' + Math.min(11, 11/scale) + 'px Sarabun, sans-serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
         ctx.shadowColor = dark ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)'; ctx.shadowBlur = 4/scale;
         ctx.fillStyle = dark ? '#e8eaf0' : '#1a1d24';
         ctx.fillText(n.label, n.x, n.y - r - 4);
+        ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+      } else if(_lensOn && scale > 0.18){
+        // กดนายกฯ: โชว์ชื่อรัฐมนตรีทุกคนในวงแหวน ครม. วางพ้นโหนดออกด้านนอกตามแนวรัศมีจากนายกฯ
+        const _c0 = nodes[0];
+        const _dx = n.x-_c0.x, _dy = n.y-_c0.y, _dd = Math.hypot(_dx,_dy)||1;
+        ctx.font = 'bold ' + Math.min(11.5, 10.5/scale) + 'px Sarabun, sans-serif';
+        ctx.textAlign = _dx>=0 ? 'left' : 'right';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = dark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)'; ctx.shadowBlur = 5/scale;
+        ctx.fillStyle = dark ? '#eef0f6' : '#161922';
+        ctx.fillText(n.label, n.x + _dx/_dd*(r+6), n.y + _dy/_dd*(r+6));
         ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
       }
 
@@ -3036,17 +3048,18 @@ function showPanel(node) {
     // Show all deputy PMs and Cabinet summary in minister row
     document.getElementById('info-minister-row').style.display='flex';
     document.getElementById('info-minister-row').querySelector('.info-label').textContent='ครม.';
-    const deputies=[
-      {name:'นายพิพัฒน์ รัชกิจประการ', role:'รองนายกฯ + รมว.คมนาคม', party:'ภูมิใจไทย'},
+    // คนในครม.ทั้งคณะ — สร้างจากข้อมูล CABINET จริง + รองนายกฯ ที่ไม่ได้คุมกระทรวง (ไม่อยู่ใน CABINET ซึ่งคีย์ตามกระทรวง)
+    const _dpmOnly=[
       {name:'นายทรงศักดิ์ ทองศรี', role:'รองนายกรัฐมนตรี', party:'ภูมิใจไทย'},
-      {name:'นายเอกนิติ นิติทัณฑ์ประภาศ', role:'รองนายกฯ + รมว.คลัง', party:'ภูมิใจไทย'},
-      {name:'นายสีหศักดิ์ พวงเกตุแก้ว', role:'รองนายกฯ + รมว.ต่างประเทศ', party:'ภูมิใจไทย'},
-      {name:'นางศุภจี สุธรรมพันธุ์', role:'รองนายกฯ + รมว.พาณิชย์', party:'ภูมิใจไทย'},
       {name:'นายปกรณ์ นิลประพันธ์', role:'รองนายกรัฐมนตรี', party:'ภูมิใจไทย'},
-      {name:'นายยศชนัน วงศ์สวัสดิ์', role:'รองนายกฯ + รมว.อุดมศึกษา', party:'เพื่อไทย'},
     ];
+    const _seenC=new Set(), _allC=[];
+    Object.values(CABINET).forEach(a=>a.forEach(m=>{ if(!_seenC.has(m.name)){_seenC.add(m.name);_allC.push(m);} }));
+    _dpmOnly.forEach(m=>{ if(!_seenC.has(m.name)){_seenC.add(m.name);_allC.push(m);} });
+    const _rankC=m=> m.name===CABINET_PM.name?0 : /รองนายกรัฐมนตรี/.test(m.role)?1 : /รมช\./.test(m.role)?3 : 2;
+    const deputies=_allC.slice().sort((a,b)=>_rankC(a)-_rankC(b));
     document.getElementById('info-minister').innerHTML = `
-      <div style="margin-bottom:6px;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">รองนายกรัฐมนตรี (${deputies.length} คน)</div>
+      <div style="margin-bottom:6px;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">คณะรัฐมนตรี (${deputies.length} คน)</div>
       ${deputies.map(p=>{const pc=PARTY_COLORS[p.party]||'#8a97aa';return `<div style="margin-bottom:5px"><div style="font-size:11px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size:9.5px;color:var(--text-dim)">${p.role}</div><span style="font-size:8px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;}).join('')}
       <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">สัดส่วนพรรค</div>
       <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">
