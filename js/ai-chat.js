@@ -93,8 +93,8 @@
     "@media(max-width:860px){#mdai-root.mdai-avoid #mdai-fab{right:62px;bottom:72px}#mdai-root.mdai-avoid #mdai-panel{bottom:132px}}",
     // ตอน snap ติดขอบให้ลื่น ๆ (ใส่ class ชั่วคราว เพราะตอนลากต้องขยับทันทีไม่หน่วง)
     "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease}",
-    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i{animation:none}",
-    "#mdai-fab::before{animation:none}}",
+    // Reduce Motion: ปิดเฉพาะ transition/typing ที่ไม่จำเป็น แต่คงแสงวิ่งรอบปุ่มไว้ (ตั้งใจให้วิ่งบนมือถือ)
+    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i{animation:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
