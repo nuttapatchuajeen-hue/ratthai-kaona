@@ -657,7 +657,7 @@ function monogram(name){
    ผู้ที่ไม่มีรูปจะใช้อักษรย่อ (monogram) แทนอัตโนมัติ
    เติมรูปเพิ่ม/รีเฟรชได้ด้วย:  node "tools-fetch-photos.js" */
 const PHOTOS = {
-  "อนุทิน ชาญวีรกูล":"01-1.jpg","ศุภมาส อิศรภักดี":"01-2.jpg","นภินทร ศรีสรรพางค์":"01-3.jpg","ภราดร ปริศนานันทกุล":"01-4.jpg","สุขสมรวย วันทนียกุล":"01-5.jpg",
+  "อนุทิน ชาญวีรกูล":"01-1.jpg","ศุภมาส อิศรภักดี":"01-2.jpg","นภินทร ศรีสรรพางค์":"01-3.jpg","ภราดร ปริศนานันทกุล":"01-4.jpg","สุขสมรวย วันทนียกุล":"01-5.jpg","ทรงศักดิ์ ทองศรี":"01-6.jpg","ปกรณ์ นิลประพันธ์":"01-7.jpg",
   "อดุลย์ บุญธรรมเจริญ":"02-1.jpg","เอกนิติ นิติทัณฑ์ประภาศ":"03-1.jpg","สีหศักดิ์ พวงเกตุแก้ว":"04-1.jpg","สุรศักดิ์ พันธ์เจริญวรกุล":"05-1.jpg","นิกร โสมกลาง":"06-1.jpg",
   "สุริยะ จึงรุ่งเรืองกิจ":"07-1.jpg","วัชระพล ขาวขำ":"07-2.jpg","ปิยะรัฐชย์ ติยะไพรัช":"07-3.jpg",
   "พิพัฒน์ รัชกิจประการ":"08-1.jpg","สิริพงศ์ อังคสกุลเกียรติ":"08-2.jpg","ภัทรพงศ์ ภัทรประสิทธิ์":"08-3.jpg","สรรเพชญ บุญญามณี":"08-4.jpg",
@@ -755,7 +755,7 @@ function renderRoster(){
     return;
   }
   grid.innerHTML = list.map(r=>`
-    <div class="mcard ${r.role==="pm"?"is-pm":""}">
+    <div class="mcard ${r.role==="pm"?"is-pm":""}" data-nm="${r.name}" tabindex="0" role="button" aria-label="ดูประวัติ ${r.name}">
       ${portrait(r.name)}
       <div class="mc-info">
         <div class="nm">${r.name}</div>
@@ -862,6 +862,163 @@ links.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
   }, {passive:true});
   addEventListener("resize", write, {passive:true});
   addEventListener("load", write);
+})();
+
+/* ---------- profile data (ประวัติรายบุคคล · จากวิกิพีเดียไทย/สื่อสาธารณะ · อายุ ณ พ.ศ. 2569) ---------- */
+const BIO = {
+  "อนุทิน ชาญวีรกูล":{party:"ภูมิใจไทย (หัวหน้าพรรค)",birth:"13 กันยายน 2509",age:"59",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมอุตสาหการ มหาวิทยาลัยฮอฟสตรา (สหรัฐฯ); Mini MBA จุฬาฯ; ม.ปลาย ร.ร.อัสสัมชัญ",exp:"นายกรัฐมนตรี คนที่ 32; หัวหน้าพรรคภูมิใจไทย; อดีตรองนายกรัฐมนตรีและ รมว.สาธารณสุข; อดีต รมว.มหาดไทย",src:"https://th.wikipedia.org/wiki/อนุทิน_ชาญวีรกูล"},
+  "ทรงศักดิ์ ทองศรี":{party:"ภูมิใจไทย",birth:"20 เมษายน 2501",age:"68",province:"บุรีรัมย์",edu:"ตรี นิติศาสตร์ ม.รามคำแหง; โท-เอก รัฐประศาสนศาสตร์ ม.อีสเทิร์นเอเชีย",exp:"รองนายกรัฐมนตรี; อดีต รมช.มหาดไทย (2562–2568); อดีต รมช.คมนาคม (2551); ส.ส.บุรีรัมย์ 7 สมัย",src:"https://th.wikipedia.org/wiki/ทรงศักดิ์_ทองศรี"},
+  "ปกรณ์ นิลประพันธ์":{party:"อิสระ",birth:"1 พฤศจิกายน 2511",age:"57",province:"ไม่ระบุ",edu:"ตรี นิติศาสตร์ ม.ธรรมศาสตร์; โท กฎหมายการแข่งขันทางการค้า มหาวิทยาลัยซิดนีย์ (ออสเตรเลีย)",exp:"รองนายกรัฐมนตรีฝ่ายกฎหมาย; อดีตเลขาธิการคณะกรรมการกฤษฎีกา (2563–2569)",src:"https://th.wikipedia.org/wiki/ปกรณ์_นิลประพันธ์"},
+  "ศุภมาส อิศรภักดี":{party:"ภูมิใจไทย (เดิม ไทยรักไทย/พลังประชาชน)",birth:"3 เมษายน 2516",age:"53",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมอุตสาหการ จุฬาฯ; โท วิศวกรรม มหาวิทยาลัยวอริก (อังกฤษ)",exp:"รมต.ประจำสำนักนายกฯ; อดีต รมว.การอุดมศึกษาฯ (อว.) (2565–2567); ส.ส.กทม.",src:"https://th.wikipedia.org/wiki/ศุภมาส_อิศรภักดี"},
+  "นภินทร ศรีสรรพางค์":{party:"ภูมิใจไทย (เดิมเพื่อไทย)",birth:"30 พฤษภาคม 2502",age:"67",province:"ราชบุรี",edu:"ตรี นิติศาสตร์ ม.รามคำแหง; โท รัฐศาสตร์ ม.รามคำแหง",exp:"รมต.ประจำสำนักนายกฯ; อดีต รมช.พาณิชย์ (2566–2568)",src:"https://th.wikipedia.org/wiki/นภินทร_ศรีสรรพางค์"},
+  "ภราดร ปริศนานันทกุล":{party:"ภูมิใจไทย",birth:"18 กันยายน 2522",age:"46",province:"อ่างทอง",edu:"ตรี สถิติ คณะวิทยาศาสตร์ฯ ม.ธรรมศาสตร์; โท เศรษฐศาสตร์ มหาวิทยาลัยวอริก (อังกฤษ)",exp:"รมต.ประจำสำนักนายกฯ; อดีตรองประธานสภาผู้แทนราษฎร คนที่ 2; อดีตโฆษกพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/ภราดร_ปริศนานันทกุล"},
+  "สุขสมรวย วันทนียกุล":{party:"ภูมิใจไทย",birth:"ไม่ระบุ",age:"ไม่ระบุ",province:"อำนาจเจริญ",edu:"ไม่ระบุ",exp:"รมต.ประจำสำนักนายกฯ; ส.ส.อำนาจเจริญ เขต 1 (2566); อดีตเลขานุการ รมว.คมนาคม (ศักดิ์สยาม ชิดชอบ)",src:"https://www.pptvhd36.com/news/การเมือง/272157"},
+  "อดุลย์ บุญธรรมเจริญ":{rank:"พลโท",party:"อิสระ",birth:"2 มิถุนายน 2507",age:"62",province:"บุรีรัมย์",edu:"เตรียมทหารรุ่น 26; นายร้อย จปร. รุ่น 37; วปอ. รุ่น 61; MPPM นิด้า รุ่น 9",exp:"รมว.กลาโหม; อดีต รมช.กลาโหม; อดีตแม่ทัพภาคที่ 2",src:"https://th.wikipedia.org/wiki/อดุลย์_บุญธรรมเจริญ"},
+  "เอกนิติ นิติทัณฑ์ประภาศ":{party:"ภูมิใจไทย",birth:"17 กันยายน 2514",age:"54",province:"กรุงเทพมหานคร",edu:"ตรี เศรษฐศาสตร์ (เกียรตินิยม) ม.ธรรมศาสตร์; โท เศรษฐศาสตร์ ม.อิลลินอยส์ เออร์แบนา-แชมเปญ; เอก เศรษฐศาสตร์ Claremont Graduate University (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.การคลัง; อดีตอธิบดีกรมสรรพากร/กรมสรรพสามิต/กรมธนารักษ์",src:"https://th.wikipedia.org/wiki/เอกนิติ_นิติทัณฑ์ประภาศ"},
+  "สีหศักดิ์ พวงเกตุแก้ว":{party:"ภูมิใจไทย",birth:"21 ธันวาคม 2500",age:"68",province:"อำนาจเจริญ",edu:"ตรี รัฐศาสตร์ จุฬาฯ; โท ความสัมพันธ์ระหว่างประเทศ (SAIS) ม.จอนส์ฮอปกินส์ (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.การต่างประเทศ; อดีตปลัดกระทรวงการต่างประเทศ; อดีตเอกอัครราชทูต (ฝรั่งเศส/ญี่ปุ่น/โมนาโก)",src:"https://th.wikipedia.org/wiki/สีหศักดิ์_พวงเกตุแก้ว"},
+  "สุรศักดิ์ พันธ์เจริญวรกุล":{party:"ภูมิใจไทย (เดิม พลังประชาชน/เพื่อไทย)",birth:"2 กันยายน 2519",age:"49",province:"พระนครศรีอยุธยา",edu:"ตรี บริหารธุรกิจ (การจัดการ) ม.รังสิต",exp:"รมว.การท่องเที่ยวและกีฬา; อดีต รมว.การอุดมศึกษาฯ (อว.) (2568–2569); ส.ส.พระนครศรีอยุธยา",src:"https://th.wikipedia.org/wiki/สุรศักดิ์_พันธ์เจริญวรกุล"},
+  "นิกร โสมกลาง":{party:"เพื่อไทย",birth:"9 กุมภาพันธ์ 2524",age:"45",province:"นครราชสีมา",edu:"ตรี วิศวกรรมศาสตร์ ม.เทคโนโลยีสุรนารี; โท วิทยาศาสตร์ ม.ฮันโนเวอร์ (เยอรมนี)",exp:"รมว.การพัฒนาสังคมและความมั่นคงของมนุษย์; ส.ส.นครราชสีมา (2566)",src:"https://th.wikipedia.org/wiki/นิกร_โสมกลาง"},
+  "สุริยะ จึงรุ่งเรืองกิจ":{party:"เพื่อไทย",birth:"10 ธันวาคม 2497",age:"71",province:"กรุงเทพมหานคร",edu:"วิศวกรรมอุตสาหการ ม.แคลิฟอร์เนีย เบิร์กลีย์ (สหรัฐฯ); วปอ.",exp:"รมว.เกษตรและสหกรณ์; อดีตรักษาการนายกรัฐมนตรี (2568); อดีตรองนายกฯ และ รมว.คมนาคม; อดีต รมว.อุตสาหกรรม",src:"https://th.wikipedia.org/wiki/สุริยะ_จึงรุ่งเรืองกิจ"},
+  "วัชระพล ขาวขำ":{party:"เพื่อไทย",birth:"20 มิถุนายน 2529",age:"39",province:"อุดรธานี",edu:"ตรี วิทยาการจัดการ ม.ราชภัฏอุดรธานี; โท MBA Pacific States University (สหรัฐฯ)",exp:"รมช.เกษตรและสหกรณ์; ส.ส.อุดรธานี (2566); อดีตรองนายกเทศมนตรีนครอุดรธานี",src:"https://th.wikipedia.org/wiki/วัชระพล_ขาวขำ"},
+  "ปิยะรัฐชย์ ติยะไพรัช":{party:"เพื่อไทย (เดิมเพื่อชาติ)",birth:"11 ตุลาคม 2530",age:"38",province:"เชียงราย",edu:"ตรี สังคมศาสตร์ ม.เกษตรศาสตร์; โท สังคมศาสตร์และมนุษยศาสตร์ ม.มหิดล",exp:"รมช.เกษตรและสหกรณ์; ส.ส.เชียงราย (2566)",src:"https://th.wikipedia.org/wiki/ปิยะรัฐชย์_ติยะไพรัช"},
+  "พิพัฒน์ รัชกิจประการ":{party:"ภูมิใจไทย",birth:"5 สิงหาคม 2498",age:"70",province:"สงขลา",edu:"ตรี-โท รัฐศาสตร์ ม.รามคำแหง",exp:"รองนายกรัฐมนตรีและ รมว.คมนาคม; อดีต รมว.แรงงาน; อดีต รมว.การท่องเที่ยวและกีฬา",src:"https://th.wikipedia.org/wiki/พิพัฒน์_รัชกิจประการ"},
+  "สิริพงศ์ อังคสกุลเกียรติ":{party:"ภูมิใจไทย",birth:"26 สิงหาคม 2519",age:"49",province:"ศรีสะเกษ",edu:"ตรี วิศวกรรมศาสตร์ ม.รังสิต; โท การจัดการระบบสารสนเทศ ม.โคโลราโด เดนเวอร์ (สหรัฐฯ); เอก เกษตรเขตร้อน ม.เกษตรศาสตร์",exp:"รมช.คมนาคม; ส.ส.ศรีสะเกษ; อดีตโฆษกประจำสำนักนายกรัฐมนตรี",src:"https://th.wikipedia.org/wiki/สิริพงศ์_อังคสกุลเกียรติ"},
+  "ภัทรพงศ์ ภัทรประสิทธิ์":{party:"ภูมิใจไทย",birth:"13 กรกฎาคม 2526",age:"42",province:"พิจิตร",edu:"ตรี วิศวกรรมอุตสาหการ ม.เชียงใหม่; ตรี นิติศาสตร์ จุฬาฯ; โท โลจิสติกส์ University of La Verne (สหรัฐฯ)",exp:"รมช.คมนาคม; ส.ส.พิจิตร (2 สมัย)",src:"https://th.wikipedia.org/wiki/ภัทรพงศ์_ภัทรประสิทธิ์"},
+  "สรรเพชญ บุญญามณี":{party:"ภูมิใจไทย",birth:"1 กุมภาพันธ์ 2533",age:"36",province:"สงขลา",edu:"ตรี ธุรกิจระหว่างประเทศ วิทยาลัยนานาชาติ ม.มหิดล; โท การวางแผนการเงินและบริหารความมั่งคั่ง Manchester Metropolitan University (อังกฤษ)",exp:"รมช.คมนาคม; ส.ส.สงขลา (2566)",src:"https://th.wikipedia.org/wiki/สรรเพชญ_บุญญามณี"},
+  "สุชาติ ชมกลิ่น":{party:"ภูมิใจไทย",birth:"15 กรกฎาคม 2517",age:"51",province:"ชลบุรี",edu:"ตรี ศิลปศาสตร์ (การจัดการ) ม.เกริก",exp:"รมว.ทรัพยากรธรรมชาติฯ; อดีตรองนายกรัฐมนตรี; อดีต รมว.แรงงาน; อดีต รมช.พาณิชย์; ส.ส.ชลบุรี",src:"https://th.wikipedia.org/wiki/สุชาติ_ชมกลิ่น"},
+  "ไชยชนก ชิดชอบ":{party:"ภูมิใจไทย (เลขาธิการพรรค)",birth:"14 กรกฎาคม 2533",age:"35",province:"บุรีรัมย์",edu:"ตรี รัฐศาสตร์ (การปกครองท้องถิ่น) ม.เฉลิมกาญจนา บุรีรัมย์",exp:"รมว.ดิจิทัลฯ; เลขาธิการพรรคภูมิใจไทย; อดีต ส.ส.บุรีรัมย์",src:"https://th.wikipedia.org/wiki/ไชยชนก_ชิดชอบ"},
+  "บุณย์ธิดา สมชัย":{party:"ภูมิใจไทย (เดิมประชาธิปัตย์)",birth:"7 กุมภาพันธ์ 2527",age:"42",province:"อุบลราชธานี",edu:"ตรี-โท รัฐศาสตร์ ม.รามคำแหง",exp:"รมช.ดิจิทัลฯ; ส.ส.อุบลราชธานี; โฆษกพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/บุณย์ธิดา_สมชัย"},
+  "เอกนัฏ พร้อมพันธุ์":{party:"ภูมิใจไทย (เดิมประชาธิปัตย์/รวมไทยสร้างชาติ)",birth:"12 มกราคม 2529",age:"40",province:"กรุงเทพมหานคร",edu:"ตรีควบโท EEM (วิศวกรรม เศรษฐศาสตร์ และการจัดการ) มหาวิทยาลัยออกซฟอร์ด (อังกฤษ)",exp:"รมว.พลังงาน; อดีต รมว.อุตสาหกรรม; อดีตเลขาธิการพรรครวมไทยสร้างชาติ; ส.ส.",src:"https://th.wikipedia.org/wiki/เอกนัฏ_พร้อมพันธุ์"},
+  "ศุภจี สุธรรมพันธุ์":{party:"ภูมิใจไทย",birth:"15 เมษายน 2507",age:"62",province:"สมุทรปราการ",edu:"ตรี สังคมวิทยาและมานุษยวิทยา ม.ธรรมศาสตร์; โท MBA (การเงินและบัญชีระหว่างประเทศ) ม.นอร์ทรอป",exp:"รองนายกรัฐมนตรีและ รมว.พาณิชย์; อดีตประธานเจ้าหน้าที่บริหารกลุ่มบริษัท ดุสิตธานี",src:"https://th.wikipedia.org/wiki/ศุภจี_สุธรรมพันธุ์"},
+  "พลพีร์ สุวรรณฉวี":{party:"ภูมิใจไทย",birth:"25 พฤศจิกายน 2525",age:"43",province:"กรุงเทพมหานคร (ฐานเสียง นครราชสีมา)",edu:"ตรี Travel Industry Management ม.มหิดล; โท Marketing Communications, London College of Communication (อังกฤษ)",exp:"รมช.มหาดไทย; ส.ส.นครราชสีมา เขต 9 (2566)",src:"https://th.wikipedia.org/wiki/พลพีร์_สุวรรณฉวี"},
+  "เจเศรษฐ์ ไทยเศรษฐ์":{party:"ภูมิใจไทย",birth:"17 พฤศจิกายน 2531",age:"37",province:"อุทัยธานี",edu:"ตรี ศิลปศาสตร์ (ผู้นำสังคม ธุรกิจ และการเมือง) วิทยาลัยนวัตกรรมสังคม ม.รังสิต",exp:"รมช.มหาดไทย; ส.ส.อุทัยธานี; รองเลขาธิการพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/เจเศรษฐ์_ไทยเศรษฐ์"},
+  "วรศิษฎ์ เลียงประสิทธิ์":{party:"ภูมิใจไทย",birth:"10 กุมภาพันธ์ 2532",age:"37",province:"สตูล",edu:"ตรี บัญชี ม.สงขลานครินทร์; โท International Business Management ม.บอร์นมัธ (อังกฤษ)",exp:"รมช.มหาดไทย; ส.ส.สตูล (2562)",src:"https://th.wikipedia.org/wiki/วรศิษฎ์_เลียงประสิทธิ์"},
+  "รุทธพล เนาวรัตน์":{rank:"พลตำรวจโท",party:"อิสระ (รัฐมนตรีคนนอก)",birth:"5 มกราคม 2508",age:"61",province:"ไม่ระบุ (ศึกษา ม.ปลายที่นครสวรรค์)",edu:"เตรียมทหารรุ่น 24; ตรี รัฐประศาสนศาสตร์ (รป.บ.ตร.) ร.ร.นายร้อยตำรวจ; โท การจัดการภาครัฐและภาคเอกชน นิด้า",exp:"รมว.ยุติธรรม; อดีตนายตำรวจระดับสูง",src:"https://th.wikipedia.org/wiki/รุทธพล_เนาวรัตน์"},
+  "จุลพันธ์ อมรวิวัฒน์":{party:"เพื่อไทย (หัวหน้าพรรค)",birth:"8 เมษายน 2518",age:"51",province:"เชียงใหม่",edu:"ตรี เศรษฐศาสตร์ จุฬาฯ; โท MBA Boston College (สหรัฐฯ)",exp:"รมว.แรงงาน; หัวหน้าพรรคเพื่อไทย; อดีต รมช.การคลัง; ส.ส.เชียงใหม่",src:"https://th.wikipedia.org/wiki/จุลพันธ์_อมรวิวัฒน์"},
+  "ซาบีดา ไทยเศรษฐ์":{party:"ภูมิใจไทย",birth:"11 ตุลาคม 2527",age:"41",province:"อุทัยธานี",edu:"ตรี นิติศาสตร์ ม.อัสสัมชัญ; โท LL.M. University of Westminster (อังกฤษ)",exp:"รมว.วัฒนธรรม; อดีต รมช.มหาดไทย; ส.ส.บัญชีรายชื่อ",src:"https://th.wikipedia.org/wiki/ซาบีดา_ไทยเศรษฐ์"},
+  "ยศชนัน วงศ์สวัสดิ์":{party:"เพื่อไทย",birth:"8 ตุลาคม 2522",age:"46",province:"เชียงใหม่",edu:"ตรี วิศวกรรมไฟฟ้า SIIT ม.ธรรมศาสตร์; โท-เอก วิศวกรรมไฟฟ้า ม.เทกซัส อาร์ลิงตัน (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.อว.; อดีตศาสตราจารย์/รองอธิการบดีฝ่ายวิจัย ม.มหิดล",src:"https://th.wikipedia.org/wiki/ยศชนัน_วงศ์สวัสดิ์"},
+  "ประเสริฐ จันทรรวงทอง":{party:"เพื่อไทย (เลขาธิการพรรค)",birth:"1 เมษายน 2503",age:"66",province:"นครราชสีมา",edu:"ตรี วิทยาศาสตร์ (เศรษฐศาสตร์และบริหารธุรกิจ) ม.เกษตรศาสตร์; โท รัฐประศาสนศาสตร์ นิด้า",exp:"รมว.ศึกษาธิการ; เลขาธิการพรรคเพื่อไทย; อดีตรองนายกรัฐมนตรี; อดีต รมว.ดิจิทัลฯ",src:"https://th.wikipedia.org/wiki/ประเสริฐ_จันทรรวงทอง"},
+  "อัครนันท์ กัณณ์กิตตินันท์":{party:"เพื่อไทย",birth:"29 มีนาคม 2530",age:"39",province:"กาญจนบุรี",edu:"ไม่ระบุ",exp:"รมช.ศึกษาธิการ; ส.ส.กาญจนบุรี; นักธุรกิจ (บจก. เอเค เก้าหนึ่งกรุ๊ป)",src:"https://www.thairath.co.th/news/politic/2921604"},
+  "พัฒนา พร้อมพัฒน์":{party:"ภูมิใจไทย (เดิมพลังประชารัฐ)",birth:"8 ธันวาคม 2527",age:"41",province:"กรุงเทพมหานคร",edu:"ตรี บริหารธุรกิจ (การเงิน) จุฬาฯ; โท Real Estate Investment, City University London (อังกฤษ)",exp:"รมว.สาธารณสุข; นักธุรกิจ-นักการเมือง",src:"https://th.wikipedia.org/wiki/พัฒนา_พร้อมพัฒน์"},
+  "วราวุธ ศิลปอาชา":{party:"ภูมิใจไทย (เดิมชาติไทย/ชาติไทยพัฒนา)",birth:"11 กรกฎาคม 2516",age:"52",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมเครื่องกล University College London (UCL, อังกฤษ); โท MBA (การเงินและการธนาคาร) University of Wisconsin–Madison (สหรัฐฯ)",exp:"รมว.อุตสาหกรรม; ส.ส.บัญชีรายชื่อ; อดีต รมว.การพัฒนาสังคมฯ; อดีต รมว.ทรัพยากรธรรมชาติและสิ่งแวดล้อม",src:"https://th.wikipedia.org/wiki/วราวุธ_ศิลปอาชา"}
+};
+
+/* ---------- profile modal (กดการ์ด → เด้งประวัติ) ---------- */
+(function(){
+  const css = `
+  .pf-overlay{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:20px;
+    background:rgba(6,10,18,.74);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;transition:opacity .22s ease}
+  .pf-overlay.show{opacity:1}
+  .pf-overlay[hidden]{display:none}
+  .pf-modal{width:min(640px,100%);max-height:88vh;overflow:auto;position:relative;
+    background:linear-gradient(180deg,#11192b,#0c1320);
+    border:1px solid var(--gold-line,rgba(201,162,39,.30));border-radius:18px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);transform:translateY(14px) scale(.98);transition:transform .22s ease}
+  .pf-overlay.show .pf-modal{transform:none}
+  .pf-close{position:absolute;top:12px;right:14px;width:38px;height:38px;border-radius:10px;
+    border:1px solid var(--line-soft,rgba(255,255,255,.12));background:rgba(255,255,255,.05);
+    color:var(--gold-bright,#e6c558);font-size:24px;line-height:1;cursor:pointer;z-index:3}
+  .pf-close:hover{background:rgba(201,162,39,.18)}
+  .pf-head{display:flex;gap:18px;align-items:center;padding:28px 26px 18px;
+    border-bottom:1px solid var(--line-soft,rgba(255,255,255,.10));
+    background:radial-gradient(120% 120% at 0% 0%,rgba(201,162,39,.12),transparent 60%)}
+  .pf-head .portrait{width:88px;height:108px;flex:none}
+  .pf-name{font-family:var(--serif,Georgia,serif);font-weight:800;font-size:22px;color:#fff;line-height:1.2}
+  .pf-role{color:var(--gold-bright,#e6c558);font-size:14px;margin-top:5px;line-height:1.4}
+  .pf-pill{display:inline-block;margin-top:9px;font-size:12px;padding:3px 11px;border-radius:999px;
+    border:1px solid var(--gold-line,rgba(201,162,39,.35));color:var(--gold,#c9a227)}
+  .pf-body{padding:18px 26px 26px}
+  .pf-row{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 0;
+    border-bottom:1px dashed var(--line-soft,rgba(255,255,255,.08))}
+  .pf-row:last-child{border-bottom:0}
+  .pf-k{color:var(--dim,#9aa3b2);font-size:13px}
+  .pf-v{color:#e9edf4;font-size:14px;line-height:1.6}
+  .pf-src{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:13px;
+    color:var(--gold-bright,#e6c558);text-decoration:none;
+    border:1px solid var(--gold-line,rgba(201,162,39,.4));padding:8px 15px;border-radius:10px}
+  .pf-src:hover{background:rgba(201,162,39,.14)}
+  .pf-note{color:var(--dim,#9aa3b2);font-size:12px;margin-top:14px;font-style:italic;line-height:1.5}
+  .mcard{cursor:pointer}
+  .mcard:focus-visible{outline:2px solid var(--gold-bright,#e6c558);outline-offset:3px}
+  #pm-card{cursor:pointer}
+  @media (max-width:560px){
+    .pf-row{grid-template-columns:1fr;gap:3px}
+    .pf-head{flex-direction:column;text-align:center}
+    .pf-modal{max-height:92vh}
+  }`;
+  const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+
+  const ov = document.createElement("div");
+  ov.className = "pf-overlay"; ov.hidden = true;
+  ov.setAttribute("role","dialog"); ov.setAttribute("aria-modal","true");
+  ov.innerHTML = `<div class="pf-modal"><button class="pf-close" aria-label="ปิด">&times;</button>
+    <div class="pf-head"></div><div class="pf-body"></div></div>`;
+  document.body.appendChild(ov);
+  const headEl = ov.querySelector(".pf-head");
+  const bodyEl = ov.querySelector(".pf-body");
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+  function rows(b){
+    const items = [
+      ["พรรคการเมือง", b.party],
+      ["วันเกิด", b.birth],
+      ["อายุ", b.age && b.age!=="ไม่ระบุ" ? b.age+" ปี" : ""],
+      ["จังหวัด", b.province],
+      ["การศึกษา", b.edu],
+      ["ประวัติ / ตำแหน่งที่ผ่านมา", b.exp]
+    ];
+    return items.filter(([k,v])=> v && v!=="ไม่ระบุ")
+      .map(([k,v])=>`<div class="pf-row"><div class="pf-k">${k}</div><div class="pf-v">${esc(v)}</div></div>`).join("");
+  }
+
+  let lastFocus = null;
+  function open(name){
+    const r = ROSTER.find(x=>x.name===name);
+    const b = BIO[name] || {};
+    const m = r ? MINISTRIES.find(x=>x.id===r.mid) : null;
+    const fullRole = r ? roleLabel(r.role, m, r.name) : "";
+    const dispName = (b.rank ? b.rank+" " : "") + name;
+    headEl.innerHTML = `${portrait(name)}
+      <div class="pf-id">
+        <div class="pf-name">${dispName}</div>
+        <div class="pf-role">${fullRole}</div>
+        ${r ? `<span class="pf-pill">${r.mname}</span>` : ""}
+      </div>`;
+    let html = rows(b) || `<div class="pf-note">ยังไม่มีข้อมูลประวัติเชิงลึกของบุคคลนี้</div>`;
+    if(b.src) html += `<a class="pf-src" href="${b.src}" target="_blank" rel="noopener">แหล่งอ้างอิง ↗</a>`;
+    html += `<div class="pf-note">ข้อมูลจากวิกิพีเดียภาษาไทย/สื่อสาธารณะ · อายุคำนวณ ณ พ.ศ. 2569</div>`;
+    bodyEl.innerHTML = html;
+    lastFocus = document.activeElement;
+    ov.hidden = false; document.body.style.overflow = "hidden";
+    void ov.offsetWidth;            /* บังคับ reflow ให้ transition เล่นได้ (rAF ถูกหน่วงเมื่อแท็บไม่ active) */
+    ov.classList.add("show");
+    ov.querySelector(".pf-close").focus();
+  }
+  function close(){
+    ov.classList.remove("show"); document.body.style.overflow = "";
+    setTimeout(()=>{ ov.hidden = true; }, 220);
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  ov.addEventListener("click", e=>{ if(e.target===ov || e.target.classList.contains("pf-close")) close(); });
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !ov.hidden) close(); });
+
+  grid.addEventListener("click", e=>{
+    const card = e.target.closest(".mcard");
+    if(card && card.dataset.nm) open(card.dataset.nm);
+  });
+  grid.addEventListener("keydown", e=>{
+    const card = e.target.closest(".mcard");
+    if(card && (e.key==="Enter" || e.key===" ")){ e.preventDefault(); if(card.dataset.nm) open(card.dataset.nm); }
+  });
+  const pmCard = document.getElementById("pm-card");
+  if(pmCard){
+    pmCard.setAttribute("tabindex","0"); pmCard.setAttribute("role","button");
+    const openPm = ()=>{ const pm = ROSTER.find(r=>r.role==="pm"); if(pm) open(pm.name); };
+    pmCard.addEventListener("click", openPm);
+    pmCard.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openPm(); } });
+  }
 })();
 
 /* ---------- init ---------- */
