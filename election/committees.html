@@ -25,6 +25,7 @@
 .cmt-stat{flex:1 1 130px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px}
 .cmt-stat .n{font-family:'Kanit';font-weight:700;font-size:1.6rem;line-height:1;color:var(--ink)}
 .cmt-stat .l{font-size:.76rem;color:var(--muted);margin-top:4px}
+.cmt-stat .ssub{font-size:.66rem;color:var(--muted);margin-top:4px;line-height:1.35;opacity:.82}
 .cmt-stat .n .u{font-size:.85rem;font-weight:500;color:var(--muted)}
 
 /* controls */
@@ -47,8 +48,14 @@ html[data-theme="dark"] .cmt-searchbox input{background:var(--card)}
 .chip.on .ct{background:rgba(255,255,255,.25);color:#fff}
 .chip.on .sw{box-shadow:0 0 0 2px rgba(255,255,255,.6)}
 html[data-theme="dark"] .chip{background:var(--card)}
-html[data-theme="dark"] .chip.on{color:#06101a}
-html[data-theme="dark"] .chip.on .ct{background:rgba(0,0,0,.18);color:#06101a}
+/* fix: ธีมมืด chip ที่ active ต้องคืนพื้นหลัง — เดิม .chip{background:var(--card)}
+   (specificity สูงกว่า .chip.on) ทับพื้นหลัง active ทำให้มืดบนมืด อ่านไม่ออก
+   และสีพรรคก็ไม่ขึ้นตอนเลือก */
+html[data-theme="dark"] .chip.on{background:var(--chip-col,var(--ink));color:#06101a}
+html[data-theme="dark"] .chip.on .ct{background:rgba(0,0,0,.16);color:#06101a}
+/* chip ที่ถูกเติมด้วย "สีพรรค" (ไม่ใช่ "ทุกพรรค") → ตัวอักษรขาว ให้ตัดกับสีพรรคที่เข้ม */
+html[data-theme="dark"] .chip.on[data-party]:not([data-party="all"]){color:#fff}
+html[data-theme="dark"] .chip.on[data-party]:not([data-party="all"]) .ct{background:rgba(255,255,255,.25);color:#fff}
 
 /* grid */
 .cmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(335px,1fr));gap:14px}
@@ -83,6 +90,57 @@ html[data-theme="dark"] .cmt-card .tbadge.wisaman{color:#e7c977}
 .cmt-foot a{color:var(--orange-deep);text-decoration:underline}
 .cmt-back{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.86rem;color:var(--orange-deep);
   background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:10px;padding:8px 14px;margin-bottom:16px}
+
+/* ===== clickable card + ปุ่มดูประวัติ ===== */
+.cmt-card{cursor:pointer}
+.cmt-card:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.cmt-card .seebio{margin-left:auto;flex:0 0 auto;align-self:center;display:inline-flex;align-items:center;gap:3px;
+  font-family:'Kanit';font-weight:500;font-size:.72rem;color:var(--orange-deep);background:var(--orange-soft);
+  border:1px solid var(--orange-line);border-radius:999px;padding:4px 9px;white-space:nowrap;transition:.13s}
+.cmt-card:hover .seebio{background:var(--orange);color:#fff;border-color:transparent}
+html[data-theme="dark"] .cmt-card .seebio{background:var(--card)}
+/* รูปประธาน ในวงอวาตาร์ (อ้างอิงชุดรูป ส.ส. ที่หน้า index.html ใช้ · โฟลเดอร์ photos/) */
+.cmt-card .av{position:relative;overflow:hidden}
+.pf-av{position:relative;overflow:hidden}
+.cmt-card .av img,.pf-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
+
+/* ===== PROFILE MODAL (กดการ์ด → ดูประวัติประธาน · ธีมเดียวกับหน้า) ===== */
+.pf-overlay{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:20px;
+  background:rgba(10,24,34,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .22s ease}
+html[data-theme="dark"] .pf-overlay{background:rgba(2,8,14,.72)}
+.pf-overlay.show{opacity:1}
+.pf-overlay[hidden]{display:none}
+.pf-modal{width:min(620px,100%);max-height:88vh;overflow:auto;position:relative;background:var(--card);
+  border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px -28px rgba(10,40,60,.55);
+  transform:translateY(14px) scale(.985);transition:transform .22s ease}
+.pf-overlay.show .pf-modal{transform:none}
+.pf-modal::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--pc,var(--orange));border-radius:20px 20px 0 0}
+.pf-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:10px;border:1px solid var(--line-2);
+  background:var(--paper);color:var(--muted);font-size:22px;line-height:1;cursor:pointer;z-index:3;transition:.13s}
+html[data-theme="dark"] .pf-close{background:var(--card)}
+.pf-close:hover{background:var(--wash);color:var(--ink)}
+.pf-head{display:flex;gap:16px;align-items:center;padding:26px 24px 18px 24px;border-bottom:1px solid var(--line)}
+.pf-av{width:64px;height:64px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;
+  font-family:'Kanit';font-weight:600;font-size:1.7rem;background:var(--pc,var(--orange));box-shadow:0 0 0 3px var(--card),0 0 0 4px var(--line-2)}
+.pf-id{min-width:0}
+.pf-name{font-family:'Kanit';font-weight:600;font-size:1.28rem;color:var(--ink);line-height:1.2}
+.pf-role{font-size:.84rem;color:var(--muted);margin-top:4px;line-height:1.45}
+.pf-pill{display:inline-flex;align-items:center;margin-top:9px;font-family:'Kanit';font-weight:500;font-size:.74rem;
+  color:#fff;background:var(--pc,var(--orange));padding:3px 11px;border-radius:999px}
+.pf-body{padding:16px 24px 24px 24px}
+.pf-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line)}
+.pf-row:last-of-type{border-bottom:0}
+.pf-k{color:var(--muted);font-size:.82rem;font-family:'Kanit';font-weight:500}
+.pf-v{color:var(--ink);font-size:.9rem;line-height:1.6}
+.pf-src{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-family:'Kanit';font-weight:500;font-size:.82rem;
+  color:var(--orange-deep);background:var(--orange-soft);border:1px solid var(--orange-line);padding:8px 14px;border-radius:10px;transition:.13s}
+.pf-src:hover{background:var(--orange);color:#fff;border-color:transparent}
+.pf-note{color:var(--muted);font-size:.74rem;margin-top:14px;font-style:italic;line-height:1.55}
+@media(max-width:560px){
+  .pf-row{grid-template-columns:1fr;gap:2px}
+  .pf-head{flex-direction:column;text-align:center}
+  .pf-pill{margin-left:auto;margin-right:auto}
+}
 </style>
 </head>
 <body>
@@ -119,7 +177,7 @@ mdThemeIcon();
       <path d="M14 22v18M24 22v18M34 22v18" stroke="var(--orange-deep)" stroke-width="2.4"/>
     </svg>
     <div class="bt">คณะกรรมาธิการ สภาผู้แทนราษฎร
-      <small>ชุดที่ 27 · คณะกรรมาธิการสามัญและวิสามัญ พร้อมประธานและสังกัดพรรค</small>
+      <small>ชุดที่ 27 · 35 คณะสามัญ (ตามข้อบังคับฯ ข้อ 90) + 3 คณะวิสามัญ · พร้อมประธานและสังกัดพรรค</small>
     </div>
   </div>
 
@@ -138,8 +196,10 @@ mdThemeIcon();
   <div class="cmt-grid" id="cmtGrid"></div>
 
   <div class="cmt-foot">
-    ที่มา: รายชื่อคณะกรรมาธิการสามัญและวิสามัญ สภาผู้แทนราษฎร ชุดที่ 27 ·
-    ดูข้อมูลและผลงานของแต่ละคณะเพิ่มเติมที่ <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a><br>
+    <b>คณะกรรมาธิการสามัญประจำสภามี 35 คณะ</b> (คณะละ 15 คน) ตั้งเป็นการถาวรตาม<b>ข้อบังคับการประชุมสภาผู้แทนราษฎร พ.ศ. 2562 ข้อ 90</b>
+    โดยจัดสรรประธานและกรรมาธิการตามสัดส่วนจำนวน สส. ของแต่ละพรรค · ส่วน<b>คณะกรรมาธิการวิสามัญ</b>ตั้งขึ้นเฉพาะกิจเพื่อพิจารณาหรือศึกษาเรื่องใดเรื่องหนึ่งเป็นการเฉพาะ
+    — หน้านี้จึงรวม <b>35 สามัญ + 3 วิสามัญ = 38 คณะ</b><br>
+    ที่มา: รายชื่อคณะกรรมาธิการ สภาผู้แทนราษฎร ชุดที่ 27 · ดูเพิ่มเติมที่ <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a> ·
     สังกัดพรรคหมายถึงพรรคต้นสังกัดของ <b>ประธานคณะกรรมาธิการ</b> เท่านั้น — สมาชิกในแต่ละคณะมาจากหลายพรรคตามสัดส่วนในสภา ·
     คณะกรรมาธิการวิสามัญที่ระบุ "คณะรัฐมนตรี" หมายถึงคณะที่ตั้งตามข้อเสนอของ ครม.
   </div>
@@ -208,6 +268,26 @@ const colOf = p => PARTY_COL[p] || '#5E7488';
 const initialOf = name => { const parts = name.trim().split(/\s+/); const first = parts.length>1 ? parts[1] : parts[0]; return (first||'?').charAt(0); };
 const cleanName = n => n.replace(/^คณะกรรมาธิการ/, '').trim();
 
+/* รูปประธาน — คณะกรรมาธิการสามัญ 35 คณะ ใช้รูปชุด committee-photos/01..35.jpg
+   (เลขลำดับไฟล์ตรงกับลำดับคณะในอาร์เรย์ COMMITTEES พอดี) · คณะวิสามัญที่เหลือ
+   ดึงรูปจากชุดรูป ส.ส. ที่หน้า index.html ใช้ (photos/) เท่าที่มี */
+const VISAMAN_PHOTOS = {
+  'พิมพ์ภัทรา วิชัยกุล':'นางสาวพิมพ์ภัทรา__วิชัยกุล.png'
+};
+function photoSrc(c){
+  if(!c) return null;
+  const idx = COMMITTEES.indexOf(c) + 1;
+  if(c.t==='สามัญ' && idx>=1 && idx<=35) return `committee-photos/${String(idx).padStart(2,'0')}.jpg`;
+  const ph = VISAMAN_PHOTOS[c.c];
+  return ph ? `photos/${encodeURIComponent(ph)}` : null;
+}
+/* อวาตาร์: มีรูป → ใส่ <img> ทับ (โหลดพลาด → onerror ลบรูป เหลืออักษรย่อ); ไม่มีรูป → อักษรย่อ */
+function avatarHTML(name, cls, c){
+  const s = photoSrc(c);
+  const img = s ? `<img src="${s}" alt="" loading="lazy" onerror="this.remove()">` : '';
+  return `<span class="${cls}">${initialOf(name)}${img}</span>`;
+}
+
 let state = { q:'', type:'all', party:'all' };
 
 /* ---- stat strip ---- */
@@ -217,13 +297,13 @@ function renderStats(){
   const wisaman = COMMITTEES.filter(c=>c.t==='วิสามัญ').length;
   const parties = new Set(COMMITTEES.map(c=>c.p)); parties.delete('คณะรัฐมนตรี');
   const stats = [
-    {n:total, l:'คณะกรรมาธิการทั้งหมด'},
-    {n:saman, l:'คณะกรรมาธิการสามัญ'},
-    {n:wisaman, l:'คณะกรรมาธิการวิสามัญ'},
-    {n:parties.size, l:'พรรคของประธาน', u:'พรรค'}
+    {n:total, l:'คณะกรรมาธิการทั้งหมด', sub:'35 สามัญ + 3 วิสามัญ'},
+    {n:saman, l:'คณะกรรมาธิการสามัญ', sub:'ตั้งถาวร · ข้อบังคับฯ ข้อ 90'},
+    {n:wisaman, l:'คณะกรรมาธิการวิสามัญ', sub:'ตั้งเฉพาะกิจเป็นเรื่องๆ'},
+    {n:parties.size, l:'พรรคของประธาน', u:'พรรค', sub:'ไม่รวมคณะที่ตั้งตาม ครม.'}
   ];
   document.getElementById('cmtStats').innerHTML = stats.map(s=>
-    `<div class="cmt-stat"><div class="n">${s.n}${s.u?` <span class="u">${s.u}</span>`:''}</div><div class="l">${s.l}</div></div>`
+    `<div class="cmt-stat"><div class="n">${s.n}${s.u?` <span class="u">${s.u}</span>`:''}</div><div class="l">${s.l}</div>${s.sub?`<div class="ssub">${s.sub}</div>`:''}</div>`
   ).join('');
 }
 
@@ -279,25 +359,129 @@ function renderGrid(){
     const col = colOf(c.p);
     const isW = c.t==='วิสามัญ';
     const idx = COMMITTEES.indexOf(c)+1;
-    return `<article class="cmt-card" style="--pc:${col}">
+    return `<article class="cmt-card" style="--pc:${col}" data-nm="${c.c}" tabindex="0" role="button" aria-label="ดูประวัติ ${c.c}">
       <div class="toprow">
         <span class="cnum">${idx}</span>
         <h3 class="cname" title="${c.n}">${cleanName(c.n)}</h3>
         <span class="tbadge${isW?' wisaman':''}">${c.t}</span>
       </div>
       <div class="chair">
-        <span class="av">${initialOf(c.c)}</span>
+        ${avatarHTML(c.c, 'av', c)}
         <div class="chmeta">
           <div class="role">ประธานคณะกรรมาธิการ</div>
           <div class="chname" title="${c.c}">${c.c}</div>
           <span class="pbadge"><span class="sw"></span>${c.p}</span>
         </div>
+        <span class="seebio">ประวัติ<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
       </div>
     </article>`;
   }).join('');
 }
 
 document.getElementById('cmtSearch').addEventListener('input', e=>{ state.q=e.target.value; renderGrid(); });
+
+/* ===== ประวัติประธานคณะกรรมาธิการรายบุคคล (จากวิกิพีเดียไทย/ฐานข้อมูลรัฐสภา/สื่อสาธารณะ · อายุ ณ พ.ศ. 2569) ===== */
+const BIO = {
+  'รังสิมันต์ โรม':{party:'ประชาชน (รองหัวหน้าพรรค)',birth:'31 พฤษภาคม 2535',age:'34',province:'ภูเก็ต (เติบโตที่นครศรีธรรมราช)',edu:'นิติศาสตรบัณฑิต ม.ธรรมศาสตร์ (กำลังศึกษาต่อปริญญาโท)',exp:'ส.ส.บัญชีรายชื่อ (2562–ปัจจุบัน); รองหัวหน้าพรรคประชาชน; อดีตโฆษกพรรคก้าวไกล; นักเคลื่อนไหวด้านสิทธิมนุษยชน',src:'https://th.wikipedia.org/wiki/รังสิมันต์_โรม'},
+  'บุญยิ่ง นิติกาญจนา':{party:'กล้าธรรม (รองหัวหน้าพรรค)',birth:'25 กันยายน 2502',age:'66',province:'ราชบุรี',edu:'ศิลปศาสตรบัณฑิต (การพัฒนาชุมชน) ม.ราชภัฏสวนดุสิต',exp:'ส.ส.ราชบุรี (2554–ปัจจุบัน); รองหัวหน้าพรรคกล้าธรรม; อดีตเหรัญญิกพรรค',src:'https://th.wikipedia.org/wiki/บุญยิ่ง_นิติกาญจนา'},
+  'วาโย อัศวรุ่งเรือง':{party:'ประชาชน (รองหัวหน้าพรรค)',birth:'27 ธันวาคม 2530',age:'38',province:'กรุงเทพมหานคร',edu:'แพทยศาสตรบัณฑิต ม.มหิดล; นิติศาสตรบัณฑิต ม.รามคำแหง; วท.ม. ม.แม่ฟ้าหลวง; MBA ม.หอการค้าไทย',exp:'ส.ส.บัญชีรายชื่อ (2562–ปัจจุบัน); รองหัวหน้าพรรคประชาชน; อดีตประธาน กมธ.การอุดมศึกษาฯ; แพทย์',src:'https://th.wikipedia.org/wiki/วาโย_อัศวรุ่งเรือง'},
+  'จักพันธ์ ปิยพรไพบูลย์':{party:'กล้าธรรม (เดิมประชาธิปัตย์)',birth:'5 กรกฎาคม 2524',age:'44',province:'ประจวบคีรีขันธ์',edu:'ศิลปศาสตรบัณฑิต (การพัฒนาชุมชน) ม.ราชภัฏสวนดุสิต',exp:'ส.ส.ประจวบคีรีขันธ์; อดีตรองเลขาธิการพรรคประชาธิปัตย์ (2566–2568)',src:'https://th.wikipedia.org/wiki/จักพันธ์_ปิยพรไพบูลย์'},
+  'โอชิษฐ์ เกียรติก้องชูชัย':{party:'เพื่อไทย',birth:'22 กันยายน 2520',age:'48',province:'ชัยภูมิ',edu:'แพทยศาสตรบัณฑิต (กุมารเวชศาสตร์) มหาวิทยาลัยศรีนครินทรวิโรฒ; รป.ม. ม.รามคำแหง',exp:'ส.ส.ชัยภูมิ (2554–ปัจจุบัน); อดีตรองหัวหน้าพรรคเพื่อไทย; แพทย์',src:'https://th.wikipedia.org/wiki/โอชิษฐ์_เกียรติก้องชูชัย'},
+  'สฤษดิ์ บุตรเนียร':{party:'ภูมิใจไทย',birth:'24 กรกฎาคม 2498',age:'70',province:'ปราจีนบุรี',edu:'นิติศาสตรบัณฑิต ม.รามคำแหง; รป.ม. นิด้า; รป.ด. ม.ราชภัฏสวนดุสิต',exp:'ส.ส.ปราจีนบุรี เขต 3 (2566–ปัจจุบัน); เจ้าของกลุ่มโรงเรียนในเครือสายมิตร',src:'https://theyworkforus.elect.in.th/people/สฤษดิ์-บุตรเนียร/'},
+  'นพพล เหลืองทองนารา':{party:'เพื่อไทย',birth:'11 กันยายน 2515',age:'53',province:'พิษณุโลก',edu:'บริหารธุรกิจบัณฑิต (บริหารงานบุคคล) ม.พายัพ; รป.ม. ม.พิษณุโลก',exp:'ส.ส.พิษณุโลก 4 สมัย (2554, 2562, 2566, 2569); อดีตรองนายก อบจ.พิษณุโลก',src:'https://th.wikipedia.org/wiki/นพพล_เหลืองทองนารา'},
+  'ศุภณัฐ มีนชัยนันท์':{party:'ประชาชน',birth:'19 กรกฎาคม 2534',age:'34',province:'กรุงเทพมหานคร',edu:'Project Management for Construction (เกียรตินิยมอันดับ 1) UCL (อังกฤษ); โท Real Estate Finance ม.เคมบริดจ์',exp:'ส.ส.กทม. เขต 9; นักบริหารธุรกิจก่อสร้าง อสังหาริมทรัพย์ และขนส่ง',src:'https://th.wikipedia.org/wiki/ศุภณัฐ_มีนชัยนันท์'},
+  'มณเฑียร สงฆ์ประชา':{party:'ภูมิใจไทย',birth:'15 กุมภาพันธ์ 2500',age:'69',province:'ชัยนาท',edu:'รัฐศาสตรบัณฑิต ม.รามคำแหง',exp:'ส.ส.ชัยนาท หลายสมัย (ตั้งแต่ 2562); อดีตสมาชิกวุฒิสภาชัยนาท (2557–2560)',src:'https://th.wikipedia.org/wiki/มณเฑียร_สงฆ์ประชา'},
+  'อรรถพล ไตรศรี':{party:'ภูมิใจไทย',birth:'14 เมษายน 2501',age:'68',province:'พังงา',edu:'ปริญญาตรี ม.รามคำแหง',exp:'ส.ส.พังงา; ทนายความ; อดีตสมาชิกและรองนายก อบจ.พังงา'},
+  'จุติ ไกรฤกษ์':{party:'ภูมิใจไทย (เดิมประชาธิปัตย์)',birth:'14 ธันวาคม 2499',age:'69',province:'พิษณุโลก',edu:'ตรี เศรษฐศาสตร์ และโท MBA, Queensland University of Technology (ออสเตรเลีย)',exp:'ส.ส.พิษณุโลก; อดีต รมว.การพัฒนาสังคมฯ (2562–2566); อดีต รมว.ไอซีที; อดีตเลขาธิการพรรคประชาธิปัตย์',src:'https://th.wikipedia.org/wiki/จุติ_ไกรฤกษ์'},
+  'จิตรวรรณ หวังศุภกิจโกศล':{party:'ไทรวมพลัง (หัวหน้าพรรค)',birth:'18 ตุลาคม 2509',age:'59',province:'นครราชสีมา (พิมาย)',edu:'ศิลปศาสตรบัณฑิต (รัฐศาสตร์) ม.รามคำแหง',exp:'ผู้ก่อตั้งและหัวหน้าพรรคไทรวมพลัง; ส.ส. (อดีตนครราชสีมา / ปัจจุบันอุบลราชธานี); อดีตนายกเทศมนตรีตำบลเสิงสาง',src:'https://th.wikipedia.org/wiki/จิตรวรรณ_หวังศุภกิจโกศล'},
+  'วัชรพงศ์ คูวิจิตรสุวรรณ':{party:'ภูมิใจไทย (เดิมประชาธิปัตย์)',birth:'6 ธันวาคม 2516',age:'52',province:'สระบุรี',edu:'ระดับปริญญาเอก (รัฐประศาสนศาสตร์)',exp:'ส.ส.สระบุรี เขต 3 หลายสมัย; เลขานุการรัฐมนตรีว่าการกระทรวงสาธารณสุข'},
+  'รักชนก ศรีนอก':{party:'ประชาชน (เดิมก้าวไกล)',birth:'10 ตุลาคม 2536',age:'32',province:'กรุงเทพมหานคร',edu:'วิทยาศาสตรบัณฑิต (สถิติ) ม.ธรรมศาสตร์',exp:'ส.ส.กทม. (2566); ส.ส.บัญชีรายชื่อ (2569); นักการเมืองสายดิจิทัล ("ไอซ์ รักชนก")',src:'https://th.wikipedia.org/wiki/รักชนก_ศรีนอก'},
+  'เอกราช อุดมอำนวย':{party:'ประชาชน (เดิมก้าวไกล)',province:'กรุงเทพมหานคร (เขตดอนเมือง)',exp:'ส.ส.กทม. เขตดอนเมือง (2566); อดีตผู้สื่อข่าวภาคสนามสถานีโทรทัศน์ไอทีวี ("จอจาน"); ผู้ผลักดันกฎหมายป้องกันการคุกคามทางเพศ',src:'https://parliamentwatch.wevis.info/politicians/ff283208-933c-4418-92a9-85f73f27a532'},
+  'พันโท สินธพ แก้วพิจิตร':{party:'กล้าธรรม (รองหัวหน้าพรรค)',birth:'25 มิถุนายน 2514',age:'54',province:'นครปฐม',edu:'วศ.บ. (วิศวกรรมโยธา) รร.นายร้อย จปร. รุ่น 43; โท Engineering Management, George Washington Univ.; เอก Computational Sciences, George Mason Univ. (สหรัฐฯ)',exp:'ส.ส.นครปฐม 4 สมัย (2554–ปัจจุบัน); รองหัวหน้าพรรคกล้าธรรม; อดีตนายทหาร',src:'https://th.wikipedia.org/wiki/สินธพ_แก้วพิจิตร'},
+  'กุลวลี นพอมรบดี':{party:'ภูมิใจไทย',birth:'1 กุมภาพันธ์ 2529',age:'40',province:'ราชบุรี',edu:'ปริญญาตรี การบัญชี, Swinburne University of Technology (ออสเตรเลีย)',exp:'ส.ส.ราชบุรี 3 สมัย (2562–ปัจจุบัน)',src:'https://th.wikipedia.org/wiki/กุลวลี_นพอมรบดี'},
+  'ธนยศ ทิมสุวรรณ':{party:'ภูมิใจไทย',birth:'7 พฤศจิกายน 2533',age:'35',province:'เลย',edu:'ปริญญาโท Hult International Business School (สหรัฐฯ)',exp:'ส.ส.เลย 2 สมัย; ทายาทตระกูลการเมืองทิมสุวรรณ',src:'https://parliamentwatch.wevis.info/politicians/8710ee4e-7608-461f-afd0-5212c61381cf'},
+  'คงกฤษ ฉัตรมาลีรัตน์':{party:'ภูมิใจไทย',birth:'7 พฤษภาคม 2516',age:'53',province:'ระนอง',edu:'ศิลปศาสตรบัณฑิต (การบริหารทั่วไป) และ รป.ม. ม.เกริก',exp:'ส.ส.ระนอง (2562–ปัจจุบัน); อดีตนายก อบจ.ระนอง',src:'https://th.wikipedia.org/wiki/คงกฤษ_ฉัตรมาลีรัตน์'},
+  'พิทักษ์เดช เดชเดโช':{party:'ประชาธิปัตย์',birth:'18 มกราคม 2535',age:'34',province:'นครศรีธรรมราช',edu:'นิติศาสตรบัณฑิต และ นิติศาสตรมหาบัณฑิต ม.รามคำแหง',exp:'ส.ส.นครศรีธรรมราช (2566–ปัจจุบัน); อดีตรองโฆษกพรรคประชาธิปัตย์',src:'https://th.wikipedia.org/wiki/พิทักษ์เดช_เดชเดโช'},
+  'ภัทรพงษ์ ลีลาภัทร์':{party:'ประชาชน',birth:'5 ธันวาคม 2533',age:'35',province:'เชียงใหม่',edu:'วิศวกรรมโยธา ม.เชียงใหม่; โท วิศวกรรมโครงสร้าง (ม.เอดินบะระ/กลาสโกว์ สกอตแลนด์)',exp:'ส.ส.เชียงใหม่ เขต 8 (2566–ปัจจุบัน); รองโฆษกพรรคประชาชน',src:'https://th.wikipedia.org/wiki/ภัทรพงษ์_ลีลาภัทร์'},
+  'อาสพลธ์ สรรณ์ไตรภพ':{party:'ภูมิใจไทย',birth:'6 ธันวาคม 2521',age:'47',province:'ศรีสะเกษ',edu:'วิศวกรรมโยธา ม.ขอนแก่น; โท วิศวกรรมโยธา ม.ฟลอริดา (สหรัฐฯ)',exp:'ส.ส.ศรีสะเกษ (2562–ปัจจุบัน)',src:'https://th.wikipedia.org/wiki/อาสพลธ์_สรรณ์ไตรภพ'},
+  'สุพล จุลใส':{party:'ภูมิใจไทย (เดิมประชาธิปัตย์)',birth:'4 มกราคม 2510',age:'59',province:'ชุมพร',edu:'ศิลปศาสตรบัณฑิต (การพัฒนาชุมชน) ม.ราชภัฏสุราษฎร์ธานี; รป.ม. ม.ราชภัฏบ้านสมเด็จเจ้าพระยา',exp:'ส.ส.ชุมพร; อดีตนายก อบจ.ชุมพร (2555–2561)',src:'https://th.wikipedia.org/wiki/สุพล_จุลใส'},
+  'ภคมน หนุนอนันต์':{party:'ประชาชน (โฆษกพรรค)',birth:'11 พฤษภาคม 2531',age:'38',province:'พัทลุง',edu:'นิเทศศาสตรบัณฑิต ม.กรุงเทพ; โท รัฐศาสตร์ ม.เกษตรศาสตร์',exp:'ส.ส.บัญชีรายชื่อ (2566); โฆษกพรรคประชาชน (2569–ปัจจุบัน)',src:'https://th.wikipedia.org/wiki/ภคมน_หนุนอนันต์'},
+  'วีระยุทธ กาญจน์ชูฉัตร':{party:'ประชาชน (รองหัวหน้าพรรค)',birth:'16 พฤษภาคม 2522',age:'47',province:'กรุงเทพมหานคร',edu:'วิศวกรรมไฟฟ้า และ โท เศรษฐศาสตร์ จุฬาฯ; เอก Development Studies ม.เคมบริดจ์',exp:'ส.ส.บัญชีรายชื่อ (2569); รองหัวหน้าพรรคประชาชน; อดีต รศ.เศรษฐศาสตร์การเมือง GRIPS (ญี่ปุ่น)',src:'https://th.wikipedia.org/wiki/วีระยุทธ_กาญจน์ชูฉัตร'},
+  'สัมฤทธิ์ แทนทรัพย์':{party:'ภูมิใจไทย',province:'ชัยภูมิ',edu:'ปริญญาตรี-โท (บริหารธุรกิจ / ครุศาสตรมหาบัณฑิต) ม.ราชภัฏชัยภูมิ',exp:'ส.ส.ชัยภูมิ เขต 3; อดีตนายกเทศมนตรีตำบลเทพสถิต 4 สมัย; บิดาของ สุชาดา แทนทรัพย์ ส.ส.',src:'https://parliamentwatch.wevis.info/politicians/c39fd5b9-1b5d-4708-b6e7-8052d14b35cc'},
+  'วีระพล จิตสัมฤทธิ์':{party:'เพื่อไทย',birth:'23 กันยายน 2507',age:'61',province:'ศรีสะเกษ',edu:'บริหารธุรกิจบัณฑิต ม.รามคำแหง',exp:'ส.ส.ศรีสะเกษ 6 สมัย (ตั้งแต่ 2548); อดีตรองนายก อบจ.',src:'https://th.wikipedia.org/wiki/วีระพล_จิตสัมฤทธิ์'},
+  'ฐิติมา ฉายแสง':{party:'เพื่อไทย',birth:'13 พฤศจิกายน 2503',age:'65',province:'ฉะเชิงเทรา',edu:'ศึกษาศาสตรบัณฑิต ม.ศิลปากร; โท บริหารธุรกิจ/รัฐกิจ Southeastern University (สหรัฐฯ)',exp:'ส.ส.ฉะเชิงเทรา; อดีตโฆษกประจำสำนักนายกรัฐมนตรี (2554–2555)',src:'https://th.wikipedia.org/wiki/ฐิติมา_ฉายแสง'},
+  'ภาคภูมิ บูลย์ประมุข':{party:'กล้าธรรม',province:'ตาก (แม่ระมาด)',edu:'ปริญญาโท ศิลปศาสตร์ (รัฐศาสตร์ การเมืองการปกครอง) ม.รามคำแหง',exp:'ส.ส.ตาก เขต 3; อดีตรองนายก อบจ.ตาก; นักการเมืองท้องถิ่นกว่า 20 ปี',src:'https://theyworkforus.wevis.info/people/ภาคภูมิ-บูลย์ประมุข/'},
+  'ธิวัลรัตน์ อังกินันทน์':{party:'ภูมิใจไทย (เดิมรวมไทยสร้างชาติ)',province:'เพชรบุรี',exp:'ส.ส.เพชรบุรี เขต 1 ("มาดามกระแต") — สตรีคนแรกของเพชรบุรีที่เป็น ส.ส.; ตระกูลการเมืองอังกินันทน์; อดีตที่ปรึกษา รมว.แรงงาน'},
+  'จิรวัฒน์ ศิริพานิชย์':{party:'เพื่อไทย',birth:'28 มีนาคม 2515',age:'54',province:'มหาสารคาม',edu:'บริหารธุรกิจบัณฑิต (การตลาด) ม.กรุงเทพ; MBA Mercer University (สหรัฐฯ); เอก รป.ด. ม.ราชภัฏมหาสารคาม',exp:'ส.ส.มหาสารคาม 5 สมัย (ตั้งแต่ 2550); รองเลขาธิการพรรคเพื่อไทย; อดีตนายกเทศมนตรี/รองนายก อบจ.',src:'https://th.wikipedia.org/wiki/จิรวัฒน์_ศิริพานิชย์'},
+  'รัชนก สุขประเสริฐ':{party:'ประชาชน (เดิมก้าวไกล)',province:'สมุทรปราการ',edu:'บริหารธุรกิจบัณฑิต (การจัดการโลจิสติกส์) และ วท.ม. การจัดการโลจิสติกส์และโซ่อุปทาน วิทยาลัยเซาธ์อีสท์บางกอก',exp:'ส.ส.สมุทรปราการ เขต 2 (2566); กรรมการวิปฝ่ายค้าน',src:'https://parliamentwatch.wevis.info/politicians/fb848ee4-5295-4fd1-8297-80d889c809df'},
+  'สกลธี ภัททิยกุล':{party:'ประชาธิปัตย์ (รองหัวหน้าพรรค)',birth:'14 ตุลาคม 2520',age:'48',province:'กรุงเทพมหานคร',edu:'นิติศาสตรบัณฑิต ม.ธรรมศาสตร์; โท กฎหมาย Indiana Univ. และ George Washington Univ. (สหรัฐฯ)',exp:'ส.ส. (2550–2554, 2569–ปัจจุบัน); อดีตรองผู้ว่าราชการกรุงเทพมหานคร (2561–2565); แกนนำ กปปส.',src:'https://th.wikipedia.org/wiki/สกลธี_ภัททิยกุล'},
+  'อลงกต มณีกาศ':{party:'ภูมิใจไทย',birth:'29 พฤษภาคม 2509',age:'60',province:'นครพนม (ปลาปาก)',edu:'แพทยศาสตรบัณฑิต ม.เชียงใหม่',exp:'ส.ส.นครพนม; อดีตผู้อำนวยการโรงพยาบาลปลาปาก; อดีตโฆษกพรรคเพื่อแผ่นดิน',src:'https://th.wikipedia.org/wiki/อลงกต_มณีกาศ'},
+  'ศุภโชค ศรีสุขจร':{party:'ภูมิใจไทย (เดิมชาติไทยพัฒนา)',birth:'7 กรกฎาคม 2537',age:'31',province:'นครปฐม',edu:'ตรี การเงินการธนาคาร; โท วิทยาศาสตร์ข้อมูล ม.โคลัมเบีย (นครนิวยอร์ก สหรัฐฯ)',exp:'ส.ส.นครปฐม เขต 1 (2566 ชาติไทยพัฒนา → 2569 ภูมิใจไทย); ทายาทตระกูลศรีสุขจร',src:'https://th.wikipedia.org/wiki/ศุภโชค_ศรีสุขจร'},
+  'พิมพ์ภัทรา วิชัยกุล':{party:'ภูมิใจไทย (เดิมรวมไทยสร้างชาติ)',birth:'19 ตุลาคม 2522',age:'46',province:'นครศรีธรรมราช (สิชล)',edu:'วท.บ. เคมีอุตสาหกรรม ม.เทคโนโลยีพระจอมเกล้าพระนครเหนือ; รัฐศาสตรมหาบัณฑิต ม.รามคำแหง',exp:'ส.ส.นครศรีธรรมราช 5 สมัย (ตั้งแต่ 2550); อดีต รมว.อุตสาหกรรม (2566–2567)',src:'https://th.wikipedia.org/wiki/พิมพ์ภัทรา_วิชัยกุล'},
+  'สมคิด เลิศไพฑูรย์':{party:'อิสระ / นักวิชาการ',birth:'9 กรกฎาคม 2502',age:'66',province:'กรุงเทพมหานคร',edu:'นิติศาสตรบัณฑิต ม.ธรรมศาสตร์; โท-เอก กฎหมายมหาชน ม.ปารีส 2 (ฝรั่งเศส)',exp:'ศาสตราจารย์ด้านกฎหมายมหาชน; อดีตอธิการบดี ม.ธรรมศาสตร์ (2553–2560); อดีตสมาชิกสภาร่างรัฐธรรมนูญ 2540 และ สนช.',src:'https://th.wikipedia.org/wiki/สมคิด_เลิศไพฑูรย์'},
+  'ศุภชัย ใจสมุทร':{party:'ภูมิใจไทย',birth:'27 กันยายน 2501',age:'67',province:'ตรัง',edu:'นิติศาสตรบัณฑิต ม.รามคำแหง; โท ศิลปศาสตร์ (กฎหมายเศรษฐกิจ) จุฬาฯ',exp:'ส.ส.บัญชีรายชื่อ (2569); เลขานุการ รมว.ยุติธรรม; อดีตรองโฆษกประจำสำนักนายกรัฐมนตรี',src:'https://th.wikipedia.org/wiki/ศุภชัย_ใจสมุทร'}
+};
+
+/* ===== profile modal (กดการ์ดประธาน → เด้งประวัติ) ===== */
+(function(){
+  const ov = document.createElement('div');
+  ov.className = 'pf-overlay'; ov.hidden = true;
+  ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+  ov.innerHTML = `<div class="pf-modal"><button class="pf-close" aria-label="ปิด">&times;</button>
+    <div class="pf-head"></div><div class="pf-body"></div></div>`;
+  document.body.appendChild(ov);
+  const modalEl = ov.querySelector('.pf-modal');
+  const headEl = ov.querySelector('.pf-head');
+  const bodyEl = ov.querySelector('.pf-body');
+
+  const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function rows(b){
+    const items = [
+      ['พรรคการเมือง', b.party],
+      ['วันเกิด', b.birth],
+      ['อายุ', (b.age && b.age!=='ไม่ระบุ') ? b.age+' ปี' : ''],
+      ['จังหวัด', b.province],
+      ['การศึกษา', b.edu],
+      ['ประวัติ / ตำแหน่งสำคัญ', b.exp]
+    ];
+    return items.filter(([k,v])=> v && v!=='ไม่ระบุ')
+      .map(([k,v])=>`<div class="pf-row"><div class="pf-k">${k}</div><div class="pf-v">${esc(v)}</div></div>`).join('');
+  }
+
+  let lastFocus = null;
+  function open(name){
+    const c = COMMITTEES.find(x=>x.c===name);
+    const b = BIO[name] || {};
+    modalEl.style.setProperty('--pc', c ? colOf(c.p) : 'var(--orange)');
+    headEl.innerHTML = `${avatarHTML(name, 'pf-av', c)}
+      <div class="pf-id">
+        <div class="pf-name">${esc(name)}</div>
+        <div class="pf-role">ประธาน${c ? esc(c.n) : 'คณะกรรมาธิการ'}</div>
+        ${c ? `<span class="pf-pill">${esc(c.p)}</span>` : ''}
+      </div>`;
+    let html = rows(b) || `<div class="pf-note">ยังไม่มีข้อมูลประวัติเชิงลึกของบุคคลนี้</div>`;
+    if(b.src) html += `<a class="pf-src" href="${b.src}" target="_blank" rel="noopener">แหล่งอ้างอิง ↗</a>`;
+    html += `<div class="pf-note">ข้อมูลจากวิกิพีเดียภาษาไทย/ฐานข้อมูลรัฐสภา/สื่อสาธารณะ · อายุคำนวณ ณ พ.ศ. 2569</div>`;
+    bodyEl.innerHTML = html;
+    lastFocus = document.activeElement;
+    ov.hidden = false; document.body.style.overflow = 'hidden';
+    void ov.offsetWidth;            /* บังคับ reflow ให้ transition เล่นได้ */
+    ov.classList.add('show');
+    ov.querySelector('.pf-close').focus();
+  }
+  function close(){
+    ov.classList.remove('show'); document.body.style.overflow = '';
+    setTimeout(()=>{ ov.hidden = true; }, 220);
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  ov.addEventListener('click', e=>{ if(e.target===ov || e.target.classList.contains('pf-close')) close(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !ov.hidden) close(); });
+
+  const grid = document.getElementById('cmtGrid');
+  grid.addEventListener('click', e=>{ const card=e.target.closest('.cmt-card'); if(card && card.dataset.nm) open(card.dataset.nm); });
+  grid.addEventListener('keydown', e=>{ const card=e.target.closest('.cmt-card'); if(card && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); if(card.dataset.nm) open(card.dataset.nm); } });
+})();
+
 renderStats(); renderFilters(); renderGrid();
 </script>
 
