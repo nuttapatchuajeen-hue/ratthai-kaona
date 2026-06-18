@@ -404,7 +404,7 @@
     <section class="wrap" id="view-results" hidden>
       <div class="results-actions">
         <button class="btn-ghost" type="button" id="btn-refresh">⟳ โหลดผลล่าสุด</button>
-        <a class="btn-ghost" id="csv-link" href="#" download>⬇ ดาวน์โหลดข้อมูลดิบ (CSV สำหรับ Excel/SPSS)</a>
+        <a class="btn-ghost" id="csv-link" href="admin.html">🔒 แผงแอดมิน (ข้อมูลดิบ / CSV)</a>
       </div>
       <div class="loading" id="res-loading">กำลังโหลดผลการประเมิน…</div>
       <div id="res-body" hidden>
@@ -672,8 +672,7 @@
   }
 
   // ── results ──
-  const csvLink = document.getElementById('csv-link');
-  csvLink.href = API + '?format=csv';
+  // ปุ่ม CSV/ข้อมูลดิบ ย้ายไปหน้า admin.html (ต้อง login) — เป็นลิงก์ปกติ ไม่ต้องมี JS
   document.getElementById('btn-refresh').addEventListener('click', loadResults);
 
   async function loadResults() {
