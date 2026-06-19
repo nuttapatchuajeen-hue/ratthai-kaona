@@ -996,6 +996,27 @@ body::before {
     height: 100dvh;
     transform: none !important;
     align-items: center;
+    /* คอนเทนเนอร์จาง in/out นุ่ม ๆ (เนื้อหาด้านในเลื่อนเป็นสไลด์ด้านล่าง) */
+    transition: opacity 0.55s ease;
+  }
+
+  /* ── เลื่อนเป็นสไลด์ (ไม่ใช่ "โผล่" ทันที) ──
+     ตอน section เข้าช่วง scroll → เนื้อหาเลื่อนขึ้น + จางเข้า ทีละนุ่ม
+     ทำงานคู่กับ initSections ที่ปิด GSAP timeline บนมือถือ (กันชนกัน) */
+  .scroll-section .section-inner,
+  .scroll-section .cta-inner,
+  .scroll-section .stats-grid {
+    opacity: 0;
+    transform: translateY(46px);
+    transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .scroll-section.is-visible .section-inner,
+  .scroll-section.is-visible .cta-inner,
+  .scroll-section.is-visible .stats-grid {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .align-left, .align-right {

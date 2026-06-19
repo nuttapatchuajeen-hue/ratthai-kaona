@@ -297,12 +297,17 @@ function buildTimeline(type, children) {
 
 function initSections() {
   const totalH = scrollCont.offsetHeight;
+  // มือถือ: ใช้ "slide-reveal" ด้วย CSS (เลื่อนขึ้น+จาง ตาม class .is-visible)
+  // แทน GSAP timeline ของเดสก์ท็อป — ให้เนื้อหา "เลื่อนเข้าเป็นสไลด์" ไม่ใช่โผล่ทันที
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
   document.querySelectorAll('.scroll-section').forEach((section) => {
     const enterPct = parseFloat(section.dataset.enter) / 100;
     const leavePct = parseFloat(section.dataset.leave) / 100;
     const midPct   = (enterPct + leavePct) / 2;
-    const persist  = section.dataset.persist === 'true';
+    // มือถือ: ไม่ persist — เพราะ section ถูกตรึง fixed top:0 ถ้า persist ค้างไว้
+    // จะตรึงทับเนื้อหาด้านบน (เช่น logo slider) ตอนเลื่อนกลับขึ้น (เดสก์ท็อปเป็น absolute จึงไม่มีปัญหา)
+    const persist  = section.dataset.persist === 'true' && !isMobile;
     const animType = section.dataset.animation || 'fade-up';
 
     // Position section at the midpoint of its scroll range
@@ -312,10 +317,14 @@ function initSections() {
     section.style.top = (midPct * scrollable + window.innerHeight / 2) + 'px';
     section.style.transform = 'translateY(-50%)';
 
-    const children = section.querySelectorAll(
-      '.section-label, .section-heading, .section-body, .section-note, .cta-heading, .cta-sub, .cta-button, .cta-button-ghost, .stat, .dash-link'
-    );
-    const tl = buildTimeline(animType, children);
+    // เดสก์ท็อปเท่านั้นที่สร้าง GSAP timeline (มือถือใช้ CSS slide แทน)
+    let tl = null;
+    if (!isMobile) {
+      const children = section.querySelectorAll(
+        '.section-label, .section-heading, .section-body, .section-note, .cta-heading, .cta-sub, .cta-button, .cta-button-ghost, .stat, .dash-link'
+      );
+      tl = buildTimeline(animType, children);
+    }
 
     let played = false;
 
@@ -330,14 +339,14 @@ function initSections() {
 
         if (inRange) {
           section.classList.add('is-visible');
-          if (!played) {
+          if (tl && !played) {
             played = true;
             tl.play(0);
           }
         } else {
           if (!persist) {
             section.classList.remove('is-visible');
-            if (played) {
+            if (tl && played) {
               played = false;
               tl.pause(0);
             }
