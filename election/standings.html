@@ -178,32 +178,20 @@ mdThemeIcon();
 </script>
 <script>
 /* ===== เพลงพรรคในอดีต — พรรคถูกยุบแล้ว (ขีดฆ่าคำว่า "พรรค") เครื่องเล่นหน้าตาเดียวกับด้านบน
-   ไม่มีไฟล์ mp3 — เสียงสตรีมจาก YouTube ผ่าน IFrame API โดยซ่อนตัวเล่นไว้นอกจอ ===== */
+   เล่นจากไฟล์ mp3 ในเครื่อง (../songs-past/) + มีปุ่มลิงก์ไป YouTube เป็นทางสำรอง ===== */
 (function(){
   const PAST=[
-    {name:'อนาคตใหม่', year:'ยุบ พ.ศ. 2563', color:'#F47920', title:'The Future of Our Country', id:'wAvkRPrsliw'},
-    {name:'ก้าวไกล',   year:'ยุบ พ.ศ. 2567', color:'#FF6A13', title:'ก้าวไกลก้าวหน้า · วงสามัญชน x ส.ส.คำพอง เทพาคำ (Lyric Video)', id:'99KfzrvfIns'},
-    {name:'ไทยรักไทย', year:'ยุบ พ.ศ. 2550', color:'#1B3C8F', title:'บทเพลงแห่งนโยบาย · Song of the Policy', id:'Uurw_CC3VbQ'},
-    {name:'เสรีมนังคศิลา', year:'ยุบ พ.ศ. 2500',   color:'#B08D57', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', id:'qjIDGTX5NUE'},
-    {name:'สหประชาไทย',   year:'สิ้นสุด พ.ศ. 2514', color:'#5E7A99', title:'มาร์ชสหประชาไทย', id:'Qv_SY27Uh5U'},
-    {name:'กิจสังคม',     year:'พ.ศ. 2517–2561',   color:'#1F8A70', title:'หัวหน้าและเลขาธิการพรรคกิจสังคม (2517–2561)', id:'lcxJxVxkMxo'},
-    {name:'ความหวังใหม่', year:'ยุบรวม พ.ศ. 2545', color:'#3949AB', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', id:'NlVsqCH8s_k'},
-    {name:'พลังประชาชน',  year:'ยุบ พ.ศ. 2551',    color:'#C0392B', title:'พลังประชาชน · กี้ อริสมันต์ (MV)', id:'FNur5U-Y710'}
+    {name:'อนาคตใหม่', year:'ยุบ พ.ศ. 2563', color:'#F47920', title:'The Future of Our Country', file:'anakhotmai.mp3', id:'wAvkRPrsliw'},
+    {name:'ก้าวไกล',   year:'ยุบ พ.ศ. 2567', color:'#FF6A13', title:'ก้าวไกลก้าวหน้า · วงสามัญชน x ส.ส.คำพอง เทพาคำ (Lyric Video)', file:'kaoklai.mp3', id:'99KfzrvfIns'},
+    {name:'ไทยรักไทย', year:'ยุบ พ.ศ. 2550', color:'#1B3C8F', title:'บทเพลงแห่งนโยบาย · Song of the Policy', file:'thairakthai.mp3', id:'Uurw_CC3VbQ'},
+    {name:'เสรีมนังคศิลา', year:'ยุบ พ.ศ. 2500',   color:'#B08D57', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', file:'serimanangkhasila.mp3', id:'qjIDGTX5NUE'},
+    {name:'สหประชาไทย',   year:'สิ้นสุด พ.ศ. 2514', color:'#5E7A99', title:'มาร์ชสหประชาไทย', file:'sahaprachathai.mp3', id:'Qv_SY27Uh5U'},
+    {name:'กิจสังคม',     year:'พ.ศ. 2517–2561',   color:'#1F8A70', title:'หัวหน้าและเลขาธิการพรรคกิจสังคม (2517–2561)', file:'kitsangkhom.mp3', id:'lcxJxVxkMxo'},
+    {name:'ความหวังใหม่', year:'ยุบรวม พ.ศ. 2545', color:'#3949AB', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', file:'khwamwangmai.mp3', id:'NlVsqCH8s_k'},
+    {name:'พลังประชาชน',  year:'ยุบ พ.ศ. 2551',    color:'#C0392B', title:'พลังประชาชน · กี้ อริสมันต์ (MV)', file:'phalangprachachon.mp3', id:'FNur5U-Y710'}
   ];
   const wrap=document.getElementById('pastsongs');
   const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  let apiReady=null;
-  function loadAPI(){
-    if(apiReady)return apiReady;
-    apiReady=new Promise(res=>{
-      if(window.YT&&YT.Player)return res();
-      const prev=window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady=()=>{if(prev)prev();res();};
-      const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
-    });
-    return apiReady;
-  }
-  const dock=document.createElement('div');dock.className='yt-audio-dock';dock.setAttribute('aria-hidden','true');document.body.appendChild(dock);
   PAST.forEach(p=>{
     const row=document.createElement('div');
     row.className='songrow past'; row.style.setProperty('--pc',p.color);
@@ -225,57 +213,28 @@ mdThemeIcon();
     const btn=row.querySelector('.playbtn'), fill=row.querySelector('.sg-fill'),
           tCur=row.querySelector('.sg-time b'), tDur=row.querySelector('.sg-time span'),
           track=row.querySelector('.sg-track');
-    let player=null, ready=false, timer=null, watchdog=null;
-    const tick=()=>{
-      if(!ready)return;
-      const d=player.getDuration()||0, t=player.getCurrentTime()||0;
-      if(d){tDur.textContent=' / '+fmt(d);fill.style.width=(t/d*100)+'%';}
-      tCur.textContent=fmt(t);
-    };
-    const stopTick=()=>{if(timer){clearInterval(timer);timer=null;}};
-    const startTick=()=>{stopTick();timer=setInterval(tick,250);tick();};
-    const clearDog=()=>{if(watchdog){clearTimeout(watchdog);watchdog=null;}};
+    // เล่นจากไฟล์ mp3 ในเครื่อง (../songs-past/) — เครื่องเล่นเดียวกับหมวดเพลงประจำพรรคด้านบน
+    const audio=new Audio('../songs-past/'+p.file); audio.preload='metadata';
+    audio.addEventListener('loadedmetadata',()=>{tDur.textContent=' / '+fmt(audio.duration);});
+    audio.addEventListener('timeupdate',()=>{
+      tCur.textContent=fmt(audio.currentTime);
+      if(audio.duration)fill.style.width=(audio.currentTime/audio.duration*100)+'%';
+    });
     // ตัวหยุดประจำแถว — ล้างการลงทะเบียนเฉพาะเมื่อยังเป็นของตัวเอง (กันลบของแถวอื่นทับ)
-    const myStop=()=>{clearDog();stopTick();if(player&&ready)player.pauseVideo();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
+    const myStop=()=>{audio.pause();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
+    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';if(window.__mdStop===myStop)window.__mdStop=null;});
+    audio.addEventListener('error',()=>{myStop();tDur.textContent=' / เล่นไม่ได้ · กดปุ่ม YouTube';});
     btn.addEventListener('click',()=>{
-      if(row.classList.contains('playing')){myStop();return;} // หยุด/ยกเลิกได้แม้ยังโหลดไม่เสร็จ
-      if(window.__mdStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (ทั้งสองหมวด)
-      window.__mdStop=myStop;
-      row.classList.add('playing'); // ติดไฟทันทีระหว่างรอโหลด
-      if(player){if(ready)player.playVideo();return;}
-      loadAPI().then(()=>{
-        if(player)return;
-        if(!row.classList.contains('playing'))return; // ผู้ใช้กดยกเลิกไปแล้วระหว่างรอโหลด
-        const host=document.createElement('div');dock.appendChild(host);
-        player=new YT.Player(host,{videoId:p.id,width:200,height:200,
-          playerVars:{playsinline:1},
-          events:{
-            onReady:e=>{
-              ready=true;
-              if(!row.classList.contains('playing'))return; // ถูกยกเลิก/ถูกแถวอื่นแย่งระหว่างโหลด
-              e.target.playVideo();tick();
-              // มือถือบางเครื่อง (iOS) บล็อกการเล่นที่ไม่ได้เริ่มในจังหวะแตะ — ถ้าไม่เริ่มใน 4 วิ รีเซตให้กดใหม่ได้
-              watchdog=setTimeout(()=>{
-                watchdog=null;
-                const st=player.getPlayerState();
-                if(st!==YT.PlayerState.PLAYING&&st!==YT.PlayerState.BUFFERING)myStop();
-              },4000);
-            },
-            onStateChange:e=>{
-              if(e.data===YT.PlayerState.PLAYING){clearDog();row.classList.add('playing');startTick();}
-              else if(e.data===YT.PlayerState.PAUSED){row.classList.remove('playing');stopTick();tick();}
-              else if(e.data===YT.PlayerState.ENDED){stopTick();fill.style.width='0';tCur.textContent='0:00';row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;}
-            },
-            onError:()=>{myStop();tDur.textContent=' / เล่นไม่ได้ · กดปุ่ม YouTube';}
-          }});
-      });
+      if(audio.paused){
+        if(window.__mdStop&&window.__mdStop!==myStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (ทั้งสองหมวด)
+        audio.play();row.classList.add('playing');
+        window.__mdStop=myStop;
+      }else{myStop();}
     });
     track.addEventListener('click',e=>{
-      if(!player||!ready)return;
-      const d=player.getDuration(); if(!d)return;
+      if(!audio.duration)return;
       const r=track.getBoundingClientRect();
-      player.seekTo(Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*d,true);
-      tick();
+      audio.currentTime=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*audio.duration;
     });
     wrap.appendChild(row);
   });
