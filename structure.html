@@ -7,6 +7,7 @@
 <title>โครงสร้างหน่วยงานรัฐไทย</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/bb8-toggle.css">
 <style>
 /* ═══════════════════════════════════════
    THEME TOKENS — Dark (default)
@@ -1575,6 +1576,16 @@ body {
 </head>
 <body>
 
+<style>
+  /* structure: the BB-8 toggle lives INSIDE the header (just left of the ครม. button) — small + in-flow,
+     not a floating overlay. position:static side-steps the header's backdrop-filter containing block. */
+  #header .bb8-toggle{ position:static; --toggle-size:6px; flex:0 0 auto; }
+</style>
+<script>
+function bb8SetTheme(dark){var h=document.documentElement,t=dark?'dark':'light';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}if(typeof refreshThemeCache==='function')refreshThemeCache();if(typeof draw==='function')draw();}
+document.addEventListener('DOMContentLoaded',function(){var cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=document.documentElement.getAttribute('data-theme')==='dark';});
+</script>
+
 <!-- ปุ่มกลับหน้าหลัก รัฐไทยก้าวหน้า (hub) -->
 <a href="hub/index.html" id="hub-back-btn" style="position:fixed;left:16px;bottom:72px;z-index:99999;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Prompt','Kanit','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14px;font-weight:600;line-height:1;color:#eafcff;text-decoration:none;background:rgba(11,17,26,0.92);border:1px solid rgba(0,229,255,0.55);border-radius:999px;box-shadow:0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 26px rgba(0,0,0,.5),0 0 26px rgba(0,229,255,.5)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25)';">← กลับหน้าหลัก</a>
 
@@ -1622,14 +1633,40 @@ body {
     </div>
 
     <div class="hd-right">
-      <!-- Dark / Light toggle -->
-      <button id="theme-toggle" title="สลับธีมสว่าง/มืด" onclick="toggleTheme()">
-        <div class="track">
-          <span>🌙</span>
-          <span>☀️</span>
+      <!-- theme toggle — BB-8 droid (day/night), in-header just left of the ครม. button -->
+      <label class="bb8-toggle" title="สลับธีมสว่าง/มืด">
+        <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับธีมสว่าง/มืด" onchange="bb8SetTheme(this.checked)" />
+        <div class="bb8-toggle__container">
+          <div class="bb8-toggle__scenery">
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="bb8-toggle__star"></div>
+            <div class="tatto-1"></div>
+            <div class="tatto-2"></div>
+            <div class="gomrassen"></div>
+            <div class="hermes"></div>
+            <div class="chenini"></div>
+            <div class="bb8-toggle__cloud"></div>
+            <div class="bb8-toggle__cloud"></div>
+            <div class="bb8-toggle__cloud"></div>
+          </div>
+          <div class="bb8">
+            <div class="bb8__head-container">
+              <div class="bb8__antenna"></div>
+              <div class="bb8__antenna"></div>
+              <div class="bb8__head"></div>
+            </div>
+            <div class="bb8__body"></div>
+          </div>
+          <div class="artificial__hidden">
+            <div class="bb8__shadow"></div>
+          </div>
         </div>
-        <div class="knob" id="knob">🌙</div>
-      </button>
+      </label>
 
       <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()">👑 ครม.</button>
       <button class="action-btn" id="btn-reset" title="รีเซตมุมมอง">⟳</button>

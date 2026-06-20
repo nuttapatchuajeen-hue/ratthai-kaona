@@ -9,14 +9,47 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/bb8-toggle.css">
 </head>
 <body>
 <!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
-<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+  <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+  <div class="bb8-toggle__container">
+    <div class="bb8-toggle__scenery">
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="tatto-1"></div>
+      <div class="tatto-2"></div>
+      <div class="gomrassen"></div>
+      <div class="hermes"></div>
+      <div class="chenini"></div>
+      <div class="bb8-toggle__cloud"></div>
+      <div class="bb8-toggle__cloud"></div>
+      <div class="bb8-toggle__cloud"></div>
+    </div>
+    <div class="bb8">
+      <div class="bb8__head-container">
+        <div class="bb8__antenna"></div>
+        <div class="bb8__antenna"></div>
+        <div class="bb8__head"></div>
+      </div>
+      <div class="bb8__body"></div>
+    </div>
+    <div class="artificial__hidden">
+      <div class="bb8__shadow"></div>
+    </div>
+  </div>
+</label>
 <script>
-function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
-function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
-mdThemeIcon();
+function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}}
+function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+mdSyncToggle();
 </script>
 
 <!-- desktop nav -->

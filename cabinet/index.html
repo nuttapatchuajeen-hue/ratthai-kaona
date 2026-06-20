@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../css/bb8-toggle.css" />
 <style>
 :root{
   --ink-950:#070810;
@@ -52,10 +53,7 @@ html[data-theme="light"] body::before{
              radial-gradient(100% 100% at 50% 120%, rgba(120,90,20,.06), transparent 60%);
 }
 html[data-theme="light"] body::after{opacity:.28;mix-blend-mode:multiply}
-.md-theme-toggle{position:fixed;right:18px;bottom:18px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;
-  border-radius:50%;cursor:pointer;font-size:19px;line-height:1;padding:0;background:var(--ink-850);color:var(--cream);
-  border:1px solid var(--gold-line);box-shadow:0 8px 24px -12px rgba(0,0,0,.5);transition:transform .15s, border-color .2s}
-.md-theme-toggle:hover{transform:translateY(-2px);border-color:var(--gold)}
+/* theme toggle = BB-8 droid · สไตล์อยู่ใน ../css/bb8-toggle.css (ลอยมุมขวาล่าง) */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -405,11 +403,43 @@ section{position:relative;z-index:1}
 </head>
 <body>
 <!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
-<button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+<label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+  <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+  <div class="bb8-toggle__container">
+    <div class="bb8-toggle__scenery">
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="tatto-1"></div>
+      <div class="tatto-2"></div>
+      <div class="gomrassen"></div>
+      <div class="hermes"></div>
+      <div class="chenini"></div>
+      <div class="bb8-toggle__cloud"></div>
+      <div class="bb8-toggle__cloud"></div>
+      <div class="bb8-toggle__cloud"></div>
+    </div>
+    <div class="bb8">
+      <div class="bb8__head-container">
+        <div class="bb8__antenna"></div>
+        <div class="bb8__antenna"></div>
+        <div class="bb8__head"></div>
+      </div>
+      <div class="bb8__body"></div>
+    </div>
+    <div class="artificial__hidden">
+      <div class="bb8__shadow"></div>
+    </div>
+  </div>
+</label>
 <script>
-function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
-function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
-mdThemeIcon();
+function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}}
+function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+mdSyncToggle();
 </script>
 
 <div class="topline"></div>
@@ -611,27 +641,27 @@ const MINISTRIES = [
     ministers:[["พิพัฒน์ รัชกิจประการ","minister"],["สิริพงศ์ อังคสกุลเกียรติ","deputy"],["ภัทรพงศ์ ภัทรประสิทธิ์","deputy"],["สรรเพชญ บุญญามณี","deputy"]]},
   {id:"09",name:"กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม",short:"ทรัพยากรฯ",desc:"อนุรักษ์ทรัพยากรธรรมชาติและสิ่งแวดล้อม",orgs:15,
     ministers:[["สุชาติ ชมกลิ่น","minister"]]},
-  {id:"11",name:"กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม",short:"ดิจิทัลฯ",desc:"เศรษฐกิจดิจิทัลและโครงสร้างพื้นฐานข้อมูล",orgs:10,
+  {id:"10",name:"กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม",short:"ดิจิทัลฯ",desc:"เศรษฐกิจดิจิทัลและโครงสร้างพื้นฐานข้อมูล",orgs:10,
     ministers:[["ไชยชนก ชิดชอบ","minister"],["บุณย์ธิดา สมชัย","deputy"]]},
-  {id:"12",name:"กระทรวงพลังงาน",short:"พลังงาน",desc:"บริหารจัดการพลังงานของประเทศ",orgs:10,
+  {id:"11",name:"กระทรวงพลังงาน",short:"พลังงาน",desc:"บริหารจัดการพลังงานของประเทศ",orgs:10,
     ministers:[["เอกนัฏ พร้อมพันธุ์","minister"]]},
-  {id:"13",name:"กระทรวงพาณิชย์",short:"พาณิชย์",desc:"การค้าภายในและการค้าระหว่างประเทศ",orgs:13,
+  {id:"12",name:"กระทรวงพาณิชย์",short:"พาณิชย์",desc:"การค้าภายในและการค้าระหว่างประเทศ",orgs:13,
     ministers:[["ศุภจี สุธรรมพันธุ์","minister"]]},
-  {id:"14",name:"กระทรวงมหาดไทย",short:"มหาดไทย",desc:"การปกครองท้องที่และความสงบเรียบร้อย",orgs:14,
+  {id:"13",name:"กระทรวงมหาดไทย",short:"มหาดไทย",desc:"การปกครองท้องที่และความสงบเรียบร้อย",orgs:14,
     ministers:[["พลพีร์ สุวรรณฉวี","deputy"],["เจเศรษฐ์ ไทยเศรษฐ์","deputy"],["วรศิษฎ์ เลียงประสิทธิ์","deputy"]]},
-  {id:"15",name:"กระทรวงยุติธรรม",short:"ยุติธรรม",desc:"กระบวนการยุติธรรมและการคุ้มครองสิทธิ",orgs:13,
+  {id:"14",name:"กระทรวงยุติธรรม",short:"ยุติธรรม",desc:"กระบวนการยุติธรรมและการคุ้มครองสิทธิ",orgs:13,
     ministers:[["รุทธพล เนาวรัตน์","minister"]]},
-  {id:"16",name:"กระทรวงแรงงาน",short:"แรงงาน",desc:"แรงงานสัมพันธ์และการจ้างงาน",orgs:6,
+  {id:"15",name:"กระทรวงแรงงาน",short:"แรงงาน",desc:"แรงงานสัมพันธ์และการจ้างงาน",orgs:6,
     ministers:[["จุลพันธ์ อมรวิวัฒน์","minister"]]},
-  {id:"17",name:"กระทรวงวัฒนธรรม",short:"วัฒนธรรม",desc:"ศิลปวัฒนธรรมและมรดกของชาติ",orgs:9,
+  {id:"16",name:"กระทรวงวัฒนธรรม",short:"วัฒนธรรม",desc:"ศิลปวัฒนธรรมและมรดกของชาติ",orgs:9,
     ministers:[["ซาบีดา ไทยเศรษฐ์","minister"]]},
-  {id:"18",name:"กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",short:"อว.",desc:"อุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",orgs:26,
+  {id:"17",name:"กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",short:"อว.",desc:"อุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม",orgs:26,
     ministers:[["ยศชนัน วงศ์สวัสดิ์","minister"]]},
-  {id:"19",name:"กระทรวงศึกษาธิการ",short:"ศึกษาธิการ",desc:"การศึกษาขั้นพื้นฐานและการพัฒนาครู",orgs:9,
+  {id:"18",name:"กระทรวงศึกษาธิการ",short:"ศึกษาธิการ",desc:"การศึกษาขั้นพื้นฐานและการพัฒนาครู",orgs:9,
     ministers:[["ประเสริฐ จันทรรวงทอง","minister"],["อัครนันท์ กัณณ์กิตตินันท์","deputy"]]},
-  {id:"21",name:"กระทรวงสาธารณสุข",short:"สาธารณสุข",desc:"ระบบสุขภาพและบริการสาธารณสุข",orgs:20,
+  {id:"19",name:"กระทรวงสาธารณสุข",short:"สาธารณสุข",desc:"ระบบสุขภาพและบริการสาธารณสุข",orgs:20,
     ministers:[["พัฒนา พร้อมพัฒน์","minister"]]},
-  {id:"22",name:"กระทรวงอุตสาหกรรม",short:"อุตสาหกรรม",desc:"พัฒนาภาคอุตสาหกรรมและผู้ประกอบการ",orgs:8,
+  {id:"20",name:"กระทรวงอุตสาหกรรม",short:"อุตสาหกรรม",desc:"พัฒนาภาคอุตสาหกรรมและผู้ประกอบการ",orgs:8,
     ministers:[["วราวุธ ศิลปอาชา","minister"]]}
 ];
 

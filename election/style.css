@@ -357,13 +357,8 @@ html[data-theme="dark"] .maptip{background:#0E1C29;border:1px solid var(--line-2
 html[data-theme="dark"] .sel select,
 html[data-theme="dark"] .lcontrols .search input{background:var(--card);color:var(--ink)}
 
-/* ===== shared theme toggle button (🌙/☀️) ===== */
-.md-theme-toggle{position:fixed;z-index:1000;display:grid;place-items:center;width:40px;height:40px;
-  border-radius:12px;cursor:pointer;font-size:18px;line-height:1;padding:0;
-  background:var(--card);color:var(--ink);border:1px solid var(--line-2);box-shadow:var(--shadow);
-  transition:transform .15s, background .2s, border-color .2s}
-.md-theme-toggle:hover{transform:translateY(-1px);border-color:var(--orange-line)}
-.md-theme-toggle:active{transform:translateY(0)}
-/* desktop: just above the zoom +/- controls (bottom-right); mobile: above the bottom nav */
-.md-theme-toggle{right:16px;bottom:118px}
-@media(max-width:860px){.md-theme-toggle{right:10px;bottom:72px;width:44px;height:44px;border-radius:50%}}
+/* ===== BB-8 theme toggle — position override for election map pages =====
+   (full styling in ../css/bb8-toggle.css; bumped up so it clears the zoom +/- controls) */
+body .bb8-toggle{right:16px;bottom:118px}
+/* mobile: clear the 83px bottom nav (mobnav) + the ผู้ช่วย AI FAB */
+@media(max-width:860px){body .bb8-toggle{right:10px;bottom:96px}}

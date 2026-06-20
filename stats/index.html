@@ -43,10 +43,7 @@
     --nav-bg:rgba(2,5,8,.82);
   }
   html[data-theme="dark"] body::before{mix-blend-mode:screen;opacity:.05}
-  .md-theme-toggle{position:fixed;right:18px;bottom:18px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;
-    border-radius:50%;cursor:pointer;font-size:19px;line-height:1;padding:0;background:var(--paper-2);color:var(--ink);
-    border:1px solid var(--rule-strong);box-shadow:0 8px 24px -12px rgba(0,0,0,.45);transition:transform .15s, border-color .2s}
-  .md-theme-toggle:hover{transform:translateY(-2px);border-color:var(--green)}
+  /* theme toggle = BB-8 droid (day/night) · สไตล์อยู่ใน ../css/bb8-toggle.css */
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
@@ -289,14 +286,47 @@
     .kpi:last-child{border-bottom:0}
   }
 </style>
+<link rel="stylesheet" href="../css/bb8-toggle.css" />
 </head>
 <body>
-  <!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
-  <button class="md-theme-toggle" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด" onclick="mdToggleTheme()"><span class="md-tt-ico" aria-hidden="true">🌙</span></button>
+  <!-- theme toggle — BB-8 droid (day/night) · ผูกกับ data-theme/localStorage 'md-theme' -->
+  <label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+    <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+    <div class="bb8-toggle__container">
+      <div class="bb8-toggle__scenery">
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="tatto-1"></div>
+        <div class="tatto-2"></div>
+        <div class="gomrassen"></div>
+        <div class="hermes"></div>
+        <div class="chenini"></div>
+        <div class="bb8-toggle__cloud"></div>
+        <div class="bb8-toggle__cloud"></div>
+        <div class="bb8-toggle__cloud"></div>
+      </div>
+      <div class="bb8">
+        <div class="bb8__head-container">
+          <div class="bb8__antenna"></div>
+          <div class="bb8__antenna"></div>
+          <div class="bb8__head"></div>
+        </div>
+        <div class="bb8__body"></div>
+      </div>
+      <div class="artificial__hidden">
+        <div class="bb8__shadow"></div>
+      </div>
+    </div>
+  </label>
   <script>
-  function mdToggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')==='dark',t=d?'light':'dark';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}mdThemeIcon();}
-  function mdThemeIcon(){var d=document.documentElement.getAttribute('data-theme')==='dark',el=document.querySelector('.md-tt-ico');if(el)el.textContent=d?'☀️':'🌙';}
-  mdThemeIcon();
+  function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}}
+  function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+  mdSyncToggle();
   </script>
   <!-- ปุ่มกลับหน้าหลัก รัฐไทยก้าวหน้า (hub) -->
   <a href="../hub/index.html" id="hub-back-btn" style="position:fixed;left:16px;bottom:16px;z-index:99999;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Prompt','Kanit','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14px;font-weight:600;line-height:1;color:#eafcff;text-decoration:none;background:rgba(11,17,26,0.92);border:1px solid rgba(0,229,255,0.55);border-radius:999px;box-shadow:0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 26px rgba(0,0,0,.5),0 0 26px rgba(0,229,255,.5)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25)';">← กลับหน้าหลัก</a>
