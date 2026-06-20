@@ -1026,8 +1026,8 @@ body::before {
 
   .align-left .section-inner,
   .align-right .section-inner {
-    max-width: 100%;
-    width: 100%;
+    max-width: 82%;                 /* แคบกว่าจอ → เหลือที่ว่างฝั่งตรงข้าม เห็นการเยื้องซ้าย–ขวา */
+    width: auto;
     background: transparent;        /* เอากล่องทึบออก → ใช้ "แสงนวล" แบบเดสก์ท็อปแทน */
     padding: 1.5rem 1.4rem;
     border-radius: 14px;
@@ -1045,14 +1045,20 @@ body::before {
     border-radius: 20px;
   }
 
-  /* จอแคบ: ยกเลิกการชิดขวา กลับมาเรียงชิดซ้ายทุก section */
-  .align-right .section-inner {
+  /* จอแคบ: คงการเยื้องซ้าย–ขวาแบบเดสก์ท็อป (zigzag) ไม่บีบให้ชิดซ้ายทุก section
+     → section คู่ (002/004/006) ชิดขวา + จัดข้อความขวา, section คี่ (003/005/007) ชิดซ้าย */
+  .align-left .section-inner {
     margin-left: 0;
+    margin-right: auto;
     text-align: left;
   }
-  .align-right .section-body {
-    margin-left: 0;
+  .align-right .section-inner {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
   }
+  .align-left .section-body { margin-right: auto; }
+  .align-right .section-body { margin-left: auto; }
   .section-body { max-width: none; }
 
   /* ── STATS: การ์ด 2×2 จัดกึ่งกลาง ตัวเลขไม่ถูกตัดขอบ ป้ายไม่ขึ้นบรรทัดมั่ว ── */
