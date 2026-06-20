@@ -98,7 +98,7 @@ svg.thmap path.pv.dim{opacity:.25}
 .legendbar .li{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;color:var(--ink-2)}
 .legendbar .li .sw{width:10px;height:10px;border-radius:3px}
 .legendbar .li b{font-family:'Kanit';font-weight:600;color:var(--muted);font-size:.7rem}
-.panel-scroll{flex:1 1 auto;overflow-y:auto;padding:8px 10px 14px}
+.panel-scroll{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:8px 10px 14px}
 .panel-scroll::-webkit-scrollbar{width:9px}.panel-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 .list-head{display:flex;align-items:center;gap:8px;padding:8px 10px 6px;font-size:.78rem;color:var(--muted);font-weight:600}
 .list-head .cnt{margin-left:auto;font-family:'Kanit'}
@@ -252,9 +252,14 @@ footer{background:var(--navy);color:#A9BFCD;margin-top:46px}
     transition:transform .3s cubic-bezier(.3,.85,.3,1)}
   .panel.expanded{transform:translateY(0)}
   .panel.dragging{transition:none}
-  .grabber{display:flex;align-items:center;justify-content:center;height:26px;flex:0 0 auto;cursor:grab;touch-action:none}
-  .grabber::before{content:"";width:42px;height:5px;border-radius:3px;background:var(--line-2)}
-  .legendbar{max-height:96px;overflow:auto}
+  /* แถบจับใหญ่ขึ้น = ปัดง่าย ไม่ต้องเล็งกดแถบเล็ก ๆ */
+  .grabber{display:flex;align-items:center;justify-content:center;height:40px;flex:0 0 auto;cursor:grab;touch-action:none}
+  .grabber::before{content:"";width:48px;height:6px;border-radius:3px;background:var(--line-2);transition:width .15s,background .15s}
+  .panel.dragging .grabber::before{width:64px;background:var(--orange)}
+  .legendbar{max-height:96px;overflow:auto;touch-action:none}
+  /* ตอนย่อ (peek) ล็อกการเลื่อนรายการไว้ เพื่อให้ "ปัด" ที่เนื้อหากลายเป็นคำสั่งกาง/ออกแทน */
+  .panel:not(.expanded) .panel-scroll{overflow:hidden;touch-action:none}
+  .panel.expanded .panel-scroll{touch-action:pan-y}
 
   /* sub pages mobile */
   .pagehead{padding:20px 18px 4px}

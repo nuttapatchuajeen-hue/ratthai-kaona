@@ -255,7 +255,8 @@ mdSyncToggle();
     p.addEventListener('click',()=>{if(moved||Date.now()-lastTapTime<500)return;const th=en2th[p.dataset.en];if(th&&provStats[th])selectProvince(th);});
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}
-  function backToAll(){curProvince=null;clearMarkers();highlight(null);scale=1;tx=0;ty=0;apply();renderList();}
+  // กลับไปหน้าเลือกจังหวัด: บนมือถือต้องพับ bottom sheet ลงด้วย ไม่งั้นแผ่นจะค้างบานเต็มจอบังแผนที่จนแพน/ซูมไม่ได้
+  function backToAll(){curProvince=null;clearMarkers();highlight(null);scale=1;tx=0;ty=0;apply();renderList();expandSheet(false);}
   function zoomToProvince(th){const en=th2en[th],p=pathEls[en];if(!p)return;const bb=p.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2,fill=.30;
     const s=clamp(Math.min(M.width*fill/bb.width,M.height*fill/bb.height),1,3.4);scale=s;tx=M.width/2-cx*s;ty=M.height/2-cy*s;apply();}
 
@@ -354,21 +355,54 @@ mdSyncToggle();
   search.addEventListener('focus',()=>{if(isMobile())expandSheet(true);});
   renderList();
 
-  /* ---- bottom sheet (mobile) ---- */
-  const panel=document.getElementById('panel'), grabber=document.getElementById('grabber');
+  /* ---- bottom sheet (mobile): คุมด้วยการ "ปัด" — ปัดขึ้น=ขยาย · ปัดลง=ย่อ · ปัดลงต่อ/แรง=ออก(กลับทุกจังหวัด) ---- */
+  const panel=document.getElementById('panel'), grabber=document.getElementById('grabber'),
+        legendbar=document.getElementById('legendbar');
+  const PEEK=104, FLICK=0.45;                       // FLICK = px/ms ความเร็วขั้นต่ำที่นับว่า "สะบัด"
   function expandSheet(on){ if(isMobile()) panel.classList.toggle('expanded',on); }
-  grabber.addEventListener('click',()=>panel.classList.toggle('expanded'));
+  function sheetMaxT(){ return Math.max(0, panel.getBoundingClientRect().height - PEEK); }
+
   let sd=null;
-  grabber.addEventListener('pointerdown',e=>{const h=panel.getBoundingClientRect().height;sd={y:e.clientY,h,moved:false};
-    panel.classList.add('dragging');grabber.setPointerCapture(e.pointerId);});
-  grabber.addEventListener('pointermove',e=>{if(!sd)return;const peek=104,maxT=Math.max(0,sd.h-peek);
-    const base=panel.classList.contains('expanded')?0:maxT;let t=clamp(base+(e.clientY-sd.y),0,maxT);
-    if(Math.abs(e.clientY-sd.y)>3)sd.moved=true;panel.style.transform='translateY('+t+'px)';});
-  grabber.addEventListener('pointerup',e=>{if(!sd)return;const peek=104,maxT=Math.max(0,sd.h-peek);
-    const m=/translateY\(([-\d.]+)px\)/.exec(panel.style.transform);const t=m?+m[1]:maxT;
-    panel.style.transform='';panel.classList.remove('dragging');
-    if(sd.moved)panel.classList.toggle('expanded',t<maxT/2);
-    try{grabber.releasePointerCapture(e.pointerId)}catch(_){}sd=null;});
+  function sheetDown(e){
+    if(!isMobile()) return;
+    sd={id:e.pointerId, src:e.currentTarget, y0:e.clientY, t0:Date.now(),
+        MT:sheetMaxT(), expanded:panel.classList.contains('expanded'), captured:false};
+    sd.base = sd.expanded ? 0 : sd.MT;
+  }
+  function sheetMove(e){
+    if(!sd || e.pointerId!==sd.id) return;
+    const dy=e.clientY-sd.y0;
+    if(!sd.captured){
+      if(Math.abs(dy)<6) return;                     // ยังไม่ชัดว่าตั้งใจปัด
+      // ในรายการที่กางอยู่: ปัดลงเฉพาะตอนเลื่อนสุดบนสุดเท่านั้นที่ใช้ย่อแผ่น นอกนั้นปล่อยให้เลื่อนรายการ
+      if(sd.src===panelScroll && sd.expanded && !(dy>0 && panelScroll.scrollTop<=0)){ sd=null; return; }
+      sd.captured=true; panel.classList.add('dragging');
+      try{sd.src.setPointerCapture(sd.id)}catch(_){}
+    }
+    const over = sd.expanded?120:90;                  // ลากเลย peek ลงได้นิดเพื่อสั่ง "ออก"
+    panel.style.transform='translateY('+clamp(sd.base+dy,0,sd.MT+over)+'px)';
+  }
+  function sheetUp(e){
+    if(!sd || e.pointerId!==sd.id) return;
+    const MT=sd.MT, dy=e.clientY-sd.y0, dt=Math.max(1,Date.now()-sd.t0), v=dy/dt; // v>0 = ปัดลง
+    const m=/translateY\(([-\d.]+)px\)/.exec(panel.style.transform), t=m?+m[1]:sd.base;
+    const wasExpanded=sd.expanded, captured=sd.captured, src=sd.src;
+    panel.style.transform=''; panel.classList.remove('dragging');
+    try{src.releasePointerCapture(sd.id)}catch(_){}
+    sd=null;
+    if(!captured){ if(src===grabber) panel.classList.toggle('expanded'); return; } // แตะเบา ๆ ก็ยังสลับได้
+    // ปัดออก: ลากเลย peek ลงไป หรือสะบัดลงแรงตอนอยู่ที่ peek ขณะดูจังหวัด → กลับหน้าเลือกจังหวัด
+    if(curProvince && (t>MT+18 || (!wasExpanded && (v>FLICK || dy>56)))){ backToAll(); return; }
+    if(v<-FLICK)      panel.classList.add('expanded');             // สะบัดขึ้น → ขยาย
+    else if(v>FLICK)  panel.classList.remove('expanded');          // สะบัดลง → ย่อ
+    else              panel.classList.toggle('expanded', t<MT/2);  // ไม่สะบัด → ตัดสินตามตำแหน่ง
+  }
+  [grabber, legendbar, panelScroll].forEach(el=>{
+    el.addEventListener('pointerdown',sheetDown);
+    el.addEventListener('pointermove',sheetMove);
+    el.addEventListener('pointerup',sheetUp);
+    el.addEventListener('pointercancel',sheetUp);
+  });
 
   apply();
 })();
