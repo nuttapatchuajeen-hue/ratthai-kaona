@@ -146,25 +146,38 @@ body::before {
     display: flex !important;
   }
 
-  /* info panel — bottom sheet on mobile */
+  /* info panel — draggable bottom sheet on mobile (ปัดขึ้น–ลง แทนปุ่มปิด) */
   #info-panel {
     position: fixed !important;
     left: 0 !important; right: 0 !important;
     bottom: 0 !important; top: auto !important;
-    width: 100% !important; max-height: 60vh;
-    border-radius: 16px 16px 0 0;
+    width: 100% !important; max-height: 46vh;     /* ปรับลง: เตี้ยลง เห็นแผนภาพมากขึ้น (ปัดขึ้นเพื่อขยายเต็ม) */
+    border-radius: 18px 18px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
     overflow-y: auto;
+    overscroll-behavior: contain;
     transform: translateY(100%);
-    transition: transform .3s ease;
+    transition: transform .3s ease, max-height .3s ease;
   }
+  /* offset ตอนลากส่งผ่าน CSS var (เพราะกฎ !important ทับ inline transform ไม่ได้) */
   #info-panel.visible {
-    transform: translateY(0) !important;
+    transform: translateY(var(--ip-drag, 0px)) !important;
     display: flex !important;
   }
   #info-panel.hidden {
     transform: translateY(100%) !important;
   }
+  #info-panel.sheet-full { max-height: 92vh; }            /* ปัดขึ้น = ขยายเต็มจอ */
+  #info-panel.dragging { transition: none !important; }   /* ตอนลากให้ตามนิ้วทันที */
+  #info-close { display: none !important; }               /* มือถือ: ไม่ใช้ปุ่มกากบาท → ปัดลงเพื่อปิด */
+  /* แถบจับ (handle) สำหรับปัดขึ้น–ลง — header ปักไว้บนสุดให้จับได้เสมอแม้เลื่อนเนื้อหา */
+  .ip-header { position: sticky !important; top: 0 !important; z-index: 5; padding-top: 10px !important; }
+  .ip-handle {
+    display: block !important;
+    width: 44px; height: 5px; margin: 0 auto 10px;
+    border-radius: 3px; background: var(--border2);
+  }
+  .ip-handle:active { background: var(--text-dim); }
 
   /* bigger touch targets */
   .action-btn, .fp, button { min-height: 38px; }
@@ -679,7 +692,7 @@ canvas:active { cursor: grabbing; }
   #info-panel.show {
     display: flex !important;
     flex-direction: column !important;   /* stack header above body — default row squashed the title */
-    transform: translateY(0) !important;
+    transform: translateY(var(--ip-drag, 0px)) !important;
     animation: none;
   }
 }
@@ -700,6 +713,8 @@ canvas:active { cursor: grabbing; }
   position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
 }
+
+.ip-handle { display: none; }   /* desktop: ไม่มีแถบจับ (ใช้ปุ่ม ✕ ตามเดิม); มือถือเปิดเป็น block */
 
 #info-close {
   position: absolute; top: 12px; right: 12px;
@@ -1891,6 +1906,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
 <!-- Info Panel -->
 <div id="info-panel">
   <div class="ip-header">
+    <div class="ip-handle" aria-hidden="true"></div>
     <button id="info-close">✕</button>
     <div id="info-badge"></div>
     <div id="info-title"></div>
@@ -2137,6 +2153,10 @@ function buildRadialLayout() {
 
   const sectorAngle = (2*Math.PI) / N;
 
+  // เก็บโหนด "ส่วนราชการ" (catID 01 = วงเขียว) ไว้จัดเป็น "วงเต็ม" รอบเดียวหลังลูป
+  // (แทนการกระจายตามกลีบกระทรวง ซึ่งทำให้วงเขียวเป็นหยัก ๆ ไม่เต็มวง)
+  const greenOrgs = [];
+
   nodes.push({ type:'center', x:cx, y:cy, r:20, label:'นายกรัฐมนตรี', data:null, isMinistry:false });
 
   RING_MINS.forEach((min, i) => {
@@ -2176,6 +2196,11 @@ function buildRadialLayout() {
     });
 
     Object.entries(byCat).forEach(([catID, orgs]) => {
+      // วงเขียว (ส่วนราชการ): ไม่วางในกลีบกระทรวง แต่เก็บไปจัดเต็มวงทีหลัง
+      if(catID === '01') {
+        orgs.forEach(org => greenOrgs.push({ org, ministryID:min.id, parentX:mx, parentY:my }));
+        return;
+      }
       const ringR = CAT_RING_MAP[catID] || R_min + step*2;
       const spread = sectorAngle * 0.88;
       orgs.forEach((org, j) => {
@@ -2193,6 +2218,26 @@ function buildRadialLayout() {
           catID:org.catID, angle
         });
       });
+    });
+  });
+
+  // ── วงเขียว "ส่วนราชการ" (catID 01) — จัดกระจายเต็มวงรอบเดียว สม่ำเสมอทั้งวง
+  //    (เหมือน machineryofgovernment.uk) · ยังคงเส้นโยงไปกระทรวงต้นสังกัด → เกิดใยเส้นจาง ๆ
+  //    เรียงตามลำดับกระทรวง (ซึ่งไล่ตามมุมอยู่แล้ว) เพื่อให้เส้นโยงไม่พันกันเกินไป
+  const greenRingR = CAT_RING_MAP['01'];
+  const Ng = greenOrgs.length;
+  greenOrgs.forEach((g, k) => {
+    const angle = (2*Math.PI * k / Ng) - Math.PI/2;
+    nodes.push({
+      type:'org',
+      x: cx + greenRingR * Math.cos(angle),
+      y: cy + greenRingR * Math.sin(angle),
+      r: 4.4, label:g.org.name,
+      color: getColor(g.org.catID),
+      data:g.org, isMinistry:false,
+      ministryID:g.ministryID,
+      parentX:g.parentX, parentY:g.parentY,
+      catID:g.org.catID, angle
     });
   });
 
@@ -2261,17 +2306,25 @@ function fitView() {
   if(!nodes.length) return;
   const isMob = window.innerWidth <= 640;
   const legH  = isMob ? 48 : 72;
+  const radial = (currentView === 'radial');
+  // เฟรมเริ่มต้นแบบ machineryofgovernment.uk: เฟรมรอบ "วงล้อหลัก" เท่านั้น → นายกฯ อยู่
+  // กึ่งกลางพอดี + ขยายวงให้เต็มจอ. คลัสเตอร์ standalone ("นอกบังคับบัญชาฝ่ายบริหาร")
+  // วางใต้วง เลื่อน/ซูมออกไปดูได้ (ไม่ดึงให้วงเล็กลงและลอยขึ้นอีกต่อไป)
+  const fitNodes = radial ? nodes.filter(n => !n.standalone) : nodes;
   let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
-  nodes.forEach(n => {
+  fitNodes.forEach(n => {
     const pad = n.type==='ministry' ? 28 : n.r+4;
     minX=Math.min(minX,n.x-pad); maxX=Math.max(maxX,n.x+pad);
     minY=Math.min(minY,n.y-pad); maxY=Math.max(maxY,n.y+pad);
   });
   const gW=maxX-minX, gH=maxY-minY;
   const avH = H - legH;
-  scale = Math.min(W/gW, avH/gH) * (isMob ? 0.88 : 0.93);
+  // ขยายเต็มขึ้นในโหมด radial (วงเดียว) เพื่อให้ใกล้เคียงเว็บอ้างอิง
+  const fillF = radial ? (isMob ? 0.92 : 0.95) : (isMob ? 0.88 : 0.93);
+  scale = Math.min(W/gW, avH/gH) * fillF;
   offsetX = W/2 - (minX+gW/2)*scale;
-  offsetY = H/2 - (minY+gH/2)*scale;
+  // โหมด radial จัดให้นายกฯ อยู่กึ่งกลาง "พื้นที่ที่มองเห็น" (เหนือแถบ legend)
+  offsetY = (radial ? avH/2 : H/2) - (minY+gH/2)*scale;
 }
 
 // ── FORCE LAYOUT ──
@@ -2492,8 +2545,11 @@ function draw() {
   const ministerMap = {};
   nodes.forEach(n => { if(n.type==='minister') ministerMap[n.ministryID] = n; });
 
-  let connectedSet = null; // set of nodes connected to selectedNode
+  let connectedSet = null; // set of nodes connected to focus node
   let pmEdgeNodes = null;  // โหนดที่นายกฯ สั่งตรง → วาดเส้นทองจากศูนย์กลางตรงไปหา
+  // โฟกัส = เมาส์ที่ชี้อยู่ (hover) มาก่อน, ถ้าไม่ชี้ใช้โหนดที่กดค้างไว้ (selected)
+  // → เลื่อนเมาส์ไปที่โหนดไหน "โชว์ความเชื่อมโยง" ของโหนดนั้นทันที (เหมือน machineryofgovernment.uk)
+  const focusNode = hoveredNode || selectedNode;
   if(pmLens && currentView==='radial' && nodes[0]) {
     connectedSet = new Set([nodes[0]]);
     pmEdgeNodes = [];
@@ -2502,31 +2558,32 @@ function draw() {
       if(n.type==='minister') connectedSet.add(n);                                   // โชว์วงแหวน ครม. (รัฐมนตรี) พร้อมชื่อทั้งหมดพร้อมกัน — ไม่หรี่
       if(isPmDirect(n) && activeFilters.has(n.catID||'01')) { connectedSet.add(n); pmEdgeNodes.push(n); }
     });
-  } else if(selectedNode) {
+  } else if(focusNode) {
     connectedSet = new Set();
-    connectedSet.add(selectedNode);
-    if(selectedNode.type==='org') {
+    connectedSet.add(focusNode);
+    if(focusNode.type==='org') {
       // parent ministry (+ center only if not standalone)
-      const mn = ministryMap[selectedNode.ministryID];
+      const mn = ministryMap[focusNode.ministryID];
       if(mn) {
         connectedSet.add(mn);
-        if(!selectedNode.standalone) connectedSet.add(nodes[0]);
+        if(!focusNode.standalone) connectedSet.add(nodes[0]);
       }
-    } else if(selectedNode.type==='ministry') {
+    } else if(focusNode.type==='ministry') {
       // all orgs in this ministry (+ center only if not standalone) + its minister
-      if(!selectedNode.standalone) connectedSet.add(nodes[0]);
-      nodes.forEach(n => { if(n.type==='org'&&n.ministryID===selectedNode.ministryID) connectedSet.add(n); });
-      const _mnM = ministerMap[selectedNode.ministryID]; if(_mnM) connectedSet.add(_mnM);
-    } else if(selectedNode.type==='minister') {
+      if(!focusNode.standalone) connectedSet.add(nodes[0]);
+      nodes.forEach(n => { if(n.type==='org'&&n.ministryID===focusNode.ministryID) connectedSet.add(n); });
+      const _mnM = ministerMap[focusNode.ministryID]; if(_mnM) connectedSet.add(_mnM);
+    } else if(focusNode.type==='minister') {
       // ลูกโซ่ นายกฯ → รัฐมนตรี → กระทรวง
       connectedSet.add(nodes[0]);
-      const _mnMin = ministryMap[selectedNode.ministryID]; if(_mnMin) connectedSet.add(_mnMin);
-    } else if(selectedNode.type==='center') {
+      const _mnMin = ministryMap[focusNode.ministryID]; if(_mnMin) connectedSet.add(_mnMin);
+    } else if(focusNode.type==='center') {
       // all ministries
       nodes.forEach(n => { if(n.type==='ministry') connectedSet.add(n); });
     }
   }
-  const dimAlpha = connectedSet ? 0.07 : 1;
+  // hover = หรี่เบากว่า (โชว์ชั่วคราว) · กดค้าง/เลนส์ = หรี่เข้มกว่า (ยืนยันการเลือก)
+  const dimAlpha = connectedSet ? ((hoveredNode && hoveredNode===focusNode && !pmLens) ? 0.13 : 0.07) : 1;
 
   // helper: is this node faded?
   function isFaded(n) { return connectedSet && !connectedSet.has(n); }
@@ -3129,7 +3186,9 @@ function showPanel(node) {
   draw();
   // Mobile bottom-sheet
   if (window.innerWidth <= 640) {
-    panel.classList.remove('hidden');
+    panel.classList.remove('hidden', 'sheet-full');   // เปิดมาเริ่มที่ระดับ peek เสมอ
+    panel.style.removeProperty('--ip-drag');
+    panel.scrollTop = 0;
     panel.classList.add('show', 'visible');
   }
   // ── Center (PM) node special handling ──
@@ -3254,7 +3313,54 @@ function showPanel(node) {
     document.getElementById('info-orgs-list').style.display='none';
   }
 }
-document.getElementById('info-close').onclick=()=>{ panel.classList.remove('show', 'visible'); selectedNode=null; pmLens=false; draw(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); };
+function closeInfoPanel(){
+  panel.classList.remove('show', 'visible', 'sheet-full');
+  panel.style.removeProperty('--ip-drag');
+  selectedNode=null; pmLens=false; draw();
+  if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden');
+}
+document.getElementById('info-close').onclick=closeInfoPanel;
+
+// ── มือถือ: ปัดขึ้น–ลง บนแถบจับ/หัวแผง (แทนปุ่มปิด) ──
+//   ปัดขึ้น = ขยายเต็มจอ · ปัดลง (จากเต็ม) = กลับ peek · ปัดลง (จาก peek) = ปิด
+(function initSheetSwipe(){
+  const header = panel.querySelector('.ip-header');
+  if(!header) return;
+  let startY=0, dy=0, dragging=false, wasFull=false;
+
+  function onStart(e){
+    if(window.innerWidth > 640) return;
+    const t = e.touches ? e.touches[0] : e;
+    startY = t.clientY; dy = 0; dragging = true;
+    wasFull = panel.classList.contains('sheet-full');
+    panel.classList.add('dragging');
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const t = e.touches ? e.touches[0] : e;
+    dy = t.clientY - startY;
+    // ลากลง = เลื่อนตามนิ้ว; ลากขึ้น = หน่วงไว้ (ไปขยายตอนปล่อย)
+    const follow = dy > 0 ? dy : dy * 0.18;
+    panel.style.setProperty('--ip-drag', Math.max(0, follow) + 'px');
+    if(e.cancelable) e.preventDefault();
+  }
+  function onEnd(){
+    if(!dragging) return;
+    dragging = false;
+    panel.classList.remove('dragging');
+    panel.style.removeProperty('--ip-drag');     // ปล่อยให้ transition สแน็ปกลับ
+    if(dy > 90){
+      if(wasFull) panel.classList.remove('sheet-full');   // เต็ม → กลับ peek
+      else closeInfoPanel();                              // peek → ปิด
+    } else if(dy < -50 && !wasFull){
+      panel.classList.add('sheet-full');                  // ปัดขึ้น → ขยายเต็ม
+    }
+  }
+  header.addEventListener('touchstart', onStart, {passive:true});
+  header.addEventListener('touchmove',  onMove,  {passive:false});
+  header.addEventListener('touchend',   onEnd);
+  header.addEventListener('touchcancel',onEnd);
+})();
 
 // ── SEARCH ──
 const searchEl=document.getElementById('search');
