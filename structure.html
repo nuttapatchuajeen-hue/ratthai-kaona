@@ -2542,17 +2542,35 @@ function animateRingsTo(targets, offsetDeltaX){
   }
   rotAnimRAF = requestAnimationFrame(frame);
 }
-// กดโหนด → หมุนวงของมัน + วงกระทรวง + วงรัฐมนตรี ให้ทั้งสายโซ่ไปเรียงที่ SPINE_ANGLE
+// รวม "โหนดสัมพันธ์" ของ node — ให้ตรงกับ connectedSet ที่ draw() ไฮไลต์ (ไม่รวมศูนย์กลาง/standalone)
+function collectRelated(node){
+  const ministryMap = {}, ministerMap = {};
+  nodes.forEach(n=>{ if(n.type==='ministry') ministryMap[n.ministryID]=n; if(n.type==='minister') ministerMap[n.ministryID]=n; });
+  const set = new Set([node]);
+  if(node.type==='org'){
+    const mn = ministryMap[node.ministryID]; if(mn) set.add(mn);
+  } else if(node.type==='ministry'){
+    const ms = ministerMap[node.ministryID]; if(ms) set.add(ms);
+    nodes.forEach(n=>{ if(n.type==='org' && n.ministryID===node.ministryID) set.add(n); });   // หน่วยงานลูกทั้งหมด
+  } else if(node.type==='minister'){
+    const mn = ministryMap[node.ministryID]; if(mn) set.add(mn);
+  }
+  return [...set].filter(n => n.baseR !== undefined && !n.standalone && n.ringKey !== undefined);
+}
+// กดโหนด → หมุน "ทุกวง" ที่มีโหนดสัมพันธ์ ให้กลุ่มนั้นมาเรียงที่ SPINE_ANGLE → หน่วยงาน/ความสัมพันธ์ "ตามมา" ด้วย
+// (ก่อนหน้าหมุนแค่วงของโหนด+กระทรวง+รัฐมนตรี → ลูกอยู่คนละวงเลยค้างอีกฝั่ง เส้นลากข้ามวง)
 function spineToNode(node){
   if(!node || currentView !== 'radial') return;
   if(node.type === 'center' || node.standalone || node.baseR === undefined) return;
-  const ministryMap = {}, ministerMap = {};
-  nodes.forEach(n=>{ if(n.type==='ministry') ministryMap[n.ministryID]=n; if(n.type==='minister') ministerMap[n.ministryID]=n; });
-  const chain = [node];
-  const mn = ministryMap[node.ministryID]; if(mn && mn!==node && !mn.standalone && mn.baseR!==undefined) chain.push(mn);
-  const ms = ministerMap[node.ministryID]; if(ms && ms!==node && !ms.standalone && ms.baseR!==undefined) chain.push(ms);
+  const rel = collectRelated(node);
+  // ต่อวง: หา circular-mean ของมุมฐานโหนดสัมพันธ์บนวงนั้น → หมุนให้ค่าเฉลี่ยนั้นไปที่ SPINE_ANGLE
+  const acc = new Map();   // ringKey → {s:Σsin, c:Σcos}
+  rel.forEach(n=>{
+    let e = acc.get(n.ringKey); if(!e){ e = {s:0, c:0}; acc.set(n.ringKey, e); }
+    e.s += Math.sin(n.baseAngle); e.c += Math.cos(n.baseAngle);
+  });
   const targets = new Map();
-  chain.forEach(cn=>{ if(cn.ringKey!==undefined) targets.set(cn.ringKey, SPINE_ANGLE - cn.baseAngle); });
+  acc.forEach((e,k)=> targets.set(k, SPINE_ANGLE - Math.atan2(e.s, e.c)));   // วงนอกสายสัมพันธ์ไม่อยู่ใน targets → หมุนกลับ 0
   // เลื่อนกล้องซ้ายให้ spine (ชี้ขวา) พ้นแผงข้อมูลขวา — เฉพาะเดสก์ท็อป
   let odx = 0;
   if(window.innerWidth > 640){
