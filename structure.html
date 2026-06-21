@@ -2044,6 +2044,8 @@ let isDragging = false, dragStartX, dragStartY, dragOffX, dragOffY;
 let nodes = [], hoveredNode = null, selectedNode = null;
 let connectedSet = null;  // used in draw() for highlighting connections
 let currentView = 'radial';
+let radialRotation = 0;   // มุมหมุนวงล้อ radial (เรเดียน) — กดโหนดรอบนอกแล้ววงหมุนพาโหนดขึ้นด้านบน
+let rotAnimRAF = null;    // id ของ requestAnimationFrame ระหว่างอนิเมชันหมุน
 let showArrows = true;     // directional arrowheads on relationship edges
 
 // ── เลนส์ "นายกฯ สั่งตรง" : หน่วยงานที่หัวหน้า "ขึ้นตรงต่อนายกรัฐมนตรี" (สั่งได้ไม่ผ่านรัฐมนตรี) ──
@@ -2304,6 +2306,9 @@ function buildRadialLayout() {
   });
 
   buildUniNodes(cx, cy, R_min, step, CAT_RING_MAP);   // สถาบันอุดมศึกษา 390 แห่ง — วงเต็มรอบ "อุดมศึกษา"
+
+  storeRadialBase();   // เก็บมุม/รัศมีฐานของทุกโหนด แล้ว…
+  applyRotation();     // …วางตำแหน่งตามมุมหมุนปัจจุบัน (คงค่าหลัง resize/rebuild)
 }
 
 // ── สถาบันอุดมศึกษา (catID 09 = เพชรสีส้ม) วางเป็นโหนดกระจายเต็มรอบ "อุดมศึกษา", โยงเส้นกลับกระทรวงต้นสังกัด ──
@@ -2470,6 +2475,63 @@ function buildLayout() {
 }
 
 // ═══════════════════════════════════════════════════════════
+//  RADIAL ROTATION — กดโหนดรอบ ๆ แล้ว "วงล้อ" หมุนพาโหนดขึ้นด้านบน
+//  (เหมือน machineryofgovernment.uk) · เก็บพิกัดเชิงขั้วของทุกโหนด
+//  แล้วคำนวณ x,y ใหม่ตามมุมหมุน → ป้ายชื่อยังตั้งตรง, hit-test ใช้ได้ทันที
+// ═══════════════════════════════════════════════════════════
+function storeRadialBase(){
+  const c = nodes[0]; if(!c) return;
+  for(const n of nodes){
+    if(n===c || n.standalone){ n.baseR = undefined; continue; }   // ศูนย์กลาง + คลัสเตอร์อิสระ = ไม่หมุน
+    const dx = n.x - c.x, dy = n.y - c.y;
+    n.baseR = Math.hypot(dx, dy);
+    n.baseAngle = Math.atan2(dy, dx);   // buildRadialLayout วางที่มุมฐาน (rotation 0) เสมอ → applyRotation จะบวกมุมหมุนกลับเข้าไป
+  }
+}
+function applyRotation(){
+  if(currentView !== 'radial') return;
+  const c = nodes[0]; if(!c) return;
+  const rot = radialRotation;
+  for(const n of nodes){
+    if(n.baseR === undefined || n.baseR === 0) continue;
+    const a = n.baseAngle + rot;
+    n.x = c.x + n.baseR * Math.cos(a);
+    n.y = c.y + n.baseR * Math.sin(a);
+  }
+}
+function animateRotationTo(target){
+  if(currentView !== 'radial'){ radialRotation = target; return; }
+  const start = radialRotation;
+  let delta = target - start;
+  delta = Math.atan2(Math.sin(delta), Math.cos(delta));   // เส้นทางหมุนสั้นที่สุด (−π..π)
+  if(Math.abs(delta) < 0.002){ radialRotation = start + delta; applyRotation(); draw(); return; }
+  const dur = 700, t0 = (performance||Date).now();
+  if(rotAnimRAF) cancelAnimationFrame(rotAnimRAF);
+  function frame(now){
+    let p = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);   // easeOutCubic — ออกตัวไว แล้วค่อย ๆ จอดนิ่ม
+    radialRotation = start + delta * e;
+    applyRotation();
+    draw();
+    if(p < 1) rotAnimRAF = requestAnimationFrame(frame);
+    else rotAnimRAF = null;
+  }
+  rotAnimRAF = requestAnimationFrame(frame);
+}
+// กดโหนด → หมุนพาโหนดนั้นขึ้นไปด้านบน (−90°) · ศูนย์กลาง/คลัสเตอร์อิสระ = ไม่หมุน
+function spinToNode(node){
+  if(!node || currentView !== 'radial') return;
+  if(node.type === 'center' || node.standalone || node.baseR === undefined) return;
+  animateRotationTo(-Math.PI/2 - node.baseAngle);
+}
+function updateNodeBase(n){
+  const c = nodes[0]; if(!c || n===c || n.standalone) return;
+  const dx = n.x - c.x, dy = n.y - c.y;
+  n.baseR = Math.hypot(dx, dy);
+  n.baseAngle = Math.atan2(dy, dx) - radialRotation;
+}
+
+// ═══════════════════════════════════════════════════════════
 //  CANVAS VISUAL HELPERS — colour utils · theme cache · org sprites
 //  (static visual polish only; no motion)
 // ═══════════════════════════════════════════════════════════
@@ -2596,7 +2658,7 @@ function draw() {
     ctx.lineCap = 'butt';
     uniGroups.forEach(g => {
       ctx.beginPath();
-      ctx.arc(cx, cy, bandR, g.a0, g.a1);
+      ctx.arc(cx, cy, bandR, g.a0 + radialRotation, g.a1 + radialRotation);
       ctx.strokeStyle = _rgba(g.color, dark ? 0.62 : 0.72);
       ctx.lineWidth = 4.5 / scale;
       ctx.stroke();
@@ -2608,7 +2670,7 @@ function draw() {
     const N = MINISTRIES.filter(m => !new Set(['24']).has(m.id)).length;
     const outerR = ringGuides[ringGuides.length-1].r;
     for(let i=0; i<N; i++) {
-      const a = (2*Math.PI*i/N) - Math.PI/2 - Math.PI/N;
+      const a = (2*Math.PI*i/N) - Math.PI/2 - Math.PI/N + radialRotation;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + outerR*1.04*Math.cos(a), cy + outerR*1.04*Math.sin(a));
@@ -3016,11 +3078,12 @@ function draw() {
     ctx.textBaseline = 'middle';
     uniGroups.forEach(g => {
       if(g.count < 5) return;
-      const wx = uniCx + labelR*Math.cos(g.mid);
-      const wy = uniCy + labelR*Math.sin(g.mid);
+      const gMid = g.mid + radialRotation;
+      const wx = uniCx + labelR*Math.cos(gMid);
+      const wy = uniCy + labelR*Math.sin(gMid);
       const sx = wx*scale + offsetX;
       const sy = wy*scale + offsetY;
-      ctx.textAlign = Math.cos(g.mid) >= 0 ? 'left' : 'right';
+      ctx.textAlign = Math.cos(gMid) >= 0 ? 'left' : 'right';
       ctx.shadowColor = isDkU ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)';
       ctx.shadowBlur = 3;
       ctx.fillStyle = g.color;
@@ -3082,6 +3145,7 @@ canvas.addEventListener('mousemove', e => {
     const dx=nx-draggedNode.x, dy=ny-draggedNode.y;
 
     draggedNode.x=nx; draggedNode.y=ny;
+    updateNodeBase(draggedNode);   // ลากแล้วอัปเดตมุม/รัศมีฐาน → ไม่ดีดกลับตอนหมุน
     hideTooltip();
     draw(); return;
   }
@@ -3105,7 +3169,7 @@ canvas.addEventListener('mouseup', e => {
   const r=MAIN.getBoundingClientRect();
   const moved=Math.abs(e.clientX-dragStartX)>4||Math.abs(e.clientY-dragStartY)>4;
   if(draggedNode) {
-    if(!moved) showPanel(draggedNode);
+    if(!moved) { showPanel(draggedNode); spinToNode(draggedNode); }
     draggedNode=null;
     canvas.style.cursor='default';
     return;
@@ -3113,7 +3177,7 @@ canvas.addEventListener('mouseup', e => {
   isDragging=false;
   if(!moved) {
     const hit=hitTest(e.clientX-r.left,e.clientY-r.top);
-    if(hit) { showPanel(hit); }
+    if(hit) { showPanel(hit); spinToNode(hit); }
     else { selectedNode=null; pmLens=false; panel.classList.remove('show', 'visible'); draw(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); }
   }
 });
@@ -3191,6 +3255,7 @@ canvas.addEventListener('touchmove', e => {
     const wx = (t.clientX - r.left - offsetX) / scale;
     const wy = (t.clientY - r.top  - offsetY) / scale;
     draggedNode.x = wx - nodeDragOffX; draggedNode.y = wy - nodeDragOffY;
+    updateNodeBase(draggedNode);
     draw();
   } else if (isDragging) {
     offsetX = dragOffX + (t.clientX - dragStartX);
@@ -3205,7 +3270,7 @@ canvas.addEventListener('touchend', e => {
   const moved = e.changedTouches.length &&
     (Math.abs(e.changedTouches[0].clientX - dragStartX) > 8 ||
      Math.abs(e.changedTouches[0].clientY - dragStartY) > 8);
-  if (draggedNode) { if (!moved) showPanel(draggedNode); draggedNode = null; }
+  if (draggedNode) { if (!moved) { showPanel(draggedNode); spinToNode(draggedNode); } draggedNode = null; }
   isDragging = false; pinchDist0 = 0;
 });
 
@@ -3521,7 +3586,7 @@ document.getElementById('btn-view-grid').onclick=()=>{
   showCorruptView(false);
 };
 document.getElementById('btn-view-radial').onclick=()=>{
-  currentView='radial';
+  currentView='radial'; radialRotation=0;
   ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='radial'));
   showGridView(false);
   showCorruptView(false);
@@ -3535,7 +3600,7 @@ document.getElementById('btn-view-force').onclick=()=>{
 };
 
 
-function resetView(){ buildLayout(); fitView(); }
+function resetView(){ radialRotation = 0; buildLayout(); fitView(); }
 function flyToFit(){
   const oX=offsetX, oY=offsetY, oS=scale;
   buildLayout(); fitView();                 // fitView writes the target into offset/scale
