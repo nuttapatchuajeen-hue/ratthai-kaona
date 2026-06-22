@@ -1171,6 +1171,86 @@ canvas:active { cursor: grabbing; }
   display: flex; gap: 16px; flex-wrap: wrap;
 }
 
+/* ── หน้าทุจริต: ส่วน CPI + หัวข้อ + ประเภทคำกล่าวหา ── */
+.corrupt-sec-hd {
+  font-size: 13px; font-weight: 700; color: var(--text);
+  margin: 18px 0 10px; padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: .2px;
+}
+#corrupt-cpi { margin-top: 4px; }
+.cpi-card {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 16px 18px;
+  display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+}
+.cpi-score {
+  text-align: center; padding-right: 18px; border-right: 1px solid var(--border);
+  min-width: 116px;
+}
+.cpi-score-num { font-size: 46px; font-weight: 800; line-height: 1; color: var(--red); font-family: 'Bebas Neue', Archivo, sans-serif; }
+.cpi-score-den { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.cpi-score-lbl { font-size: 11px; color: var(--text-mid); margin-top: 6px; }
+.cpi-rank { font-size: 12px; color: var(--text); margin-top: 7px; }
+.cpi-rank b { color: var(--orange); font-size: 15px; }
+.cpi-trend { display: flex; flex-direction: column; gap: 9px; }
+.cpi-trend-row { display: flex; align-items: center; gap: 9px; }
+.cpi-trend-yr { font-size: 11px; color: var(--text-dim); width: 64px; flex: none; }
+.cpi-trend-track { flex: 1; height: 13px; background: var(--bg3); border-radius: 7px; overflow: hidden; }
+.cpi-trend-fill { height: 100%; border-radius: 7px; }
+.cpi-trend-val { font-size: 11px; font-weight: 700; color: var(--text); width: 30px; text-align: right; flex: none; }
+.cpi-note { font-size: 11px; color: var(--text-mid); margin-top: 11px; line-height: 1.6; }
+.cpi-note b { color: var(--text); }
+.cpi-asean { font-size: 10.5px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
+#corrupt-types { margin-top: 8px; }
+.ctype-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 0; border-bottom: 1px dashed var(--border);
+}
+.ctype-row:last-child { border-bottom: 0; }
+.ctype-ic { font-size: 16px; flex: none; width: 22px; text-align: center; }
+.ctype-txt { font-size: 12px; color: var(--text); line-height: 1.5; }
+.ctype-txt small { color: var(--text-dim); }
+.corrupt-card.is-agg { opacity: .82; }
+.corrupt-card.is-agg .corrupt-rank { background: var(--border2); color: var(--text-dim); }
+.corrupt-card { cursor: pointer; }
+.corrupt-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ── modal รายละเอียดข้อกล่าวหา (กดการ์ดทุจริต) ── */
+.crd-overlay { position: fixed; inset: 0; z-index: 100000; display: none; place-items: center; padding: 20px;
+  background: rgba(6,10,18,.74); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .2s ease; }
+.crd-overlay.show { opacity: 1; }
+.crd-modal { width: min(640px,100%); max-height: 88vh; overflow: auto; position: relative;
+  background: var(--bg2); color: var(--text); border: 1px solid var(--border2); border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.5); transform: translateY(14px) scale(.985); transition: transform .2s ease; }
+.crd-overlay.show .crd-modal { transform: none; }
+.crd-close { position: absolute; top: 11px; right: 13px; width: 36px; height: 36px; border-radius: 9px;
+  border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font-size: 22px; line-height: 1; cursor: pointer; z-index: 3; }
+.crd-close:hover { background: var(--border2); }
+.crd-head { padding: 22px 46px 15px 24px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(248,113,113,.10), transparent); }
+.crd-rankbadge { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--red);
+  border: 1px solid var(--red); border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; }
+.crd-name { font-size: 19px; font-weight: 800; line-height: 1.25; }
+.crd-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+.crd-body { padding: 6px 24px 22px; }
+.crd-sec { margin-top: 17px; }
+.crd-sec-t { font-size: 12.5px; font-weight: 700; color: var(--gold); margin-bottom: 8px; display: flex; gap: 7px; align-items: center; }
+.crd-li { font-size: 12.5px; color: var(--text); line-height: 1.5; padding: 4px 0 4px 16px; position: relative; }
+.crd-li::before { content: "▪"; position: absolute; left: 0; color: var(--text-dim); }
+.crd-stat { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.crd-stat > div { flex: 1; min-width: 116px; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px; }
+.crd-stat b { display: block; font-size: 16px; color: var(--text); }
+.crd-stat span { font-size: 10.5px; color: var(--text-dim); }
+.crd-onote { font-size: 11.5px; color: var(--text-mid); margin-top: 9px; line-height: 1.5; }
+.crd-case { border-left: 3px solid var(--red); background: var(--bg3); border-radius: 0 9px 9px 0; padding: 9px 12px; margin-top: 8px; }
+.crd-case-t { font-size: 12.5px; font-weight: 700; color: var(--text); }
+.crd-case-d { font-size: 11.5px; color: var(--text-mid); line-height: 1.5; margin-top: 3px; }
+.crd-case a { color: var(--gold); font-size: 11px; text-decoration: none; display: inline-block; margin-top: 5px; }
+.crd-case a:hover { text-decoration: underline; }
+.crd-note { font-size: 10.5px; color: var(--text-dim); font-style: italic; margin-top: 16px; line-height: 1.55; border-top: 1px dashed var(--border); padding-top: 11px; }
+@media (max-width:560px){ .crd-stat > div { min-width: 45%; } }
+
 /* ═══════════════════════════════════════
    TOOLTIP
 ═══════════════════════════════════════ */
@@ -1784,7 +1864,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <div id="grid-pm-wrap"></div>
         <div class="grid-section-hd" style="margin-top:4px">รองนายกรัฐมนตรี</div>
         <div class="grid-cards" id="grid-deputy-cards"></div>
-        <div class="grid-section-hd">รัฐมนตรีว่าการกระทรวง</div>
+        <div class="grid-section-hd">รัฐมนตรีว่าการ และรัฐมนตรีช่วยว่าการ</div>
         <div class="grid-cards" id="grid-minister-cards"></div>
       </div>
       <div class="grid-footer">
@@ -1796,12 +1876,12 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <!-- ══════ CORRUPTION OVERLAY ══════ -->
     <div id="corrupt-overlay">
       <div id="corrupt-topbar">
-        <div class="corrupt-title">⚠ ดัชนีความเสี่ยงทุจริต — หน่วยงานรัฐไทย</div>
+        <div class="corrupt-title">⚠ สถานการณ์คอร์รัปชันไทย — CPI &amp; สถิติเรื่องร้องเรียน ป.ป.ช.</div>
         <div class="corrupt-stats">
-          <div class="c-stat"><div class="c-stat-val">10</div><div class="c-stat-lbl">หน่วยงานเสี่ยงสูง</div></div>
-          <div class="c-stat"><div class="c-stat-val">3</div><div class="c-stat-lbl">ความเสี่ยงระดับวิกฤต</div></div>
-          <div class="c-stat"><div class="c-stat-val">5</div><div class="c-stat-lbl">ประเภทความเสี่ยง</div></div>
-          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">10</div><div class="c-stat-lbl">หน่วยงานรัฐที่แสดง</div></div>
+          <div class="c-stat"><div class="c-stat-val">33</div><div class="c-stat-lbl">คะแนน CPI 2568 (เต็ม 100)</div></div>
+          <div class="c-stat"><div class="c-stat-val">116</div><div class="c-stat-lbl">อันดับโลก (จาก 180)</div></div>
+          <div class="c-stat"><div class="c-stat-val">4,475</div><div class="c-stat-lbl">คำกล่าวหา ป.ป.ช. ปีงบ 2566</div></div>
+          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">3</div><div class="c-stat-lbl">หน่วยงานที่แสดง</div></div>
         </div>
         <div class="corrupt-controls">
           <input id="corrupt-search" type="text" placeholder="🔍  ค้นหาหน่วยงาน หรือ ความเสี่ยง...">
@@ -1810,9 +1890,14 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
           <span class="c-results-count" id="c-results-count">แสดง 10 รายการ</span>
         </div>
       </div>
-      <div id="corrupt-scroll"><div id="corrupt-list"></div></div>
+      <div id="corrupt-scroll">
+        <div id="corrupt-cpi"></div>
+        <div class="corrupt-sec-hd">🏛️ หน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566</div>
+        <div id="corrupt-list"></div>
+        <div id="corrupt-types"></div>
+      </div>
       <div id="corrupt-footer">
-        <span>📎 ที่มา: ดัชนีภาพลักษณ์คอร์รัปชัน (CPI) · รายงาน ป.ป.ช. · สวนดุสิตโพล · สตง.</span>
+        <span>📎 ที่มา: Transparency International (CPI 2566–2568) · สำนักงาน ป.ป.ช. (สถิติคำกล่าวหา ปีงบ 2566 · ข้อมูล ณ 1 ต.ค. 2565–19 ก.ค. 2566)</span>
         <span>⚠ ข้อมูลเพื่อการศึกษาเชิงวิชาการ ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
       </div>
     </div>
@@ -3716,7 +3801,7 @@ const CABINET = {
   "05": [{name:"นายสุรศักดิ์ พันธ์เจริญวรกุล", role:"รมว.การท่องเที่ยวและกีฬา", party:"ภูมิใจไทย"}],
   "06": [{name:"นายนิกร โสมกลาง", role:"รมว.การพัฒนาสังคมและความมั่นคงของมนุษย์", party:"เพื่อไทย"}],
   "07": [
-    {name:"นายสุริยะ จึงรุ่งเรืองกิจ",     role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"},
+    {name:"นายสุริยะ จึงรุ่งเรืองกิจ",     role:"รมว.เกษตรและสหกรณ์", party:"เพื่อไทย"},
     {name:"นายวัชระพล ขาวขำ",           role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"},
     {name:"นางสาวปิยะรัฐชย์ ติยะไพรัช", role:"รมช.เกษตรและสหกรณ์", party:"เพื่อไทย"}
   ],
@@ -3726,34 +3811,35 @@ const CABINET = {
     {name:"นายภัทรพงศ์ ภัทรประสิทธิ์",   role:"รมช.คมนาคม", party:"ภูมิใจไทย"},
     {name:"นายสรรเพชญ บุญญามณี",        role:"รมช.คมนาคม", party:"ภูมิใจไทย"}
   ],
-  "09": [{name:"นายสุชาติ ชมกลิ่น", role:"รมว.ทรัพยากรธรรมชาติและสิ่งแวดล้อม", party:"รวมไทยสร้างชาติ"}],
+  "09": [{name:"นายสุชาติ ชมกลิ่น", role:"รมว.ทรัพยากรธรรมชาติและสิ่งแวดล้อม", party:"ภูมิใจไทย"}],
   "11": [
     {name:"นายไชยชนก ชิดชอบ",         role:"รมว.ดิจิทัลเพื่อเศรษฐกิจและสังคม", party:"ภูมิใจไทย"},
     {name:"นางสาวแนน บุณย์ธิดา สมชัย", role:"รมช.ดิจิทัลเพื่อเศรษฐกิจและสังคม", party:"ภูมิใจไทย"}
   ],
-  "12": [{name:"นายเอกนัฏ พร้อมพัฒน์", role:"รมว.พลังงาน", party:"รวมไทยสร้างชาติ"}],
+  "12": [{name:"นายเอกนัฏ พร้อมพันธุ์", role:"รมว.พลังงาน", party:"ภูมิใจไทย"}],
   "13": [{name:"นางศุภจี สุธรรมพันธุ์", role:"รองนายกรัฐมนตรี และ รมว.พาณิชย์", party:"ภูมิใจไทย (โควตาคนนอก)"}],
   "14": [
     {name:"นายอนุทิน ชาญวีรกูล",    role:"นายกรัฐมนตรี และ รมว.มหาดไทย", party:"ภูมิใจไทย"},
     {name:"นายพลพีร์ สุวรรณฉวี",    role:"รมช.มหาดไทย", party:"ภูมิใจไทย"},
     {name:"นายเจเศรษฐ์ ไทยเศรษฐ์", role:"รมช.มหาดไทย", party:"ภูมิใจไทย"},
-    {name:"นายวรศิษฏ์ เลียงประสิทธิ์", role:"รมช.มหาดไทย", party:"ภูมิใจไทย"}
+    {name:"นายวรศิษฎ์ เลียงประสิทธิ์", role:"รมช.มหาดไทย", party:"ภูมิใจไทย"}
   ],
   "15": [{name:"พลตำรวจโท รุทธพล เนาวรัตน์", role:"รมว.ยุติธรรม", party:"ภูมิใจไทย (โควตาคนนอก)"}],
   "16": [{name:"นายจุลพันธ์ อมรวิวัฒน์", role:"รมว.แรงงาน", party:"เพื่อไทย"}],
-  "17": [{name:"นางสาวซาบีดา ไทยเศรษฐ", role:"รมว.วัฒนธรรม", party:"ภูมิใจไทย"}],
+  "17": [{name:"นางสาวซาบีดา ไทยเศรษฐ์", role:"รมว.วัฒนธรรม", party:"ภูมิใจไทย"}],
   "18": [{name:"นายยศชนัน วงศ์สวัสดิ์", role:"รองนายกรัฐมนตรี และ รมว.การอุดมศึกษาฯ", party:"เพื่อไทย"}],
   "19": [
     {name:"นายประเสริฐ จันทรรวงทอง",     role:"รมว.ศึกษาธิการ", party:"เพื่อไทย"},
     {name:"นายอัครนันท์ กัณณ์กิตตินันท์", role:"รมช.ศึกษาธิการ", party:"เพื่อไทย"}
   ],
-  "21": [{name:"นายพัฒนา พร้อมพัฒน์", role:"รมว.สาธารณสุข", party:"เพื่อไทย"}],
-  "22": [{name:"นายวราวุธ ศิลปอาชา", role:"รมว.อุตสาหกรรม", party:"ชาติไทยพัฒนา"}]
+  "21": [{name:"นายพัฒนา พร้อมพัฒน์", role:"รมว.สาธารณสุข", party:"ภูมิใจไทย"}],
+  "22": [{name:"นายวราวุธ ศิลปอาชา", role:"รมว.อุตสาหกรรม", party:"ภูมิใจไทย"}]
 };
 
 const PARTY_COLORS = {
   "ภูมิใจไทย": "#3b82f6",
   "ภูมิใจไทย (โควตาคนนอก)": "#60a5fa",
+  "ภูมิใจไทย (คนนอก)": "#60a5fa",
   "เพื่อไทย": "#ef4444",
   "รวมไทยสร้างชาติ": "#f59e0b",
   "ชาติไทยพัฒนา": "#10b981"
@@ -3982,30 +4068,239 @@ const GRID_DEPUTIES = [
   {name:"นายยศชนัน วงศ์สวัสดิ์",     role:"รองนายกฯ + รมว.อุดมศึกษา",  party:"เพื่อไทย",               minId:"18", emoji:"🎓"},
 ];
 const GRID_MINISTERS = [
-  {name:"นางสาวศุภมาส อิศรภักดี",     role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
-  {name:"นายนภินทร ศรีสรรพางค์",      role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
-  {name:"นายภราดร ปริศนานันทกุล",      role:"รมต.ประจำสำนักนายกรัฐมนตรี",party:"ภูมิใจไทย",              minId:"01", emoji:"🏛️"},
-  {name:"พลโท อดุลย์ บุญธรรมเจริญ",   role:"รมว.กลาโหม",                 party:"ภูมิใจไทย (คนนอก)",      minId:"02", emoji:"🛡️"},
-  {name:"นายสุรศักดิ์ พันธ์เจริญวรกุล",role:"รมว.การท่องเที่ยวและกีฬา",  party:"ภูมิใจไทย",              minId:"05", emoji:"✈️"},
-  {name:"นายนิกร โสมกลาง",             role:"รมว.การพัฒนาสังคมฯ",         party:"เพื่อไทย",               minId:"06", emoji:"🏘️"},
-  {name:"นายสุริยะ จึงรุ่งเรืองกิจ",  role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",               minId:"07", emoji:"🌾"},
-  {name:"นายไชยชนก ชิดชอบ",           role:"รมว.ดิจิทัลเพื่อเศรษฐกิจฯ",  party:"ภูมิใจไทย",              minId:"11", emoji:"💻"},
-  {name:"นายสุชาติ ชมกลิ่น",           role:"รมว.ทรัพยากรธรรมชาติฯ",      party:"รวมไทยสร้างชาติ",        minId:"09", emoji:"🌿"},
-  {name:"นายเอกนัฏ พร้อมพัฒน์",       role:"รมว.พลังงาน",                 party:"รวมไทยสร้างชาติ",        minId:"12", emoji:"⚡"},
-  {name:"นายพลพีร์ สุวรรณฉวี",        role:"รมช.มหาดไทย",                party:"ภูมิใจไทย",              minId:"14", emoji:"🏙️"},
-  {name:"พลตำรวจโท รุทธพล เนาวรัตน์", role:"รมว.ยุติธรรม",               party:"ภูมิใจไทย (คนนอก)",      minId:"15", emoji:"⚖️"},
-  {name:"นายจุลพันธ์ อมรวิวัฒน์",     role:"รมว.แรงงาน",                 party:"เพื่อไทย",               minId:"16", emoji:"👷"},
-  {name:"นางสาวซาบีดา ไทยเศรษฐ",      role:"รมว.วัฒนธรรม",               party:"ภูมิใจไทย",              minId:"17", emoji:"🎭"},
-  {name:"นายประเสริฐ จันทรรวงทอง",    role:"รมว.ศึกษาธิการ",             party:"เพื่อไทย",               minId:"19", emoji:"📚"},
-  {name:"นายพัฒนา พร้อมพัฒน์",        role:"รมว.สาธารณสุข",              party:"เพื่อไทย",               minId:"21", emoji:"🏥"},
-  {name:"นายวราวุธ ศิลปอาชา",          role:"รมว.อุตสาหกรรม",             party:"ชาติไทยพัฒนา",           minId:"22", emoji:"🏭"},
+  // สำนักนายกรัฐมนตรี (01)
+  {name:"นางสาวศุภมาส อิศรภักดี",      role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
+  {name:"นายนภินทร ศรีสรรพางค์",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
+  {name:"นายภราดร ปริศนานันทกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
+  {name:"นางสุขสมรวย วันทนียกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
+  // กลาโหม (02)
+  {name:"พลโท อดุลย์ บุญธรรมเจริญ",    role:"รมว.กลาโหม",                party:"ภูมิใจไทย (คนนอก)", minId:"02", emoji:"🛡️"},
+  // การท่องเที่ยวและกีฬา (05)
+  {name:"นายสุรศักดิ์ พันธ์เจริญวรกุล", role:"รมว.การท่องเที่ยวและกีฬา",  party:"ภูมิใจไทย",         minId:"05", emoji:"✈️"},
+  // การพัฒนาสังคมฯ (06)
+  {name:"นายนิกร โสมกลาง",             role:"รมว.การพัฒนาสังคมฯ",        party:"เพื่อไทย",          minId:"06", emoji:"🏘️"},
+  // เกษตรและสหกรณ์ (07)
+  {name:"นายสุริยะ จึงรุ่งเรืองกิจ",   role:"รมว.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
+  {name:"นายวัชระพล ขาวขำ",            role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
+  {name:"นางสาวปิยะรัฐชย์ ติยะไพรัช",   role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
+  // คมนาคม (08) — รมว.พิพัฒน์ เป็นรองนายกฯ (อยู่กลุ่มบน)
+  {name:"นายสิริพงศ์ อังคสกุลเกียรติ",  role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
+  {name:"นายภัทรพงศ์ ภัทรประสิทธิ์",    role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
+  {name:"นายสรรเพชญ บุญญามณี",         role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
+  // ทรัพยากรธรรมชาติฯ (09)
+  {name:"นายสุชาติ ชมกลิ่น",           role:"รมว.ทรัพยากรธรรมชาติฯ",     party:"ภูมิใจไทย",         minId:"09", emoji:"🌿"},
+  // ดิจิทัลฯ (11)
+  {name:"นายไชยชนก ชิดชอบ",            role:"รมว.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"💻"},
+  {name:"นางสาวบุณย์ธิดา สมชัย",        role:"รมช.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"💻"},
+  // พลังงาน (12)
+  {name:"นายเอกนัฏ พร้อมพันธุ์",        role:"รมว.พลังงาน",              party:"ภูมิใจไทย",         minId:"12", emoji:"⚡"},
+  // มหาดไทย (14) — รมว. = นายกฯ อนุทิน (อยู่การ์ด PM)
+  {name:"นายพลพีร์ สุวรรณฉวี",         role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
+  {name:"นายเจเศรษฐ์ ไทยเศรษฐ์",        role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
+  {name:"นายวรศิษฎ์ เลียงประสิทธิ์",    role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
+  // ยุติธรรม (15)
+  {name:"พลตำรวจโท รุทธพล เนาวรัตน์",  role:"รมว.ยุติธรรม",             party:"ภูมิใจไทย (คนนอก)", minId:"15", emoji:"⚖️"},
+  // แรงงาน (16)
+  {name:"นายจุลพันธ์ อมรวิวัฒน์",      role:"รมว.แรงงาน",               party:"เพื่อไทย",          minId:"16", emoji:"👷"},
+  // วัฒนธรรม (17)
+  {name:"นางสาวซาบีดา ไทยเศรษฐ์",       role:"รมว.วัฒนธรรม",             party:"ภูมิใจไทย",         minId:"17", emoji:"🎭"},
+  // ศึกษาธิการ (19)
+  {name:"นายประเสริฐ จันทรรวงทอง",     role:"รมว.ศึกษาธิการ",           party:"เพื่อไทย",          minId:"19", emoji:"📚"},
+  {name:"นายอัครนันท์ กัณณ์กิตตินันท์", role:"รมช.ศึกษาธิการ",          party:"เพื่อไทย",          minId:"19", emoji:"📚"},
+  // สาธารณสุข (21)
+  {name:"นายพัฒนา พร้อมพัฒน์",         role:"รมว.สาธารณสุข",            party:"ภูมิใจไทย",         minId:"21", emoji:"🏥"},
+  // อุตสาหกรรม (22)
+  {name:"นายวราวุธ ศิลปอาชา",          role:"รมว.อุตสาหกรรม",           party:"ภูมิใจไทย",         minId:"22", emoji:"🏭"},
 ];
+
+// ═══════════════════════════════════════
+//  ประวัติรัฐมนตรี — กดการ์ดเด้งประวัติ (พอร์ตจากหน้า cabinet)
+// ═══════════════════════════════════════
+const CAB_MIN_NAMES = {
+  "01":"สำนักนายกรัฐมนตรี","02":"กระทรวงกลาโหม","03":"กระทรวงการคลัง","04":"กระทรวงการต่างประเทศ",
+  "05":"กระทรวงการท่องเที่ยวและกีฬา","06":"กระทรวงการพัฒนาสังคมและความมั่นคงของมนุษย์","07":"กระทรวงเกษตรและสหกรณ์",
+  "08":"กระทรวงคมนาคม","09":"กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม","11":"กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม",
+  "12":"กระทรวงพลังงาน","13":"กระทรวงพาณิชย์","14":"กระทรวงมหาดไทย","15":"กระทรวงยุติธรรม","16":"กระทรวงแรงงาน",
+  "17":"กระทรวงวัฒนธรรม","18":"กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม","19":"กระทรวงศึกษาธิการ",
+  "21":"กระทรวงสาธารณสุข","22":"กระทรวงอุตสาหกรรม"
+};
+/* แปลงชื่อมีคำนำหน้า (นาย/นางสาว/พลโท …) → คีย์ BIO แบบไม่มีคำนำหน้า */
+function cabBioKey(name){
+  return String(name).replace(/^(นางสาว|นาย|นาง|พลตำรวจโท|พลตำรวจเอก|พลตำรวจตรี|พันตำรวจเอก|พลโท|พลเอก|พลตรี|ว่าที่ร้อยตรี|ดร\.)\s*/,"").trim();
+}
+const CAB_LEAD_VOWELS = new Set(["เ","แ","โ","ใ","ไ"]);
+function cabMonogram(name){ const f=String(name).trim().split(/\s+/)[0]||name; let ch=f[0]; if(CAB_LEAD_VOWELS.has(ch)&&f.length>1) ch=f[1]; return ch; }
+/* รูปจาก cabinet/photos/ (วิกิมีเดียคอมมอนส์ + ภาพทางการที่ผู้ใช้จัดเตรียม) คีย์ = ชื่อแบบไม่มีคำนำหน้า */
+const CAB_PHOTOS = {
+  "อนุทิน ชาญวีรกูล":"01-1.jpg","ศุภมาส อิศรภักดี":"01-2.jpg","นภินทร ศรีสรรพางค์":"01-3.jpg","ภราดร ปริศนานันทกุล":"01-4.jpg","สุขสมรวย วันทนียกุล":"01-5.jpg","ทรงศักดิ์ ทองศรี":"01-6.jpg","ปกรณ์ นิลประพันธ์":"01-7.jpg",
+  "อดุลย์ บุญธรรมเจริญ":"02-1.jpg","เอกนิติ นิติทัณฑ์ประภาศ":"03-1.jpg","สีหศักดิ์ พวงเกตุแก้ว":"04-1.jpg","สุรศักดิ์ พันธ์เจริญวรกุล":"05-1.jpg","นิกร โสมกลาง":"06-1.jpg",
+  "สุริยะ จึงรุ่งเรืองกิจ":"07-1.jpg","วัชระพล ขาวขำ":"07-2.jpg","ปิยะรัฐชย์ ติยะไพรัช":"07-3.jpg",
+  "พิพัฒน์ รัชกิจประการ":"08-1.jpg","สิริพงศ์ อังคสกุลเกียรติ":"08-2.jpg","ภัทรพงศ์ ภัทรประสิทธิ์":"08-3.jpg","สรรเพชญ บุญญามณี":"08-4.jpg",
+  "สุชาติ ชมกลิ่น":"09-1.jpg","ไชยชนก ชิดชอบ":"11-1.jpg","บุณย์ธิดา สมชัย":"11-2.jpg","เอกนัฏ พร้อมพันธุ์":"12-1.jpg","ศุภจี สุธรรมพันธุ์":"13-1.jpg",
+  "พลพีร์ สุวรรณฉวี":"14-1.jpg","เจเศรษฐ์ ไทยเศรษฐ์":"14-2.jpg","วรศิษฎ์ เลียงประสิทธิ์":"14-3.jpg","รุทธพล เนาวรัตน์":"15-1.jpg","จุลพันธ์ อมรวิวัฒน์":"16-1.jpg",
+  "ซาบีดา ไทยเศรษฐ์":"17-1.jpg","ยศชนัน วงศ์สวัสดิ์":"18-1.jpg","ประเสริฐ จันทรรวงทอง":"19-1.jpg","อัครนันท์ กัณณ์กิตตินันท์":"19-2.jpg","พัฒนา พร้อมพัฒน์":"21-1.jpg","วราวุธ ศิลปอาชา":"22-1.png"
+};
+function cabPortrait(key){
+  const f = CAB_PHOTOS[key], mono = cabMonogram(key);
+  const img = f ? `<img src="cabinet/photos/${f}" alt="${key}" loading="lazy" onerror="this.parentElement.classList.add('noimg');this.remove()">` : "";
+  return `<div class="cab-pf${f?"":" noimg"}">${img}<span class="cab-mono">${mono}</span></div>`;
+}
+const CAB_BIO = {
+  "อนุทิน ชาญวีรกูล":{party:"ภูมิใจไทย (หัวหน้าพรรค)",birth:"13 กันยายน 2509",age:"59",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมอุตสาหการ มหาวิทยาลัยฮอฟสตรา (สหรัฐฯ); Mini MBA จุฬาฯ; ม.ปลาย ร.ร.อัสสัมชัญ",exp:"นายกรัฐมนตรี คนที่ 32; หัวหน้าพรรคภูมิใจไทย; อดีตรองนายกรัฐมนตรีและ รมว.สาธารณสุข; อดีต รมว.มหาดไทย",src:"https://th.wikipedia.org/wiki/อนุทิน_ชาญวีรกูล"},
+  "ทรงศักดิ์ ทองศรี":{party:"ภูมิใจไทย",birth:"20 เมษายน 2501",age:"68",province:"บุรีรัมย์",edu:"ตรี นิติศาสตร์ ม.รามคำแหง; โท-เอก รัฐประศาสนศาสตร์ ม.อีสเทิร์นเอเชีย",exp:"รองนายกรัฐมนตรี; อดีต รมช.มหาดไทย (2562–2568); อดีต รมช.คมนาคม (2551); ส.ส.บุรีรัมย์ 7 สมัย",src:"https://th.wikipedia.org/wiki/ทรงศักดิ์_ทองศรี"},
+  "ปกรณ์ นิลประพันธ์":{party:"อิสระ",birth:"1 พฤศจิกายน 2511",age:"57",province:"ไม่ระบุ",edu:"ตรี นิติศาสตร์ ม.ธรรมศาสตร์; โท กฎหมายการแข่งขันทางการค้า มหาวิทยาลัยซิดนีย์ (ออสเตรเลีย)",exp:"รองนายกรัฐมนตรีฝ่ายกฎหมาย; อดีตเลขาธิการคณะกรรมการกฤษฎีกา (2563–2569)",src:"https://th.wikipedia.org/wiki/ปกรณ์_นิลประพันธ์"},
+  "ศุภมาส อิศรภักดี":{party:"ภูมิใจไทย (เดิม ไทยรักไทย/พลังประชาชน)",birth:"3 เมษายน 2516",age:"53",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมอุตสาหการ จุฬาฯ; โท วิศวกรรม มหาวิทยาลัยวอริก (อังกฤษ)",exp:"รมต.ประจำสำนักนายกฯ; อดีต รมว.การอุดมศึกษาฯ (อว.) (2565–2567); ส.ส.กทม.",src:"https://th.wikipedia.org/wiki/ศุภมาส_อิศรภักดี"},
+  "นภินทร ศรีสรรพางค์":{party:"ภูมิใจไทย (เดิมเพื่อไทย)",birth:"30 พฤษภาคม 2502",age:"67",province:"ราชบุรี",edu:"ตรี นิติศาสตร์ ม.รามคำแหง; โท รัฐศาสตร์ ม.รามคำแหง",exp:"รมต.ประจำสำนักนายกฯ; อดีต รมช.พาณิชย์ (2566–2568)",src:"https://th.wikipedia.org/wiki/นภินทร_ศรีสรรพางค์"},
+  "ภราดร ปริศนานันทกุล":{party:"ภูมิใจไทย",birth:"18 กันยายน 2522",age:"46",province:"อ่างทอง",edu:"ตรี สถิติ คณะวิทยาศาสตร์ฯ ม.ธรรมศาสตร์; โท เศรษฐศาสตร์ มหาวิทยาลัยวอริก (อังกฤษ)",exp:"รมต.ประจำสำนักนายกฯ; อดีตรองประธานสภาผู้แทนราษฎร คนที่ 2; อดีตโฆษกพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/ภราดร_ปริศนานันทกุล"},
+  "สุขสมรวย วันทนียกุล":{party:"ภูมิใจไทย",birth:"ไม่ระบุ",age:"ไม่ระบุ",province:"อำนาจเจริญ",edu:"ไม่ระบุ",exp:"รมต.ประจำสำนักนายกฯ; ส.ส.อำนาจเจริญ เขต 1 (2566); อดีตเลขานุการ รมว.คมนาคม (ศักดิ์สยาม ชิดชอบ)",src:"https://www.pptvhd36.com/news/การเมือง/272157"},
+  "อดุลย์ บุญธรรมเจริญ":{rank:"พลโท",party:"อิสระ",birth:"2 มิถุนายน 2507",age:"62",province:"บุรีรัมย์",edu:"เตรียมทหารรุ่น 26; นายร้อย จปร. รุ่น 37; วปอ. รุ่น 61; MPPM นิด้า รุ่น 9",exp:"รมว.กลาโหม; อดีต รมช.กลาโหม; อดีตแม่ทัพภาคที่ 2",src:"https://th.wikipedia.org/wiki/อดุลย์_บุญธรรมเจริญ"},
+  "เอกนิติ นิติทัณฑ์ประภาศ":{party:"ภูมิใจไทย",birth:"17 กันยายน 2514",age:"54",province:"กรุงเทพมหานคร",edu:"ตรี เศรษฐศาสตร์ (เกียรตินิยม) ม.ธรรมศาสตร์; โท เศรษฐศาสตร์ ม.อิลลินอยส์ เออร์แบนา-แชมเปญ; เอก เศรษฐศาสตร์ Claremont Graduate University (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.การคลัง; อดีตอธิบดีกรมสรรพากร/กรมสรรพสามิต/กรมธนารักษ์",src:"https://th.wikipedia.org/wiki/เอกนิติ_นิติทัณฑ์ประภาศ"},
+  "สีหศักดิ์ พวงเกตุแก้ว":{party:"ภูมิใจไทย",birth:"21 ธันวาคม 2500",age:"68",province:"อำนาจเจริญ",edu:"ตรี รัฐศาสตร์ จุฬาฯ; โท ความสัมพันธ์ระหว่างประเทศ (SAIS) ม.จอนส์ฮอปกินส์ (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.การต่างประเทศ; อดีตปลัดกระทรวงการต่างประเทศ; อดีตเอกอัครราชทูต (ฝรั่งเศส/ญี่ปุ่น/โมนาโก)",src:"https://th.wikipedia.org/wiki/สีหศักดิ์_พวงเกตุแก้ว"},
+  "สุรศักดิ์ พันธ์เจริญวรกุล":{party:"ภูมิใจไทย (เดิม พลังประชาชน/เพื่อไทย)",birth:"2 กันยายน 2519",age:"49",province:"พระนครศรีอยุธยา",edu:"ตรี บริหารธุรกิจ (การจัดการ) ม.รังสิต",exp:"รมว.การท่องเที่ยวและกีฬา; อดีต รมว.การอุดมศึกษาฯ (อว.) (2568–2569); ส.ส.พระนครศรีอยุธยา",src:"https://th.wikipedia.org/wiki/สุรศักดิ์_พันธ์เจริญวรกุล"},
+  "นิกร โสมกลาง":{party:"เพื่อไทย",birth:"9 กุมภาพันธ์ 2524",age:"45",province:"นครราชสีมา",edu:"ตรี วิศวกรรมศาสตร์ ม.เทคโนโลยีสุรนารี; โท วิทยาศาสตร์ ม.ฮันโนเวอร์ (เยอรมนี)",exp:"รมว.การพัฒนาสังคมและความมั่นคงของมนุษย์; ส.ส.นครราชสีมา (2566)",src:"https://th.wikipedia.org/wiki/นิกร_โสมกลาง"},
+  "สุริยะ จึงรุ่งเรืองกิจ":{party:"เพื่อไทย",birth:"10 ธันวาคม 2497",age:"71",province:"กรุงเทพมหานคร",edu:"วิศวกรรมอุตสาหการ ม.แคลิฟอร์เนีย เบิร์กลีย์ (สหรัฐฯ); วปอ.",exp:"รมว.เกษตรและสหกรณ์; อดีตรักษาการนายกรัฐมนตรี (2568); อดีตรองนายกฯ และ รมว.คมนาคม; อดีต รมว.อุตสาหกรรม",src:"https://th.wikipedia.org/wiki/สุริยะ_จึงรุ่งเรืองกิจ"},
+  "วัชระพล ขาวขำ":{party:"เพื่อไทย",birth:"20 มิถุนายน 2529",age:"39",province:"อุดรธานี",edu:"ตรี วิทยาการจัดการ ม.ราชภัฏอุดรธานี; โท MBA Pacific States University (สหรัฐฯ)",exp:"รมช.เกษตรและสหกรณ์; ส.ส.อุดรธานี (2566); อดีตรองนายกเทศมนตรีนครอุดรธานี",src:"https://th.wikipedia.org/wiki/วัชระพล_ขาวขำ"},
+  "ปิยะรัฐชย์ ติยะไพรัช":{party:"เพื่อไทย (เดิมเพื่อชาติ)",birth:"11 ตุลาคม 2530",age:"38",province:"เชียงราย",edu:"ตรี สังคมศาสตร์ ม.เกษตรศาสตร์; โท สังคมศาสตร์และมนุษยศาสตร์ ม.มหิดล",exp:"รมช.เกษตรและสหกรณ์; ส.ส.เชียงราย (2566)",src:"https://th.wikipedia.org/wiki/ปิยะรัฐชย์_ติยะไพรัช"},
+  "พิพัฒน์ รัชกิจประการ":{party:"ภูมิใจไทย",birth:"5 สิงหาคม 2498",age:"70",province:"สงขลา",edu:"ตรี-โท รัฐศาสตร์ ม.รามคำแหง",exp:"รองนายกรัฐมนตรีและ รมว.คมนาคม; อดีต รมว.แรงงาน; อดีต รมว.การท่องเที่ยวและกีฬา",src:"https://th.wikipedia.org/wiki/พิพัฒน์_รัชกิจประการ"},
+  "สิริพงศ์ อังคสกุลเกียรติ":{party:"ภูมิใจไทย",birth:"26 สิงหาคม 2519",age:"49",province:"ศรีสะเกษ",edu:"ตรี วิศวกรรมศาสตร์ ม.รังสิต; โท การจัดการระบบสารสนเทศ ม.โคโลราโด เดนเวอร์ (สหรัฐฯ); เอก เกษตรเขตร้อน ม.เกษตรศาสตร์",exp:"รมช.คมนาคม; ส.ส.ศรีสะเกษ; อดีตโฆษกประจำสำนักนายกรัฐมนตรี",src:"https://th.wikipedia.org/wiki/สิริพงศ์_อังคสกุลเกียรติ"},
+  "ภัทรพงศ์ ภัทรประสิทธิ์":{party:"ภูมิใจไทย",birth:"13 กรกฎาคม 2526",age:"42",province:"พิจิตร",edu:"ตรี วิศวกรรมอุตสาหการ ม.เชียงใหม่; ตรี นิติศาสตร์ จุฬาฯ; โท โลจิสติกส์ University of La Verne (สหรัฐฯ)",exp:"รมช.คมนาคม; ส.ส.พิจิตร (2 สมัย)",src:"https://th.wikipedia.org/wiki/ภัทรพงศ์_ภัทรประสิทธิ์"},
+  "สรรเพชญ บุญญามณี":{party:"ภูมิใจไทย",birth:"1 กุมภาพันธ์ 2533",age:"36",province:"สงขลา",edu:"ตรี ธุรกิจระหว่างประเทศ วิทยาลัยนานาชาติ ม.มหิดล; โท การวางแผนการเงินและบริหารความมั่งคั่ง Manchester Metropolitan University (อังกฤษ)",exp:"รมช.คมนาคม; ส.ส.สงขลา (2566)",src:"https://th.wikipedia.org/wiki/สรรเพชญ_บุญญามณี"},
+  "สุชาติ ชมกลิ่น":{party:"ภูมิใจไทย",birth:"15 กรกฎาคม 2517",age:"51",province:"ชลบุรี",edu:"ตรี ศิลปศาสตร์ (การจัดการ) ม.เกริก",exp:"รมว.ทรัพยากรธรรมชาติฯ; อดีตรองนายกรัฐมนตรี; อดีต รมว.แรงงาน; อดีต รมช.พาณิชย์; ส.ส.ชลบุรี",src:"https://th.wikipedia.org/wiki/สุชาติ_ชมกลิ่น"},
+  "ไชยชนก ชิดชอบ":{party:"ภูมิใจไทย (เลขาธิการพรรค)",birth:"14 กรกฎาคม 2533",age:"35",province:"บุรีรัมย์",edu:"ตรี รัฐศาสตร์ (การปกครองท้องถิ่น) ม.เฉลิมกาญจนา บุรีรัมย์",exp:"รมว.ดิจิทัลฯ; เลขาธิการพรรคภูมิใจไทย; อดีต ส.ส.บุรีรัมย์",src:"https://th.wikipedia.org/wiki/ไชยชนก_ชิดชอบ"},
+  "บุณย์ธิดา สมชัย":{party:"ภูมิใจไทย (เดิมประชาธิปัตย์)",birth:"7 กุมภาพันธ์ 2527",age:"42",province:"อุบลราชธานี",edu:"ตรี-โท รัฐศาสตร์ ม.รามคำแหง",exp:"รมช.ดิจิทัลฯ; ส.ส.อุบลราชธานี; โฆษกพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/บุณย์ธิดา_สมชัย"},
+  "เอกนัฏ พร้อมพันธุ์":{party:"ภูมิใจไทย (เดิมประชาธิปัตย์/รวมไทยสร้างชาติ)",birth:"12 มกราคม 2529",age:"40",province:"กรุงเทพมหานคร",edu:"ตรีควบโท EEM (วิศวกรรม เศรษฐศาสตร์ และการจัดการ) มหาวิทยาลัยออกซฟอร์ด (อังกฤษ)",exp:"รมว.พลังงาน; อดีต รมว.อุตสาหกรรม; อดีตเลขาธิการพรรครวมไทยสร้างชาติ; ส.ส.",src:"https://th.wikipedia.org/wiki/เอกนัฏ_พร้อมพันธุ์"},
+  "ศุภจี สุธรรมพันธุ์":{party:"ภูมิใจไทย",birth:"15 เมษายน 2507",age:"62",province:"สมุทรปราการ",edu:"ตรี สังคมวิทยาและมานุษยวิทยา ม.ธรรมศาสตร์; โท MBA (การเงินและบัญชีระหว่างประเทศ) ม.นอร์ทรอป",exp:"รองนายกรัฐมนตรีและ รมว.พาณิชย์; อดีตประธานเจ้าหน้าที่บริหารกลุ่มบริษัท ดุสิตธานี",src:"https://th.wikipedia.org/wiki/ศุภจี_สุธรรมพันธุ์"},
+  "พลพีร์ สุวรรณฉวี":{party:"ภูมิใจไทย",birth:"25 พฤศจิกายน 2525",age:"43",province:"กรุงเทพมหานคร (ฐานเสียง นครราชสีมา)",edu:"ตรี Travel Industry Management ม.มหิดล; โท Marketing Communications, London College of Communication (อังกฤษ)",exp:"รมช.มหาดไทย; ส.ส.นครราชสีมา เขต 9 (2566)",src:"https://th.wikipedia.org/wiki/พลพีร์_สุวรรณฉวี"},
+  "เจเศรษฐ์ ไทยเศรษฐ์":{party:"ภูมิใจไทย",birth:"17 พฤศจิกายน 2531",age:"37",province:"อุทัยธานี",edu:"ตรี ศิลปศาสตร์ (ผู้นำสังคม ธุรกิจ และการเมือง) วิทยาลัยนวัตกรรมสังคม ม.รังสิต",exp:"รมช.มหาดไทย; ส.ส.อุทัยธานี; รองเลขาธิการพรรคภูมิใจไทย",src:"https://th.wikipedia.org/wiki/เจเศรษฐ์_ไทยเศรษฐ์"},
+  "วรศิษฎ์ เลียงประสิทธิ์":{party:"ภูมิใจไทย",birth:"10 กุมภาพันธ์ 2532",age:"37",province:"สตูล",edu:"ตรี บัญชี ม.สงขลานครินทร์; โท International Business Management ม.บอร์นมัธ (อังกฤษ)",exp:"รมช.มหาดไทย; ส.ส.สตูล (2562)",src:"https://th.wikipedia.org/wiki/วรศิษฎ์_เลียงประสิทธิ์"},
+  "รุทธพล เนาวรัตน์":{rank:"พลตำรวจโท",party:"อิสระ (รัฐมนตรีคนนอก)",birth:"5 มกราคม 2508",age:"61",province:"ไม่ระบุ (ศึกษา ม.ปลายที่นครสวรรค์)",edu:"เตรียมทหารรุ่น 24; ตรี รัฐประศาสนศาสตร์ (รป.บ.ตร.) ร.ร.นายร้อยตำรวจ; โท การจัดการภาครัฐและภาคเอกชน นิด้า",exp:"รมว.ยุติธรรม; อดีตนายตำรวจระดับสูง",src:"https://th.wikipedia.org/wiki/รุทธพล_เนาวรัตน์"},
+  "จุลพันธ์ อมรวิวัฒน์":{party:"เพื่อไทย (หัวหน้าพรรค)",birth:"8 เมษายน 2518",age:"51",province:"เชียงใหม่",edu:"ตรี เศรษฐศาสตร์ จุฬาฯ; โท MBA Boston College (สหรัฐฯ)",exp:"รมว.แรงงาน; หัวหน้าพรรคเพื่อไทย; อดีต รมช.การคลัง; ส.ส.เชียงใหม่",src:"https://th.wikipedia.org/wiki/จุลพันธ์_อมรวิวัฒน์"},
+  "ซาบีดา ไทยเศรษฐ์":{party:"ภูมิใจไทย",birth:"11 ตุลาคม 2527",age:"41",province:"อุทัยธานี",edu:"ตรี นิติศาสตร์ ม.อัสสัมชัญ; โท LL.M. University of Westminster (อังกฤษ)",exp:"รมว.วัฒนธรรม; อดีต รมช.มหาดไทย; ส.ส.บัญชีรายชื่อ",src:"https://th.wikipedia.org/wiki/ซาบีดา_ไทยเศรษฐ์"},
+  "ยศชนัน วงศ์สวัสดิ์":{party:"เพื่อไทย",birth:"8 ตุลาคม 2522",age:"46",province:"เชียงใหม่",edu:"ตรี วิศวกรรมไฟฟ้า SIIT ม.ธรรมศาสตร์; โท-เอก วิศวกรรมไฟฟ้า ม.เทกซัส อาร์ลิงตัน (สหรัฐฯ)",exp:"รองนายกรัฐมนตรีและ รมว.อว.; อดีตศาสตราจารย์/รองอธิการบดีฝ่ายวิจัย ม.มหิดล",src:"https://th.wikipedia.org/wiki/ยศชนัน_วงศ์สวัสดิ์"},
+  "ประเสริฐ จันทรรวงทอง":{party:"เพื่อไทย (เลขาธิการพรรค)",birth:"1 เมษายน 2503",age:"66",province:"นครราชสีมา",edu:"ตรี วิทยาศาสตร์ (เศรษฐศาสตร์และบริหารธุรกิจ) ม.เกษตรศาสตร์; โท รัฐประศาสนศาสตร์ นิด้า",exp:"รมว.ศึกษาธิการ; เลขาธิการพรรคเพื่อไทย; อดีตรองนายกรัฐมนตรี; อดีต รมว.ดิจิทัลฯ",src:"https://th.wikipedia.org/wiki/ประเสริฐ_จันทรรวงทอง"},
+  "อัครนันท์ กัณณ์กิตตินันท์":{party:"เพื่อไทย",birth:"29 มีนาคม 2530",age:"39",province:"กาญจนบุรี",edu:"ไม่ระบุ",exp:"รมช.ศึกษาธิการ; ส.ส.กาญจนบุรี; นักธุรกิจ (บจก. เอเค เก้าหนึ่งกรุ๊ป)",src:"https://www.thairath.co.th/news/politic/2921604"},
+  "พัฒนา พร้อมพัฒน์":{party:"ภูมิใจไทย (เดิมพลังประชารัฐ)",birth:"8 ธันวาคม 2527",age:"41",province:"กรุงเทพมหานคร",edu:"ตรี บริหารธุรกิจ (การเงิน) จุฬาฯ; โท Real Estate Investment, City University London (อังกฤษ)",exp:"รมว.สาธารณสุข; นักธุรกิจ-นักการเมือง",src:"https://th.wikipedia.org/wiki/พัฒนา_พร้อมพัฒน์"},
+  "วราวุธ ศิลปอาชา":{party:"ภูมิใจไทย (เดิมชาติไทย/ชาติไทยพัฒนา)",birth:"11 กรกฎาคม 2516",age:"52",province:"กรุงเทพมหานคร",edu:"ตรี วิศวกรรมเครื่องกล University College London (UCL, อังกฤษ); โท MBA (การเงินและการธนาคาร) University of Wisconsin–Madison (สหรัฐฯ)",exp:"รมว.อุตสาหกรรม; ส.ส.บัญชีรายชื่อ; อดีต รมว.การพัฒนาสังคมฯ; อดีต รมว.ทรัพยากรธรรมชาติและสิ่งแวดล้อม",src:"https://th.wikipedia.org/wiki/วราวุธ_ศิลปอาชา"}
+};
+
+/* ---------- profile modal (กดการ์ด → เด้งประวัติ) ---------- */
+(function(){
+  if(document.getElementById("cab-pf-overlay")) return;
+  const css = `
+  .cab-pf-overlay{position:fixed;inset:0;z-index:100000;display:none;place-items:center;padding:20px;
+    background:rgba(6,10,18,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .2s ease}
+  .cab-pf-overlay.show{opacity:1}
+  .cab-pf-modal{width:min(620px,100%);max-height:88vh;overflow:auto;position:relative;
+    background:var(--bg2);color:var(--text);border:1px solid var(--border2);border-radius:16px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);transform:translateY(14px) scale(.985);transition:transform .2s ease}
+  .cab-pf-overlay.show .cab-pf-modal{transform:none}
+  .cab-pf-close{position:absolute;top:11px;right:13px;width:36px;height:36px;border-radius:9px;
+    border:1px solid var(--border2);background:var(--bg3);color:var(--gold);font-size:22px;line-height:1;cursor:pointer;z-index:3}
+  .cab-pf-close:hover{background:var(--gold-glow)}
+  .cab-pf-head{display:flex;gap:16px;align-items:center;padding:24px 24px 16px;border-bottom:1px solid var(--border);
+    background:radial-gradient(120% 120% at 0% 0%,var(--gold-glow),transparent 60%)}
+  .cab-pf{position:relative;width:84px;height:104px;flex:none;border-radius:11px;overflow:hidden;
+    background:linear-gradient(160deg,var(--gold-dim),var(--bg3));display:grid;place-items:center}
+  .cab-pf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+  .cab-pf .cab-mono{font-family:Georgia,'Noto Serif Thai',serif;font-size:38px;font-weight:800;color:#fff;opacity:.92;z-index:1}
+  .cab-pf-name{font-size:21px;font-weight:800;color:var(--text);line-height:1.2}
+  .cab-pf-role{color:var(--gold);font-size:13.5px;margin-top:5px;line-height:1.4}
+  .cab-pf-pill{display:inline-block;margin-top:9px;font-size:11.5px;padding:3px 11px;border-radius:999px;border:1px solid var(--border2);color:var(--text-mid)}
+  .cab-pf-body{padding:16px 24px 22px}
+  .cab-pf-row{display:grid;grid-template-columns:140px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--border)}
+  .cab-pf-row:last-child{border-bottom:0}
+  .cab-pf-k{color:var(--text-dim);font-size:12.5px}
+  .cab-pf-v{color:var(--text);font-size:13.5px;line-height:1.6}
+  .cab-pf-src{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;color:var(--gold);
+    text-decoration:none;border:1px solid var(--border2);padding:8px 14px;border-radius:9px}
+  .cab-pf-src:hover{background:var(--gold-glow)}
+  .cab-pf-note{color:var(--text-dim);font-size:11.5px;margin-top:12px;font-style:italic;line-height:1.5}
+  .grid-card,.grid-pm-card{cursor:pointer}
+  .grid-card:focus-visible,.grid-pm-card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  @media(max-width:560px){.cab-pf-row{grid-template-columns:1fr;gap:3px}.cab-pf-head{flex-direction:column;text-align:center}}`;
+  const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+
+  const ov = document.createElement("div");
+  ov.id = "cab-pf-overlay"; ov.className = "cab-pf-overlay";
+  ov.setAttribute("role","dialog"); ov.setAttribute("aria-modal","true");
+  ov.innerHTML = `<div class="cab-pf-modal"><button class="cab-pf-close" aria-label="ปิด">&times;</button>
+    <div class="cab-pf-head"></div><div class="cab-pf-body"></div></div>`;
+  document.body.appendChild(ov);
+  const headEl = ov.querySelector(".cab-pf-head");
+  const bodyEl = ov.querySelector(".cab-pf-body");
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+  function rows(b){
+    const items = [
+      ["พรรคการเมือง", b.party],["วันเกิด", b.birth],
+      ["อายุ", b.age && b.age!=="ไม่ระบุ" ? b.age+" ปี" : ""],
+      ["จังหวัด", b.province],["การศึกษา", b.edu],
+      ["ประวัติ / ตำแหน่งที่ผ่านมา", b.exp]
+    ];
+    return items.filter(([k,v])=> v && v!=="ไม่ระบุ")
+      .map(([k,v])=>`<div class="cab-pf-row"><div class="cab-pf-k">${k}</div><div class="cab-pf-v">${esc(v)}</div></div>`).join("");
+  }
+
+  let lastFocus = null;
+  function open(d){
+    const key = d.nm; const b = CAB_BIO[key] || {};
+    const mname = d.min ? (CAB_MIN_NAMES[d.min]||"") : "";
+    headEl.innerHTML = `${cabPortrait(key)}
+      <div class="cab-pf-id">
+        <div class="cab-pf-name">${esc(d.fullname||key)}</div>
+        <div class="cab-pf-role">${esc(d.role||"")}</div>
+        ${mname ? `<span class="cab-pf-pill">${esc(mname)}</span>` : ""}
+      </div>`;
+    let html = rows(b) || `<div class="cab-pf-note">ยังไม่มีข้อมูลประวัติเชิงลึกของบุคคลนี้</div>`;
+    if(b.src) html += `<a class="cab-pf-src" href="${b.src}" target="_blank" rel="noopener">แหล่งอ้างอิง ↗</a>`;
+    html += `<div class="cab-pf-note">ข้อมูลจากวิกิพีเดียภาษาไทย/สื่อสาธารณะ · อายุคำนวณ ณ พ.ศ. 2569</div>`;
+    bodyEl.innerHTML = html;
+    lastFocus = document.activeElement;
+    ov.style.display = "grid";
+    void ov.offsetWidth;            /* บังคับ reflow ให้ transition เล่น (rAF ถูกหน่วงเมื่อแท็บไม่ active) */
+    ov.classList.add("show");
+    ov.querySelector(".cab-pf-close").focus();
+  }
+  function close(){
+    ov.classList.remove("show");
+    setTimeout(()=>{ ov.style.display = "none"; }, 210);
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function fromCard(card){
+    if(!card || !card.dataset.nm) return;
+    open({nm:card.dataset.nm, fullname:card.dataset.fullname, role:card.dataset.role, min:card.dataset.min});
+  }
+
+  ov.addEventListener("click", e=>{ if(e.target===ov || e.target.classList.contains("cab-pf-close")) close(); });
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape" && ov.style.display==="grid") close(); });
+
+  const scroll = document.getElementById("grid-scroll");
+  if(scroll){
+    scroll.addEventListener("click", e=>{
+      if(e.target.closest(".grid-card-min-btn")) return;  /* ปุ่มดูกระทรวงทำงานของตัวเอง */
+      fromCard(e.target.closest(".grid-card, .grid-pm-card"));
+    });
+    scroll.addEventListener("keydown", e=>{
+      if(e.key!=="Enter" && e.key!==" ") return;
+      if(e.target.closest(".grid-card-min-btn")) return;
+      const card = e.target.closest(".grid-card, .grid-pm-card");
+      if(card){ e.preventDefault(); fromCard(card); }
+    });
+  }
+})();
 
 function buildGridCard(p) {
   const pc = PARTY_COLORS[p.party] || '#8a97aa';
   const card = document.createElement('div');
   card.className = 'grid-card';
   card.dataset.party = p.party;
+  card.dataset.nm = cabBioKey(p.name);
+  card.dataset.fullname = p.name;
+  card.dataset.role = p.role;
+  if(p.minId) card.dataset.min = p.minId;
+  card.tabIndex = 0;
+  card.setAttribute('role','button');
+  card.setAttribute('aria-label', p.name + ' — ดูประวัติ');
   card.style.setProperty('--gcard-color', pc);
   card.innerHTML = `
     <div class="grid-card-avatar">${p.emoji}</div>
@@ -4013,7 +4308,7 @@ function buildGridCard(p) {
     <div class="grid-card-role">${p.role}</div>
     <div class="grid-card-footer">
       <span class="grid-card-party" style="background:${pc}22;color:${pc};border-color:${pc}44">${p.party}</span>
-      ${p.minId ? `<button class="grid-card-min-btn" onclick="goToMinistryFromGrid('${p.minId}')">⊙ ดูกระทรวง</button>` : ''}
+      ${p.minId ? `<button class="grid-card-min-btn" onclick="event.stopPropagation();goToMinistryFromGrid('${p.minId}')">⊙ ดูกระทรวง</button>` : ''}
     </div>`;
   return card;
 }
@@ -4024,7 +4319,10 @@ function buildGridView() {
   const pmWrap = document.getElementById('grid-pm-wrap');
   const pc = PARTY_COLORS['ภูมิใจไทย'];
   pmWrap.innerHTML = `
-    <div class="grid-pm-card" data-party="${CABINET_PM.party}">
+    <div class="grid-pm-card" data-party="${CABINET_PM.party}"
+         data-nm="อนุทิน ชาญวีรกูล" data-fullname="${CABINET_PM.name}"
+         data-role="นายกรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทย" data-min="14"
+         tabindex="0" role="button" aria-label="${CABINET_PM.name} — ดูประวัติ">
       <div class="grid-pm-avatar">👑</div>
       <div class="grid-pm-info">
         <div class="grid-pm-name">${CABINET_PM.name}</div>
@@ -4035,7 +4333,7 @@ function buildGridView() {
           <span class="grid-pm-badge" style="background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2)">ครม.ชุดที่ 66</span>
         </div>
       </div>
-      <button class="grid-card-min-btn" style="align-self:flex-start;font-size:11px;padding:5px 12px" onclick="goToMinistryFromGrid('14')">⊙ ดูกระทรวงมหาดไทย</button>
+      <button class="grid-card-min-btn" style="align-self:flex-start;font-size:11px;padding:5px 12px" onclick="event.stopPropagation();goToMinistryFromGrid('14')">⊙ ดูกระทรวงมหาดไทย</button>
     </div>`;
   // Deputy PMs
   const depCont = document.getElementById('grid-deputy-cards');
@@ -4152,33 +4450,183 @@ function showGridView(on) {
 // ═══════════════════════════════════════
 //  CORRUPTION DATA
 // ═══════════════════════════════════════
+// อันดับหน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566 (1 ต.ค. 2565–19 ก.ค. 2566)
+// ที่มา: สำนักงาน ป.ป.ช. (รวมคำกล่าวหา 4,475 เรื่อง) — ตัวเลข/ร้อยละเป็นข้อมูลจริงที่อ้างอิงได้
 const CORRUPT_DATA = [
-  {rank:1, name:"ตำรวจ (National Police)", risk:"ส่วย · การเรียกรับเงินสินบน · การแต่งตั้งโยกย้าย", source:"ดัชนีภาพลักษณ์คอร์รัปชัน (CPI)"},
-  {rank:2, name:"กรมการปกครอง / ท้องถิ่น", risk:"งบประมาณก่อสร้าง · การอนุมัติใบอนุญาต", source:"สวนดุสิตโพล / นิด้าโพล"},
-  {rank:3, name:"กรมศุลกากร (Customs)", risk:"การหลีกเลี่ยงภาษีนำเข้า · การตรวจปล่อยสินค้า", source:"รายงาน ป.ป.ช. / ป.ป.ท."},
-  {rank:4, name:"กรมที่ดิน (Land Department)", risk:"การออกเอกสารสิทธิ์มิชอบ · การประเมินราคา", source:"รายงาน ป.ป.ช."},
-  {rank:5, name:"กรมขนส่งทางบก (Transport)", risk:"การทำใบขับขี่ · การตรวจสภาพรถ", source:"สถิติการร้องเรียนผู้บริโภค"},
-  {rank:6, name:"หน่วยงานจัดซื้อจัดจ้างภาครัฐ", risk:"การฮั้วประมูล · เงินทอนโครงการ", source:"ข่าวเจาะลึกงบประมาณรัฐ"},
-  {rank:7, name:"กรมสรรพากร (Revenue Dept.)", risk:"การต่อรองภาษี · คืนภาษีเท็จ", source:"กรณีศึกษาการทุจริตในอดีต"},
-  {rank:8, name:"รัฐวิสาหกิจขนาดใหญ่", risk:"โครงการลงทุนขนาดใหญ่ · ผลประโยชน์ทับซ้อน", source:"รายงานการตรวจสอบสตง."},
-  {rank:9, name:"อปท. (องค์กรปกครองส่วนท้องถิ่น)", risk:"การจัดซื้อวัสดุอุปกรณ์ · การจ้างงาน", source:"สถิติคดีทุจริตศาลอาญาคดีทุจริตฯ"},
-  {rank:10, name:"ระบบราชการส่วนกลาง", risk:"การทุจริตเชิงนโยบาย · งบสัมมนา/ดูงาน", source:"งานวิจัยด้านรัฐศาสตร์"},
+  {rank:1, name:"องค์กรปกครองส่วนท้องถิ่น (อปท.)", count:1548, pct:34.59, risk:"จัดซื้อจัดจ้าง · ฮั้วประมูล · ปฏิบัติหน้าที่มิชอบ (ม.157)", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:2, name:"กระทรวงมหาดไทย", count:507, pct:11.33, risk:"ออกเอกสารสิทธิ์ที่ดิน · อนุมัติใบอนุญาต · งานทะเบียน-ปกครอง", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:3, name:"สำนักงานตำรวจแห่งชาติ", count:409, pct:9.14, risk:"ส่วย/สินบน · การแต่งตั้งโยกย้าย", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:4, name:"หน่วยงานรัฐอื่น ๆ (รวมหลายหน่วยงาน)", count:2011, pct:44.94, risk:"จัดซื้อจัดจ้าง · ปฏิบัติ/ละเว้นหน้าที่ · เรียกรับเงิน", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566", agg:true},
 ];
 
-// Corruption mapping: index → {ministryId, orgNo} or null
-// For specific organizations, map to both; for general departments, map to ministry only
+// Corruption mapping: rank → {ministryId, orgNo} or null (สำหรับปุ่ม "ดูแผนที่")
 const CORRUPT_MIN_MAP = {
-  1:{minId:'23',orgNo:'155'},      // National Police Office
-  2:{minId:'14',orgNo:'106,111'},  // DOPA / DLA in Interior
-  3:{minId:'03',orgNo:'023'},      // Customs in Finance
-  4:{minId:'14',orgNo:'108'},      // Land Department in Interior
-  5:{minId:'08',orgNo:'072'},      // Transport in Transport Ministry
-  6:null,                          // General procurements (no specific org)
-  7:{minId:'03',orgNo:'025'},      // Revenue Dept in Finance
-  8:null,                          // Large SOEs (no specific org)
-  9:null,                          // Local government (no specific org)
-  10:null                          // Central bureaucracy (no specific org)
+  1:{minId:'14',orgNo:'111'},      // อปท. → โหนดกรมส่งเสริมการปกครองท้องถิ่น (สังกัด มท.)
+  2:{minId:'14',orgNo:''},         // กระทรวงมหาดไทย (ชี้โหนดกระทรวง)
+  3:{minId:'23',orgNo:'155'},      // สำนักงานตำรวจแห่งชาติ
+  4:null                           // หน่วยงานอื่น ๆ รวม (ไม่ชี้เฉพาะ)
 };
+
+// CPI ไทย (Transparency International) + ประเภทคำกล่าวหา — สำหรับแผงด้านบน/ล่าง
+const CPI_TREND = [
+  {yr:'2566', score:35, rank:108},
+  {yr:'2567', score:34, rank:107},
+  {yr:'2568', score:33, rank:116},
+];
+const CPI_ASEAN = 'ตามหลัง สิงคโปร์ 84 · บรูไน 63 · มาเลเซีย 52 · ติมอร์-เลสเต 44 · เวียดนาม 41 · อินโดนีเซีย/ลาว 34';
+const ALLEGATION_TYPES = [
+  {ic:'⚖️', t:'ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ', s:'ประมวลกฎหมายอาญา มาตรา 157 — ฐานความผิดที่ถูกกล่าวหามากที่สุด'},
+  {ic:'📑', t:'การจัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ', s:'มักเกี่ยวกับงบก่อสร้างและการจัดหาพัสดุภาครัฐ'},
+  {ic:'💰', t:'การเรียกรับเงิน / สินบน', s:'เรียกรับจากการอนุมัติ-อนุญาต และการตรวจปล่อย'},
+];
+
+let _corruptExtrasBuilt = false;
+function buildCorruptExtras(){
+  if(_corruptExtrasBuilt) return;
+  const cpiEl = document.getElementById('corrupt-cpi');
+  if(!cpiEl) return;
+  const SCALE = 50;   // จุดอ้างอิงแกนคะแนน CPI สำหรับแถบเล็ก
+  const trendRows = CPI_TREND.map(d=>{
+    const w = Math.round(d.score / SCALE * 100);
+    const col = d.score >= 35 ? 'var(--orange)' : 'var(--red)';
+    return `<div class="cpi-trend-row"><span class="cpi-trend-yr">พ.ศ. ${d.yr}</span>`
+      + `<span class="cpi-trend-track"><span class="cpi-trend-fill" style="width:${w}%;background:${col}"></span></span>`
+      + `<span class="cpi-trend-val">${d.score}</span></div>`;
+  }).join('');
+  cpiEl.innerHTML = `<div class="corrupt-sec-hd">📉 ดัชนีภาพลักษณ์คอร์รัปชัน (CPI) ของไทย</div>
+    <div class="cpi-card">
+      <div class="cpi-score">
+        <div class="cpi-score-num">33</div>
+        <div class="cpi-score-den">/ 100</div>
+        <div class="cpi-score-lbl">CPI พ.ศ. 2568</div>
+        <div class="cpi-rank">อันดับ <b>116</b> / 180 โลก</div>
+      </div>
+      <div>
+        <div class="cpi-trend">${trendRows}</div>
+        <div class="cpi-note"><b>ต่ำสุดในรอบ ~14 ปี</b> · ลดลงต่อเนื่องนับจากปี 2555 (เคยอยู่อันดับ 88) · ค่าเฉลี่ยโลก 42 · เอเชีย-แปซิฟิก 45</div>
+        <div class="cpi-asean">อาเซียน: ${CPI_ASEAN}</div>
+      </div>
+    </div>`;
+  const typesEl = document.getElementById('corrupt-types');
+  if(typesEl){
+    typesEl.innerHTML = `<div class="corrupt-sec-hd">📌 ฐาน/ประเภทคำกล่าวหาที่พบมากที่สุด</div>`
+      + ALLEGATION_TYPES.map(a=>`<div class="ctype-row"><div class="ctype-ic">${a.ic}</div>`
+        + `<div class="ctype-txt">${a.t}<br><small>${a.s}</small></div></div>`).join('');
+  }
+  _corruptExtrasBuilt = true;
+}
+
+// ── รายละเอียดข้อกล่าวหารายหน่วยงาน (กดการ์ด → เด้ง modal) ──
+// ผลภาพรวม ป.ป.ช. ปีงบ 2566 (ที่มา: สำนักงาน ป.ป.ช. / กรุงเทพธุรกิจ)
+const NACC_OVERALL = {
+  year:'2566', received:'4,475', investigated:'2,748', referred:'1,727', damage:'~13,430 ล้านบาท',
+  src:'https://www.bangkokbiznews.com/politics/1080553'
+};
+const CORRUPT_DETAIL = {
+  1: { // อปท.
+    bases:["จัดซื้อจัดจ้าง / ฮั้วประมูล (ฐานที่พบมากที่สุดในคดีท้องถิ่น)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ (ป.อาญา ม.157)","ปกปิด/ยื่นบัญชีทรัพย์สินอันเป็นเท็จ"],
+    patterns:["ฮั้วประมูลโครงการก่อสร้าง — ถนน ระบบประปา อาคาร","ไม่ประกาศ/ปกปิดราคากลาง · ล็อกสเปกเอื้อผู้รับเหมา","เบิกจ่าย-จ้างเหมาเป็นเท็จ งานไม่ตรงสัญญา"],
+    outcomeNote:"องค์กรต่อต้านคอร์รัปชัน (ACT) รวบรวม 10 คดีจัดซื้อจัดจ้างใน อบจ. (พ.ศ. 2547–2567) มูลค่าความเสียหายรวม ≥ 377 ล้านบาท",
+    cases:[
+      {t:"อดีตนายก อบจ.นครราชสีมา", d:"ป.ป.ช.ชี้มูลทุจริตโครงการก่อสร้างถนนหลายโครงการ — ศาลอาญาคดีทุจริตฯ พิพากษาจำคุก 25 ปี", src:"https://www.thaipbs.or.th/news/content/347048"},
+      {t:"อดีตนายก อบจ.อุบลราชธานี", d:"ถูกร้องเรียนมากถึง 42 คดี ป.ป.ช.ชี้มูลแล้วหลายคดี ความเสียหายรวม ~114 ล้านบาท", src:"https://thaipublica.org/2024/12/act-reveals-10-procurement-corruptions-in-provincial-administrative-organizations/"},
+      {t:"อดีตรองนายก อบจ.สงขลา", d:"ป.ป.ช.ชี้มูลทุจริตจัดซื้อจัดจ้าง อบจ.สงขลา ความเสียหาย ~19 ล้านบาท", src:"https://www.isranews.org/article/south-news/south-slide/132131-sknacc.html"},
+    ],
+  },
+  2: { // กระทรวงมหาดไทย
+    bases:["ออกเอกสารสิทธิ์ที่ดินโดยมิชอบ","ปฏิบัติหน้าที่โดยมิชอบ / ทำเอกสารราชการเป็นเท็จ (ป.อาญา ม.157, 161)","เรียกรับผลประโยชน์จากการอนุมัติ-อนุญาต"],
+    patterns:["นำ ส.ค.1 ของแปลงอื่นมาสวมออกโฉนด/น.ส.3ก. ในที่เขา-ป่าสงวน-เขตปฏิรูป","รังวัดและรายงานการรังวัดไม่ตรงความจริง","ทุจริตงานทะเบียน-บัตร และการออกใบอนุญาต"],
+    outcomeNote:"คดีที่ดินจำนวนมากถูก ป.ป.ช.ชี้มูลทั้งวินัยร้ายแรงและความผิดอาญา ม.157/161",
+    cases:[
+      {t:"คดีออกโฉนด/น.ส.3ก. มิชอบ", d:"เจ้าหน้าที่นำ ส.ค.1 ของที่ดินแปลงอื่นมาสวมออกเอกสารสิทธิ์ในที่เขา/ป่าสงวน ทั้งที่รู้อยู่ก่อน — ป.ป.ช.ชี้มูลวินัยร้ายแรง + อาญา ม.157/161", src:"https://www.isranews.org/content-page/item/70838-invest-70838.html"},
+    ],
+  },
+  3: { // สำนักงานตำรวจแห่งชาติ
+    bases:["เรียกรับเงิน/สินบน (ส่วย)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ","การแต่งตั้งโยกย้ายโดยมิชอบ (ซื้อขายตำแหน่ง)"],
+    patterns:["ส่วยรถบรรทุก-‘ส่วยสติกเกอร์’ แลกการไม่จับ/ตรวจบนทางหลวง","เรียกรับจากแหล่งอบายมุข บ่อน เว็บพนัน","เรียกรับเพื่อแลกตำแหน่ง/การโยกย้าย"],
+    outcomeNote:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก ป.ป.ช.รับไต่สวนและส่งชี้มูลตำรวจที่เกี่ยวข้อง",
+    cases:[
+      {t:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก", d:"ใช้สติกเกอร์สัญลักษณ์แลกการไม่ถูกจับ/ตรวจบนทางหลวง — ส่งเรื่องให้ ป.ป.ช.ชี้มูลตำรวจที่เกี่ยวข้อง ฐานเรียกรับสินบน/ปฏิบัติหน้าที่มิชอบ", src:"https://www.nationtv.tv/news/crime/378929293"},
+      {t:"เครือข่ายผู้มีอิทธิพล ‘กำนันนก’", d:"เส้นทางเงินโยงการจ่ายส่วยให้ตำรวจ และการฮั้วประมูลงานก่อสร้างของรัฐ", src:"https://www.thairath.co.th/news/society/2724892"},
+    ],
+  },
+  4: { // หน่วยงานอื่น ๆ รวม (ภาพรวม)
+    bases:["จัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่ (ม.157)","ร่ำรวยผิดปกติ · ขัดกันแห่งผลประโยชน์"],
+    patterns:["ทุจริตงบจัดซื้อจัดจ้างและโครงการลงทุนของรัฐ","เบิกจ่ายงบสัมมนา/ดูงานเป็นเท็จ","ผลประโยชน์ทับซ้อนในการอนุมัติโครงการ"],
+    outcomeNote:"รวมหน่วยงานระดับกระทรวง/กรม/รัฐวิสาหกิจ และหน่วยงานรัฐอื่นที่เหลือทั้งหมด",
+    cases:[
+      {t:"ทุจริตเงินอุดหนุนวัด", d:"ป.ป.ช.ชี้มูลทุจริตการจัดสรรเงินอุดหนุนบูรณะวัด มูลค่าความเสียหายกว่า 100 ล้านบาท — ส่งอัยการสูงสุดฟ้องศาลอาญาคดีทุจริตฯ", src:"https://www.thaipbs.or.th/news/content/340777"},
+    ],
+  },
+};
+
+/* modal: กดการ์ดทุจริต → เด้งรายละเอียดข้อกล่าวหา */
+(function(){
+  if(document.getElementById('crd-overlay')) return;
+  const ov = document.createElement('div');
+  ov.id = 'crd-overlay'; ov.className = 'crd-overlay';
+  ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+  ov.innerHTML = `<div class="crd-modal"><button class="crd-close" aria-label="ปิด">&times;</button>
+    <div class="crd-head"></div><div class="crd-body"></div></div>`;
+  document.body.appendChild(ov);
+  const headEl = ov.querySelector('.crd-head');
+  const bodyEl = ov.querySelector('.crd-body');
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const liList = arr => (arr||[]).map(x=>`<div class="crd-li">${esc(x)}</div>`).join('');
+  let lastFocus = null;
+
+  function open(rank){
+    const d = CORRUPT_DATA.find(x=>String(x.rank)===String(rank));
+    if(!d) return;
+    const det = CORRUPT_DETAIL[rank] || {};
+    const badge = d.agg ? 'ภาพรวมหลายหน่วยงาน' : ('อันดับ '+d.rank+' · ถูกกล่าวหามากสุด');
+    headEl.innerHTML = `<div class="crd-rankbadge">${badge}</div>
+      <div class="crd-name">${esc(d.name)}</div>
+      <div class="crd-sub">เรื่องร้องเรียนต่อ ป.ป.ช. ปีงบ 2566: <b>${d.count.toLocaleString('th-TH')}</b> เรื่อง (${d.pct}% ของทั้งหมด)</div>`;
+    const cases = (det.cases||[]).map(c=>`<div class="crd-case"><div class="crd-case-t">${esc(c.t)}</div>
+      <div class="crd-case-d">${esc(c.d)}</div>${c.src?`<a href="${c.src}" target="_blank" rel="noopener">อ่านข่าว/ที่มา ↗</a>`:''}</div>`).join('');
+    bodyEl.innerHTML = `
+      <div class="crd-sec"><div class="crd-sec-t">⚖️ ฐาน/ประเภทคำกล่าวหา</div>${liList(det.bases)}</div>
+      <div class="crd-sec"><div class="crd-sec-t">🔍 พฤติการณ์ที่พบบ่อย</div>${liList(det.patterns)}</div>
+      <div class="crd-sec"><div class="crd-sec-t">📊 ผลดำเนินการ & ความเสียหาย — ภาพรวม ป.ป.ช. ปีงบ ${NACC_OVERALL.year}</div>
+        <div class="crd-stat">
+          <div><b>${NACC_OVERALL.received}</b><span>คำกล่าวหาที่รับ</span></div>
+          <div><b>${NACC_OVERALL.investigated}</b><span>รับไว้ไต่สวน</span></div>
+          <div><b>${NACC_OVERALL.referred}</b><span>ส่งหน่วยงานอื่น</span></div>
+          <div><b>${NACC_OVERALL.damage}</b><span>มูลค่าความเสียหายตามคำกล่าวหา</span></div>
+        </div>
+        ${det.outcomeNote?`<div class="crd-onote">▸ ${esc(det.outcomeNote)}</div>`:''}</div>
+      <div class="crd-sec"><div class="crd-sec-t">📁 ตัวอย่างคดีที่ ป.ป.ช.ชี้มูล / ศาลพิพากษา</div>${cases||'<div class="crd-li">—</div>'}</div>
+      <div class="crd-note">ข้อมูลคดีเป็นกรณีที่ ป.ป.ช.ชี้มูล/ศาลมีคำพิพากษาแล้ว และเผยแพร่เป็นข่าวสาธารณะ · สถิติภาพรวมจากสำนักงาน ป.ป.ช. (ปีงบ 2566) · นำเสนอเพื่อการศึกษา ไม่ใช่การกล่าวหาหน่วยงานหรือบุคคลใดเพิ่มเติม</div>`;
+    lastFocus = document.activeElement;
+    ov.style.display = 'grid';
+    void ov.offsetWidth;
+    ov.classList.add('show');
+    ov.querySelector('.crd-close').focus();
+  }
+  function close(){
+    ov.classList.remove('show');
+    setTimeout(()=>{ ov.style.display='none'; }, 210);
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  ov.addEventListener('click', e=>{ if(e.target===ov || e.target.classList.contains('crd-close')) close(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && ov.style.display==='grid') close(); });
+
+  const scroll = document.getElementById('corrupt-scroll');
+  if(scroll){
+    scroll.addEventListener('click', e=>{
+      if(e.target.closest('.corrupt-map-btn')) return;   // ปุ่มดูแผนที่ทำงานของตัวเอง
+      const card = e.target.closest('.corrupt-card');
+      if(card && card.dataset.rank) open(card.dataset.rank);
+    });
+    scroll.addEventListener('keydown', e=>{
+      if(e.key!=='Enter' && e.key!==' ') return;
+      if(e.target.closest('.corrupt-map-btn')) return;
+      const card = e.target.closest('.corrupt-card');
+      if(card && card.dataset.rank){ e.preventDefault(); open(card.dataset.rank); }
+    });
+  }
+})();
 
 let corruptSort = 'rank';
 let corruptQuery = '';
@@ -4189,29 +4637,34 @@ function buildCorruptView(data) {
   data = data || CORRUPT_DATA;
   const list = document.getElementById('corrupt-list');
   list.innerHTML = '';
-  document.getElementById('c-filtered-n').textContent = data.length;
+  const nAgencies = data.filter(d => !d.agg).length;
+  document.getElementById('c-filtered-n').textContent = nAgencies;
   document.getElementById('c-results-count').textContent = `แสดง ${data.length} รายการ`;
   data.forEach((d, i) => {
-    const barW = Math.round(100 - (d.rank - 1) * 8.5);
-    const color = RANK_COLORS[d.rank - 1] || '#888';
+    const barW = Math.max(4, Math.round(d.pct || 0));   // แถบ = สัดส่วนของคำกล่าวหาทั้งหมด
+    const color = d.agg ? 'var(--text-dim)' : (RANK_COLORS[d.rank - 1] || '#888');
     const risks = d.risk.split('·').map(r => `<span>${r.trim()}</span>`).join('');
     const mapping = CORRUPT_MIN_MAP[d.rank];
     const orgArg = mapping?.orgNo || '';
     const mapBtn = mapping
       ? `<button class="corrupt-map-btn" onclick="goToMinistryFromCorrupt('${mapping.minId}','${orgArg}')">⊙ ดูแผนที่</button>`
       : '';
+    const cntTxt = d.count ? `${d.count.toLocaleString('th-TH')} เรื่อง · ${d.pct}%` : '';
     const card = document.createElement('div');
-    card.className = 'corrupt-card';
+    card.className = 'corrupt-card' + (d.agg ? ' is-agg' : '');
     card.style.setProperty('--ccard-color', color);
     card.style.animationDelay = (i * 0.045) + 's';
     card.dataset.rank = d.rank;
     card.dataset.name = d.name;
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', d.name + ' — ดูรายละเอียดข้อกล่าวหา');
     card.innerHTML = `
-      <div class="corrupt-rank">${d.rank}</div>
+      <div class="corrupt-rank">${d.agg ? '∑' : d.rank}</div>
       <div class="corrupt-name">${d.name}</div>
       ${mapBtn}
       <div class="corrupt-risk">${risks}</div>
-      <div class="corrupt-source">📎 ${d.source}</div>
+      <div class="corrupt-source">📎 ${cntTxt ? cntTxt + ' · ' : ''}${d.source}</div>
       <div class="corrupt-bar-wrap"><div class="corrupt-bar" style="width:${barW}%"></div></div>
     `;
     list.appendChild(card);
@@ -4322,6 +4775,7 @@ function showCorruptView(on) {
     corruptQuery = ''; corruptSort = 'rank';
     document.querySelectorAll('.c-sort-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('csort-rank').classList.add('active');
+    buildCorruptExtras();
     renderCorruptFiltered();
     overlay.classList.add('show');
     canvas.style.display = 'none';
