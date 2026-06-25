@@ -254,14 +254,13 @@ body::before {
     max-height: 58vh; border-radius: 16px 16px 0 0;
     overflow-y: auto; z-index: 100;
   }
-  .cab-header { border-radius: 16px 16px 0 0; cursor: default; }
+  .cab-header { border-radius: 16px 16px 0 0; cursor: default; padding-top: 18px; }
   .cab-header::before { display: none; }
-  /* drag indicator pill */
+  /* drag indicator pill — ตรึงกึ่งกลางบนสุด (absolute) → อยู่ตรงกลางจริง ไม่ดันหัวข้อไปขวา */
   .cab-header::after {
-    content: ''; display: block;
+    content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
     width: 36px; height: 4px; border-radius: 2px;
     background: var(--border2);
-    margin: 0 auto 8px; order: -1;
   }
   #cab-size-btns { display: none !important; }
   #cab-body { display: block !important; max-height: 44vh; overflow-y: auto; }
@@ -878,6 +877,7 @@ canvas:active { cursor: grabbing; }
   width: 11px; height: 11px; flex-shrink: 0;
   clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
 }
+.li-link { width: 16px; height: 0; flex-shrink: 0; border-top: 2.5px dashed; align-self: center; }
 
 
 
@@ -1970,6 +1970,17 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         </div>
       </div>
 
+      <!-- ↔ อำนาจกำกับ / AUTHORITY — เลื่อน/กดโหนดเพื่อดูเส้น -->
+      <div class="leg-section" style="border-right:none">
+        <div class="leg-section-title">↔ อำนาจกำกับ · AUTHORITY <span style="opacity:.6;font-weight:400">(เลื่อน/กดโหนด → ใครกำกับใคร)</span></div>
+        <div class="leg-items">
+          <div class="leg-item"><span class="li-link" style="border-color:#22d3ee"></span>⚙️ บริหารราชการกลาง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#f87171"></span>🔍 ตรวจสอบ·องค์กรอิสระ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#a78bfa"></span>⚖️ ตุลาการ/อัยการ/เลือกตั้ง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#34d399"></span>🎛️ กำกับเฉพาะสาขา</div>
+        </div>
+      </div>
+
     </div><!-- /legend-bar -->
 
   </main>
@@ -2145,6 +2156,61 @@ const PM_DIRECT = new Set([
 function isPmDirect(n){ return !!(n && n.type==='org' && n.data && PM_DIRECT.has(n.ministryID + '|' + n.data.no)); }
 let pmLens = false;
 
+// ── ความสัมพันธ์เชิงอำนาจระหว่างหน่วยงาน (แบบ machineryofgovernment.uk) ──
+// เลื่อนเมาส์/กดโหนดไหน → โชว์ "เส้นตรงมีหัวลูกศร" ว่าใครกำกับ/ตรวจสอบ/สั่งการใคร
+// 4 ประเภท: central=บริหารราชการกลาง · oversight=ตรวจสอบ(องค์กรอิสระ) · judicial=ตุลาการ/อัยการ/เลือกตั้ง · regulator=กำกับเฉพาะสาขา
+const REL_TYPES = {
+  central:   { color:'#22d3ee', icon:'⚙️', label:'บริหารราชการกลาง' },
+  oversight: { color:'#f87171', icon:'🔍', label:'ตรวจสอบ · องค์กรอิสระ' },
+  judicial:  { color:'#a78bfa', icon:'⚖️', label:'ตุลาการ/อัยการ/เลือกตั้ง' },
+  regulator: { color:'#34d399', icon:'🎛️', label:'กำกับเฉพาะสาขา' },
+};
+// หน่วยแม่ข่าย (key = ministryID|no) → {ประเภท, คำกริยาอำนาจ, ปลายทาง}
+//   to = 'MIN' → 20 กระทรวง (ทุกส่วนราชการ) · หรือ array ของ 'ministryID|no' (หน่วยที่ถูกกำกับเจาะจง)
+const RELATIONS = {
+  // องค์กรกลางบริหารราชการแผ่นดิน → กำกับทุกส่วนราชการ
+  '01|010': { type:'central',   verb:'กำกับการบริหารงานบุคคลภาครัฐ',            to:'MIN' }, // ก.พ.
+  '01|012': { type:'central',   verb:'พัฒนาระบบราชการ/โครงสร้างส่วนราชการ',      to:'MIN' }, // ก.พ.ร.
+  '01|007': { type:'central',   verb:'จัดสรรงบประมาณรายจ่าย',                    to:'MIN' }, // สงป.
+  '01|009': { type:'central',   verb:'ตรวจร่างกฎหมาย · ให้ความเห็นทางกฎหมาย',    to:'MIN' }, // สคก.
+  '01|011': { type:'central',   verb:'กำหนดยุทธศาสตร์ชาติ/แผนพัฒนาฯ',            to:'MIN' }, // สศช.
+  '03|022': { type:'central',   verb:'วางระเบียบการเงิน-เบิกจ่าย-จัดซื้อจัดจ้าง',  to:'MIN' }, // กรมบัญชีกลาง
+  // องค์กรอิสระตรวจสอบ → มีอำนาจเหนือทุกหน่วยงานรัฐ
+  '24|289': { type:'oversight', verb:'ไต่สวนการทุจริต · ตรวจบัญชีทรัพย์สิน',      to:'MIN' }, // ป.ป.ช.
+  '24|290': { type:'oversight', verb:'ตรวจสอบการใช้จ่ายเงินแผ่นดิน',             to:'MIN' }, // สตง.
+  '24|288': { type:'oversight', verb:'สอบสวนเรื่องร้องเรียน (ผู้ตรวจการแผ่นดิน)',  to:'MIN' }, // สผผ.
+  '24|291': { type:'oversight', verb:'ตรวจสอบการละเมิดสิทธิมนุษยชน',             to:'MIN' }, // กสม.
+  // ตุลาการ/อัยการ/เลือกตั้ง
+  '24|284': { type:'judicial',  verb:'วินิจฉัยความชอบด้วยรัฐธรรมนูญ',            to:'MIN' }, // ศาลรัฐธรรมนูญ
+  '24|286': { type:'judicial',  verb:'พิจารณาคดีปกครอง · เพิกถอนคำสั่ง/กฎที่มิชอบ', to:'MIN' }, // ศาลปกครอง
+  '24|292': { type:'judicial',  verb:'ทนายแผ่นดิน · ดำเนินคดีอาญาแผ่นดิน',       to:'MIN' }, // อัยการสูงสุด
+  '24|287': { type:'judicial',  verb:'จัดและควบคุมการเลือกตั้ง/พรรคการเมือง',     to:['24|282','24|281'] }, // กกต. → สผ./สว.
+  // องค์กรกำกับเฉพาะสาขา → หน่วยที่ถูกกำกับเจาะจง
+  '03|396': { type:'regulator', verb:'กำกับสถาบันการเงิน/ธนาคาร',               to:['03|164','03|166','03|165','03|169'] }, // ธปท. → ออมสิน/ธกส./ธอส./อิสลาม
+  '24|400': { type:'regulator', verb:'กำกับกิจการพลังงาน (ไฟฟ้า/ก๊าซ)',          to:['12|197','14|201','14|202','12|198'] }, // กกพ. → กฟผ./กฟน./กฟภ./ปตท.
+  '24|401': { type:'regulator', verb:'กำกับกิจการโทรคมนาคม/วิทยุ-โทรทัศน์',      to:['01|162','24|402'] }, // กสทช. → อสมท/Thai PBS
+  '25|403': { type:'regulator', verb:'กำกับการแข่งขันทางการค้าภาคเอกชน',         to:[] }, // สขค. (เอกชน — ไม่มีหน่วยในแผนภาพ)
+};
+const REL_SOURCE = 'อ้างอิงอำนาจตาม รธน. 2560 · พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน · กฎหมายจัดตั้งแต่ละองค์กร';
+// คืน key 'ministryID|no' ของโหนด org (ใช้จับคู่ความสัมพันธ์)
+function relKey(n){ return (n && n.type==='org' && n.data) ? (n.ministryID + '|' + n.data.no) : null; }
+// โหนดที่ "ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร" (กระทรวง id 24: ศาล/องค์กรอิสระ/อัยการ/รัฐสภา) → อยู่ในวงปกติ แต่ไม่โยงถึงนายกฯ
+function notPM(n){ return !!(n && (n.standalone || n.ministryID === '24')); }
+// ตัดบรรทัดข้อความตามความกว้าง (ใช้ ctx ปัจจุบัน — ตั้ง font ก่อนเรียก); ไทยยาวเกินบรรทัดจะตัดทีละอักษร
+function wrapText(text, maxW){
+  const words = String(text).split(' '), lines = []; let cur = '';
+  const fit = s => ctx.measureText(s).width <= maxW;
+  words.forEach(w => {
+    const test = cur ? cur + ' ' + w : w;
+    if(fit(test)) { cur = test; return; }
+    if(cur) { lines.push(cur); cur = ''; }
+    if(!fit(w)) { let chunk = ''; for(const ch of w){ if(fit(chunk + ch)) chunk += ch; else { lines.push(chunk); chunk = ch; } } cur = chunk; }
+    else cur = w;
+  });
+  if(cur) lines.push(cur);
+  return lines;
+}
+
 /* Draw a triangular arrowhead pointing toward (tx,ty), coming from (fx,fy).
    The tip is pulled back by `inset` world-units so it sits just outside the
    target node instead of being hidden under it. */
@@ -2218,7 +2284,9 @@ function buildRadialLayout() {
   const cx = W/2, cy = H/2;
 
   // Standalone IDs: not in main ring, not connected to center
-  const STANDALONE_IDS = new Set(['24']);
+  // เดิม {'24'} — ย้าย "หน่วยงานนอกบังคับบัญชาฝ่ายบริหาร" (ศาล/องค์กรอิสระ/อัยการ/รัฐสภา) เข้าวงปกติเหมือนกระทรวง
+  // (ยังไม่โยงถึงนายกฯ — จัดการผ่าน notPM() ในส่วนวาดเส้น/connectedSet)
+  const STANDALONE_IDS = new Set([]);
   const RING_MINS = MINISTRIES.filter(m => !STANDALONE_IDS.has(m.id));
   const STANDALONE_MINS = MINISTRIES.filter(m => STANDALONE_IDS.has(m.id));
   const N = RING_MINS.length;
@@ -2287,14 +2355,19 @@ function buildRadialLayout() {
       byCat[cid].push(org);
     });
 
-    Object.entries(byCat).forEach(([catID, orgs]) => {
+    // กระทรวง id 24 (หน่วยนอกบังคับบัญชา): ทุกหน่วยเป็นหมวด 05–08 ซึ่งใช้วงเดียวกัน → รวมเป็นกลุ่มเดียว
+    // กระจายให้ทั่วกลีบบนวง "องค์กรอิสระ/ศาล" (กว้างกว่าปกติ) ไม่ให้ทับกัน
+    const catEntries = (min.id === '24')
+      ? [['_indep', min.orgs.filter(o => String(o.catID) !== '01')]]
+      : Object.entries(byCat);
+    catEntries.forEach(([catID, orgs]) => {
       // วงเขียว (ส่วนราชการ): ไม่วางในกลีบกระทรวง แต่เก็บไปจัดเต็มวงทีหลัง
       if(catID === '01') {
         orgs.forEach(org => greenOrgs.push({ org, ministryID:min.id, parentX:mx, parentY:my }));
         return;
       }
-      const ringR = CAT_RING_MAP[catID] || R_min + step*2;
-      const spread = sectorAngle * 0.88;
+      const ringR = (catID === '_indep') ? CAT_RING_MAP['06'] : (CAT_RING_MAP[catID] || R_min + step*2);
+      const spread = sectorAngle * (catID === '_indep' ? 1.6 : 0.88);
       orgs.forEach((org, j) => {
         const t = orgs.length > 1 ? (j/(orgs.length-1) - 0.5)*spread : 0;
         const angle = sectorMid + t;
@@ -2816,7 +2889,7 @@ function draw() {
 
   // ── Sector dividers (faint wedges) ──
   if(currentView === 'radial' && ringGuides.length) {
-    const N = MINISTRIES.filter(m => !new Set(['24']).has(m.id)).length;
+    const N = nodes.filter(n => n.type==='ministry' && !n.standalone).length;  // = จำนวนกระทรวงบนวง (รวม id 24 แล้ว)
     const outerR = ringGuides[ringGuides.length-1].r;
     for(let i=0; i<N; i++) {
       const a = (2*Math.PI*i/N) - Math.PI/2 - Math.PI/N + (ringRot.get(ministryRingKey) || 0);
@@ -2848,7 +2921,7 @@ function draw() {
     connectedSet = new Set([nodes[0]]);
     pmEdgeNodes = [];
     nodes.forEach(n => {
-      if(n.type==='ministry') connectedSet.add(n);                                   // โชว์กระทรวงไปพร้อมกัน (ไม่หรี่)
+      if(n.type==='ministry' && !notPM(n)) connectedSet.add(n);                       // โชว์กระทรวงไปพร้อมกัน (ไม่รวม id 24 ที่ไม่ขึ้นกับนายกฯ)
       if(n.type==='minister') connectedSet.add(n);                                   // โชว์วงแหวน ครม. (รัฐมนตรี) พร้อมชื่อทั้งหมดพร้อมกัน — ไม่หรี่
       if(isPmDirect(n) && activeFilters.has(n.catID||'01')) { connectedSet.add(n); pmEdgeNodes.push(n); }
     });
@@ -2856,15 +2929,15 @@ function draw() {
     connectedSet = new Set();
     connectedSet.add(focusNode);
     if(focusNode.type==='org') {
-      // parent ministry (+ center only if not standalone)
+      // parent ministry (+ center เฉพาะหน่วยที่อยู่ในบังคับบัญชาฝ่ายบริหาร)
       const mn = ministryMap[focusNode.ministryID];
       if(mn) {
         connectedSet.add(mn);
-        if(!focusNode.standalone) connectedSet.add(nodes[0]);
+        if(!notPM(focusNode)) connectedSet.add(nodes[0]);
       }
     } else if(focusNode.type==='ministry') {
-      // all orgs in this ministry (+ center only if not standalone) + its minister
-      if(!focusNode.standalone) connectedSet.add(nodes[0]);
+      // all orgs in this ministry (+ center เฉพาะหน่วยในบังคับบัญชา) + its minister
+      if(!notPM(focusNode)) connectedSet.add(nodes[0]);
       nodes.forEach(n => { if(n.type==='org'&&n.ministryID===focusNode.ministryID) connectedSet.add(n); });
       const _mnM = ministerMap[focusNode.ministryID]; if(_mnM) connectedSet.add(_mnM);
     } else if(focusNode.type==='minister') {
@@ -2872,15 +2945,42 @@ function draw() {
       connectedSet.add(nodes[0]);
       const _mnMin = ministryMap[focusNode.ministryID]; if(_mnMin) connectedSet.add(_mnMin);
     } else if(focusNode.type==='center') {
-      // all ministries
-      nodes.forEach(n => { if(n.type==='ministry') connectedSet.add(n); });
+      // all ministries (ไม่รวม id 24 ที่ไม่อยู่ในบังคับบัญชาฝ่ายบริหาร)
+      nodes.forEach(n => { if(n.type==='ministry' && !notPM(n)) connectedSet.add(n); });
     }
   }
+  // ── ความสัมพันธ์เชิงอำนาจ: เลื่อน/กดโหนด → เส้นตรงว่าใครกำกับ/ตรวจสอบใคร (machineryofgovernment.uk style) ──
+  let relInfo = null, relVisible = null;
+  if(focusNode && currentView==='radial') {
+    const byKey = {}; nodes.forEach(n => { const k = relKey(n); if(k) byKey[k] = n; });
+    const mins = nodes.filter(n => n.type==='ministry' && !notPM(n));  // เป้าหมาย "20 กระทรวง" — ไม่รวม id 24 (หน่วยนอกบังคับบัญชา)
+    const resolve = to => to==='MIN' ? mins : (Array.isArray(to) ? to.map(k => byKey[k]).filter(Boolean) : []);
+    const fk = relKey(focusNode);
+    if(fk && RELATIONS[fk]) {
+      // โหนดแม่ข่าย → วาดออกไปยังหน่วยที่กำกับ/ตรวจสอบ
+      const def = RELATIONS[fk];
+      const tnodes = resolve(def.to);
+      relInfo = { mode:'out', focus:focusNode, def, edges: tnodes.map(t => ({ from:focusNode, to:t, type:def.type })) };
+      relVisible = new Set([focusNode, ...tnodes]);
+    } else {
+      // โหนดปลายทาง → ใครมีอำนาจกำกับ/ตรวจสอบหน่วยนี้บ้าง
+      const incoming = [];
+      Object.keys(RELATIONS).forEach(k => {
+        const def = RELATIONS[k], hub = byKey[k];
+        if(hub && resolve(def.to).includes(focusNode)) incoming.push({ hub, def });
+      });
+      if(incoming.length) {
+        relInfo = { mode:'in', focus:focusNode, incoming, edges: incoming.map(it => ({ from:it.hub, to:focusNode, type:it.def.type })) };
+        relVisible = new Set([focusNode, ...incoming.map(it => it.hub)]);
+      }
+    }
+  }
+
   // hover = หรี่เบากว่า (โชว์ชั่วคราว) · กดค้าง/เลนส์ = หรี่เข้มกว่า (ยืนยันการเลือก)
   const dimAlpha = connectedSet ? ((hoveredNode && hoveredNode===focusNode && !pmLens) ? 0.13 : 0.07) : 1;
 
-  // helper: is this node faded?
-  function isFaded(n) { return connectedSet && !connectedSet.has(n); }
+  // helper: is this node faded? (หน่วยที่อยู่ในความสัมพันธ์เชิงอำนาจไม่หรี่ → อ่านง่าย)
+  function isFaded(n) { return connectedSet && !connectedSet.has(n) && !(relVisible && relVisible.has(n)); }
   function isHighlighted(n) { return connectedSet && connectedSet.has(n); }
 
   // ── org → ministry edges ──
@@ -2926,7 +3026,7 @@ function draw() {
   ctx.lineWidth = 1.1;
   nodes.forEach(n => {
     if(n.type==='ministry') {
-      if(n.standalone) return; // องค์กรอิสระ — ไม่เชื่อมต่อ
+      if(notPM(n)) return; // หน่วยนอกบังคับบัญชาฝ่ายบริหาร (id 24) — ไม่โยงถึงนายกฯ
       const c = nodes[0];
       const edgeConnected = connectedSet && connectedSet.has(n) && connectedSet.has(c);
       if(connectedSet && !edgeConnected) return;
@@ -2978,6 +3078,23 @@ function draw() {
       ctx.stroke();
       if(showArrows) drawArrowHead(c.x, c.y, n.x, n.y, _rgba(goldc, 0.95), 3.4/scale, n.r + 2.5/scale);
     });
+  }
+
+  // ── เส้น "ความสัมพันธ์เชิงอำนาจ" (โชว์เมื่อเลื่อน/กดโหนด) — เส้นตรงมีหัวลูกศร ผู้กำกับ → ผู้ถูกกำกับ ──
+  if(relInfo) {
+    ctx.save();
+    ctx.lineCap = 'round';
+    relInfo.edges.forEach(e => {
+      const col = REL_TYPES[e.type].color;
+      ctx.beginPath();
+      ctx.moveTo(e.from.x, e.from.y);
+      ctx.lineTo(e.to.x, e.to.y);
+      ctx.strokeStyle = _rgba(col, 0.6);
+      ctx.lineWidth = 1.7/scale;
+      ctx.stroke();
+      if(showArrows) drawArrowHead(e.from.x, e.from.y, e.to.x, e.to.y, _rgba(col, 0.95), 3.0/scale, ((e.to.r || 10)*0.9) + 3/scale);
+    });
+    ctx.restore();
   }
 
   // ── Independent cluster bounding rectangle ──
@@ -3073,9 +3190,9 @@ function draw() {
       ctx.fill();
       ctx.strokeStyle = selected ? '#fff' : mc;
       ctx.lineWidth = selected ? 2.5 : (hover ? 2 : 1.2);
-      if(n.standalone) { ctx.setLineDash([4/scale, 2/scale]); ctx.lineWidth = hover ? 1.8 : 1.2; }
+      if(notPM(n)) { ctx.setLineDash([4/scale, 2/scale]); ctx.lineWidth = hover ? 1.8 : 1.2; }  // id 24 = เส้นประ บอกว่าไม่ขึ้นกับนายกฯ
       ctx.stroke();
-      if(n.standalone) ctx.setLineDash([]);
+      if(notPM(n)) ctx.setLineDash([]);
       // Selection / hover glow ring
       if(selected || hover) {
         ctx.beginPath();
@@ -3132,6 +3249,15 @@ function draw() {
       // Org node — cached gradient sprite (รูปทรงตามชั้น) + focus ring
       const _sr = r + 1.6;
       ctx.drawImage(orgSprite(n.color, orgShape(n.catID)), n.x - _sr, n.y - _sr, _sr*2, _sr*2);
+      // หน่วยที่ "มีอำนาจกำกับ/ตรวจสอบ" — วงแหวนสีประเภท (โชว์ตลอด ให้ค้นเจอว่าเลื่อนเมาส์ดูเส้นได้)
+      const _rk = relKey(n);
+      if(_rk && RELATIONS[_rk]) {
+        const _rc = REL_TYPES[RELATIONS[_rk].type].color;
+        const _act = relInfo && (relInfo.focus === n || (relInfo.edges && relInfo.edges.some(e => e.from === n)));
+        ctx.beginPath(); ctx.arc(n.x, n.y, r + (_act ? 4.5 : 3.2), 0, Math.PI*2);
+        ctx.strokeStyle = _rgba(_rc, (hover || selected || _act) ? 0.95 : 0.62);
+        ctx.lineWidth = (_act ? 2.4 : 1.6); ctx.stroke();
+      }
       if(pmLens && isPmDirect(n)) {
         const goldc = _theme.gold || '#c9a84c';
         ctx.beginPath(); ctx.arc(n.x, n.y, r+6, 0, Math.PI*2);
@@ -3176,6 +3302,66 @@ function draw() {
 
   // Store connectedSet state for UI reference
   window._lastConnectedSet = connectedSet;
+
+  // ── ป้ายอธิบาย "ความสัมพันธ์เชิงอำนาจ" (screen space) — โชว์เมื่อ hover/กดโหนด ──
+  if(relInfo) {
+    const isDk = isDark();
+    const padX = 14, padY = 11;
+    const maxW = Math.min(W - 28, 580);
+    const _nm = n0 => n0.type==='ministry' ? n0.label.replace('กระทรวง','') : (n0.data && (n0.data.abbr || n0.data.name)) || n0.label;
+    let accent, titleLine, lines = [];   // lines: {text, color}
+    ctx.font = '12.5px Sarabun, sans-serif';
+    if(relInfo.mode === 'out') {
+      const t = REL_TYPES[relInfo.def.type]; accent = t.color;
+      titleLine = t.icon + '  ' + _nm(relInfo.focus) + ' — ' + relInfo.def.verb;
+      const cnt = relInfo.edges.length;
+      const scope = relInfo.def.to === 'MIN'
+        ? 'มีอำนาจกำกับเหนือ 20 กระทรวง (ครอบคลุมทุกส่วนราชการ)'
+        : (cnt ? ('กำกับ ' + cnt + ' หน่วยงานที่ระบุ: ' + relInfo.edges.map(e => _nm(e.to)).join(' · '))
+               : 'กำกับภาคเอกชน (ไม่มีหน่วยงานในแผนภาพนี้)');
+      wrapText(scope, maxW - padX*2).forEach(l => lines.push({ text:l, color: isDk ? 'rgba(226,232,240,0.92)' : 'rgba(40,52,68,0.93)' }));
+    } else {
+      accent = '#94a3b8';
+      titleLine = '🏛️  ' + _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย';
+      const groups = {};
+      relInfo.incoming.forEach(it => { (groups[it.def.type] = groups[it.def.type] || []).push(_nm(it.hub)); });
+      Object.keys(REL_TYPES).forEach(ty => {
+        if(!groups[ty]) return;
+        const txt = REL_TYPES[ty].icon + ' ' + REL_TYPES[ty].label + ': ' + groups[ty].join(' · ');
+        wrapText(txt, maxW - padX*2).forEach((l, i) => lines.push({ text:l, color: REL_TYPES[ty].color }));
+      });
+    }
+    // วัดขนาดกล่อง
+    ctx.font = 'bold 14px Sarabun, sans-serif';
+    let boxW = ctx.measureText(titleLine).width;
+    ctx.font = '12.5px Sarabun, sans-serif';
+    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width));
+    ctx.font = 'italic 10.5px Sarabun, sans-serif';
+    boxW = Math.max(boxW, ctx.measureText(REL_SOURCE).width);
+    boxW = Math.min(maxW, boxW + padX*2);
+    const boxH = padY*2 + 20 + lines.length*17 + 17;
+    const bx = (W - boxW)/2, by = 12;
+    ctx.save();
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(bx, by, boxW, boxH, 12); else ctx.rect(bx, by, boxW, boxH);
+    ctx.fillStyle = isDk ? 'rgba(16,20,30,0.93)' : 'rgba(255,255,255,0.96)';
+    ctx.fill();
+    ctx.strokeStyle = _rgba(accent, 0.9); ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.clip();
+    ctx.fillStyle = accent; ctx.fillRect(bx, by, 5, boxH);
+    ctx.restore();
+    let ty = by + padY + 2;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.font = 'bold 14px Sarabun, sans-serif';
+    ctx.fillStyle = isDk ? '#f3f6fb' : '#15202e';
+    ctx.fillText(titleLine, bx + padX, ty); ty += 20;
+    ctx.font = '12.5px Sarabun, sans-serif';
+    lines.forEach(l => { ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX, ty); ty += 17; });
+    ty += 2;
+    ctx.font = 'italic 10.5px Sarabun, sans-serif';
+    ctx.fillStyle = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
+    ctx.fillText(REL_SOURCE, bx + padX, ty);
+  }
 
   // ── Ring labels — screen space (อยู่นิ่ง ไม่เลื่อนตามกราฟ) ──
   if(currentView === 'radial' && ringGuides.length && nodes[0]) {
@@ -4734,7 +4920,7 @@ function goToMinistryFromCorrupt(minId, orgNo) {
       const mn = nodes.find(n => n.isMinistry && n.data?.id === targetNode.ministryID);
       if (mn) {
         connectedSet.add(mn);
-        if (!mn.standalone) connectedSet.add(nodes[0]);
+        if (!notPM(mn)) connectedSet.add(nodes[0]);
         nodes.forEach(n => { if (n.ministryID === targetNode.ministryID) connectedSet.add(n); });
       }
       if (orgNos.length) {
@@ -4744,7 +4930,7 @@ function goToMinistryFromCorrupt(minId, orgNo) {
         });
       }
     } else {
-      if (!targetNode.standalone) connectedSet.add(nodes[0]);
+      if (!notPM(targetNode)) connectedSet.add(nodes[0]);
       nodes.forEach(n => { if (n.ministryID === targetNode.data?.id) connectedSet.add(n); });
     }
 
