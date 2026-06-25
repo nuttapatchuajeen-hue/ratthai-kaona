@@ -255,6 +255,9 @@
     position: relative; z-index: 0; width: 100%; height: auto; display: block;
     filter: drop-shadow(0 14px 24px rgba(0,0,0,0.55));
     user-select: none; -webkit-user-select: none; -webkit-user-drag: none; pointer-events: none;
+    /* เฟดขอบล่างของรูปให้จมหายไปในความมืด — กันไม่ให้เห็นรอยตัดล่างของภาพโผล่เหนือรอยปรุ */
+    -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 97%);
+            mask-image: linear-gradient(to bottom, #000 80%, transparent 97%);
   }
   .portrait-tag {
     position: absolute; z-index: 4; top: 1rem; left: 1rem;
