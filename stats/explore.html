@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม · ภัยพิบัติ อาเซียน พลังงาน — สถิติข้อมูลรัฐ</title>
+<meta name="description" content="ศูนย์ข้อมูลภาพรวมโลกและสิ่งแวดล้อม: ภัยพิบัติ–ภูมิอากาศ (อุณหภูมิโลก น้ำท่วม คลื่นความร้อน), อาเซียน และพลังงาน/น้ำมัน — สร้างจากข้อมูลเปิด (Our World in Data, EM-DAT, World Bank, NASA) ด้วย Observable Plot + D3" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  /* โทนสีอิงหน้าหลัก "รัฐไทยก้าวหน้า" (hub) — cyan #00E5FF + ส้ม #FF5C1A · ชุดตัวแปรเดียวกับ stats/index.html */
+  :root{
+    --paper:#EDF4F8; --paper-2:#F8FBFD; --paper-3:#DCE9F0;
+    --ink:#0A1822; --ink-2:#2C4356; --ink-soft:#5C7686;
+    --rule:#C8DAE4; --rule-strong:#A8C2D0;
+    --green:#0089A9; --green-deep:#055A75; --green-soft:#D7EEF5;
+    --red:#D9480F; --red-deep:#9C3308;
+    --gold:#B07F22; --gold-deep:#7C5712;
+    --shadow:18px 22px 40px -28px rgba(10,40,60,.45);
+    --nav-bg:rgba(248,251,253,.86);
+    --maxw:1240px;
+  }
+  html[data-theme="dark"]{
+    --paper:#020508; --paper-2:#070D14; --paper-3:#0D1822;
+    --ink:#DCE8F0; --ink-2:#A9BFCD; --ink-soft:#5F7C8E;
+    --rule:#122230; --rule-strong:#1C3344;
+    --green:#00E5FF; --green-deep:#0094B8; --green-soft:rgba(0,229,255,.13);
+    --red:#FF5C1A; --red-deep:#B23A0C;
+    --gold:#FFB454; --gold-deep:#B36F1D;
+    --shadow:18px 22px 40px -28px rgba(0,0,0,.85), 0 0 24px rgba(0,229,255,.05);
+    --nav-bg:rgba(2,5,8,.82);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--green);color:var(--paper)}
+  .topbar{height:6px;background:linear-gradient(90deg,var(--green-deep),var(--green) 50%,var(--red));position:relative;z-index:2}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---------- TOP NAV (ชุดเดียวกับ hub/stats) ---------- */
+  .site-nav{position:sticky;top:0;z-index:900;background:var(--nav-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+  .site-nav nav{display:flex;align-items:stretch;justify-content:space-between;gap:18px;height:56px}
+  .snav-logo{display:flex;align-items:center;flex:none}
+  .snav-logo img{height:40px;width:auto;display:block}
+  .snav-links{list-style:none;display:flex;margin:0;padding:0;align-items:stretch;overflow-x:auto;scrollbar-width:none}
+  .snav-links::-webkit-scrollbar{display:none}
+  .snav-links a{display:flex;align-items:center;padding:0 16px;font-size:13.5px;font-weight:600;letter-spacing:.03em;color:var(--ink-2);border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+  .snav-links a:hover{color:var(--green)}
+  .snav-links a.active{color:var(--green);border-bottom-color:var(--green)}
+
+  /* ---------- MASTHEAD ---------- */
+  .masthead{padding:30px 0 6px}
+  .eyebrow{font-family:"Archivo",sans-serif;font-weight:800;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+  .masthead h1{margin:6px 0 0;font-family:"Noto Serif Thai",serif;font-weight:900;letter-spacing:-.01em;font-size:clamp(28px,4.6vw,48px);line-height:1.02;color:var(--ink)}
+  .masthead h1 .dot{color:var(--green)}
+  .masthead .lead{margin:10px 0 0;max-width:64ch;font-size:15px;color:var(--ink-soft);font-weight:500}
+
+  /* ---------- TABS ---------- */
+  .tabbar{display:flex;gap:8px;margin:22px 0 4px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+  .tabbar::-webkit-scrollbar{display:none}
+  .tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;cursor:pointer;
+       font-family:"IBM Plex Sans Thai",sans-serif;font-weight:700;font-size:15px;color:var(--ink-soft);
+       padding:12px 18px 13px;white-space:nowrap;display:flex;align-items:center;gap:8px;transition:color .2s,border-color .2s}
+  .tab:hover{color:var(--ink-2)}
+  .tab.active{color:var(--green);border-bottom-color:var(--green)}
+  .tab .em{font-size:17px}
+  .tab .soon{font-family:"Archivo",sans-serif;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 7px}
+  .tabpane{display:none;padding:26px 0 60px}
+  .tabpane.active{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- KPI STRIP ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 24px}
+  .kpi{background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+  .kpi .k-top{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);font-weight:600}
+  .kpi .k-num{margin-top:8px;font-family:"Archivo",sans-serif;font-weight:800;font-size:30px;line-height:1;color:var(--ink);letter-spacing:-.02em}
+  .kpi .k-num .u{font-size:15px;color:var(--ink-2);font-weight:700;margin-left:3px}
+  .kpi.accent .k-num{color:var(--red)}
+  .kpi .k-sub{margin-top:7px;font-size:11.5px;color:var(--ink-soft)}
+
+  /* ---------- CHART CARDS ---------- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{background:var(--paper-2);border:1px solid var(--rule);border-radius:16px;padding:20px 22px 22px;box-shadow:var(--shadow);margin-bottom:20px}
+  .card.full{grid-column:1/-1}
+  .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+  .card h2{margin:0;font-family:"Noto Serif Thai",serif;font-weight:700;font-size:19px;color:var(--ink);display:flex;align-items:center;gap:9px}
+  .card .tag{font-family:"Archivo",sans-serif;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);border-radius:20px;padding:2px 9px}
+  .card .sub{margin:2px 0 14px;font-size:13px;color:var(--ink-soft);max-width:70ch}
+  .plot{width:100%;min-height:60px;overflow-x:auto}
+  .plot svg{max-width:100%;height:auto;display:block}
+  .src{margin-top:12px;font-size:11px;color:var(--ink-soft);border-top:1px dashed var(--rule);padding-top:9px}
+  .src a{color:var(--green);font-weight:600}
+  .state-msg{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px}
+  .state-msg.err{color:var(--red)}
+
+  /* ---------- COMING-SOON PANES ---------- */
+  .soon-card{background:var(--paper-2);border:1.5px dashed var(--rule-strong);border-radius:18px;padding:48px 28px;text-align:center}
+  .soon-card .big{font-size:46px;line-height:1}
+  .soon-card h3{margin:14px 0 6px;font-family:"Noto Serif Thai",serif;font-weight:700;font-size:24px;color:var(--ink)}
+  .soon-card p{margin:0 auto;max-width:54ch;color:var(--ink-soft);font-size:14px}
+  .soon-card .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+  .soon-card .chip{background:var(--green-soft);color:var(--green-deep);border:1px solid var(--rule);border-radius:20px;padding:5px 13px;font-size:12.5px;font-weight:600}
+  html[data-theme="dark"] .soon-card .chip{color:var(--green)}
+
+  .foot{border-top:1px solid var(--rule);padding:26px 0 80px;color:var(--ink-soft);font-size:12.5px}
+
+  @media (max-width:880px){
+    .grid2{grid-template-columns:1fr}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:520px){
+    .wrap{padding:0 16px}
+    .kpis{grid-template-columns:1fr}
+  }
+  /* แถบสลับมุมมองหมวดข้อมูลสถิติ (สถิติข้อมูลรัฐ ↔ ศูนย์ข้อมูลโลก) */
+  /* ========== แถบเมนูซ้าย (SIDEBAR) — เมนูรอง + แท็บหมวดในหน้า ย้ายมาด้านซ้าย ========== */
+  .shell{display:flex;align-items:flex-start;gap:26px;margin-top:22px}
+  .content{flex:1 1 auto;min-width:0}
+  .side{
+    flex:0 0 246px;position:sticky;top:66px;align-self:flex-start;
+    display:flex;flex-direction:column;gap:14px;
+    max-height:calc(100vh - 84px);overflow-y:auto;
+    padding:14px;border-radius:var(--radius-lg);
+    background:var(--glass-bg);border:1px solid var(--glass-border-soft);
+    backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));
+    box-shadow:var(--glass-shadow),var(--glass-inset);
+  }
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:var(--glass-border-soft);border-radius:6px}
+  .side-switch{display:flex;flex-direction:column;gap:7px}
+  .snav{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;color:var(--ink-2);border:1px solid transparent;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
+  .snav:hover{background:var(--glass-bg-2);color:var(--ink);border-color:var(--glass-border-soft)}
+  .snav.active{background:var(--green);color:var(--paper);box-shadow:var(--glow-cyan);border-color:transparent}
+  .snav.active small{color:rgba(255,255,255,.82)}
+  .sn-ico{font-size:20px;line-height:1;flex:none}
+  .sn-tx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+  .sn-tx b{font-weight:700;font-size:14px}
+  .sn-tx small{font-size:10.5px;color:var(--ink-soft);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .side-sec{display:flex;flex-direction:column;gap:2px;padding-top:13px;border-top:1px solid var(--glass-border-soft)}
+  .side-label{font-family:"Archivo",sans-serif;font-weight:800;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);padding:0 9px 5px}
+  /* แท็บหมวด (ภัยพิบัติ/อาเซียน/…) ในแถบซ้าย — ใช้คลาส .tab เดิมเพื่อคงการทำงานของ JS */
+  .side-tabs{display:flex;flex-direction:column;gap:2px}
+  .side-tabs .tab{display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border:1px solid transparent;border-radius:10px;font-family:inherit;font-size:12.6px;font-weight:600;color:var(--ink-2);background:none;cursor:pointer;text-align:left;line-height:1.25;transition:background .2s,color .2s}
+  .side-tabs .tab:hover{background:var(--glass-bg-2);color:var(--green)}
+  .side-tabs .tab.active{background:var(--green);color:var(--paper);box-shadow:var(--glow-cyan)}
+  .side-tabs .tab .em{font-size:15px;flex:none}
+  .side-tabs .tab .soon{font-family:"Archivo",sans-serif;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 5px;margin-left:auto;flex:none}
+  .side-tabs .tab.active .soon{color:#fff;border-color:rgba(255,255,255,.65)}
+  .side-foot{display:flex;flex-direction:column;gap:7px;padding-top:13px;border-top:1px solid var(--glass-border-soft)}
+  .side-util{display:inline-flex;align-items:center;gap:8px;padding:9px 11px;border-radius:10px;font-size:12.3px;font-weight:600;color:var(--ink-2);background:var(--glass-bg-2);border:1px solid var(--glass-border-soft);cursor:pointer;font-family:inherit;transition:color .2s,background .2s,border-color .2s;text-align:left;text-decoration:none}
+  .side-util:hover{color:var(--green);border-color:var(--green)}
+  .side-util svg{width:15px;height:15px;flex:none}
+  /* จอกว้าง: ซ่อนปุ่ม "กลับหน้าหลัก" แบบลอย (มีในแถบซ้ายแล้ว) */
+  @media(min-width:1025px){ #hub-back-btn{display:none!important} }
+  /* จอแคบ: แถบซ้ายพับขึ้นบนสุด — 2 เมนูหลักเป็นแถว + แท็บหมวดเลื่อนแนวนอน */
+  @media(max-width:1024px){
+    .shell{flex-direction:column;gap:16px;margin-top:16px}
+    .side{position:static;flex:none;width:100%;max-height:none;overflow:visible;gap:12px}
+    .side-switch{flex-direction:row;gap:8px}
+    .snav{flex:1}
+    .side-label{display:none}
+    .side-sec{padding-top:11px}
+    .side-tabs{flex-direction:row;overflow-x:auto;gap:6px;scrollbar-width:none}
+    .side-tabs::-webkit-scrollbar{display:none}
+    .side-tabs .tab{white-space:nowrap;flex:none}
+    .side-foot{display:none}
+  }
+  @media(max-width:520px){
+    .side{padding:10px}
+    .side-switch{flex-direction:column}
+    .sn-tx small{white-space:normal}
+  }
+</style>
+<link rel="stylesheet" href="../css/bb8-toggle.css" />
+<script src="../js/preloader.js"></script>
+</head>
+<body>
+  <!-- theme toggle — BB-8 droid (ผูกกับ data-theme/localStorage 'md-theme') -->
+  <label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+    <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+    <div class="bb8-toggle__container">
+      <div class="bb8-toggle__scenery">
+        <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="tatto-1"></div><div class="tatto-2"></div>
+        <div class="gomrassen"></div><div class="hermes"></div><div class="chenini"></div>
+        <div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div>
+      </div>
+      <div class="bb8">
+        <div class="bb8__head-container"><div class="bb8__antenna"></div><div class="bb8__antenna"></div><div class="bb8__head"></div></div>
+        <div class="bb8__body"></div>
+      </div>
+      <div class="artificial__hidden"><div class="bb8__shadow"></div></div>
+    </div>
+  </label>
+  <script>
+  function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}}
+  function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+  mdSyncToggle();
+  </script>
+
+  <!-- ปุ่มกลับหน้าหลัก รัฐไทยก้าวหน้า (hub) -->
+  <a href="../hub/index.html" id="hub-back-btn" style="position:fixed;left:16px;bottom:16px;z-index:99999;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Prompt','Kanit','IBM Plex Sans Thai',system-ui,sans-serif;font-size:14px;font-weight:600;line-height:1;color:#eafcff;text-decoration:none;background:rgba(11,17,26,0.92);border:1px solid rgba(0,229,255,0.55);border-radius:999px;box-shadow:0 6px 22px rgba(0,0,0,.4),0 0 16px rgba(0,229,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='';">← กลับหน้าหลัก</a>
+
+  <!-- แถบเมนูบนสุด (ลิงก์ชุดเดียวกับ hub) -->
+  <header class="site-nav">
+    <nav class="wrap">
+      <a class="snav-logo" href="../hub/index.html" title="กลับหน้าหลัก รัฐไทยก้าวหน้า">
+        <img src="../hub/images/logo.png" alt="รัฐไทยก้าวหน้า" />
+      </a>
+      <ul class="snav-links">
+        <li><a href="../hub/index.html">หน้าแรก</a></li>
+        <li><a href="../structure.html">แผนผังโครงสร้าง</a></li>
+        <li><a href="../election/index.html">ส.ส. ผู้แทนราษฎร</a></li>
+        <li><a href="../cabinet/index.html">ชุดคณะรัฐมนตรี</a></li>
+        <li><a class="active" href="index.html" aria-current="page">ข้อมูลสถิติ</a></li>
+        <li><a href="../hub/about.html">เกี่ยวกับเรา</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="topbar"></div>
+
+  <header class="masthead">
+    <div class="wrap">
+      <div class="eyebrow">ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม · World &amp; Environment Hub</div>
+      <h1>ภาพรวมโลกที่ส่งผลต่อไทย<span class="dot">.</span></h1>
+      <p class="lead">ภัยพิบัติและภูมิอากาศ อาเซียน และพลังงาน — รวมข้อมูลเปิดระดับโลกมาเล่าเป็นภาพ ด้วย Observable Plot + D3 เชื่อมต่อกับชุดข้อมูลเปิดที่ใช้ได้ตามกฎหมาย</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="shell">
+      <!-- ===== แถบเมนูซ้าย ===== -->
+      <aside class="side" aria-label="เมนูหมวดข้อมูลสถิติ">
+        <nav class="side-switch" aria-label="สลับมุมมองหมวดข้อมูลสถิติ">
+          <a class="snav" href="index.html">
+            <span class="sn-ico">📊</span>
+            <span class="sn-tx"><b>สถิติข้อมูลรัฐ</b><small>งบประมาณ · เศรษฐกิจ · Open Data</small></span>
+          </a>
+          <a class="snav active" href="explore.html" aria-current="page">
+            <span class="sn-ico">🌍</span>
+            <span class="sn-tx"><b>ศูนย์ข้อมูลโลก</b><small>ภัยพิบัติ · อาเซียน · น้ำมัน</small></span>
+          </a>
+        </nav>
+        <div class="side-sec">
+          <div class="side-label">หมวดในหน้านี้</div>
+          <div class="side-tabs" role="tablist">
+            <button class="tab active" role="tab" data-pane="disaster"><span class="em">🌊</span> ภัยพิบัติ &amp; ภูมิอากาศ</button>
+            <button class="tab" role="tab" data-pane="asean"><span class="em">🌏</span> อาเซียน <span class="soon">เร็วๆ นี้</span></button>
+            <button class="tab" role="tab" data-pane="oil"><span class="em">⛽</span> น้ำมัน &amp; พลังงาน <span class="soon">เร็วๆ นี้</span></button>
+            <button class="tab" role="tab" data-pane="finance"><span class="em">💰</span> การเงิน <span class="soon">เร็วๆ นี้</span></button>
+            <button class="tab" role="tab" data-pane="bangkok"><span class="em">🏙️</span> กรุงเทพ <span class="soon">เร็วๆ นี้</span></button>
+            <button class="tab" role="tab" data-pane="geopolitics"><span class="em">🌐</span> ภูมิรัฐศาสตร์โลก <span class="soon">เร็วๆ นี้</span></button>
+            <button class="tab" role="tab" data-pane="thai-econ"><span class="em">📈</span> เศรษฐกิจไทย <span class="soon">เร็วๆ นี้</span></button>
+          </div>
+        </div>
+        <div class="side-foot">
+          <button type="button" class="side-util" onclick="location.reload()" aria-label="รีเฟรชข้อมูล">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            รีเฟรชข้อมูล
+          </button>
+          <a class="side-util" href="../hub/index.html">← กลับหน้าหลัก</a>
+        </div>
+      </aside>
+
+      <!-- ===== เนื้อหา ===== -->
+      <div class="content">
+
+    <!-- ============ แท็บ 1 · ภัยพิบัติ & ภูมิอากาศ ============ -->
+    <section class="tabpane active" id="pane-disaster" role="tabpanel">
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🌡️ อุณหภูมิโลกปี 2024</div>
+          <div class="k-num">+1.28<span class="u">°C</span></div>
+          <div class="k-sub">สูงกว่าค่าเฉลี่ยปี 1951–1980 (ปีที่ร้อนสุดเป็นประวัติการณ์)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌀 ภัยพิบัติทั่วโลก/ปี</div>
+          <div class="k-num"><span class="k-count" data-count="363">0</span></div>
+          <div class="k-sub">เฉลี่ยเหตุภัยพิบัติธรรมชาติต่อปี ในทศวรรษ 2010s</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏭 CO₂ ต่อคนของไทย</div>
+          <div class="k-num">3.8<span class="u">ตัน</span></div>
+          <div class="k-sub">ปี 2022 — ต่ำกว่าค่าเฉลี่ยโลก ~4.7 ตัน/คน</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌊 น้ำท่วมใหญ่ไทย 2554</div>
+          <div class="k-num">13.6<span class="u">ล้านคน</span></div>
+          <div class="k-sub">ผู้ได้รับผลกระทบจากมหาอุทกภัย พ.ศ. 2554</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>🌡️ อุณหภูมิเฉลี่ยโลกที่สูงขึ้น</h2><span class="tag">เส้นเวลา</span></div>
+          <p class="sub">ค่าผิดปกติของอุณหภูมิเฉลี่ยพื้นผิวโลก (เทียบฐานปี 1951–1980) — แนวโน้มร้อนขึ้นชัดเจนตั้งแต่ปี 1980</p>
+          <div class="plot" id="tempChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA GISTEMP v4 · เรียบเรียงโดย <a href="https://ourworldindata.org/grapher/temperature-anomaly" target="_blank" rel="noopener">Our World in Data ↗</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>🌀 ภัยพิบัติแยกประเภท</h2><span class="tag">เฉลี่ยต่อปี</span></div>
+          <p class="sub">จำนวนเหตุภัยพิบัติธรรมชาติทั่วโลกเฉลี่ยต่อปี (ทศวรรษ 2010s) — น้ำท่วมและพายุครองสัดส่วนสูงสุด</p>
+          <div class="plot" id="disChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: EM-DAT, CRED / UCLouvain · เรียบเรียงโดย <a href="https://ourworldindata.org/natural-disasters" target="_blank" rel="noopener">Our World in Data ↗</a></div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>🗺️ การปล่อย CO₂ ต่อหัวประชากร ทั่วโลก</h2><span class="tag">แผนที่โลก</span></div>
+        <p class="sub">ตัวขับเคลื่อนภาวะโลกร้อนเบื้องหลังภัยพิบัติ — ตันคาร์บอนไดออกไซด์ต่อคนต่อปี (พ.ศ. 2565 / ค.ศ. 2022) ชี้ตำแหน่งของไทยเทียบกับโลกและเพื่อนบ้านอาเซียน</p>
+        <div class="plot" id="mapChart"><div class="state-msg">กำลังโหลดแผนที่โลก…</div></div>
+        <div class="src">ที่มา: Global Carbon Project · <a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Our World in Data ↗</a> · แผนที่ฐาน world-atlas (Natural Earth)</div>
+      </div>
+    </section>
+
+    <!-- ============ แท็บ 2 · อาเซียน (World Bank live) ============ -->
+    <section class="tabpane" id="pane-asean" role="tabpanel">
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k-top">👥 ประชากรอาเซียนรวม</div>
+          <div class="k-num"><span id="kAseanPop">—</span><span class="u">ล้าน</span></div>
+          <div class="k-sub">10 ชาติสมาชิกอาเซียน</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">💰 GDP อาเซียนรวม</div>
+          <div class="k-num"><span id="kAseanGdp">—</span><span class="u">ล้านล้าน $</span></div>
+          <div class="k-sub">ผลรวมมูลค่าเศรษฐกิจทั้งภูมิภาค</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🇹🇭 ไทยในอาเซียน</div>
+          <div class="k-num">อันดับ <span id="kAseanRank">—</span></div>
+          <div class="k-sub">ขนาดเศรษฐกิจ (GDP) ในภูมิภาค</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🏙️ GDP ต่อหัวของไทย</div>
+          <div class="k-num"><span id="kAseanThPc">—</span></div>
+          <div class="k-sub">ดอลลาร์สหรัฐต่อคนต่อปี</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>🟦 ขนาดเศรษฐกิจ (GDP)</h2><span class="tag">Treemap</span></div>
+          <p class="sub">มูลค่า GDP ของแต่ละชาติอาเซียน — พื้นที่ยิ่งใหญ่ เศรษฐกิจยิ่งใหญ่ (อินโดนีเซียครองแชมป์ ไทยตามมา)</p>
+          <div class="plot" id="aseanTreemap"><div class="state-msg">กำลังโหลดข้อมูล World Bank…</div></div>
+          <div class="src">ที่มา: <a href="https://data.worldbank.org/indicator/NY.GDP.MKTP.CD" target="_blank" rel="noopener">World Bank ↗</a> · NY.GDP.MKTP.CD (ค่าล่าสุด)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>🏙️ GDP ต่อหัวประชากร</h2><span class="tag">เทียบประเทศ</span></div>
+          <p class="sub">รายได้เฉลี่ยต่อคน (US$) — สิงคโปร์/บรูไนนำห่าง ไทยอยู่กลางตาราง (แท่งส้ม = ไทย)</p>
+          <div class="plot" id="aseanBars"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="src">ที่มา: World Bank · NY.GDP.PCAP.CD (ค่าล่าสุด)</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>📈 การเติบโตทางเศรษฐกิจ</h2><span class="tag">2010–ปัจจุบัน</span></div>
+        <p class="sub">อัตราการเติบโต GDP รายปี (%) ของทั้ง 10 ชาติ — เห็น “หลุมปี 2020” จากโควิดชัดเจน · เส้นหนา = ไทย</p>
+        <div class="plot" id="aseanGrowth"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">ที่มา: World Bank · NY.GDP.MKTP.KD.ZG (GDP growth, annual %)</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>🗺️ แผนที่ภูมิภาคอาเซียน</h2><span class="tag">GDP ต่อหัว</span></div>
+        <p class="sub">ระบายสีตาม GDP ต่อหัว เข้มยิ่งรวย — ไฮไลต์ประเทศไทยเส้นทอง</p>
+        <div class="plot" id="aseanMap"><div class="state-msg">กำลังโหลดแผนที่…</div></div>
+        <div class="src">ที่มา: World Bank · NY.GDP.PCAP.CD + แผนที่ฐาน world-atlas (Natural Earth)</div>
+      </div>
+    </section>
+
+    <!-- ============ แท็บ 3 · น้ำมัน & พลังงาน (placeholder) ============ -->
+    <section class="tabpane" id="pane-oil" role="tabpanel">
+      <div class="soon-card">
+        <div class="big">⛽</div>
+        <h3>น้ำมัน &amp; พลังงาน — กำลังจัดทำ</h3>
+        <p>ราคาน้ำมันเส้นเวลา (Brent/ดีเซล/เบนซิน) จาก World Bank Pink Sheet และ EPPO, สัดส่วนแหล่งพลังงานแบบ treemap และแผนที่ผู้ผลิต/ผู้ใช้พลังงานของโลก</p>
+        <div class="chips">
+          <span class="chip">📈 ราคาน้ำมันย้อนหลัง</span>
+          <span class="chip">🟦 Treemap สัดส่วนพลังงาน</span>
+          <span class="chip">🗺️ แผนที่ผู้ผลิต/ผู้ใช้</span>
+        </div>
+      </div>
+    </section>
+
+      </div><!-- /.content -->
+    </div><!-- /.shell -->
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม — ส่วนเสริมของ “สถิติข้อมูลรัฐ” ในเว็บ รัฐไทยก้าวหน้า · ข้อมูลทั้งหมดมาจากแหล่งเปิดที่อ้างอิงใต้กราฟแต่ละชิ้น · เพื่อการศึกษา
+    </div>
+  </footer>
+
+  <!-- ===== เอนจินกราฟ: D3 + TopoJSON + Observable Plot ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+  <script>
+  (function(){
+    "use strict";
+    var $ = function(s,r){ return (r||document).querySelector(s); };
+    var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+    // เรียก fn หลังเฟรมถัดไป แต่การันตีว่าทำงานแม้ rAF ไม่ยิง (แท็บพื้นหลัง / Preview headless)
+    function afterPaint(fn){ requestAnimationFrame(fn); setTimeout(fn, 60); }
+    function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+    // ---- ดึง JSON (World Bank ยิงตรงได้) — มี fallback ผ่านพร็อกซีถ้าตรงไม่ผ่าน ----
+    var XML_PROXIES = [
+      function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); },
+      function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
+      function(u){ return "https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u); }
+    ];
+    function fetchTimeout(url, ms){
+      var ctrl=new AbortController(); var t=setTimeout(function(){ ctrl.abort(); }, ms||12000);
+      return fetch(url, { signal:ctrl.signal }).finally(function(){ clearTimeout(t); });
+    }
+    function fetchJSON(url, directFirst){
+      var chain=(directFirst===false?[]:[url]).concat(XML_PROXIES.map(function(p){ return p(url); }));
+      var i=0;
+      function attempt(){
+        if(i>=chain.length) return Promise.reject(new Error("all sources failed"));
+        var u=chain[i++];
+        return fetchTimeout(u, 15000).then(function(r){ if(!r.ok) throw 0; return r.text(); })
+          .then(function(t){ return JSON.parse(t); }).catch(function(){ return attempt(); });
+      }
+      return attempt();
+    }
+
+    /* ---------- ข้อมูลชุดจริง (curated, อ้างอิงแหล่งใต้กราฟ) ---------- */
+    // ค่าผิดปกติอุณหภูมิเฉลี่ยโลก °C เทียบฐาน 1951–1980 (NASA GISTEMP v4)
+    var TEMP = [
+      {year:1880,v:-0.17},{year:1900,v:-0.08},{year:1920,v:-0.27},{year:1940,v:0.13},
+      {year:1960,v:-0.03},{year:1980,v:0.26},{year:2000,v:0.40},{year:2010,v:0.72},
+      {year:2016,v:1.01},{year:2020,v:1.02},{year:2023,v:1.17},{year:2024,v:1.28}
+    ];
+    // เหตุภัยพิบัติธรรมชาติทั่วโลก เฉลี่ยต่อปี ทศวรรษ 2010s (EM-DAT)
+    var DIS = [
+      {type:"น้ำท่วม",n:163},{type:"พายุ",n:104},{type:"แผ่นดินไหว",n:28},
+      {type:"อุณหภูมิสุดขั้ว",n:22},{type:"ดินถล่ม",n:18},{type:"ภัยแล้ง",n:16},{type:"ไฟป่า",n:12}
+    ];
+    // CO₂ ตัน/คน ปี 2022 (Global Carbon Project) — คีย์ตามชื่อใน world-atlas (Natural Earth)
+    var CO2 = {
+      "Qatar":35.6,"United Arab Emirates":25.8,"Saudi Arabia":18.2,"Australia":15.1,
+      "United States of America":14.9,"Canada":14.2,"South Korea":11.6,"Russia":11.4,
+      "Japan":8.5,"China":8.0,"Germany":8.0,"Iran":8.0,"Poland":8.0,"Malaysia":8.0,
+      "South Africa":6.7,"Italy":5.6,"Turkey":5.3,"Spain":5.2,"United Kingdom":4.7,
+      "France":4.6,"Argentina":4.0,"Thailand":3.8,"Mexico":3.6,"Vietnam":3.5,
+      "Laos":2.7,"Indonesia":2.6,"Egypt":2.4,"Brazil":2.3,"India":2.0,
+      "Philippines":1.5,"Cambodia":1.2,"Myanmar":0.7,"Nigeria":0.6
+    };
+
+    var WORLD = null; // geojson หลังโหลด topojson
+
+    /* ---------- count-up KPI (rAF-safe) ---------- */
+    function countUp(el){
+      var to = +el.getAttribute("data-count") || 0, dur = 950, t0 = performance.now(), done = false;
+      function fin(){ if(done) return; done = true; el.textContent = Math.round(to).toLocaleString("en-US"); }
+      function step(now){ if(done) return; var p = Math.min(1,(now-t0)/dur);
+        el.textContent = Math.round(to*(1-Math.pow(1-p,3))).toLocaleString("en-US");
+        if(p<1) requestAnimationFrame(step); else fin(); }
+      requestAnimationFrame(step); setTimeout(fin, dur+250);
+    }
+
+    /* ---------- วาดกราฟ (อ่านสีจากธีมปัจจุบัน — เรียกซ้ำได้เมื่อสลับ light/dark) ---------- */
+    function plotInto(sel, figure){
+      var box = $(sel); if(!box) return;
+      box.innerHTML = ""; box.appendChild(figure);
+    }
+    function baseStyle(ink, font){ return { background:"transparent", color:ink, fontFamily:font, fontSize:"12px", overflow:"visible" }; }
+
+    function renderTemp(){
+      var box = $("#tempChart"); if(!box || !window.Plot) return;
+      var red = cssVar("--red"), ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"),
+          rule = cssVar("--rule"), paper2 = cssVar("--paper-2"),
+          font = "'IBM Plex Sans Thai', system-ui, sans-serif";
+      var W = Math.max(280, box.clientWidth || 520), last = TEMP[TEMP.length-1];
+      var fig = Plot.plot({
+        width:W, height:300, marginLeft:42, marginBottom:34, marginTop:14, marginRight:18,
+        style: baseStyle(ink, font),
+        x:{ tickFormat:"d", label:null, ticks:6, tickSize:0 },
+        y:{ label:"°C", grid:true, ticks:5, tickSize:0 },
+        marks:[
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.6, strokeDasharray:"3,3" }),
+          Plot.areaY(TEMP, { x:"year", y:"v", fill:red, fillOpacity:.10, curve:"catmull-rom" }),
+          Plot.lineY(TEMP, { x:"year", y:"v", stroke:red, strokeWidth:2.6, curve:"catmull-rom" }),
+          Plot.dot(TEMP, { x:"year", y:"v", fill:paper2, stroke:red, strokeWidth:1.8, r:3 }),
+          Plot.dot([last], { x:"year", y:"v", fill:red, r:5 }),
+          Plot.text([last], { x:"year", y:"v", text:d=>"+"+d.v.toFixed(2)+"°C", dy:-14, fill:red, fontWeight:700, fontSize:13 })
+        ]
+      });
+      plotInto("#tempChart", fig);
+    }
+
+    function renderDis(){
+      var box = $("#disChart"); if(!box || !window.Plot) return;
+      var cyan = cssVar("--green"), ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"),
+          font = "'IBM Plex Sans Thai', system-ui, sans-serif";
+      var W = Math.max(280, box.clientWidth || 520);
+      var fig = Plot.plot({
+        width:W, height:300, marginLeft:42, marginBottom:54, marginTop:14, marginRight:12,
+        style: baseStyle(ink, font),
+        x:{ label:null, tickSize:0 },
+        y:{ label:"เหตุ/ปี", grid:true, ticks:5, tickSize:0 },
+        marks:[
+          Plot.barY(DIS, { x:"type", y:"n", fill:cyan, rx:3, sort:{x:"-y"} }),
+          Plot.text(DIS, { x:"type", y:"n", text:d=>d.n, dy:-8, fill:inkSoft, fontWeight:700, fontSize:12 }),
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
+        ]
+      });
+      plotInto("#disChart", fig);
+    }
+
+    function renderMap(){
+      var box = $("#mapChart"); if(!box || !window.Plot) return;
+      if(!WORLD){ return; }
+      var ink = cssVar("--ink"), rule = cssVar("--rule"), red = cssVar("--red"),
+          paper3 = cssVar("--paper-3"), gold = cssVar("--gold"),
+          font = "'IBM Plex Sans Thai', system-ui, sans-serif";
+      var W = Math.max(300, box.clientWidth || 900);
+      var fig = Plot.plot({
+        width:W, height: Math.round(W*0.48),
+        style: baseStyle(ink, font),
+        projection:"equal-earth",
+        color:{ type:"sqrt", domain:[0,36], range:[paper3, red], unknown:"var(--paper-3)",
+                label:"CO₂ ตัน/คน", legend:true },
+        marks:[
+          Plot.sphere({ stroke:rule, strokeWidth:.6, fill:"none" }),
+          Plot.geo(WORLD.features, {
+            fill: d => (CO2[d.properties.name] != null ? CO2[d.properties.name] : null),
+            stroke: rule, strokeWidth:.4,
+            title: d => d.properties.name + (CO2[d.properties.name]!=null ? " — "+CO2[d.properties.name].toFixed(1)+" ตัน/คน" : " — ไม่มีข้อมูล")
+          }),
+          // ไฮไลต์ประเทศไทย
+          Plot.geo(WORLD.features.filter(d=>d.properties.name==="Thailand"), { stroke:gold, strokeWidth:2, fill:"none" })
+        ]
+      });
+      plotInto("#mapChart", fig);
+    }
+
+    function renderAll(){ renderTemp(); renderDis(); renderMap(); renderAseanAll(); }
+
+    /* ===================== แท็บอาเซียน (World Bank — live, ยิงตรง CORS) ===================== */
+    // ชื่อ EN ตรงกับ world-atlas (Natural Earth) เพื่อ join แผนที่ · สีประจำชาติสำหรับ treemap/เส้น
+    var ASEAN = [
+      { iso:"IDN", en:"Indonesia",   th:"อินโดนีเซีย", c:"#E2641F" },
+      { iso:"THA", en:"Thailand",    th:"ไทย",        c:"#0089A9" },
+      { iso:"SGP", en:"Singapore",   th:"สิงคโปร์",    c:"#7E5FC9" },
+      { iso:"MYS", en:"Malaysia",    th:"มาเลเซีย",    c:"#2E8C7C" },
+      { iso:"PHL", en:"Philippines", th:"ฟิลิปปินส์",  c:"#C2497E" },
+      { iso:"VNM", en:"Vietnam",     th:"เวียดนาม",    c:"#3D6FB4" },
+      { iso:"MMR", en:"Myanmar",     th:"เมียนมา",     c:"#B0822A" },
+      { iso:"KHM", en:"Cambodia",    th:"กัมพูชา",     c:"#0B5B73" },
+      { iso:"LAO", en:"Laos",        th:"ลาว",        c:"#996FBF" },
+      { iso:"BRN", en:"Brunei",      th:"บรูไน",       c:"#5B7384" }
+    ];
+    // ค่าสำรอง (โดยประมาณ World Bank ~2023) — เผื่อ fetch ไม่ติด/preview offline · gdp=พันล้าน$, pc=$, pop=ล้านคน
+    var FALL = {
+      IDN:{gdp:1371,pc:4900,pop:277,g:[[2019,5.0],[2020,-2.1],[2021,3.7],[2022,5.3],[2023,5.0]]},
+      THA:{gdp:515, pc:7200,pop:72, g:[[2019,2.2],[2020,-6.1],[2021,1.6],[2022,2.5],[2023,1.9]]},
+      SGP:{gdp:501, pc:84500,pop:5.9,g:[[2019,1.3],[2020,-3.9],[2021,9.7],[2022,3.6],[2023,1.1]]},
+      MYS:{gdp:400, pc:11600,pop:34, g:[[2019,4.4],[2020,-5.5],[2021,3.3],[2022,8.7],[2023,3.6]]},
+      PHL:{gdp:437, pc:3900,pop:117,g:[[2019,6.1],[2020,-9.5],[2021,5.7],[2022,7.6],[2023,5.5]]},
+      VNM:{gdp:430, pc:4300,pop:98, g:[[2019,7.4],[2020,2.9],[2021,2.6],[2022,8.0],[2023,5.0]]},
+      MMR:{gdp:65,  pc:1200,pop:54, g:[[2019,6.8],[2020,-1.2],[2021,-12.0],[2022,3.0],[2023,1.0]]},
+      KHM:{gdp:32,  pc:1900,pop:17, g:[[2019,7.1],[2020,-3.1],[2021,3.0],[2022,5.2],[2023,5.0]]},
+      LAO:{gdp:15,  pc:2100,pop:7.6,g:[[2019,5.5],[2020,0.5],[2021,2.5],[2022,2.7],[2023,3.7]]},
+      BRN:{gdp:15,  pc:33400,pop:0.45,g:[[2019,3.9],[2020,1.1],[2021,-1.6],[2022,-1.6],[2023,1.4]]}
+    };
+    var AD = {}; // asean data ปัจจุบัน (เริ่มจาก fallback แล้วให้ World Bank ทับ)
+    ASEAN.forEach(function(a){ var f=FALL[a.iso];
+      AD[a.iso]={ gdp:f.gdp, pc:f.pc, pop:f.pop, gr:f.g[f.g.length-1][1],
+                  growth:f.g.map(function(p){ return {year:p[0], v:p[1]}; }) }; });
+
+    function setTxt(s,v){ var e=$(s); if(e) e.textContent=v; }
+    function fmtUSD(b){ return b>=1000 ? "$"+(b/1000).toFixed(2)+" ล้านล้าน" : "$"+Math.round(b).toLocaleString("en-US")+" พันล้าน"; }
+    var FONT = "'IBM Plex Sans Thai', system-ui, sans-serif";
+
+    function renderAseanKpis(){
+      var pop=0, gdp=0;
+      ASEAN.forEach(function(a){ pop+=AD[a.iso].pop||0; gdp+=AD[a.iso].gdp||0; });
+      var rank = ASEAN.map(function(a){ return {iso:a.iso, gdp:AD[a.iso].gdp}; })
+        .sort(function(x,y){ return y.gdp-x.gdp; })
+        .findIndex(function(x){ return x.iso==="THA"; }) + 1;
+      setTxt("#kAseanPop", Math.round(pop).toLocaleString("en-US"));
+      setTxt("#kAseanGdp", (gdp/1000).toFixed(2));
+      setTxt("#kAseanRank", rank || "—");
+      setTxt("#kAseanThPc", "$"+Math.round(AD.THA.pc).toLocaleString("en-US"));
+    }
+
+    function renderAseanTreemap(){
+      var box=$("#aseanTreemap"); if(!box || !window.d3) return;
+      var W=Math.max(280, box.clientWidth||520), H=300; if(W<60) return;
+      var data={ name:"ASEAN", children: ASEAN.map(function(a){ return {name:a.th, value:AD[a.iso].gdp, color:a.c}; })
+        .filter(function(d){ return d.value>0; }) };
+      var root=d3.hierarchy(data).sum(function(d){ return d.value; }).sort(function(a,b){ return b.value-a.value; });
+      d3.treemap().size([W,H]).paddingInner(3).round(true)(root);
+      var NS="http://www.w3.org/2000/svg";
+      var svg=document.createElementNS(NS,"svg");
+      svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width","100%");
+      svg.style.height="auto"; svg.style.display="block"; svg.style.fontFamily=FONT;
+      root.leaves().forEach(function(l){
+        var w=l.x1-l.x0, h=l.y1-l.y0;
+        var g=document.createElementNS(NS,"g"); g.setAttribute("transform","translate("+l.x0+","+l.y0+")");
+        var r=document.createElementNS(NS,"rect");
+        r.setAttribute("width",w); r.setAttribute("height",h); r.setAttribute("rx","4");
+        r.setAttribute("fill",l.data.color); r.setAttribute("fill-opacity","0.88");
+        var ti=document.createElementNS(NS,"title"); ti.textContent=l.data.name+" — "+fmtUSD(l.data.value); r.appendChild(ti);
+        g.appendChild(r);
+        if(w>56 && h>30){
+          var t1=document.createElementNS(NS,"text"); t1.setAttribute("x",8); t1.setAttribute("y",20);
+          t1.setAttribute("fill","#fff"); t1.setAttribute("font-size","13.5"); t1.setAttribute("font-weight","700");
+          t1.textContent=l.data.name; g.appendChild(t1);
+          if(h>46){
+            var t2=document.createElementNS(NS,"text"); t2.setAttribute("x",8); t2.setAttribute("y",37);
+            t2.setAttribute("fill","rgba(255,255,255,.88)"); t2.setAttribute("font-size","11"); t2.setAttribute("font-weight","600");
+            t2.textContent=fmtUSD(l.data.value); g.appendChild(t2);
+          }
+        }
+        svg.appendChild(g);
+      });
+      box.innerHTML=""; box.appendChild(svg);
+    }
+
+    function renderAseanBars(){
+      var box=$("#aseanBars"); if(!box || !window.Plot) return;
+      var W=Math.max(280, box.clientWidth||520); if(W<60) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
+      var rows=ASEAN.map(function(a){ return {th:a.th, pc:AD[a.iso].pc}; }).filter(function(d){ return d.pc>0; });
+      var fig=Plot.plot({
+        width:W, height:320, marginLeft:80, marginRight:60, marginTop:8, marginBottom:30,
+        style: baseStyle(ink, FONT),
+        x:{ label:"US$ ต่อหัว", grid:true, tickFormat:"~s" }, y:{ label:null },
+        marks:[
+          Plot.barX(rows, { x:"pc", y:"th", sort:{y:"-x"}, rx:3,
+            fill:function(d){ return d.th==="ไทย" ? red : green; } }),
+          Plot.text(rows, { x:"pc", y:"th", text:function(d){ return "$"+Math.round(d.pc).toLocaleString("en-US"); },
+            textAnchor:"start", dx:4, fill:inkSoft, fontWeight:600, fontSize:11 }),
+          Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
+        ]
+      });
+      box.innerHTML=""; box.appendChild(fig);
+    }
+
+    function renderAseanGrowth(){
+      var box=$("#aseanGrowth"); if(!box || !window.Plot) return;
+      var W=Math.max(280, box.clientWidth||520); if(W<60) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
+      var data=[]; ASEAN.forEach(function(a){ (AD[a.iso].growth||[]).forEach(function(p){
+        data.push({ th:a.th, year:p.year, v:p.v }); }); });
+      if(!data.length){ box.innerHTML='<div class="state-msg err">โหลดข้อมูลการเติบโตไม่สำเร็จ</div>'; return; }
+      var fig=Plot.plot({
+        width:W, height:340, marginLeft:40, marginBottom:30, marginRight:104, marginTop:10,
+        style: baseStyle(ink, FONT),
+        x:{ label:null, tickFormat:"d", ticks:7 }, y:{ label:"% เติบโต", grid:true },
+        color:{ domain:ASEAN.map(function(a){return a.th;}), range:ASEAN.map(function(a){return a.c;}), legend:true },
+        marks:[
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.45 }),
+          Plot.lineY(data, { x:"year", y:"v", stroke:"th", strokeWidth:1.5, curve:"catmull-rom" }),
+          Plot.lineY(data.filter(function(d){ return d.th==="ไทย"; }),
+            { x:"year", y:"v", stroke:"th", strokeWidth:3.6, curve:"catmull-rom" })
+        ]
+      });
+      box.innerHTML=""; box.appendChild(fig);
+    }
+
+    function renderAseanMap(){
+      var box=$("#aseanMap"); if(!box || !window.Plot || !WORLD) return;
+      var W=Math.max(300, box.clientWidth||820); if(W<60) return;
+      var ink=cssVar("--ink"), rule=cssVar("--rule"), green=cssVar("--green"),
+          paper3=cssVar("--paper-3"), gold=cssVar("--gold");
+      var pcByName={}; ASEAN.forEach(function(a){ pcByName[a.en]=AD[a.iso].pc; });
+      var feats=WORLD.features.filter(function(f){ return pcByName[f.properties.name]!=null; });
+      if(!feats.length){ box.innerHTML='<div class="state-msg err">ไม่พบขอบเขตประเทศ</div>'; return; }
+      var fig=Plot.plot({
+        width:W, height:Math.round(W*0.62),
+        style: baseStyle(ink, FONT),
+        projection:{ type:"mercator", domain:{ type:"FeatureCollection", features:feats } },
+        color:{ type:"sqrt", range:[paper3, green], label:"GDP/หัว (US$)", legend:true, tickFormat:"~s" },
+        marks:[
+          Plot.geo(feats, { fill:function(d){ return pcByName[d.properties.name]; }, stroke:rule, strokeWidth:.5,
+            title:function(d){ return d.properties.name+" — $"+Math.round(pcByName[d.properties.name]).toLocaleString("en-US")+"/คน"; } }),
+          Plot.geo(feats.filter(function(d){ return d.properties.name==="Thailand"; }), { stroke:gold, strokeWidth:2.2, fill:"none" })
+        ]
+      });
+      box.innerHTML=""; box.appendChild(fig);
+    }
+
+    function renderAseanAll(){
+      if(!document.getElementById("pane-asean")) return;
+      renderAseanKpis(); renderAseanTreemap(); renderAseanBars(); renderAseanGrowth(); renderAseanMap();
+    }
+
+    // ดึง World Bank 10 ชาติพร้อมกัน (ยิงตรง CORS ได้) แล้วทับค่า fallback
+    function loadAsean(){
+      var codes="IDN;THA;SGP;MYS;PHL;VNM;MMR;KHM;LAO;BRN";
+      function u(ind, extra){ return "https://api.worldbank.org/v2/country/"+codes+"/indicator/"+ind+"?format=json&per_page=20000"+(extra||""); }
+      function applyMrnev(json, set){
+        if(!Array.isArray(json) || !Array.isArray(json[1])) return;
+        json[1].forEach(function(d){ var iso=d.countryiso3code; if(iso && AD[iso] && d.value!=null) set(iso, +d.value); });
+      }
+      Promise.all([
+        fetchJSON(u("NY.GDP.MKTP.CD","&mrnev=1")).catch(function(){ return null; }),
+        fetchJSON(u("NY.GDP.PCAP.CD","&mrnev=1")).catch(function(){ return null; }),
+        fetchJSON(u("SP.POP.TOTL","&mrnev=1")).catch(function(){ return null; }),
+        fetchJSON(u("NY.GDP.MKTP.KD.ZG","&date=2010:2024")).catch(function(){ return null; })
+      ]).then(function(r){
+        applyMrnev(r[0], function(iso,v){ AD[iso].gdp=v/1e9; });   // → พันล้าน$
+        applyMrnev(r[1], function(iso,v){ AD[iso].pc=v; });
+        applyMrnev(r[2], function(iso,v){ AD[iso].pop=v/1e6; });   // → ล้านคน
+        if(Array.isArray(r[3]) && Array.isArray(r[3][1])){
+          var by={}; r[3][1].forEach(function(d){ var iso=d.countryiso3code;
+            if(iso && AD[iso] && d.value!=null){ (by[iso]=by[iso]||[]).push({year:+d.date, v:+d.value}); } });
+          Object.keys(by).forEach(function(iso){
+            var s=by[iso].sort(function(a,b){ return a.year-b.year; });
+            if(s.length){ AD[iso].growth=s; AD[iso].gr=s[s.length-1].v; }
+          });
+        }
+        renderAseanAll();
+      });
+    }
+
+    /* ---------- โหลดแผนที่ฐานโลก ---------- */
+    function loadWorld(){
+      if(!window.d3 || !window.topojson){ $("#mapChart").innerHTML = '<div class="state-msg err">โหลดไลบรารีแผนที่ไม่สำเร็จ</div>'; return; }
+      d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+        .then(function(topo){
+          WORLD = topojson.feature(topo, topo.objects.countries);
+          renderMap();
+          renderAseanMap();
+        })
+        .catch(function(){ $("#mapChart").innerHTML = '<div class="state-msg err">เชื่อมต่อข้อมูลแผนที่ไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>'; });
+    }
+
+    /* ---------- แท็บ ---------- */
+    function initTabs(){
+      $$(".tab").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          $$(".tab").forEach(function(b){ b.classList.remove("active"); });
+          $$(".tabpane").forEach(function(p){ p.classList.remove("active"); });
+          btn.classList.add("active");
+          var pane = $("#pane-" + btn.getAttribute("data-pane"));
+          if(pane){ pane.classList.add("active"); }
+          afterPaint(renderAll); // กราฟ resize ตามความกว้างที่เพิ่งโผล่
+        });
+      });
+    }
+
+    /* ---------- รี-เรนเดอร์เมื่อสลับธีม / รีไซส์ ---------- */
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){ if(m.attributeName === "data-theme") afterPaint(renderAll); });
+    }).observe(document.documentElement, { attributes:true });
+
+    var rt;
+    window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(renderAll, 180); });
+
+    /* ---------- BOOT ---------- */
+    function boot(){
+      $$(".k-count").forEach(countUp);
+      initTabs();
+      afterPaint(function(){ renderTemp(); renderDis(); });
+      loadWorld();
+      loadAsean();
+    }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+    else boot();
+  })();
+  </script>
+
+  <script src="../js/theme-toggle-drag.js"></script>
+  <script src="../js/ai-chat.js"></script>
+</body>
+</html>
