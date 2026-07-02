@@ -324,9 +324,10 @@
     backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));
     box-shadow:var(--glass-shadow),var(--glass-inset);
   }
-  .side-switch{display:flex;flex-direction:column;gap:7px}
-  .snav{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;color:var(--ink-2);border:1px solid transparent;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
-  .snav:hover{background:var(--glass-bg-2);color:var(--ink);border-color:var(--glass-border-soft)}
+  /* กล่องเดียว มีปุ่มสลับ (สถิติข้อมูลรัฐ ↔ ศูนย์ข้อมูลโลก) อยู่ข้างในชุดเดียวกัน */
+  .side-switch{display:flex;flex-direction:column;gap:4px;padding:5px;border-radius:16px;background:var(--glass-bg-2);border:1px solid var(--glass-border-soft);box-shadow:var(--glass-inset)}
+  .snav{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:11px;color:var(--ink-2);border:1px solid transparent;transition:background .2s,color .2s,box-shadow .2s,border-color .2s}
+  .snav:hover{background:var(--glass-bg);color:var(--ink);border-color:var(--glass-border-soft)}
   .snav.active{background:var(--green);color:var(--paper);box-shadow:var(--glow-cyan);border-color:transparent}
   .snav.active small{color:rgba(255,255,255,.82)}
   .sn-ico{font-size:20px;line-height:1;flex:none}
