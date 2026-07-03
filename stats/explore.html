@@ -118,6 +118,29 @@
   .tilemap{width:100%;height:460px;position:relative;background:var(--paper-3);cursor:grab}
   .tilemap:active{cursor:grabbing}
   .tilemap svg{display:block;width:100%;height:100%}
+  /* ---------- แผนที่โลกเล่นย้อนเวลา (timelapse choropleth) ---------- */
+  .tl-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .tl-toolbar select{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--paper-3);border:1px solid var(--rule);border-radius:10px;padding:7px 12px;cursor:pointer}
+  .tl-btn{font-family:inherit;font-size:13px;font-weight:700;color:var(--ink-2);background:var(--paper-3);border:1px solid var(--rule);border-radius:10px;padding:7px 14px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+  .tl-btn:hover{border-color:var(--green);color:var(--green)}
+  .tl-btn.on{background:var(--green);color:var(--paper);border-color:var(--green)}
+  .tl-maps{display:grid;grid-template-columns:1fr;gap:14px}
+  .tl-maps.cmp{grid-template-columns:1fr 1fr}
+  .tl-map-wrap{position:relative}
+  .tl-map-yr{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2;font-family:"Archivo",sans-serif;font-weight:800;font-size:21px;color:var(--ink);background:var(--paper-2);padding:1px 13px;border-radius:20px;border:1px solid var(--rule);pointer-events:none}
+  .tl-legend{display:flex;justify-content:center;margin:10px 0 4px;overflow-x:auto}
+  .tl-player{display:flex;align-items:center;gap:14px;margin-top:10px}
+  .tl-play{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:var(--green);color:var(--paper);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-cyan);transition:transform .12s}
+  .tl-play:hover{transform:scale(1.08)}
+  .tl-year-lab{font-family:"Archivo",sans-serif;font-weight:800;font-size:15px;color:var(--green);min-width:46px;text-align:center;font-variant-numeric:tabular-nums}
+  .tl-slider{flex:1;accent-color:var(--green);height:6px;cursor:pointer;min-width:120px}
+  @media(max-width:640px){ .tl-maps.cmp{grid-template-columns:1fr} }
+  /* ---------- หัวเล่นไล่ปีบนกราฟเส้น/แท่งรายปี (year player) ---------- */
+  .yp-player{display:flex;align-items:center;gap:10px;margin-top:9px}
+  .yp-play{flex:none;width:30px;height:30px;border-radius:50%;border:none;background:var(--green);color:var(--paper);font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .12s}
+  .yp-play:hover{filter:brightness(1.12)}
+  .yp-range{flex:1;accent-color:var(--green);height:5px;cursor:pointer;min-width:90px}
+  .yp-yr{font-family:"Archivo",sans-serif;font-weight:800;font-size:12.5px;color:var(--green);min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
 
   /* ---------- ตารางข้อมูล (ใช้ในแท็บภูมิศาสตร์อาเซียน) ---------- */
   .tbl-wrap{overflow-x:auto}
@@ -822,10 +845,10 @@
         </div>
       </div>
       <div class="card full">
-        <div class="card-head"><h2>🚢 เส้นทางการค้าทางทะเลของโลก</h2><span class="tag">แผนที่ · เส้นทางเดินเรือ</span></div>
-        <p class="sub">เส้นโค้ง = เส้นทางเดินเรือขนส่งสินค้าหลักของโลก (great-circle) · จุดแดง = <b style="color:var(--red)">ช่องแคบ/คลองคอขวด</b> ที่การค้าโลกต้องผ่าน — ฮอร์มุซ มะละกา สุเอซ ปานามา ฯลฯ หากจุดใดติดขัดกระทบราคาน้ำมันและสินค้าทั่วโลกทันที · ชี้จุดเพื่อดูปริมาณ</p>
+        <div class="card-head"><h2>🚢 เส้นทางเดินเรือคอนเทนเนอร์ของโลก</h2><span class="tag">Container lanes · Natural Earth</span></div>
+        <p class="sub">เลนเรือขนส่งตู้คอนเทนเนอร์หลักของโลก — <b>ความหนา = ปริมาณ</b> · สีตามสถานะค่าระวาง: <b style="color:#1D9E75">เขียว ขาขึ้น</b> · <b style="color:#D85A30">ส้ม ขาลง</b> · <b style="color:#BA7517">แทน ทรงตัว</b> · <b style="color:#A32D2D">แดง (เส้นประ) ชะงัก</b> จากวิกฤตทะเลแดง/ปานามา · วงกลมขาว = ท่าเรือ (ฟ้า = แหลมฉบัง), สี่เหลี่ยมแดง = จุดคอขวด · ชี้เส้นเพื่อดูรายละเอียด</p>
         <div class="plot" id="seaRouteMap"><div class="state-msg">กำลังโหลดแผนที่โลก…</div></div>
-        <div class="src">เส้นทาง/จุดคอขวดเรียบเรียงจาก UNCTAD Review of Maritime Transport และ <a href="https://www.eia.gov/international/analysis/special-topics/World_Oil_Transit_Chokepoints" target="_blank" rel="noopener">EIA World Oil Transit Chokepoints ↗</a> · แผนที่ Natural Earth · ตำแหน่งโดยประมาณ</div>
+        <div class="src">เรียบเรียงสไตล์จาก Drewry World/Intra-Asia Container Index และสถานการณ์เส้นทางปี 2567–2569 (วิกฤตทะเลแดง / ภัยแล้งคลองปานามา) · ปรับจาก <a href="https://observablehq.com/d/4f3ee52b04234a5b" target="_blank" rel="noopener">Observable: Global Container Shipping Routes ↗</a> · แผนที่ Natural Earth · ตำแหน่งโดยประมาณ</div>
       </div>
     </section>
 
@@ -1052,6 +1075,36 @@
         <p class="sub">แผนที่สองตัวแปร — <b>ยิ่งไปทางขวา (เขียว–น้ำเงิน) = พื้นที่น้ำท่วมมาก</b> · <b>ยิ่งขึ้นบน (ชมพู–ม่วง) = ประชากรได้รับผลกระทบมาก</b> · มุมสีเข้มสุด = วิกฤตทั้งสองด้าน (ลุ่มเจ้าพระยา/อีสานตอนล่าง) · ชี้จังหวัดเพื่อดูค่า</p>
         <div class="biv-wrap"><div class="plot" id="floodBivMap"><div class="state-msg">กำลังวาดแผนที่…</div></div><div class="biv-legend" id="floodBivLegend"></div></div>
         <div class="src">เรียบเรียงจากสถิติพื้นที่ประสบอุทกภัย กรมป้องกันและบรรเทาสาธารณภัย (ปภ.) / GISTDA และข้อมูลประชากร — ค่าเชิงเปรียบเทียบโดยประมาณ · เทคนิคจาก <a href="https://observablehq.com/@d3/bivariate-choropleth" target="_blank" rel="noopener">@d3/bivariate-choropleth ↗</a> · รูปแผนที่จากหน้า ส.ส.</div>
+      </div>
+    </section>
+
+    <!-- ============ ศูนย์ข้อมูลโลก · แผนที่โลกเล่นย้อนเวลา + เทียบ 2 ปี (OWID live) ============ -->
+    <section class="tabpane" id="pane-world-timelapse" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title">🎞️ แผนที่โลกเล่นย้อนเวลา</h2></div>
+      <div class="card full">
+        <div class="card-head"><h2>🎞️ แผนที่โลกเปลี่ยนแปลงตามปี — กด ▶ เล่น</h2><span class="tag">OWID · สด</span></div>
+        <p class="sub">เลือกตัวชี้วัด แล้วกด <b>▶ เล่น</b> ให้แผนที่โลกไล่ปีเอง หรือลากสไลเดอร์ · กด <b>“⇄ เทียบ 2 ปี”</b> เพื่อวางแผนที่ปีเริ่มต้นเทียบกับปีปัจจุบันซ้าย-ขวา · ชี้ประเทศเพื่อดูค่า</p>
+        <div class="tl-toolbar">
+          <select id="tlMetric">
+            <option value="co2">🏭 CO₂ ปล่อยรวมต่อประเทศ</option>
+            <option value="co2pc">👤 CO₂ ต่อหัว</option>
+            <option value="pop">👪 ประชากร</option>
+            <option value="gdppc">💵 GDP ต่อหัว</option>
+          </select>
+          <button class="tl-btn" id="tlCompare">⇄ เทียบ 2 ปี</button>
+          <span class="tl-year-lab" id="tlRange" style="min-width:auto;color:var(--ink-soft);font-size:12px"></span>
+        </div>
+        <div class="tl-maps" id="tlMaps">
+          <div class="tl-map-wrap"><div class="tl-map-yr" id="tlYrA"></div><div class="plot" id="tlMapA"><div class="state-msg">กำลังโหลดข้อมูลโลก…</div></div></div>
+          <div class="tl-map-wrap" id="tlWrapB" hidden><div class="tl-map-yr" id="tlYrB"></div><div class="plot" id="tlMapB"></div></div>
+        </div>
+        <div class="tl-legend" id="tlLegend"></div>
+        <div class="tl-player">
+          <button class="tl-play" id="tlPlay" aria-label="เล่น/หยุด">▶</button>
+          <span class="tl-year-lab" id="tlYearLab">—</span>
+          <input type="range" class="tl-slider" id="tlYear" min="1900" max="2023" value="2023" />
+        </div>
+        <div class="src">ที่มา: <a href="https://ourworldindata.org" target="_blank" rel="noopener">Our World in Data ↗</a> (CO₂: Global Carbon Project · ประชากร/GDP: OWID/World Bank) · ดึงสด · แผนที่ Natural Earth</div>
       </div>
     </section>
 
@@ -2652,7 +2705,90 @@
     function plotInto(sel, figure){
       var box = $(sel); if(!box) return;
       box.innerHTML = ""; box.appendChild(figure);
+      maybeAttachYearPlayer(box, figure);
     }
+    function injectPlot(box, fig){
+      if(!box) return;
+      box.innerHTML = ""; box.appendChild(fig);
+      maybeAttachYearPlayer(box, fig);
+    }
+    /* ===== หัวเล่นไล่ปีอัตโนมัติ: ตรวจกราฟที่แกน x เป็น "ปี" แล้วเติม ▶ + สไลเดอร์ (เส้นค่อยๆ วาดถึงปีที่เล่น) ===== */
+    function ypIsYear(v){ return (v>=1500&&v<=2100)||(v>=2400&&v<=2600); } // รองรับทั้ง ค.ศ. และ พ.ศ.
+    function ypMainSvg(fig){
+      if(!fig) return null;
+      if(fig.tagName && fig.tagName.toLowerCase()==="svg") return fig;
+      var ss=fig.querySelectorAll?fig.querySelectorAll("svg"):[], best=null, bw=-1;
+      for(var i=0;i<ss.length;i++){ var s=ss[i], w=(s.width&&s.width.baseVal?s.width.baseVal.value:0); if(w>bw){ bw=w; best=s; } }
+      return best;
+    }
+    function maybeAttachYearPlayer(box, fig){
+      try{
+        if(!fig || typeof fig.scale!=="function") return;
+        var xs=fig.scale("x"); if(!xs || !xs.domain || xs.domain.length<2) return;
+        var dom=xs.domain, a=+dom[0], b=+dom[dom.length-1];
+        if(isNaN(a)||isNaN(b)||!ypIsYear(a)||!ypIsYear(b)) return;
+        var lo=Math.ceil(Math.min(a,b)), hi=Math.floor(Math.max(a,b));
+        if(hi-lo<4 || hi-lo>400) return;
+        attachYearPlayer(box, fig, xs, lo, hi);
+      }catch(e){}
+    }
+    function attachYearPlayer(box, fig, xs, lo, hi){
+      var svg=ypMainSvg(fig); if(!svg) return;
+      var W=(svg.width&&svg.width.baseVal?svg.width.baseVal.value:0)||box.clientWidth||800;
+      var H=(svg.height&&svg.height.baseVal?svg.height.baseVal.value:0)||300;
+      var rng=(typeof xs.range==="function")?xs.range():xs.range;
+      if(!rng||rng.length<2) rng=[0,W];
+      var a=+xs.domain[0], b=+xs.domain[xs.domain.length-1], d0=Math.min(a,b), d1=Math.max(a,b);
+      function px(y){
+        if(typeof xs.apply==="function"){ var p=xs.apply(y); if(p!=null&&!isNaN(p)) return p+(typeof xs.bandwidth==="function"?xs.bandwidth():0); }
+        return rng[0]+(y-d0)/((d1-d0)||1)*(rng[1]-rng[0]);
+      }
+      var st=box._yp||(box._yp={ year:hi, playing:false, timer:null });
+      st.lo=lo; st.hi=hi; if(st.year<lo||st.year>hi) st.year=hi;
+      var NS="http://www.w3.org/2000/svg";
+      var g=document.createElementNS(NS,"g"); g.setAttribute("class","yp-ov"); g.style.pointerEvents="none";
+      var mask=document.createElementNS(NS,"rect"); mask.setAttribute("y","0"); mask.setAttribute("height",H); mask.setAttribute("fill",cssVar("--paper-2"));
+      var line=document.createElementNS(NS,"line"); line.setAttribute("y1","0"); line.setAttribute("y2",H); line.setAttribute("stroke",cssVar("--green")); line.setAttribute("stroke-width","1.5"); line.setAttribute("stroke-dasharray","3,3");
+      g.appendChild(mask); g.appendChild(line); svg.appendChild(g);
+      st.render=function(){
+        var full=st.year>=st.hi, x=px(st.year); if(x==null||isNaN(x)) x=rng[1];
+        mask.setAttribute("x",x); mask.setAttribute("width",Math.max(0,W-x)); mask.style.display=full?"none":"";
+        line.setAttribute("x1",x); line.setAttribute("x2",x); line.style.display=full?"none":"";
+      };
+      st.render();
+      ensureYearPlayerUI(box, st);
+    }
+    function ensureYearPlayerUI(box, st){
+      var ui=box._ypUI;
+      if(!ui){
+        ui=document.createElement("div"); ui.className="yp-player";
+        ui.innerHTML='<button class="yp-play" type="button" aria-label="เล่นไล่ปี">▶</button><input type="range" class="yp-range"><span class="yp-yr"></span>';
+        if(box.parentNode) box.parentNode.insertBefore(ui, box.nextSibling);
+        box._ypUI=ui;
+        var rng=ui.querySelector(".yp-range"), btn=ui.querySelector(".yp-play");
+        rng.addEventListener("input", function(){ st.year=Math.min(st.hi, Math.max(st.lo, +rng.value)); ypRefresh(box, st); });
+        btn.addEventListener("click", function(){ ypToggle(box, st); });
+      }
+      var r=ui.querySelector(".yp-range"); r.min=st.lo; r.max=st.hi; r.step=1; r.value=st.year;
+      ui.querySelector(".yp-yr").textContent=st.year;
+      if(!st.playing) ui.querySelector(".yp-play").textContent="▶";
+    }
+    function ypRefresh(box, st){
+      if(st.render) st.render();
+      if(box._ypUI){ box._ypUI.querySelector(".yp-yr").textContent=st.year; box._ypUI.querySelector(".yp-range").value=st.year; }
+    }
+    function ypToggle(box, st){
+      if(st.playing){ ypStop(box, st); return; }
+      st.playing=true; if(box._ypUI) box._ypUI.querySelector(".yp-play").textContent="⏸";
+      st.year=st.lo; ypRefresh(box, st); // รีเซ็ตไปปีเริ่มต้นทุกครั้งที่กดเล่น
+      st.timer=setInterval(function(){
+        if(box.offsetParent===null){ ypStop(box, st); return; }
+        st.year++;
+        if(st.year>=st.hi){ st.year=st.hi; ypRefresh(box, st); ypStop(box, st); return; }
+        ypRefresh(box, st);
+      }, 300);
+    }
+    function ypStop(box, st){ st.playing=false; if(st.timer) clearInterval(st.timer); st.timer=null; if(box._ypUI) box._ypUI.querySelector(".yp-play").textContent="▶"; }
     function baseStyle(ink, font){ return { background:"transparent", color:ink, fontFamily:font, fontSize:"12px", overflow:"visible" }; }
 
     function renderTemp(){
@@ -2745,7 +2881,7 @@
           Plot.text([last], { x:"year", y:"v", text:d=>"+"+Math.round(d.v)+" มม.", dy:-12, textAnchor:"end", fill:red, fontWeight:700, fontSize:12 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function setSinkingKpis(){
       if(!SEA_LEVEL || !SEA_LEVEL.length) return;
@@ -2768,7 +2904,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderArctic(){
@@ -2791,7 +2927,7 @@
           Plot.text(lastMin, { x:"year", y:"v", text:d=>d.v.toFixed(2), dy:-10, fill:red, fontWeight:700, fontSize:11 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function setIceKpis(){
       if(!ARCTIC || !ARCTIC.length) return;
@@ -2817,7 +2953,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     /* ===== คลื่นความร้อน + PM2.5 (Open-Meteo สด) ===== */
@@ -2839,7 +2975,7 @@
         marks:[ Plot.cell(HEAT_CAL, { x:"month", y:"year", fill:"v", inset:0.5,
           title:function(d){ return THMON[d.month-1]+" "+d.year+" — "+d.v.toFixed(1)+"°C"; } }) ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderHotDays(){
       var box=$("#hotDaysChart"); if(!box || !window.Plot) return;
@@ -2858,7 +2994,7 @@
           Plot.text([last], { x:"year", y:"n", text:d=>d.n+" วัน", dy:-12, textAnchor:"end", fill:red, fontWeight:700, fontSize:12 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function setHeatKpis(){
       setTxt("#kHeatMax", HEAT_MAX.v.toFixed(1)); setTxt("#kHeatMaxDate", HEAT_MAX.date);
@@ -2881,7 +3017,7 @@
           Plot.lineY(PM25, { x:"date", y:"v", stroke:"city", strokeWidth:1.4, curve:"catmull-rom" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function setPmKpis(){
       setTxt("#kPmMax", Math.round(PM25_MAX.v));
@@ -2910,7 +3046,7 @@
             fill:"#fff", stroke:"rgba(0,0,0,.45)", strokeWidth:2, paintOrder:"stroke", fontSize:9.5, fontWeight:700 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderHeatMap(){
       renderCityMap("#heatMapChart", "t",
@@ -2939,7 +3075,7 @@
           Plot.sphere({ stroke:"#00000066", strokeWidth:.6 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderHeatField(){
       renderField("#heatFieldChart", TEMP_FIELD,
@@ -2951,7 +3087,7 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderMap(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); }
+    function renderAll(){ renderTemp(); renderDis(); renderMap(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderTimelapse(); }
 
     /* ===================== แท็บอาเซียน (World Bank — live, ยิงตรง CORS) ===================== */
     // ชื่อ EN ตรงกับ world-atlas (Natural Earth) เพื่อ join แผนที่ · สีประจำชาติสำหรับ treemap/เส้น
@@ -3052,7 +3188,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderAseanGrowth(){
@@ -3074,7 +3210,7 @@
             { x:"year", y:"v", stroke:"th", strokeWidth:3.6, curve:"catmull-rom" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderAseanMap(){
@@ -3096,7 +3232,7 @@
           Plot.geo(feats.filter(function(d){ return d.properties.name==="Thailand"; }), { stroke:gold, strokeWidth:2.2, fill:"none" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     /* ===================== แท็บอาเซียน · การคอร์รัปชัน (CPI 2025 — curated) ===================== */
@@ -3127,7 +3263,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderCorRank(){
@@ -3149,7 +3285,7 @@
             textAnchor:"start", dx:10, fill:inkSoft, fontWeight:700, fontSize:11 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderCorMap(){
@@ -3171,7 +3307,7 @@
           Plot.geo(feats.filter(function(d){ return d.properties.name==="Thailand"; }), { stroke:gold, strokeWidth:2.2, fill:"none" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderCorruptAll(){
@@ -3211,7 +3347,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderMilTroops(){
@@ -3232,7 +3368,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderMilRank(){
@@ -3255,7 +3391,7 @@
             textAnchor:"start", dx:10, fill:inkSoft, fontWeight:700, fontSize:11 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderMilAll(){
@@ -3335,7 +3471,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderGeoMap(){
@@ -3362,7 +3498,7 @@
             stroke:cssVar("--paper"), strokeWidth:3, paintOrder:"stroke" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
 
     function renderGeoTable(){
@@ -3415,7 +3551,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function byYear(a,b){ return a.year-b.year; }
 
@@ -3442,7 +3578,7 @@
           Plot.dot(data.filter(function(d){ return d.who==="ไทย"; }), { x:"year", y:"v", r:2.6, fill:red })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderInfThai(){
       var box=$("#infThai"); if(!box || !window.Plot) return;
@@ -3458,7 +3594,7 @@
             title:function(d){ return d.year+": "+d.v.toFixed(1)+"%"; } })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderInfAsean(){
       var rows=ASEAN.map(function(a){ return {k:a.th, v:INF_ASEAN[a.iso], hl:a.iso==="THA"}; })
@@ -3492,7 +3628,7 @@
             fill:ink, fontWeight:700, fontSize:10.5, stroke:paper, strokeWidth:3, paintOrder:"stroke" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderHdComp(){ hbarChart("#hdComp", HD_COMP.slice(), { h:280, ml:120, xlab:"% ของหนี้ครัวเรือน", fmt:function(v){ return v.toFixed(1)+"%"; } }); }
     function renderHdIntl(){ hbarChart("#hdIntl", HD_INTL.slice(), { h:320, xlab:"หนี้ครัวเรือน (% ของ GDP)", fmt:function(v){ return v+"%"; } }); }
@@ -3523,7 +3659,7 @@
           Plot.dot(PUB_HIST, { x:"year", y:"v", r:2.4, fill:red })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderPubAsean(){ hbarChart("#pubAsean", PUB_ASEAN.slice(), { h:320, xlab:"หนี้สาธารณะ (% ของ GDP)", fmt:function(v){ return v+"%"; } }); }
     function renderPubIntl(){ hbarChart("#pubIntl", PUB_INTL.slice(), { h:440, xlab:"หนี้สาธารณะ (% ของ GDP)", fmt:function(v){ return v+"%"; } }); }
@@ -3562,7 +3698,7 @@
             fill:ink, fontWeight:700, fontSize:10.5, stroke:paper, strokeWidth:3, paintOrder:"stroke" })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderCrisis(){
       var box=$("#crisisBars"); if(!box || !window.Plot) return;
@@ -3579,7 +3715,7 @@
             dy:14, fill:inkSoft, fontWeight:700, fontSize:11 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderHistTable(){
       var box=$("#histTable"); if(!box) return;
@@ -3628,7 +3764,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      box.innerHTML=""; box.appendChild(fig);
+      injectPlot(box, fig);
     }
     function renderWPerAdult(){
       hbarChart("#wPerAdult", WEALTH_PA.slice(), { h:440, ml:120, xlab:"ความมั่งคั่งเฉลี่ยต่อผู้ใหญ่ (US$)", tf:"~s",
@@ -3844,6 +3980,7 @@
           renderHeatField();
           renderPmField();
           renderSeaRoutes();
+          renderTimelapse();
         })
         .catch(function(){ $("#mapChart").innerHTML = '<div class="state-msg err">เชื่อมต่อข้อมูลแผนที่ไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>'; });
     }
@@ -4283,57 +4420,83 @@
        ② นาฬิกาหนี้สหรัฐฯ (Treasury API)  ③ แผนที่น้ำท่วม bivariate
        ============================================================ */
 
-    /* ---- ① เส้นทางการค้าทางทะเลของโลก (Plot geo + great-circle) ---- */
-    var SEA_PORTS = {
-      shanghai:[121.5,31.2], busan:[129.0,35.1], singapore:[103.8,1.29], malacca:[100.8,2.5],
+    /* ---- ① แผนที่เส้นทางเดินเรือคอนเทนเนอร์โลก (ปรับจาก Observable "Global Container Shipping Routes" · D3 geoNaturalEarth1 · ล็อกสีตัวอย่าง) ---- */
+    var SR_PT = {
+      shanghai:[121.5,31.2], busan:[129.0,35.1], singapore:[103.8,1.29], laemchabang:[100.9,13.1],
       mumbai:[72.8,18.9], hormuz:[56.3,26.6], jebelali:[55.1,25.0], suez:[32.55,29.97],
       babelmandeb:[43.3,12.6], rotterdam:[4.1,51.95], hamburg:[9.9,53.5], gibraltar:[-5.6,36.0],
       goodhope:[18.5,-34.4], durban:[31.0,-29.9], santos:[-46.3,-24.0], panama:[-79.9,9.1],
       losangeles:[-118.2,33.7], newyork:[-74.0,40.6], sydney:[151.2,-33.9]
     };
-    // เลี่ยงเส้นข้ามเส้นแวง 180° (ทรานส์แปซิฟิก) เพื่อไม่ให้เส้นลากพาดจอ
-    var SEA_ROUTES = [
-      ["shanghai","singapore"],["busan","shanghai"],["singapore","malacca"],["malacca","mumbai"],
-      ["mumbai","hormuz"],["hormuz","jebelali"],["jebelali","babelmandeb"],["babelmandeb","suez"],
-      ["suez","gibraltar"],["gibraltar","rotterdam"],["rotterdam","hamburg"],["singapore","suez"],
-      ["shanghai","suez"],["losangeles","panama"],["panama","newyork"],["newyork","rotterdam"],
-      ["singapore","sydney"],["santos","goodhope"],["goodhope","durban"],["durban","singapore"],
-      ["gibraltar","newyork"],["singapore","hormuz"]
+    var SR_STAT = {
+      rising:   { c:"#1D9E75", th:"ค่าระวางขาขึ้น", dash:null },
+      falling:  { c:"#D85A30", th:"ค่าระวางขาลง", dash:null },
+      stable:   { c:"#BA7517", th:"ทรงตัว", dash:null },
+      disrupted:{ c:"#A32D2D", th:"ชะงัก/เลี่ยงเส้นทาง", dash:"7 4" }
+    };
+    var SR_ROUTES = [
+      { n:"เอเชีย–ยุโรป ผ่านสุเอซ/ทะเลแดง", s:"disrupted", w:7, wp:["shanghai","singapore","babelmandeb","suez","gibraltar","rotterdam"], d:"เลนใหญ่สุดของโลก — วิกฤตทะเลแดงทำเรือต้องเลี่ยง ค่าระวางผันผวนแรง" },
+      { n:"เอเชีย–ยุโรป อ้อมแหลมกู๊ดโฮป", s:"rising", w:4, wp:["singapore","goodhope","gibraltar","rotterdam"], d:"เส้นเลี่ยงสุเอซรอบแอฟริกา ไกลขึ้น ~10–14 วัน แต่ปริมาณพุ่งช่วงวิกฤต" },
+      { n:"ทรานส์แปซิฟิก เอเชีย–สหรัฐฯ ตะวันตก", s:"rising", w:7, wp:["shanghai","losangeles"], d:"เซี่ยงไฮ้–ลอสแอนเจลิส เส้นเลือดใหญ่การค้าเอเชีย–สหรัฐฯ ค่าระวางขาขึ้น" },
+      { n:"เอเชีย–สหรัฐฯ ตะวันออก ผ่านปานามา", s:"falling", w:5, wp:["shanghai","losangeles","panama","newyork"], d:"ผ่านคลองปานามา — ภัยแล้งจำกัดจำนวนเรือ/ระดับกินน้ำ" },
+      { n:"ทรานส์แอตแลนติก ยุโรป–สหรัฐฯ", s:"stable", w:4, wp:["rotterdam","newyork"], d:"รอตเทอร์ดาม–นิวยอร์ก ค่าระวางค่อนข้างทรงตัว" },
+      { n:"อินทรา-เอเชีย", s:"rising", w:6, wp:["busan","shanghai","laemchabang","singapore"], d:"การค้าภายในเอเชียโตต่อเนื่อง — ไทย (แหลมฉบัง) อยู่บนเส้นนี้" },
+      { n:"เอเชีย–อ่าวเปอร์เซีย ผ่านฮอร์มุซ", s:"stable", w:4, wp:["singapore","mumbai","hormuz","jebelali"], d:"สินค้า+พลังงานผ่านช่องแคบฮอร์มุซ" },
+      { n:"เอเชีย–ออสเตรเลีย", s:"stable", w:3, wp:["singapore","sydney"], d:"เอเชียตะวันออกเฉียงใต้–ออสเตรเลีย" },
+      { n:"อเมริกาใต้–เอเชีย", s:"rising", w:3, wp:["santos","goodhope","singapore"], d:"บราซิล (เกษตร/แร่) – เอเชีย" },
+      { n:"แอฟริกาใต้–เอเชีย", s:"stable", w:3, wp:["durban","mumbai","singapore"], d:"แอฟริกาใต้–เอเชียใต้/ตะวันออก" },
+      { n:"ยุโรป–อเมริกาใต้", s:"falling", w:3, wp:["gibraltar","santos"], d:"ยุโรป–บราซิล ผ่านแอตแลนติกใต้" },
+      { n:"แหลมฉบัง–ยุโรป (ไทยส่งออก)", s:"disrupted", w:4, wp:["laemchabang","singapore","babelmandeb","suez","rotterdam"], d:"เส้นส่งออกไทยไปยุโรป กระทบวิกฤตทะเลแดงเช่นกัน" }
     ];
-    var SEA_CHOKE = [
-      {k:"ฮอร์มุซ", ll:[56.3,26.6], d:"~20–21 ล้านบาร์เรล/วัน (~1 ใน 5 ของน้ำมันโลก)"},
-      {k:"มะละกา", ll:[100.8,2.5], d:"~23–25 ล้านบาร์เรล/วัน + การค้าเอเชียมหาศาล"},
-      {k:"สุเอซ", ll:[32.55,29.97], d:"~12–15% ของการค้าโลก เชื่อมเอเชีย–ยุโรป"},
-      {k:"บับเอลมันเดบ", ll:[43.3,12.6], d:"ประตูทะเลแดงสู่คลองสุเอซ"},
-      {k:"ปานามา", ll:[-79.9,9.1], d:"~5% ของการค้าโลก เชื่อม 2 มหาสมุทร"},
-      {k:"กู๊ดโฮป", ll:[18.5,-34.4], d:"เส้นทางเลี่ยงสุเอซรอบแอฟริกา"},
-      {k:"ยิบรอลตาร์", ll:[-5.6,36.0], d:"ประตูเมดิเตอร์เรเนียน–แอตแลนติก"}
+    var SR_PORTS = [
+      {n:"เซี่ยงไฮ้",ll:[121.5,31.2]},{n:"ปูซาน",ll:[129.0,35.1]},{n:"สิงคโปร์",ll:[103.8,1.29]},
+      {n:"แหลมฉบัง",ll:[100.9,13.1],th:1},{n:"รอตเทอร์ดาม",ll:[4.1,51.95]},{n:"ฮัมบวร์ค",ll:[9.9,53.5]},
+      {n:"ลอสแอนเจลิส",ll:[-118.2,33.7]},{n:"นิวยอร์ก",ll:[-74.0,40.6]},{n:"ดูไบ",ll:[55.1,25.0]},
+      {n:"มุมไบ",ll:[72.8,18.9]},{n:"ซานโตส",ll:[-46.3,-24.0]},{n:"เดอร์บัน",ll:[31.0,-29.9]},{n:"ซิดนีย์",ll:[151.2,-33.9]}
     ];
-    function greatCircle(a,b,n){ var f=d3.geoInterpolate(a,b), pts=[]; n=n||36; for(var i=0;i<=n;i++) pts.push(f(i/n)); return pts; }
+    var SR_CHOKE = [
+      {n:"ฮอร์มุซ",ll:[56.3,26.6]},{n:"มะละกา",ll:[100.8,2.5]},{n:"สุเอซ",ll:[32.55,29.97]},
+      {n:"บับเอลมันเดบ",ll:[43.3,12.6]},{n:"ปานามา",ll:[-79.9,9.1]},{n:"กู๊ดโฮป",ll:[18.5,-34.4]},{n:"ยิบรอลตาร์",ll:[-5.6,36.0]}
+    ];
     function renderSeaRoutes(){
-      var box=$("#seaRouteMap"); if(!box || !window.Plot || !WORLD || !window.d3) return;
-      var ink=cssVar("--ink"), red=cssVar("--red"), green=cssVar("--green"),
-          paper2=cssVar("--paper-2"), paper3=cssVar("--paper-3"), rule=cssVar("--rule");
-      var W=Math.max(300, box.clientWidth||900), H=Math.round(Math.min(W*0.52, 520));
-      var linePts=[];
-      SEA_ROUTES.forEach(function(r,idx){ var a=SEA_PORTS[r[0]], b=SEA_PORTS[r[1]]; if(!a||!b) return;
-        greatCircle(a,b,36).forEach(function(p){ linePts.push({lon:p[0], lat:p[1], g:idx}); }); });
-      var choke=SEA_CHOKE.map(function(c){ return {lon:c.ll[0], lat:c.ll[1], k:c.k, d:c.d}; });
-      var fig=Plot.plot({
-        width:W, height:H, marginLeft:0, marginRight:0, marginTop:0, marginBottom:0,
-        style: baseStyle(ink, FONT_W),
-        projection:{ type:"equal-earth", rotate:[-12,0] },
-        marks:[
-          Plot.sphere({ stroke:rule, fill:paper3, fillOpacity:.5 }),
-          Plot.geo(WORLD.features, { fill:paper2, stroke:rule, strokeWidth:.5 }),
-          Plot.line(linePts, { x:"lon", y:"lat", z:"g", stroke:green, strokeWidth:1.1, strokeOpacity:.55 }),
-          Plot.dot(choke, { x:"lon", y:"lat", r:5.5, fill:red, stroke:paper2, strokeWidth:1.3,
-            title:function(d){ return d.k+" — "+d.d; } }),
-          Plot.text(choke, { x:"lon", y:"lat", text:"k", dy:-11, fill:red, fontWeight:700, fontSize:10.5,
-            stroke:paper2, strokeWidth:2.6, paintOrder:"stroke" })
-        ]
+      var box=$("#seaRouteMap"); if(!box || !window.d3 || !WORLD) return; var d3=window.d3;
+      var W=Math.max(300, box.clientWidth||900), H=Math.round(W*0.52);
+      var OCEAN="#d6e8f5", LAND="#e8e6dc", LANDSTK="#cfcabb", GRAT="#b8cfe0", INK="#33404a";
+      var proj=d3.geoNaturalEarth1().scale(W/5.5).translate([W/2, H/2 + H*0.03]);
+      var path=d3.geoPath(proj);
+      box.innerHTML="";
+      var svg=d3.select(box).append("svg").attr("viewBox","0 0 "+W+" "+H)
+        .attr("width","100%").style("max-width",W+"px").style("height","auto").style("display","block").style("font-family",FONT_W);
+      svg.append("path").attr("d", path({type:"Sphere"})).attr("fill",OCEAN);
+      svg.append("path").attr("d", path(d3.geoGraticule10())).attr("fill","none").attr("stroke",GRAT).attr("stroke-width",0.5).attr("stroke-opacity",0.5);
+      svg.append("g").selectAll("path").data(WORLD.features).join("path").attr("d",path).attr("fill",LAND).attr("stroke",LANDSTK).attr("stroke-width",0.4);
+      function lineFor(wp){ var co=[]; for(var i=0;i<wp.length-1;i++){ var a=SR_PT[wp[i]], b=SR_PT[wp[i+1]]; if(!a||!b) continue; var f=d3.geoInterpolate(a,b); for(var j=0;j<=44;j++) co.push(f(j/44)); } return {type:"LineString",coordinates:co}; }
+      var rg=svg.append("g");
+      SR_ROUTES.forEach(function(r){
+        var st=SR_STAT[r.s]||SR_STAT.stable, dd=path(lineFor(r.wp)); if(!dd) return;
+        rg.append("path").attr("d",dd).attr("fill","none").attr("stroke",st.c).attr("stroke-width",r.w+4).attr("stroke-opacity",0.08).attr("stroke-linecap","round").attr("stroke-linejoin","round");
+        var mp=rg.append("path").attr("d",dd).attr("fill","none").attr("stroke",st.c).attr("stroke-width",r.w).attr("stroke-opacity",0.85).attr("stroke-linecap","round").attr("stroke-linejoin","round").style("cursor","pointer");
+        if(st.dash) mp.attr("stroke-dasharray",st.dash);
+        mp.append("title").text(r.n+" — "+st.th+"\n"+r.d);
       });
-      plotInto("#seaRouteMap", fig);
+      var cg=svg.append("g");
+      SR_CHOKE.forEach(function(c){ var p=proj(c.ll); if(!p) return;
+        cg.append("rect").attr("x",p[0]-3).attr("y",p[1]-3).attr("width",6).attr("height",6).attr("transform","rotate(45 "+p[0]+" "+p[1]+")").attr("fill","#A32D2D").attr("stroke","#fff").attr("stroke-width",1).append("title").text("จุดคอขวด: "+c.n);
+        cg.append("text").attr("x",p[0]).attr("y",p[1]-7).attr("text-anchor","middle").attr("fill","#A32D2D").style("font-size","9px").style("font-weight","800").text(c.n);
+      });
+      var pg=svg.append("g");
+      SR_PORTS.forEach(function(pt){ var p=proj(pt.ll); if(!p) return;
+        pg.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",3.6).attr("fill",pt.th?"#0089A9":"#fff").attr("stroke","#334").attr("stroke-width",1.1).append("title").text("ท่าเรือ: "+pt.n);
+        pg.append("text").attr("x",p[0]+5).attr("y",p[1]+3).attr("fill",INK).style("font-size","9.5px").style("font-weight",pt.th?"800":"600").text(pt.n);
+      });
+      var lg=svg.append("g").attr("transform","translate(12,"+(H-10)+")"), lx=0;
+      [["rising","ขาขึ้น"],["falling","ขาลง"],["stable","ทรงตัว"],["disrupted","ชะงัก(ทะเลแดง)"]].forEach(function(it){
+        var st=SR_STAT[it[0]];
+        var ln=lg.append("line").attr("x1",lx).attr("x2",lx+20).attr("y1",0).attr("y2",0).attr("stroke",st.c).attr("stroke-width",3.4).attr("stroke-linecap","round");
+        if(st.dash) ln.attr("stroke-dasharray","5 3");
+        lg.append("text").attr("x",lx+25).attr("y",3.5).attr("fill",INK).style("font-size","10px").style("font-weight","600").text(it[1]);
+        lx += 25 + it[1].length*6.6 + 16;
+      });
     }
 
     /* ---- ② นาฬิกาหนี้สหรัฐฯ (US Treasury FiscalData API — ทางการ ฟรี) ---- */
@@ -4570,6 +4733,142 @@
         }).catch(function(){});
     }
     function loadEnergy(){ loadElecMix(); loadOilPrice(); loadWaterAccess(); }
+
+    /* ---- 🎞️ แผนที่โลกเล่นย้อนเวลา + เทียบ 2 ปี (OWID live, โหลดต่อเมตริกแบบ lazy) ---- */
+    var TL_METRICS={
+      co2:   { slug:"annual-co2-emissions-per-country", kw:["emission","co2"], unit:"ตัน CO₂", minYear:1900, scheme:"reds" },
+      co2pc: { slug:"co-emissions-per-capita",         kw:["per_capita","emission"], unit:"ตัน/คน", minYear:1900, scheme:"oranges" },
+      pop:   { slug:"population",                       kw:["population"], unit:"คน", minYear:1900, scheme:"greens" },
+      gdppc: { slug:"gdp-per-capita-worldbank",         kw:["gdp"], unit:"US$", minYear:1990, scheme:"blues" }
+    };
+    // ชื่อ Natural Earth (WORLD) → ชื่อ OWID (แก้ที่ไม่ตรงกันบ่อยๆ)
+    var TL_ALIAS={ "United States of America":"United States","Dem. Rep. Congo":"Democratic Republic of Congo",
+      "Central African Rep.":"Central African Republic","S. Sudan":"South Sudan","Dominican Rep.":"Dominican Republic",
+      "Bosnia and Herz.":"Bosnia and Herzegovina","Eq. Guinea":"Equatorial Guinea","Solomon Is.":"Solomon Islands",
+      "W. Sahara":"Western Sahara","Falkland Is.":"Falkland Islands","Timor-Leste":"East Timor","eSwatini":"Eswatini",
+      "Côte d'Ivoire":"Cote d'Ivoire","Czechia":"Czechia","North Macedonia":"North Macedonia" };
+    var TL_CACHE={};
+    var tlState={ metric:"co2", year:2023, playing:false, compare:false, timer:null, minYear:1900, maxYear:2023 };
+
+    function tlFmt(v,m){
+      if(m.unit==="ตัน CO₂"){ return v>=1e9?(v/1e9).toFixed(2)+" พันล้านตัน":v>=1e6?(v/1e6).toFixed(1)+" ล้านตัน":Math.round(v).toLocaleString("en-US")+" ตัน"; }
+      if(m.unit==="คน"){ return v>=1e6?(v/1e6).toFixed(1)+" ล้านคน":Math.round(v).toLocaleString("en-US")+" คน"; }
+      if(m.unit==="US$"){ return "$"+Math.round(v).toLocaleString("en-US"); }
+      return v.toFixed(2)+" "+m.unit;
+    }
+    function tlColorSpec(packed,m){
+      return { type:"log", domain:[Math.max(packed.vmin, packed.vmax/1e6), packed.vmax], scheme:m.scheme, unknown:cssVar("--paper-3"), label:m.unit };
+    }
+    function tlLoadMetric(metric, cb){
+      if(TL_CACHE[metric]){ cb(TL_CACHE[metric]); return; }
+      var m=TL_METRICS[metric];
+      var url="https://ourworldindata.org/grapher/"+m.slug+".csv?csvType=full&useColumnShortNames=true";
+      fetchText(url).then(function(t){
+        var rows=parseCSV(t); if(!rows.length){ cb(null); return; }
+        var heads=Object.keys(rows[0]), valCol=null;
+        heads.forEach(function(h){ var l=h.toLowerCase(); if(l==="entity"||l==="code"||l==="year") return;
+          if(!valCol && m.kw.some(function(k){ return l.indexOf(k)>=0; })) valCol=h; });
+        if(!valCol) heads.forEach(function(h){ var l=h.toLowerCase(); if(!valCol && l!=="entity"&&l!=="code"&&l!=="year") valCol=h; });
+        var byYear={}, vmin=Infinity, vmax=-Infinity, yrs={};
+        rows.forEach(function(r){
+          var code=r.Code||r.code; if(!code || code.length!==3) return; // เฉพาะประเทศ (มี ISO3) ตัด World/ภูมิภาค/รายได้
+          var y=+(r.Year||r.year), v=parseFloat(r[valCol]);
+          if(!y||isNaN(v)||v<=0) return;
+          (byYear[y]||(byYear[y]={}))[r.Entity||r.entity]=v; yrs[y]=1;
+          if(v<vmin) vmin=v; if(v>vmax) vmax=v;
+        });
+        var years=Object.keys(yrs).map(Number).sort(function(a,b){ return a-b; });
+        if(!years.length){ cb(null); return; }
+        TL_CACHE[metric]={ years:years, byYear:byYear, vmin:vmin, vmax:vmax };
+        cb(TL_CACHE[metric]);
+      }).catch(function(){ cb(null); });
+    }
+    function tlNearestYear(packed, y){
+      if(packed.byYear[y]) return y;
+      var best=packed.years[0], bd=1e9;
+      packed.years.forEach(function(yy){ var d=Math.abs(yy-y); if(d<bd){ bd=d; best=yy; } });
+      return best;
+    }
+    function tlDrawMap(sel, packed, year, m){
+      var box=$(sel); if(!box || !window.Plot || !WORLD) return;
+      var ink=cssVar("--ink"), rule=cssVar("--rule");
+      var W=Math.max(240, box.clientWidth || (tlState.compare?420:820));
+      var data=packed.byYear[year]||{};
+      var fig=Plot.plot({
+        width:W, height:Math.round(W*0.5), marginLeft:0, marginRight:0, marginTop:0, marginBottom:0,
+        projection:{ type:"equal-earth" }, style: baseStyle(ink, FONT_W),
+        color: tlColorSpec(packed,m),
+        marks:[
+          Plot.sphere({ stroke:rule, strokeWidth:.5 }),
+          Plot.geo(WORLD.features, {
+            fill:function(f){ var v=data[TL_ALIAS[f.properties.name]||f.properties.name]; return (v==null?undefined:v); },
+            stroke:rule, strokeWidth:.3,
+            title:function(f){ var nm=f.properties.name, v=data[TL_ALIAS[nm]||nm]; return nm+(v==null?" — ไม่มีข้อมูล":" — "+tlFmt(v,m)); }
+          })
+        ]
+      });
+      plotInto(sel, fig);
+    }
+    function tlDrawLegend(packed,m){
+      var box=$("#tlLegend"); if(!box || !window.Plot || !Plot.legend) return;
+      box.innerHTML="";
+      try{ box.appendChild(Plot.legend({ color: tlColorSpec(packed,m), width:340, style: baseStyle(cssVar("--ink"), FONT_W) })); }catch(e){}
+    }
+    function tlRedraw(){
+      var packed=TL_CACHE[tlState.metric]; if(!packed){ return; }
+      var m=TL_METRICS[tlState.metric];
+      if(tlState.compare){
+        var yA=tlNearestYear(packed, tlState.minYear), yB=tlNearestYear(packed, tlState.year);
+        setTxt("#tlYrA", yA); tlDrawMap("#tlMapA", packed, yA, m);
+        setTxt("#tlYrB", yB); tlDrawMap("#tlMapB", packed, yB, m);
+      } else {
+        var y=tlNearestYear(packed, tlState.year);
+        setTxt("#tlYrA", y); tlDrawMap("#tlMapA", packed, y, m);
+      }
+    }
+    function renderTimelapse(){
+      if(!document.getElementById("pane-world-timelapse")) return;
+      var m=TL_METRICS[tlState.metric];
+      tlLoadMetric(tlState.metric, function(packed){
+        var box=$("#tlMapA");
+        if(!packed){ if(box) box.innerHTML='<div class="state-msg err">โหลดข้อมูลไม่สำเร็จ — ลองเมตริกอื่น</div>'; return; }
+        var lo=Math.max(m.minYear, packed.years[0]), hi=packed.years[packed.years.length-1];
+        tlState.minYear=lo; tlState.maxYear=hi;
+        if(tlState.year<lo || tlState.year>hi) tlState.year=hi;
+        var sl=$("#tlYear"); if(sl){ sl.min=lo; sl.max=hi; sl.value=tlState.year; }
+        setTxt("#tlYearLab", tlState.year); setTxt("#tlRange", lo+"–"+hi+" · "+m.unit);
+        tlDrawLegend(packed, m);
+        tlRedraw();
+      });
+    }
+    function tlTogglePlay(){
+      if(tlState.playing){ tlStopPlay(); return; }
+      if(!TL_CACHE[tlState.metric]){ renderTimelapse(); }
+      tlState.playing=true; setTxt("#tlPlay","⏸");
+      tlState.year=tlState.minYear;                                   // รีเซ็ตไปปีเริ่มต้นทุกครั้งที่กดเล่น
+      var sl0=$("#tlYear"); if(sl0) sl0.value=tlState.year; setTxt("#tlYearLab", tlState.year); tlRedraw();
+      tlState.timer=setInterval(function(){
+        var pane=document.getElementById("pane-world-timelapse");
+        if(!pane || pane.offsetParent===null){ tlStopPlay(); return; } // หยุดเมื่อออกจากแท็บ
+        tlState.year++;
+        var sl=$("#tlYear"); if(sl) sl.value=tlState.year;
+        setTxt("#tlYearLab", tlState.year); tlRedraw();
+        if(tlState.year>=tlState.maxYear){ tlStopPlay(); }             // เล่นถึงปีล่าสุดแล้วหยุด
+      }, 420);
+    }
+    function tlStopPlay(){ tlState.playing=false; if(tlState.timer) clearInterval(tlState.timer); tlState.timer=null; setTxt("#tlPlay","▶"); }
+    function tlSetup(){
+      var pane=document.getElementById("pane-world-timelapse"); if(!pane || pane.dataset.wired) return; pane.dataset.wired="1";
+      var sel=$("#tlMetric"); if(sel) sel.addEventListener("change", function(){ tlState.metric=this.value; tlState.year=99999; tlStopPlay(); renderTimelapse(); });
+      var sl=$("#tlYear"); if(sl) sl.addEventListener("input", function(){ tlState.year=+this.value; setTxt("#tlYearLab", this.value); tlRedraw(); });
+      var pb=$("#tlPlay"); if(pb) pb.addEventListener("click", tlTogglePlay);
+      var cb=$("#tlCompare"); if(cb) cb.addEventListener("click", function(){
+        tlState.compare=!tlState.compare; this.classList.toggle("on", tlState.compare);
+        var wb=$("#tlWrapB"); if(wb) wb.hidden=!tlState.compare;
+        var mm=$("#tlMaps"); if(mm) mm.classList.toggle("cmp", tlState.compare);
+        tlRedraw();
+      });
+    }
 
     /* ================= กรุงเทพ (5 หัวข้อย่อย) — ข้อมูล curated อ้างอิงใต้กราฟ ================= */
     // ---- การจราจร ----
@@ -5441,7 +5740,8 @@
           { pane:"heat",     ico:"🔥", label:"คลื่นความร้อน", existing:true },
           { pane:"pm25",     ico:"🌫️", label:"ฝุ่น PM2.5", existing:true },
           { pane:"world-satellite", ico:"🛰️", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
-          { pane:"world-flood", ico:"🌊", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true }
+          { pane:"world-flood", ico:"🌊", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
+          { pane:"world-timelapse", ico:"🎞️", label:"แผนที่โลกเล่นย้อนเวลา", existing:true }
       ]},
       { id:"asean", ico:"🌏", label:"อาเซียน", subs:[
           { pane:"asean",          ico:"💰", label:"เศรษฐกิจ", existing:true },
@@ -5767,14 +6067,17 @@
           });
       }
 
+      // สังเกตทั้งเวที 3D และแผนที่ 2D — ให้ลูปเดินเมื่อ "อย่างใดอย่างหนึ่ง" อยู่ในจอ
+      // (แก้บั๊ก "เส้นแดงนิ่ง": เดิมดูแค่ #satStage → พอเลื่อนลงมาดูแผนที่ 2D ที่อยู่ใต้เวที เส้นทางแดงหยุดนิ่ง)
+      var seen={};
       var io=new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          visible=e.isIntersecting;
-          if(visible){ if(!started) init(); else if(ready) startLoop(); }
-          else stopLoop();
-        });
+        entries.forEach(function(e){ seen[e.target.id]=e.isIntersecting; });
+        visible = Object.keys(seen).some(function(k){ return seen[k]; });
+        if(visible){ if(!started) init(); else if(ready) startLoop(); }
+        else stopLoop();
       },{threshold:0.01});
       io.observe(stage);
+      var mapEl=document.getElementById("satMap"); if(mapEl) io.observe(mapEl);
       window.addEventListener("resize", function(){ if(ready) resize(); });
     }
 
@@ -5791,6 +6094,7 @@
         renderFinanceAll();
         renderEnergyAll();
         renderFloodBiv();
+        tlSetup(); renderTimelapse();
       });
       loadWorld();
       loadAsean();
