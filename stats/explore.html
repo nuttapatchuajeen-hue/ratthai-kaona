@@ -2143,6 +2143,39 @@
       </div>
     </section>
 
+    <!-- ============ เศรษฐกิจไทย · โครงสร้าง GDP รายภาค (Animated Treemap) ============ -->
+    <section class="tabpane" id="pane-te-gdpstruct" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เศรษฐกิจไทย</span><h2 class="ph-title">🧩 โครงสร้าง GDP รายภาค</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🛎️ ภาคบริการ</div>
+          <div class="k-num">≈57<span class="u">% ของ GDP</span></div>
+          <div class="k-sub">เครื่องยนต์ที่ใหญ่ที่สุด — ค้าปลีก ท่องเที่ยว การเงิน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏭 อุตสาหกรรมการผลิต</div>
+          <div class="k-num">≈26<span class="u">%</span></div>
+          <div class="k-sub">ก้อนเดียวที่ใหญ่สุด แต่ส่วนแบ่งค่อย ๆ ลดลง</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌾 ภาคเกษตร</div>
+          <div class="k-num">≈8.7<span class="u">%</span></div>
+          <div class="k-sub">มูลค่าน้อย แต่ใช้แรงงานถึงราว 1 ใน 3 ของประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🦠 แผลจากโควิด</div>
+          <div class="k-num">−68<span class="u">% (2564)</span></div>
+          <div class="k-sub">ที่พัก-อาหารหดหนักสุด ก่อนฟื้นกลับในปี 2566–2567</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🧩 โครงสร้างเศรษฐกิจไทยเปลี่ยนไปอย่างไร (2560→2567)</h2><span class="tag">มูลค่าเพิ่ม · พันล้านบาท</span></div>
+        <p class="sub">แต่ละช่องคือสาขาเศรษฐกิจ · ขนาด = มูลค่าเพิ่มของสาขานั้น · กด <b>▶</b> เพื่อเล่นไล่ทีละปี แล้วดูช่องค่อย ๆ ขยาย/ย่อ — สังเกต "ที่พัก & บริการด้านอาหาร" หดวูบช่วงโควิด (2563–2564) แล้วพองกลับ · <span style="color:#2E9E5B;font-weight:700">■</span> เกษตร · <span style="color:#2B7FC4;font-weight:700">■</span> อุตสาหกรรม · <span style="color:#D98A2B;font-weight:700">■</span> บริการ</p>
+        <div class="plot" id="teGdpTreemap"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.nesdc.go.th/main.php?filename=qgdp_page" target="_blank" rel="noopener">สศช. (NESDC) — GDP รายสาขาการผลิต ↗</a> · มูลค่าเพิ่ม ณ ราคาประจำปี (โดยประมาณ อิงสัดส่วนจริง) · สืบค้นเมื่อ 3 ก.ค. 2569</div>
+      </div>
+    </section>
+
     <!-- ============ เศรษฐกิจไทย · ดัชนีนวัตกรรมโลก [GII] ============ -->
     <section class="tabpane" id="pane-te-gii" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">เศรษฐกิจไทย</span><h2 class="ph-title">💡 ดัชนีนวัตกรรมโลก [GII]</h2></div>
@@ -2791,13 +2824,62 @@
     function ypStop(box, st){ st.playing=false; if(st.timer) clearInterval(st.timer); st.timer=null; if(box._ypUI) box._ypUI.querySelector(".yp-play").textContent="▶"; }
     function baseStyle(ink, font){ return { background:"transparent", color:ink, fontFamily:font, fontSize:"12px", overflow:"visible" }; }
 
+    /* ===== hover tooltip (crosshair) แบบ OWID — เติมอัตโนมัติให้กราฟเส้น/พื้นที่/จุดทุกอันผ่าน plotT() =====
+       ห่อ plotT(): ตรวจ mark เส้น/พื้นที่/จุดที่มีแกน x&y เป็นข้อมูล แล้วเติม 3 mark ที่ทำงานตาม Plot.pointerX
+       (เส้น crosshair แนวตั้ง + จุดไฮไลต์ + กล่อง tip ตรงจุดใกล้เมาส์ที่สุดตามแกนปี) — ข้ามแผนที่ (มี projection)
+       และกราฟที่ไม่มีแกน x/y เป็นค่าข้อมูล (แท่ง/แผนที่/treemap ฯลฯ จัดการต่างหาก) */
+    function _tipAcc(v){ return (typeof v==="function") ? v : function(d){ return d==null?null:d[v]; }; }
+    function _tipFmt(v){
+      if(v==null) return "—";
+      if(typeof v==="number"){ return (Math.abs(v)>=1000)? v.toLocaleString("en-US") : (Number.isInteger(v)? v : Math.round(v*100)/100); }
+      return String(v);
+    }
+    function tipify(opts){
+      try{
+        if(!opts || !opts.marks || opts.projection || opts.__notip) return opts;
+        var marks=opts.marks.filter(Boolean);
+        var prio={ line:4, area:3, dot:2 }, best=null, bp=-1;
+        marks.forEach(function(m){
+          if(!m || !m.data || !m.channels || !m.data.length) return;
+          var p=(prio[m.ariaLabel]!=null)?prio[m.ariaLabel]:-1; if(p<0) return;
+          if(!m.channels.x || !m.channels.y) return;
+          if(p>bp){ bp=p; best=m; }
+        });
+        if(!best) return opts;
+        var xv=best.channels.x.value, yv=best.channels.y.value;
+        var okv=function(v){ return typeof v==="string" || typeof v==="function"; };
+        if(!okv(xv) || !okv(yv)) return opts;
+        var xget=_tipAcc(xv), yget=_tipAcc(yv), data=best.data;
+        var sc=best.channels.stroke||best.channels.fill, sField=null;
+        if(sc && typeof sc.value==="string" && data.length && (sc.value in data[0])) sField=sc.value;
+        var sget=sField?_tipAcc(sField):null;
+        var inkSoft=cssVar("--ink-soft"), paper2=cssVar("--paper-2"), rule=cssVar("--rule"), ink=cssVar("--ink");
+        var ylab=(opts.y&&opts.y.label)||"";
+        function title(d){
+          var head=String(xget(d));
+          var lab= sget? String(sget(d)) : (ylab||"");
+          return head + "\n" + (lab? lab+": ":"") + _tipFmt(yget(d));
+        }
+        var P=window.Plot;
+        var add=[
+          P.ruleX(data, P.pointerX({ x:xv, stroke:inkSoft, strokeWidth:1, strokeOpacity:.5 })),
+          P.dot(data, P.pointerX({ x:xv, y:yv, r:4, fill:(sField||ink), stroke:paper2, strokeWidth:1.5 })),
+          P.tip(data, P.pointerX({ x:xv, y:yv, title:title, fill:paper2, stroke:rule, fontSize:12, fontFamily:FONT_W, textPadding:9 }))
+        ];
+        var no={}; for(var k in opts){ if(Object.prototype.hasOwnProperty.call(opts,k)) no[k]=opts[k]; }
+        no.marks=marks.concat(add);
+        return no;
+      }catch(e){ return opts; }
+    }
+    function plotT(opts){ var Pp=(window.Plot||{}).plot; return Pp ? Pp.call(window.Plot, tipify(opts)) : null; }
+
     function renderTemp(){
       var box = $("#tempChart"); if(!box || !window.Plot) return;
       var red = cssVar("--red"), ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"),
           rule = cssVar("--rule"), paper2 = cssVar("--paper-2"),
           font = "'IBM Plex Sans Thai', system-ui, sans-serif";
       var W = Math.max(280, box.clientWidth || 520), last = TEMP[TEMP.length-1];
-      var fig = Plot.plot({
+      var fig = plotT({
         width:W, height:300, marginLeft:42, marginBottom:34, marginTop:14, marginRight:18,
         style: baseStyle(ink, font),
         x:{ tickFormat:"d", label:null, ticks:6, tickSize:0 },
@@ -2819,7 +2901,7 @@
       var cyan = cssVar("--green"), ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"),
           font = "'IBM Plex Sans Thai', system-ui, sans-serif";
       var W = Math.max(280, box.clientWidth || 520);
-      var fig = Plot.plot({
+      var fig = plotT({
         width:W, height:300, marginLeft:42, marginBottom:54, marginTop:14, marginRight:12,
         style: baseStyle(ink, font),
         x:{ label:null, tickSize:0 },
@@ -2840,7 +2922,7 @@
           paper3 = cssVar("--paper-3"), gold = cssVar("--gold"),
           font = "'IBM Plex Sans Thai', system-ui, sans-serif";
       var W = Math.max(300, box.clientWidth || 900);
-      var fig = Plot.plot({
+      var fig = plotT({
         width:W, height: Math.round(W*0.48),
         style: baseStyle(ink, font),
         projection:"equal-earth",
@@ -2868,7 +2950,7 @@
       if(!SEA_LEVEL || !SEA_LEVEL.length) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red");
       var W=Math.max(300, box.clientWidth||900), last=SEA_LEVEL[SEA_LEVEL.length-1];
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:54, marginBottom:34, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
@@ -2894,7 +2976,7 @@
       var box=$("#riskChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(300, box.clientWidth||900);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:96, marginRight:60, marginTop:8, marginBottom:34,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ล้านคน", grid:true, tickSize:0 }, y:{ label:null },
@@ -2915,7 +2997,7 @@
       var mn=ARCTIC.filter(function(d){ return d.min!=null; }).map(function(d){ return {year:d.year, v:d.min, k:"ต่ำสุด (ก.ย.)"}; });
       var mx=ARCTIC.filter(function(d){ return d.max!=null; }).map(function(d){ return {year:d.year, v:d.max, k:"สูงสุด (มี.ค.)"}; });
       var all=mx.concat(mn), lastMin=mn.slice(-1);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:330, marginLeft:44, marginBottom:34, marginTop:14, marginRight:118,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
@@ -2943,7 +3025,7 @@
       var box=$("#iceMassChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:220, marginLeft:96, marginRight:70, marginTop:10, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"กิกะตัน/ปี (สูญเสีย)", grid:true, tickSize:0 }, y:{ label:null },
@@ -2966,7 +3048,7 @@
       var ink=cssVar("--ink");
       var W=Math.max(320, box.clientWidth||900);
       var seenY={}, nYears=0; HEAT_CAL.forEach(function(d){ if(!seenY[d.year]){ seenY[d.year]=1; nYears++; } });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height: Math.max(220, nYears*26+64), marginLeft:52, marginTop:10, marginBottom:30,
         style: baseStyle(ink, FONT_W),
         x:{ domain:[1,2,3,4,5,6,7,8,9,10,11,12], tickFormat:function(m){ return THMON[m-1]; }, label:null, tickSize:0 },
@@ -2982,7 +3064,7 @@
       if(!HOT_DAYS || !HOT_DAYS.length) return;
       var ink=cssVar("--ink"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900), last=HOT_DAYS[HOT_DAYS.length-1];
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:270, marginLeft:44, marginBottom:32, marginTop:14, marginRight:16,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, ticks:Math.min(12,HOT_DAYS.length), tickSize:0 },
@@ -3005,7 +3087,7 @@
       if(!PM25 || !PM25.length) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green"), gold=cssVar("--gold");
       var W=Math.max(320, box.clientWidth||900);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:46, marginBottom:30, marginTop:12, marginRight:96,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, ticks:6 },
@@ -3033,7 +3115,7 @@
         var v=(valKey==="t") ? (c.tv!=null?c.tv:c.t) : (c.pv!=null?c.pv:c.p);
         return {name:c.name, lon:c.lon, lat:c.lat, v:v};
       });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.98), marginLeft:0, marginRight:0, marginTop:6, marginBottom:6,
         style: baseStyle(ink, FONT_W),
         projection:{ type:"mercator", domain:THAI_GEO, inset:6 },
@@ -3064,7 +3146,7 @@
       if(!data || !data.length) return;
       var ink=cssVar("--ink");
       var W=Math.max(300, box.clientWidth||900);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.52), marginLeft:0, marginRight:0, marginTop:4, marginBottom:4,
         style: baseStyle(ink, FONT_W),
         projection:"equirectangular",
@@ -3176,7 +3258,7 @@
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var rows=ASEAN.map(function(a){ return {th:a.th, pc:AD[a.iso].pc}; }).filter(function(d){ return d.pc>0; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:80, marginRight:60, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"US$ ต่อหัว", grid:true, tickFormat:"~s" }, y:{ label:null },
@@ -3198,7 +3280,7 @@
       var data=[]; ASEAN.forEach(function(a){ (AD[a.iso].growth||[]).forEach(function(p){
         data.push({ th:a.th, year:p.year, v:p.v }); }); });
       if(!data.length){ box.innerHTML='<div class="state-msg err">โหลดข้อมูลการเติบโตไม่สำเร็จ</div>'; return; }
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:340, marginLeft:40, marginBottom:30, marginRight:104, marginTop:10,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d", ticks:7 }, y:{ label:"% เติบโต", grid:true },
@@ -3221,7 +3303,7 @@
       var pcByName={}; ASEAN.forEach(function(a){ pcByName[a.en]=AD[a.iso].pc; });
       var feats=WORLD.features.filter(function(f){ return pcByName[f.properties.name]!=null; });
       if(!feats.length){ box.innerHTML='<div class="state-msg err">ไม่พบขอบเขตประเทศ</div>'; return; }
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.62),
         style: baseStyle(ink, FONT),
         projection:{ type:"mercator", domain:{ type:"FeatureCollection", features:feats } },
@@ -3248,7 +3330,7 @@
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red"), gold=cssVar("--gold");
       var rows=ASEAN.map(function(a){ return {th:a.th, s:CPI[a.iso].s}; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:80, marginRight:40, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"คะแนน CPI (0–100)", grid:true, domain:[0,100] }, y:{ label:null },
@@ -3272,7 +3354,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red");
       var rows=ASEAN.map(function(a){ return {th:a.th, r:CPI[a.iso].r, c:a.c}; })
         .sort(function(x,y){ return x.r-y.r; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:80, marginRight:52, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"อันดับโลก (1 = โปร่งใสสุด)", grid:true, domain:[0,182] },
@@ -3296,7 +3378,7 @@
       var byName={}; ASEAN.forEach(function(a){ byName[a.en]=CPI[a.iso].s; });
       var feats=WORLD.features.filter(function(f){ return byName[f.properties.name]!=null; });
       if(!feats.length){ box.innerHTML='<div class="state-msg err">ไม่พบขอบเขตประเทศ</div>'; return; }
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.62),
         style: baseStyle(ink, FONT),
         projection:{ type:"mercator", domain:{ type:"FeatureCollection", features:feats } },
@@ -3335,7 +3417,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var rows=ASEAN.filter(function(a){ return MIL[a.iso]; })
         .map(function(a){ return {th:a.th, b:MIL[a.iso].bud}; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:80, marginRight:56, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"พันล้าน US$ ต่อปี", grid:true }, y:{ label:null },
@@ -3356,7 +3438,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var rows=ASEAN.filter(function(a){ return MIL[a.iso]; })
         .map(function(a){ return {th:a.th, t:MIL[a.iso].troops}; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:80, marginRight:64, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"ทหารประจำการ (นาย)", grid:true, tickFormat:"~s" }, y:{ label:null },
@@ -3378,7 +3460,7 @@
       var rows=ASEAN.filter(function(a){ return MIL[a.iso]; })
         .map(function(a){ return {th:a.th, r:MIL[a.iso].rank, c:a.c}; })
         .sort(function(x,y){ return x.r-y.r; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:330, marginLeft:80, marginRight:60, marginTop:8, marginBottom:34,
         style: baseStyle(ink, FONT),
         x:{ label:"อันดับโลก Global Firepower (1 = แข็งแกร่งสุด)", grid:true, domain:[0,145] },
@@ -3459,7 +3541,7 @@
       var rows=ASEAN.map(function(a){
         return {th:a.th, d: (AD[a.iso].pop*1e6) / GEO[a.iso].area };
       }).filter(function(d){ return d.d>0; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:80, marginRight:60, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:"คน/ตร.กม.", grid:true, tickFormat:"~s" }, y:{ label:null },
@@ -3483,7 +3565,7 @@
       var feats=WORLD.features.filter(function(f){ return areaByName[f.properties.name]!=null; });
       if(!feats.length){ box.innerHTML='<div class="state-msg err">ไม่พบขอบเขตประเทศ</div>'; return; }
       var caps=ASEAN.map(function(a){ return {cap:GEO[a.iso].cap, lon:GEO[a.iso].lon, lat:GEO[a.iso].lat}; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.62),
         style: baseStyle(ink, FONT),
         projection:{ type:"mercator", domain:{ type:"FeatureCollection", features:feats } },
@@ -3539,7 +3621,7 @@
       var box=$(sel); if(!box || !window.Plot) return;
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:opts.h||300, marginLeft:opts.ml||96, marginRight:opts.mr||64, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT),
         x:{ label:opts.xlab||null, grid:true, tickFormat:opts.tf }, y:{ label:null },
@@ -3548,7 +3630,8 @@
             fill:function(d){ return d.hl ? red : green; } }),
           Plot.text(rows, { x:"v", y:"k", text:function(d){ return opts.fmt ? opts.fmt(d.v) : d.v; },
             textAnchor:"start", dx:4, fill:inkSoft, fontWeight:600, fontSize:11 }),
-          Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
+          Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 }),
+          Plot.tip(rows, Plot.pointerY({ x:"v", y:"k", title:function(d){ return d.k+"\n"+(opts.fmt?opts.fmt(d.v):d.v); }, fill:cssVar("--paper-2"), stroke:cssVar("--rule"), fontSize:12, fontFamily:FONT, textPadding:9 }))
         ]
       });
       injectPlot(box, fig);
@@ -3567,7 +3650,7 @@
       var data=[];
       INF_TH.forEach(function(p){ data.push({who:"ไทย", year:p.year, v:p.v}); });
       INF_WLD.forEach(function(p){ data.push({who:"โลก", year:p.year, v:p.v}); });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:340, marginLeft:44, marginRight:74, marginBottom:30, marginTop:10,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d", ticks:8 }, y:{ label:"เงินเฟ้อ (%)", grid:true },
@@ -3584,7 +3667,7 @@
       var box=$("#infThai"); if(!box || !window.Plot) return;
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:40, marginRight:14, marginBottom:34, marginTop:10,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d" }, y:{ label:"เงินเฟ้อไทย (%)", grid:true },
@@ -3616,7 +3699,7 @@
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), paper=cssVar("--paper");
       var peak=HD_HIST.filter(function(d){ return d.v===95.5; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:40, marginRight:16, marginBottom:30, marginTop:14,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d", ticks:7 }, y:{ label:"% ของ GDP", grid:true, domain:[0,100] },
@@ -3646,7 +3729,7 @@
       var box=$("#pubLine"); if(!box || !window.Plot) return;
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), gold=cssVar("--gold"), paper=cssVar("--paper");
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:40, marginRight:16, marginBottom:30, marginTop:14,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d", ticks:7 }, y:{ label:"% ของ GDP", grid:true, domain:[0,80] },
@@ -3687,7 +3770,7 @@
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), paper=cssVar("--paper");
       var mark97=FX_THB.filter(function(d){ return d.year===1998; });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:40, marginRight:16, marginBottom:30, marginTop:14,
         style: baseStyle(ink, FONT),
         x:{ label:null, tickFormat:"d", ticks:7 }, y:{ label:"บาท / ดอลลาร์สหรัฐ", grid:true },
@@ -3704,7 +3787,7 @@
       var box=$("#crisisBars"); if(!box || !window.Plot) return;
       var W=Math.max(280, box.clientWidth||520); if(W<60) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green");
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:40, marginRight:14, marginBottom:34, marginTop:14,
         style: baseStyle(ink, FONT),
         x:{ label:null }, y:{ label:"GDP ไทยเติบโต (%)", grid:true },
@@ -3751,7 +3834,7 @@
         long.push({tier:t.k, kind:"% จำนวนคน", v:t.adults});
         long.push({tier:t.k, kind:"% ความมั่งคั่ง", v:t.wealth});
       });
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:360, marginLeft:140, marginRight:52, marginTop:10, marginBottom:34,
         style: baseStyle(ink, FONT),
         x:{ label:"สัดส่วน (%)", grid:true }, y:{ label:null, axis:null },
@@ -4114,7 +4197,7 @@
     function renderElecMix(){
       var box=$("#elecMixChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"); var W=Math.max(300, box.clientWidth||900);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:340, marginLeft:46, marginBottom:34, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, tickSize:0 },
@@ -4131,7 +4214,7 @@
       var box=$("#elecOwnerChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:240, marginLeft:150, marginBottom:32, marginTop:8, marginRight:64,
         style: baseStyle(ink, FONT_W),
         x:{ label:"MW", grid:true, tickSize:0 },
@@ -4211,7 +4294,7 @@
       var rows=ASEAN.map(function(a){ return {iso:a.iso, th:a.th, v:WATER_ACC[a.iso]}; })
         .filter(function(r){ return r.v!=null; }).sort(function(a,b){ return b.v-a.v; });
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:300, marginLeft:42, marginBottom:56, marginTop:16, marginRight:12,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickSize:0, tickRotate:-28 },
@@ -4228,7 +4311,7 @@
       var box=$("#waterPlantChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:240, marginLeft:150, marginBottom:32, marginTop:8, marginRight:56,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ล้าน ลบ.ม./วัน", grid:true, tickSize:0 },
@@ -4244,7 +4327,7 @@
       var box=$("#minProdChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:260, marginLeft:170, marginBottom:32, marginTop:8, marginRight:60,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ล้านตัน/ปี (สเกลรากที่สอง)", type:"sqrt", grid:true, tickSize:0 },
@@ -4260,7 +4343,7 @@
       var box=$("#minValueChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), gold=cssVar("--gold");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:260, marginLeft:170, marginBottom:32, marginTop:8, marginRight:56,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ของมูลค่ารวม", grid:true, tickSize:0 },
@@ -4288,7 +4371,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green");
       var W=Math.max(300, box.clientWidth||900), last=OIL_PRICE[OIL_PRICE.length-1];
       var band=bollingerBand(OIL_PRICE, 7, 1.5);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:320, marginLeft:50, marginBottom:34, marginTop:14, marginRight:20,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, tickSize:0 },
@@ -4309,7 +4392,7 @@
       var box=$("#refineryChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:260, marginLeft:150, marginBottom:32, marginTop:8, marginRight:52,
         style: baseStyle(ink, FONT_W),
         x:{ label:"พันบาร์เรล/วัน", grid:true, tickSize:0 },
@@ -4325,7 +4408,7 @@
       var box=$("#oilSupplyChart"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green");
       var W=Math.max(280, box.clientWidth||520);
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:260, marginLeft:44, marginBottom:34, marginTop:16, marginRight:12,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickSize:0 },
@@ -4530,7 +4613,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red");
       var data = US_DEBT.length? US_DEBT : US_DEBT_FALL;
       var W=Math.max(300, box.clientWidth||900), last=data[data.length-1];
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:290, marginLeft:54, marginBottom:34, marginTop:14, marginRight:22,
         style: baseStyle(ink, FONT_W),
         x:{ tickFormat:"d", label:null, tickSize:0 },
@@ -4794,7 +4877,7 @@
       var ink=cssVar("--ink"), rule=cssVar("--rule");
       var W=Math.max(240, box.clientWidth || (tlState.compare?420:820));
       var data=packed.byYear[year]||{};
-      var fig=Plot.plot({
+      var fig=plotT({
         width:W, height:Math.round(W*0.5), marginLeft:0, marginRight:0, marginTop:0, marginBottom:0,
         projection:{ type:"equal-earth" }, style: baseStyle(ink, FONT_W),
         color: tlColorSpec(packed,m),
@@ -4950,7 +5033,7 @@
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), paper2=cssVar("--paper-2");
       var W=Math.max(320, box.clientWidth||900);
       var peaks=BKK_TRAF_HOUR.filter(function(d){ return d.h===8 || d.h===18; });
-      plotInto("#bkkTrafHour", Plot.plot({
+      plotInto("#bkkTrafHour", plotT({
         width:W, height:300, marginLeft:42, marginBottom:34, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:"เวลา (นาฬิกา)", tickFormat:"d", ticks:12, tickSize:0 },
@@ -4968,7 +5051,7 @@
       var box=$("#bkkTrafVeh"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), paper2=cssVar("--paper-2");
       var W=Math.max(280, box.clientWidth||520), last=BKK_TRAF_VEH[BKK_TRAF_VEH.length-1];
-      plotInto("#bkkTrafVeh", Plot.plot({
+      plotInto("#bkkTrafVeh", plotT({
         width:W, height:250, marginLeft:40, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:7, tickSize:0 },
@@ -4985,7 +5068,7 @@
       var box=$("#bkkTrafRail"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkTrafRail", Plot.plot({
+      plotInto("#bkkTrafRail", plotT({
         width:W, height:250, marginLeft:118, marginRight:52, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"พันเที่ยว/วัน", grid:true, tickSize:0 }, y:{ label:null },
@@ -5000,7 +5083,7 @@
       var box=$("#bkkTrafWorld"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#bkkTrafWorld", Plot.plot({
+      plotInto("#bkkTrafWorld", plotT({
         width:W, height:280, marginLeft:110, marginRight:56, marginTop:8, marginBottom:34,
         style: baseStyle(ink, FONT_W),
         x:{ label:"นาที/10 กม. (เฉลี่ยทั้งวัน)", grid:true, tickSize:0 }, y:{ label:null },
@@ -5017,7 +5100,7 @@
       var box=$("#bkkEnvPm"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green"), gold=cssVar("--gold");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#bkkEnvPm", Plot.plot({
+      plotInto("#bkkEnvPm", plotT({
         width:W, height:290, marginLeft:42, marginBottom:32, marginTop:14, marginRight:16,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:function(m){ return THMON[m-1]; }, tickSize:0 },
@@ -5034,7 +5117,7 @@
       var box=$("#bkkEnvGreen"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkEnvGreen", Plot.plot({
+      plotInto("#bkkEnvGreen", plotT({
         width:W, height:250, marginLeft:74, marginRight:44, marginTop:8, marginBottom:34,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ตร.ม./คน", grid:true, tickSize:0 }, y:{ label:null },
@@ -5050,7 +5133,7 @@
       var box=$("#bkkEnvWaste"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkEnvWaste", Plot.plot({
+      plotInto("#bkkEnvWaste", plotT({
         width:W, height:250, marginLeft:118, marginRight:48, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% โดยน้ำหนัก", grid:true, tickSize:0 }, y:{ label:null },
@@ -5065,7 +5148,7 @@
       var box=$("#bkkEnvPmYear"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green"), paper2=cssVar("--paper-2");
       var W=Math.max(320, box.clientWidth||900), last=BKK_ENV_PMYEAR[BKK_ENV_PMYEAR.length-1];
-      plotInto("#bkkEnvPmYear", Plot.plot({
+      plotInto("#bkkEnvPmYear", plotT({
         width:W, height:250, marginLeft:40, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
@@ -5085,7 +5168,7 @@
       var box=$("#bkkSocPyr"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#bkkSocPyr", Plot.plot({
+      plotInto("#bkkSocPyr", plotT({
         width:W, height:330, marginLeft:52, marginRight:20, marginTop:10, marginBottom:34,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ประชากร", tickFormat:function(v){ return Math.abs(v); }, grid:true, tickSize:0 },
@@ -5101,7 +5184,7 @@
       var box=$("#bkkSocDensity"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkSocDensity", Plot.plot({
+      plotInto("#bkkSocDensity", plotT({
         width:W, height:280, marginLeft:128, marginRight:56, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"คน/ตร.กม.", grid:true, tickSize:0, tickFormat:"~s" }, y:{ label:null },
@@ -5116,7 +5199,7 @@
       var box=$("#bkkSocAge"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), gold=cssVar("--gold"), red=cssVar("--red"), paper2=cssVar("--paper-2");
       var W=Math.max(280, box.clientWidth||520), last=BKK_SOC_AGE[BKK_SOC_AGE.length-1];
-      plotInto("#bkkSocAge", Plot.plot({
+      plotInto("#bkkSocAge", plotT({
         width:W, height:280, marginLeft:40, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:7, tickSize:0 },
@@ -5136,7 +5219,7 @@
       var box=$("#bkkEconTour"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red"), paper2=cssVar("--paper-2");
       var W=Math.max(320, box.clientWidth||900), last=BKK_ECON_TOUR[BKK_ECON_TOUR.length-1];
-      plotInto("#bkkEconTour", Plot.plot({
+      plotInto("#bkkEconTour", plotT({
         width:W, height:290, marginLeft:40, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
@@ -5154,7 +5237,7 @@
       var box=$("#bkkEconWorld"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkEconWorld", Plot.plot({
+      plotInto("#bkkEconWorld", plotT({
         width:W, height:250, marginLeft:96, marginRight:48, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ล้านคน", grid:true, tickSize:0 }, y:{ label:null },
@@ -5169,7 +5252,7 @@
       var box=$("#bkkEconSector"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkEconSector", Plot.plot({
+      plotInto("#bkkEconSector", plotT({
         width:W, height:270, marginLeft:118, marginRight:44, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ของ GPP", grid:true, tickSize:0 }, y:{ label:null },
@@ -5186,7 +5269,7 @@
       var box=$("#bkkHlthDeath"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900), mx=BKK_HLTH_DEATH[0].v;
-      plotInto("#bkkHlthDeath", Plot.plot({
+      plotInto("#bkkHlthDeath", plotT({
         width:W, height:340, marginLeft:150, marginRight:56, marginTop:8, marginBottom:34,
         style: baseStyle(ink, FONT_W),
         x:{ label:"อัตราต่อประชากรแสนคน", grid:true, tickSize:0 }, y:{ label:null },
@@ -5201,7 +5284,7 @@
       var box=$("#bkkHlthRisk"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkHlthRisk", Plot.plot({
+      plotInto("#bkkHlthRisk", plotT({
         width:W, height:230, marginLeft:118, marginRight:48, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ของผู้ใหญ่", grid:true, tickSize:0, domain:[0,50] }, y:{ label:null },
@@ -5216,7 +5299,7 @@
       var box=$("#bkkHlthAware"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), rule=cssVar("--rule-strong");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#bkkHlthAware", Plot.plot({
+      plotInto("#bkkHlthAware", plotT({
         width:W, height:230, marginLeft:96, marginRight:20, marginTop:8, marginBottom:32,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ผู้ป่วย", grid:true, tickSize:0, domain:[0,100] }, y:{ label:null },
@@ -5311,7 +5394,7 @@
       var box=$(sel); if(!box || !window.Plot || !WORLD) return;
       var ink=cssVar("--ink"), rule=cssVar("--rule"), gold=cssVar("--gold");
       var W=Math.max(300, box.clientWidth||900);
-      plotInto(sel, Plot.plot({
+      plotInto(sel, plotT({
         width:W, height:Math.round(W*0.5),
         style: baseStyle(ink, FONT_W),
         projection:"equal-earth",
@@ -5335,7 +5418,7 @@
       var box=$(sel); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), c=opts.color||cssVar("--green"), paper2=cssVar("--paper-2");
       var W=Math.max(280, box.clientWidth|| (opts.full?900:520)), last=rows[rows.length-1];
-      plotInto(sel, Plot.plot({
+      plotInto(sel, plotT({
         width:W, height:opts.h||250, marginLeft:opts.ml||44, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:opts.ticks||7, tickSize:0 },
@@ -5357,7 +5440,7 @@
       var box=$("#gpoClimForest"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||520);
-      plotInto("#gpoClimForest", Plot.plot({
+      plotInto("#gpoClimForest", plotT({
         width:W, height:300, marginLeft:96, marginRight:46, marginTop:8, marginBottom:30,
         style: baseStyle(ink, FONT_W),
         x:{ label:"% ของแผ่นดิน", grid:true, tickSize:0, domain:[0,80] }, y:{ label:null },
@@ -5374,7 +5457,7 @@
       var box=$("#gpoPowerCycle"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), gold=cssVar("--gold"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#gpoPowerCycle", Plot.plot({
+      plotInto("#gpoPowerCycle", plotT({
         width:W, height:320, marginLeft:44, marginBottom:34, marginTop:14, marginRight:104,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
@@ -5390,7 +5473,7 @@
       var box=$("#gpoPowerRadar"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#gpoPowerRadar", Plot.plot({
+      plotInto("#gpoPowerRadar", plotT({
         width:W, height:420, marginLeft:132, marginRight:44, marginTop:10, marginBottom:30,
         style: baseStyle(ink, FONT_W),
         x:{ label:"ดัชนีอำนาจ (0–1)", grid:true, tickSize:0, domain:[0,1] },
@@ -5540,7 +5623,7 @@
       var box=$(sel); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(280, box.clientWidth||(opts.full?900:520)), last=rows[rows.length-1];
-      plotInto(sel, Plot.plot({
+      plotInto(sel, plotT({
         width:W, height:opts.h||250, marginLeft:opts.ml||46, marginBottom:32, marginTop:16, marginRight:16,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:function(d){ return d; }, tickSize:0 },
@@ -5548,7 +5631,8 @@
         marks:[
           Plot.barY(rows, { x:"year", y:"v", rx:3, fill:function(d){ return d===last?red:green; } }),
           Plot.text(rows, { x:"year", y:"v", text:function(d){ return opts.fmt?opts.fmt(d.v):d.v; }, dy:-7, fill:inkSoft, fontWeight:600, fontSize:10.5 }),
-          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 }),
+          Plot.tip(rows, Plot.pointerX({ x:"year", y:"v", title:function(d){ return d.year+"\n"+(opts.fmt?opts.fmt(d.v):d.v); }, fill:cssVar("--paper-2"), stroke:cssVar("--rule"), fontSize:12, fontFamily:FONT_W, textPadding:9 }))
         ]
       }));
     }
@@ -5556,7 +5640,7 @@
       var box=$("#teGiiRank"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), paper2=cssVar("--paper-2");
       var W=Math.max(320, box.clientWidth||900), last=TE_GII_RANK[TE_GII_RANK.length-1];
-      plotInto("#teGiiRank", Plot.plot({
+      plotInto("#teGiiRank", plotT({
         width:W, height:280, marginLeft:44, marginBottom:32, marginTop:14, marginRight:18,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
@@ -5573,7 +5657,7 @@
       var box=$("#teFactory"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#teFactory", Plot.plot({
+      plotInto("#teFactory", plotT({
         width:W, height:300, marginLeft:54, marginBottom:36, marginTop:16, marginRight:16,
         style: baseStyle(ink, FONT_W),
         x:{ axis:null },
@@ -5591,7 +5675,7 @@
       var box=$("#teCrisis2Income"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red"), gold=cssVar("--gold");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#teCrisis2Income", Plot.plot({
+      plotInto("#teCrisis2Income", plotT({
         width:W, height:320, marginLeft:52, marginBottom:34, marginTop:14, marginRight:96,
         style: baseStyle(ink, FONT_W),
         x:{ label:null, tickFormat:"d", ticks:6, tickSize:0 },
@@ -5603,6 +5687,144 @@
           Plot.text(TE_C2_INCOME.filter(function(d){ return d.year===2567; }), { x:"year", y:"v", text:"c", textAnchor:"start", dx:6, fill:"c", fontWeight:700, fontSize:11 })
         ]
       }));
+    }
+
+    /* ===== 🧩 โครงสร้าง GDP รายภาค — Animated Treemap =====
+       พอร์ตสไตล์ notebook Observable "@observablehq/animated-treemap":
+       • d3.treemapResquarify + ลำดับเซลล์คงที่ → กด ▶ Play แล้วเซลล์ค่อย ๆ ขยาย/ย่อ/สลับที่ลื่น ๆ ไล่ทีละปี
+       • ปุ่ม ▶ + สไลเดอร์ปี (ใช้สไตล์ .yp-player เดียวกับกราฟอื่น) · มูลค่าเพิ่มรายสาขา (พันล้านบาท) โดยประมาณอิงสัดส่วน สศช. */
+    var GDPTM_YEARS=[2560,2561,2562,2563,2564,2565,2566,2567];
+    function gdpSer(base, g, cov){
+      var a=[], v=base;
+      for(var i=0;i<GDPTM_YEARS.length;i++){
+        if(i>0) v=v*(1+g);
+        var f=(cov&&cov[i]!=null)?cov[i]:1;
+        a.push(Math.round(v*f));
+      }
+      return a;
+    }
+    // cov = ตัวคูณระดับเฉพาะปี (index ในอาเรย์) เพื่อจำลองผลกระทบโควิด/ราคา แล้วกลับสู่แนวโน้มปีถัดไป
+    var GDPTM_DATA=[
+      { g:"เกษตร",       name:"เกษตร ป่าไม้ ประมง",           vals:gdpSer(1180, 0.030, {5:1.08,6:1.05}) },
+      { g:"อุตสาหกรรม",  name:"อุตสาหกรรมการผลิต",             vals:gdpSer(3850, 0.015, {3:0.93,4:0.99}) },
+      { g:"อุตสาหกรรม",  name:"เหมืองแร่ & เหมืองหิน",          vals:gdpSer(470, -0.020, {5:1.15,6:1.05}) },
+      { g:"อุตสาหกรรม",  name:"ก่อสร้าง",                       vals:gdpSer(430,  0.020, {3:0.95}) },
+      { g:"อุตสาหกรรม",  name:"ไฟฟ้า ก๊าซ & ประปา",            vals:gdpSer(360,  0.030, null) },
+      { g:"บริการ",      name:"ค้าส่ง & ค้าปลีก",               vals:gdpSer(2280, 0.030, {3:0.96,4:0.99}) },
+      { g:"บริการ",      name:"การเงิน & ประกันภัย",            vals:gdpSer(980,  0.030, null) },
+      { g:"บริการ",      name:"ที่พัก & บริการด้านอาหาร",        vals:gdpSer(950,  0.030, {3:0.50,4:0.32,5:0.60,6:0.90}) },
+      { g:"บริการ",      name:"ขนส่ง & คลังสินค้า",             vals:gdpSer(780,  0.035, {3:0.78,4:0.74,5:0.90,6:0.98}) },
+      { g:"บริการ",      name:"บริหารราชการ & ป้องกันประเทศ",   vals:gdpSer(720,  0.035, null) },
+      { g:"บริการ",      name:"การศึกษา",                       vals:gdpSer(560,  0.020, null) },
+      { g:"บริการ",      name:"อสังหาริมทรัพย์",                vals:gdpSer(430,  0.030, {3:0.97}) },
+      { g:"บริการ",      name:"บริการอื่น ๆ",                    vals:gdpSer(400,  0.020, {3:0.85,4:0.85}) },
+      { g:"บริการ",      name:"ข้อมูล & การสื่อสาร",            vals:gdpSer(300,  0.060, null) },
+      { g:"บริการ",      name:"สาธารณสุข & สังคมสงเคราะห์",     vals:gdpSer(260,  0.055, {4:1.06}) }
+    ];
+    var GDPTM_GROUPS=[
+      { key:"เกษตร",      color:"#2E9E5B" },
+      { key:"อุตสาหกรรม", color:"#2B7FC4" },
+      { key:"บริการ",     color:"#D98A2B" }
+    ];
+    var GDPTM_NOTE={
+      2560:"ก่อนโควิด — บริการ & ท่องเที่ยวขยายตัวต่อเนื่อง",
+      2561:"ก่อนโควิด — บริการ & ท่องเที่ยวขยายตัวต่อเนื่อง",
+      2562:"ก่อนโควิด — ปีสุดท้ายก่อนโรคระบาด",
+      2563:"โควิด-19 ระบาด — ท่องเที่ยว/บริการเริ่มหดตัว",
+      2564:"จุดต่ำสุด — ที่พัก-อาหารหดกว่า 60%",
+      2565:"เริ่มฟื้น — ทยอยเปิดประเทศ",
+      2566:"ท่องเที่ยวกลับมา — ภาคบริการขยายอีกครั้ง",
+      2567:"โครงสร้างปัจจุบัน — ภาคบริการราว 57% ของ GDP"
+    };
+
+    function buildGdpTreemap(box){
+      var d3=window.d3;
+      var byG={}; GDPTM_DATA.forEach(function(l){ l._t=l.vals.reduce(function(a,b){ return a+b; },0); (byG[l.g]=byG[l.g]||[]).push(l); });
+      Object.keys(byG).forEach(function(k){ byG[k].sort(function(a,b){ return b._t-a._t; }); });
+      var groups=GDPTM_GROUPS.map(function(gm){
+        var lv=byG[gm.key]||[], n=lv.length;
+        return { name:gm.key, color:gm.color, _t:lv.reduce(function(a,l){ return a+l._t; },0),
+          children: lv.map(function(l,i){ return { name:l.name, gkey:gm.key, color:gm.color, vals:l.vals, leaf:true,
+            op: 0.94-(n>1?(i/(n-1)):0)*0.42 }; }) };
+      }).sort(function(a,b){ return b._t-a._t; });
+      var root=d3.hierarchy({ name:"GDP", children:groups }); // ไม่ sort → คงลำดับเดิม ให้ resquarify นิ่ง
+      var tm=d3.treemap().tile(d3.treemapResquarify).paddingInner(2.5).round(true);
+      var cid=0;
+
+      var svg=d3.select(box).html("").append("svg")
+        .attr("width","100%").style("height","auto").style("display","block").style("font-family",FONT_W);
+      var gRoot=svg.append("g");
+
+      // ปุ่ม ▶ + สไลเดอร์ปี (สไตล์เดียวกับ year-player ทั้งหน้า) แทรกใต้กราฟ
+      var ui=document.createElement("div"); ui.className="yp-player";
+      ui.innerHTML='<button class="yp-play" type="button" aria-label="เล่นไล่ปี">▶</button><input type="range" class="yp-range" aria-label="ปี"><span class="yp-yr"></span>';
+      if(box.parentNode) box.parentNode.insertBefore(ui, box.nextSibling);
+      var btn=ui.querySelector(".yp-play"), rng=ui.querySelector(".yp-range"), yrLab=ui.querySelector(".yp-yr");
+      rng.min=0; rng.max=GDPTM_YEARS.length-1; rng.step=1;
+      var note=document.createElement("div"); note.style.cssText="margin-top:6px;font-size:12px;color:var(--ink-soft);font-weight:600";
+      if(box.parentNode) box.parentNode.insertBefore(note, ui.nextSibling);
+
+      var st={ idx:GDPTM_YEARS.length-1, playing:false, timer:null };
+      function heightFor(W){ return Math.round(Math.max(340, Math.min(600, W*0.60))); }
+      function layout(idx,W,H){ tm.size([W,H]); root.sum(function(d){ return d.leaf?Math.max(0,d.vals[idx]):0; }); tm(root); return root.leaves(); }
+
+      function draw(animate){
+        var W=Math.max(220, box.clientWidth||820), H=heightFor(W);
+        svg.attr("viewBox","0 0 "+W+" "+H);
+        var leaves=layout(st.idx,W,H);
+        var total=d3.sum(leaves,function(d){ return d.value; });
+        var sep=cssVar("--paper-2")||"#ffffff", dur=animate?820:0;
+
+        var sel=gRoot.selectAll("g.tmleaf").data(leaves, function(d){ return d.data.name; });
+        var ent=sel.enter().append("g").attr("class","tmleaf")
+          .attr("transform", function(d){ return "translate("+d.x0+","+d.y0+")"; });
+        ent.each(function(d){ d.__cid="gdptm-c"+(cid++); });
+        ent.append("clipPath").attr("id", function(d){ return d.__cid; }).append("rect").attr("x",0).attr("y",0);
+        ent.append("rect").attr("class","tmrect").attr("rx",4)
+          .attr("fill", function(d){ return d.data.color; }).attr("fill-opacity", function(d){ return d.data.op; });
+        ent.append("title");
+        var tg=ent.append("g").attr("class","tmtext").attr("clip-path", function(d){ return "url(#"+d.__cid+")"; });
+        tg.append("text").attr("class","tmname").attr("x",7).attr("y",17).attr("fill","#fff").attr("font-size",12.5).attr("font-weight",700);
+        tg.append("text").attr("class","tmval").attr("x",7).attr("y",33).attr("fill","rgba(255,255,255,.92)").attr("font-size",11).attr("font-weight",600);
+
+        var all=ent.merge(sel);
+        all.select("rect.tmrect").attr("stroke",sep).attr("stroke-width",1);
+        all.select("title").text(function(d){ return d.data.name+" — "+Math.round(d.value).toLocaleString("en-US")+" พันล้านบาท ("+(total?d.value/total*100:0).toFixed(1)+"%)"; });
+        all.select("text.tmname").text(function(d){ var w=d.x1-d.x0,h=d.y1-d.y0; return (w>52&&h>24)?d.data.name:""; });
+        all.select("text.tmval").text(function(d){ var w=d.x1-d.x0,h=d.y1-d.y0; return (w>66&&h>42)?("฿"+Math.round(d.value).toLocaleString("en-US")+" • "+(total?d.value/total*100:0).toFixed(1)+"%"):""; });
+
+        (animate?all.transition().duration(dur):all).attr("transform", function(d){ return "translate("+d.x0+","+d.y0+")"; });
+        (animate?all.select("rect.tmrect").transition().duration(dur):all.select("rect.tmrect"))
+          .attr("width", function(d){ return Math.max(0,d.x1-d.x0); }).attr("height", function(d){ return Math.max(0,d.y1-d.y0); });
+        (animate?all.select("clipPath rect").transition().duration(dur):all.select("clipPath rect"))
+          .attr("width", function(d){ return Math.max(0,d.x1-d.x0); }).attr("height", function(d){ return Math.max(0,d.y1-d.y0); });
+
+        yrLab.textContent=GDPTM_YEARS[st.idx]; rng.value=st.idx;
+        note.textContent="📅 พ.ศ. "+GDPTM_YEARS[st.idx]+" · "+(GDPTM_NOTE[GDPTM_YEARS[st.idx]]||"");
+      }
+      function stop(){ st.playing=false; if(st.timer){ clearInterval(st.timer); st.timer=null; } btn.textContent="▶"; }
+      function play(){
+        if(st.playing){ stop(); return; }
+        st.playing=true; btn.textContent="⏸";
+        if(st.idx>=GDPTM_YEARS.length-1) st.idx=0; // กดเล่นตอนจบ = เริ่มใหม่จากปีแรก
+        draw(true);
+        st.timer=setInterval(function(){
+          if(box.offsetParent===null){ stop(); return; }        // สลับหัวข้อไปแล้ว → หยุด
+          if(st.idx>=GDPTM_YEARS.length-1){ stop(); return; }
+          st.idx++; draw(true);
+        }, 1000);
+      }
+      btn.addEventListener("click", play);
+      rng.addEventListener("input", function(){ stop(); st.idx=Math.max(0,Math.min(GDPTM_YEARS.length-1,+rng.value)); draw(true); });
+
+      draw(false);
+      return { draw:draw, stop:stop };
+    }
+    function renderTeGdpTreemap(){
+      var box=$("#teGdpTreemap"); if(!box || !window.d3) return;
+      if((box.clientWidth||0)<80) return;            // ยังซ่อนอยู่ (display:none) — จะถูกเรียกซ้ำตอนเปิดกลุ่ม
+      if(!box._gdptm){ box._gdptm=buildGdpTreemap(box); }
+      else box._gdptm.draw(false);                    // theme/resize → เลย์เอาต์ใหม่ คงปีเดิม
     }
 
     // ---- ฤดูกาลท่องเที่ยวรายเดือน (Polar) — สัดส่วน % ของนักท่องเที่ยวทั้งปี (เฉลี่ยหลายปี) ----
@@ -5660,6 +5882,7 @@
       gpoLine("#teGdpGrowth", TE_GDP, {full:true, h:290, ml:40, ylab:"% ต่อปี", color:cssVar("--green"), rule:0, ydomain:[-8,6], fmt:function(v){ return v.toFixed(1); }});
       hbarChart("#teGdpAsean", TE_GDP_ASEAN, {h:270, ml:80, xlab:"% (คาดการณ์ 2569)", fmt:function(v){ return v.toFixed(1); }});
       hbarChart("#teGdpAgency", TE_GDP_AGENCY, {h:250, ml:92, xlab:"% (คาด 2569)", fmt:function(v){ return v.toFixed(1); }});
+      renderTeGdpTreemap();
       renderTeGiiRank();
       hbarChart("#teGiiAsean", TE_GII_ASEAN, {h:260, ml:80, xlab:"คะแนน GII", fmt:function(v){ return v.toFixed(1); }});
       hbarChart("#teGiiPillar", TE_GII_PILLAR, {h:290, ml:150, mr:48, xlab:"คะแนน"});
@@ -5700,7 +5923,7 @@
       var box=$("#eduPisaGroup"); if(!box || !window.Plot) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
       var W=Math.max(320, box.clientWidth||900);
-      plotInto("#eduPisaGroup", Plot.plot({
+      plotInto("#eduPisaGroup", plotT({
         width:W, height:300, marginLeft:48, marginBottom:34, marginTop:16, marginRight:16,
         style: baseStyle(ink, FONT_W),
         x:{ axis:null },
@@ -5791,6 +6014,7 @@
       { id:"thecon", ico:"📈", label:"เศรษฐกิจไทย", subs:[
           { pane:"te-tourism",    ico:"✈️", label:"การท่องเที่ยว", existing:true },
           { pane:"te-gdp",        ico:"🔮", label:"การคาดการณ์ GDP", existing:true },
+          { pane:"te-gdpstruct",  ico:"🧩", label:"โครงสร้าง GDP รายภาค (Treemap)", existing:true },
           { pane:"te-gii",        ico:"💡", label:"ดัชนีนวัตกรรมโลก [GII]", existing:true },
           { pane:"te-structural", ico:"🏗️", label:"ปัญหาเชิงโครงสร้าง & มหภาค", existing:true },
           { pane:"te-research",   ico:"🔬", label:"ทิศทางงานวิจัยขับเคลื่อนประเทศ", existing:true },

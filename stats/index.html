@@ -271,6 +271,13 @@
   @keyframes shim{to{transform:translateX(100%)}}
   .state-msg{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:14px}
   .state-msg.err{color:var(--red)}
+  /* hover tooltip (crosshair) กราฟเส้น */
+  svg.ic-line{cursor:crosshair}
+  .ic-tip{position:fixed;z-index:120;pointer-events:none;background:var(--paper-2);border:1px solid var(--rule);border-radius:9px;padding:8px 11px;font-size:12px;color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.16);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;min-width:96px}
+  .ic-tip-h{font-weight:800;font-family:"Archivo",sans-serif;margin-bottom:4px;color:var(--ink)}
+  .ic-tip-r{display:flex;align-items:center;gap:6px;line-height:1.75;white-space:nowrap}
+  .ic-tip-r b{margin-left:auto;font-family:"Archivo",sans-serif}
+  .ic-sw{width:9px;height:9px;border-radius:2px;flex:none;display:inline-block}
   .hidden{display:none!important}
 
   /* ---------- FOOTER ---------- */
@@ -1038,7 +1045,62 @@
       var lp=d[d.length-1];
       g+='<text x="'+(X(lp.year)-5).toFixed(1)+'" y="'+(Y(lp.value)-9).toFixed(1)+'" text-anchor="end" font-size="10.5" font-weight="700" style="fill:'+s.color+'" font-family="Archivo">'+lp.value.toFixed(1)+'%</text>';
     });
-    return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="กราฟเส้นแสดงแนวโน้ม">'+g+'</svg>';
+    var _yset={}; series.forEach(function(s){ s.data.forEach(function(d){ _yset[d.year]=1; }); });
+    var _years=Object.keys(_yset).map(Number).sort(function(a,b){ return a-b; });
+    var _spec={ g:{ W:W,H:H,Pl:Pl,Pr:Pr,Pt:Pt,Pb:Pb, minY:minY,maxY:maxY, minV:minV,maxV:maxV }, years:_years, unit:"%",
+      series: series.map(function(s){ return { label:(s.label||s.name), color:s.color, data:s.data.map(function(d){ return { year:d.year, value:d.value }; }) }; }) };
+    return '<svg class="ic-line" data-ic=\''+JSON.stringify(_spec)+'\' viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="กราฟเส้นแสดงแนวโน้ม">'+g+'</svg>';
+  }
+
+  /* ===== hover crosshair แบบ OWID สำหรับกราฟเส้น SVG (ทำมือ) — เดลิเกตครั้งเดียว ครอบทุก svg.ic-line =====
+     อ่านสเปก (เรขาคณิต+ข้อมูล) จาก data-ic → หาปีที่ใกล้เมาส์สุด → วาดเส้นแนวตั้ง+จุดไฮไลต์ + กล่อง tip */
+  function setupLineHover(){
+    if(window._icHoverWired) return; window._icHoverWired=true;
+    var NS="http://www.w3.org/2000/svg";
+    var tip=document.createElement("div"); tip.className="ic-tip"; tip.style.display="none"; document.body.appendChild(tip);
+    function hide(){ tip.style.display="none"; var ovs=document.querySelectorAll("svg.ic-line .ic-ov"); for(var i=0;i<ovs.length;i++) ovs[i].style.display="none"; }
+    function onMove(e){
+      var svg = e.target && e.target.closest ? e.target.closest("svg.ic-line") : null;
+      if(!svg){ hide(); return; }
+      var spec; try{ spec=JSON.parse(svg.getAttribute("data-ic")); }catch(err){ return; }
+      var G=spec.g, pW=G.W-G.Pl-G.Pr, pH=G.H-G.Pt-G.Pb;
+      function X(y){ return G.Pl + (G.maxY===G.minY?0.5:(y-G.minY)/(G.maxY-G.minY))*pW; }
+      function Y(v){ return G.Pt + (1-(v-G.minV)/(G.maxV-G.minV))*pH; }
+      var ctm=svg.getScreenCTM(); if(!ctm){ return; }
+      var p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; var loc=p.matrixTransform(ctm.inverse());
+      if(loc.x<G.Pl-6 || loc.x>G.W-G.Pr+6){ hide(); return; }
+      var best=spec.years[0], bd=Infinity;
+      spec.years.forEach(function(yr){ var dx=Math.abs(X(yr)-loc.x); if(dx<bd){ bd=dx; best=yr; } });
+      var xb=X(best);
+      var ov=svg.querySelector(".ic-ov");
+      if(!ov){ ov=document.createElementNS(NS,"g"); ov.setAttribute("class","ic-ov"); ov.style.pointerEvents="none"; svg.appendChild(ov); }
+      ov.style.display=""; ov.innerHTML="";
+      var ln=document.createElementNS(NS,"line");
+      ln.setAttribute("x1",xb); ln.setAttribute("x2",xb); ln.setAttribute("y1",G.Pt); ln.setAttribute("y2",G.H-G.Pb);
+      ln.style.stroke="var(--ink-soft)"; ln.setAttribute("stroke-width","1"); ln.setAttribute("stroke-dasharray","3,3"); ln.setAttribute("opacity",".75");
+      ov.appendChild(ln);
+      var rows=[];
+      spec.series.forEach(function(s){
+        var pt=null; for(var i=0;i<s.data.length;i++){ if(s.data[i].year===best){ pt=s.data[i]; break; } }
+        if(!pt) return;
+        var c=document.createElementNS(NS,"circle");
+        c.setAttribute("cx",xb); c.setAttribute("cy",Y(pt.value)); c.setAttribute("r","4.5");
+        c.style.fill=s.color; c.style.stroke="var(--paper-2)"; c.setAttribute("stroke-width","2");
+        ov.appendChild(c);
+        rows.push({ label:s.label, color:s.color, v:pt.value });
+      });
+      var html='<div class="ic-tip-h">พ.ศ. '+(best+543)+'</div>';
+      rows.forEach(function(r){ html+='<div class="ic-tip-r"><span class="ic-sw" style="background:'+r.color+'"></span>'+r.label+' <b>'+r.v.toFixed(1)+(spec.unit||"")+'</b></div>'; });
+      tip.innerHTML=html; tip.style.display="block";
+      var tw=tip.offsetWidth, th=tip.offsetHeight;
+      var px=e.clientX+14, py=e.clientY-th-10;
+      if(px+tw>window.innerWidth-8) px=e.clientX-tw-14;
+      if(py<8) py=e.clientY+18;
+      tip.style.left=px+"px"; tip.style.top=py+"px";
+    }
+    document.addEventListener("pointermove", onMove, true);
+    document.addEventListener("pointerdown", onMove, true);
+    window.addEventListener("scroll", hide, true);
   }
 
   function renderEcon(gdp, growth, exp, tax){
@@ -1056,8 +1118,8 @@
     if(exp.length) setKpiText("exp", exp[exp.length-1].value.toFixed(1));
     if(exp.length || tax.length){
       $("#fiscalChart").innerHTML = lineChart([
-        { name:"exp", color:"var(--red)", data:exp.slice(-12) },
-        { name:"tax", color:"var(--green)", data:tax.slice(-12) }
+        { name:"exp", label:"รายจ่าย", color:"var(--red)", data:exp.slice(-12) },
+        { name:"tax", label:"รายได้ (ภาษี)", color:"var(--green)", data:tax.slice(-12) }
       ]);
     } else {
       $("#fiscalChart").innerHTML = '<div class="state-msg err">โหลดข้อมูลการคลังไม่สำเร็จ</div>';
@@ -1105,15 +1167,15 @@
       $("#balanceChart").innerHTML = '<div class="state-msg err">โหลดข้อมูลดุลการคลังไม่สำเร็จ — ลองรีเฟรช</div>';
     }
     var sectors = [
-      { name:"edu",    color:"var(--green)", data:edu.slice(-15) },
-      { name:"health", color:"var(--gold)",  data:health.slice(-15) },
-      { name:"mil",    color:"var(--red)",   data:mil.slice(-15) }
+      { name:"edu",    label:"การศึกษา",  color:"var(--green)", data:edu.slice(-15) },
+      { name:"health", label:"สาธารณสุข", color:"var(--gold)",  data:health.slice(-15) },
+      { name:"mil",    label:"กลาโหม",    color:"var(--red)",   data:mil.slice(-15) }
     ].filter(function(s){ return s.data.length; });
     $("#sectorChart").innerHTML = sectors.length
       ? lineChart(sectors)
       : '<div class="state-msg err">โหลดข้อมูลงบรายด้านไม่สำเร็จ — ลองรีเฟรช</div>';
     $("#interestChart").innerHTML = intp.length
-      ? lineChart([{ name:"intp", color:"var(--red)", data:intp.slice(-15) }])
+      ? lineChart([{ name:"intp", label:"ดอกเบี้ยจ่าย", color:"var(--red)", data:intp.slice(-15) }])
       : '<div class="state-msg err">โหลดข้อมูลดอกเบี้ยจ่ายไม่สำเร็จ — ลองรีเฟรช</div>';
   }
 
@@ -1162,6 +1224,7 @@
   $("#year").textContent = new Date().getFullYear()+543;
 
   $("#btnRefresh").addEventListener("click", refreshAll);
+  setupLineHover();
   refreshAll();
   setInterval(refreshAll, 15*60*1000); // รีเฟรชอัตโนมัติทุก 15 นาที
 })();
