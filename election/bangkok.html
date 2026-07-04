@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>เลือกตั้ง กทม. 2569 · ผู้ว่าฯ + ส.ก. 50 เขต · แผนที่ผลคะแนน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/bb8-toggle.css">
+<style>
+/* ===== BANGKOK ELECTION PAGE ===== */
+.pwrap{max-width:1190px;margin:0 auto;padding:84px 20px 96px}
+@media(max-width:860px){.pwrap{padding:16px 12px 110px}}
+
+.phead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.phead .pico{width:46px;height:46px;flex:0 0 auto}
+.phead .bt{font-family:'Kanit';font-weight:600;font-size:1.25rem;line-height:1.1}
+.phead .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.74rem;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;box-shadow:var(--shadow)}
+.tabs button{font-family:'Kanit';font-weight:500;font-size:.9rem;color:var(--ink-2);background:none;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap}
+.tabs button:hover{background:var(--orange-soft);color:var(--orange-deep)}
+.tabs button.active{background:var(--ink);color:var(--paper)}
+.tabs button b{font-family:'Kanit';font-weight:700}
+@media(max-width:860px){
+  .phead .bt{font-size:1.05rem}
+  .tabs{margin-left:0;width:100%;justify-content:stretch}
+  .tabs button{flex:1;justify-content:center;padding:8px 6px;font-size:.82rem}
+}
+
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:16px;align-items:start}
+@media(max-width:980px){.pgrid{grid-template-columns:1fr}}
+
+/* map card */
+.chamber{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.chamber-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 18px 2px}
+.chamber-head .cn{font-family:'Kanit';font-weight:600;font-size:1.02rem}
+.chamber-head .cm{font-size:.78rem;color:var(--muted)}
+.phint{display:flex;align-items:center;gap:6px;padding:6px 18px 0;font-size:.72rem;color:var(--muted)}
+.phint svg{flex:0 0 auto;color:var(--orange-deep)}
+
+.mapwrap{position:relative;padding:6px 10px 2px}
+#bkkmap{width:100%;height:auto;display:block;max-height:70vh;touch-action:pan-y}
+.khet{cursor:pointer;stroke:rgba(255,255,255,.7);stroke-width:1;transition:opacity .14s,stroke-width .12s;stroke-linejoin:round}
+.khet:hover{stroke:var(--ink);stroke-width:2}
+.khet.sel{stroke:var(--ink);stroke-width:2.6}
+.khet.dim{opacity:.15}
+html[data-theme="dark"] .khet{stroke:rgba(6,14,22,.55)}
+.klabel{font-family:'Kanit';font-weight:600;fill:#fff;stroke:rgba(6,18,28,.72);stroke-width:2.4;paint-order:stroke;stroke-linejoin:round;text-anchor:middle;pointer-events:none;opacity:0}
+.klabel.show{opacity:1}
+
+/* map overlay badge (governor sweep) */
+.mapbadge{position:absolute;left:16px;top:12px;z-index:5;display:flex;align-items:center;gap:10px;
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:8px 13px;box-shadow:var(--shadow-lg)}
+.mapbadge .mv{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:700;font-size:.86rem;flex:0 0 auto;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px currentColor}
+.mapbadge .mt{line-height:1.15}
+.mapbadge .mt b{display:block;font-family:'Kanit';font-weight:600;font-size:.86rem;color:var(--ink)}
+.mapbadge .mt small{font-size:.66rem;color:var(--muted)}
+@media(max-width:560px){.mapbadge{left:12px;top:8px;padding:6px 10px}.mapbadge .mv{width:28px;height:28px;font-size:.75rem}}
+
+.legendwrap{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px 15px;border-top:1px dashed var(--line)}
+.lchip{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.8rem;color:var(--ink-2);
+  background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;transition:.13s}
+.lchip .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.lchip b{font-family:'Kanit';font-weight:700;color:var(--ink)}
+.lchip:hover{border-color:var(--orange-line);background:var(--orange-soft)}
+.lchip.on{border-color:var(--orange-deep);background:var(--orange-soft);box-shadow:0 0 0 2px rgba(143,169,189,.22)}
+.lchip.off{opacity:.4}
+.chamber-note{padding:0 18px 15px;font-size:.75rem;color:var(--muted);line-height:1.6}
+
+/* tooltip */
+.ptip{position:fixed;z-index:90;pointer-events:none;background:var(--ink);color:var(--paper);border-radius:11px;
+  padding:8px 12px;font-size:.8rem;box-shadow:var(--shadow-lg);max-width:250px;opacity:0;transform:translateY(4px);transition:opacity .1s}
+.ptip.on{opacity:1}
+.ptip .tn{font-family:'Kanit';font-weight:600;font-size:.88rem}
+.ptip .tp{display:flex;align-items:center;gap:6px;margin-top:3px}
+.ptip .tp .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+html[data-theme="dark"] .ptip{background:#0E1C29;border:1px solid var(--line-2)}
+
+/* side panel */
+.pside{position:sticky;top:84px;display:flex;flex-direction:column;gap:14px}
+@media(max-width:980px){.pside{position:static}}
+.scard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:15px}
+.scard .sb-head{font-family:'Kanit';font-weight:600;font-size:.98rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.scard .sb-head svg{color:var(--orange-deep);flex:0 0 auto}
+.scard .sb-head .sc{margin-left:auto;font-size:.72rem;font-weight:500;color:var(--muted)}
+
+/* winner hero */
+.whero{display:flex;gap:13px;align-items:center;padding:13px;border-radius:15px;color:#fff;margin-bottom:13px;
+  box-shadow:var(--shadow)}
+.whero .wav{width:56px;height:56px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,255,255,.2);
+  font-family:'Kanit';font-weight:700;font-size:1.15rem;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.whero .wi{min-width:0}
+.whero .wn{font-family:'Kanit';font-weight:600;font-size:1.12rem;line-height:1.2}
+.whero .wmeta{font-size:.78rem;opacity:.92;margin-top:2px}
+.whero .wbig{font-family:'Kanit';font-weight:700;font-size:1.35rem;margin-top:5px;font-variant-numeric:tabular-nums}
+.whero .wbig span{font-size:.8rem;font-weight:500;opacity:.9}
+
+/* ranking bars */
+.rank{display:flex;flex-direction:column;gap:2px;max-height:430px;overflow-y:auto;margin:0 -4px}
+.rank::-webkit-scrollbar{width:7px}.rank::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:7px}
+.rrow{display:grid;grid-template-columns:26px 1fr auto;gap:9px;align-items:center;padding:7px 5px;border-radius:9px}
+.rrow:hover{background:var(--wash)}
+.rrow.win{background:var(--orange-soft)}
+.rno{font-family:'Kanit';font-weight:600;font-size:.72rem;color:var(--muted);width:26px;height:26px;border-radius:8px;
+  display:grid;place-items:center;background:var(--wash);border:1px solid var(--line)}
+.rmid{min-width:0}
+.rnm{font-weight:600;font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rpt{font-size:.7rem;color:var(--muted);margin-bottom:3px}
+.rbar{height:7px;border-radius:5px;background:var(--wash);overflow:hidden}
+.rbar i{display:block;height:100%;border-radius:5px}
+.rval{text-align:right;flex:0 0 auto}
+.rval .rp{font-family:'Kanit';font-weight:700;font-size:.92rem}
+.rval .rv{font-size:.68rem;color:var(--muted)}
+
+/* candidate/winner avatars with photo overlay (photo covers number/✓ when available) */
+.ava{position:relative;overflow:hidden}
+.ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
+
+/* campaign song player (ผู้ว่าฯ tab) */
+.songcard{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--wash);margin-bottom:13px}
+.songplay{width:40px;height:40px;border-radius:50%;border:0;flex:0 0 auto;cursor:pointer;display:grid;place-items:center;color:#fff;font-size:.9rem;background:linear-gradient(135deg,#3B4FC4,#2A3690);box-shadow:var(--shadow);transition:transform .1s}
+.songplay:active{transform:scale(.92)}
+.songinfo{flex:1 1 auto;min-width:0}
+.songttl{font-family:'Kanit';font-weight:600;font-size:.85rem;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.songsub{font-size:.66rem;color:var(--muted);margin:1px 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.songbar{height:6px;border-radius:4px;background:var(--line-2);overflow:hidden;cursor:pointer}
+.songbar i{display:block;height:100%;width:0;background:#3B4FC4;border-radius:4px;transition:width .2s linear}
+.songtime{font-family:'Kanit';font-size:.64rem;color:var(--muted);flex:0 0 auto;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+.songyt{flex:0 0 auto;font-family:'Kanit';font-weight:700;font-size:.62rem;color:#d00;background:rgba(220,0,0,.08);border:1px solid rgba(220,0,0,.25);border-radius:8px;padding:5px 7px;white-space:nowrap}
+.yt-audio-dock{position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+.songwrap{margin-bottom:13px}
+.songhead{font-family:'Kanit';font-weight:600;font-size:.8rem;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.songhead svg{color:var(--orange-deep);flex:0 0 auto}
+.songlist{display:flex;flex-direction:column;gap:8px}
+.songlist .songcard{margin-bottom:0}
+
+/* party seat totals */
+.ptot{display:flex;flex-direction:column;gap:11px}
+.ptrow .pth{display:flex;align-items:center;gap:8px;font-size:.86rem;margin-bottom:4px}
+.ptrow .pth .sw{width:12px;height:12px;border-radius:4px;flex:0 0 auto}
+.ptrow .pth .pnm{font-family:'Kanit';font-weight:600;flex:1 1 auto;min-width:0}
+.ptrow .pth .pseat{font-family:'Kanit';font-weight:700;font-size:1rem}
+.ptrow .pth .pseat span{font-size:.72rem;font-weight:500;color:var(--muted)}
+.ptrow .ptbar{height:9px;border-radius:6px;background:var(--wash);overflow:hidden}
+.ptrow .ptbar i{display:block;height:100%;border-radius:6px}
+.ptrow .ptv{font-size:.68rem;color:var(--muted);margin-top:3px}
+
+/* stats strip */
+.sstrip{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;padding-top:13px;border-top:1px dashed var(--line)}
+.sfig{flex:1 1 92px;background:var(--wash);border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+.sfig .sfk{font-size:.68rem;color:var(--muted);line-height:1.3}
+.sfig .sfv{font-family:'Kanit';font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.sfig .sfv small{font-size:.7rem;font-weight:500;color:var(--muted)}
+
+/* district detail */
+.dback{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.84rem;color:var(--orange-deep);
+  background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:10px;padding:7px 13px;margin-bottom:12px;cursor:pointer}
+.ddet .ddn{font-family:'Kanit';font-weight:600;font-size:1.5rem;line-height:1.1}
+.ddet .ddwin{display:flex;align-items:center;gap:9px;margin-top:12px;padding:12px;border-radius:14px;color:#fff;box-shadow:var(--shadow)}
+.ddet .ddwin .dva{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;
+  font-family:'Kanit';font-weight:700;flex:0 0 auto;box-shadow:0 0 0 2px rgba(255,255,255,.32)}
+.ddet .ddwin .dvn{font-family:'Kanit';font-weight:600;font-size:1.02rem;line-height:1.2}
+.ddet .ddwin .dvm{font-size:.76rem;opacity:.92;margin-top:2px}
+.ddrows{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.ddr{display:flex;justify-content:space-between;align-items:center;font-size:.86rem;padding:6px 2px;border-bottom:1px dashed var(--line)}
+.ddr b{font-family:'Kanit';font-weight:600}
+.dempty{color:var(--muted);font-size:.85rem;line-height:1.7;padding:6px 2px}
+
+/* ===== SUMMARY VIEW ===== */
+#sumView{display:none}
+.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:820px){.sumgrid{grid-template-columns:1fr}}
+.sumcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.sumcard h3{font-family:'Kanit';font-weight:600;font-size:1.05rem;display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.sumcard h3 svg{color:var(--orange-deep);flex:0 0 auto}
+.sumcard .sub{font-size:.8rem;color:var(--muted);margin-bottom:14px}
+.sumwin{display:flex;align-items:center;gap:13px;padding:14px;border-radius:15px;color:#fff;margin-bottom:14px}
+.sumwin .swa{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;
+  font-family:'Kanit';font-weight:700;font-size:1.2rem;flex:0 0 auto;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.sumwin .swn{font-family:'Kanit';font-weight:600;font-size:1.2rem;line-height:1.15}
+.sumwin .swm{font-size:.8rem;opacity:.92;margin-top:2px}
+.sumwin .swb{font-family:'Kanit';font-weight:700;font-size:1.5rem;margin-top:4px}
+.sumwin .swb span{font-size:.82rem;font-weight:500;opacity:.9}
+/* seat composition bar + dot grid */
+.seatbar{display:flex;height:26px;border-radius:8px;overflow:hidden;margin:4px 0 14px;box-shadow:var(--shadow)}
+.seatbar i{height:100%}
+.dotgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:6px 0 4px}
+.dotgrid .dot{aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.05) inset}
+.sumfacts{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.sumfacts li{display:flex;gap:10px;font-size:.86rem;color:var(--ink-2);line-height:1.55}
+.sumfacts li svg{flex:0 0 auto;margin-top:2px;color:var(--orange-deep)}
+.sumfacts b{color:var(--ink);font-weight:600}
+.tcompare{display:flex;gap:12px;margin-top:6px}
+.tcompare .tc{flex:1;background:var(--wash);border:1px solid var(--line);border-radius:14px;padding:13px;text-align:center}
+.tcompare .tc .tk{font-size:.74rem;color:var(--muted)}
+.tcompare .tc .tv{font-family:'Kanit';font-weight:700;font-size:1.6rem;line-height:1.1;margin:2px 0}
+.tcompare .tc .ts{font-size:.68rem;color:var(--muted)}
+
+.pfoot{margin-top:22px;font-size:.72rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
+.pfoot a{color:var(--orange-deep);text-decoration:underline}
+</style>
+<script src="../js/preloader.js"></script>
+</head>
+<body>
+<!-- theme toggle (shared across all md sites) -->
+<label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+  <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+  <div class="bb8-toggle__container">
+    <div class="bb8-toggle__scenery">
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="tatto-1"></div><div class="tatto-2"></div>
+      <div class="gomrassen"></div><div class="hermes"></div><div class="chenini"></div>
+      <div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div>
+    </div>
+    <div class="bb8">
+      <div class="bb8__head-container"><div class="bb8__antenna"></div><div class="bb8__antenna"></div><div class="bb8__head"></div></div>
+      <div class="bb8__body"></div>
+    </div>
+    <div class="artificial__hidden"><div class="bb8__shadow"></div></div>
+  </div>
+</label>
+<script>
+function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}if(window.bkkRecolor)window.bkkRecolor();}
+function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+mdSyncToggle();
+</script>
+
+<!-- desktop nav -->
+<nav class="navpill">
+  <a href="../hub/index.html" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="กลับหน้าหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="partylist.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>บัญชีรายชื่อ</a>
+  <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
+  <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="referendum.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+  <a href="bangkok.html" class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/><path d="M9 11h.01M15 11h.01"/></svg>กทม.</a>
+</nav>
+
+<div class="pwrap">
+
+  <div class="phead">
+    <svg class="pico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect x="7" y="20" width="11" height="22" rx="1.5" fill="#5E7488"/>
+      <rect x="20" y="12" width="10" height="30" rx="1.5" fill="#435A6D"/>
+      <rect x="32" y="24" width="9" height="18" rx="1.5" fill="#8FA9BD"/>
+      <circle cx="25" cy="7" r="3" fill="#0089A9"/><path d="M25 10v4" stroke="#0089A9" stroke-width="2"/>
+      <rect x="10" y="24" width="4" height="4" rx="1" fill="#fff"/><rect x="22.5" y="17" width="5" height="5" rx="1" fill="#fff"/><rect x="34.5" y="28" width="4" height="4" rx="1" fill="#fff"/>
+    </svg>
+    <div class="bt">เลือกตั้งกรุงเทพมหานคร 2569<small>ผู้ว่าราชการ กทม. + สมาชิกสภากรุงเทพมหานคร (ส.ก.) 50 เขต · 28 มิ.ย. 2569</small></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-gov" class="active" onclick="setView('gov')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผู้ว่าฯ กทม.</button>
+      <button id="tab-sk" onclick="setView('sk')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>ส.ก. <b>50</b></button>
+      <button id="tab-sum" onclick="setView('sum')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>สรุปคะแนน</button>
+    </div>
+  </div>
+
+  <!-- MAP + PANEL (gov / sk) -->
+  <div class="pgrid" id="mapGrid">
+    <section class="chamber">
+      <div class="chamber-head">
+        <span class="cn" id="mapTitle"></span>
+        <span class="cm" id="mapMeta"></span>
+      </div>
+      <div class="phint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+        <span id="mapHint"></span>
+      </div>
+      <div class="mapwrap">
+        <div class="mapbadge" id="mapBadge"></div>
+        <svg id="bkkmap" xmlns="http://www.w3.org/2000/svg" aria-label="แผนที่ผลเลือกตั้ง กทม. รายเขต">
+          <g id="khetG"></g>
+          <g id="labelG"></g>
+        </svg>
+      </div>
+      <div class="legendwrap" id="legend"></div>
+      <div class="chamber-note" id="mapNote"></div>
+    </section>
+
+    <aside class="pside">
+      <div class="scard" id="panel"></div>
+    </aside>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="sumView"></div>
+
+  <div class="pfoot" id="foot"></div>
+</div>
+
+<!-- mobile nav -->
+<nav class="mobnav" aria-label="เมนูหลัก">
+  <a href="../hub/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>หน้าหลัก</a>
+  <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>รายเขต</a>
+  <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
+  <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
+  <a href="referendum.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
+  <a href="bangkok.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg>กทม.</a>
+</nav>
+
+<div class="ptip" id="ptip"></div>
+<div class="yt-audio-dock"><div id="ytdock"></div></div>
+
+<script src="bangkok-geo.js"></script>
+<script src="bangkok-data.js"></script>
+<script src="bkk-photos.js"></script>
+<script>
+'use strict';
+(function(){
+const GEO=window.BKKGEO, D=window.BKKDATA, SK=D.sk, GOV=D.gov;
+const NS='http://www.w3.org/2000/svg';
+const fmt=n=>n==null?'—':Number(n).toLocaleString('en-US');
+const el=id=>document.getElementById(id);
+const state={view:'gov', focus:null, sel:null};
+
+// governor candidate accent color
+function govColor(c){
+  if(c.no===9) return GOV.winnerColor;
+  const m={'ประชาชน':'#FF6A13','ประชาธิปัตย์':'#27AAE1','เพื่อไทย':'#ED1C24','เศรษฐกิจ':'#B7791F'};
+  return m[c.party]||'#9AA3AE';
+}
+const skColor=name=>{const d=SK.districts[name]; return d?(SK.colors[d.party]||'#9AA3AE'):'#C9D4DC';};
+
+/* ---------- photos (avatar shows portrait if available, else number/✓) ---------- */
+const PH=window.BKKPHOTOS||{gov:{},sk:{}};
+function govAvatar(c,cls){
+  const f=PH.gov&&PH.gov[c.no];
+  return `<div class="${cls} ava">${c.no}${f?`<img src="bkk-photos/${f}" alt="" onerror="this.remove()">`:''}</div>`;
+}
+
+/* ---------- campaign songs (YouTube official audio) — 2-track playlist ---------- */
+const SONGS=[
+  {id:'sQUu4_yDrAI',title:'ชัช-ชัช-ชาติ เอ้า! กา เบอร์ 9',sub:'ทีมชัชชาติ · กรุงเทพฯ ทำงาน · official audio'},
+  {id:'NVJip0Tsub4',title:'เพลงในพลังของท่านชัชชาติ',sub:'เพลงให้กำลังใจท่านชัชชาติ'}
+];
+const SONG={player:null,ready:false,apiLoading:false,cur:-1,playing:false,timer:null,_pending:null,errIdx:-1};
+function fmtTime(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function songUI(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i);if(!b)return;b.innerHTML=(SONG.cur===i&&SONG.playing)?'❚❚':'▶';});}
+function songTimer(on){clearInterval(SONG.timer);SONG.timer=null;if(!on)return;
+  SONG.timer=setInterval(()=>{if(!SONG.player||SONG.cur<0||!SONG.player.getDuration)return;
+    const d=SONG.player.getDuration()||0,t=SONG.player.getCurrentTime()||0,p=el('songProg'+SONG.cur),tm=el('songTime'+SONG.cur);
+    if(p&&d)p.style.width=(t/d*100).toFixed(1)+'%'; if(tm)tm.textContent=fmtTime(t)+' / '+fmtTime(d);
+  },250);}
+function songCreate(){if(SONG.player)return;
+  SONG.player=new YT.Player('ytdock',{height:'120',width:'120',playerVars:{playsinline:1},
+    events:{onReady:()=>{SONG.ready=true;if(SONG._pending){const c=SONG._pending;SONG._pending=null;c();}},
+      onStateChange:e=>{if(e.data===1){SONG.playing=true;songUI();songTimer(true);}
+        else if(e.data===2||e.data===0){SONG.playing=false;songUI();songTimer(false);
+          if(e.data===0){const p=el('songProg'+SONG.cur);if(p)p.style.width='0%';}}},
+      onError:()=>{SONG.playing=false;songTimer(false);SONG.errIdx=SONG.cur;songUI();
+        const tm=el('songTime'+SONG.cur);if(tm)tm.textContent='เล่นไม่ได้ · กด YT';}}});}
+function songEnsure(cb){if(SONG.player&&SONG.ready){cb();return;}SONG._pending=cb;
+  if(window.YT&&window.YT.Player){songCreate();return;}
+  if(!SONG.apiLoading){SONG.apiLoading=true;window.onYouTubeIframeAPIReady=songCreate;
+    const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);}}
+function songPlay(i){
+  if(SONG.errIdx===i){window.open('https://youtu.be/'+SONGS[i].id,'_blank');return;}
+  if(window.__mdStop)window.__mdStop();
+  window.__mdStop=()=>{if(SONG.player&&SONG.playing)SONG.player.pauseVideo();};
+  songEnsure(()=>{
+    if(SONG.cur===i){ if(SONG.playing)SONG.player.pauseVideo(); else SONG.player.playVideo(); }
+    else { const op=el('songProg'+SONG.cur); if(op)op.style.width='0%'; SONG.cur=i; SONG.errIdx=-1; SONG.player.loadVideoById(SONGS[i].id); }
+    songUI();
+  });}
+function songSeek(i,ev){if(SONG.cur!==i||!SONG.player||!SONG.player.getDuration)return;
+  const bar=el('songBar'+i);if(!bar)return;const r=bar.getBoundingClientRect();
+  const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
+  SONG.player.seekTo(f*(SONG.player.getDuration()||0),true);}
+function songListHTML(){return `<div class="songwrap"><div class="songhead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>เพลงหาเสียง · ชัชชาติ เบอร์ 9</div><div class="songlist">`+
+  SONGS.map((s,i)=>`<div class="songcard">`+
+    `<button class="songplay" id="songBtn${i}" title="เล่น/หยุดเพลง">▶</button>`+
+    `<div class="songinfo"><div class="songttl">${s.title}</div>`+
+    `<div class="songsub">${s.sub}</div>`+
+    `<div class="songbar" id="songBar${i}"><i id="songProg${i}"></i></div></div>`+
+    `<div class="songtime" id="songTime${i}">0:00</div>`+
+    `<a class="songyt" href="https://youtu.be/${s.id}" target="_blank" rel="noopener" title="เปิดใน YouTube">YT ▶</a></div>`
+  ).join('')+`</div></div>`;}
+function bindSong(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i);if(b)b.onclick=()=>songPlay(i);
+  const bar=el('songBar'+i);if(bar)bar.onclick=e=>songSeek(i,e);});songUI();if(SONG.playing)songTimer(true);}
+
+/* ---------- build map once ---------- */
+const svg=el('bkkmap'), kg=el('khetG'), lg=el('labelG');
+svg.setAttribute('viewBox', GEO.meta.viewBox);
+const paths={};
+Object.entries(GEO.districts).forEach(([name,g])=>{
+  const p=document.createElementNS(NS,'path');
+  p.setAttribute('d', g.d);
+  p.setAttribute('class','khet');
+  p.dataset.name=name;
+  kg.appendChild(p);
+  paths[name]=p;
+  p.addEventListener('mouseenter',e=>onEnter(name,e));
+  p.addEventListener('mousemove',moveTip);
+  p.addEventListener('mouseleave',onLeave);
+  p.addEventListener('click',()=>onClick(name));
+});
+// data-coverage guard
+Object.keys(GEO.districts).forEach(n=>{ if(state && !SK.districts[n]) console.warn('no ส.ก. data for',n); });
+
+/* ---------- tooltip ---------- */
+const tip=el('ptip');
+function tipHTML(name){
+  if(state.view==='gov'){
+    return `<div class="tn">เขต${name}</div><div class="tp"><span class="sw" style="background:${GOV.winnerColor}"></span>ผู้ชนะ: ชัชชาติ สิทธิพันธุ์</div>`;
+  }
+  const d=SK.districts[name];
+  if(!d) return `<div class="tn">เขต${name}</div>`;
+  return `<div class="tn">เขต${name}</div>`+
+    `<div class="tp"><span class="sw" style="background:${skColor(name)}"></span>${d.winner||'—'} · ${d.grp||d.party}</div>`+
+    (d.votes?`<div class="tp" style="opacity:.85">${fmt(d.votes)} คะแนน (${d.pct}%)</div>`:'');
+}
+function onEnter(name,e){ if(paths[name].classList.contains('dim'))return; tip.innerHTML=tipHTML(name); tip.classList.add('on'); moveTip(e); }
+function moveTip(e){ const pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
+  let x=e.clientX+pad, y=e.clientY+pad;
+  if(x+w>innerWidth-8) x=e.clientX-w-pad; if(y+h>innerHeight-8) y=e.clientY-h-pad;
+  tip.style.left=x+'px'; tip.style.top=y+'px'; }
+function onLeave(){ tip.classList.remove('on'); }
+function onClick(name){
+  if(state.view==='sk'){ state.sel=name; renderPanel(); recolor(); }
+  else { // gov: flash
+    const p=paths[name]; p.classList.add('sel'); setTimeout(()=>p.classList.remove('sel'),600);
+  }
+}
+
+/* ---------- recolor ---------- */
+function recolor(){
+  Object.entries(paths).forEach(([name,p])=>{
+    p.setAttribute('fill', state.view==='gov'?GOV.winnerColor:skColor(name));
+    p.classList.remove('dim','sel');
+    if(state.view==='sk'){
+      if(state.focus){ const d=SK.districts[name]; if(!d||d.party!==state.focus) p.classList.add('dim'); }
+      if(state.sel===name) p.classList.add('sel');
+    }
+  });
+}
+window.bkkRecolor=recolor;
+
+/* ---------- legend ---------- */
+function renderLegend(){
+  const box=el('legend');
+  if(state.view==='gov'){
+    box.innerHTML=`<span class="lchip" style="cursor:default"><span class="sw" style="background:${GOV.winnerColor}"></span>ชัชชาติ สิทธิพันธุ์ <b>ชนะทั้ง 50 เขต</b></span>`+
+      `<span class="lchip" style="cursor:default;opacity:.75"><span class="sw" style="background:var(--wash);border:1px solid var(--line-2)"></span>ไม่มีผลแยกรายเขต (นับรวมทั้ง กทม.)</span>`;
+    return;
+  }
+  box.innerHTML=SK.parties.map(pt=>
+    `<span class="lchip${state.focus&&state.focus!==pt.key?' off':''}${state.focus===pt.key?' on':''}" data-k="${pt.key}">`+
+    `<span class="sw" style="background:${pt.color}"></span>${pt.key} <b>${pt.seats}</b></span>`).join('');
+  box.querySelectorAll('.lchip').forEach(c=>c.onclick=()=>{
+    const k=c.dataset.k; state.focus=(state.focus===k)?null:k; renderLegend(); recolor();
+  });
+}
+
+/* ---------- panel ---------- */
+function statStrip(s){
+  return `<div class="sstrip">`+
+    `<div class="sfig"><div class="sfk">ผู้มีสิทธิ</div><div class="sfv">${fmt(s.eligible)}</div></div>`+
+    `<div class="sfig"><div class="sfk">มาใช้สิทธิ</div><div class="sfv">${s.turnoutPct}<small>%</small></div></div>`+
+    `<div class="sfig"><div class="sfk">บัตรดี</div><div class="sfv">${fmt(s.valid)}</div></div>`+
+    `<div class="sfig"><div class="sfk">บัตรเสีย</div><div class="sfv">${fmt(s.invalid)}</div></div>`+
+    `<div class="sfig"><div class="sfk">ไม่ประสงค์</div><div class="sfv">${fmt(s.abstain)}</div></div>`+
+  `</div>`;
+}
+function renderPanel(){
+  const panel=el('panel');
+  if(state.view==='gov'){
+    const w=GOV.candidates[0], max=w.pct;
+    const rows=GOV.candidates.map(c=>{
+      const col=govColor(c), wd=Math.max(2,(c.pct/max*100)).toFixed(1);
+      return `<div class="rrow${c.no===9?' win':''}">${govAvatar(c,'rno')}`+
+        `<div class="rmid"><div class="rnm">${c.name}</div><div class="rpt">${c.party}</div>`+
+        `<div class="rbar"><i style="width:${wd}%;background:${col}"></i></div></div>`+
+        `<div class="rval"><div class="rp" style="color:${col}">${c.pct}%</div><div class="rv">${fmt(c.votes)}</div></div></div>`;
+    }).join('');
+    panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผลผู้ว่าฯ กทม. <span class="sc">ผู้สมัคร ${GOV.candidates.length} คน</span></div>`+
+      `<div class="whero" style="background:linear-gradient(135deg,${GOV.winnerColor},#2A3690)">${govAvatar(w,'wav')}`+
+      `<div class="wi"><div class="wn">${w.name}</div><div class="wmeta">${w.party} · เบอร์ ${w.no}</div>`+
+      `<div class="wbig">${fmt(w.votes)} <span>คะแนน · ${w.pct}%</span></div></div></div>`+
+      songListHTML()+
+      `<div class="rank">${rows}</div>`+statStrip(GOV.stats);
+    bindSong();
+    return;
+  }
+  // sk
+  if(state.sel){
+    const name=state.sel, d=SK.districts[name], col=skColor(name);
+    panel.innerHTML=`<button class="dback" onclick="bkkClearSel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>กลับทุกเขต</button>`+
+      `<div class="ddet"><div class="ddn">เขต${name}</div>`+
+      `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">${(PH.sk&&PH.sk[name])?`<img src="bkk-photos/${PH.sk[name]}" alt="" onerror="this.remove()">`:'✓'}</div>`+
+      `<div><div class="dvn">${d.winner||'—'}</div><div class="dvm">${d.grp||d.party}</div></div></div>`+
+      `<div class="ddrows">`+
+      `<div class="ddr"><span>คะแนนที่ได้</span><b>${fmt(d.votes)}</b></div>`+
+      `<div class="ddr"><span>ร้อยละของเขต</span><b>${d.pct!=null?d.pct+'%':'—'}</b></div>`+
+      `<div class="ddr"><span>สังกัด</span><b>${d.grp||d.party}</b></div>`+
+      `</div></div>`;
+    return;
+  }
+  const maxSeat=Math.max(...SK.parties.map(p=>p.seats));
+  const rows=SK.parties.map(pt=>
+    `<div class="ptrow"><div class="pth"><span class="sw" style="background:${pt.color}"></span>`+
+    `<span class="pnm">${pt.key}</span><span class="pseat">${pt.seats}<span> ที่นั่ง</span></span></div>`+
+    `<div class="ptbar"><i style="width:${(pt.seats/maxSeat*100).toFixed(1)}%;background:${pt.color}"></i></div>`+
+    (pt.votes?`<div class="ptv">${fmt(pt.votes)} คะแนน</div>`:'')+`</div>`).join('');
+  panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11"/></svg>ที่นั่ง ส.ก. รายพรรค <span class="sc">รวม 50 เขต</span></div>`+
+    `<div class="ptot">${rows}</div>`+statStrip(SK.stats)+
+    `<div style="font-size:.74rem;color:var(--muted);margin-top:12px;line-height:1.6">แตะแผนที่หรือชิปพรรคด้านล่างแผนที่เพื่อเจาะรายเขต</div>`;
+}
+window.bkkClearSel=function(){ state.sel=null; renderPanel(); recolor(); };
+function shade(hex){ // darken ~18%
+  const n=parseInt(hex.slice(1),16); let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.round(r*.72);g=Math.round(g*.72);b=Math.round(b*.72);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* ---------- summary ---------- */
+function renderSummary(){
+  const w=GOV.candidates[0];
+  const totalSeats=SK.parties.reduce((a,p)=>a+p.seats,0);
+  const seatbar=SK.parties.map(p=>`<i style="width:${(p.seats/totalSeats*100)}%;background:${p.color}" title="${p.key} ${p.seats}"></i>`).join('');
+  let dots=''; SK.parties.forEach(p=>{ for(let i=0;i<p.seats;i++) dots+=`<div class="dot" style="background:${p.color}"></div>`; });
+  const legend=SK.parties.map(p=>`<span class="lchip" style="cursor:default"><span class="sw" style="background:${p.color}"></span>${p.key} <b>${p.seats}</b></span>`).join('');
+  el('sumView').innerHTML=`
+  <div class="sumgrid">
+    <div class="sumcard">
+      <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผู้ว่าราชการ กทม.</h3>
+      <div class="sub">นับคะแนนอย่างไม่เป็นทางการ · ผู้สมัคร ${GOV.candidates.length} คน</div>
+      <div class="sumwin" style="background:linear-gradient(135deg,${GOV.winnerColor},#2A3690)">
+        ${govAvatar(w,'swa')}
+        <div><div class="swn">${w.name}</div><div class="swm">${w.party} · เบอร์ ${w.no}</div>
+        <div class="swb">${w.pct}% <span>· ${fmt(w.votes)} คะแนน</span></div></div>
+      </div>
+      <ul class="sumfacts">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span><b>ชนะยกทั้ง 50 เขต</b> ของกรุงเทพมหานคร ครองตำแหน่งผู้ว่าฯ สมัยที่ 2</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg><span>อันดับ 2 <b>${GOV.candidates[1].name}</b> ${GOV.candidates[1].pct}% · อันดับ 3 <b>${GOV.candidates[2].name}</b> ${GOV.candidates[2].pct}%</span></li>
+      </ul>
+      <div class="tcompare">
+        <div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ผู้ว่าฯ)</div><div class="tv">${GOV.stats.turnoutPct}%</div><div class="ts">${fmt(GOV.stats.turnout)} จาก ${fmt(GOV.stats.eligible)}</div></div>
+        <div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ส.ก.)</div><div class="tv">${SK.stats.turnoutPct}%</div><div class="ts">${fmt(SK.stats.turnout)} จาก ${fmt(SK.stats.eligible)}</div></div>
+      </div>
+    </div>
+
+    <div class="sumcard">
+      <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>สภากรุงเทพมหานคร (ส.ก.)</h3>
+      <div class="sub">50 ที่นั่ง · เขตละ 1 คน · องค์ประกอบตามพรรค/กลุ่ม</div>
+      <div class="seatbar">${seatbar}</div>
+      <div class="dotgrid">${dots}</div>
+      <div class="legendwrap" style="padding:12px 0 4px;border-top:1px dashed var(--line)">${legend}</div>
+      <ul class="sumfacts" style="margin-top:10px">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V7l-8-5Z"/></svg><span><b>พรรคประชาชน</b> ได้ที่นั่งมากที่สุด <b>22 เขต</b> เพิ่มขึ้น 8 จากเดิม</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>รองลงมา <b>กลุ่มคนทำงาน</b> 11 · <b>ประชาธิปัตย์</b> 8 · <b>เพื่อไทย</b> 4 · <b>กรุงเทพที่ดีกว่า</b> 2 · <b>อิสระ</b> 3</span></li>
+      </ul>
+    </div>
+  </div>`;
+}
+
+/* ---------- view switch ---------- */
+window.setView=function(v){
+  state.view=v; state.focus=null; state.sel=null;
+  if(v!=='gov'&&SONG.player&&SONG.playing)SONG.player.pauseVideo();
+  ['gov','sk','sum'].forEach(k=>el('tab-'+k).classList.toggle('active',k===v));
+  const isMap=(v!=='sum');
+  el('mapGrid').style.display=isMap?'':'none';
+  el('sumView').style.display=isMap?'none':'block';
+  if(isMap){
+    el('mapTitle').textContent = v==='gov'?'แผนที่ผู้ชนะรายเขต — ผู้ว่าฯ กทม.':'แผนที่ผู้ชนะรายเขต — ส.ก. 50 เขต';
+    el('mapMeta').textContent  = v==='gov'?'ชัชชาติ กวาดครบ 50 เขต':'ระบายสีตามพรรค/กลุ่มที่ชนะแต่ละเขต';
+    el('mapHint').textContent  = v==='gov'?'ชี้ที่เขตเพื่อดูชื่อเขต · ผลผู้ว่าฯ นับรวมทั้ง กทม. (ไม่มีแยกรายเขตจาก กกต.)':'ชี้/แตะเขตเพื่อดูผู้ชนะและคะแนน · แตะชิปพรรคเพื่อไฮไลต์';
+    el('mapNote').innerHTML = v==='gov'
+      ? 'แผนที่แสดง<strong>ผู้ชนะรายเขต</strong> ซึ่งชัชชาติ สิทธิพันธุ์ (เบอร์ 9) ชนะทั้ง 50 เขต — คะแนนผู้ว่าฯ เป็นการนับรวมทั้งกรุงเทพมหานคร กกต. ไม่ได้ประกาศแยกเป็นรายเขต'
+      : 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) เลือกตั้งแบบแบ่งเขต เขตละ 1 คน รวม 50 คน — สีของแต่ละเขตคือพรรค/กลุ่มของผู้ชนะ';
+    // badge
+    el('mapBadge').style.display=v==='gov'?'':'none';
+    if(v==='gov'){const pf=(PH.gov&&PH.gov[9])?`<img src="bkk-photos/${PH.gov[9]}" alt="" onerror="this.remove()">`:''; el('mapBadge').innerHTML=`<div class="mv ava" style="color:${GOV.winnerColor}">9${pf}</div><div class="mt"><b>ชัชชาติ สิทธิพันธุ์</b><small>ชนะ 50 / 50 เขต · ${GOV.candidates[0].pct}%</small></div>`;}
+    recolor(); renderLegend(); renderPanel();
+  } else { renderSummary(); }
+};
+
+/* ---------- footer ---------- */
+el('foot').innerHTML='ข้อมูลผลการเลือกตั้ง (อย่างไม่เป็นทางการ · รอ กกต. ประกาศรับรอง) · ที่มา: '+
+  '<a href="https://th.wikipedia.org/wiki/การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a>, '+
+  '<a href="https://www.thaipbs.or.th/bkkelection69" target="_blank" rel="noopener">Thai PBS</a>, '+
+  '<a href="https://www.ect.go.th" target="_blank" rel="noopener">สำนักงาน กกต.</a> · '+
+  'ขอบเขตเขต กทม.: OpenGISData-Thailand (chingchai) · จัดทำเพื่อการเรียนรู้';
+
+// init
+setView('gov');
+})();
+</script>
+<script src="../js/theme-toggle-drag.js"></script>
+<script src="../js/ai-chat.js"></script>
+</body>
+</html>
