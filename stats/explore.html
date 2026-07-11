@@ -112,6 +112,10 @@
   .biv-wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center}
   .biv-wrap .plot{flex:1 1 300px;min-width:280px}
   .biv-legend{flex:none;display:flex;justify-content:center;align-items:center;padding:6px}
+  .prov-tip{position:fixed;pointer-events:none;z-index:9999;max-width:270px;background:var(--paper-2);border:1px solid var(--rule);border-radius:10px;box-shadow:0 12px 28px -14px rgba(0,0,0,.5);padding:9px 12px;font-size:12.5px;line-height:1.55;color:var(--ink-2);opacity:0;transition:opacity .12s}
+  .prov-tip b{display:block;font-size:13px;color:var(--ink);font-weight:800;margin-bottom:3px}
+  .prov-tip .v{color:var(--ink);font-weight:700}
+  .prov-hoverable path{transition:filter .1s}
   /* ---------- แผนที่ 50 เขต กทม. (district choropleth + switcher) ---------- */
   .bkkm-pills{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
   .bkkm-pill{font-family:"IBM Plex Sans Thai",sans-serif;font-size:12.5px;font-weight:700;color:var(--ink-soft);background:var(--paper-3);border:1px solid var(--rule);border-radius:999px;padding:7px 13px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;transition:all .15s;line-height:1}
@@ -758,6 +762,67 @@
         <p class="sub">พื้นที่ · เมืองหลวง · ประชากรล่าสุด (World Bank) · ปีที่เข้าเป็นสมาชิกอาเซียน — แถวเขียว = ไทย</p>
         <div class="tbl-wrap" id="geoTable"><div class="state-msg">กำลังสร้างตาราง…</div></div>
         <div class="src">ที่มา: ASEAN Member States (Wikipedia) + World Bank · ปีสมาชิก: ก่อตั้ง 2510 (อินโดฯ มาเลเซีย ฟิลิปปินส์ สิงคโปร์ ไทย) · บรูไน 2527 · เวียดนาม 2538 · ลาว/เมียนมา 2540 · กัมพูชา 2542</div>
+      </div>
+    </section>
+
+    <!-- ============ อาเซียน · เศรษฐกิจดิจิทัล (ลูกโลกแท่ง 3D · e-Conomy SEA) ============ -->
+    <section class="tabpane" id="pane-asean-digital" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">อาเซียน</span><h2 class="ph-title">📱 เศรษฐกิจดิจิทัลอาเซียน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">📱 เศรษฐกิจดิจิทัล SEA-6</div>
+          <div class="k-num">263<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">ปี 2567 (GMV) — โต 15% ต่อปี (Google/Temasek/Bain)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🇮🇩 อินโดนีเซียใหญ่สุด</div>
+          <div class="k-num">90<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">ตลาดดิจิทัลอันดับ 1 ของภูมิภาค</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🇹🇭 ไทยอันดับ 2</div>
+          <div class="k-num">46<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">รองจากอินโดฯ นำหน้าเวียดนาม 36</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🚀 คาดการณ์ปี 2573</div>
+          <div class="k-num">600<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">กรณีฐาน — เต็มที่อาจแตะ 1 ล้านล้าน US$</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>🌏 ลูกโลกเศรษฐกิจดิจิทัลอาเซียน 3 มิติ</h2><span class="tag">3D · แท่งยื่น · ลาก/ซูมได้</span></div>
+        <p class="sub">แท่งที่ยื่นจากผิวโลก = <b>ขนาดเศรษฐกิจดิจิทัลของแต่ละชาติ (GMV มูลค่าซื้อขายรวม)</b> · <b style="color:var(--gold)">แท่งสีทอง = ประเทศไทย</b> (46 พันล้าน) อันดับ 2 ของภูมิภาค · แท่งอินโดนีเซียสูงเด่นเพราะประชากร 280 ล้านคนเพิ่งเข้าสู่โลกออนไลน์เต็มตัว · หมุนดูจะเห็นว่าเศรษฐกิจดิจิทัลกระจุกอยู่ใน 6 ชาติหลักของอาเซียน · 🖱️ ลากเพื่อหมุน · สกอลล์เพื่อซูม</p>
+        <div class="tl-toolbar">
+          <button class="tl-btn" id="asdSpin" type="button">⏸ หยุดหมุน</button>
+        </div>
+        <div class="sat-stage tg-stage" id="asdStage">
+          <div class="tg-rank" id="asdRank"></div>
+          <div class="sat-loading" id="asdLoading"><div class="spin"></div><span>กำลังโหลดลูกโลก 3 มิติ…</span></div>
+          <div class="sat-drag">🖱️ ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+        </div>
+        <div class="tg-legend">
+          <span class="lg"><i class="sw" style="background:var(--green)"></i> ขนาดเศรษฐกิจดิจิทัล (GMV)</span>
+          <span class="lg"><i class="sw" style="background:var(--gold)"></i> ประเทศไทย</span>
+        </div>
+        <div class="sat-hint">💡 <b>รู้หรือไม่:</b> เศรษฐกิจดิจิทัลอาเซียนโตจาก ~40 พันล้านเมื่อ 10 ปีก่อน มาเป็น 263 พันล้าน US$ — และวิดีโอคอมเมิร์ซ (ขายของผ่านไลฟ์สด) พุ่งจากไม่ถึง 5% เป็น 20% ของอีคอมเมิร์ซทั้งหมดในสองปี 🎯</div>
+        <div class="src">ที่มา: <a href="https://www.bain.com/insights/e-conomy-sea-2024/" target="_blank" rel="noopener">Google, Temasek &amp; Bain — e-Conomy SEA 2024 ↗</a> (GMV รายประเทศ ปี 2567) · แผนที่ฐาน world-atlas (Natural Earth) · สร้างด้วย three.js · สืบค้นเมื่อ 11 ก.ค. 2569</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>📈 เศรษฐกิจดิจิทัลอาเซียนโตทะยาน</h2><span class="tag">GMV รวม SEA-6</span></div>
+          <p class="sub">มูลค่ารวมของทั้ง 6 ชาติหลัก (GMV พันล้าน US$) — เติบโตต่อเนื่องแม้ผ่านโควิด และตั้งเป้าแตะ <b>600 พันล้าน US$ ภายในปี 2573</b> · เส้นประ = ช่วงคาดการณ์</p>
+          <div class="plot" id="asdGrowth"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: <a href="https://www.bain.com/insights/e-conomy-sea-2025/" target="_blank" rel="noopener">e-Conomy SEA reports (Google/Temasek/Bain) ↗</a> — GMV รวม SEA-6 รายปี (ปี 2568–2573 = คาดการณ์)</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>🌐 ผู้ใช้อินเทอร์เน็ตรายประเทศ</h2><span class="tag">ต้นปี 2567 · ล้านคน</span></div>
+          <p class="sub">อินโดนีเซียมีชาวเน็ตมากกว่าประชากรทั้งประเทศไทยเกือบ 3 เท่า — ฐานผู้ใช้มหาศาลนี้คือเชื้อเพลิงของเศรษฐกิจดิจิทัล · <b style="color:var(--red)">แท่งแดง = ไทย</b></p>
+          <div class="plot" id="asdUsers"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: <a href="https://datareportal.com/reports/tag/Southeastern+Asia" target="_blank" rel="noopener">DataReportal — Digital 2024 (We Are Social/Meltwater) ↗</a> (จำนวนผู้ใช้อินเทอร์เน็ต ต้นปี 2567)</div>
+        </div>
       </div>
     </section>
 
@@ -2998,6 +3063,170 @@
       </div>
     </section>
 
+    <!-- ============ ข้อมูลการศึกษาไทย · แผนที่ความเหลื่อมล้ำ & เด็กหลุดจากระบบ ============ -->
+    <section class="tabpane" id="pane-edu-map" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ข้อมูลการศึกษาไทย</span><h2 class="ph-title">🗺️ แผนที่ความเหลื่อมล้ำ &amp; เด็กหลุดจากระบบ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🚸 เด็กหลุดจากระบบ (3–18 ปี)</div>
+          <div class="k-num">1.02<span class="u">ล้านคน</span></div>
+          <div class="k-sub">ปี 2567 — คิดเป็น 8.41% ของเด็กวัยเรียน (กสศ.)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📚 วัยการศึกษาภาคบังคับ (6–14)</div>
+          <div class="k-num">394,039<span class="u">คน</span></div>
+          <div class="k-sub">38.4% ของเด็กหลุดทั้งหมด — วัยที่กฎหมายบังคับให้เรียน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">↩️ ดึงกลับเข้าระบบแล้ว</div>
+          <div class="k-num">304,082<span class="u">คน</span></div>
+          <div class="k-sub">ปี 2567 ผ่านโครงการ Thailand Zero Dropout</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">📍 จังหวัดสูงสุด</div>
+          <div class="k-num">กรุงเทพฯ<span class="u">61,609 คน</span></div>
+          <div class="k-sub">ไม่ใช่จังหวัดยากจน แต่เป็นเมือง/ชายแดน/แรงงานข้ามชาติ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🗺️ จังหวัดที่มีเด็กหลุดจากระบบมากที่สุด</h2><span class="tag">อายุ 6–14 ปี · รายจังหวัด</span></div>
+        <p class="sub">ระบายสีตามจำนวนเด็กหลุดจากระบบวัยบังคับ — <b>ยิ่งเข้มยิ่งมาก</b> · จุดน่าสนใจคือ 5 จังหวัดหัวแถวไม่ใช่จังหวัดยากจนในอีสาน แต่เป็น <b>เมืองใหญ่ ชายแดน และเขตอุตสาหกรรมที่มีแรงงานข้ามชาติ</b> (กรุงเทพฯ ตาก สมุทรสาคร เชียงใหม่ สมุทรปราการ) — สะท้อนว่าปัญหาหลักคือลูกหลานแรงงานย้ายถิ่น/ข้ามชาติที่ตกสำรวจ · ชี้จังหวัดเพื่อดูค่า</p>
+        <div class="biv-wrap"><div class="plot" id="eduMapChart"><div class="state-msg">กำลังวาดแผนที่…</div></div></div>
+        <div class="src">ที่มา: <a href="https://waymagazine.org/eef-thailand-zero-dropout/" target="_blank" rel="noopener">กสศ. (กองทุนเพื่อความเสมอภาคทางการศึกษา) · Thailand Zero Dropout ↗</a> — เด็กนอกระบบวัยการศึกษาภาคบังคับ (6–14 ปี) รายจังหวัด · รูปแผนที่จากหน้า ส.ส. · สืบค้นเมื่อ 11 ก.ค. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📊 5 จังหวัดที่มีเด็กหลุดมากที่สุด</h2><span class="tag">อายุ 6–14 ปี · คน</span></div>
+        <p class="sub">กรุงเทพฯ นำโด่งด้วยตัวเลขที่มากกว่าอันดับสองเกือบเท่าตัว รองลงมาคือตาก (ชายแดนเมียนมา) และสมุทรสาคร (เมืองประมง/โรงงาน) — ทั้งหมดเป็นพื้นที่ที่มีเด็กลูกหลานแรงงานข้ามชาติจำนวนมาก · แท่งส้ม = กรุงเทพฯ</p>
+        <div class="plot" id="eduDropBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://waymagazine.org/eef-thailand-zero-dropout/" target="_blank" rel="noopener">กสศ. · Thailand Zero Dropout ↗</a> (เด็กนอกระบบ 6–14 ปี รายจังหวัด 5 อันดับแรก)</div>
+      </div>
+    </section>
+
+    <!-- ============ การเงิน · ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน ============ -->
+    <section class="tabpane" id="pane-fin-macro" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title">📊 ความเหลื่อมล้ำ &amp; ตลาดเงินตลาดทุน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">⚖️ ดัชนีความเหลื่อมล้ำ (Gini)</div>
+          <div class="k-num">≈35<span class="u">/100</span></div>
+          <div class="k-sub">ค่อยๆ ดีขึ้นจาก ~42 เมื่อ 20 ปีก่อน แต่ยังสูง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏦 ดอกเบี้ยนโยบาย ธปท.</div>
+          <div class="k-num">2.00<span class="u">%</span></div>
+          <div class="k-sub">ลดลงจากจุดสูงสุด 2.50% หลังเศรษฐกิจชะลอ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📈 ดัชนี SET</div>
+          <div class="k-num">1,621<span class="u">จุด</span></div>
+          <div class="k-sub">11 ก.ค. 2569 · ยังวนเวียนระดับเดิมมาหลายปี</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">😐 หุ้นไทย "10 ปีไม่ไปไหน"</div>
+          <div class="k-num">1,400–1,700<span class="u">จุด</span></div>
+          <div class="k-sub">กรอบที่ SET วนเวียนมาตลอดทศวรรษ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ ความเหลื่อมล้ำทางรายได้ (Gini) ค่อยๆ ดีขึ้น</h2><span class="tag">ดัชนี Gini · ต่ำ = เท่าเทียม</span></div>
+        <p class="sub">ค่ายิ่งต่ำยิ่งเท่าเทียม — ความเหลื่อมล้ำไทยลดลงช้าๆ จากราว 42 เมื่อต้นทศวรรษ 2540 มาที่ราว 35 แต่ยังถือว่าสูงเมื่อเทียบชาติพัฒนาแล้ว (ที่มักต่ำกว่า 30)</p>
+        <div class="plot" id="finGini"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://data.worldbank.org/indicator/SI.POV.GINI?locations=TH" target="_blank" rel="noopener">World Bank — Gini index (Thailand) ↗</a> (ค่ารายปีที่มีข้อมูลสำรวจ · โดยประมาณ)</div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>🏦 ดอกเบี้ยนโยบาย ธปท. ย้อนหลัง</h2><span class="tag">% ต่อปี · สิ้นปี</span></div>
+          <p class="sub">ธปท. ขึ้นดอกเบี้ยสู้เงินเฟ้อจนแตะ 2.50% ปลายปี 2566 แล้วทยอยลดตั้งแต่ปลายปี 2567 เมื่อเศรษฐกิจชะลอและเงินเฟ้อต่ำ</p>
+          <div class="plot" id="finRate"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: <a href="https://www.bot.or.th/th/our-roles/monetary-policy/mpc-publication/policy-interest-rate.html" target="_blank" rel="noopener">ธนาคารแห่งประเทศไทย — อัตราดอกเบี้ยนโยบาย ↗</a> (ระดับ ณ สิ้นปี)</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>📈 ดัชนี SET ย้อนหลัง</h2><span class="tag">จุด · สิ้นปี</span></div>
+          <p class="sub">ดัชนีตลาดหุ้นไทยแทบไม่ไปไหนตลอดหลายปี วนเวียนอยู่ในกรอบ 1,400–1,700 จุด สะท้อนความเชื่อมั่นและการเติบโตที่ชะลอ</p>
+          <div class="plot" id="finSet"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: <a href="https://www.set.or.th/th/market/index/set/overview" target="_blank" rel="noopener">ตลาดหลักทรัพย์แห่งประเทศไทย — ดัชนี SET ↗</a> (ปิดสิ้นปี · จุดสุดท้าย = 11 ก.ค. 2569)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ กรุงเทพ · น้ำท่วม & งบประมาณ ============ -->
+    <section class="tabpane" id="pane-bkk-flood" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">กรุงเทพ</span><h2 class="ph-title">🌊 น้ำท่วม &amp; งบประมาณเมือง</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💰 งบประมาณ กทม. ปี 2568</div>
+          <div class="k-num">90,000<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">งบรายจ่ายประจำปีของกรุงเทพมหานคร</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌊 งบสำนักการระบายน้ำ</div>
+          <div class="k-num">7,081<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">ราว 8% ของงบทั้งหมด — ดูแลระบบระบายน้ำทั้งเมือง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🛡️ งบป้องกัน–แก้น้ำท่วม</div>
+          <div class="k-num">16,978<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">ก้อนใหญ่สุดในแผน "เดินทางดี" ปี 2568</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌧️ มหาอุทกภัย 2554</div>
+          <div class="k-num">13.6<span class="u">ล้านคน</span></div>
+          <div class="k-sub">บทเรียนน้ำท่วมใหญ่ที่ยังหลอนคนกรุง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🌧️ ฝนตกหนักช่วงไหน — ฤดูน้ำท่วมกรุงเทพฯ</h2><span class="tag">มม./เดือน · ค่าเฉลี่ย</span></div>
+        <p class="sub">ปริมาณฝนเฉลี่ยรายเดือนในกรุงเทพฯ — พุ่งสูงสุดช่วง <b>กันยายน–ตุลาคม</b> ซึ่งเป็นเดือนที่น้ำท่วมขังบ่อยที่สุด เมื่อฝนตกหนักชนกับน้ำเหนือและน้ำทะเลหนุน · แท่งน้ำเงินเข้ม = เดือนเสี่ยงสูง</p>
+        <div class="plot" id="bkkRain"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กรมอุตุนิยมวิทยา — ค่าเฉลี่ยภูมิอากาศปริมาณฝนรายเดือน กรุงเทพมหานคร (โดยประมาณ)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💰 งบประมาณ กทม. 2568 แยกตามสำนักงาน (สูงสุด)</h2><span class="tag">ล้านบาท</span></div>
+        <p class="sub">สำนักการโยธาได้งบมากสุด ตามด้วยสำนักการระบายน้ำและสำนักการแพทย์ — โครงสร้างพื้นฐานและการจัดการน้ำกินงบเมืองเป็นสัดส่วนสูง · แท่งน้ำเงิน = งานที่เกี่ยวกับน้ำ</p>
+        <div class="plot" id="bkkBudget"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://theactive.thaipbs.or.th/data/bangkok-budget" target="_blank" rel="noopener">The Active — ชำแหละร่างงบฯ กทม. 2568 ↗</a> (ข้อบัญญัติงบประมาณรายจ่ายประจำปี 2568)</div>
+      </div>
+    </section>
+
+    <!-- ============ ศูนย์ข้อมูลโลก · ภัยพิบัติ & มหาสมุทรเดือด ============ -->
+    <section class="tabpane" id="pane-world-ocean" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title">🌊 ความเสียหายภัยพิบัติ &amp; มหาสมุทรเดือด</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💸 ความเสียหายภัยพิบัติโลก 2567</div>
+          <div class="k-num">242<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">จาก 393 เหตุการณ์ทั่วโลก (EM-DAT)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🪸 ปะการังฟอกขาว</div>
+          <div class="k-num">84<span class="u">% ของแนวปะการังโลก</span></div>
+          <div class="k-sub">เหตุการณ์ครั้งที่ 4 (2566–68) รุนแรงสุดเป็นประวัติการณ์</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌡️ อุณหภูมิผิวน้ำทะเล</div>
+          <div class="k-num">สูงสุด<span class="u">เป็นประวัติการณ์</span></div>
+          <div class="k-sub">ปี 2567 ทำสถิติร้อนสุดนับตั้งแต่มีการวัด</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">💀 ผู้เสียชีวิต 2567</div>
+          <div class="k-num">16,753<span class="u">คน</span></div>
+          <div class="k-sub">กระทบผู้คนกว่า 167 ล้านคนทั่วโลก</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💸 ความเสียหายทางเศรษฐกิจจากภัยพิบัติโลก</h2><span class="tag">พันล้าน US$ · รายปี</span></div>
+        <p class="sub">มูลค่าความเสียหายจากภัยพิบัติธรรมชาติทั่วโลก — พุ่งสูงในปีที่มีมหันตภัยใหญ่ (เช่น 2554 แผ่นดินไหว/สึนามิญี่ปุ่น + น้ำท่วมใหญ่ไทย) และมีแนวโน้มสูงขึ้นตามภูมิอากาศที่แปรปรวน</p>
+        <div class="plot" id="worldDamage"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://ourworldindata.org/grapher/damage-costs-from-natural-disasters" target="_blank" rel="noopener">EM-DAT (CRED) · เรียบเรียงโดย Our World in Data ↗</a> (มูลค่าความเสียหายรายปี · โดยประมาณ)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🪸 เหตุการณ์ปะการังฟอกขาวระดับโลก — ครั้งที่ 4 หนักสุดในประวัติศาสตร์</h2><span class="tag">% ของแนวปะการังโลกที่ได้รับผลกระทบ</span></div>
+        <p class="sub">โลกเคยเกิดเหตุปะการังฟอกขาวระดับโลกมาแล้ว 4 ครั้ง — ครั้งล่าสุด (2566–2568) จากคลื่นความร้อนในทะเล กระทบแนวปะการังถึง <b>84%</b> ทำลายสถิติเดิม 65.7% ในเวลาเพียงครึ่งเดียว · แท่งแดง = ครั้งล่าสุด</p>
+        <div class="plot" id="worldCoral"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://icriforum.org/4gbe-2025/" target="_blank" rel="noopener">International Coral Reef Initiative (ICRI) / NOAA Coral Reef Watch ↗</a> — สัดส่วนแนวปะการังโลกที่เผชิญความเครียดจากความร้อน</div>
+      </div>
+    </section>
+
       </div><!-- /.content -->
     </div><!-- /.shell -->
   </main>
@@ -3998,7 +4227,7 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); }
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); }
 
     /* ===================== แท็บอาเซียน (World Bank — live, ยิงตรง CORS) ===================== */
     // ชื่อ EN ตรงกับ world-atlas (Natural Earth) เพื่อ join แผนที่ · สีประจำชาติสำหรับ treemap/เส้น
@@ -4455,7 +4684,189 @@
     function renderAseanAll(){
       if(!document.getElementById("pane-asean")) return;
       renderAseanKpis(); renderAseanTreemap(); renderAseanBars(); renderAseanGrowth(); renderAseanMap();
-      renderCorruptAll(); renderMilAll(); renderGeoAll();
+      renderCorruptAll(); renderMilAll(); renderGeoAll(); renderAseanDigital();
+    }
+
+    /* ================= 📱 เศรษฐกิจดิจิทัลอาเซียน (e-Conomy SEA 2024) =================
+       GMV รายประเทศ 2567 + เทรนด์รวม SEA-6 + ผู้ใช้อินเทอร์เน็ต — ทุกตัวมีแหล่งใต้กราฟ */
+    var ASD_GMV = [   // GMV เศรษฐกิจดิจิทัล 2567 (พันล้าน US$) · ll=[lon,lat]
+      { k:"อินโดนีเซีย", v:90, ll:[118,-2]      },
+      { k:"ไทย",        v:46, ll:[100.9,13.9], th:true },
+      { k:"เวียดนาม",    v:36, ll:[106,16]      },
+      { k:"มาเลเซีย",    v:31, ll:[102,4]       },
+      { k:"ฟิลิปปินส์",  v:31, ll:[122,12]      },
+      { k:"สิงคโปร์",    v:29, ll:[103.8,1.35]  }
+    ];
+    var ASD_GROWTH_ACT = [ {year:2563,v:117},{year:2564,v:161},{year:2565,v:194},{year:2566,v:218},{year:2567,v:263} ];
+    var ASD_GROWTH_PROJ = [ {year:2567,v:263},{year:2568,v:300},{year:2573,v:600} ]; // คาดการณ์ (เริ่มที่ 2567 ให้ต่อเส้น)
+    var ASD_USERS = [ // ผู้ใช้อินเทอร์เน็ต ต้นปี 2567 (ล้านคน)
+      {k:"อินโดนีเซีย",v:185},{k:"ฟิลิปปินส์",v:87},{k:"เวียดนาม",v:78},
+      {k:"ไทย",v:63,hl:true},{k:"มาเลเซีย",v:33},{k:"สิงคโปร์",v:6}
+    ];
+
+    function renderAsdGrowth(){
+      var box=$("#asdGrowth"); if(!box || !window.Plot) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), paper2=cssVar("--paper-2");
+      var W=Math.max(300, box.clientWidth||520), lastA=ASD_GROWTH_ACT[ASD_GROWTH_ACT.length-1], lastP=ASD_GROWTH_PROJ[ASD_GROWTH_PROJ.length-1];
+      plotInto("#asdGrowth", plotT({
+        width:W, height:290, marginLeft:44, marginBottom:32, marginTop:16, marginRight:20,
+        style: baseStyle(ink, FONT_W),
+        x:{ label:null, tickFormat:"d", ticks:7, tickSize:0 },
+        y:{ label:"พันล้าน US$", grid:true, tickSize:0, domain:[0,660] },
+        marks:[
+          Plot.areaY(ASD_GROWTH_ACT, { x:"year", y:"v", fill:green, fillOpacity:.12, curve:"catmull-rom" }),
+          Plot.lineY(ASD_GROWTH_ACT, { x:"year", y:"v", stroke:green, strokeWidth:2.8, curve:"catmull-rom" }),
+          Plot.lineY(ASD_GROWTH_PROJ, { x:"year", y:"v", stroke:green, strokeWidth:2.2, strokeDasharray:"5,4" }),
+          Plot.dot(ASD_GROWTH_ACT, { x:"year", y:"v", fill:paper2, stroke:green, strokeWidth:1.6, r:3.5 }),
+          Plot.dot([lastP], { x:"year", y:"v", fill:green, stroke:paper2, strokeWidth:1.6, r:5.5 }),
+          Plot.text([lastA], { x:"year", y:"v", text:function(d){ return d.v; }, dy:-12, fill:green, fontWeight:700, fontSize:12 }),
+          Plot.text([lastP], { x:"year", y:"v", text:function(d){ return "คาด "+d.v; }, dy:-13, fill:green, fontWeight:700, fontSize:12 })
+        ]
+      }));
+    }
+
+    /* ---------- 🌏 ลูกโลกเศรษฐกิจดิจิทัลอาเซียน (three.js — ซูมเข้า SEA) ---------- */
+    var asdRetheme = null;
+    function setupAseanDigitalGlobe(){
+      var stage=document.getElementById("asdStage"); if(!stage || !window.d3) return;
+      var loading=document.getElementById("asdLoading"), rankBox=document.getElementById("asdRank");
+      var btnSpin=document.getElementById("asdSpin");
+      var started=false, ready=false, visible=false, raf=0, spin=true, lastTheme="";
+      var THREE, renderer, scene, camera, controls, texture, mapCanvas, mapCtx, barGrp;
+      var MAPW=2048, MAPH=1024;
+      var SEA={ "Indonesia":1,"Thailand":1,"Vietnam":1,"Malaysia":1,"Philippines":1,"Singapore":1 };
+
+      function loadScript(src){
+        return new Promise(function(res,rej){
+          var s=document.createElement("script"); s.src=src; s.onload=res;
+          s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s);
+        });
+      }
+      function loadThree(){
+        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
+        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
+        return loadScript(b+"build/three.min.js").then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
+      }
+      function waitWorld(){
+        return new Promise(function(res,rej){
+          var n=0;
+          (function tick(){
+            if(typeof WORLD!=="undefined" && WORLD) return res();
+            if(++n>70) return rej(new Error("แผนที่ฐานยังไม่พร้อม"));
+            setTimeout(tick,200);
+          })();
+        });
+      }
+      function ll2v(lon, lat, r){
+        var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
+        return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(th), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(th));
+      }
+      function paintMap(){
+        var dark = document.documentElement.getAttribute("data-theme")==="dark";
+        var ocean = dark ? "#0b1622" : "#dde8ef", land = dark ? "#243140" : "#f2f6f8", line = dark ? "#3b4b5b" : "#c7d5dd";
+        var green=cssVar("--green"), gold=cssVar("--gold");
+        mapCtx.fillStyle=ocean; mapCtx.fillRect(0,0,MAPW,MAPH);
+        var proj=d3.geoEquirectangular().translate([MAPW/2,MAPH/2]).scale(MAPW/(2*Math.PI));
+        var path=d3.geoPath(proj, mapCtx);
+        WORLD.features.forEach(function(f){
+          var nm=f.properties.name, isTH=(nm==="Thailand"), isSEA=!!SEA[nm];
+          mapCtx.beginPath(); path(f);
+          mapCtx.fillStyle = isTH ? gold : (isSEA ? green : land);
+          mapCtx.globalAlpha = isSEA && !isTH ? .38 : 1;
+          mapCtx.fill(); mapCtx.globalAlpha=1;
+          mapCtx.lineWidth=1; mapCtx.strokeStyle=line; mapCtx.stroke();
+        });
+        if(texture) texture.needsUpdate=true;
+      }
+      function disposeGroup(g){ g.traverse(function(o){ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); }); }
+      function buildBars(){
+        if(barGrp){ scene.remove(barGrp); disposeGroup(barGrp); }
+        barGrp=new THREE.Group();
+        var green=new THREE.Color(cssVar("--green")), gold=new THREE.Color(cssVar("--gold"));
+        var up=new THREE.Vector3(0,1,0), max=90;
+        ASD_GMV.forEach(function(d){
+          var dir=ll2v(d.ll[0], d.ll[1], 1).normalize();
+          var h=.04 + .34*(d.v/max);
+          var bar=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,h,14),
+                                 new THREE.MeshBasicMaterial({color: d.th?gold:green}));
+          bar.quaternion.setFromUnitVectors(up, dir);
+          bar.position.copy(dir.clone().multiplyScalar(1 + h/2));
+          barGrp.add(bar);
+        });
+        scene.add(barGrp);
+      }
+      function paintRank(){
+        if(!rankBox) return;
+        var green=cssVar("--green"), gold=cssVar("--gold");
+        var h='<h4>📱 GMV ดิจิทัล 2567 (พันล้าน US$)</h4>';
+        ASD_GMV.forEach(function(d){
+          h+='<div class="row"><i class="dotc" style="background:'+(d.th?gold:green)+'"></i>'+d.k+'<b>'+d.v+'</b></div>';
+        });
+        rankBox.innerHTML=h;
+      }
+      function resize(){
+        if(!renderer) return;
+        var w=stage.clientWidth||640, h=stage.clientHeight||380;
+        renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.render(scene,camera);
+      }
+      function build(){
+        THREE=window.THREE;
+        scene=new THREE.Scene();
+        camera=new THREE.PerspectiveCamera(38, 2, .05, 100);
+        mapCanvas=document.createElement("canvas"); mapCanvas.width=MAPW; mapCanvas.height=MAPH;
+        mapCtx=mapCanvas.getContext("2d"); paintMap();
+        texture=new THREE.CanvasTexture(mapCanvas);
+        scene.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1,64,48), new THREE.MeshBasicMaterial({map:texture})));
+        scene.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1.04,48,32),
+          new THREE.MeshBasicMaterial({color:new THREE.Color(cssVar("--green")), transparent:true, opacity:.07, side:THREE.BackSide})));
+        renderer=new THREE.WebGLRenderer({antialias:true, alpha:true});
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+        stage.appendChild(renderer.domElement);
+        controls=new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enablePan=false; controls.minDistance=1.9; controls.maxDistance=8;
+        controls.enableDamping=true; controls.dampingFactor=.08;
+        controls.autoRotate=true; controls.autoRotateSpeed=.42;
+        camera.position.copy(ll2v(112, 8, 3.0));   // ซูมเข้าเอเชียตะวันออกเฉียงใต้
+        lastTheme=document.documentElement.getAttribute("data-theme")||"light";
+        buildBars(); paintRank(); resize();
+        ready=true; if(loading) loading.style.display="none";
+      }
+      function tick(){
+        raf=0; if(!visible||!ready) return;
+        controls.autoRotate=spin; controls.update();
+        renderer.render(scene,camera);
+        raf=requestAnimationFrame(tick);
+      }
+      function kick(){ if(!raf && visible && ready) raf=requestAnimationFrame(tick); }
+      if(btnSpin) btnSpin.addEventListener("click", function(){
+        spin=!spin; btnSpin.textContent = spin ? "⏸ หยุดหมุน" : "▶ หมุนต่อ"; kick();
+      });
+
+      new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          visible=e.isIntersecting;
+          if(visible && !started){
+            started=true;
+            loadThree().then(waitWorld).then(function(){ build(); kick(); })
+              .catch(function(){ if(loading) loading.innerHTML='<span>โหลดลูกโลก 3 มิติไม่สำเร็จ — ลองรีเฟรชหน้า</span>'; });
+          } else kick();
+        });
+      }, {rootMargin:"200px"}).observe(stage);
+
+      window.addEventListener("resize", function(){ clearTimeout(stage._asdRt); stage._asdRt=setTimeout(resize,180); });
+      asdRetheme=function(){
+        if(!ready) return;
+        var t=document.documentElement.getAttribute("data-theme")||"light";
+        if(t===lastTheme) return;
+        lastTheme=t; paintMap(); buildBars(); paintRank(); renderer.render(scene,camera);
+      };
+    }
+
+    function renderAseanDigital(){
+      if(!document.getElementById("pane-asean-digital")) return;
+      renderAsdGrowth();
+      hbarChart("#asdUsers", ASD_USERS, {h:230, ml:96, xlab:"ล้านคน", nameLabel:"ประเทศ", fmt:function(v){ return v; }});
+      if(asdRetheme) asdRetheme();
     }
 
     /* ======================================================================
@@ -4715,6 +5126,7 @@
     function renderFinanceAll(){
       renderInflationAll(); renderPersonalAll(); renderDebtAll(); renderHistoryAll(); renderWealthAll();
       renderUsDebt(); renderUsDebtNum();
+      renderFinMacro();
     }
 
     /* ---------- โหลดเงินเฟ้อสด (World Bank) ---------- */
@@ -6289,6 +6701,25 @@
       "ปราจีนบุรี":{a:56,p:190},"จันทบุรี":{a:44,p:170},"ระยอง":{a:36,p:220},"ตราด":{a:40,p:90},
       "เพชรบุรี":{a:48,p:200},"ราชบุรี":{a:46,p:260},"กาญจนบุรี":{a:42,p:210},"ประจวบคีรีขันธ์":{a:44,p:180}
     };
+    /* tooltip ลอยตามเมาส์ (ใช้ร่วมกับแผนที่ choropleth รายจังหวัด: น้ำท่วม bivariate + การศึกษา) */
+    function provTipEl(){
+      var t=document.getElementById("provTip");
+      if(!t){ t=document.createElement("div"); t.id="provTip"; t.className="prov-tip"; document.body.appendChild(t); }
+      return t;
+    }
+    function bindProvHover(pathEl, html){
+      pathEl.style.cursor="default";
+      pathEl.addEventListener("mousemove", function(ev){
+        var t=provTipEl(); t.innerHTML=html; t.style.opacity="1";
+        var w=t.offsetWidth||200, h=t.offsetHeight||60, x=ev.clientX+15, y=ev.clientY+15;
+        if(x+w>window.innerWidth) x=ev.clientX-w-15;
+        if(y+h>window.innerHeight) y=ev.clientY-h-15;
+        t.style.left=Math.max(4,x)+"px"; t.style.top=Math.max(4,y)+"px";
+      });
+      pathEl.addEventListener("mouseenter", function(){ pathEl.style.filter="brightness(0.86)"; });
+      pathEl.addEventListener("mouseleave", function(){ provTipEl().style.opacity="0"; pathEl.style.filter=""; });
+    }
+
     function renderFloodBiv(){
       var box=$("#floodBivMap"); if(!box) return; var d3=window.d3;
       if(!d3 || !window.THMAP) return;
@@ -6305,7 +6736,10 @@
         var th=M.en2th[en]||en, f=FLOOD[th];
         var fill = f ? BIV_COLORS[xq(f.a)+yq(f.p)*3] : "#e8e8e8";
         var p=g.append("path").attr("d",M.paths[en]).attr("fill",fill).attr("stroke",paper3).attr("stroke-width",0.6);
-        p.append("title").text(th + (f ? " — พื้นที่น้ำท่วม ~"+f.a+"/100 · ประชากรกระทบ ~"+f.p+" พันคน" : " — น้ำท่วมไม่รุนแรง/ข้อมูลน้อย"));
+        var html = f
+          ? "<b>"+th+"</b>🌊 พื้นที่น้ำท่วม <span class='v'>~"+f.a+"/100</span><br>👥 ประชากรกระทบ <span class='v'>~"+f.p.toLocaleString("en-US")+" พันคน</span>"
+          : "<b>"+th+"</b>น้ำท่วมไม่รุนแรง / ข้อมูลน้อย";
+        bindProvHover(p.node(), html);
       });
       renderFloodBivLegend();
     }
@@ -7316,6 +7750,7 @@
       renderBkkSocPyr(); renderBkkSocDensity(); renderBkkSocAge();
       renderBkkEconTour(); renderBkkEconWorld(); renderBkkEconSector();
       renderBkkHlthDeath(); renderBkkHlthRisk(); renderBkkHlthAware();
+      renderBkkFlood();
     }
 
     /* ================= ภูมิรัฐศาสตร์โลก (10 หัวข้อย่อย) — curated + อ้างอิงใต้กราฟ ================= */
@@ -8409,6 +8844,88 @@
       hbarChart("#eduPisaWorld", EDU_PISA_WORLD, {full:true, h:320, ml:96, xlab:"คะแนนคณิต PISA 2022", fmt:function(v){ return v; }});
       hbarChart("#eduSpend", EDU_SPEND, {h:280, ml:80, xlab:"% ของ GDP", fmt:function(v){ return v.toFixed(1)+"%"; }});
       hbarChart("#eduSchoolYears", EDU_SCHOOLYEARS, {h:260, ml:80, xlab:"ปี", fmt:function(v){ return v.toFixed(1); }});
+      renderEduMap(); renderEduDropBar();
+    }
+
+    /* ================= ข้อ 5 · แผนที่ความเหลื่อมล้ำ & เด็กหลุดจากระบบ (กสศ. รายจังหวัด) ================= */
+    var EDU_DROP_PROV = [ // เด็กนอกระบบวัยบังคับ 6–14 ปี รายจังหวัด (5 อันดับแรก) — คีย์ไทยตรง THMAP.en2th
+      { th:"กรุงเทพมหานคร", v:61609 }, { th:"ตาก", v:41285 }, { th:"สมุทรสาคร", v:20277 },
+      { th:"เชียงใหม่", v:16847 }, { th:"สมุทรปราการ", v:14349 }
+    ];
+    function renderEduMap(){
+      var box=$("#eduMapChart"); if(!box || !window.THMAP || !window.d3 || box.dataset.built) return;
+      box.dataset.built="1";
+      var M=window.THMAP, NS="http://www.w3.org/2000/svg";
+      var t2en={}; Object.keys(M.en2th).forEach(function(en){ t2en[M.en2th[en]]=en; });
+      var valBy={}, max=0; EDU_DROP_PROV.forEach(function(d){ var en=t2en[d.th]; if(en){ valBy[en]=d.v; if(d.v>max) max=d.v; } });
+      var svg=document.createElementNS(NS,"svg");
+      svg.setAttribute("viewBox","0 0 "+M.width+" "+M.height);
+      svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+      svg.style.width="auto"; svg.style.maxWidth="100%"; svg.style.height="auto"; svg.style.maxHeight="560px"; svg.style.display="block"; svg.style.margin="0 auto";
+      var base=cssVar("--paper-3")||"#e8edf0", stroke=cssVar("--rule")||"#cbd5db";
+      Object.keys(M.paths).forEach(function(en){
+        var p=document.createElementNS(NS,"path"); p.setAttribute("d",M.paths[en]);
+        var v=valBy[en];
+        p.setAttribute("fill", v!=null ? d3.interpolateReds(0.35 + 0.6*(v/max)) : base);
+        p.setAttribute("stroke", stroke); p.setAttribute("stroke-width","0.6");
+        var nm=M.en2th[en]||en;
+        var html = v!=null
+          ? "<b>"+nm+"</b>🚸 เด็กหลุดจากระบบ (6–14 ปี)<br><span class='v'>"+v.toLocaleString("en-US")+" คน</span>"
+          : "<b>"+nm+"</b>ไม่มีข้อมูลใน 5 อันดับแรก";
+        bindProvHover(p, html);
+        svg.appendChild(p);
+      });
+      box.innerHTML=""; box.appendChild(svg);
+    }
+    function renderEduDropBar(){
+      hbarChart("#eduDropBar", EDU_DROP_PROV.map(function(d){ return {k:d.th, v:d.v, hl:d.th==="กรุงเทพมหานคร"}; }),
+        {full:true, h:230, ml:120, mr:64, xlab:"เด็กนอกระบบ 6–14 ปี (คน)", nameLabel:"จังหวัด", fmt:function(v){ return v.toLocaleString("en-US"); }});
+    }
+
+    /* ================= ข้อ 6 · ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน ================= */
+    var FIN_GINI=[{year:2545,v:42.0},{year:2552,v:39.9},{year:2558,v:36.0},{year:2562,v:34.9},{year:2564,v:35.1}];
+    var FIN_RATE=[{year:2562,v:1.25},{year:2563,v:0.50},{year:2564,v:0.50},{year:2565,v:1.25},{year:2566,v:2.50},{year:2567,v:2.25},{year:2568,v:2.00}];
+    var FIN_SET=[{year:2562,v:1580},{year:2563,v:1449},{year:2564,v:1658},{year:2565,v:1669},{year:2566,v:1416},{year:2569,v:1621}];
+    function renderFinMacro(){
+      if(!document.getElementById("pane-fin-macro")) return;
+      gpoLine("#finGini", FIN_GINI, {full:true, h:270, ml:44, ticks:5, ylab:"ดัชนี Gini", color:cssVar("--green"), ydomain:[30,45], fmt:function(v){ return v.toFixed(1); }});
+      gpoLine("#finRate", FIN_RATE, {h:260, ml:40, ticks:7, ylab:"% ต่อปี", color:cssVar("--red"), ydomain:[0,3], fmt:function(v){ return v.toFixed(2)+"%"; }});
+      gpoLine("#finSet", FIN_SET, {h:260, ml:48, ticks:6, ylab:"จุด", color:cssVar("--green"), ydomain:[1300,1750], fmt:function(v){ return v.toLocaleString("en-US"); }});
+    }
+
+    /* ================= ข้อ 7 · น้ำท่วม & งบประมาณ กทม. ================= */
+    var BKK_RAIN=[ {m:"ม.ค.",v:12},{m:"ก.พ.",v:20},{m:"มี.ค.",v:42},{m:"เม.ย.",v:86},{m:"พ.ค.",v:248},{m:"มิ.ย.",v:160},
+                   {m:"ก.ค.",v:172},{m:"ส.ค.",v:198},{m:"ก.ย.",v:344},{m:"ต.ค.",v:292},{m:"พ.ย.",v:56},{m:"ธ.ค.",v:10} ];
+    var BKK_BUDGET=[ {k:"สำนักการโยธา",v:9210},{k:"สำนักการระบายน้ำ",v:7081,hl:true},{k:"สำนักการแพทย์",v:6897} ];
+    function renderBkkRain(){
+      var box=$("#bkkRain"); if(!box || !window.Plot) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), blue="#1e6fb8";
+      var W=Math.max(320, box.clientWidth||900), order=BKK_RAIN.map(function(d){ return d.m; });
+      plotInto("#bkkRain", plotT({
+        width:W, height:280, marginLeft:46, marginBottom:34, marginTop:16, marginRight:14,
+        style: baseStyle(ink, FONT_W),
+        x:{ label:null, domain:order, tickSize:0 },
+        y:{ label:"มม./เดือน", grid:true, tickSize:0 },
+        marks:[
+          Plot.barY(BKK_RAIN, { x:"m", y:"v", rx:3, fill:function(d){ return (d.m==="ก.ย."||d.m==="ต.ค.")?blue:green; } }),
+          Plot.text(BKK_RAIN, { x:"m", y:"v", text:function(d){ return d.v; }, dy:-7, fill:inkSoft, fontWeight:600, fontSize:10 }),
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
+        ]
+      }));
+    }
+    function renderBkkFlood(){
+      if(!document.getElementById("pane-bkk-flood")) return;
+      renderBkkRain();
+      hbarChart("#bkkBudget", BKK_BUDGET, {full:true, h:200, ml:150, mr:70, xlab:"ล้านบาท", nameLabel:"สำนักงาน", fmt:function(v){ return v.toLocaleString("en-US"); }});
+    }
+
+    /* ================= ข้อ 8 · ความเสียหายภัยพิบัติ & มหาสมุทรเดือด ================= */
+    var WORLD_DAMAGE=[{year:2543,v:50},{year:2548,v:214},{year:2554,v:364},{year:2560,v:335},{year:2565,v:270},{year:2567,v:242}];
+    var WORLD_CORAL=[{k:"ครั้งที่ 3 (2557–2560)",v:65.7},{k:"ครั้งที่ 4 (2566–2568)",v:84,hl:true}];
+    function renderWorldOcean(){
+      if(!document.getElementById("pane-world-ocean")) return;
+      gpoLine("#worldDamage", WORLD_DAMAGE, {full:true, h:280, ml:48, ticks:6, ylab:"พันล้าน US$", color:cssVar("--red"), ydomain:[0,400], fmt:function(v){ return v.toLocaleString("en-US"); }});
+      hbarChart("#worldCoral", WORLD_CORAL, {full:true, h:170, ml:170, mr:56, xlab:"% ของแนวปะการังโลก", nameLabel:"เหตุการณ์", fmt:function(v){ return v+"%"; }});
     }
 
     /* ================= เมนูหมวด (หัวข้อหลัก → หัวข้อรอง) ================= */
@@ -8421,26 +8938,30 @@
           { pane:"heat",     ico:"🔥", label:"คลื่นความร้อน", existing:true },
           { pane:"pm25",     ico:"🌫️", label:"ฝุ่น PM2.5", existing:true },
           { pane:"world-satellite", ico:"🛰️", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
-          { pane:"world-flood", ico:"🌊", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true }
+          { pane:"world-flood", ico:"🌊", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
+          { pane:"world-ocean", ico:"🌊", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true }
       ]},
       { id:"asean", ico:"🌏", label:"อาเซียน", subs:[
           { pane:"asean",          ico:"💰", label:"เศรษฐกิจ", existing:true },
           { pane:"asean-corrupt",  ico:"🕵️", label:"การคอร์รัปชัน", existing:true },
           { pane:"asean-military", ico:"🎖️", label:"อาวุธทางการทหาร", existing:true },
-          { pane:"asean-geo",      ico:"🗺️", label:"ภูมิศาสตร์อาเซียน", existing:true }
+          { pane:"asean-geo",      ico:"🗺️", label:"ภูมิศาสตร์อาเซียน", existing:true },
+          { pane:"asean-digital",  ico:"📱", label:"เศรษฐกิจดิจิทัล", existing:true }
       ]},
       { id:"edu", ico:"🎓", label:"ข้อมูลการศึกษาไทย", subs:[
           { pane:"edu-employ",  ico:"💼", label:"การจ้างงาน", existing:true },
           { pane:"edu-happy",   ico:"😊", label:"ความสุขของนักเรียนไทย", existing:true },
           { pane:"edu-quality", ico:"🏫", label:"คุณภาพการศึกษาไทย", existing:true },
-          { pane:"edu-world",   ico:"🌐", label:"เทียบกับโลก", existing:true }
+          { pane:"edu-world",   ico:"🌐", label:"เทียบกับโลก", existing:true },
+          { pane:"edu-map",     ico:"🗺️", label:"แผนที่ความเหลื่อมล้ำ & เด็กหลุดจากระบบ", existing:true }
       ]},
       { id:"finance", ico:"💰", label:"การเงิน", subs:[
           { pane:"fin-inflation", ico:"📈", label:"เงินเฟ้อ", existing:true },
           { pane:"fin-personal",  ico:"👛", label:"การเงินคนไทย", existing:true },
           { pane:"fin-debt",      ico:"🏛️", label:"หนี้ประเทศต่อ GDP", existing:true },
           { pane:"fin-history",   ico:"📜", label:"ประวัติศาสตร์การเงินโลก & ไทย", existing:true },
-          { pane:"fin-wealth",    ico:"💎", label:"ความมั่งคั่งของคนทั้งโลก", existing:true }
+          { pane:"fin-wealth",    ico:"💎", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
+          { pane:"fin-macro",     ico:"📊", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
       ]},
       { id:"oil", ico:"⛽", label:"น้ำมัน & พลังงาน", subs:[
           { pane:"en-elec",    ico:"⚡", label:"ไฟฟ้า", existing:true },
@@ -8456,7 +8977,8 @@
           { pane:"bkk-env",     ico:"🌱", label:"สิ่งแวดล้อม", existing:true },
           { pane:"bkk-social",  ico:"👥", label:"สังคม", existing:true },
           { pane:"bkk-econ",    ico:"🏢", label:"เศรษฐกิจ", existing:true },
-          { pane:"bkk-health",  ico:"🏥", label:"โรคที่คนไทยเป็นเยอะ", existing:true }
+          { pane:"bkk-health",  ico:"🏥", label:"โรคที่คนไทยเป็นเยอะ", existing:true },
+          { pane:"bkk-flood",   ico:"🌊", label:"น้ำท่วม & งบประมาณเมือง", existing:true }
       ]},
       { id:"geo", ico:"🌐", label:"ภูมิรัฐศาสตร์โลก", subs:[
           { pane:"geo-territory", ico:"📍", label:"ที่ตั้งและอาณาเขต", existing:true },
@@ -8984,6 +9506,7 @@
       setupTradeGlobe();
       setupChipGlobe();
       setupRenewGlobe();
+      setupAseanDigitalGlobe();
       afterPaint(function(){
         renderTemp(); renderDis();
         renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass();
