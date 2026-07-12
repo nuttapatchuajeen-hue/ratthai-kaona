@@ -1645,6 +1645,68 @@
       </div>
     </section>
 
+    <!-- ============ การเงิน · ประวัติศาสตร์เงินเฟ้อ & ไฮเปอร์อินเฟลชัน ============ -->
+    <section class="tabpane" id="pane-fin-hyperinflation" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title">💸 ประวัติศาสตร์เงินเฟ้อ — เมื่อเงินกลายเป็นเศษกระดาษ</h2></div>
+      <p class="sub" style="max-width:920px">เงินเฟ้อธรรมดาคือราคาค่อย ๆ ขึ้นปีละไม่กี่ % แต่ <b>“ไฮเปอร์อินเฟลชัน”</b> คือราคาพุ่งเกิน 50% <b>ต่อเดือน</b> จนเงินแทบไร้ค่าในไม่กี่วัน — ในประวัติศาสตร์เกิดมาแล้วกว่า 50 ครั้ง นี่คือเคสที่รุนแรงที่สุด</p>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🇭🇺 แย่ที่สุดในประวัติศาสตร์</div>
+          <div class="k-num">×2<span class="u">ทุก ~15 ชม.</span></div>
+          <div class="k-sub">ฮังการี พ.ศ. 2489 — ราคาสินค้าพองตัวเท่าตัวทุก 15 ชั่วโมง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🇩🇪 ไวมาร์ พ.ศ. 2466</div>
+          <div class="k-num">4.2<span class="u">ล้านล้านมาร์ก/$</span></div>
+          <div class="k-sub">จากที่เคย ~4 มาร์กต่อดอลลาร์ก่อนสงครามโลกครั้งที่ 1</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🇿🇼 ซิมบับเว พ.ศ. 2551</div>
+          <div class="k-num">100<span class="u">ล้านล้านดอลลาร์</span></div>
+          <div class="k-sub">ธนบัตรมูลค่าสูงสุด — ใบเดียวยังซื้อขนมปังไม่ได้</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🔥 ต้นเหตุร่วม</div>
+          <div class="k-num">พิมพ์เงิน<span class="u">อุดขาดดุล</span></div>
+          <div class="k-sub">เมื่อความเชื่อมั่นในเงินหมด เงินเฟ้อจะเร่งตัวเป็นทวีคูณ</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>📈 การระเบิดของค่าเงินไวมาร์</h2><span class="tag">มาร์ก/ดอลลาร์ · 1919–1923 · สเกล log</span></div>
+        <p class="sub">แกนตั้งเป็น <b>สเกลลอการิทึม</b> (แต่ละขีดคูณ 10) — ถึงอย่างนั้นเส้นก็ยังพุ่งชันเกือบตั้งฉากในปี 1923 เพราะเงินอ่อนค่าเป็น “ล้านล้านเท่า”</p>
+        <div class="plot" id="weimarLine"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: อัตราแลกเปลี่ยนมาร์ก/ดอลลาร์รายเดือน — “Hyperinflation in the Weimar Republic” (รวบรวมจากธนาคารกลางเยอรมนี/Wikipedia)</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>🏆 ไฮเปอร์อินเฟลชันที่รุนแรงที่สุดในประวัติศาสตร์</h2><span class="tag">อัตราสูงสุด/เดือน</span></div>
+        <p class="sub">เรียงจากรุนแรงสุด — ตัวเลขระดับ “ยกกำลัง” นี้คือ % เงินเฟ้อ<b>ต่อเดือน</b> ไม่ใช่ต่อปี</p>
+        <div class="tbl-wrap" id="hyperTable"><div class="state-msg">กำลังสร้างตาราง…</div></div>
+        <div class="src">ที่มา: ตาราง Hanke–Krus World Hyperinflation Table (Cato Institute / Johns Hopkins) — อัตราสูงสุดรายเดือนและเวลาที่ราคาพองตัวเท่าตัว</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>0️⃣ จำนวนศูนย์บนธนบัตรใบใหญ่สุด</h2><span class="tag">หลักศูนย์</span></div>
+          <p class="sub">วิธีวัดความรุนแรงแบบเห็นภาพ — ยิ่งต้องพิมพ์ศูนย์เยอะ เงินยิ่งไร้ค่า</p>
+          <div class="plot" id="hyperZeros"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">นับจากธนบัตรมูลค่าหน้าตั๋วสูงสุดที่เคยออกใช้จริงในแต่ละประเทศ</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>🔥 ทำไมมันเกิด &amp; บทเรียน</h2></div>
+          <p class="sub">ไฮเปอร์อินเฟลชันแทบทุกครั้งมีสูตรเดียวกัน:</p>
+          <ul style="margin:0;padding-left:18px;font-size:12.7px;color:var(--ink-soft);line-height:1.7">
+            <li>รัฐ<b>พิมพ์เงินจำนวนมาก</b>เพื่ออุดขาดดุล/หนี้สงคราม</li>
+            <li>ผลผลิตสินค้าตกต่ำ (สงคราม/วิกฤต) — เงินมากไล่ซื้อของน้อย</li>
+            <li>ความเชื่อมั่นหมด คนรีบใช้เงินทันทีที่ได้มา → เงินหมุนเร็ว ราคายิ่งพุ่ง</li>
+            <li>กลายเป็น<b>วงจร</b>: ยิ่งพิมพ์ ยิ่งเฟ้อ ยิ่งต้องพิมพ์เพิ่ม</li>
+          </ul>
+          <p class="sub" style="margin-top:10px"><b style="color:var(--gold)">บทเรียน:</b> มักจบด้วยการ “ล้างสกุลเงิน” ออกเงินใหม่ + วินัยการคลัง เช่น เยอรมนีออก <b>Rentenmark</b> ผูกมูลค่ากับที่ดินในปลายปี 1923 จึงหยุดวิกฤตได้</p>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ การเงิน · ความมั่งคั่งของคนทั้งโลก (UBS Global Wealth Report — curated) ============ -->
     <section class="tabpane" id="pane-fin-wealth" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title">💎 ความมั่งคั่งของคนทั้งโลก</h2></div>
@@ -5257,10 +5319,61 @@
         fmt:function(v){ return v>=1000 ? (v/1000).toFixed(v%1000?1:0)+" พันปี" : v+" ปี"; } });
     }
 
+    /* ===== 💸 การเงิน · ประวัติศาสตร์เงินเฟ้อ & ไฮเปอร์อินเฟลชัน ===== */
+    var WEIMAR_USD=[   // มาร์กเยอรมันต่อ 1 ดอลลาร์สหรัฐ (t = ปี ค.ศ. แบบทศนิยม) — วิกฤตไวมาร์
+      {t:1919.0, v:8.9}, {t:1920.0, v:65}, {t:1921.0, v:64}, {t:1922.0, v:192}, {t:1922.5, v:493},
+      {t:1923.0, v:17972}, {t:1923.5, v:353412}, {t:1923.62, v:4620455}, {t:1923.71, v:98860000},
+      {t:1923.79, v:25260000000}, {t:1923.87, v:4200000000000}
+    ];
+    var HYPER_CASES=[  // Hanke–Krus World Hyperinflation Table
+      { c:"🇭🇺 ฮังการี", y:"2489 (1946)", m:"4.19×10¹⁶ %", dbl:"~15 ชั่วโมง", note:"10²⁰ เปงเกอ", hl:true },
+      { c:"🇿🇼 ซิมบับเว", y:"2551 (2008)", m:"7.96×10¹⁰ %", dbl:"~24.7 ชั่วโมง", note:"100 ล้านล้านดอลลาร์" },
+      { c:"🇷🇸 ยูโกสลาเวีย", y:"2537 (1994)", m:"3.13×10⁸ %", dbl:"~1.4 วัน", note:"500 พันล้านดีนาร์" },
+      { c:"🇩🇪 เยอรมนี (ไวมาร์)", y:"2466 (1923)", m:"29,500 %", dbl:"~3.7 วัน", note:"100 ล้านล้านมาร์ก" },
+      { c:"🇬🇷 กรีซ", y:"2487 (1944)", m:"13,800 %", dbl:"~4.3 วัน", note:"100 พันล้านดรัชมา" },
+      { c:"🇻🇪 เวเนซุเอลา", y:"2561 (2018)", m:"~197 %", dbl:"~18 วัน", note:"1 ล้านโบลิวาร์" }
+    ];
+    var HYPER_ZEROS=[  // จำนวนหลักศูนย์บนธนบัตรมูลค่าหน้าตั๋วสูงสุดที่ออกใช้จริง
+      { k:"ฮังการี (2489)", v:20, hl:true }, { k:"ซิมบับเว (2551)", v:14 }, { k:"เยอรมนี-ไวมาร์ (2466)", v:14 },
+      { k:"ยูโกสลาเวีย (2537)", v:11 }, { k:"กรีซ (2487)", v:11 }, { k:"เวเนซุเอลา (2564)", v:6 }
+    ];
+    function renderWeimarLine(){
+      var box=$("#weimarLine"); if(!box || !window.Plot) return;
+      var W=Math.max(300, box.clientWidth||900); if(W<60) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), last=WEIMAR_USD[WEIMAR_USD.length-1];
+      var fig=plotT({
+        width:W, height:300, marginLeft:56, marginBottom:32, marginTop:16, marginRight:20,
+        style: baseStyle(ink, FONT_W),
+        x:{ label:null, tickFormat:"d", ticks:[1919,1920,1921,1922,1923,1924], tickSize:0 },
+        y:{ type:"log", label:"มาร์ก ต่อ 1 ดอลลาร์ (สเกล log)", grid:true, tickFormat:"~s", tickSize:0 },
+        marks:[
+          Plot.lineY(WEIMAR_USD, { x:"t", y:"v", stroke:red, strokeWidth:2.4, curve:"monotone-x" }),
+          Plot.dot(WEIMAR_USD, { x:"t", y:"v", fill:red, r:3 }),
+          Plot.dot([last], { x:"t", y:"v", fill:red, r:5 }),
+          Plot.text([last], { x:"t", y:"v", text:function(){ return "พ.ย. 1923: 4.2 ล้านล้านมาร์ก"; }, dy:-13, dx:-4, textAnchor:"end", fill:red, fontWeight:700, fontSize:11.5 })
+        ]
+      });
+      plotInto("#weimarLine", fig);
+    }
+    function renderHyperTable(){
+      var box=$("#hyperTable"); if(!box) return;
+      var h='<table class="dataTbl"><thead><tr><th>ประเทศ</th><th>ปี (พ.ศ.)</th><th class="num">เงินเฟ้อสูงสุด/เดือน</th><th>ราคา×2 ทุก</th><th>ธนบัตรใหญ่สุด</th></tr></thead><tbody>';
+      HYPER_CASES.forEach(function(r){
+        h+='<tr'+(r.hl?' class="hl"':'')+'><td><b>'+r.c+'</b></td><td>'+r.y+'</td><td class="num">'+r.m+'</td><td>'+r.dbl+'</td><td>'+r.note+'</td></tr>';
+      });
+      box.innerHTML=h+'</tbody></table>';
+    }
+    function renderFinHyper(){
+      if(!document.getElementById("pane-fin-hyperinflation")) return;
+      renderWeimarLine(); renderHyperTable();
+      hbarChart("#hyperZeros", HYPER_ZEROS, { h:220, ml:132, xlab:"จำนวนหลักศูนย์บนธนบัตร", nameLabel:"ประเทศ (พ.ศ.)",
+        fmt:function(v){ return v+" ศูนย์"; } });
+    }
+
     function renderFinanceAll(){
       renderInflationAll(); renderPersonalAll(); renderDebtAll(); renderHistoryAll(); renderWealthAll();
       renderUsDebt(); renderUsDebtNum();
-      renderFinMacro(); renderFinMoney5000();
+      renderFinMacro(); renderFinMoney5000(); renderFinHyper();
     }
 
     /* ---------- โหลดเงินเฟ้อสด (World Bank) ---------- */
@@ -9139,6 +9252,7 @@
           { pane:"fin-debt",      ico:"🏛️", label:"หนี้ประเทศต่อ GDP", existing:true },
           { pane:"fin-history",   ico:"📜", label:"ประวัติศาสตร์การเงินโลก & ไทย", existing:true },
           { pane:"fin-money5000", ico:"🪙", label:"กำเนิดเงิน 5,000 ปี", existing:true },
+          { pane:"fin-hyperinflation", ico:"💸", label:"ประวัติศาสตร์เงินเฟ้อ", existing:true },
           { pane:"fin-wealth",    ico:"💎", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
           { pane:"fin-macro",     ico:"📊", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
       ]},
