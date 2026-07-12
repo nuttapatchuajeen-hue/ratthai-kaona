@@ -1,6 +1,10 @@
 # ไฟล์ดิบขนาดใหญ่ — เกินลิมิต GitHub 100MB (รูปย่อแล้วอยู่ที่ election/senators/)
 senator_images_200.zip
 
+# ไฟล์ zip ดิบของรูปผู้สมัคร/ผู้ชนะ (แตกไฟล์แล้ว รูปจริงอยู่ใน img/ และ bkk-photos/ ไม่ต้อง commit ตัว zip)
+bangkok_election_2026_images.zip
+candidate_images.zip
+
 # Netlify CLI local state (site id อยู่ในเครื่องพอ)
 .netlify/
 

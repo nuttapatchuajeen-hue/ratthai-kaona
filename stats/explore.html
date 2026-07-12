@@ -5535,7 +5535,7 @@
       var path=svg.append("g").selectAll("path").data(nodes).join("path")
         .attr("fill",function(d){ return d.data.color || (d.parent&&d.parent.data.color) || inkSoft; })
         .attr("fill-opacity",baseOp).attr("stroke",paper2).attr("stroke-width",1).attr("d",arc);
-      path.append("title").text(function(d){ var pct=totV?(d.value/totV*100):0; return d.data.name+" — "+d.value.toFixed(1)+" TWh ("+pct.toFixed(1)+"%)"; });
+      path.each(function(d){ var pct=totV?(d.value/totV*100):0; bindProvHover(this, '<b>'+d.data.name+'</b>'+d.value.toFixed(1)+' TWh<span class="v"> · '+pct.toFixed(1)+'%</span>'); });
 
       var cName=svg.append("text").attr("text-anchor","middle").attr("dy","-0.15em")
         .attr("fill",ink).style("font-weight","800").style("font-size","15px").text("ไฟฟ้า "+last);
@@ -6513,11 +6513,11 @@
       s.append("g").attr("fill","none").selectAll("path").data(graph.links).join("path")
         .attr("d",d3.sankeyLinkHorizontal()).attr("stroke",function(d){return d.source.color||"#bbb";})
         .attr("stroke-width",function(d){return Math.max(1,d.width);}).attr("stroke-opacity",0.42)
-        .append("title").text(function(d){return d.source.name+" → "+d.target.name+"\n"+d.value+" พันล้าน US$";});
+        .each(function(d){ bindProvHover(this, '<b>'+d.source.name+' → '+d.target.name+'</b>'+d.value+' พันล้าน US$'); });
       s.append("g").selectAll("rect").data(graph.nodes).join("rect")
         .attr("x",function(d){return d.x0;}).attr("y",function(d){return d.y0;}).attr("width",function(d){return d.x1-d.x0;})
         .attr("height",function(d){return Math.max(1,d.y1-d.y0);}).attr("fill",function(d){return d.color;}).attr("rx",2)
-        .append("title").text(function(d){return d.name+"\n"+Math.round(d.value)+" พันล้าน US$";});
+        .each(function(d){ bindProvHover(this, '<b>'+d.name+'</b>'+Math.round(d.value)+' พันล้าน US$'); });
       s.append("g").style("font-size","10px").style("font-weight","600").selectAll("text").data(graph.nodes).join("text")
         .attr("x",function(d){return d.col===2?d.x1+5:(d.col===0?d.x0-5:(d.x0+d.x1)/2);})
         .attr("y",function(d){return d.col===1?d.y0-4:(d.y0+d.y1)/2;})
@@ -7979,12 +7979,12 @@
       var rib=svg.append("g").attr("fill-opacity",0.72).selectAll("path").data(chords).join("path")
         .attr("d",ribbon).attr("fill",function(d){ return colors[d.source.index]; })
         .attr("stroke",paper2).attr("stroke-width",0.5);
-      rib.append("title").text(function(d){ return names[d.source.index]+" ↔ "+names[d.target.index]+" — $"+GPO_TRADE_M[d.source.index][d.target.index]+" พันล้าน"; });
+      rib.each(function(d){ bindProvHover(this, '<b>'+names[d.source.index]+' ↔ '+names[d.target.index]+'</b>$'+GPO_TRADE_M[d.source.index][d.target.index]+' พันล้าน'); });
 
       var g=svg.append("g").selectAll("g").data(chords.groups).join("g").style("cursor","pointer");
       g.append("path").attr("d",arc).attr("fill",function(d){ return colors[d.index]; })
         .attr("stroke",paper2).attr("stroke-width",1);
-      g.append("title").text(function(d){ return names[d.index]+" — การค้ารวม $"+d.value.toLocaleString("en-US")+" พันล้าน"; });
+      g.each(function(d){ var p=this.querySelector("path"); if(p) bindProvHover(p, '<b>'+names[d.index]+'</b>การค้ารวม $'+d.value.toLocaleString("en-US")+' พันล้าน'); });
       g.append("text").each(function(d){ d.ang=(d.startAngle+d.endAngle)/2; })
         .attr("dy","0.35em")
         .attr("transform",function(d){ return "rotate("+(d.ang*180/Math.PI-90)+") translate("+(outerR+8)+")"+(d.ang>Math.PI?" rotate(180)":""); })
@@ -8399,7 +8399,7 @@
       var note=document.createElement("div"); note.style.cssText="margin-top:6px;font-size:12px;color:var(--ink-soft);font-weight:600";
       if(box.parentNode) box.parentNode.insertBefore(note, ui.nextSibling);
 
-      var st={ idx:GDPTM_YEARS.length-1, playing:false, timer:null };
+      var st={ idx:GDPTM_YEARS.length-1, playing:false, timer:null }, curTotal=0;
       function heightFor(W){ return Math.round(Math.max(340, Math.min(600, W*0.60))); }
       function layout(idx,W,H){ tm.size([W,H]); root.sum(function(d){ return d.leaf?Math.max(0,d.vals[idx]):0; }); tm(root); return root.leaves(); }
 
@@ -8407,7 +8407,7 @@
         var W=Math.max(220, box.clientWidth||820), H=heightFor(W);
         svg.attr("viewBox","0 0 "+W+" "+H);
         var leaves=layout(st.idx,W,H);
-        var total=d3.sum(leaves,function(d){ return d.value; });
+        var total=d3.sum(leaves,function(d){ return d.value; }); curTotal=total;
         var sep=cssVar("--paper-2")||"#ffffff", dur=animate?820:0;
 
         var sel=gRoot.selectAll("g.tmleaf").data(leaves, function(d){ return d.data.name; });
@@ -8417,14 +8417,25 @@
         ent.append("clipPath").attr("id", function(d){ return d.__cid; }).append("rect").attr("x",0).attr("y",0);
         ent.append("rect").attr("class","tmrect").attr("rx",4)
           .attr("fill", function(d){ return d.data.color; }).attr("fill-opacity", function(d){ return d.data.op; });
-        ent.append("title");
+        ent.each(function(){                            // tooltip ลอยตามเมาส์ · อ่านค่าปีปัจจุบันสด ๆ (title เดิมขึ้นช้า/ไม่ขึ้น)
+          var g=this; g.style.cursor="default";
+          g.addEventListener("mousemove", function(ev){
+            var dd=d3.select(g).datum(), pct=curTotal? dd.value/curTotal*100 : 0, t=provTipEl();
+            t.innerHTML='<b>'+dd.data.name+'</b>฿'+Math.round(dd.value).toLocaleString("en-US")+' พันล้านบาท<span class="v"> · '+pct.toFixed(1)+'%</span><br>หมวด'+dd.data.gkey+' · พ.ศ. '+GDPTM_YEARS[st.idx];
+            t.style.opacity="1";
+            var w=t.offsetWidth||210,h=t.offsetHeight||60,x=ev.clientX+15,y=ev.clientY+15;
+            if(x+w>window.innerWidth) x=ev.clientX-w-15; if(y+h>window.innerHeight) y=ev.clientY-h-15;
+            t.style.left=Math.max(4,x)+"px"; t.style.top=Math.max(4,y)+"px";
+          });
+          g.addEventListener("mouseenter", function(){ g.style.filter="brightness(1.1)"; });
+          g.addEventListener("mouseleave", function(){ provTipEl().style.opacity="0"; g.style.filter=""; });
+        });
         var tg=ent.append("g").attr("class","tmtext").attr("clip-path", function(d){ return "url(#"+d.__cid+")"; });
         tg.append("text").attr("class","tmname").attr("x",7).attr("y",17).attr("fill","#fff").attr("font-size",12.5).attr("font-weight",700);
         tg.append("text").attr("class","tmval").attr("x",7).attr("y",33).attr("fill","rgba(255,255,255,.92)").attr("font-size",11).attr("font-weight",600);
 
         var all=ent.merge(sel);
         all.select("rect.tmrect").attr("stroke",sep).attr("stroke-width",1);
-        all.select("title").text(function(d){ return d.data.name+" — "+Math.round(d.value).toLocaleString("en-US")+" พันล้านบาท ("+(total?d.value/total*100:0).toFixed(1)+"%)"; });
         all.select("text.tmname").text(function(d){ var w=d.x1-d.x0,h=d.y1-d.y0; return (w>52&&h>24)?d.data.name:""; });
         all.select("text.tmval").text(function(d){ var w=d.x1-d.x0,h=d.y1-d.y0; return (w>66&&h>42)?("฿"+Math.round(d.value).toLocaleString("en-US")+" • "+(total?d.value/total*100:0).toFixed(1)+"%"):""; });
 
@@ -8497,7 +8508,9 @@
         .attr("fill",function(d){ return HIGH[d.m]?gold:green; })
         .attr("fill-opacity",function(d){ return HIGH[d.m]?0.9:0.6; })
         .attr("stroke",paper2).attr("stroke-width",1);
-      petal.append("title").text(function(d){ return d.m+" — "+d.v.toFixed(1)+"% ของนักท่องเที่ยวทั้งปี"; });
+      petal.each(function(d){                          // tooltip ลอยตามเมาส์ (เหมือนกราฟอื่นในหน้า) แทน title เดิมที่ขึ้นช้า/ไม่ขึ้น
+        bindProvHover(this, '<b>'+d.m+'</b>'+d.v.toFixed(1)+'% ของนักท่องเที่ยวทั้งปี'+(HIGH[d.m]?' · ช่วงไฮซีซั่น 🌟':''));
+      });
 
       svg.append("g").selectAll("text").data(data).join("text")
         .attr("transform",function(d,i){ var ang=a0+(i+0.5)*step, rr=R+13; return "translate("+(Math.cos(ang)*rr)+","+(Math.sin(ang)*rr)+")"; })
@@ -8649,6 +8662,34 @@
       function disposeGroup(g){
         g.traverse(function(o){ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
       }
+      /* เส้นโค้งตามวงกลมใหญ่ (slerp) + โป่งออกกลางเส้นแบบ sin — ปลายแตะผิวโลก(1.012) แล้วยกพ้นผิวเสมอ
+         แก้ของเดิมที่ใช้ Quadratic Bézier จุดควบคุมเดียว: เส้นไกล ๆ (เช่นไปสหรัฐฯ 124°) จะแอ่นจมใต้ผิวโลก
+         เหลือโผล่แค่ตอที่ปลาย → ดูเป็น "ก้อน/ตอ" เสียบผิวโลก */
+      function greatArc(from, to){
+        var ang=from.angleTo(to), so=Math.sin(ang), N=64, pts=[], i;
+        var lift=Math.min(0.40, 0.10 + ang*0.15);   // ยอดโค้ง = 1.012+lift (สหรัฐฯ ~1.41 พอดีเฟรมกล้อง fov40/ระยะ4.2)
+        for(i=0;i<=N;i++){
+          var t=i/N, s;
+          if(so<1e-4){ s=from.clone().lerp(to,t); if(s.length()>1e-6) s.normalize(); }
+          else s=from.clone().multiplyScalar(Math.sin((1-t)*ang)/so).add(to.clone().multiplyScalar(Math.sin(t*ang)/so));
+          pts.push(s.multiplyScalar(1.012 + lift*Math.sin(Math.PI*t)));
+        }
+        return new THREE.CatmullRomCurve3(pts);
+      }
+      /* เรียวปลายท่อโค้งให้ลู่เข้าหมุดปลายทาง (กันปลายเป็น "ก้อน/ตอ") — ย่อรัศมีวงแหวนหัว-ท้ายแบบ smoothstep */
+      function taperTube(geo, tub, radSeg){
+        var pos=geo.attributes.position, ring=radSeg+1, e=0.17, i, j, base;
+        for(i=0;i<=tub;i++){
+          var t=i/tub, s = t<e ? t/e : (t>1-e ? (1-t)/e : 1);
+          if(s<0) s=0; s=s*s*(3-2*s);
+          base=i*ring; var cx=0,cy=0,cz=0;
+          for(j=0;j<radSeg;j++){ cx+=pos.getX(base+j); cy+=pos.getY(base+j); cz+=pos.getZ(base+j); }
+          cx/=radSeg; cy/=radSeg; cz/=radSeg;                       // ศูนย์กลางวงแหวน = เฉลี่ยเวอร์เท็กซ์
+          for(j=0;j<ring;j++){ var k=base+j;
+            pos.setXYZ(k, cx+(pos.getX(k)-cx)*s, cy+(pos.getY(k)-cy)*s, cz+(pos.getZ(k)-cz)*s); }
+        }
+        pos.needsUpdate=true;
+      }
       function buildArcs(){
         if(arcGrp){ scene.remove(arcGrp); disposeGroup(arcGrp); }
         arcGrp=new THREE.Group(); pulses=[];
@@ -8656,20 +8697,18 @@
         var list=rows(), max=Math.max.apply(null, list.map(function(d){ return d.v; }));
         var pTH=ll2v(TE_TRADE_TH_LL[0], TE_TRADE_TH_LL[1], 1);
         var thMk=new THREE.Mesh(new THREE.SphereBufferGeometry(0.02,16,16), new THREE.MeshBasicMaterial({color:gold}));
-        thMk.position.copy(pTH.clone().multiplyScalar(1.006)); arcGrp.add(thMk);
+        thMk.position.copy(pTH.clone().multiplyScalar(1.012)); arcGrp.add(thMk);
         list.forEach(function(d){
           var pP=ll2v(d.ll[0], d.ll[1], 1);
           var from=(mode==="exp")?pTH:pP, to=(mode==="exp")?pP:pTH;   // ทิศจุดวิ่งตามทิศสินค้าจริง
-          var ang=from.angleTo(to);
-          var mid=from.clone().add(to).multiplyScalar(.5).normalize().multiplyScalar(1 + .10 + ang*.145); // ยอดโค้งสูงสุด ~1.43 ให้พอดีเฟรมกล้อง
-          var curve=new THREE.QuadraticBezierCurve3(from.clone().multiplyScalar(1.004), mid, to.clone().multiplyScalar(1.004));
+          var curve=greatArc(from, to);                               // โค้งพ้นผิวโลกเสมอ (เดิมเส้นไกลจมใต้ผิวโลก เห็นแค่ตอที่ปลาย)
           var rad=.0035 + .015*Math.sqrt(d.v/max);
-          arcGrp.add(new THREE.Mesh(new THREE.TubeBufferGeometry(curve,64,rad,8,false),
-                                    new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:.9})));
-          var dot=new THREE.Mesh(new THREE.SphereBufferGeometry(Math.max(rad*1.8,.008),12,12), new THREE.MeshBasicMaterial({color:col}));
+          var tube=new THREE.TubeBufferGeometry(curve,80,rad,8,false); taperTube(tube,80,8); // เรียวปลายให้ลู่เข้าหมุด ไม่เป็นก้อน/ตอ
+          arcGrp.add(new THREE.Mesh(tube, new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:.9})));
+          var dot=new THREE.Mesh(new THREE.SphereBufferGeometry(Math.max(rad*1.6,.008),12,12), new THREE.MeshBasicMaterial({color:col}));
           arcGrp.add(dot); pulses.push({curve:curve, dot:dot, off:Math.random()});
-          var pMk=new THREE.Mesh(new THREE.SphereBufferGeometry(.014,14,14), new THREE.MeshBasicMaterial({color:col}));
-          pMk.position.copy(pP.clone().multiplyScalar(1.006)); arcGrp.add(pMk);
+          var pMk=new THREE.Mesh(new THREE.SphereBufferGeometry(.012,14,14), new THREE.MeshBasicMaterial({color:col}));
+          pMk.position.copy(pP.clone().multiplyScalar(1.012)); arcGrp.add(pMk);
         });
         scene.add(arcGrp);
       }
@@ -9384,6 +9423,8 @@
       var cd=POP_GRID.map(function(r,y){ return r.map(function(v,a){ return [POP_AGES[a], yearsBE[y], v.toLocaleString("en-US")]; }); });
       var tickI=[], tickT=[]; for(var a=0;a<nA;a+=2){ tickI.push(a); tickT.push(POP_AGES[a]); }
       var sel=nY-1;
+      /* ค่อยๆ เผยพื้นผิว/ฮีตแมป: เก็บเฉพาะปีที่ ≤ sel ที่เหลือแทนด้วย null (Plotly เว้นว่าง) → "ภูเขา" ก่อตัวทีละปี */
+      function zReveal(){ return zM.map(function(r,i){ return i<=sel ? r : r.map(function(){ return null; }); }); }
 
       function loadScript(src){ return new Promise(function(res,rej){ var s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s); }); }
       function loadPlotly(){ if(window.Plotly) return Promise.resolve(); return loadScript("https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"); }
@@ -9414,7 +9455,7 @@
       }
 
       function surfTrace(){
-        return { type:'surface', x:ageIdx, y:yearsBE, z:zM, customdata:cd,
+        return { type:'surface', x:ageIdx, y:yearsBE, z:zReveal(), customdata:cd,
           colorscale:terrain(), cmin:0, cmax:zMaxM, showscale:true,
           colorbar:{ title:{text:'ล้านคน',font:{color:inkSoft(),size:11}}, tickfont:{color:inkSoft(),size:10}, outlinewidth:0, thickness:12, len:0.62 },
           contours:{ z:{show:true,usecolormap:true,project:{z:true}} },
@@ -9435,7 +9476,7 @@
           }, showlegend:false };
       }
       function heatTrace(){
-        return { type:'heatmap', x:POP_AGES, y:yearsBE, z:zM, colorscale:terrain(), zmin:0, zmax:zMaxM,
+        return { type:'heatmap', x:POP_AGES, y:yearsBE, z:zReveal(), colorscale:terrain(), zmin:0, zmax:zMaxM,
           colorbar:{ title:{text:'ล้านคน',font:{color:inkSoft(),size:11}}, tickfont:{color:inkSoft(),size:10}, outlinewidth:0, thickness:12, len:0.9 },
           hovertemplate:'อายุ %{x} ปี · พ.ศ. %{y}<br>%{z:.3f} ล้านคน<extra></extra>' };
       }
@@ -9455,14 +9496,19 @@
       function onSlider(v){
         sel=+v; updateKpis();
         if(!window.Plotly || !ready) return;
-        if(view==='surface') Plotly.restyle(plotEl, { y:[constYear(sel)], z:[zM[sel]] }, [1]);
-        else Plotly.relayout(plotEl, { shapes:[heatShape()] });
+        if(view==='surface'){
+          Plotly.restyle(plotEl, { z:[zReveal()] }, [0]);                    // เผยพื้นผิวถึงปีปัจจุบัน
+          Plotly.restyle(plotEl, { y:[constYear(sel)], z:[zM[sel]] }, [1]);  // ริ้วปี = สันขอบที่กำลังก่อตัว
+        } else {
+          Plotly.restyle(plotEl, { z:[zReveal()] }, [0]);                    // เผยฮีตแมปถึงปีปัจจุบัน
+          Plotly.relayout(plotEl, { shapes:[heatShape()] });
+        }
       }
       function stopPlay(){ if(playTimer){ clearInterval(playTimer); playTimer=0; } var b=document.getElementById("popPlay"); if(b) b.textContent="▶"; }
       function play(){
         var b=document.getElementById("popPlay");
         if(playTimer){ stopPlay(); return; }
-        if(sel>=nY-1) sel=0;
+        if(sel>=nY-1){ sel=0; var rg0=document.getElementById("popRange"); if(rg0) rg0.value=sel; onSlider(sel); }  // ยุบภูเขากลับไปเริ่มปี 2493 ก่อนก่อตัวใหม่
         if(b) b.textContent="⏸";
         playTimer=setInterval(function(){
           if(sel>=nY-1){ stopPlay(); return; }
