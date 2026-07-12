@@ -5648,15 +5648,20 @@
         y:{ label:"US$/บาร์เรล", grid:true, tickSize:0 },
         marks:[
           Plot.areaY(band, { x:"year", y1:"lo", y2:"hi", fill:green, fillOpacity:.13 }),
-          Plot.lineY(band, { x:"year", y:"mean", stroke:green, strokeWidth:1.4, strokeDasharray:"4,3", strokeOpacity:.9, title:function(d){ return "เฉลี่ยเคลื่อนที่ ปี "+d.year+" — $"+d.mean.toFixed(1); } }),
           Plot.areaY(OIL_PRICE, { x:"year", y:"v", fill:red, fillOpacity:.06 }),
-          Plot.lineY(OIL_PRICE, { x:"year", y:"v", stroke:red, strokeWidth:2.2, title:function(d){ return "ปี "+d.year+" — $"+d.v.toFixed(1); } }),
+          Plot.lineY(OIL_PRICE, { x:"year", y:"v", stroke:red, strokeWidth:2.2 }),   // เส้นราคาจริง = เส้นแรก → หัววิ่งเกาะเส้นนี้ตอนเล่นไทม์ไลน์
+          Plot.lineY(band, { x:"year", y:"mean", stroke:green, strokeWidth:1.4, strokeDasharray:"4,3", strokeOpacity:.9 }),
           Plot.dot([last], { x:"year", y:"v", fill:red, r:4 }),
           Plot.text([last], { x:"year", y:"v", text:function(d){ return "$"+d.v.toFixed(0); }, dy:-12, textAnchor:"end", fill:red, fontWeight:700, fontSize:12 }),
           Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      plotInto("#oilPriceChart", fig);
+      // ไทม์ไลน์เล่นไล่ปี + เส้นค่อย ๆ โตตามปี (เอนจิน OWID เดียวกับกราฟเส้นอื่นในหน้า)
+      owidMount("#oilPriceChart", fig, {
+        data: OIL_PRICE, xKey:"year", yKey:"v", color:red,
+        xLabel:"ปี (ค.ศ.)", yLabel:"US$/บาร์เรล",
+        valueFmt:function(v){ return "$"+v.toFixed(1); }
+      });
     }
     function renderRefineries(){
       var box=$("#refineryChart"); if(!box || !window.Plot) return;
@@ -7066,7 +7071,7 @@
           // OWID ให้หน่วยเป็น $ ต่อลูกบาศก์เมตร (per_m3) → แปลงเป็นต่อบาร์เรล (1 บาร์เรล = 0.158987 ลบ.ม.)
           var toBbl = col.toLowerCase().indexOf("m3")>=0 ? 0.158987 : 1;
           var d=[];
-          rows.forEach(function(r){ var y=+(r.Year||r.year), v=parseFloat(r[col]); if(y && !isNaN(v)) d.push({year:y, v:v*toBbl}); });
+          rows.forEach(function(r){ var y=+(r.Year||r.year), v=parseFloat(r[col]); if(y>=1965 && !isNaN(v)) d.push({year:y, v:v*toBbl}); });   // เริ่ม 1965 — ก่อนหน้านั้นราคานิ่งใกล้ 0 (นอมินัล) อนิเมชันจะดูค้าง/แบน
           if(toBbl===1 && d.length && d[d.length-1].v>300){ d=d.map(function(p){ return {year:p.year, v:p.v*0.158987}; }); }
           d.sort(function(a,b){ return a.year-b.year; });
           if(d.length){
