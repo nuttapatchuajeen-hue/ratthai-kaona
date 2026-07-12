@@ -1624,8 +1624,8 @@
 
       <div class="card full">
         <div class="card-head"><h2>🗓️ เส้นเวลาวิวัฒนาการของเงิน</h2><span class="tag">5,000 ปี · โลก + ไทย</span></div>
-        <p class="sub">ไล่จากยุคก่อนเงินตราถึงเงินดิจิทัล — จุดสีแทนยุคของเงินแต่ละแบบ · <b style="color:var(--gold)">🇹🇭 = เหตุการณ์ในไทย</b></p>
-        <div id="moneyTimeline"><div class="state-msg">กำลังสร้างเส้นเวลา…</div></div>
+        <p class="sub">แต่ละจุด = เหตุการณ์สำคัญ · แกนนอน = อายุ (ปีก่อนปัจจุบัน สเกล log) จะเห็นว่านวัตกรรมเรื่องเงิน<b>ถี่ขึ้นมาก</b>ในยุคใกล้ · สีจุดแทนยุค · 🖱️ ชี้ที่จุดเพื่อดูรายละเอียด</p>
+        <div class="plot" id="moneyTimeline"><div class="state-msg">กำลังวาดกราฟ…</div></div>
         <div class="src">ที่มา: รวบรวมจาก Britannica, British Museum, IMF “A Brief History of Money” และธนาคารแห่งประเทศไทย</div>
       </div>
 
@@ -5322,22 +5322,22 @@
       digi: { name:"ดิจิทัล",         c:"#8B5CF6" }
     };
     var MONEY_TIMELINE=[
-      { y:"~9000 ปีก่อน ค.ศ.", era:"pre",  t:"ปศุสัตว์ & ธัญพืชเป็นเงิน", d:"เมโสโปเตเมียใช้ข้าวบาร์เลย์เป็นหน่วยวัดมูลค่า (หน่วย “เชเขล”) — มูลค่าผูกกับของกินของใช้" },
-      { y:"~1200 ปีก่อน ค.ศ.", era:"pre",  t:"เบี้ยหอยเบี้ย (cowrie)", d:"หอยเบี้ยกลายเป็นสื่อกลางแพร่หลายในจีน อินเดีย แอฟริกา — เงินที่ใช้ยาวนานที่สุดในโลก" },
-      { y:"~1000 ปีก่อน ค.ศ.", era:"coin", t:"เงินมีด & เงินจอบสำริด", d:"จีนหล่อโลหะเลียนแบบเครื่องมือจริง เป็นก้าวแรกสู่เงินโลหะที่รัฐรับรอง" },
-      { y:"640 ปีก่อน ค.ศ.",   era:"coin", t:"เหรียญกษาปณ์แท้แรกของโลก", d:"อาณาจักรลิเดียผลิตเหรียญอิเล็กตรัม (ทอง-เงินผสม) ประทับตรารัฐรับประกันน้ำหนัก" },
-      { y:"~600 ปีก่อน ค.ศ.",  era:"coin", t:"เหรียญเงินกรีก “ดรัชมา”", d:"เหรียญแพร่สู่กรีก-เปอร์เซีย-โรม กลายเป็นมาตรฐานการค้ารอบเมดิเตอร์เรเนียน" },
-      { y:"118 ปีก่อน ค.ศ.",   era:"coin", t:"เงินหนังกวาง ราชวงศ์ฮั่น", d:"จีนออกบัตรหนังกวางมูลค่าสูง — ต้นแบบความคิด “เงินที่มูลค่าไม่ได้อยู่ที่ตัววัสดุ”" },
-      { y:"~ค.ศ. 806",  era:"paper", t:"“เงินบินได้” ราชวงศ์ถัง", d:"ตั๋วแลกเงินของพ่อค้าจีน ลดความเสี่ยงขนเหรียญหนัก ๆ — ปฐมบทของธนบัตร" },
-      { y:"~ค.ศ. 1023", era:"paper", t:"“เจียวจื่อ” ธนบัตรรัฐแรกของโลก", d:"ราชวงศ์ซ่งออกธนบัตรที่รัฐค้ำ ก่อนยุโรปกว่า 600 ปี — มาร์โคโปโลตะลึงเมื่อได้เห็น" },
-      { y:"ค.ศ. 1252",  era:"coin",  t:"เหรียญทอง “ฟลอริน” ฟลอเรนซ์", d:"เหรียญทองคุณภาพสูงกลายเป็นเงินการค้าหลักของยุโรปยุคเรอเนสซองส์" },
-      { y:"ค.ศ. 1661",  era:"paper", t:"ธนบัตรแรกของยุโรป", d:"ธนาคารสตอกโฮล์ม (สวีเดน) ออกแบงก์โน้ตกระดาษเป็นครั้งแรกในยุโรป" },
-      { y:"ค.ศ. 1816",  era:"gold",  t:"อังกฤษใช้ “มาตรฐานทองคำ”", d:"ตรากฎหมายผูกค่าเงินปอนด์กับทองคำ — ทั่วโลกทยอยทำตามในศตวรรษที่ 19" },
-      { y:"พ.ศ. 2445 (1902)", era:"gold", t:"ธนบัตรไทยรุ่นแรก 🇹🇭", d:"สมัยรัชกาลที่ 5 ก่อนหน้านั้นไทยใช้เงินพดด้วง เบี้ยหอย และเหรียญกษาปณ์" },
-      { y:"พ.ศ. 2487 (1944)", era:"gold", t:"ระบบเบรตตันวูดส์", d:"ดอลลาร์สหรัฐผูกทอง $35/ออนซ์ สกุลอื่นผูกดอลลาร์ — ระเบียบการเงินโลกหลังสงคราม" },
-      { y:"15 ส.ค. 2514 (1971)", era:"fiat", t:"“นิกสัน ช็อก”", d:"สหรัฐเลิกให้แลกดอลลาร์เป็นทอง โลกเข้าสู่ยุค “เงิน fiat” ที่มูลค่าอยู่ที่ความเชื่อมั่นล้วน ๆ" },
-      { y:"พ.ศ. 2552 (2009)", era:"digi", t:"บิตคอยน์", d:"เงินดิจิทัลกระจายศูนย์แรก จำกัดปริมาณ 21 ล้านเหรียญ ท้าทายแนวคิดเงินที่รัฐควบคุม" },
-      { y:"ยุค 2020s", era:"digi", t:"CBDC เงินดิจิทัลของธนาคารกลาง", d:"จีนนำร่อง e-CNY ไทยทดสอบบาทดิจิทัล — รัฐกลับมาออกเงินในรูปดิจิทัลเอง" }
+      { yr:-9000, y:"~9000 ปีก่อน ค.ศ.", era:"pre",  s:"ปศุสัตว์ & ธัญพืช", t:"ปศุสัตว์ & ธัญพืชเป็นเงิน", d:"เมโสโปเตเมียใช้ข้าวบาร์เลย์เป็นหน่วยวัดมูลค่า (หน่วย “เชเขล”) — มูลค่าผูกกับของกินของใช้" },
+      { yr:-1200, y:"~1200 ปีก่อน ค.ศ.", era:"pre",  s:"เบี้ยหอยเบี้ย", t:"เบี้ยหอยเบี้ย (cowrie)", d:"หอยเบี้ยกลายเป็นสื่อกลางแพร่หลายในจีน อินเดีย แอฟริกา — เงินที่ใช้ยาวนานที่สุดในโลก" },
+      { yr:-1000, y:"~1000 ปีก่อน ค.ศ.", era:"coin", s:"เงินมีด/จอบสำริด", t:"เงินมีด & เงินจอบสำริด", d:"จีนหล่อโลหะเลียนแบบเครื่องมือจริง เป็นก้าวแรกสู่เงินโลหะที่รัฐรับรอง" },
+      { yr:-640,  y:"640 ปีก่อน ค.ศ.",   era:"coin", s:"เหรียญแรก (ลิเดีย)", t:"เหรียญกษาปณ์แท้แรกของโลก", d:"อาณาจักรลิเดียผลิตเหรียญอิเล็กตรัม (ทอง-เงินผสม) ประทับตรารัฐรับประกันน้ำหนัก" },
+      { yr:-600,  y:"~600 ปีก่อน ค.ศ.",  era:"coin", s:"เหรียญเงินกรีก", t:"เหรียญเงินกรีก “ดรัชมา”", d:"เหรียญแพร่สู่กรีก-เปอร์เซีย-โรม กลายเป็นมาตรฐานการค้ารอบเมดิเตอร์เรเนียน" },
+      { yr:-118,  y:"118 ปีก่อน ค.ศ.",   era:"coin", s:"เงินหนังกวาง (ฮั่น)", t:"เงินหนังกวาง ราชวงศ์ฮั่น", d:"จีนออกบัตรหนังกวางมูลค่าสูง — ต้นแบบความคิด “เงินที่มูลค่าไม่ได้อยู่ที่ตัววัสดุ”" },
+      { yr:806,   y:"~ค.ศ. 806",  era:"paper", s:"เงินบินได้ (ถัง)", t:"“เงินบินได้” ราชวงศ์ถัง", d:"ตั๋วแลกเงินของพ่อค้าจีน ลดความเสี่ยงขนเหรียญหนัก ๆ — ปฐมบทของธนบัตร" },
+      { yr:1023,  y:"~ค.ศ. 1023", era:"paper", s:"ธนบัตรแรก (ซ่ง)", t:"“เจียวจื่อ” ธนบัตรรัฐแรกของโลก", d:"ราชวงศ์ซ่งออกธนบัตรที่รัฐค้ำ ก่อนยุโรปกว่า 600 ปี — มาร์โคโปโลตะลึงเมื่อได้เห็น" },
+      { yr:1252,  y:"ค.ศ. 1252",  era:"coin",  s:"เหรียญทองฟลอริน", t:"เหรียญทอง “ฟลอริน” ฟลอเรนซ์", d:"เหรียญทองคุณภาพสูงกลายเป็นเงินการค้าหลักของยุโรปยุคเรอเนสซองส์" },
+      { yr:1661,  y:"ค.ศ. 1661",  era:"paper", s:"ธนบัตรยุโรปแรก", t:"ธนบัตรแรกของยุโรป", d:"ธนาคารสตอกโฮล์ม (สวีเดน) ออกแบงก์โน้ตกระดาษเป็นครั้งแรกในยุโรป" },
+      { yr:1816,  y:"ค.ศ. 1816",  era:"gold",  s:"มาตรฐานทองคำ", t:"อังกฤษใช้ “มาตรฐานทองคำ”", d:"ตรากฎหมายผูกค่าเงินปอนด์กับทองคำ — ทั่วโลกทยอยทำตามในศตวรรษที่ 19" },
+      { yr:1902,  y:"พ.ศ. 2445 (1902)", era:"gold", s:"ธนบัตรไทยแรก 🇹🇭", t:"ธนบัตรไทยรุ่นแรก 🇹🇭", d:"สมัยรัชกาลที่ 5 ก่อนหน้านั้นไทยใช้เงินพดด้วง เบี้ยหอย และเหรียญกษาปณ์" },
+      { yr:1944,  y:"พ.ศ. 2487 (1944)", era:"gold", s:"เบรตตันวูดส์", t:"ระบบเบรตตันวูดส์", d:"ดอลลาร์สหรัฐผูกทอง $35/ออนซ์ สกุลอื่นผูกดอลลาร์ — ระเบียบการเงินโลกหลังสงคราม" },
+      { yr:1971,  y:"15 ส.ค. 2514 (1971)", era:"fiat", s:"นิกสัน ช็อก", t:"“นิกสัน ช็อก”", d:"สหรัฐเลิกให้แลกดอลลาร์เป็นทอง โลกเข้าสู่ยุค “เงิน fiat” ที่มูลค่าอยู่ที่ความเชื่อมั่นล้วน ๆ" },
+      { yr:2009,  y:"พ.ศ. 2552 (2009)", era:"digi", s:"บิตคอยน์", t:"บิตคอยน์", d:"เงินดิจิทัลกระจายศูนย์แรก จำกัดปริมาณ 21 ล้านเหรียญ ท้าทายแนวคิดเงินที่รัฐควบคุม" },
+      { yr:2024,  y:"ยุค 2020s", era:"digi", s:"CBDC ดิจิทัล", t:"CBDC เงินดิจิทัลของธนาคารกลาง", d:"จีนนำร่อง e-CNY ไทยทดสอบบาทดิจิทัล — รัฐกลับมาออกเงินในรูปดิจิทัลเอง" }
     ];
     var MONEY_THINGS=[
       { i:"🐚", n:"เบี้ยหอย", d:"จีน แอฟริกา เอเชีย" },
@@ -5357,25 +5357,31 @@
       { k:"เงิน fiat (ลอยตัว)", v:55, hl:true },
       { k:"เงินดิจิทัล/คริปโต", v:16, hl:true }
     ];
+    /* กราฟเส้นเวลา: จุดต่อ 1 เหตุการณ์ · แกน x = อายุ (ปีก่อนปัจจุบัน สเกล log) → เห็นชัดว่านวัตกรรมเงินถี่ขึ้นมากในยุคใกล้ · สีจุด = ยุค */
     function renderMoneyTimeline(){
-      var box=document.getElementById("moneyTimeline"); if(!box) return;
-      var h='<div style="position:relative;margin-top:6px">';
-      MONEY_TIMELINE.forEach(function(ev,i){
-        var er=MONEY_ERAS[ev.era]||{name:"",c:"#888"}, last=(i===MONEY_TIMELINE.length-1);
-        h+='<div style="display:flex;gap:13px;align-items:flex-start;padding-bottom:'+(last?'2':'18')+'px;position:relative">'
-          +'<div style="flex:0 0 98px;text-align:right;font-weight:800;font-size:12.5px;color:var(--ink);padding-top:1px;line-height:1.3">'+ev.y+'</div>'
-          +'<div style="flex:0 0 16px;position:relative;display:flex;justify-content:center">'
-            +'<span style="width:13px;height:13px;border-radius:50%;background:'+er.c+';border:2px solid var(--paper-2);box-shadow:0 0 0 1px '+er.c+';margin-top:3px;z-index:1"></span>'
-            +(last?'':'<span style="position:absolute;top:18px;bottom:-18px;left:50%;transform:translateX(-50%);width:2px;background:var(--rule)"></span>')
-          +'</div>'
-          +'<div style="flex:1 1 auto;min-width:0;padding-bottom:2px">'
-            +'<div style="font-weight:800;font-size:13.5px;color:var(--ink);margin-bottom:2px;line-height:1.35">'+ev.t
-              +' <span style="font-size:10px;font-weight:800;color:'+er.c+';background:'+er.c+'1a;border:1px solid '+er.c+'55;padding:1px 7px;border-radius:20px;margin-left:3px;white-space:nowrap">'+er.name+'</span></div>'
-            +'<div style="font-size:12.3px;color:var(--ink-soft);line-height:1.55">'+ev.d+'</div>'
-          +'</div>'
-        +'</div>';
+      var box=document.getElementById("moneyTimeline"); if(!box || !window.Plot) return;
+      var W=Math.max(300, box.clientWidth||900); if(W<60) return;
+      var P=window.Plot, NOW=2026, ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), paper2=cssVar("--paper-2"), rule=cssVar("--rule");
+      var data=MONEY_TIMELINE.map(function(e){ var er=MONEY_ERAS[e.era]||{name:"",c:"#888"};
+        return { age:Math.max(1.5, NOW-e.yr), s:e.s, era:er.name, t:e.t, y:e.y, d:e.d }; });
+      var yorder=data.map(function(d){ return d.s; });   // เรียงเก่า→ใหม่ (บนลงล่าง)
+      var eraNames=[], eraCols=[]; Object.keys(MONEY_ERAS).forEach(function(k){ eraNames.push(MONEY_ERAS[k].name); eraCols.push(MONEY_ERAS[k].c); });
+      var fig=P.plot({
+        width:W, height:44+data.length*25, marginLeft:150, marginRight:56, marginTop:28, marginBottom:44,
+        style: baseStyle(ink, FONT_W),
+        x:{ type:"log", domain:[12000,1.5], ticks:[10000,1000,100,10,1], grid:true, tickSize:0,
+            label:"← เก่ากว่า · เวลาก่อนปัจจุบัน (ปี · สเกล log) · ใหม่กว่า →",
+            tickFormat:function(d){ return d>=1000?(d/1000)+" พันปีก่อน":(d<=1.5?"ปัจจุบัน":d+" ปีก่อน"); } },
+        y:{ domain:yorder, label:null, tickSize:0 },
+        color:{ domain:eraNames, range:eraCols, legend:true },
+        marks:[
+          P.ruleY(data, { y:"s", x1:12000, x2:"age", stroke:"era", strokeOpacity:0.25, strokeWidth:2 }),
+          P.dot(data, { x:"age", y:"s", fill:"era", r:6.5, stroke:paper2, strokeWidth:1.6 }),
+          P.tip(data, P.pointerY({ x:"age", y:"s", fill:paper2, stroke:rule, fontFamily:FONT_W, fontSize:12, textPadding:9,
+            title:function(d){ return d.t+"\n"+d.y+" · "+d.era+"\n"+d.d; } }))
+        ]
       });
-      box.innerHTML=h+'</div>';
+      box.innerHTML=""; box.appendChild(fig);
     }
     function renderMoneyThings(){
       var box=document.getElementById("moneyThings"); if(!box) return;
