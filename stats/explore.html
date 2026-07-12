@@ -1707,6 +1707,83 @@
       </div>
     </section>
 
+    <!-- ============ การเงิน · เงินมั่นคง (Sound Money) vs เงินอ่อนค่า (Fiat) ============ -->
+    <section class="tabpane" id="pane-fin-soundmoney" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title">⚖️ เงินมั่นคง vs เงินอ่อนค่า</h2></div>
+      <p class="sub" style="max-width:920px"><b>“เงินมั่นคง” (sound money)</b> คือเงินที่เพิ่มปริมาณได้ยาก จึงรักษามูลค่าได้ในระยะยาว เช่น ทองคำ ส่วน <b>“เงินอ่อนค่า”</b> คือเงินที่พิมพ์เพิ่มได้เรื่อย ๆ มูลค่าจึงค่อย ๆ ลดลง — ลองดูว่าเงินกระดาษเสียกำลังซื้อไปมากแค่ไหนในหนึ่งศตวรรษ</p>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💵 กำลังซื้อดอลลาร์ตั้งแต่ 1913</div>
+          <div class="k-num">เหลือ ~3<span class="u">%</span></div>
+          <div class="k-sub">$1 ปี 1913 ซื้อของได้เท่า ~3 เซนต์วันนี้ — สูญกำลังซื้อไป ~97%</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🥇 ทองคำ 1 ออนซ์</div>
+          <div class="k-num">$35 → ~$2,390</div>
+          <div class="k-sub">นับจากเลิกมาตรฐานทองปี 1971 (×68) — ทองไม่ได้แพงขึ้น แต่เงินกระดาษอ่อนลง</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🏛️ เดนาริอุสโรมัน</div>
+          <div class="k-num">98% → ~4<span class="u">% เงินแท้</span></div>
+          <div class="k-sub">จักรวรรดิลดเนื้อเงินเพื่อผลิตเหรียญมากขึ้น = เงินเฟ้อยุคโบราณ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚖️ หัวใจของเงินมั่นคง</div>
+          <div class="k-num">เพิ่ม<span class="u">ปริมาณยาก</span></div>
+          <div class="k-sub">ทอง/บิตคอยน์จำกัดจำนวน จึงรักษามูลค่า ต่างจากเงินกระดาษที่พิมพ์เพิ่มได้</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>📉 กำลังซื้อของเงินดอลลาร์ที่หายไป</h2><span class="tag">ปี 1913 = $1 · กด ▶ เล่นไล่ปี</span></div>
+        <p class="sub">มูลค่าที่แท้จริงของ $1 ตั้งแต่ตั้งธนาคารกลางสหรัฐ (Fed) ปี 1913 — เงินเฟ้อสะสมกัดกินกำลังซื้อจนเหลือราว 3 เซนต์</p>
+        <div class="plot" id="usdPowerLine"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: คำนวณจากดัชนีราคาผู้บริโภคสหรัฐ (U.S. BLS Consumer Price Index) · กำลังซื้อโดยประมาณ</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2>🥇 ราคาทองคำหลังเลิกมาตรฐานทอง</h2><span class="tag">$/ออนซ์ · 1971–ปัจจุบัน</span></div>
+          <p class="sub">มองอีกด้าน: ทองคำที่ปริมาณเพิ่มยากกลับ “แพงขึ้น” เพราะเงินกระดาษที่พิมพ์ได้ไม่จำกัดอ่อนค่าลง</p>
+          <div class="plot" id="goldLine"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: ราคาทองคำเฉลี่ยรายปี (London Fix / World Gold Council โดยประมาณ)</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>🏛️ การลดค่าเงินเดนาริอุสโรมัน</h2><span class="tag">% เนื้อเงิน · ค.ศ. 0–268</span></div>
+          <p class="sub">แม้แต่ “เหรียญเงิน” ก็ถูกทำให้อ่อนค่าได้ — โรมค่อย ๆ ลดเนื้อเงินจริงในเหรียญเพื่อยืดงบจักรวรรดิ</p>
+          <div class="plot" id="denariusLine"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: สัดส่วนเนื้อเงินในเหรียญเดนาริอุส — “Debasement of the denarius” (Wikipedia / งานเหรียญวิทยา)</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ เทียบกันชัด ๆ</h2><span class="tag">Sound money vs Fiat</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:4px">
+          <div style="border:1px solid var(--rule);border-left:4px solid #C99A2E;border-radius:12px;padding:12px 15px;background:var(--paper-2)">
+            <div style="font-weight:800;font-size:14px;color:var(--ink)">🥇 เงินมั่นคง (Sound Money)</div>
+            <div style="font-size:11px;color:var(--ink-soft);margin:2px 0 9px">ทองคำ · เงินผูกโลหะ · บิตคอยน์</div>
+            <ul style="margin:0;padding-left:17px;font-size:12.3px;color:var(--ink-soft);line-height:1.7">
+              <li><b>ปริมาณจำกัด</b> เพิ่มได้ยาก</li>
+              <li><b>รักษามูลค่า</b>ในระยะยาว</li>
+              <li>รัฐหรือใครเพิ่มตามใจไม่ได้</li>
+              <li>ไม่ต้องพึ่งความเชื่อใจต่อผู้ออก</li>
+            </ul>
+          </div>
+          <div style="border:1px solid var(--rule);border-left:4px solid #D64545;border-radius:12px;padding:12px 15px;background:var(--paper-2)">
+            <div style="font-weight:800;font-size:14px;color:var(--ink)">💵 เงินอ่อนค่า (Fiat)</div>
+            <div style="font-size:11px;color:var(--ink-soft);margin:2px 0 9px">เงินกระดาษ/ดิจิทัลที่รัฐออก</div>
+            <ul style="margin:0;padding-left:17px;font-size:12.3px;color:var(--ink-soft);line-height:1.7">
+              <li><b>พิมพ์เพิ่มได้</b>แทบไม่จำกัด</li>
+              <li>มูลค่า<b>ลดลงตามเวลา</b> (เงินเฟ้อ)</li>
+              <li>รัฐใช้เป็นเครื่องมือกระตุ้น/คุมเศรษฐกิจ</li>
+              <li>สะดวก ใช้จ่าย-กู้ยืมคล่องตัว</li>
+            </ul>
+          </div>
+        </div>
+        <p class="sub" style="margin-top:11px"><b style="color:var(--gold)">สมดุลจริง:</b> เงินมั่นคงรักษามูลค่าได้ดี แต่เงิน fiat ให้รัฐยืดหยุ่นเชิงนโยบายได้มากกว่า — โลกจริงคือการชั่งน้ำหนักระหว่าง “มูลค่าที่มั่นคง” กับ “ความยืดหยุ่น”</p>
+      </div>
+    </section>
+
     <!-- ============ การเงิน · ความมั่งคั่งของคนทั้งโลก (UBS Global Wealth Report — curated) ============ -->
     <section class="tabpane" id="pane-fin-wealth" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title">💎 ความมั่งคั่งของคนทั้งโลก</h2></div>
@@ -5370,10 +5447,35 @@
         fmt:function(v){ return v+" ศูนย์"; } });
     }
 
+    /* ===== ⚖️ การเงิน · เงินมั่นคง (Sound Money) vs เงินอ่อนค่า (Fiat) ===== */
+    var USD_POWER=[   // กำลังซื้อของ $1 (ปี 1913 = 1.00) คำนวณจาก CPI สหรัฐ
+      {year:1913, v:1.00},{year:1920, v:0.49},{year:1930, v:0.58},{year:1940, v:0.70},
+      {year:1950, v:0.41},{year:1960, v:0.33},{year:1970, v:0.25},{year:1980, v:0.12},
+      {year:1990, v:0.076},{year:2000, v:0.058},{year:2010, v:0.046},{year:2020, v:0.038},{year:2024, v:0.031}
+    ];
+    var GOLD_USD=[    // ราคาทองคำเฉลี่ยรายปี ($/ออนซ์) หลังเลิกมาตรฐานทอง
+      {year:1971, v:35},{year:1975, v:161},{year:1980, v:615},{year:1985, v:317},{year:1990, v:384},
+      {year:1995, v:384},{year:2000, v:279},{year:2005, v:445},{year:2008, v:872},{year:2011, v:1571},
+      {year:2015, v:1160},{year:2020, v:1770},{year:2022, v:1800},{year:2024, v:2390}
+    ];
+    var DENARIUS=[    // % เนื้อเงินในเหรียญเดนาริอุสโรมัน (ค.ศ.)
+      {year:0, v:98},{year:68, v:93},{year:100, v:89},{year:150, v:83},
+      {year:180, v:79},{year:211, v:54},{year:240, v:45},{year:250, v:40},{year:268, v:4}
+    ];
+    function renderFinSound(){
+      if(!document.getElementById("pane-fin-soundmoney")) return;
+      gpoLine("#usdPowerLine", USD_POWER, { full:true, h:290, ml:54, ylab:"กำลังซื้อของ $1 (ปี 1913 = $1)",
+        color:cssVar("--red"), ydomain:[0,1], fmt:function(v){ return "$"+v.toFixed(2); } });
+      gpoLine("#goldLine", GOLD_USD, { h:280, ml:54, ylab:"ราคาทองคำ ($/ออนซ์)",
+        color:cssVar("--gold"), fmt:function(v){ return "$"+Math.round(v).toLocaleString("en-US"); } });
+      gpoLine("#denariusLine", DENARIUS, { h:280, ml:44, ticks:6, ylab:"เนื้อเงินในเดนาริอุส (%)",
+        color:"#B87333", ydomain:[0,100], fmt:function(v){ return v+"%"; } });
+    }
+
     function renderFinanceAll(){
       renderInflationAll(); renderPersonalAll(); renderDebtAll(); renderHistoryAll(); renderWealthAll();
       renderUsDebt(); renderUsDebtNum();
-      renderFinMacro(); renderFinMoney5000(); renderFinHyper();
+      renderFinMacro(); renderFinMoney5000(); renderFinHyper(); renderFinSound();
     }
 
     /* ---------- โหลดเงินเฟ้อสด (World Bank) ---------- */
@@ -9253,6 +9355,7 @@
           { pane:"fin-history",   ico:"📜", label:"ประวัติศาสตร์การเงินโลก & ไทย", existing:true },
           { pane:"fin-money5000", ico:"🪙", label:"กำเนิดเงิน 5,000 ปี", existing:true },
           { pane:"fin-hyperinflation", ico:"💸", label:"ประวัติศาสตร์เงินเฟ้อ", existing:true },
+          { pane:"fin-soundmoney", ico:"⚖️", label:"เงินมั่นคง vs เงินอ่อนค่า", existing:true },
           { pane:"fin-wealth",    ico:"💎", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
           { pane:"fin-macro",     ico:"📊", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
       ]},
