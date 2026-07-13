@@ -3771,7 +3771,7 @@ function showPanel(node) {
     document.getElementById('info-cat').textContent='ผู้นำรัฐบาล';
     document.getElementById('info-mission').textContent='บริหารราชการแผ่นดิน กำกับดูแลคณะรัฐมนตรีทั้งหมด';
     document.getElementById('info-exec').textContent=`ควบคุม ${MINISTRIES.filter(m=>m.name.startsWith('กระทรวง')||m.name==='สำนักนายกรัฐมนตรี').length} กระทรวง · ${MINISTRIES.reduce((a,m)=>a+m.orgs.length,0)} หน่วยงาน · สั่งตรง ${nodes.filter(isPmDirect).length} หน่วย (ไฮไลต์ทอง)`;
-    document.getElementById('info-web').querySelector('.info-val').innerHTML='<a href="https://www.thaigov.go.th" target="_blank">www.thaigov.go.th</a>';
+    document.getElementById('info-web').querySelector('.info-val').innerHTML='<a href="https://www.thaigov.go.th" target="_blank" rel="noopener">www.thaigov.go.th</a>';
 
     // Show all deputy PMs and Cabinet summary in minister row
     document.getElementById('info-minister-row').style.display='flex';
