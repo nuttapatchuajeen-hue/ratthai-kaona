@@ -266,7 +266,13 @@
   .side-tabs .tab .soon{font-family:"Archivo",sans-serif;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 5px;margin-left:auto;flex:none}
   .side-tabs .tab.active .soon{color:#fff;border-color:rgba(255,255,255,.65)}
   /* ===== เมนูหมวดแบบ accordion (หัวข้อหลัก → หัวข้อรอง) ===== */
-  .side-nav{display:flex;flex-direction:column;gap:2px}
+  .side-nav{display:flex;flex-direction:column;gap:2px;position:relative}
+  /* แถบไฟเลื่อนตามแท็บที่เลือก — glow ที่ slide ไปยัง .ng-sub.active */
+  .nav-glow{position:absolute;top:0;left:0;width:0;height:0;border-radius:9px;z-index:0;pointer-events:none;opacity:0;
+    background:linear-gradient(120deg,var(--green),var(--green-deep));box-shadow:var(--glow-cyan);
+    transition:transform .34s cubic-bezier(.45,.05,.15,1),opacity .22s ease}
+  .nav-glow.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){ .nav-glow{transition:opacity .2s ease} }
   .nav-group{border-radius:12px}
   .ng-head{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;border-radius:11px;background:none;cursor:pointer;font-family:inherit;color:var(--ink);font-weight:700;font-size:13.4px;text-align:left;line-height:1.2;transition:background .2s,color .2s,border-color .2s}
   .ng-head:hover{background:var(--glass-bg-2);border-color:var(--glass-border-soft)}
@@ -278,9 +284,9 @@
   .ng-subs{display:none;flex-direction:column;gap:1px;margin:1px 0 6px 15px;padding-left:6px;border-left:1px solid var(--glass-border-soft)}
   .nav-group.open>.ng-subs{display:flex;animation:ngdrop .25s ease}
   @keyframes ngdrop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .ng-sub{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:0;border-radius:9px;background:none;cursor:pointer;font-family:inherit;font-size:12.3px;font-weight:500;color:var(--ink-2);text-align:left;line-height:1.25;transition:background .18s,color .18s,box-shadow .18s}
+  .ng-sub{position:relative;z-index:1;display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:0;border-radius:9px;background:none;cursor:pointer;font-family:inherit;font-size:12.3px;font-weight:500;color:var(--ink-2);text-align:left;line-height:1.25;transition:background .18s,color .18s,box-shadow .18s}
   .ng-sub:hover{background:var(--glass-bg-2);color:var(--green)}
-  .ng-sub.active{background:var(--green);color:var(--paper);box-shadow:var(--glow-cyan);font-weight:600}
+  .ng-sub.active{color:var(--paper);font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.28)}
   .ng-sub .s-ico{font-size:13px;flex:none;line-height:1}
   .ng-sub .s-label{flex:1 1 auto;min-width:0}
   .ng-sub .s-soon{margin-left:auto;font-family:"Archivo",sans-serif;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 5px;flex:none}
@@ -9446,6 +9452,24 @@
         group.appendChild(head); group.appendChild(subs); frag.appendChild(group);
       });
       host.appendChild(frag);
+      if(!host.querySelector(".nav-glow")){
+        var glow = document.createElement("div"); glow.className = "nav-glow"; glow.setAttribute("aria-hidden","true");
+        host.insertBefore(glow, host.firstChild);
+      }
+    }
+
+    // เลื่อน "แถบไฟ" ไปอยู่หลังแท็บหัวข้อรองที่กำลังเลือก (.ng-sub.active)
+    // วัดตำแหน่งด้วย getBoundingClientRect เทียบกับ #sideNav (กัน offsetParent เพี้ยนจาก transform)
+    function moveNavGlow(){
+      var host = $("#sideNav"); if(!host) return;
+      var glow = host.querySelector(".nav-glow"); if(!glow) return;
+      var active = host.querySelector(".ng-sub.active");
+      if(!active || active.offsetParent === null || !active.offsetWidth){ glow.classList.remove("on"); return; }
+      var hr = host.getBoundingClientRect(), r = active.getBoundingClientRect();
+      glow.style.width  = r.width + "px";
+      glow.style.height = r.height + "px";
+      glow.style.transform = "translate(" + (r.left - hr.left) + "px," + (r.top - hr.top) + "px)";
+      glow.classList.add("on");
     }
 
     function scrollToY(y){ y=Math.max(0,y); try{ window.scrollTo({top:y, behavior:"smooth"}); }catch(e){ window.scrollTo(0,y); } }
@@ -9470,6 +9494,7 @@
       // หัวหน้ากลุ่ม
       var hero=$("#groupHero");
       if(hero){ hero.innerHTML='<span class="gh-ico">'+g.ico+'</span><div class="gh-tx"><b>'+g.label+'</b><small>'+g.subs.length+' หัวข้อย่อย · เลื่อนดูได้ในหน้าเดียว</small></div>'; }
+      afterPaint(moveNavGlow); // เลื่อนแถบไฟไปยังแท็บที่เพิ่งเลือก
       afterPaint(renderAll); // กราฟ resize ตามความกว้างที่เพิ่งโผล่
       afterPaint(function(){
         var target = focusPane ? $("#pane-"+focusPane) : hero;
@@ -9483,6 +9508,10 @@
         b.addEventListener("click", function(){ var pane=b.getAttribute("data-pane"); showGroup(PANE_GROUP[pane], pane); });
       });
       showGroup("world"); // เปิดหัวข้อหลักแรก แสดงหัวข้อรองทั้งหมดในหน้าเดียว
+      // วัดตำแหน่งแถบไฟซ้ำเมื่อ layout/ฟอนต์พร้อม (ครั้งแรกอาจวัดก่อนจัดวางเสร็จ)
+      setTimeout(moveNavGlow, 80);
+      window.addEventListener("load", moveNavGlow);
+      if(document.fonts && document.fonts.ready){ document.fonts.ready.then(moveNavGlow); }
     }
 
     /* ---------- รี-เรนเดอร์เมื่อสลับธีม / รีไซส์ ---------- */
@@ -9492,6 +9521,7 @@
 
     var rt;
     window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(renderAll, 180); });
+    window.addEventListener("resize", moveNavGlow);
 
     /* ================= 🛰️ วงโคจรดาวเทียม (Satellite Ground Track) =================
        พอร์ตแบบเป๊ะจากโน้ตบุ๊ก Observable "@jake-low/satellite-ground-track-visualizer"
