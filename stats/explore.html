@@ -3433,11 +3433,11 @@
   </footer>
 
   <!-- ===== เอนจินกราฟ: D3 + TopoJSON + Observable Plot ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-tile@1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-tile@1.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
   <script src="th-map.js"></script>
   <!-- รูปทรง 50 เขต กทม. (dissolve จาก ADM3) + ข้อมูลเปรียบเทียบรายเขต -->
@@ -5677,7 +5677,7 @@
     /* ---------- โหลดแผนที่ฐานโลก ---------- */
     function loadWorld(){
       if(!window.d3 || !window.topojson){ $("#mapChart").innerHTML = '<div class="state-msg err">โหลดไลบรารีแผนที่ไม่สำเร็จ</div>'; return; }
-      d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+      d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json")
         .then(function(topo){
           WORLD = topojson.feature(topo, topo.objects.countries);
           THAI_GEO = WORLD.features.filter(function(f){ return f.properties.name==="Thailand"; })[0] || null;
@@ -9983,7 +9983,7 @@
       async function boot(){
         if(started) return; started = true;
         try{
-          const rt = await import("https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js");
+          const rt = await import("https://cdn.jsdelivr.net/npm/@observablehq/runtime@5.9.9/dist/runtime.js");
           const mod = await import("./junction-notebook.js");
           const Runtime = rt.Runtime, Inspector = rt.Inspector, define = mod.default;
           const targets = {
