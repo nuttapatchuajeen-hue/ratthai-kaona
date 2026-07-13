@@ -329,7 +329,7 @@ const skColor=name=>{const d=SK.districts[name]; return d?(SK.colors[d.party]||'
 const PH=window.BKKPHOTOS||{gov:{},sk:{}};
 function govAvatar(c,cls){
   const f=PH.gov&&PH.gov[c.no];
-  return `<div class="${cls} ava">${c.no}${f?`<img src="bkk-photos/${f}" alt="" onerror="this.remove()">`:''}</div>`;
+  return `<div class="${cls} ava">${c.no}${f?`<img src="bkk-photos/${f}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`;
 }
 
 /* ---------- campaign songs (YouTube official audio) — 2-track playlist ---------- */
@@ -490,7 +490,7 @@ function renderPanel(){
     const name=state.sel, d=SK.districts[name], col=skColor(name);
     panel.innerHTML=`<button class="dback" onclick="bkkClearSel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>กลับทุกเขต</button>`+
       `<div class="ddet"><div class="ddn">เขต${name}</div>`+
-      `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">${(PH.sk&&PH.sk[name])?`<img src="bkk-photos/${PH.sk[name]}" alt="" onerror="this.remove()">`:'✓'}</div>`+
+      `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">${(PH.sk&&PH.sk[name])?`<img src="bkk-photos/${PH.sk[name]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'✓'}</div>`+
       `<div><div class="dvn">${d.winner||'—'}</div><div class="dvm">${d.grp||d.party}</div></div></div>`+
       `<div class="ddrows">`+
       `<div class="ddr"><span>คะแนนที่ได้</span><b>${fmt(d.votes)}</b></div>`+
@@ -574,7 +574,7 @@ window.setView=function(v){
       : 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) เลือกตั้งแบบแบ่งเขต เขตละ 1 คน รวม 50 คน — สีของแต่ละเขตคือพรรค/กลุ่มของผู้ชนะ';
     // badge
     el('mapBadge').style.display=v==='gov'?'':'none';
-    if(v==='gov'){const pf=(PH.gov&&PH.gov[9])?`<img src="bkk-photos/${PH.gov[9]}" alt="" onerror="this.remove()">`:''; el('mapBadge').innerHTML=`<div class="mv ava" style="color:${GOV.winnerColor}">9${pf}</div><div class="mt"><b>ชัชชาติ สิทธิพันธุ์</b><small>ชนะ 50 / 50 เขต · ${GOV.candidates[0].pct}%</small></div>`;}
+    if(v==='gov'){const pf=(PH.gov&&PH.gov[9])?`<img src="bkk-photos/${PH.gov[9]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''; el('mapBadge').innerHTML=`<div class="mv ava" style="color:${GOV.winnerColor}">9${pf}</div><div class="mt"><b>ชัชชาติ สิทธิพันธุ์</b><small>ชนะ 50 / 50 เขต · ${GOV.candidates[0].pct}%</small></div>`;}
     recolor(); renderLegend(); renderPanel();
   } else { renderSummary(); }
 };
