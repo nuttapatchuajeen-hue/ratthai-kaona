@@ -59,9 +59,23 @@
     "#mdai-panel{position:fixed;right:18px;bottom:88px;z-index:99999;width:380px;max-width:calc(100vw - 36px);height:70vh;max-height:560px;",
     "display:none;flex-direction:column;overflow:hidden;border-radius:18px;background:var(--mdai-surface);color:var(--mdai-text);",
     "border:1px solid var(--mdai-border);box-shadow:var(--mdai-shadow);opacity:0;transform:translateY(12px) scale(.98);transition:opacity .2s, transform .2s}",
-    "#mdai-panel.mdai-show{display:flex;opacity:1;transform:none}",
+    "#mdai-panel.mdai-show{display:flex;opacity:1;transform:none;animation:mdai-halo 9s ease-in-out infinite}",
+    // แสงสี: กรอบเรืองไล่สีรอบหน้าต่าง (mask เหลือเฉพาะขอบ 2px) — ไม่ทับการคลิก (pointer-events:none)
+    "#mdai-panel::before{content:'';position:absolute;inset:0;border-radius:18px;padding:2px;box-sizing:border-box;pointer-events:none;z-index:5;",
+    "background:linear-gradient(120deg,#00E5FF,#3B82F6,#A855F7,#00B5D6,#00E5FF);background-size:300% 300%;",
+    "-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;",
+    "animation:mdai-flow 6s linear infinite}",
+    "@keyframes mdai-flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}",
+    // ออร่าเรืองรอบกล่อง (ไล่สีวน) — เสริมเงาเดิม ไม่ทับ
+    "@keyframes mdai-halo{0%,100%{box-shadow:var(--mdai-shadow),0 0 24px -6px rgba(0,229,255,.55)}33%{box-shadow:var(--mdai-shadow),0 0 26px -4px rgba(59,130,246,.6)}66%{box-shadow:var(--mdai-shadow),0 0 26px -4px rgba(168,85,247,.55)}}",
     // หัว
-    "#mdai-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));color:var(--mdai-on-accent)}",
+    "#mdai-head{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));color:var(--mdai-on-accent)}",
+    // แสงสีลอย (aurora) เหนือแถบหัว — blend screen ให้เรืองบนพื้นสีเข้ม
+    "#mdai-head::before{content:'';position:absolute;inset:-40%;z-index:0;pointer-events:none;mix-blend-mode:screen;",
+    "background:radial-gradient(40% 60% at 20% 30%,rgba(0,229,255,.55),transparent 70%),radial-gradient(45% 65% at 75% 65%,rgba(168,85,247,.5),transparent 70%),radial-gradient(35% 50% at 55% 15%,rgba(255,255,255,.4),transparent 70%);",
+    "background-size:200% 200%;animation:mdai-aurora 12s ease-in-out infinite}",
+    "@keyframes mdai-aurora{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}",
+    "#mdai-head>*{position:relative;z-index:1}",
     "#mdai-head .mdai-dot{width:9px;height:9px;border-radius:50%;background:#5ef08a;box-shadow:0 0 0 3px rgba(94,240,138,.25)}",
     "#mdai-head b{font-size:15px;font-weight:700;line-height:1.1}",
     "#mdai-head span{display:block;font-size:11px;opacity:.85;font-weight:400}",
@@ -72,20 +86,21 @@
     ".mdai-row{display:flex;max-width:85%}",
     ".mdai-row.me{align-self:flex-end}.mdai-row.ai{align-self:flex-start}",
     ".mdai-bubble{padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}",
-    ".me .mdai-bubble{background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));color:var(--mdai-on-accent);border-bottom-right-radius:4px}",
+    ".me .mdai-bubble{background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));color:var(--mdai-on-accent);border-bottom-right-radius:4px;box-shadow:0 4px 16px -6px rgba(0,181,214,.6)}",
     ".ai .mdai-bubble{background:var(--mdai-surface);color:var(--mdai-text);border:1px solid var(--mdai-border);border-bottom-left-radius:4px}",
     ".ai .mdai-bubble.err{border-color:#d7263d;color:#d7263d}",
     // จุดพิมพ์
     ".mdai-typing{display:flex;gap:4px;padding:4px 2px}",
     ".mdai-typing i{width:7px;height:7px;border-radius:50%;background:var(--mdai-dim);animation:mdai-b 1s infinite}",
-    ".mdai-typing i:nth-child(2){animation-delay:.15s}.mdai-typing i:nth-child(3){animation-delay:.3s}",
+    ".mdai-typing i:nth-child(1){background:#00E5FF}.mdai-typing i:nth-child(2){background:#3B82F6;animation-delay:.15s}.mdai-typing i:nth-child(3){background:#A855F7;animation-delay:.3s}",
     "@keyframes mdai-b{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}",
     // ช่องพิมพ์
     "#mdai-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--mdai-border);background:var(--mdai-surface)}",
     "#mdai-input{flex:1;resize:none;border:1px solid var(--mdai-border);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;",
     "background:var(--mdai-surface2);color:var(--mdai-text);max-height:110px;outline:none}",
     "#mdai-input:focus{border-color:var(--mdai-accent)}",
-    "#mdai-send{border:none;border-radius:12px;width:44px;cursor:pointer;color:var(--mdai-on-accent);background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));display:grid;place-items:center}",
+    "#mdai-send{border:none;border-radius:12px;width:44px;cursor:pointer;color:var(--mdai-on-accent);background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));display:grid;place-items:center;box-shadow:0 0 14px -3px var(--mdai-accent2);transition:box-shadow .18s,transform .12s}",
+    "#mdai-send:hover{box-shadow:0 0 20px -2px var(--mdai-accent2);transform:translateY(-1px)}",
     "#mdai-send:disabled{opacity:.5;cursor:not-allowed}",
     "#mdai-send svg{width:20px;height:20px}",
     "@media(max-width:480px){#mdai-panel{right:10px;left:10px;width:auto;height:76vh}}",
@@ -94,7 +109,7 @@
     // ตอน snap ติดขอบให้ลื่น ๆ (ใส่ class ชั่วคราว เพราะตอนลากต้องขยับทันทีไม่หน่วง)
     "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease}",
     // Reduce Motion: ปิดเฉพาะ transition/typing ที่ไม่จำเป็น แต่คงแสงวิ่งรอบปุ่มไว้ (ตั้งใจให้วิ่งบนมือถือ)
-    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i{animation:none}}",
+    "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before{animation:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
