@@ -266,9 +266,23 @@
   .headitem:hover .head-src{opacity:1;transform:none}
 
   /* loading + states */
-  .skeleton{position:relative;overflow:hidden;background:var(--glass-bg-2);border-radius:6px}
-  .skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);animation:shim 1.3s infinite}
+  /* ---- SKELETON โครงร่างระหว่างโหลด (แทนข้อความ "กำลังโหลด…") · สีแบรนด์ cyan · light+dark ---- */
+  .skeleton{position:relative;overflow:hidden;background:rgba(9,88,117,.10);border-radius:6px}
+  html[data-theme="dark"] .skeleton{background:rgba(125,230,255,.07)}
+  .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(0,170,200,.18),transparent);animation:shim 1.35s ease-in-out infinite}
+  html[data-theme="dark"] .skeleton::after{background:linear-gradient(90deg,transparent,rgba(0,229,255,.28),transparent)}
   @keyframes shim{to{transform:translateX(100%)}}
+  /* บล็อกโครงตามรูปทรงจริงของแต่ละกราฟ/รายการ (ไม่ให้หน้ากระโดดตอนข้อมูลมา) */
+  .sk-chart{height:200px;border-radius:12px}
+  .ybars .skcol{flex:1;display:flex;align-items:flex-end;justify-content:center;height:100%}
+  .ybars .skcol .skeleton{width:100%;max-width:30px;border-radius:4px 4px 0 0}
+  .sk-list{display:flex;flex-direction:column;gap:15px;width:100%}
+  .sk-catrow{display:grid;grid-template-columns:22px 1fr 46px;gap:12px;align-items:center}
+  .sk-catrow .sk-main{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .sk-dsrow{display:flex;flex-direction:column;gap:9px;padding:14px 0;border-bottom:1px solid var(--glass-border-soft)}
+  .sk-dsrow:first-child{padding-top:2px}
+  .sk-h{height:12px;border-radius:5px}
+  @media (prefers-reduced-motion:reduce){ .skeleton::after{animation:none} }
   .state-msg{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:14px}
   .state-msg.err{color:var(--red)}
   /* hover tooltip (crosshair) กราฟเส้น */
@@ -579,12 +593,23 @@
       <div class="grid-econ">
         <div class="card">
           <div class="cap-note" id="econCap">ผลิตภัณฑ์มวลรวมในประเทศ (GDP) ราคาปัจจุบัน · หน่วย: ล้านล้านบาท · ปี พ.ศ.</div>
-          <div class="ybars" id="gdpBars" aria-label="กราฟ GDP รายปี"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="ybars" id="gdpBars" aria-label="กราฟ GDP รายปี">
+            <div class="skcol"><div class="skeleton" style="height:42%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:50%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:47%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:58%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:55%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:66%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:71%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:68%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:83%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:92%"></div></div>
+          </div>
           <div class="src-tag">ที่มา · <b>World Bank Open Data</b> · NY.GDP.MKTP.CN</div>
         </div>
         <div class="card">
           <div class="cap-note">รายจ่ายภาครัฐ เทียบกับ รายได้จากภาษี (สัดส่วนต่อ GDP) — ช่องว่างระหว่างเส้นสะท้อนภาวะการคลังของรัฐ</div>
-          <div class="linechart" id="fiscalChart" aria-label="กราฟรายจ่ายและรายได้ภาษีต่อ GDP"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="linechart" id="fiscalChart" aria-label="กราฟรายจ่ายและรายได้ภาษีต่อ GDP"><div class="skeleton sk-chart"></div></div>
           <div class="line-legend">
             <span><i style="background:var(--red)"></i>รายจ่ายภาครัฐ (% GDP)</span>
             <span><i style="background:var(--green)"></i>รายได้ภาษี (% GDP)</span>
@@ -604,12 +629,23 @@
       <div class="grid-econ">
         <div class="card">
           <div class="cap-note" id="debtCap">หนี้รัฐบาลกลาง (Central government debt) · สัดส่วนต่อ GDP · ปี พ.ศ.</div>
-          <div class="ybars" id="debtBars" aria-label="กราฟหนี้รัฐบาลกลางต่อ GDP รายปี"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="ybars" id="debtBars" aria-label="กราฟหนี้รัฐบาลกลางต่อ GDP รายปี">
+            <div class="skcol"><div class="skeleton" style="height:60%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:54%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:66%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:62%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:74%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:70%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:82%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:78%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:88%"></div></div>
+            <div class="skcol"><div class="skeleton" style="height:84%"></div></div>
+          </div>
           <div class="src-tag">ที่มา · <b>World Bank Open Data</b> · GC.DOD.TOTL.GD.ZS</div>
         </div>
         <div class="card">
           <div class="cap-note" id="balCap">ดุลการคลังของรัฐบาล (กู้ยืมสุทธิ/ให้กู้สุทธิ ต่อ GDP) — แท่งลงใต้เส้นศูนย์ = ขาดดุล (รายจ่ายมากกว่ารายได้)</div>
-          <div class="linechart" id="balanceChart" aria-label="กราฟดุลการคลังต่อ GDP รายปี"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="linechart" id="balanceChart" aria-label="กราฟดุลการคลังต่อ GDP รายปี"><div class="skeleton sk-chart"></div></div>
           <div class="line-legend">
             <span><i style="background:var(--green)"></i>เกินดุล (surplus)</span>
             <span><i style="background:var(--red)"></i>ขาดดุล (deficit)</span>
@@ -618,7 +654,7 @@
         </div>
         <div class="card">
           <div class="cap-note">งบรายด้านของรัฐ (สัดส่วนต่อ GDP) — เทียบรายจ่ายด้านการศึกษา สาธารณสุข และการทหาร</div>
-          <div class="linechart" id="sectorChart" aria-label="กราฟรายจ่ายรัฐรายด้านต่อ GDP"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="linechart" id="sectorChart" aria-label="กราฟรายจ่ายรัฐรายด้านต่อ GDP"><div class="skeleton sk-chart"></div></div>
           <div class="line-legend">
             <span><i style="background:var(--green)"></i>การศึกษา (% GDP)</span>
             <span><i style="background:var(--gold)"></i>สาธารณสุข (% GDP)</span>
@@ -628,7 +664,7 @@
         </div>
         <div class="card">
           <div class="cap-note">ภาระดอกเบี้ยหนี้ของรัฐบาล — ดอกเบี้ยจ่ายคิดเป็นสัดส่วนของรายได้รัฐ ยิ่งสูงยิ่งกินงบที่ใช้พัฒนาประเทศ</div>
-          <div class="linechart" id="interestChart" aria-label="กราฟดอกเบี้ยจ่ายต่อรายได้รัฐ"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="linechart" id="interestChart" aria-label="กราฟดอกเบี้ยจ่ายต่อรายได้รัฐ"><div class="skeleton sk-chart"></div></div>
           <div class="line-legend">
             <span><i style="background:var(--red)"></i>ดอกเบี้ยจ่าย (% ของรายได้รัฐ)</span>
           </div>
@@ -648,7 +684,17 @@
         <div>
           <div class="card">
             <div class="cap-note">หน่วยงานรัฐที่เผยแพร่ชุดข้อมูลเปิดมากที่สุด (จำนวนชุดข้อมูลบน data.go.th)</div>
-            <div class="cats" id="orgs"><div class="state-msg">กำลังเชื่อมต่อ data.go.th…</div></div>
+            <div class="cats" id="orgs">
+              <div class="sk-list">
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:72%"></div><div class="skeleton" style="height:9px;border-radius:5px"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:64%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:88%"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:58%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:76%"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:52%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:64%"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:46%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:54%"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:40%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:44%"></div></div><div class="skeleton sk-h"></div></div>
+                <div class="sk-catrow"><div class="skeleton" style="width:18px;height:16px;border-radius:4px"></div><div class="sk-main"><div class="skeleton sk-h" style="width:36%"></div><div class="skeleton" style="height:9px;border-radius:5px;width:34%"></div></div><div class="skeleton sk-h"></div></div>
+              </div>
+            </div>
             <div class="src-tag">ที่มา · <b>data.go.th</b> · CKAN API (สพร./DGA)</div>
           </div>
         </div>
@@ -676,7 +722,13 @@
       <div class="grid-2">
         <div>
           <div class="card">
-            <div id="datasets"><div class="state-msg">กำลังโหลดชุดข้อมูลล่าสุด…</div></div>
+            <div id="datasets">
+              <div class="sk-dsrow"><div class="skeleton" style="width:132px;height:15px;border-radius:4px"></div><div class="skeleton sk-h" style="width:94%;height:14px"></div><div class="skeleton sk-h" style="width:60%;height:14px"></div></div>
+              <div class="sk-dsrow"><div class="skeleton" style="width:104px;height:15px;border-radius:4px"></div><div class="skeleton sk-h" style="width:88%;height:14px"></div><div class="skeleton sk-h" style="width:52%;height:14px"></div></div>
+              <div class="sk-dsrow"><div class="skeleton" style="width:148px;height:15px;border-radius:4px"></div><div class="skeleton sk-h" style="width:96%;height:14px"></div><div class="skeleton sk-h" style="width:66%;height:14px"></div></div>
+              <div class="sk-dsrow"><div class="skeleton" style="width:120px;height:15px;border-radius:4px"></div><div class="skeleton sk-h" style="width:90%;height:14px"></div><div class="skeleton sk-h" style="width:48%;height:14px"></div></div>
+              <div class="sk-dsrow"><div class="skeleton" style="width:110px;height:15px;border-radius:4px"></div><div class="skeleton sk-h" style="width:92%;height:14px"></div><div class="skeleton sk-h" style="width:58%;height:14px"></div></div>
+            </div>
             <div class="src-tag">ที่มา · <b>data.go.th</b> · package_search · เรียงตามวันที่อัปเดตล่าสุด</div>
           </div>
         </div>
