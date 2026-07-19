@@ -864,6 +864,54 @@ var NAV = [
           { pane:"te-crisis",     ico:"🏭", label:"วิกฤต ปิดโรงงาน เปิดกิจการใหม่", existing:true },
           { pane:"te-crisis2",    ico:"⚠️", label:"วิกฤตซ้อนวิกฤต", existing:true },
           { pane:"te-poplandscape", ico:"🏔️", label:"ภูมิทัศน์ประชากรไทย 3D", existing:true }
+      ]},
+      { id:"fiscal", ico:"💵", label:"การคลังภาครัฐ", subs:[
+          { pane:"fiscal-debt",    ico:"🏛️", label:"หนี้สาธารณะ", existing:true },
+          { pane:"fiscal-tax",     ico:"🧾", label:"โครงสร้างรายได้ภาษี", existing:true },
+          { pane:"fiscal-budget",  ico:"📊", label:"งบประมาณรายกระทรวง", existing:true },
+          { pane:"fiscal-balance", ico:"⚖️", label:"ดุลการคลัง & โครงสร้างงบ", existing:true }
+      ]},
+      { id:"pop", ico:"👥", label:"ประชากร & สังคมสูงวัย", subs:[
+          { pane:"pop-struct",     ico:"👨‍👩‍👧", label:"โครงสร้างประชากร", existing:true },
+          { pane:"pop-birthdeath", ico:"🍼", label:"เกิด–ตาย & เจริญพันธุ์", existing:true },
+          { pane:"pop-aging",      ico:"👴", label:"สังคมสูงวัย", existing:true },
+          { pane:"pop-future",     ico:"🔮", label:"คาดการณ์ประชากร", existing:true }
+      ]},
+      { id:"health", ico:"🏥", label:"สาธารณสุขไทย", subs:[
+          { pane:"health-coverage",  ico:"🏥", label:"หลักประกันสุขภาพ", existing:true },
+          { pane:"health-workforce", ico:"👨‍⚕️", label:"บุคลากร & การกระจาย", existing:true },
+          { pane:"health-life",      ico:"⏳", label:"อายุคาดเฉลี่ย", existing:true },
+          { pane:"health-ncd",       ico:"🩺", label:"โรค NCDs & สาเหตุการตาย", existing:true }
+      ]},
+      { id:"ineq", ico:"⚖️", label:"เหลื่อมล้ำ & หนี้ครัวเรือน", subs:[
+          { pane:"ineq-income", ico:"📊", label:"ความเหลื่อมล้ำรายได้", existing:true },
+          { pane:"ineq-wealth", ico:"💎", label:"ความเหลื่อมล้ำทรัพย์สิน", existing:true },
+          { pane:"hh-debt",     ico:"💳", label:"หนี้ครัวเรือน", existing:true },
+          { pane:"wage-min",    ico:"💵", label:"ค่าจ้างขั้นต่ำ", existing:true }
+      ]},
+      { id:"digital", ico:"📱", label:"ดิจิทัล & AI ไทย", subs:[
+          { pane:"dg-connect", ico:"🌐", label:"อินเทอร์เน็ต & มือถือ", existing:true },
+          { pane:"dg-ecom",    ico:"🛒", label:"e-Commerce & เศรษฐกิจดิจิทัล", existing:true },
+          { pane:"dg-ai",      ico:"🤖", label:"ความพร้อมด้าน AI", existing:true },
+          { pane:"dg-pay",     ico:"💸", label:"การชำระเงินดิจิทัล", existing:true }
+      ]},
+      { id:"gov", ico:"🏛️", label:"ธรรมาภิบาล & การเมือง", subs:[
+          { pane:"gov-cpi",       ico:"🕵️", label:"ดัชนีคอร์รัปชัน (CPI)", existing:true },
+          { pane:"gov-press",     ico:"📰", label:"เสรีภาพสื่อ", existing:true },
+          { pane:"gov-democracy", ico:"🗳️", label:"ดัชนีประชาธิปไตย", existing:true },
+          { pane:"gov-rule",      ico:"⚖️", label:"หลักนิติธรรม", existing:true }
+      ]},
+      { id:"agri", ico:"🌾", label:"เกษตร & อาหาร", subs:[
+          { pane:"agri-export",    ico:"🌾", label:"ภาพรวมส่งออกเกษตร", existing:true },
+          { pane:"agri-rice",      ico:"🍚", label:"ข้าว", existing:true },
+          { pane:"agri-fruit",     ico:"🍈", label:"ผลไม้ & ทุเรียน", existing:true },
+          { pane:"agri-structure", ico:"🚜", label:"โครงสร้างภาคเกษตร", existing:true }
+      ]},
+      { id:"transport", ico:"🚆", label:"คมนาคม & โลจิสติกส์", subs:[
+          { pane:"tr-air",       ico:"✈️", label:"สนามบิน (AOT)", existing:true },
+          { pane:"tr-rail",      ico:"🚇", label:"รถไฟฟ้า", existing:true },
+          { pane:"tr-road",      ico:"🛵", label:"อุบัติเหตุทางถนน", existing:true },
+          { pane:"tr-logistics", ico:"📦", label:"โลจิสติกส์", existing:true }
       ]}
     ];
 

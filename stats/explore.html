@@ -105,6 +105,35 @@
   .src a{color:var(--green);font-weight:600}
   .state-msg{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px}
   .state-msg.err{color:var(--red)}
+  /* ---- SKELETON โครงร่างระหว่างโหลดกราฟ · ครอบทุก .plot/.tilemap อัตโนมัติ
+         (ยกเว้น .err ให้ยังเป็นข้อความแดงปกติ · กราฟเรนเดอร์เสร็จจะเขียนทับ innerHTML ทิ้งเอง) ---- */
+  .plot > .state-msg:not(.err),
+  .tilemap > .state-msg:not(.err),
+  .tbl-wrap > .state-msg:not(.err){
+    position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    min-height:200px;border-radius:12px;background:rgba(9,88,117,.10);
+  }
+  html[data-theme="dark"] .plot > .state-msg:not(.err),
+  html[data-theme="dark"] .tilemap > .state-msg:not(.err),
+  html[data-theme="dark"] .tbl-wrap > .state-msg:not(.err){background:rgba(125,230,255,.07)}
+  .plot > .state-msg:not(.err)::after,
+  .tilemap > .state-msg:not(.err)::after,
+  .tbl-wrap > .state-msg:not(.err)::after{
+    content:"";position:absolute;inset:0;transform:translateX(-100%);
+    background:linear-gradient(90deg,transparent,rgba(0,170,200,.16),transparent);
+    animation:shim 1.35s ease-in-out infinite;
+  }
+  html[data-theme="dark"] .plot > .state-msg:not(.err)::after,
+  html[data-theme="dark"] .tilemap > .state-msg:not(.err)::after,
+  html[data-theme="dark"] .tbl-wrap > .state-msg:not(.err)::after{
+    background:linear-gradient(90deg,transparent,rgba(0,229,255,.26),transparent);
+  }
+  @keyframes shim{to{transform:translateX(100%)}}
+  @media (prefers-reduced-motion:reduce){
+    .plot > .state-msg:not(.err)::after,
+    .tilemap > .state-msg:not(.err)::after,
+    .tbl-wrap > .state-msg:not(.err)::after{animation:none}
+  }
   /* ---------- นาฬิกาหนี้สหรัฐฯ (US debt clock) ---------- */
   .us-debt-clock{font-family:"Archivo","IBM Plex Sans Thai",monospace;font-weight:800;font-size:clamp(26px,5.5vw,50px);letter-spacing:.005em;color:var(--red);text-align:center;margin:4px 0 14px;font-variant-numeric:tabular-nums;text-shadow:0 2px 22px rgba(217,72,15,.22)}
   .us-debt-clock .udc-cur{font-size:.58em;vertical-align:top;margin-right:3px;color:var(--ink-soft)}
@@ -194,6 +223,11 @@
   .owid-tab{font-family:"Archivo","IBM Plex Sans Thai",sans-serif;font-size:12px;font-weight:700;color:var(--ink-soft);background:var(--paper-3);border:1px solid var(--rule);border-radius:9px;padding:5px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .14s}
   .owid-tab:hover{color:var(--green);border-color:var(--green)}
   .owid-tab.on{background:var(--green);color:var(--paper);border-color:var(--green)}
+  /* ปุ่มดาวน์โหลด CSV/PNG รายกราฟ — ชิดขวาของแถบแท็บ */
+  .owid-dl{font-family:"Archivo","IBM Plex Sans Thai",sans-serif;font-size:11px;font-weight:700;color:var(--ink-soft);background:transparent;border:1px dashed var(--rule);border-radius:9px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .14s}
+  .owid-dl:hover{color:var(--green);border-color:var(--green);border-style:solid;background:var(--paper-3)}
+  .owid-dl:active{transform:translateY(1px)}
+  .owid-tabs .owid-dl:nth-last-child(2){margin-left:auto}
   .owid-table{margin-top:2px}
   .owid-tl{display:flex;align-items:center;gap:12px;margin-top:12px;padding:8px 4px 2px}
   .owid-tl-play{flex:none;width:36px;height:36px;border-radius:50%;border:none;background:var(--green);color:var(--paper);font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-cyan);transition:transform .12s}
@@ -265,6 +299,19 @@
   .side-tabs .tab .em{font-size:15px;flex:none}
   .side-tabs .tab .soon{font-family:"Archivo",sans-serif;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 5px;margin-left:auto;flex:none}
   .side-tabs .tab.active .soon{color:#fff;border-color:rgba(255,255,255,.65)}
+  /* ===== ช่องค้นหาหัวข้อในไซด์บาร์ ===== */
+  .nav-search{position:relative;display:flex;align-items:center;margin:2px 0 8px}
+  .nav-search .ns-ico{position:absolute;left:10px;width:15px;height:15px;color:var(--ink-3,var(--ink-soft));pointer-events:none;opacity:.75}
+  .nav-search input{width:100%;box-sizing:border-box;padding:8px 30px 8px 32px;border:1px solid var(--glass-border-soft);border-radius:10px;background:var(--glass-bg-2);color:var(--ink);font-family:inherit;font-size:12.8px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+  .nav-search input::placeholder{color:var(--ink-soft);opacity:.85}
+  .nav-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 22%,transparent);background:var(--paper-2)}
+  .nav-search input::-webkit-search-cancel-button{display:none}
+  #navSearchClear{position:absolute;right:6px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;background:var(--glass-bg);color:var(--ink-soft);font-size:11px;cursor:pointer;line-height:1;padding:0}
+  #navSearchClear:hover{background:var(--green);color:var(--paper)}
+  .nav-nohit{font-size:12px;color:var(--ink-soft);padding:8px 10px;line-height:1.5}
+  .nav-nohit b,.nav-nohit span{color:var(--green);font-weight:700}
+  .ng-sub mark{background:color-mix(in srgb,var(--green) 30%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+  .ng-head .ng-label mark{background:color-mix(in srgb,var(--green) 30%,transparent);color:inherit;border-radius:3px;padding:0 1px}
   /* ===== เมนูหมวดแบบ accordion (หัวข้อหลัก → หัวข้อรอง) ===== */
   .side-nav{display:flex;flex-direction:column;gap:2px;position:relative}
   /* แถบไฟเลื่อนตามแท็บที่เลือก — glow ที่ slide ไปยัง .ng-sub.active */
@@ -473,7 +520,13 @@
         </nav>
         <div class="side-sec">
           <div class="side-label">หมวดข้อมูล</div>
+          <div class="nav-search">
+            <svg class="ns-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="search" id="navSearch" placeholder="ค้นหาหัวข้อ…" aria-label="ค้นหาหัวข้อในหน้านี้" autocomplete="off" spellcheck="false">
+            <button type="button" id="navSearchClear" aria-label="ล้างคำค้นหา" hidden>✕</button>
+          </div>
           <nav class="side-nav" id="sideNav" role="tablist" aria-label="หมวดข้อมูลในหน้านี้"></nav>
+          <div id="navNoHit" class="nav-nohit" hidden>ไม่พบหัวข้อที่ตรงกับ “<span></span>”</div>
         </div>
         <div class="side-foot">
           <button type="button" class="side-util" onclick="location.reload()" aria-label="รีเฟรชข้อมูล">
@@ -3422,6 +3475,1110 @@
       </div>
     </section>
 
+    <!-- ============ การคลังภาครัฐ · หนี้สาธารณะ ============ -->
+    <section class="tabpane" id="pane-fiscal-debt" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title">🏛️ หนี้สาธารณะ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💰 หนี้สาธารณะคงค้าง 2568</div>
+          <div class="k-num">12.6<span class="u">ล้านล้านบาท</span></div>
+          <div class="k-sub">โตจาก 6.9 ล้านล้านในปี 2562 เกือบเท่าตัวใน 6 ปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📊 สัดส่วนต่อ GDP</div>
+          <div class="k-num">65.6<span class="u">%</span></div>
+          <div class="k-sub">พุ่งขึ้นแรงหลังโควิด (2563–64) จากการกู้เยียวยา</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🚧 เพดานหนี้ตามกฎหมาย</div>
+          <div class="k-num">70<span class="u">%</span></div>
+          <div class="k-sub">พ.ร.บ.วินัยการเงินการคลังฯ 2561 — เหลือช่องว่างราว 4%</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">👤 หนี้ต่อหัวประชากร</div>
+          <div class="k-num">≈191,000<span class="u">บาท/คน</span></div>
+          <div class="k-sub">เฉลี่ยภาระหนี้รัฐที่ตกอยู่กับคนไทยแต่ละคน</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 สัดส่วนหนี้สาธารณะต่อ GDP</h2><span class="tag">2561–2568 · เส้นประ = เพดาน 70%</span></div>
+        <p class="sub">หนี้สาธารณะต่อ GDP ทรงตัวราว 41% ก่อนโควิด แล้ว<b>กระโดดขึ้นแรง</b>ในปี 2563–2564 จากการกู้เงินก้อนใหญ่ (พ.ร.ก.กู้เงิน 1 ล้านล้าน + 5 แสนล้าน) เพื่อเยียวยาและกระตุ้นเศรษฐกิจ ล่าสุดปี 2568 แตะ 65.6% เข้าใกล้เพดาน 70%</p>
+        <div class="plot" id="fisDebtGdp"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.pdmo.go.th/th/public-debt/debt-outstanding" target="_blank" rel="noopener">สำนักงานบริหารหนี้สาธารณะ (สบน.) ↗</a> · สัดส่วนหนี้สาธารณะคงค้างต่อ GDP (ณ สิ้นปีงบประมาณ)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💰 หนี้สาธารณะคงค้าง (มูลค่า)</h2><span class="tag">ล้านล้านบาท · รายปี</span></div>
+        <p class="sub">มูลค่าหนี้สาธารณะคงค้างเพิ่มขึ้นทุกปี — จาก 6.9 ล้านล้านบาท (2562) เป็น 12.6 ล้านล้านบาท (2568) หรือเพิ่มขึ้นราว <b>82%</b> ในเวลา 6 ปี</p>
+        <div class="plot" id="fisDebtOut"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานบริหารหนี้สาธารณะ (สบน.) · กระทรวงการคลัง — ยอดหนี้สาธารณะคงค้าง</div>
+      </div>
+    </section>
+
+    <!-- ============ การคลังภาครัฐ · โครงสร้างรายได้ภาษี ============ -->
+    <section class="tabpane" id="pane-fiscal-tax" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title">🧾 โครงสร้างรายได้ภาษี</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🏦 รายได้กรมสรรพากร 2568</div>
+          <div class="k-num">2.34<span class="u">ล้านล้านบาท</span></div>
+          <div class="k-sub">แหล่งรายได้ภาษีที่ใหญ่ที่สุดของรัฐบาล</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🧮 ภาษีที่เก็บได้มากสุด</div>
+          <div class="k-num">VAT<span class="u">~40%</span></div>
+          <div class="k-sub">ภาษีมูลค่าเพิ่ม — เสาหลักรายได้ ราว 9.5 แสนล้านบาท/ปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🍶 กรมสรรพสามิต</div>
+          <div class="k-num">537,540<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">ภาษีน้ำมัน เหล้า บุหรี่ รถยนต์</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🚢 กรมศุลกากร</div>
+          <div class="k-num">≈112,000<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">ภาษีนำเข้า–ส่งออก (เล็กสุดใน 3 กรมภาษี)</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🏛️ 3 กรมจัดเก็บภาษีหลัก</h2><span class="tag">ปีงบประมาณ 2568</span></div>
+        <p class="sub">รายได้ภาษีของรัฐมาจาก 3 กรมหลัก — <b>กรมสรรพากร</b>เก็บได้มากที่สุดอย่างขาดลอย (ภาษีเงินได้ + VAT) ทิ้งห่างกรมสรรพสามิตและกรมศุลกากร · แท่งแดง = ผู้จัดเก็บรายใหญ่สุด</p>
+        <div class="plot" id="fisTaxDept"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://dataservices.mof.go.th/menu3?id=2" target="_blank" rel="noopener">กระทรวงการคลัง — ผลการจัดเก็บรายได้ของรัฐบาล ↗</a> (ปีงบประมาณ 2568)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🧾 ภาษีในกรมสรรพากร แยกประเภท</h2><span class="tag">ล้านบาท</span></div>
+        <p class="sub">ในบรรดาภาษีของกรมสรรพากร <b>ภาษีมูลค่าเพิ่ม (VAT)</b> เก็บได้มากสุด ตามด้วยภาษีเงินได้นิติบุคคลและภาษีเงินได้บุคคลธรรมดา · แท่งแดง = ภาษีที่เก็บได้มากที่สุด</p>
+        <div class="plot" id="fisTaxType"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กรมสรรพากร / กระทรวงการคลัง — โครงสร้างการจัดเก็บภาษี ปีงบประมาณ 2568 (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ การคลังภาครัฐ · งบประมาณรายกระทรวง ============ -->
+    <section class="tabpane" id="pane-fiscal-budget" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title">📊 งบประมาณรายกระทรวง</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💵 งบประมาณรายจ่ายรวม 2568</div>
+          <div class="k-num">3.75<span class="u">ล้านล้านบาท</span></div>
+          <div class="k-sub">งบประมาณรายจ่ายประจำปี พ.ศ. 2568</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏆 ก้อนใหญ่ที่สุด</div>
+          <div class="k-num">งบกลาง<span class="u">805,745 ลบ.</span></div>
+          <div class="k-sub">งบส่วนกลางที่ยังไม่ผูกกับกระทรวงใด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏛️ กระทรวงงบสูงสุด</div>
+          <div class="k-num">การคลัง<span class="u">390,314 ลบ.</span></div>
+          <div class="k-sub">ตามด้วยศึกษาธิการและมหาดไทย</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">📐 คิดเป็นสัดส่วน GDP</div>
+          <div class="k-num">≈19<span class="u">%</span></div>
+          <div class="k-sub">ขนาดงบประมาณเทียบกับเศรษฐกิจทั้งประเทศ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💰 หน่วยงานที่ได้รับงบสูงสุด 2568</h2><span class="tag">ล้านบาท · Top 10</span></div>
+        <p class="sub">นอกจาก "งบกลาง" ที่เป็นก้อนใหญ่สุดแล้ว กระทรวง<b>การคลัง</b> (ภาระดอกเบี้ย+ชำระหนี้) <b>ศึกษาธิการ</b> และ<b>มหาดไทย</b> คือ 3 กระทรวงที่ได้งบมากที่สุด สะท้อนน้ำหนักด้านการศึกษา ท้องถิ่น และภาระหนี้ · แท่งแดง = งบกลาง</p>
+        <div class="plot" id="fisMinistry"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.thaipbs.or.th/news/content/341174" target="_blank" rel="noopener">พ.ร.บ.งบประมาณรายจ่ายประจำปี 2568 · เรียบเรียงโดย Thai PBS ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ การคลังภาครัฐ · ดุลการคลัง & โครงสร้างงบ ============ -->
+    <section class="tabpane" id="pane-fiscal-balance" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title">⚖️ ดุลการคลัง &amp; โครงสร้างงบ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">📉 งบขาดดุล 2568</div>
+          <div class="k-num">865,700<span class="u">ล้านบาท</span></div>
+          <div class="k-sub">รายจ่ายมากกว่ารายได้ ต้องกู้มาชดเชย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🔁 รายจ่ายประจำ</div>
+          <div class="k-num">72<span class="u">% ของงบ</span></div>
+          <div class="k-sub">เงินเดือน สวัสดิการ ค่าใช้จ่ายดำเนินงาน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏗️ รายจ่ายลงทุน</div>
+          <div class="k-num">24<span class="u">% ของงบ</span></div>
+          <div class="k-sub">โครงสร้างพื้นฐาน–พัฒนาประเทศ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">💳 ชำระคืนต้นเงินกู้</div>
+          <div class="k-num">4<span class="u">% ของงบ</span></div>
+          <div class="k-sub">ราว 150,100 ล้านบาท คืนเงินต้นหนี้เก่า</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🧩 โครงสร้างรายจ่ายงบประมาณ 2568</h2><span class="tag">ล้านบาท</span></div>
+        <p class="sub">งบประมาณเกือบ 3 ใน 4 เป็น<b>รายจ่ายประจำ</b> (เงินเดือน–สวัสดิการ) เหลือเป็นรายจ่ายลงทุนเพื่อพัฒนาประเทศเพียงราว 1 ใน 4 ซึ่งเป็นข้อจำกัดสำคัญของการคลังไทย · แท่งแดง = ก้อนใหญ่สุด</p>
+        <div class="plot" id="fisExpType"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงบประมาณ — จำแนกงบประมาณรายจ่ายประจำปี 2568 ตามลักษณะเศรษฐกิจ</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📉 การขาดดุลงบประมาณรายปี</h2><span class="tag">ล้านบาท</span></div>
+        <p class="sub">ไทยจัดทำ<b>งบประมาณขาดดุล</b>ต่อเนื่องทุกปี — รายจ่ายสูงกว่ารายได้ ต้องกู้เงินมาชดเชยส่วนต่าง ซึ่งเป็นสาเหตุที่หนี้สาธารณะเพิ่มขึ้นสะสม ล่าสุดปี 2568 ขาดดุลถึง 865,700 ล้านบาท</p>
+        <div class="plot" id="fisDeficit"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงบประมาณ / กระทรวงการคลัง — วงเงินขาดดุลงบประมาณรายจ่ายประจำปี</div>
+      </div>
+    </section>
+
+    <!-- ============ ประชากร · โครงสร้างประชากร ============ -->
+    <section class="tabpane" id="pane-pop-struct" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ประชากร &amp; สังคมสูงวัย</span><h2 class="ph-title">👨‍👩‍👧 โครงสร้างประชากร</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">👥 ประชากรไทย 2566</div>
+          <div class="k-num">66.05<span class="u">ล้านคน</span></div>
+          <div class="k-sub">ทะเบียนราษฎร — เริ่มลดลงตั้งแต่ปี 2567</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🧒 เด็ก (0–14 ปี)</div>
+          <div class="k-num">15.9<span class="u">%</span></div>
+          <div class="k-sub">หดตัวจาก 27% เมื่อ 30 ปีก่อน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👷 วัยทำงาน (15–59 ปี)</div>
+          <div class="k-num">63.9<span class="u">%</span></div>
+          <div class="k-sub">กำลังแรงงานหลักของประเทศ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">👴 ผู้สูงอายุ (60+)</div>
+          <div class="k-num">20.2<span class="u">%</span></div>
+          <div class="k-sub">มากกว่าจำนวนเด็กเป็นครั้งแรกในประวัติศาสตร์</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🔀 เส้นที่ตัดกัน — เด็กน้อยลง ผู้สูงวัยมากขึ้น</h2><span class="tag">% ของประชากร · 2537–2566</span></div>
+        <p class="sub">30 ปีก่อนไทยมีเด็กมากถึง 27% และผู้สูงอายุเพียง 7% แต่สองเส้น<b>ตัดกันราวปี 2560</b> — ปัจจุบันผู้สูงอายุ (20.2%) แซงหน้าเด็ก (15.9%) เป็นครั้งแรก สะท้อนการพลิกโครงสร้างประชากรอย่างสมบูรณ์</p>
+        <div class="plot" id="popStruct"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.dop.go.th/th/statistics_page?cat=12" target="_blank" rel="noopener">กรมกิจการผู้สูงอายุ (ผส.) ↗</a> · สำนักงานสถิติแห่งชาติ — โครงสร้างอายุประชากร</div>
+      </div>
+    </section>
+
+    <!-- ============ ประชากร · เกิด–ตาย & เจริญพันธุ์ ============ -->
+    <section class="tabpane" id="pane-pop-birthdeath" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ประชากร &amp; สังคมสูงวัย</span><h2 class="ph-title">🍼 เกิด–ตาย &amp; เจริญพันธุ์</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🍼 เด็กเกิดใหม่ 2566</div>
+          <div class="k-num">485,085<span class="u">คน</span></div>
+          <div class="k-sub">ต่ำกว่า 5 แสนคน ลดจาก 7 แสนเมื่อปี 2560</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚰️ ผู้เสียชีวิต 2566</div>
+          <div class="k-num">565,992<span class="u">คน</span></div>
+          <div class="k-sub">มากกว่าการเกิดราว 8 หมื่นคน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📉 ตายแซงเกิดปีแรก</div>
+          <div class="k-num">2564<span class="u">เป็นต้นมา</span></div>
+          <div class="k-sub">ประชากรไทยหดตัวตามธรรมชาติต่อเนื่อง</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">👶 อัตราเจริญพันธุ์ (TFR)</div>
+          <div class="k-num">≈1.0<span class="u">คน</span></div>
+          <div class="k-sub">ต่ำกว่าระดับทดแทน 2.1 อยู่มาก</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚰️ การตายแซงการเกิด</h2><span class="tag">คน/ปี · 2560–2566</span></div>
+        <p class="sub">เส้นการเกิด (เขียว) ดิ่งลงต่อเนื่อง ขณะที่เส้นการตาย (แดง) ไต่ขึ้น — <b>ตัดกันในปี 2564</b> ซึ่งเป็นปีแรกที่คนตายมากกว่าคนเกิด ทำให้ประชากรไทยเริ่มลดลงตามธรรมชาติ</p>
+        <div class="plot" id="popBirthDeath"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://stat.bora.dopa.go.th/stat/statnew/statMONTH/statmonth/" target="_blank" rel="noopener">สำนักบริหารการทะเบียน กรมการปกครอง (BORA) ↗</a> — สถิติการเกิด–ตาย</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>👶 อัตราเจริญพันธุ์รวมดิ่งต่ำ</h2><span class="tag">ลูกเฉลี่ยต่อหญิง 1 คน · เส้นประ = ระดับทดแทน 2.1</span></div>
+        <p class="sub">ผู้หญิงไทยมีลูกเฉลี่ยเหลือราว <b>1 คน</b> ต่ำกว่าระดับทดแทนประชากร (2.1) อย่างมาก และเป็นหนึ่งในอัตราที่ต่ำที่สุดในโลก ทัดเทียมเกาหลีใต้–ญี่ปุ่น</p>
+        <div class="plot" id="popTfr"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สถาบันวิจัยประชากรและสังคม ม.มหิดล / สำนักงานสถิติแห่งชาติ — อัตราเจริญพันธุ์รวม (TFR)</div>
+      </div>
+    </section>
+
+    <!-- ============ ประชากร · สังคมสูงวัย ============ -->
+    <section class="tabpane" id="pane-pop-aging" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ประชากร &amp; สังคมสูงวัย</span><h2 class="ph-title">👴 สังคมสูงวัย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">👴 ผู้สูงอายุ (60+) ปี 2566</div>
+          <div class="k-num">13.06<span class="u">ล้านคน</span></div>
+          <div class="k-sub">คิดเป็น 20.17% ของประชากรทั้งหมด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">✅ สังคมสูงวัยสมบูรณ์</div>
+          <div class="k-num">2565<span class="u">(Aged Society)</span></div>
+          <div class="k-sub">ผู้สูงอายุเกิน 20% — ไทยเข้าสู่ระดับสมบูรณ์แล้ว</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👵 วัยปลาย (80 ปีขึ้นไป)</div>
+          <div class="k-num">1.95<span class="u">ล้านคน</span></div>
+          <div class="k-sub">กลุ่มที่ต้องการการดูแลระยะยาวมากที่สุด</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🔮 คาดการณ์ปี 2583</div>
+          <div class="k-num">≈31<span class="u">%</span></div>
+          <div class="k-sub">เข้าสู่ "สังคมสูงวัยระดับสุดยอด" (Super-aged)</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 สัดส่วนผู้สูงอายุพุ่งไม่หยุด</h2><span class="tag">% 60+ · 2537→2583 · เส้นประ = เกณฑ์สมบูรณ์ 20%</span></div>
+        <p class="sub">ไทยเป็น "สังคมสูงวัย" (10%) ตั้งแต่ปี 2548 และก้าวสู่ "สังคมสูงวัยสมบูรณ์" (20%) ในปี 2565 คาดว่าจะแตะ <b>31% ในปี 2583</b> กลายเป็นสังคมสูงวัยระดับสุดยอด · ช่วงหลังปี 2566 เป็นค่าคาดการณ์ (สศช.)</p>
+        <div class="plot" id="popAgeTrend"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สศช.) / กรมกิจการผู้สูงอายุ — การคาดประมาณประชากร</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>👵 ผู้สูงอายุแยกช่วงวัย</h2><span class="tag">ล้านคน · 2566</span></div>
+        <p class="sub">ผู้สูงอายุกว่าครึ่งอยู่ในวัยต้น (60–69 ปี) แต่กลุ่มวัยปลาย (80+) ที่ต้องพึ่งพิงการดูแลก็มีเกือบ 2 ล้านคนและกำลังเพิ่มขึ้นเร็ว · แท่งแดง = กลุ่มใหญ่สุด</p>
+        <div class="plot" id="popAgeBand"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กรมกิจการผู้สูงอายุ — สถานการณ์ผู้สูงอายุไทย พ.ศ. 2566</div>
+      </div>
+    </section>
+
+    <!-- ============ ประชากร · คาดการณ์ประชากร ============ -->
+    <section class="tabpane" id="pane-pop-future" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ประชากร &amp; สังคมสูงวัย</span><h2 class="ph-title">🔮 คาดการณ์ประชากร</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">👷 วัยแรงงานที่จะหายไป</div>
+          <div class="k-num">≈9.5<span class="u">ล้านคน</span></div>
+          <div class="k-sub">วัย 15–59 ลดจาก 43.3 เหลือ 33.7 ล้าน ในปี 2583</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🔮 ผู้สูงอายุปี 2583</div>
+          <div class="k-num">≈20.4<span class="u">ล้านคน</span></div>
+          <div class="k-sub">เกือบ 1 ใน 3 ของประชากรทั้งประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚖️ ภาระพึ่งพิง</div>
+          <div class="k-num">สูงขึ้น<span class="u">เรื่อยๆ</span></div>
+          <div class="k-sub">คนวัยทำงานต้องดูแลผู้สูงอายุมากขึ้น</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">⚠️ ระยะยาว 100 ปี</div>
+          <div class="k-num">อาจเหลือ<span class="u">ครึ่งเดียว</span></div>
+          <div class="k-sub">งานวิจัยเตือน ประชากรไทยอาจลดลงถึงครึ่งภายในศตวรรษ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📉 กำลังแรงงานไทยหดตัว</h2><span class="tag">ประชากรวัย 15–59 · ล้านคน · 2563→2583</span></div>
+        <p class="sub">การคาดประมาณของ สศช. ชี้ว่าประชากรวัยแรงงานจะ<b>ลดลงต่อเนื่อง</b>จาก 43.3 ล้านคน (2563) เหลือราว 33.7 ล้านคน (2583) — หายไปเกือบ 10 ล้านคน เป็นความท้าทายใหญ่ต่อการผลิตและระบบบำนาญ</p>
+        <div class="plot" id="popWork"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สศช.) — การคาดประมาณประชากรของประเทศไทย พ.ศ. 2553–2583</div>
+      </div>
+    </section>
+
+    <!-- ============ สาธารณสุข · หลักประกันสุขภาพ ============ -->
+    <section class="tabpane" id="pane-health-coverage" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">สาธารณสุขไทย</span><h2 class="ph-title">🏥 หลักประกันสุขภาพ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🛡️ ครอบคลุมประชากร</div>
+          <div class="k-num">99<span class="u">%+</span></div>
+          <div class="k-sub">คนไทยเกือบทุกคนมีสิทธิรักษาพยาบาลอย่างน้อย 1 สิทธิ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">💳 สิทธิบัตรทอง (UC)</div>
+          <div class="k-num">46.9<span class="u">ล้านคน</span></div>
+          <div class="k-sub">กองทุนใหญ่ที่สุด — "30 บาทรักษาทุกที่" ปี 2568</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👛 ภาระจ่ายเองของครัวเรือน</div>
+          <div class="k-num">12<span class="u">%</span></div>
+          <div class="k-sub">ลดจาก 27% ในปี 2545 หลังมีหลักประกันถ้วนหน้า</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">📅 เริ่มระบบถ้วนหน้า</div>
+          <div class="k-num">2545<span class="u">(30 บาท)</span></div>
+          <div class="k-sub">หนึ่งในระบบที่ครอบคลุมกว้างที่สุดในเอเชีย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🏥 3 กองทุนสุขภาพหลัก</h2><span class="tag">ล้านคน · ก.ย. 2566</span></div>
+        <p class="sub">คนไทยส่วนใหญ่อยู่ในระบบ<b>บัตรทอง</b> (46.9 ล้านคน) ตามด้วยประกันสังคมและสวัสดิการข้าราชการ — รวมกันครอบคลุมประชากรเกือบทั้งประเทศ · แท่งแดง = กองทุนใหญ่สุด</p>
+        <div class="plot" id="hltFund"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://healthserv.net/healthupdate/223671" target="_blank" rel="noopener">สปสช. / สำนักงานประกันสังคม / กรมบัญชีกลาง ↗</a> — จำนวนผู้มีสิทธิแต่ละกองทุน (ก.ย. 2566)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>👛 ภาระค่ารักษาที่ครัวเรือนต้องจ่ายเอง</h2><span class="tag">% ของค่าใช้จ่ายสุขภาพ · 2545–2566</span></div>
+        <p class="sub">ก่อนมีหลักประกันถ้วนหน้า ครัวเรือนไทยต้องควักจ่ายค่ารักษาเองถึง 27% แต่หลังปี 2545 ภาระนี้<b>ลดลงเหลือราว 12%</b> ถือเป็นความสำเร็จด้านความคุ้มครองทางการเงินด้านสุขภาพ</p>
+        <div class="plot" id="hltOop"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานหลักประกันสุขภาพแห่งชาติ (สปสช.) / บัญชีรายจ่ายสุขภาพแห่งชาติ (NHA) — สัดส่วนรายจ่ายที่ครัวเรือนจ่ายเอง (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ สาธารณสุข · บุคลากร & การกระจาย ============ -->
+    <section class="tabpane" id="pane-health-workforce" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">สาธารณสุขไทย</span><h2 class="ph-title">👨‍⚕️ บุคลากร &amp; การกระจาย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🩺 แพทย์ต่อประชากร (เฉลี่ยทั้งประเทศ)</div>
+          <div class="k-num">1 : 1,680<span class="u">คน</span></div>
+          <div class="k-sub">ดีขึ้นเรื่อยๆ แต่ยังต่ำกว่ามาตรฐานหลายประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏙️ กรุงเทพฯ</div>
+          <div class="k-num">1 : 515<span class="u">คน</span></div>
+          <div class="k-sub">หมอกระจุกตัวในเมืองหลวง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌾 ภาคอีสาน (เฉลี่ย)</div>
+          <div class="k-num">1 : 2,659<span class="u">คน</span></div>
+          <div class="k-sub">แพทย์ 1 คนต้องดูแลคนมากกว่า กทม. ถึง 5 เท่า</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">😰 บึงกาฬ (ขาดแคลนสุด)</div>
+          <div class="k-num">1 : 5,614<span class="u">คน</span></div>
+          <div class="k-sub">สะท้อนวิกฤต "หมอกระจุก คนไข้กระจาย"</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ หมอกระจุก–คนไข้กระจาย</h2><span class="tag">ประชากรที่แพทย์ 1 คนต้องดูแล</span></div>
+        <p class="sub">แม้ค่าเฉลี่ยทั้งประเทศจะอยู่ที่ 1:1,680 แต่ความจริงคือหมอ<b>กระจุกตัวในกรุงเทพฯ</b> (1:515) ขณะที่จังหวัดชายขอบอย่างบึงกาฬ แพทย์ 1 คนต้องดูแลคนถึง 5,614 คน — ยิ่งแท่งยาว ยิ่งขาดแคลน · แท่งแดง = หนักสุด</p>
+        <div class="plot" id="hltDoctor"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://isaninsight.kku.ac.th/archives/4223" target="_blank" rel="noopener">แพทยสภา / อีสานอินไซต์ ↗</a> — สัดส่วนแพทย์ต่อประชากร ปี 2565</div>
+      </div>
+    </section>
+
+    <!-- ============ สาธารณสุข · อายุคาดเฉลี่ย ============ -->
+    <section class="tabpane" id="pane-health-life" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">สาธารณสุขไทย</span><h2 class="ph-title">⏳ อายุคาดเฉลี่ย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">⏳ อายุคาดเฉลี่ยคนไทย 2566</div>
+          <div class="k-num">77.4<span class="u">ปี</span></div>
+          <div class="k-sub">ยืนยาวขึ้นราว 7 ปีในรอบ 3 ทศวรรษ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👩 เพศหญิง</div>
+          <div class="k-num">81.0<span class="u">ปี</span></div>
+          <div class="k-sub">อายุยืนกว่าผู้ชายราว 6 ปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👨 เพศชาย</div>
+          <div class="k-num">74.9<span class="u">ปี</span></div>
+          <div class="k-sub">สั้นกว่าเพราะพฤติกรรมเสี่ยง–อุบัติเหตุ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">💯 คนไทยอายุเกิน 100 ปี</div>
+          <div class="k-num">29,127<span class="u">คน</span></div>
+          <div class="k-sub">สะท้อนสังคมอายุยืนที่กำลังมาถึง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 คนไทยอายุยืนขึ้น</h2><span class="tag">อายุคาดเฉลี่ยเมื่อแรกเกิด (ปี)</span></div>
+        <p class="sub">อายุคาดเฉลี่ยของคนไทยเพิ่มขึ้นต่อเนื่อง จากราว 70 ปี (2533) เป็น <b>77.4 ปี</b> (2566) จากระบบสาธารณสุขที่ดีขึ้น — แต่การอายุยืนพร้อมภาวะเจริญพันธุ์ต่ำ ยิ่งเร่งให้สังคมสูงวัยเร็วขึ้น</p>
+        <div class="plot" id="hltLife"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กระทรวงสาธารณสุข / World Bank — อายุคาดเฉลี่ยเมื่อแรกเกิด (โดยประมาณ)</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>👫 หญิงอายุยืนกว่าชาย</h2><span class="tag">อายุคาดเฉลี่ย · 2566</span></div>
+        <p class="sub">ผู้หญิงไทยมีอายุคาดเฉลี่ยสูงกว่าผู้ชายราว 6 ปี ซึ่งเป็นแนวโน้มเดียวกับทั่วโลก · แท่งแดง = เพศหญิง</p>
+        <div class="plot" id="hltSex"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานสถิติแห่งชาติ / กระทรวงสาธารณสุข — อายุคาดเฉลี่ยจำแนกตามเพศ ปี 2566</div>
+      </div>
+    </section>
+
+    <!-- ============ สาธารณสุข · โรค NCDs & สาเหตุการตาย ============ -->
+    <section class="tabpane" id="pane-health-ncd" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">สาธารณสุขไทย</span><h2 class="ph-title">🩺 โรค NCDs &amp; สาเหตุการตาย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🎗️ สาเหตุการตายอันดับ 1</div>
+          <div class="k-num">มะเร็ง<span class="u">ทุกชนิด</span></div>
+          <div class="k-sub">คร่าชีวิตคนไทยมากที่สุดต่อเนื่องหลายปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🫀 กลุ่มโรค NCDs</div>
+          <div class="k-num">~74<span class="u">% ของการตาย</span></div>
+          <div class="k-sub">โรคไม่ติดต่อเรื้อรัง — มะเร็ง หัวใจ เบาหวาน ความดัน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🧠 หลอดเลือดสมอง</div>
+          <div class="k-num">อันดับ 2<span class="u">สาเหตุตาย</span></div>
+          <div class="k-sub">Stroke — เกี่ยวข้องกับความดัน–ไขมัน</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🍚 เบาหวาน–ความดัน</div>
+          <div class="k-num">พุ่งสูง<span class="u">ตามไลฟ์สไตล์</span></div>
+          <div class="k-sub">อาหารหวาน–มัน–เค็ม และการไม่ออกกำลังกาย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💀 สาเหตุการตายหลักของคนไทย</h2><span class="tag">อัตราต่อแสนประชากร</span></div>
+        <p class="sub">คนไทยเสียชีวิตจาก<b>โรคไม่ติดต่อเรื้อรัง (NCDs)</b> เป็นหลัก นำโดยมะเร็ง ตามด้วยหลอดเลือดสมอง ปอดอักเสบ หัวใจขาดเลือด และเบาหวาน ซึ่งส่วนใหญ่เชื่อมโยงกับพฤติกรรมการกินและการใช้ชีวิต · แท่งแดง = อันดับ 1</p>
+        <div class="plot" id="hltDeath"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.thecoverage.info/news/content/3026" target="_blank" rel="noopener">กระทรวงสาธารณสุข — สถิติสาธารณสุข / 10 สาเหตุการตาย ↗</a> (อัตราต่อแสนประชากร โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ เหลื่อมล้ำ · ความเหลื่อมล้ำรายได้ ============ -->
+    <section class="tabpane" id="pane-ineq-income" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เหลื่อมล้ำ &amp; หนี้ครัวเรือน</span><h2 class="ph-title">📊 ความเหลื่อมล้ำรายได้</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💰 กลุ่ม 10% รวยสุด</div>
+          <div class="k-num">32.4<span class="u">% ของรายได้</span></div>
+          <div class="k-sub">กระจุกรายได้เกือบ 1 ใน 3 ของทั้งประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🪙 กลุ่ม 10% จนสุด</div>
+          <div class="k-num">2.3<span class="u">% ของรายได้</span></div>
+          <div class="k-sub">ส่วนแบ่งน้อยนิดของคนฐานล่าง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">↔️ ช่องว่างรายได้</div>
+          <div class="k-num">≈14<span class="u">เท่า</span></div>
+          <div class="k-sub">รวยสุดมีรายได้มากกว่าจนสุดราว 14 เท่า</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌍 มุมมองโลก (WIR)</div>
+          <div class="k-num">52<span class="u">%</span></div>
+          <div class="k-sub">World Inequality Report: 10% บนสุดถือรายได้ถึง 52%</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ รายได้กระจุกที่ปลายบน</h2><span class="tag">% ของรายได้รวมทั้งประเทศ</span></div>
+        <p class="sub">กลุ่มคน 10% ที่รวยที่สุดถือครองรายได้ถึง <b>32.4%</b> ของทั้งประเทศ ขณะที่ 10% ที่จนที่สุดมีเพียง 2.3% — ช่องว่างที่กว้างทำให้ไทยติดกลุ่มประเทศเหลื่อมล้ำสูงของโลก · แท่งแดง = กลุ่มรวยสุด</p>
+        <div class="plot" id="ieqIncome"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://policywatch.thaipbs.or.th/article/economy-210" target="_blank" rel="noopener">สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สศช.) ↗</a> · World Inequality Report — ส่วนแบ่งรายได้</div>
+      </div>
+    </section>
+
+    <!-- ============ เหลื่อมล้ำ · ความเหลื่อมล้ำทรัพย์สิน ============ -->
+    <section class="tabpane" id="pane-ineq-wealth" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เหลื่อมล้ำ &amp; หนี้ครัวเรือน</span><h2 class="ph-title">💎 ความเหลื่อมล้ำทรัพย์สิน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🏰 10% รวยสุดถือครอง</div>
+          <div class="k-num">64.8<span class="u">% ของทรัพย์สิน</span></div>
+          <div class="k-sub">เกือบ 2 ใน 3 ของความมั่งคั่งทั้งประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">👑 1% รวยสุดถือครอง</div>
+          <div class="k-num">32.3<span class="u">% ของทรัพย์สิน</span></div>
+          <div class="k-sub">คนกลุ่มเล็กมากถือครองทรัพย์สินมหาศาล</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🧺 50% จนสุดถือครอง</div>
+          <div class="k-num">3.2<span class="u">% ของทรัพย์สิน</span></div>
+          <div class="k-sub">คนครึ่งประเทศแบ่งกันเพียงเศษเสี้ยว</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌏 ในอาเซียน</div>
+          <div class="k-num">เหลื่อมล้ำ<span class="u">ที่สุด</span></div>
+          <div class="k-sub">ไทยติดกลุ่มเหลื่อมล้ำด้านทรัพย์สินสูงสุดของโลก</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💎 ทรัพย์สินยิ่งกระจุกกว่ารายได้</h2><span class="tag">% ของทรัพย์สินทั้งประเทศ</span></div>
+        <p class="sub">ความเหลื่อมล้ำด้าน<b>ทรัพย์สิน</b>รุนแรงกว่ารายได้มาก — คน 10% บนสุดถือครองทรัพย์สินถึง 64.8% และเพียง 1% บนสุดถือครองถึง 32.3% ขณะที่คนครึ่งประเทศ (50% ล่าง) มีรวมกันแค่ 3.2% · แท่งแดง = กลุ่มรวยสุด</p>
+        <div class="plot" id="ieqWealth"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://isranews.org/article/isranews-news/108803-gov-NESDC-National-Economic-and-Social-Development-Plan-12-news.html" target="_blank" rel="noopener">สศช. — รายงานความเหลื่อมล้ำ / การถือครองทรัพย์สิน ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ เหลื่อมล้ำ · หนี้ครัวเรือน ============ -->
+    <section class="tabpane" id="pane-hh-debt" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เหลื่อมล้ำ &amp; หนี้ครัวเรือน</span><h2 class="ph-title">💳 หนี้ครัวเรือน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💳 หนี้ครัวเรือนต่อ GDP</div>
+          <div class="k-num">≈90<span class="u">%</span></div>
+          <div class="k-sub">ทรงตัวระดับสูง หนึ่งในอันดับต้นๆ ของเอเชีย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📈 จุดพีค</div>
+          <div class="k-num">90.1<span class="u">% (2564)</span></div>
+          <div class="k-sub">สูงสุดในรอบ 18 ปี ช่วงโควิด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏠 หนี้ก้อนใหญ่สุด</div>
+          <div class="k-num">สินเชื่อบ้าน<span class="u">~34%</span></div>
+          <div class="k-sub">รองมาคือสินเชื่อส่วนบุคคลและธุรกิจ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">⚠️ หนี้เสีย (NPL)</div>
+          <div class="k-num">ขาขึ้น<span class="u">น่ากังวล</span></div>
+          <div class="k-sub">บัตรเครดิต–สินเชื่อส่วนบุคคลโตเร็ว</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 หนี้ครัวเรือนต่อ GDP</h2><span class="tag">% · 2562–2567</span></div>
+        <p class="sub">หนี้ครัวเรือนไทยพุ่งจากราว 78% ก่อนโควิด แตะจุดสูงสุด <b>90.1% ในปี 2564</b> และทรงตัวระดับสูงราว 90% ต่อเนื่อง เป็นภาระที่กดกำลังซื้อและความสามารถในการก่อหนี้ใหม่ของครัวเรือน</p>
+        <div class="plot" id="hhdGdp"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.bot.or.th/App/BTWS_STAT/statistics/BOTWEBSTAT.aspx?reportID=775&language=TH" target="_blank" rel="noopener">ธนาคารแห่งประเทศไทย (ธปท.) ↗</a> — เงินให้กู้ยืมแก่ภาคครัวเรือนต่อ GDP</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🧩 หนี้ครัวเรือนแยกตามประเภท</h2><span class="tag">% ของหนี้ครัวเรือน</span></div>
+        <p class="sub">หนี้ครัวเรือนส่วนใหญ่เป็น<b>สินเชื่อบ้าน</b> ตามด้วยสินเชื่ออุปโภคบริโภคส่วนบุคคลและสินเชื่อประกอบธุรกิจ — สินเชื่อส่วนบุคคลและบัตรเครดิตที่โตเร็วเป็นกลุ่มที่น่าจับตาเรื่องหนี้เสีย · แท่งแดง = ก้อนใหญ่สุด</p>
+        <div class="plot" id="hhdComp"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: ธนาคารแห่งประเทศไทย (ธปท.) — โครงสร้างสินเชื่อภาคครัวเรือนจำแนกตามวัตถุประสงค์ (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ เหลื่อมล้ำ · ค่าจ้างขั้นต่ำ ============ -->
+    <section class="tabpane" id="pane-wage-min" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เหลื่อมล้ำ &amp; หนี้ครัวเรือน</span><h2 class="ph-title">💵 ค่าจ้างขั้นต่ำ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💵 ค่าจ้างขั้นต่ำ (สูงสุด)</div>
+          <div class="k-num">300 → 400<span class="u">บาท/วัน</span></div>
+          <div class="k-sub">ขยับขึ้นจาก 300 บาท (2556) สู่นโยบาย 400 บาท</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🗓️ 300 บาททั่วประเทศ</div>
+          <div class="k-num">2556<span class="u">ครั้งแรก</span></div>
+          <div class="k-sub">ปรับให้เท่ากันทั้งประเทศเป็นครั้งแรก</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🎯 นโยบาย 400 บาท</div>
+          <div class="k-num">ทยอยใช้<span class="u">รายพื้นที่</span></div>
+          <div class="k-sub">ต่างจังหวัดหลายแห่งยังต่ำกว่า</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">📉 ค่าจ้างจริง</div>
+          <div class="k-num">โตช้า<span class="u">กว่าเงินเฟ้อ</span></div>
+          <div class="k-sub">ค่าครองชีพที่สูงขึ้นบั่นทอนกำลังซื้อ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 ค่าจ้างขั้นต่ำรายวัน</h2><span class="tag">บาท/วัน (อัตราสูงสุด) · 2556–2568</span></div>
+        <p class="sub">ค่าจ้างขั้นต่ำปรับขึ้นจาก 300 บาท (2556) มาสู่เพดาน <b>400 บาท</b> ตามนโยบายรัฐบาล แต่การปรับเป็นแบบทยอยรายพื้นที่/ประเภทกิจการ และเมื่อหักเงินเฟ้อแล้ว ค่าจ้างที่แท้จริงเพิ่มขึ้นไม่มากนัก · เส้นแสดงอัตราสูงสุดในแต่ละปีโดยประมาณ</p>
+        <div class="plot" id="wageMin"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กระทรวงแรงงาน — ประกาศคณะกรรมการค่าจ้าง (อัตราค่าจ้างขั้นต่ำ, อัตราสูงสุดโดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ ดิจิทัล · อินเทอร์เน็ต & มือถือ ============ -->
+    <section class="tabpane" id="pane-dg-connect" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ดิจิทัล &amp; AI ไทย</span><h2 class="ph-title">🌐 อินเทอร์เน็ต &amp; มือถือ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🌐 ผู้ใช้อินเทอร์เน็ต</div>
+          <div class="k-num">65.4<span class="u">ล้านคน (91%)</span></div>
+          <div class="k-sub">คนไทยเข้าถึงเน็ตเกือบทั้งประเทศ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📱 เลขหมายมือถือ</div>
+          <div class="k-num">99.5<span class="u">ล้าน (139%)</span></div>
+          <div class="k-sub">มากกว่าจำนวนประชากร — หลายคนถือหลายซิม</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⏱️ เวลาใช้เน็ตเฉลี่ย/วัน</div>
+          <div class="k-num">7 ชม. 54<span class="u">นาที</span></div>
+          <div class="k-sub">คนไทยติดอันดับต้นๆ ของโลก</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">📲 เข้าเน็ตผ่านมือถือ</div>
+          <div class="k-num">98<span class="u">%</span></div>
+          <div class="k-sub">มือถือคือประตูหลักสู่โลกออนไลน์ของคนไทย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📊 ภูมิทัศน์ดิจิทัลไทย 2568</h2><span class="tag">ล้าน (คน/เลขหมาย)</span></div>
+        <p class="sub">ไทยมีเลขหมายมือถือมากกว่าประชากร (99.5 ล้าน) ผู้ใช้อินเทอร์เน็ต 65.4 ล้านคน และผู้ใช้โซเชียลมีเดีย 51 ล้านคน — เป็นหนึ่งในสังคมที่ออนไลน์เข้มข้นที่สุดในโลก · แท่งแดง = ตัวเลขสูงสุด</p>
+        <div class="plot" id="dgConnect"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://datareportal.com/reports/digital-2025-thailand" target="_blank" rel="noopener">DataReportal — Digital 2025: Thailand (We Are Social / Meltwater) ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ ดิจิทัล · e-Commerce ============ -->
+    <section class="tabpane" id="pane-dg-ecom" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ดิจิทัล &amp; AI ไทย</span><h2 class="ph-title">🛒 e-Commerce &amp; เศรษฐกิจดิจิทัล</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🛒 มูลค่าอีคอมเมิร์ซไทย 2566</div>
+          <div class="k-num">5.96<span class="u">ล้านล้านบาท</span></div>
+          <div class="k-sub">เติบโตต่อเนื่องหลังยุคโควิด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏬 กลุ่มใหญ่สุด</div>
+          <div class="k-num">ค้าปลีก–ส่ง<span class="u">2.83 ล้านล้าน</span></div>
+          <div class="k-sub">เกือบครึ่งของมูลค่าอีคอมเมิร์ซทั้งหมด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📈 อุตสาหกรรมมาแรง</div>
+          <div class="k-num">ประกันภัย<span class="u">+31%</span></div>
+          <div class="k-sub">โตเร็วสุด และเริ่มใช้ AI ในธุรกิจ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🎯 เป้าเศรษฐกิจดิจิทัล</div>
+          <div class="k-num">30<span class="u">% ของ GDP</span></div>
+          <div class="k-sub">เป้าหมายรัฐบาลดิจิทัลไทย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🏭 มูลค่าอีคอมเมิร์ซแยกรายอุตสาหกรรม</h2><span class="tag">ล้านล้านบาท · 2566</span></div>
+        <p class="sub">มูลค่าอีคอมเมิร์ซไทยกระจุกในกลุ่ม<b>ค้าปลีก–ค้าส่ง</b> (2.83 ล้านล้านบาท) ตามด้วยการผลิต การขนส่ง และที่พัก–อาหาร สะท้อนการซื้อขายออนไลน์ที่แทรกซึมทุกภาคเศรษฐกิจ · แท่งแดง = กลุ่มใหญ่สุด</p>
+        <div class="plot" id="dgEcom"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.etda.or.th/th/pr-news/Dgt_ecom_survey2024.aspx" target="_blank" rel="noopener">ETDA — มูลค่าอีคอมเมิร์ซในประเทศไทย ปี 2566 ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ ดิจิทัล · ความพร้อม AI ============ -->
+    <section class="tabpane" id="pane-dg-ai" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ดิจิทัล &amp; AI ไทย</span><h2 class="ph-title">🤖 ความพร้อมด้าน AI</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🧭 วิสัยทัศน์เชิงกลยุทธ์</div>
+          <div class="k-num">100<span class="u">/100</span></div>
+          <div class="k-sub">ไทยมีแผนยุทธศาสตร์ AI ชัดเจนระดับสูงสุด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏛️ ความพร้อมภาครัฐ</div>
+          <div class="k-num">77.2<span class="u">/100</span></div>
+          <div class="k-sub">ด้านที่ไทยแข็งแรงกว่าค่าเฉลี่ย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚙️ ภาคเทคโนโลยี</div>
+          <div class="k-num">41.3<span class="u">/100</span></div>
+          <div class="k-sub">จุดอ่อนสุด — ต้องเร่งพัฒนาอุตสาหกรรมเทค</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌏 ในอาเซียน</div>
+          <div class="k-num">ตามหลัง<span class="u">สิงคโปร์</span></div>
+          <div class="k-sub">Government AI Readiness Index 2023</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🤖 จุดแข็ง–จุดอ่อน AI ของไทย</h2><span class="tag">คะแนน (เต็ม 100) · Oxford Insights 2023</span></div>
+        <p class="sub">ไทยมี<b>วิสัยทัศน์เชิงยุทธศาสตร์ด้าน AI สูงสุด (100 คะแนน)</b> และภาครัฐพร้อมพอสมควร (77.2) แต่จุดอ่อนคือ<b>ภาคเทคโนโลยี (41.3)</b> — ขาดอุตสาหกรรมและกำลังคนด้านเทคโนโลยีขั้นสูง · แท่งแดง = ด้านที่แข็งแรงสุด</p>
+        <div class="plot" id="dgAi"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://oxfordinsights.com/ai-readiness/ai-readiness-index/" target="_blank" rel="noopener">Oxford Insights — Government AI Readiness Index 2023 ↗</a> (คะแนนรายมิติของไทย)</div>
+      </div>
+    </section>
+
+    <!-- ============ ดิจิทัล · การชำระเงินดิจิทัล ============ -->
+    <section class="tabpane" id="pane-dg-pay" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ดิจิทัล &amp; AI ไทย</span><h2 class="ph-title">💸 การชำระเงินดิจิทัล</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">💸 ลงทะเบียนพร้อมเพย์</div>
+          <div class="k-num">73.16<span class="u">ล้านเลขหมาย</span></div>
+          <div class="k-sub">ส.ค. 2567 — ครอบคลุมเกือบทุกคนที่มีบัญชี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚡ ธุรกรรมต่อวัน</div>
+          <div class="k-num">≈61<span class="u">ล้านรายการ</span></div>
+          <div class="k-sub">สูงสุดเคยแตะ 76 ล้านรายการ/วัน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌏 QR ข้ามพรมแดน</div>
+          <div class="k-num">7<span class="u">ประเทศ/เขต</span></div>
+          <div class="k-sub">ไทยเชื่อมโยงชำระเงินต่างประเทศมากที่สุดในโลก</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🏆 Real-time Payment</div>
+          <div class="k-num">ผู้นำ<span class="u">ระดับโลก</span></div>
+          <div class="k-sub">ไทยเป็นสังคมไร้เงินสดที่ก้าวหน้าที่สุดแห่งหนึ่ง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 การเติบโตของพร้อมเพย์</h2><span class="tag">ล้านเลขหมายลงทะเบียน · 2560–2567</span></div>
+        <p class="sub">นับจากเปิดตัวปี 2560 พร้อมเพย์ (PromptPay) เติบโตอย่างรวดเร็วจนมีการลงทะเบียนกว่า <b>73 ล้านเลขหมาย</b> กลายเป็นโครงสร้างพื้นฐานการชำระเงินที่พลิกโฉมพฤติกรรมคนไทยสู่สังคมไร้เงินสด · ตัวเลขโดยประมาณ</p>
+        <div class="plot" id="dgPay"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://thaipublica.org/2024/05/infographic-e-payment-2023/" target="_blank" rel="noopener">ธนาคารแห่งประเทศไทย (ธปท.) — สถิติระบบพร้อมเพย์ ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ ธรรมาภิบาล · ดัชนีคอร์รัปชัน ============ -->
+    <section class="tabpane" id="pane-gov-cpi" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ธรรมาภิบาล &amp; การเมือง</span><h2 class="ph-title">🕵️ ดัชนีคอร์รัปชัน (CPI)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🕵️ คะแนน CPI ไทย 2568</div>
+          <div class="k-num">33<span class="u">/100</span></div>
+          <div class="k-sub">ยิ่งสูงยิ่งโปร่งใส — ไทยยังต่ำกว่าครึ่ง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌍 อันดับโลก</div>
+          <div class="k-num">116<span class="u">/180</span></div>
+          <div class="k-sub">ร่วงลงต่อเนื่องหลายปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📉 จุดต่ำสุด</div>
+          <div class="k-num">34<span class="u">คะแนน (2567)</span></div>
+          <div class="k-sub">เคยต่ำสุดในรอบ 12 ปี ก่อนลงต่ออีก</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌏 ในอาเซียน</div>
+          <div class="k-num">อันดับ 5<span class="u">/10</span></div>
+          <div class="k-sub">ตามหลังสิงคโปร์ มาเลเซีย เวียดนาม อินโดฯ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📉 คะแนนโปร่งใสไทยถดถอย</h2><span class="tag">คะแนน CPI · 2560–2568</span></div>
+        <p class="sub">ดัชนีการรับรู้การทุจริต (CPI) ของไทย<b>ลดลงต่อเนื่อง</b>จาก 37 คะแนน (2560) เหลือ 33 คะแนน (2568) สะท้อนว่าปัญหาคอร์รัปชันในสายตานานาชาติยังไม่ดีขึ้น แม้จะมีการปฏิรูปหลายด้าน</p>
+        <div class="plot" id="govCpi"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.transparency.org/en/cpi" target="_blank" rel="noopener">Transparency International · Corruption Perceptions Index ↗</a> (เรียบเรียงโดย ป.ป.ช./ป.ป.ท.)</div>
+      </div>
+    </section>
+
+    <!-- ============ ธรรมาภิบาล · เสรีภาพสื่อ ============ -->
+    <section class="tabpane" id="pane-gov-press" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ธรรมาภิบาล &amp; การเมือง</span><h2 class="ph-title">📰 เสรีภาพสื่อ</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">📰 อันดับเสรีภาพสื่อ 2568</div>
+          <div class="k-num">85<span class="u">/180</span></div>
+          <div class="k-sub">ดีที่สุดในอาเซียน (RSF World Press Freedom)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⬆️ ดีขึ้นจากปี 2565</div>
+          <div class="k-num">จาก 115<span class="u">→ 85</span></div>
+          <div class="k-sub">ไต่ขึ้น 30 อันดับในเวลา 3 ปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📊 คะแนน (2566)</div>
+          <div class="k-num">55.2<span class="u">/100</span></div>
+          <div class="k-sub">ดีขึ้นจาก 50.2 ในปี 2565</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">⚠️ ความท้าทาย</div>
+          <div class="k-num">ม.112<span class="u">& การฟ้องปิดปาก</span></div>
+          <div class="k-sub">ยังมีแรงกดดันต่อการทำงานของสื่อ</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⬆️ อันดับเสรีภาพสื่อไทยดีขึ้น</h2><span class="tag">อันดับโลก (จาก 180) · เส้นยิ่งต่ำ = อันดับยิ่งดี</span></div>
+        <p class="sub">หลังการเลือกตั้งปี 2566 อันดับเสรีภาพสื่อของไทย<b>ดีขึ้นชัดเจน</b>จากอันดับ 115 (2565) มาอยู่ที่ 85 (2568) ขึ้นเป็นอันดับ 1 ของอาเซียน แม้ยังเผชิญข้อจำกัดจากกฎหมายและคดีความ · เส้นลง = อันดับดีขึ้น</p>
+        <div class="plot" id="govPress"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://rsf.org/en/country/thailand" target="_blank" rel="noopener">Reporters Without Borders (RSF) — World Press Freedom Index ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ ธรรมาภิบาล · ดัชนีประชาธิปไตย ============ -->
+    <section class="tabpane" id="pane-gov-democracy" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ธรรมาภิบาล &amp; การเมือง</span><h2 class="ph-title">🗳️ ดัชนีประชาธิปไตย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🗳️ คะแนน EIU 2566</div>
+          <div class="k-num">6.35<span class="u">/10</span></div>
+          <div class="k-sub">จัดอยู่กลุ่ม "ประชาธิปไตยบกพร่อง"</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌍 อันดับโลก</div>
+          <div class="k-num">63<span class="u">/167</span></div>
+          <div class="k-sub">ร่วงลง 8 อันดับจากปีก่อนหน้า</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📈 จุดสูงสุดล่าสุด</div>
+          <div class="k-num">6.67<span class="u">(2565)</span></div>
+          <div class="k-sub">ฟื้นตัวช่วงสั้นก่อนย่อลง</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🚧 เส้นแบ่งสำคัญ</div>
+          <div class="k-num">6.0<span class="u">คะแนน</span></div>
+          <div class="k-sub">ต่ำกว่านี้ = "ระบอบผสม" (Hybrid regime)</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📊 ประชาธิปไตยไทยขึ้นๆ ลงๆ</h2><span class="tag">คะแนน EIU (เต็ม 10) · เส้นประ = เกณฑ์ 6.0</span></div>
+        <p class="sub">คะแนนประชาธิปไตยของไทยเคยดิ่งลงใกล้เกณฑ์ "ระบอบผสม" (6.04 ในปี 2563–64) แล้ว<b>ฟื้นขึ้นแตะ 6.67 ในปี 2565</b> ก่อนย่อลงมาที่ 6.35 — สะท้อนเส้นทางประชาธิปไตยที่ผันผวน · อยู่กลุ่ม "ประชาธิปไตยบกพร่อง"</p>
+        <div class="plot" id="govDemo"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://ourworldindata.org/grapher/democracy-index-eiu" target="_blank" rel="noopener">The Economist Intelligence Unit — Democracy Index ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ ธรรมาภิบาล · หลักนิติธรรม ============ -->
+    <section class="tabpane" id="pane-gov-rule" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ธรรมาภิบาล &amp; การเมือง</span><h2 class="ph-title">⚖️ หลักนิติธรรม</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">⚖️ คะแนนหลักนิติธรรมไทย</div>
+          <div class="k-num">0.50<span class="u">/1.00</span></div>
+          <div class="k-sub">WJP Rule of Law Index 2568</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌍 อันดับโลก</div>
+          <div class="k-num">77<span class="u">/143</span></div>
+          <div class="k-sub">อยู่กลางตารางค่อนไปทางล่าง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📉 เทียบค่าเฉลี่ยโลก</div>
+          <div class="k-num">ต่ำกว่า<span class="u">0.55</span></div>
+          <div class="k-sub">และต่ำกว่าค่าเฉลี่ยเอเชีย–แปซิฟิก (0.59)</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌏 ในภูมิภาค</div>
+          <div class="k-num">อันดับ 12<span class="u">/21</span></div>
+          <div class="k-sub">เอเชียตะวันออก–แปซิฟิก–เอเชียใต้</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ ไทยต่ำกว่าค่าเฉลี่ย</h2><span class="tag">คะแนนหลักนิติธรรม (0–1)</span></div>
+        <p class="sub">คะแนนหลักนิติธรรมของไทย (0.50) <b>ต่ำกว่าทั้งค่าเฉลี่ยโลก (0.55) และเอเชีย–แปซิฟิก (0.59)</b> สะท้อนความท้าทายด้านการบังคับใช้กฎหมาย ความโปร่งใส และการตรวจสอบถ่วงดุล · แท่งแดง = ไทย</p>
+        <div class="plot" id="govRule"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://worldjusticeproject.org/rule-of-law-index/country/Thailand" target="_blank" rel="noopener">World Justice Project — Rule of Law Index ↗</a></div>
+      </div>
+    </section>
+
+    <!-- ============ เกษตร · ภาพรวมส่งออกเกษตร ============ -->
+    <section class="tabpane" id="pane-agri-export" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เกษตร &amp; อาหาร</span><h2 class="ph-title">🌾 ภาพรวมส่งออกเกษตร</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🌾 มูลค่าส่งออกเกษตร 2567</div>
+          <div class="k-num">28.8<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">ไทยเป็นครัวของโลก — เกินดุลการค้าเกษตรต่อเนื่อง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🥇 สินค้าดาวเด่น</div>
+          <div class="k-num">ผลไม้<span class="u">6.5 พันล้าน$</span></div>
+          <div class="k-sub">แซงข้าวขึ้นอันดับ 1 จากทุเรียน–ลำไย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌳 ยางพารา</div>
+          <div class="k-num">อันดับ 1<span class="u">โลก</span></div>
+          <div class="k-sub">ส่วนแบ่งตลาดส่งออกยางโลก 31.3%</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🍚 ข้าว</div>
+          <div class="k-num">อันดับ 2<span class="u">โลก</span></div>
+          <div class="k-sub">ผู้ส่งออกข้าวรายใหญ่รองจากอินเดีย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🏆 5 สินค้าเกษตรส่งออกสูงสุด</h2><span class="tag">ล้านเหรียญสหรัฐ · 2567</span></div>
+        <p class="sub">สินค้าเกษตรส่งออกของไทยนำโดย<b>ผลไม้</b> (ทุเรียนเป็นหัวหอก) ตามด้วยข้าว ยางพารา ไก่ และมันสำปะหลัง — 5 อันดับนี้คิดเป็นสัดส่วนใหญ่ของมูลค่าส่งออกเกษตรทั้งหมด · แท่งแดง = อันดับ 1</p>
+        <div class="plot" id="agriTop5"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://tpso.go.th/news/2502-0000000023" target="_blank" rel="noopener">สำนักงานนโยบายและยุทธศาสตร์การค้า (สนค.) กระทรวงพาณิชย์ ↗</a> — ส่งออกสินค้าเกษตร ปี 2567</div>
+      </div>
+    </section>
+
+    <!-- ============ เกษตร · ข้าว ============ -->
+    <section class="tabpane" id="pane-agri-rice" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เกษตร &amp; อาหาร</span><h2 class="ph-title">🍚 ข้าว</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🍚 ส่งออกข้าว 2567</div>
+          <div class="k-num">9.95<span class="u">ล้านตัน</span></div>
+          <div class="k-sub">โตขึ้น 13.4% มูลค่า 6,433 ล้าน US$</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌍 อันดับผู้ส่งออกโลก</div>
+          <div class="k-num">อันดับ 2<span class="u">รองอินเดีย</span></div>
+          <div class="k-sub">แข่งกับเวียดนามชิงอันดับ 2–3</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">💵 มูลค่าส่งออกข้าว</div>
+          <div class="k-num">6,433<span class="u">ล้าน US$</span></div>
+          <div class="k-sub">ราคาข้าวโลกสูงหนุนมูลค่าเพิ่มขึ้น 25%</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🏅 ข้าวหอมมะลิ</div>
+          <div class="k-num">แชมป์โลก<span class="u">คุณภาพ</span></div>
+          <div class="k-sub">ข้าวไทยชนะรางวัลข้าวดีที่สุดในโลกหลายสมัย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 ปริมาณส่งออกข้าวไทย</h2><span class="tag">ล้านตัน · 2562–2567</span></div>
+        <p class="sub">การส่งออกข้าวไทยฟื้นตัวแรงหลังปี 2563 (จุดต่ำสุดช่วงโควิด+บาทแข็ง) ทะยานขึ้นแตะ <b>9.95 ล้านตันในปี 2567</b> จากความต้องการข้าวโลกที่สูงและการที่อินเดียจำกัดการส่งออกช่วงหนึ่ง</p>
+        <div class="plot" id="agriRice"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: กรมการค้าต่างประเทศ / สมาคมผู้ส่งออกข้าวไทย — ปริมาณการส่งออกข้าว</div>
+      </div>
+    </section>
+
+    <!-- ============ เกษตร · ผลไม้ & ทุเรียน ============ -->
+    <section class="tabpane" id="pane-agri-fruit" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เกษตร &amp; อาหาร</span><h2 class="ph-title">🍈 ผลไม้ &amp; ทุเรียน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🍈 ทุเรียนส่งออกไปจีน 2566</div>
+          <div class="k-num">93.7<span class="u">พันล้านบาท</span></div>
+          <div class="k-sub">พุ่งขึ้น 81.7% จากปีก่อน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🇨🇳 ตลาดจีน</div>
+          <div class="k-num">97.5<span class="u">% ของทุเรียน</span></div>
+          <div class="k-sub">พึ่งพาตลาดเดียวสูงมาก = ความเสี่ยง</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🥇 ผลไม้ = สินค้าเกษตร #1</div>
+          <div class="k-num">6.5<span class="u">พันล้าน US$</span></div>
+          <div class="k-sub">ทุเรียน–ลำไย–มังคุด ดันไทยขึ้นแท่นผู้นำ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">⚠️ คู่แข่งใหม่</div>
+          <div class="k-num">เวียดนาม<span class="u">แย่งตลาด</span></div>
+          <div class="k-sub">ทุเรียนเวียดนามเริ่มตีตลาดจีนหนักขึ้น</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📈 ทุเรียนไทยบูมในตลาดจีน</h2><span class="tag">มูลค่าส่งออกไปจีน · พันล้านบาท</span></div>
+        <p class="sub">มูลค่าส่งออกทุเรียนไทยไปจีน<b>พุ่งขึ้น 81.7%</b> จากราว 51.5 พันล้านบาท (2565) เป็น 93.7 พันล้านบาท (2566) — แต่การพึ่งตลาดจีนถึง 97.5% ก็เป็นความเสี่ยงเมื่อมีคู่แข่งอย่างเวียดนามเข้ามา · แท่งแดง = ปีล่าสุด</p>
+        <div class="plot" id="agriDurian"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.thaipbs.or.th/news/content/336449" target="_blank" rel="noopener">กรมส่งเสริมการค้าระหว่างประเทศ (DITP) / กรมศุลกากร ↗</a> — มูลค่าส่งออกทุเรียนสดไปจีน</div>
+      </div>
+    </section>
+
+    <!-- ============ เกษตร · โครงสร้างภาคเกษตร ============ -->
+    <section class="tabpane" id="pane-agri-structure" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">เกษตร &amp; อาหาร</span><h2 class="ph-title">🚜 โครงสร้างภาคเกษตร</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">👨‍🌾 แรงงานภาคเกษตร</div>
+          <div class="k-num">~30<span class="u">% ของแรงงาน</span></div>
+          <div class="k-sub">ราว 12 ล้านคนทำงานในภาคเกษตร</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">📉 สัดส่วนใน GDP</div>
+          <div class="k-num">~8.6<span class="u">%</span></div>
+          <div class="k-sub">สร้างมูลค่าน้อยเมื่อเทียบกับจำนวนคน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">⚖️ ช่องว่างผลิตภาพ</div>
+          <div class="k-num">คนมาก<span class="u">รายได้น้อย</span></div>
+          <div class="k-sub">ผลิตภาพแรงงานเกษตรต่ำกว่าภาคอื่นมาก</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🌡️ ความท้าทาย</div>
+          <div class="k-num">ภัยแล้ง<span class="u">–สูงวัย</span></div>
+          <div class="k-sub">เกษตรกรอายุมาก + ภูมิอากาศแปรปรวน</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>⚖️ คนเยอะ แต่มูลค่าน้อย</h2><span class="tag">% — เปรียบเทียบแรงงาน vs GDP</span></div>
+        <p class="sub">ภาคเกษตรจ้างแรงงานถึงราว <b>30% ของกำลังแรงงาน</b> แต่สร้างมูลค่าเพียง <b>8.6% ของ GDP</b> — ช่องว่างนี้สะท้อนผลิตภาพต่ำและรายได้เกษตรกรที่น้อย เป็นโจทย์ใหญ่ของการยกระดับภาคเกษตรไทย · แท่งแดง = สัดส่วนแรงงาน</p>
+        <div class="plot" id="agriStruct"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานเศรษฐกิจการเกษตร (สศก.) / สำนักงานสถิติแห่งชาติ — สัดส่วนภาคเกษตรใน GDP และการจ้างงาน (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ คมนาคม · สนามบิน (AOT) ============ -->
+    <section class="tabpane" id="pane-tr-air" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">คมนาคม &amp; โลจิสติกส์</span><h2 class="ph-title">✈️ สนามบิน (AOT)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">✈️ ผู้โดยสาร 6 สนามบิน 2567</div>
+          <div class="k-num">119.3<span class="u">ล้านคน</span></div>
+          <div class="k-sub">โต 19% ฟื้นตัวเต็มที่หลังโควิด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🛫 สุวรรณภูมิ</div>
+          <div class="k-num">60.0<span class="u">ล้านคน</span></div>
+          <div class="k-sub">ประตูหลักสู่ประเทศไทย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🛬 ดอนเมือง</div>
+          <div class="k-num">29.2<span class="u">ล้านคน</span></div>
+          <div class="k-sub">ฮับสายการบินต้นทุนต่ำที่ใหญ่ที่สุด</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🎯 เป้าปี 2568</div>
+          <div class="k-num">130<span class="u">ล้านคน</span></div>
+          <div class="k-sub">เร่งขยายรันเวย์–อาคารรับผู้โดยสารเพิ่ม</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🛫 ผู้โดยสารรายสนามบิน</h2><span class="tag">ล้านคน · ปีงบประมาณ 2567</span></div>
+        <p class="sub">สนามบินของ AOT ให้บริการผู้โดยสารรวม 119.3 ล้านคน โดย<b>สุวรรณภูมิ</b>และ<b>ดอนเมือง</b>รวมกันกินสัดส่วนใหญ่ ตามด้วยเมืองท่องเที่ยวอย่างภูเก็ตและเชียงใหม่ · แท่งแดง = สนามบินใหญ่สุด</p>
+        <div class="plot" id="trAir"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://investor-th.airportthai.co.th/transport.html" target="_blank" rel="noopener">บริษัท ท่าอากาศยานไทย จำกัด (มหาชน) — AOT ↗</a> · สถิติขนส่งทางอากาศ ปีงบประมาณ 2567</div>
+      </div>
+    </section>
+
+    <!-- ============ คมนาคม · รถไฟฟ้า ============ -->
+    <section class="tabpane" id="pane-tr-rail" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">คมนาคม &amp; โลจิสติกส์</span><h2 class="ph-title">🚇 รถไฟฟ้า</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🚇 ระยะทางเปิดใช้แล้ว</div>
+          <div class="k-num">~276<span class="u">กิโลเมตร</span></div>
+          <div class="k-sub">โครงข่ายรถไฟฟ้า กทม.–ปริมณฑล</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🗺️ เป้าหมายตามแผน M-MAP</div>
+          <div class="k-num">~554<span class="u">กิโลเมตร</span></div>
+          <div class="k-sub">ยังก่อสร้าง/วางแผนอีกหลายสาย</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🚉 สายที่ยาวที่สุด</div>
+          <div class="k-num">สีเขียว<span class="u">~68 กม.</span></div>
+          <div class="k-sub">หมอชิต–เคหะฯ / คูคต แกนหลักของเมือง</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🎟️ นโยบายค่าโดยสาร</div>
+          <div class="k-num">20 บาท<span class="u">ตลอดสาย</span></div>
+          <div class="k-sub">ทยอยใช้เพื่อลดภาระค่าเดินทาง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>🚆 ระยะทางรถไฟฟ้าแต่ละสาย</h2><span class="tag">กิโลเมตร</span></div>
+        <p class="sub">โครงข่ายรถไฟฟ้าในเขตกรุงเทพฯ–ปริมณฑลขยายตัวจนมีหลายสายสี รวมกว่า 276 กม. — สายสีเขียวยาวที่สุด ตามด้วยสีน้ำเงินและสีแดง ครอบคลุมการเดินทางหลักของคนเมือง · แท่งแดง = สายที่ยาวสุด</p>
+        <div class="plot" id="trRail"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: การรถไฟฟ้าขนส่งมวลชนแห่งประเทศไทย (รฟม.) / BTS / รฟท. — ระยะทางเส้นทางรถไฟฟ้า (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ คมนาคม · อุบัติเหตุทางถนน ============ -->
+    <section class="tabpane" id="pane-tr-road" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">คมนาคม &amp; โลจิสติกส์</span><h2 class="ph-title">🛵 อุบัติเหตุทางถนน</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">🛵 ผู้เสียชีวิตต่อปี</div>
+          <div class="k-num">~17,900<span class="u">คน</span></div>
+          <div class="k-sub">เฉลี่ยเกือบ 50 คนต่อวัน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🌍 อันดับโลก</div>
+          <div class="k-num">อันดับ 9<span class="u">ของโลก</span></div>
+          <div class="k-sub">หนึ่งในถนนที่อันตรายที่สุด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🏍️ รถจักรยานยนต์</div>
+          <div class="k-num">74.5<span class="u">% ของผู้เสียชีวิต</span></div>
+          <div class="k-sub">กลุ่มเสี่ยงสูงสุดบนท้องถนนไทย</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🎯 เป้าปี 2570</div>
+          <div class="k-num">12<span class="u">ต่อแสนประชากร</span></div>
+          <div class="k-sub">ลดการตายลงครึ่งหนึ่งตามแผนความปลอดภัย</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>📉 ผู้เสียชีวิตจากอุบัติเหตุทางถนน</h2><span class="tag">คน/ปี · ข้อมูลบูรณาการ 3 ฐาน</span></div>
+        <p class="sub">แม้ตัวเลขผู้เสียชีวิตจะ<b>ค่อยๆ ลดลง</b>จากราว 22,000 คน (2560) เหลือราว 17,900 คน แต่ก็ยังสูงมากในระดับสากล โดยเฉพาะกลุ่มผู้ขับขี่รถจักรยานยนต์ที่เป็นเหยื่อหลัก</p>
+        <div class="plot" id="trRoad"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.thairsc.com/" target="_blank" rel="noopener">ศูนย์ข้อมูลอุบัติเหตุ (ThaiRSC) / กรมควบคุมโรค ↗</a> — ข้อมูลบูรณาการผู้เสียชีวิตจากอุบัติเหตุทางถนน (โดยประมาณ)</div>
+      </div>
+    </section>
+
+    <!-- ============ คมนาคม · โลจิสติกส์ ============ -->
+    <section class="tabpane" id="pane-tr-logistics" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">คมนาคม &amp; โลจิสติกส์</span><h2 class="ph-title">📦 โลจิสติกส์</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top">📦 ต้นทุนโลจิสติกส์ต่อ GDP</div>
+          <div class="k-num">~13.8<span class="u">%</span></div>
+          <div class="k-sub">สูงกว่าประเทศพัฒนาแล้วเกือบเท่าตัว</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🚚 พึ่งพาถนน</div>
+          <div class="k-num">กว่า 80<span class="u">% ของการขนส่ง</span></div>
+          <div class="k-sub">ต้นทุนสูงเพราะรถบรรทุกเป็นหลัก</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top">🚢 ท่าเรือแหลมฉบัง</div>
+          <div class="k-num">ท่าเรือหลัก<span class="u">ของประเทศ</span></div>
+          <div class="k-sub">ประตูส่งออกสำคัญเชื่อม EEC</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top">🎯 เป้าหมาย</div>
+          <div class="k-num">ลดต้นทุน<span class="u">–เพิ่มราง</span></div>
+          <div class="k-sub">ผลักดันขนส่งทางรางและระบบดิจิทัล</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2>💸 ต้นทุนโลจิสติกส์ยังสูง</h2><span class="tag">% ของ GDP · เทียบประเทศ</span></div>
+        <p class="sub">ต้นทุนโลจิสติกส์ของไทยอยู่ที่ราว <b>13.8% ของ GDP</b> สูงกว่าประเทศพัฒนาแล้วอย่างญี่ปุ่น สหรัฐฯ และสิงคโปร์ (~8–9%) อย่างมาก เพราะพึ่งพาการขนส่งทางถนนเป็นหลักและระบบรางยังไม่สมบูรณ์ · แท่งแดง = ไทย</p>
+        <div class="plot" id="trLogis"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สศช.) — รายงานโลจิสติกส์ของประเทศไทย (สัดส่วนต่อ GDP โดยประมาณ)</div>
+      </div>
+    </section>
+
       </div><!-- /.content -->
     </div><!-- /.shell -->
   </main>
@@ -3703,42 +4860,233 @@
     function attachSmoothLineDraw(box, autoplayDur){
       try{
         if(!box) return;
-        var now=Date.now(); if(box._sldTs && now-box._sldTs<250){ return; } box._sldTs=now; // กัน afterPaint ยิงซ้ำ (rAF+setTimeout)
-        var svg=box.querySelector&&box.querySelector("svg"); if(!svg) return;
-        var line=svg.querySelector("g[aria-label='line'] path, path[aria-label='line']"); if(!line) return;
-        var len=0; try{ len=line.getTotalLength(); }catch(e){ return; } if(!len || len<12) return;
-        var extras=[];
-        ["area","dot","text"].forEach(function(lab){ Array.prototype.forEach.call(svg.querySelectorAll("g[aria-label='"+lab+"']"), function(g){ extras.push(g); }); });
-        var st={ line:line, len:len, extras:extras, timer:null };
-        box._sld=st;
-        function clearInline(){
-          line.style.transition=""; line.style.strokeDasharray=""; line.style.strokeDashoffset="";
-          extras.forEach(function(g){ g.style.transition=""; g.style.opacity=""; });
-          if(box._sldBar){ box._sldBar.style.transition=""; box._sldBar.style.width="100%"; }
-          if(box._sldBtn) box._sldBtn.textContent="▶";
-        }
+        var st=box._sld||(box._sld={ timer:null, clear:null });
         st.play=function(dur){
           dur=dur||2600;
           if(st.timer){ clearInterval(st.timer); st.timer=null; }
+          if(st.clear){ st.clear(); st.clear=null; }
+          // เก็บเป้าหมาย "สด" จาก svg ปัจจุบันตอนกดเล่น (กัน render ซ้อนทับแทนที่ svg เดิม)
+          // ใช้ ypMainSvg เพราะกราฟที่มี legend ตัว fig เป็น <figure> ที่ svg แรกคือแถบสี ไม่ใช่กราฟ
+          var svg=ypMainSvg(box); if(!svg) return;
+          // รองรับหลายเส้นในกราฟเดียว (เช่น เชียงใหม่ vs กรุงเทพฯ) — ทุกเส้นวิ่งพร้อมกัน
+          var lines=[]; Array.prototype.forEach.call(svg.querySelectorAll("g[aria-label='line'] path, path[aria-label='line']"), function(p){
+            var L=0; try{ L=p.getTotalLength(); }catch(e){}
+            if(L && L>=12) lines.push({ el:p, len:L });
+          });
+          if(!lines.length) return;
+          var extras=[];
+          ["area","dot","text"].forEach(function(lab){ Array.prototype.forEach.call(svg.querySelectorAll("g[aria-label='"+lab+"']"), function(g){ extras.push(g); }); });
+          function clearInline(){
+            lines.forEach(function(o){ o.el.style.transition=""; o.el.style.strokeDasharray=""; o.el.style.strokeDashoffset=""; });
+            extras.forEach(function(g){ g.style.transition=""; g.style.opacity=""; });
+            if(box._sldBar){ box._sldBar.style.transition=""; box._sldBar.style.width="100%"; }
+            if(box._sldBtn) box._sldBtn.textContent="▶";
+          }
+          st.clear=clearInline;
           // ปิด CSS transition แล้วขับเฟรมเองด้วย timer (setInterval ทำงานแม้ rAF/compositor ถูกแช่แข็ง)
-          line.style.transition="none"; line.style.strokeDasharray=len+" "+len;
+          lines.forEach(function(o){ o.el.style.transition="none"; o.el.style.strokeDasharray=o.len+" "+o.len; });
           extras.forEach(function(g){ g.style.transition="none"; });
           if(box._sldBtn) box._sldBtn.textContent="⏸";
           var t0=Date.now();
           function frame(){
             var p=Math.min(1,(Date.now()-t0)/dur), e=1-Math.pow(1-p,3); // easeOutCubic
-            line.style.strokeDashoffset=(len*(1-e)).toFixed(1);          // เส้นวิ่งซ้าย→ขวา
+            lines.forEach(function(o){ o.el.style.strokeDashoffset=(o.len*(1-e)).toFixed(1); }); // เส้นวิ่งซ้าย→ขวา
             extras.forEach(function(g){ g.style.opacity=e.toFixed(3); }); // พื้นที่/จุด/ป้ายจางเข้า
             if(box._sldBar) box._sldBar.style.width=(e*100).toFixed(1)+"%";
-            if(p>=1 || box.offsetParent===null){ clearInterval(st.timer); st.timer=null; clearInline(); }
+            if(p>=1 || box.offsetParent===null){ clearInterval(st.timer); st.timer=null; st.clear=null; clearInline(); }
           }
           frame();
           st.timer=setInterval(frame, 40);                              // ~25fps ผ่าน timer
         };
         ensureLinePlayerUI(box);
         if(autoplayDur){ st.play(autoplayDur); }
-        else { clearInline(); }                                 // idle = เส้นเต็ม ไม่ค้างตัด
       }catch(e){}
+    }
+
+    /* ============================================================
+       เอนจินอนิเมชันกลางสำหรับกราฟที่ไม่ใช่แกนปี (แท่ง/จุด/ไทม์ไลน์/พื้นที่ซ้อน)
+       • marks: แท่งค่อยๆ โตจากเส้นศูนย์ จุดเด้งโผล่ ป้าย/เส้นอ้างอิงจางเข้า — ไล่ทีละตัว (stagger)
+       • sweep: ม่านเปิดซ้าย→ขวาด้วย clipPath (กราฟพื้นที่ซ้อนที่ไม่มีเส้นหลัก)
+       ขับเฟรมด้วย setInterval (ทนต่อ rAF ถูกแช่แข็งในแท็บพื้นหลัง/preview) + ▶ เล่นซ้ำ
+       + เล่นอัตโนมัติครั้งแรกเมื่อเลื่อนถึง (IntersectionObserver)
+       ============================================================ */
+    var _mkUid=0;
+    var _mkIO=("IntersectionObserver" in window)?new IntersectionObserver(function(ents){
+      ents.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var f=en.target._mkOnView; if(!f) return;
+        en.target._mkOnView=null; _mkIO.unobserve(en.target); f();
+      });
+    },{threshold:.3}):null;
+    var _mkArmedBoxes=[];
+    function mkViewTick(){                   // ตัวเช็คสำรอง: IO ไม่ยิงในบางสภาพแวดล้อม (เช่น preview ที่แช่แข็งเฟรมเรนเดอร์)
+      var vh=window.innerHeight||720;
+      for(var i=_mkArmedBoxes.length-1;i>=0;i--){
+        var box=_mkArmedBoxes[i], fn=box._mkOnView;
+        if(!fn){ _mkArmedBoxes.splice(i,1); continue; }
+        if(box.offsetParent===null) continue;
+        var r=box.getBoundingClientRect();
+        if(r.height>0 && r.top<vh*0.8 && r.bottom>vh*0.15){
+          box._mkOnView=null; _mkArmedBoxes.splice(i,1);
+          if(_mkIO) _mkIO.unobserve(box);
+          fn();
+        }
+      }
+    }
+    setInterval(mkViewTick, 700);
+    window.addEventListener("scroll", mkViewTick, { passive:true });
+    function mkPlayOnView(box, fn){          // เล่นครั้งแรกครั้งเดียวเมื่อกราฟโผล่เข้าจอ (re-render ไม่เล่นซ้ำ)
+      if(!box || box._mkArmed) return;
+      box._mkArmed=true; box._mkOnView=fn;
+      _mkArmedBoxes.push(box);
+      if(_mkIO) _mkIO.observe(box);
+    }
+    function mkPlayerUI(box){                // ▶ + แถบความคืบหน้า (สไตล์ .yp-player เดิม) — อยู่นอก box จึงรอด re-render
+      if(!box._mkUI){
+        var ui=document.createElement("div"); ui.className="yp-player";
+        ui.innerHTML='<button class="yp-play" type="button" aria-label="เล่นอนิเมชัน">▶</button><div class="sld-track"><div class="sld-fill"></div></div>';
+        if(box.parentNode) box.parentNode.insertBefore(ui, box.nextSibling);
+        box._mkUI=ui;
+        ui.querySelector(".yp-play").addEventListener("click", function(){ if(box._mkPlay) box._mkPlay(); });
+      }
+      return { btn:box._mkUI.querySelector(".yp-play"), bar:box._mkUI.querySelector(".sld-fill") };
+    }
+    var MK_GROUPS="g[aria-label='bar'],g[aria-label='rect'],g[aria-label='cell'],g[aria-label='area'],g[aria-label='line'],g[aria-label='dot'],g[aria-label='text'],g[aria-label='rule'],g[aria-label='geo'],g[aria-label='raster'],g[aria-label='sphere'],g[aria-label='contour'],image";
+    function attachMarkAnim(box, opts){
+      try{
+        if(!box) return; opts=opts||{};
+        var now=Date.now(); if(box._mkTs && now-box._mkTs<250) return; box._mkTs=now;   // กัน afterPaint ยิงซ้ำ
+        var boxIsSvg=box.tagName && box.tagName.toLowerCase()==="svg";                  // บาง box เป็น <svg> ตรงๆ (เช่น #enMap)
+        if(!boxIsSvg && !ypMainSvg(box.firstElementChild)) return;
+        var ui=mkPlayerUI(box);
+        var st=box._mkSt||(box._mkSt={ timer:null, t:null, finish:null });
+        function zeroOf(fig, axis){           // ตำแหน่งพิกเซลของค่า 0 (ใช้เลือกฝั่งโตของแท่งบวก/ลบ)
+          try{ if(fig&&typeof fig.scale==="function"){ var s=fig.scale(axis); if(s&&typeof s.apply==="function"){ var z=s.apply(0); if(z!=null&&isFinite(z)) return z; } } }catch(e){}
+          return null;
+        }
+        function clearInline(){
+          (st.t||[]).forEach(function(o){ var s=o.el.style; s.transform=""; s.transformOrigin=""; s.transformBox=""; s.opacity=""; s.strokeDasharray=""; s.strokeDashoffset=""; });
+          st.t=null;
+          if(ui.bar) ui.bar.style.width="100%";
+          if(ui.btn) ui.btn.textContent="▶";
+        }
+        function play(){
+          if(st.timer){ clearInterval(st.timer); st.timer=null;        // กดระหว่างเล่น = จบทันที
+            if(st.finish){ st.finish(); st.finish=null; } else clearInline(); return; }
+          var fig=box.firstElementChild, svg=boxIsSvg?box:ypMainSvg(fig); if(!svg) return;
+          var dur=opts.dur||1900, dir=opts.dir||"y";
+          if(opts.mode==="sweep"){ playSweep(svg, dur); return; }
+          st.finish=null;
+          // เก็บเป้าหมาย + เรียงลำดับ stagger ตามตำแหน่งจริง (แนวตั้ง=ซ้าย→ขวา, แนวนอน=บน→ล่าง)
+          var t=[], domOrder=false;
+          function grab(q,kind){ Array.prototype.forEach.call(svg.querySelectorAll(q), function(el){ t.push({el:el,kind:kind}); }); }
+          if(opts.mode==="fadein"){
+            // แผนที่/ภาพ custom: ทุกชิ้นจางเข้าไล่ตามลำดับวาด (จังหวัดติดทีละชิ้น)
+            grab("path, rect, circle, text, line, image", "fade");
+            domOrder=true;
+          } else if(opts.mode==="draw"){
+            // เส้นที่มี stroke วิ่งตามความยาว (Sankey/เส้นเชื่อม) ส่วนที่เหลือจางเข้า
+            Array.prototype.forEach.call(svg.querySelectorAll("path"), function(el){
+              var L=0; try{ L=el.getTotalLength(); }catch(e){}
+              var cs=window.getComputedStyle?getComputedStyle(el):null;
+              var stroked=cs && cs.stroke && cs.stroke!=="none" && parseFloat(cs.strokeWidth||"0")>0;
+              if(stroked && L>=8) t.push({el:el,kind:"draw",len:L}); else t.push({el:el,kind:"fade"});
+            });
+            grab("circle","dot"); grab("rect","fade"); grab("text","fade"); grab("line","fade");
+            domOrder=true;
+          } else {
+            grab("g[aria-label='bar'] rect, g[aria-label='rect'] rect, g[aria-label='cell'] rect", "rect");
+            grab("g[aria-label='dot'] circle", "dot");
+            grab("g[aria-label='text'] text", "fade");
+            grab("g[aria-label='rule'] line", "fade");
+            grab("g[aria-label='line'] path, g[aria-label='area'] path", "fade");
+            var custom=!t.length;
+            if(custom){
+              // svg ที่วาดเองด้วย d3 (ซันเบิร์สต์/โรส/chord ไม่มี aria-label): กลีบบานจากศูนย์กลาง viewBox + ป้ายจางเข้า
+              grab("path", "bloom"); grab("rect", "rect"); grab("circle", "fade"); grab("text", "fade"); grab("line", "fade");
+              domOrder=true;
+            }
+          }
+          if(!t.length) return;
+          if(domOrder){ t.forEach(function(o,i){ o.key=i; o.bb={x:0,y:0,width:0,height:0}; }); }
+          else t.forEach(function(o){ var b; try{ b=o.el.getBBox(); }catch(e){ b=null; } o.bb=b||{x:0,y:0,width:0,height:0};
+            o.key=(dir==="x") ? (o.bb.y+o.bb.height/2) : (o.bb.x+o.bb.width/2); });
+          t.sort(function(a,b){ return a.key-b.key; });
+          st.t=t;
+          var zy=(dir==="y")?zeroOf(fig,"y"):null, zx=(dir==="x")?zeroOf(fig,"x"):null;
+          t.forEach(function(o){
+            var s=o.el.style, bb=o.bb;
+            if(o.kind==="rect"){
+              s.transformBox="fill-box";
+              if(dir==="x"){ s.transformOrigin=(zx!=null && Math.abs(bb.x+bb.width-zx)<Math.abs(bb.x-zx)) ? "100% 50%" : "0% 50%"; s.transform="scaleX(0.001)"; }
+              else { s.transformOrigin=(zy!=null && Math.abs(bb.y-zy)<Math.abs(bb.y+bb.height-zy)) ? "50% 0%" : "50% 100%"; s.transform="scaleY(0.001)"; }
+            } else if(o.kind==="dot"){ s.transformBox="fill-box"; s.transformOrigin="50% 50%"; s.transform="scale(0.001)"; }
+            else if(o.kind==="bloom"){ s.transformBox="view-box"; s.transformOrigin="50% 50%"; s.transform="scale(0.001)"; }
+            else if(o.kind==="draw"){ s.strokeDasharray=o.len+" "+o.len; s.strokeDashoffset=o.len; }
+            else { s.opacity="0"; }
+          });
+          if(ui.btn) ui.btn.textContent="⏸";
+          var n=t.length, t0=Date.now();
+          function frame(){
+            var p=Math.min(1,(Date.now()-t0)/dur);
+            for(var i=0;i<n;i++){
+              var o=t[i], d0=(n>1)?(i/(n-1))*0.5:0;                    // ตัวสุดท้ายเริ่มที่ครึ่งทางของช่วงเวลา
+              var pe=Math.max(0, Math.min(1, (p-d0)/0.5));
+              var e=1-Math.pow(1-pe,3), s=o.el.style;
+              if(o.kind==="rect"){ s.transform=(dir==="x")?("scaleX("+Math.max(0.001,e)+")"):("scaleY("+Math.max(0.001,e)+")"); }
+              else if(o.kind==="dot"||o.kind==="bloom"){ s.transform="scale("+Math.max(0.001,e)+")"; }
+              else if(o.kind==="draw"){ s.strokeDashoffset=(o.len*(1-e)).toFixed(1); }
+              else { s.opacity=e.toFixed(3); }
+            }
+            if(ui.bar) ui.bar.style.width=(p*100).toFixed(1)+"%";
+            if(p>=1 || box.offsetParent===null){ clearInterval(st.timer); st.timer=null; clearInline(); }
+          }
+          frame();
+          st.timer=setInterval(frame, 40);                             // ~25fps ผ่าน timer
+        }
+        function playSweep(svg, dur){
+          var NS="http://www.w3.org/2000/svg";
+          var vb=svg.viewBox&&svg.viewBox.baseVal;
+          var W=(vb&&vb.width)||(svg.width&&svg.width.baseVal?svg.width.baseVal.value:0)||box.clientWidth||800;
+          var H=(vb&&vb.height)||(svg.height&&svg.height.baseVal?svg.height.baseVal.value:0)||400;
+          var id="mkclip"+(++_mkUid);
+          var defs=document.createElementNS(NS,"defs"), cp=document.createElementNS(NS,"clipPath"), rc=document.createElementNS(NS,"rect");
+          cp.setAttribute("id",id); rc.setAttribute("x",0); rc.setAttribute("y",0); rc.setAttribute("height",H); rc.setAttribute("width",0);
+          cp.appendChild(rc); defs.appendChild(cp); svg.appendChild(defs);
+          var gs=svg.querySelectorAll(MK_GROUPS);
+          Array.prototype.forEach.call(gs, function(g){ g.setAttribute("clip-path","url(#"+id+")"); });
+          function finish(){
+            Array.prototype.forEach.call(gs, function(g){ g.removeAttribute("clip-path"); });
+            if(defs.parentNode) defs.parentNode.removeChild(defs);
+            st.finish=null;
+            if(ui.bar) ui.bar.style.width="100%";
+            if(ui.btn) ui.btn.textContent="▶";
+          }
+          st.finish=finish;
+          if(ui.btn) ui.btn.textContent="⏸";
+          var t0=Date.now();
+          function frame(){
+            var p=Math.min(1,(Date.now()-t0)/dur), e=1-Math.pow(1-p,3);
+            rc.setAttribute("width",(W*e).toFixed(1));
+            if(ui.bar) ui.bar.style.width=(p*100).toFixed(1)+"%";
+            if(p>=1 || box.offsetParent===null){ clearInterval(st.timer); st.timer=null; finish(); }
+          }
+          frame();
+          st.timer=setInterval(frame, 40);
+        }
+        box._mkPlay=play;
+      }catch(e){}
+    }
+    /* ตัวช่วยเรียกสั้นๆ หลัง render: เติม ▶ + เล่นอัตโนมัติครั้งแรกเมื่อเลื่อนถึง */
+    function markAnimOnView(sel, opts){
+      var box=$(sel); if(!box) return;
+      attachMarkAnim(box, opts);
+      mkPlayOnView(box, function(){ if(box._mkPlay) box._mkPlay(); });
+    }
+    function lineDrawOnView(sel){
+      var box=$(sel); if(!box) return;
+      attachSmoothLineDraw(box);
+      mkPlayOnView(box, function(){ if(box._sld) box._sld.play(2600); });
     }
 
     /* ============================================================
@@ -3764,6 +5112,79 @@
         return p;
       }catch(e){ return null; }
     }
+    /* ---------- ดาวน์โหลด CSV / PNG รายกราฟ ---------- */
+    function dlBlob(name, blob){
+      var a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download=name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }
+    function csvEsc(s){ s=String(s==null?"":s); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
+    function dlCsv(name, rows){   // rows = array ของ array — BOM นำหน้าให้ Excel อ่านไทยถูก
+      var txt=String.fromCharCode(0xFEFF)+rows.map(function(r){ return r.map(csvEsc).join(","); }).join("\r\n");
+      dlBlob(name+".csv", new Blob([txt], {type:"text/csv;charset=utf-8"}));
+    }
+    function dlPng(name, box){
+      var svgs=box.querySelectorAll("svg"); if(!svgs.length) return;
+      var svg=svgs[0], best=0;   // figure ที่มี legend จะมี 2 svg → เอาตัวที่ node เยอะสุด (= ตัวกราฟ)
+      Array.prototype.forEach.call(svgs, function(s){ var n=s.querySelectorAll("*").length; if(n>best){ best=n; svg=s; } });
+      var W=(svg.width&&svg.width.baseVal&&svg.width.baseVal.value)||svg.clientWidth||800;
+      var H=(svg.height&&svg.height.baseVal&&svg.height.baseVal.value)||svg.clientHeight||400;
+      var clone=svg.cloneNode(true), NS="http://www.w3.org/2000/svg";
+      clone.setAttribute("xmlns",NS); clone.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
+      clone.style.color=getComputedStyle(svg).color;   // currentColor ของแกน/กริดให้ตรงธีมตอนกด
+      var bg=document.createElementNS(NS,"rect");      // พื้นหลังทึบตามธีม กัน PNG โปร่งใส
+      bg.setAttribute("x",0); bg.setAttribute("y",0); bg.setAttribute("width",W); bg.setAttribute("height",H);
+      bg.setAttribute("fill", cssVar("--paper")||"#fff");
+      clone.insertBefore(bg, clone.firstChild);
+      var xml=new XMLSerializer().serializeToString(clone);
+      var img=new Image();
+      img.onload=function(){
+        var scale=2, cv=document.createElement("canvas");
+        cv.width=Math.round(W*scale); cv.height=Math.round(H*scale);
+        var cx=cv.getContext("2d"); cx.scale(scale,scale); cx.drawImage(img,0,0,W,H);
+        cv.toBlob(function(b){ if(b) dlBlob(name+".png", b); }, "image/png");
+      };
+      img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml);
+    }
+    /* แปลง cfg ของ owidMount / owidBarMount / owidMapMount → แถว CSV (ค่าดิบ ไม่ format) */
+    function owidCsvRows(cfg){
+      if(!cfg) return null;
+      if(cfg.rows){   // แท่ง/แผนที่: rows=[{k,v}]
+        var out=[[cfg.nameLabel||"รายการ", cfg.valueLabel||"ค่า"]];
+        (cfg.rows||[]).forEach(function(d){ if(d && d.v!=null) out.push([d.k, d.v]); });
+        return out.length>1?out:null;
+      }
+      if(cfg.data && cfg.multi){   // หลายเส้น: pivot ปี × ซีรีส์
+        var xk=cfg.xKey, yk=cfg.yKey, sk=cfg.seriesKey;
+        var years=[],yset={},series=[],sset={},cell={};
+        cfg.data.forEach(function(d){ var y=d[xk],s=d[sk];
+          if(!(y in yset)){yset[y]=1;years.push(y);}
+          if(!(s in sset)){sset[s]=1;series.push(s);}
+          cell[y+"|"+s]=d[yk]; });
+        years.sort(function(a,b){ return a-b; });
+        if(cfg.seriesOrder){ var ord=cfg.seriesOrder.filter(function(s){ return sset[s]; });
+          series=ord.concat(series.filter(function(s){ return cfg.seriesOrder.indexOf(s)<0; })); }
+        var m=[[cfg.xLabel||"ปี"].concat(series)];
+        years.forEach(function(y){ m.push([y].concat(series.map(function(s){ var v=cell[y+"|"+s]; return v==null?"":v; }))); });
+        return m;
+      }
+      if(cfg.data){   // เส้นเดี่ยว: ปี, ค่า
+        var xk2=cfg.xKey||"year", yk2=cfg.yKey||"v";
+        var o2=[[cfg.xLabel||"ปี", cfg.yLabel||"ค่า"]];
+        cfg.data.forEach(function(d){ o2.push([d[xk2], d[yk2]]); });
+        return o2.length>1?o2:null;
+      }
+      return null;
+    }
+    function owidAddDl(tabs, box, getCfg){
+      var csv=document.createElement("button"); csv.type="button"; csv.className="owid-dl"; csv.title="ดาวน์โหลดข้อมูล (CSV)"; csv.textContent="⬇ CSV";
+      var png=document.createElement("button"); png.type="button"; png.className="owid-dl"; png.title="บันทึกภาพกราฟ (PNG)"; png.textContent="⬇ PNG";
+      tabs.appendChild(csv); tabs.appendChild(png);
+      csv.addEventListener("click", function(){ var rows=owidCsvRows(getCfg()); if(rows) dlCsv(box.id||"data", rows); });
+      png.addEventListener("click", function(){ dlPng(box.id||"chart", box); });
+    }
+
     function owidScaffold(box){
       if(box._owid) return box._owid;
       var card=box.parentNode, NS="http://www.w3.org/2000/svg";
@@ -3793,6 +5214,7 @@
       });
       o.btn.addEventListener("click", function(){ owidTogglePlay(o); });
       o.range.addEventListener("input", function(){ var v=+o.range.value; owidStop(o); owidSeek(o, v); });
+      owidAddDl(tabs, box, function(){ return o.cfg; });
       return o;
     }
     function owidFillTable(o){
@@ -3969,9 +5391,11 @@
         Array.prototype.forEach.call(tabs.children, function(x){ x.classList.toggle("on", x===b); });
         box.classList.toggle("oh", !showFirst); tbl.classList.toggle("oh", showFirst);
       });
+      owidAddDl(tabs, box, function(){ return o.cfg; });
       return o;
     }
     function owidMapFillTable(o, cfg){
+      o.cfg=cfg;   // เก็บไว้ให้ปุ่ม ⬇ CSV ใช้ข้อมูลรอบล่าสุด
       var rows=(cfg.rows||[]).filter(function(d){ return d && d.v!=null; });
       if(cfg.sort!==false) rows=rows.slice().sort(function(a,b){ return b.v-a.v; });
       var showRank=cfg.rank!==false;
@@ -4317,6 +5741,7 @@
         ]
       });
       injectPlot(box, fig);
+      lineDrawOnView("#pm25Chart");   // แกนเป็นวันที่ (ไม่ใช่ปี) — ใช้เส้นวาดตัวเอง 2 เส้นพร้อมกัน
     }
     function setPmKpis(){
       setTxt("#kPmMax", Math.round(PM25_MAX.v));
@@ -4375,6 +5800,7 @@
         ]
       });
       injectPlot(box, fig);
+      markAnimOnView(boxSel, { mode:"sweep", dur:2000 });   // แผนที่ field เผยจากซ้าย→ขวา
     }
     function renderHeatField(){
       renderField("#heatFieldChart", TEMP_FIELD,
@@ -4386,7 +5812,7 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); }
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); }
 
     /* ===================== แท็บอาเซียน (World Bank — live, ยิงตรง CORS) ===================== */
     // ชื่อ EN ตรงกับ world-atlas (Natural Earth) เพื่อ join แผนที่ · สีประจำชาติสำหรับ treemap/เส้น
@@ -4565,6 +5991,7 @@
         ]
       });
       injectPlot(box, fig);
+      markAnimOnView("#corRank", { dir:"x", dur:2000 });   // จุดอันดับเด้งไล่บน→ล่าง
     }
 
     function renderCorMap(){
@@ -4665,6 +6092,7 @@
         ]
       });
       injectPlot(box, fig);
+      markAnimOnView("#milRank", { dir:"x", dur:2000 });   // จุดอันดับเด้งไล่บน→ล่าง
     }
 
     function renderMilAll(){
@@ -4734,6 +6162,7 @@
         ]
       });
       injectPlot(box, fig);
+      markAnimOnView("#geoDensity", { dir:"x", dur:2000 });   // แท่งความหนาแน่นโตจากซ้าย
     }
 
     function renderGeoMap(){
@@ -5188,6 +6617,7 @@
         ]
       });
       injectPlot(box, fig);
+      markAnimOnView("#wPyramid", { dir:"x", dur:2100 });   // แท่งพีระมิดความมั่งคั่งโตจากซ้าย ไล่ชั้น
     }
     function renderWPerAdult(){
       hbarChart("#wPerAdult", WEALTH_PA.slice(), { h:440, ml:120, xlab:"ความมั่งคั่งเฉลี่ยต่อผู้ใหญ่ (US$)", tf:"~s",
@@ -5224,6 +6654,7 @@
         ]
       });
       box.innerHTML=""; box.appendChild(fig);
+      markAnimOnView("#moneyTimeline", { dir:"x", dur:2400 });   // หมุดวิวัฒนาการเงินเด้งไล่เก่า→ใหม่
     }
     function renderMoneyThings(){
       var box=document.getElementById("moneyThings"); if(!box) return;
@@ -5633,6 +7064,7 @@
           path.attr("fill-opacity",baseOp);
           cName.text("ไฟฟ้า "+last); cVal.text(Math.round(totV)+" TWh");
         });
+      markAnimOnView("#elecShareChart", { dur:2100 });   // ซันเบิร์สต์บานจากศูนย์กลาง (โหมด bloom)
     }
     function renderWaterAccess(){
       var box=$("#waterAccChart"); if(!box || !window.Plot) return;
@@ -5831,6 +7263,7 @@
         dot.addEventListener("click", function(){ showDetail(s); });
         svg.appendChild(dot);
       });
+      markAnimOnView("#enMap", { mode:"fadein", dur:2400 });   // จังหวัด+จุดพลังงานติดไล่ทีละชิ้น
       // ป้ายหมวด (คลิกเปิด/ปิด) + ตัวนับ
       var legend=$("#enLegend");
       function applyCats(){
@@ -6327,6 +7760,7 @@
         ]
       });
       plotInto("#wciFreightChart", fig);
+      lineDrawOnView("#wciFreightChart");
     }
 
     // ปริมาณแบนด์วิดท์สายเคเบิลใต้ทะเลโลกจำลองสะสม (Tbps)
@@ -6366,6 +7800,7 @@
         ]
       });
       plotInto("#subseaBandwidthChart", fig);
+      lineDrawOnView("#subseaBandwidthChart");   // เส้นรวมวาดตัวเอง + พื้นที่ซ้อนจางเข้า
     }
 
     /* ===== Phase 3: การ์ดกราฟแดชบอร์ด (รูปแบบจากโน้ตบุ๊ก + ข้อมูลไทย/โลกจริง) ===== */
@@ -6391,6 +7826,7 @@
         ]
       });
       plotInto("#maritimeEventsChart", fig);
+      markAnimOnView("#maritimeEventsChart", { dir:"x", dur:2300 });   // จุดเหตุการณ์เด้งไล่บน→ล่าง
     }
 
     // ② Beeswarm ท่าเรือคอนเทนเนอร์ใหญ่สุดของโลก (ล้าน TEU/ปี ~2566)
@@ -6410,6 +7846,7 @@
         ]
       });
       plotInto("#portsBeeswarmChart", fig);
+      markAnimOnView("#portsBeeswarmChart", { dir:"y", dur:2100 });    // จุดท่าเรือเด้งไล่ซ้าย→ขวา
     }
 
     // ③ อันดับสายเคเบิลใต้ทะเลตามความจุออกแบบโดยประมาณ (Tbps) — เน้นสายที่เชื่อมไทย
@@ -6429,6 +7866,7 @@
         ]
       });
       plotInto("#cableCapacityChart", fig);
+      markAnimOnView("#cableCapacityChart", { dir:"x", dur:2100 });    // แท่งความจุโตจากซ้าย ไล่บน→ล่าง
     }
 
     /* ================= 🌏 การค้าระหว่างประเทศของไทย (รูปแบบจากโน้ตบุ๊ก + ข้อมูลจริงโดยประมาณ) ================= */
@@ -6470,6 +7908,7 @@
         .attr("dy",function(d){return d.col===1?0:"0.35em";})
         .attr("text-anchor",function(d){return d.col===2?"start":(d.col===0?"end":"middle");})
         .attr("fill",ink).text(function(d){return d.name;});
+      markAnimOnView("#tradeSankeyChart", { mode:"draw", dur:2600 });   // สายธารการค้าวิ่งซ้าย→ขวา
     }
 
     // ② มูลค่าส่งออกรายเดือน แยกหมวด (พื้นที่ซ้อน · พันล้าน US$)
@@ -6490,6 +7929,7 @@
         ]
       });
       plotInto("#tradeMonthlyChart", fig);
+      markAnimOnView("#tradeMonthlyChart", { mode:"sweep", dur:2000 });   // พื้นที่ซ้อนล้วน — ม่านเปิดซ้าย→ขวา
     }
 
     // ③ ไทม์ไลน์ FTA ของไทย (Gantt · เริ่มปีที่มีผล → ปัจจุบัน)
@@ -6511,6 +7951,7 @@
         ]
       });
       plotInto("#tradeFtaChart", fig);
+      markAnimOnView("#tradeFtaChart", { dir:"x", dur:2300 });   // แถบ Gantt โตจากปีเริ่ม ไล่บน→ล่าง
     }
 
     // ④ ดุลการค้าไทยรายปี (ส่งออก–นำเข้า · พันล้าน US$)
@@ -6530,6 +7971,7 @@
         ]
       });
       plotInto("#tradeBalanceChart", fig);
+      markAnimOnView("#tradeBalanceChart", { dir:"y", dur:2000 });   // แท่งบวกโตขึ้น/ลบโตลงจากเส้นศูนย์
     }
 
     // แท็บการ์ดการค้า
@@ -6643,6 +8085,7 @@
         bindProvHover(p.node(), html);
       });
       renderFloodBivLegend();
+      markAnimOnView("#floodBivMap", { mode:"fadein", dur:2300 });   // จังหวัดติดสีไล่ทีละจังหวัด
     }
     function renderFloodBivLegend(){
       var box=$("#floodBivLegend"); if(!box) return; var d3=window.d3; if(!d3) return;
@@ -7124,6 +8567,7 @@
           Plot.text(peaks, { x:"h", y:"v", text:function(d){ return d.h+":00"; }, dy:-12, fill:red, fontWeight:700, fontSize:11 })
         ]
       }));
+      lineDrawOnView("#bkkTrafHour");   // แกนเป็นชั่วโมง (ไม่ใช่ปี) — เส้นวาดตัวเอง
     }
     function renderBkkTrafVeh(){
       var box=$("#bkkTrafVeh"); if(!box || !window.Plot) return;
@@ -7266,6 +8710,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.5 })
         ]
       }));
+      markAnimOnView("#bkkSocPyr", { dir:"x", dur:2100 });   // พีระมิดโตออกสองฝั่งจากแกนกลาง
     }
     function renderBkkSocDensity(){
       var box=$("#bkkSocDensity"); if(!box || !window.Plot) return;
@@ -7406,6 +8851,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#bkkHlthAware", { dir:"x", dur:2000 });   // แถบภูเขาน้ำแข็งโตจากซ้าย
     }
 
     /* ================= กรุงเทพ · แผนที่รายเขต 50 เขต (choropleth + สลับตัวชี้วัด) ================= */
@@ -7499,7 +8945,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       });
-      if(fig) plotInto("#bkkMapRank", fig);
+      if(fig){ plotInto("#bkkMapRank", fig); markAnimOnView("#bkkMapRank", { dir:"x", dur:2400 }); }   // แท่ง 50 เขตโตไล่อันดับ
     }
     function bkkBuildMulti(){
       var host=$("#bkkMapMulti"); if(!host) return; var geo=window.BKK_GEO, M=window.BKK_METRICS, NS="http://www.w3.org/2000/svg"; host.innerHTML="";
@@ -7695,6 +9141,7 @@
           Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#gpoPowerRadar", { dir:"x", dur:2200 });   // แท่งดัชนีอำนาจโตไล่เสา
     }
 
     function renderGpoIntelTbl(){
@@ -7746,6 +9193,7 @@
           rib.attr("fill-opacity",function(r){ return (r.source.index===d.index||r.target.index===d.index)?0.88:0.05; });
         })
         .on("mouseleave",function(){ rib.attr("fill-opacity",0.72); });
+      markAnimOnView("#gpoTradeChord", { dur:2300 });   // ริบบิ้นการค้าบานจากศูนย์กลาง (โหมด bloom)
     }
 
     /* ================= 🔩 ชิป & เซมิคอนดักเตอร์ =================
@@ -8036,6 +9484,7 @@
           Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#teFactory", { dir:"y", dur:2000 });   // แท่งเปิด/ปิดโรงงานโตไล่ปี
     }
     function renderTeC2Income(){
       var box=$("#teCrisis2Income"); if(!box || !window.Plot) return;
@@ -8239,6 +9688,7 @@
         .style("font-size","10.5px").text(function(d){ return d.m; });
 
       svg.append("text").attr("text-anchor","middle").attr("dy","0.35em").attr("fill",inkSoft).style("font-weight","700").style("font-size","11px").text("รายเดือน");
+      markAnimOnView("#teTourRose", { dur:2200 });   // กลีบกุหลาบบานไล่ ม.ค.→ธ.ค. (โหมด bloom)
     }
 
     /* ================= 🚢 การค้าระหว่างประเทศ (ปี 2568) =================
@@ -8285,6 +9735,7 @@
           Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#teTradeUs", { dir:"y", dur:1900 });   // แท่งส่งออก/นำเข้าโตไล่ปี
     }
 
     /* ---------- 🌏 ลูกโลกการค้า 3 มิติ (three.js r97 — ตัวเดียวกับพาเนลดาวเทียม จึงไม่เพิ่มไลบรารีใหม่) ----------
@@ -8550,6 +10001,7 @@
           Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#eduPisaGroup", { dir:"y", dur:2000 });   // แท่ง PISA ไทย/OECD โตไล่วิชา
     }
 
     function renderEduAll(){
@@ -8593,6 +10045,7 @@
         svg.appendChild(p);
       });
       box.innerHTML=""; box.appendChild(svg);
+      markAnimOnView("#eduMapChart", { mode:"fadein", dur:2300 });   // จังหวัดติดสีไล่ทีละจังหวัด
     }
     function renderEduDropBar(){
       hbarChart("#eduDropBar", EDU_DROP_PROV.map(function(d){ return {k:d.th, v:d.v, hl:d.th==="กรุงเทพมหานคร"}; }),
@@ -8627,6 +10080,7 @@
           Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
         ]
       }));
+      markAnimOnView("#bkkRain", { dir:"y", dur:1900 });   // แท่งฝนรายเดือนโตไล่ ม.ค.→ธ.ค.
     }
     function renderBkkFlood(){
       if(!document.getElementById("pane-bkk-flood")) return;
@@ -8641,6 +10095,209 @@
       if(!document.getElementById("pane-world-ocean")) return;
       gpoLine("#worldDamage", WORLD_DAMAGE, {full:true, h:280, ml:48, ticks:6, ylab:"พันล้าน US$", color:cssVar("--red"), ydomain:[0,400], fmt:function(v){ return v.toLocaleString("en-US"); }});
       hbarChart("#worldCoral", WORLD_CORAL, {full:true, h:170, ml:170, mr:56, xlab:"% ของแนวปะการังโลก", nameLabel:"เหตุการณ์", fmt:function(v){ return v+"%"; }});
+    }
+
+    /* ================= การคลังภาครัฐ (สบน. / สำนักงบประมาณ / กระทรวงการคลัง) ================= */
+    function fmtMB(v){ return Math.round(v).toLocaleString("en-US"); }
+    var FIS_DEBT_GDP=[{year:2561,v:41.7},{year:2562,v:41.1},{year:2563,v:49.4},{year:2564,v:58.0},{year:2565,v:60.7},{year:2566,v:62.1},{year:2567,v:63.3},{year:2568,v:65.6}];
+    var FIS_DEBT_OUT=[{year:2562,v:6.9},{year:2563,v:7.8},{year:2564,v:9.3},{year:2565,v:10.4},{year:2566,v:11.1},{year:2567,v:11.6},{year:2568,v:12.6}];
+    var FIS_TAX_DEPT=[{k:"กรมสรรพากร",v:2335300,hl:true},{k:"กรมสรรพสามิต",v:537540},{k:"กรมศุลกากร",v:112000}];
+    var FIS_TAX_TYPE=[{k:"ภาษีมูลค่าเพิ่ม (VAT)",v:950000,hl:true},{k:"ภาษีเงินได้นิติบุคคล",v:797000},{k:"ภาษีเงินได้บุคคลธรรมดา",v:432000},{k:"ภาษีธุรกิจเฉพาะ+อื่นๆ",v:156300}];
+    var FIS_MINISTRY=[{k:"งบกลาง",v:805745,hl:true},{k:"กระทรวงการคลัง",v:390314},{k:"กระทรวงศึกษาธิการ",v:340584},{k:"กระทรวงมหาดไทย",v:294863},{k:"กระทรวงกลาโหม",v:200293},{k:"กระทรวงคมนาคม",v:193618},{k:"กระทรวงสาธารณสุข",v:172285},{k:"กระทรวงการอุดมศึกษาฯ",v:132294},{k:"กระทรวงเกษตรและสหกรณ์",v:123149},{k:"กระทรวงแรงงาน",v:67772}];
+    var FIS_EXP_TYPE=[{k:"รายจ่ายประจำ",v:2704575,hl:true},{k:"รายจ่ายลงทุน",v:908224},{k:"ชำระคืนต้นเงินกู้",v:150100}];
+    var FIS_DEFICIT=[{year:2564,v:608962},{year:2565,v:695000},{year:2566,v:695000},{year:2567,v:693000},{year:2568,v:865700}];
+    function renderFiscalAll(){
+      if(document.getElementById("pane-fiscal-debt")){
+        gpoLine("#fisDebtGdp", FIS_DEBT_GDP, {full:true, h:290, ml:44, ticks:8, ylab:"% ต่อ GDP", color:cssVar("--red"), rule:70, ydomain:[35,72], fmt:function(v){ return v.toFixed(1)+"%"; }});
+        gpoLine("#fisDebtOut", FIS_DEBT_OUT, {full:true, h:270, ml:44, ticks:7, ylab:"ล้านล้านบาท", color:cssVar("--green"), ydomain:[6,13], fmt:function(v){ return v.toFixed(1); }});
+      }
+      if(document.getElementById("pane-fiscal-tax")){
+        hbarChart("#fisTaxDept", FIS_TAX_DEPT, {full:true, h:180, ml:120, mr:104, xlab:"ล้านบาท", nameLabel:"หน่วยจัดเก็บ", fmt:fmtMB});
+        hbarChart("#fisTaxType", FIS_TAX_TYPE, {full:true, h:220, ml:190, mr:104, xlab:"ล้านบาท", nameLabel:"ประเภทภาษี", fmt:fmtMB});
+      }
+      if(document.getElementById("pane-fiscal-budget")){
+        hbarChart("#fisMinistry", FIS_MINISTRY, {full:true, h:380, ml:180, mr:104, xlab:"ล้านบาท", nameLabel:"หน่วยงาน", fmt:fmtMB});
+      }
+      if(document.getElementById("pane-fiscal-balance")){
+        hbarChart("#fisExpType", FIS_EXP_TYPE, {full:true, h:180, ml:150, mr:120, xlab:"ล้านบาท", nameLabel:"ประเภทรายจ่าย", fmt:fmtMB});
+        gpoLine("#fisDeficit", FIS_DEFICIT, {full:true, h:270, ml:56, ticks:5, ylab:"ล้านบาท", color:cssVar("--red"), fmt:fmtMB});
+      }
+    }
+
+    /* ================= ประชากร & สังคมสูงวัย (BORA / สศช. / ผส. / ม.มหิดล) ================= */
+    // เส้นคู่ 2 ชุด (ใช้แท็บ เส้น/ตาราง + ไทม์ไลน์ผ่าน owidMount multi)
+    function twoLine(sel, series, opts){
+      var box=$(sel); if(!box || !window.Plot) return;
+      var W=Math.max(300, box.clientWidth|| (opts.full?900:820)); if(W<60) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft");
+      var data=[]; series.forEach(function(s){ s.pts.forEach(function(p){ data.push({who:s.who, year:p.year, v:p.v}); }); });
+      var names=series.map(function(s){ return s.who; });
+      var fig=plotT({
+        width:W, height:opts.h||320, marginLeft:opts.ml||52, marginRight:opts.mr||80, marginBottom:30, marginTop:12,
+        style: baseStyle(ink, FONT_W),
+        x:{ label:null, tickFormat:"d", ticks:opts.ticks||8, tickSize:0 },
+        y:{ label:opts.ylab||null, grid:true, tickSize:0, domain:opts.ydomain },
+        color:{ domain:names, range:opts.colors, legend:true },
+        marks:[
+          opts.rule!=null?Plot.ruleY([opts.rule],{stroke:inkSoft,strokeDasharray:"4,3",strokeOpacity:.6}):null,
+          Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.6, curve:"catmull-rom" }),
+          Plot.dot(data, { x:"year", y:"v", r:2.6, fill:"who" })
+        ].filter(Boolean)
+      });
+      owidMount(sel, fig, { multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+        seriesOrder:names, yLabel:opts.ylab||"ค่า", valueFmt:opts.valueFmt||function(v){ return (""+v); } });
+    }
+    var POP_CHILD=[{year:2537,v:27.0},{year:2547,v:22.5},{year:2557,v:18.5},{year:2564,v:16.3},{year:2566,v:15.9}];
+    var POP_ELDER=[{year:2537,v:7.0},{year:2547,v:10.4},{year:2557,v:14.9},{year:2564,v:18.3},{year:2566,v:20.2}];
+    var POP_BIRTH=[{year:2560,v:702754},{year:2562,v:618193},{year:2563,v:587368},{year:2564,v:544570},{year:2565,v:502107},{year:2566,v:485085}];
+    var POP_DEATH=[{year:2560,v:468911},{year:2562,v:506211},{year:2563,v:501438},{year:2564,v:563650},{year:2565,v:595965},{year:2566,v:565992}];
+    var POP_TFR=[{year:2536,v:2.0},{year:2543,v:1.7},{year:2553,v:1.6},{year:2560,v:1.5},{year:2564,v:1.21},{year:2565,v:1.1},{year:2566,v:1.0}];
+    var POP_AGE_TREND=[{year:2537,v:7.0},{year:2548,v:10.4},{year:2557,v:14.9},{year:2564,v:18.3},{year:2566,v:20.2},{year:2573,v:26.0},{year:2583,v:31.4}];
+    var POP_AGE_BAND=[{k:"วัยต้น 60–69 ปี",v:7.13,hl:true},{k:"วัยกลาง 70–79 ปี",v:3.98},{k:"วัยปลาย 80 ปีขึ้นไป",v:1.95}];
+    var POP_WORK=[{year:2563,v:43.26},{year:2568,v:42.0},{year:2573,v:39.8},{year:2578,v:37.0},{year:2583,v:33.69}];
+    function renderPopAll(){
+      if(document.getElementById("pane-pop-struct")){
+        twoLine("#popStruct", [ {who:"เด็ก (0–14 ปี)", pts:POP_CHILD}, {who:"ผู้สูงอายุ (60+)", pts:POP_ELDER} ],
+          { full:true, h:330, ml:42, ticks:6, ylab:"% ของประชากร", colors:[cssVar("--green"), cssVar("--red")], valueFmt:function(v){ return v.toFixed(1)+"%"; } });
+      }
+      if(document.getElementById("pane-pop-birthdeath")){
+        twoLine("#popBirthDeath", [ {who:"การเกิด", pts:POP_BIRTH}, {who:"การตาย", pts:POP_DEATH} ],
+          { full:true, h:330, ml:58, ticks:6, ylab:"คน/ปี", colors:[cssVar("--green"), cssVar("--red")], valueFmt:fmtMB });
+        gpoLine("#popTfr", POP_TFR, {full:true, h:260, ml:40, ticks:7, ylab:"ลูกเฉลี่ย/หญิง 1 คน", color:cssVar("--red"), rule:2.1, ydomain:[0.8,2.2], fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-pop-aging")){
+        gpoLine("#popAgeTrend", POP_AGE_TREND, {full:true, h:300, ml:40, ticks:7, ylab:"% ผู้สูงอายุ 60+", color:cssVar("--red"), rule:20, ydomain:[0,35], fmt:function(v){ return v.toFixed(1)+"%"; }});
+        hbarChart("#popAgeBand", POP_AGE_BAND, {full:true, h:180, ml:180, mr:84, xlab:"ล้านคน (2566)", nameLabel:"ช่วงวัย", fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-pop-future")){
+        gpoLine("#popWork", POP_WORK, {full:true, h:300, ml:44, ticks:5, ylab:"ล้านคน", color:cssVar("--green"), ydomain:[30,45], fmt:function(v){ return v.toFixed(1); }});
+      }
+    }
+
+    /* ================= สาธารณสุขไทย (สปสช. / แพทยสภา / สธ. / World Bank) ================= */
+    var HLT_FUND=[{k:"บัตรทอง (UC / 30 บาท)",v:46.934,hl:true},{k:"ประกันสังคม",v:12.865},{k:"ข้าราชการ/รัฐวิสาหกิจ",v:5.321}];
+    var HLT_OOP=[{year:2545,v:27},{year:2552,v:18},{year:2558,v:13},{year:2563,v:11},{year:2566,v:12}];
+    var HLT_DOCTOR=[{k:"กรุงเทพฯ",v:515},{k:"ทั่วประเทศ (เฉลี่ย)",v:1680},{k:"ภาคอีสาน (เฉลี่ย)",v:2659},{k:"ชัยภูมิ",v:4054},{k:"นครพนม",v:4415},{k:"หนองบัวลำภู",v:4577},{k:"บึงกาฬ",v:5614,hl:true}];
+    var HLT_LIFE=[{year:2533,v:70.3},{year:2543,v:72.5},{year:2553,v:74.1},{year:2563,v:77.0},{year:2566,v:77.4}];
+    var HLT_SEX=[{k:"หญิง",v:81.0,hl:true},{k:"ชาย",v:74.9}];
+    var HLT_DEATH=[{k:"มะเร็งทุกชนิด",v:127,hl:true},{k:"หลอดเลือดสมอง",v:53},{k:"ปอดอักเสบ",v:43},{k:"หัวใจขาดเลือด",v:32},{k:"เบาหวาน",v:26}];
+    function renderHealthAll(){
+      if(document.getElementById("pane-health-coverage")){
+        hbarChart("#hltFund", HLT_FUND, {full:true, h:180, ml:200, mr:70, xlab:"ล้านคน", nameLabel:"กองทุน", fmt:function(v){ return v.toFixed(2); }});
+        gpoLine("#hltOop", HLT_OOP, {full:true, h:260, ml:40, ticks:5, ylab:"% ภาระจ่ายเอง", color:cssVar("--green"), ydomain:[0,30], fmt:function(v){ return v+"%"; }});
+      }
+      if(document.getElementById("pane-health-workforce")){
+        hbarChart("#hltDoctor", HLT_DOCTOR, {full:true, h:290, ml:180, mr:80, xlab:"ประชากรต่อแพทย์ 1 คน", nameLabel:"พื้นที่", fmt:fmtMB});
+      }
+      if(document.getElementById("pane-health-life")){
+        gpoLine("#hltLife", HLT_LIFE, {full:true, h:270, ml:40, ticks:5, ylab:"ปี", color:cssVar("--green"), ydomain:[68,82], fmt:function(v){ return v.toFixed(1); }});
+        hbarChart("#hltSex", HLT_SEX, {full:true, h:130, ml:90, mr:70, xlab:"อายุคาดเฉลี่ย (ปี)", nameLabel:"เพศ", fmt:function(v){ return v.toFixed(1); }});
+      }
+      if(document.getElementById("pane-health-ncd")){
+        hbarChart("#hltDeath", HLT_DEATH, {full:true, h:240, ml:150, mr:70, xlab:"อัตราต่อแสนประชากร", nameLabel:"สาเหตุ", fmt:function(v){ return v; }});
+      }
+    }
+
+    /* ================= ความเหลื่อมล้ำ & หนี้ครัวเรือน (สศช. / ธปท. / WIR / ก.แรงงาน) ================= */
+    var IEQ_INCOME=[{k:"10% รวยที่สุด",v:32.42,hl:true},{k:"10% จนที่สุด",v:2.33}];
+    var IEQ_WEALTH=[{k:"10% รวยสุด",v:64.75,hl:true},{k:"1% รวยสุด",v:32.31},{k:"50% จนสุด",v:3.17}];
+    var HHD_GDP=[{year:2562,v:78.5},{year:2563,v:89.7},{year:2564,v:90.1},{year:2565,v:86.9},{year:2566,v:90.9},{year:2567,v:89.0}];
+    var HHD_COMP=[{k:"สินเชื่อบ้าน/อสังหา",v:34,hl:true},{k:"อุปโภคบริโภคส่วนบุคคล",v:28},{k:"ประกอบธุรกิจ",v:18},{k:"เช่าซื้อรถยนต์",v:11},{k:"อื่นๆ",v:6},{k:"บัตรเครดิต",v:3}];
+    var WAGE_MIN=[{year:2556,v:300},{year:2561,v:330},{year:2563,v:336},{year:2565,v:354},{year:2567,v:370},{year:2568,v:400}];
+    function renderIneqAll(){
+      if(document.getElementById("pane-ineq-income")){
+        hbarChart("#ieqIncome", IEQ_INCOME, {full:true, h:140, ml:130, mr:96, xlab:"% ของรายได้รวมทั้งประเทศ", nameLabel:"กลุ่มประชากร", fmt:function(v){ return v.toFixed(2)+"%"; }});
+      }
+      if(document.getElementById("pane-ineq-wealth")){
+        hbarChart("#ieqWealth", IEQ_WEALTH, {full:true, h:180, ml:120, mr:96, xlab:"% ของทรัพย์สินทั้งประเทศ", nameLabel:"กลุ่มประชากร", fmt:function(v){ return v.toFixed(2)+"%"; }});
+      }
+      if(document.getElementById("pane-hh-debt")){
+        gpoLine("#hhdGdp", HHD_GDP, {full:true, h:280, ml:44, ticks:6, ylab:"% ต่อ GDP", color:cssVar("--red"), ydomain:[70,95], fmt:function(v){ return v.toFixed(1)+"%"; }});
+        hbarChart("#hhdComp", HHD_COMP, {full:true, h:240, ml:200, mr:70, xlab:"% ของหนี้ครัวเรือน", nameLabel:"ประเภทสินเชื่อ", fmt:function(v){ return v+"%"; }});
+      }
+      if(document.getElementById("pane-wage-min")){
+        gpoLine("#wageMin", WAGE_MIN, {full:true, h:280, ml:48, ticks:6, ylab:"บาท/วัน", color:cssVar("--green"), ydomain:[280,410], fmt:function(v){ return v+" บาท"; }});
+      }
+    }
+
+    /* ================= ดิจิทัล & AI ไทย (DataReportal / ETDA / Oxford Insights / ธปท.) ================= */
+    var DG_CONNECT=[{k:"เลขหมายมือถือ",v:99.5,hl:true},{k:"ผู้ใช้อินเทอร์เน็ต",v:65.4},{k:"ผู้ใช้โซเชียลมีเดีย",v:51.0}];
+    var DG_ECOM=[{k:"ค้าปลีก & ค้าส่ง",v:2.83,hl:true},{k:"การผลิต",v:0.70},{k:"การขนส่ง",v:0.55},{k:"ที่พัก & อาหาร",v:0.43},{k:"ข้อมูล/สื่อสาร",v:0.30},{k:"อื่นๆ",v:1.15}];
+    var DG_AI=[{k:"วิสัยทัศน์เชิงกลยุทธ์",v:100,hl:true},{k:"ความพร้อมภาครัฐ (เฉลี่ย)",v:77.21},{k:"ภาคเทคโนโลยี",v:41.33}];
+    var DG_PAY=[{year:2560,v:30},{year:2562,v:50},{year:2564,v:64},{year:2566,v:71},{year:2567,v:73.16}];
+    function renderDigitalAll(){
+      if(document.getElementById("pane-dg-connect")){
+        hbarChart("#dgConnect", DG_CONNECT, {full:true, h:170, ml:180, mr:80, xlab:"ล้าน (คน/เลขหมาย)", nameLabel:"ตัวชี้วัด", fmt:function(v){ return v.toFixed(1); }});
+      }
+      if(document.getElementById("pane-dg-ecom")){
+        hbarChart("#dgEcom", DG_ECOM, {full:true, h:250, ml:150, mr:96, xlab:"ล้านล้านบาท", nameLabel:"อุตสาหกรรม", fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-dg-ai")){
+        hbarChart("#dgAi", DG_AI, {full:true, h:170, ml:210, mr:70, xlab:"คะแนน (เต็ม 100)", nameLabel:"ด้าน", fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-dg-pay")){
+        gpoLine("#dgPay", DG_PAY, {full:true, h:280, ml:44, ticks:6, ylab:"ล้านเลขหมาย", color:cssVar("--green"), ydomain:[20,80], fmt:function(v){ return v.toFixed(0); }});
+      }
+    }
+
+    /* ================= ธรรมาภิบาล & การเมือง (TI / RSF / EIU / WJP) ================= */
+    var GOV_CPI=[{year:2560,v:37},{year:2562,v:36},{year:2563,v:36},{year:2564,v:35},{year:2565,v:36},{year:2566,v:35},{year:2567,v:34},{year:2568,v:33}];
+    var GOV_PRESS=[{year:2565,v:115},{year:2566,v:106},{year:2567,v:87},{year:2568,v:85}];
+    var GOV_DEMO=[{year:2562,v:6.32},{year:2563,v:6.04},{year:2564,v:6.04},{year:2565,v:6.67},{year:2566,v:6.35}];
+    var GOV_RULE=[{k:"เอเชีย–แปซิฟิก (เฉลี่ย)",v:0.59},{k:"ค่าเฉลี่ยโลก",v:0.55},{k:"ไทย",v:0.50,hl:true}];
+    function renderGovAll(){
+      if(document.getElementById("pane-gov-cpi")){
+        gpoLine("#govCpi", GOV_CPI, {full:true, h:280, ml:40, ticks:8, ylab:"คะแนน CPI (เต็ม 100)", color:cssVar("--red"), ydomain:[30,42], fmt:function(v){ return v; }});
+      }
+      if(document.getElementById("pane-gov-press")){
+        gpoLine("#govPress", GOV_PRESS, {full:true, h:280, ml:44, ticks:4, ylab:"อันดับโลก (จาก 180)", color:cssVar("--green"), ydomain:[80,120], fmt:function(v){ return "#"+v; }});
+      }
+      if(document.getElementById("pane-gov-democracy")){
+        gpoLine("#govDemo", GOV_DEMO, {full:true, h:280, ml:40, ticks:5, ylab:"คะแนน (เต็ม 10)", color:cssVar("--red"), rule:6.0, ydomain:[5.5,7], fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-gov-rule")){
+        hbarChart("#govRule", GOV_RULE, {full:true, h:160, ml:190, mr:70, xlab:"คะแนน (0–1)", nameLabel:"", fmt:function(v){ return v.toFixed(2); }});
+      }
+    }
+
+    /* ================= เกษตร & อาหาร (กระทรวงพาณิชย์ / สศก. / DITP) ================= */
+    var AGRI_TOP5=[{k:"ผลไม้ (สด/แช่แข็ง/แห้ง)",v:6510.6,hl:true},{k:"ข้าว",v:6443.9},{k:"ยางพารา",v:4992.4},{k:"ไก่",v:4313.7},{k:"มันสำปะหลัง",v:3133.4}];
+    var AGRI_RICE=[{year:2562,v:7.58},{year:2563,v:5.72},{year:2564,v:6.11},{year:2565,v:7.71},{year:2566,v:8.76},{year:2567,v:9.95}];
+    var AGRI_DURIAN=[{k:"ปี 2566",v:93.7,hl:true},{k:"ปี 2565",v:51.5}];
+    var AGRI_STRUCT=[{k:"สัดส่วนแรงงานในภาคเกษตร",v:30,hl:true},{k:"สัดส่วนใน GDP",v:8.6}];
+    function renderAgriAll(){
+      if(document.getElementById("pane-agri-export")){
+        hbarChart("#agriTop5", AGRI_TOP5, {full:true, h:240, ml:190, mr:96, xlab:"ล้านเหรียญสหรัฐ (2567)", nameLabel:"สินค้า", fmt:fmtMB});
+      }
+      if(document.getElementById("pane-agri-rice")){
+        gpoLine("#agriRice", AGRI_RICE, {full:true, h:280, ml:44, ticks:6, ylab:"ล้านตัน", color:cssVar("--green"), ydomain:[5,11], fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-agri-fruit")){
+        hbarChart("#agriDurian", AGRI_DURIAN, {full:true, h:150, ml:110, mr:110, xlab:"พันล้านบาท (ส่งออกไปจีน)", nameLabel:"ปี", fmt:function(v){ return v.toFixed(1); }});
+      }
+      if(document.getElementById("pane-agri-structure")){
+        hbarChart("#agriStruct", AGRI_STRUCT, {full:true, h:150, ml:220, mr:80, xlab:"%", nameLabel:"", fmt:function(v){ return v+"%"; }});
+      }
+    }
+
+    /* ================= คมนาคม & โลจิสติกส์ (AOT / รฟม. / ThaiRSC / สศช.) ================= */
+    var TR_AIR=[{k:"สุวรรณภูมิ",v:60.0,hl:true},{k:"ดอนเมือง",v:29.15},{k:"ภูเก็ต",v:16.0},{k:"เชียงใหม่",v:8.8},{k:"หาดใหญ่",v:4.0},{k:"แม่ฟ้าหลวง เชียงราย",v:2.5}];
+    var TR_RAIL=[{k:"สายสีเขียว",v:68.25,hl:true},{k:"สายสีน้ำเงิน",v:48.0},{k:"สายสีแดง",v:41.5},{k:"สายสีชมพู",v:34.5},{k:"สายสีเหลือง",v:30.4},{k:"แอร์พอร์ต เรล ลิงก์",v:28.6},{k:"สายสีม่วง",v:23.0},{k:"สายสีทอง",v:1.8}];
+    var TR_ROAD=[{year:2560,v:22491},{year:2562,v:19904},{year:2563,v:17831},{year:2564,v:16957},{year:2565,v:17379},{year:2566,v:17914}];
+    var TR_LOGIS=[{k:"ไทย",v:13.8,hl:true},{k:"มาเลเซีย",v:13.0},{k:"ญี่ปุ่น",v:9.0},{k:"สหรัฐฯ",v:8.0},{k:"สิงคโปร์",v:8.0}];
+    function renderTransAll(){
+      if(document.getElementById("pane-tr-air")){
+        hbarChart("#trAir", TR_AIR, {full:true, h:250, ml:180, mr:80, xlab:"ล้านคน (ปีงบ 2567)", nameLabel:"สนามบิน", fmt:function(v){ return v.toFixed(2); }});
+      }
+      if(document.getElementById("pane-tr-rail")){
+        hbarChart("#trRail", TR_RAIL, {full:true, h:300, ml:170, mr:80, xlab:"กิโลเมตร", nameLabel:"สายรถไฟฟ้า", fmt:function(v){ return v.toFixed(1); }});
+      }
+      if(document.getElementById("pane-tr-road")){
+        gpoLine("#trRoad", TR_ROAD, {full:true, h:280, ml:58, ticks:6, ylab:"คน/ปี", color:cssVar("--red"), ydomain:[15000,24000], fmt:fmtMB});
+      }
+      if(document.getElementById("pane-tr-logistics")){
+        hbarChart("#trLogis", TR_LOGIS, {full:true, h:200, ml:140, mr:80, xlab:"% ของ GDP", nameLabel:"ประเทศ", fmt:function(v){ return v.toFixed(1)+"%"; }});
+      }
     }
 
     /* ================= เมนูหมวด (หัวข้อหลัก → หัวข้อรอง) ================= */
@@ -8723,6 +10380,8 @@
       $$(".ng-sub").forEach(function(b){ b.classList.remove("active"); });
       var focus=focusPane||g.subs[0].pane;
       var fb=$('.ng-sub[data-pane="'+focus+'"]'); if(fb) fb.classList.add("active");
+      // deep-link: อัปเดต URL hash ให้แชร์ลิงก์ตรงหัวข้อได้ (#pane-xxx)
+      try{ if(("#pane-"+focus)!==location.hash) history.replaceState(null,"","#pane-"+focus); }catch(e){}
       // หัวหน้ากลุ่ม
       var hero=$("#groupHero");
       if(hero){ hero.innerHTML='<span class="gh-ico">'+g.ico+'</span><div class="gh-tx"><b>'+g.label+'</b><small>'+g.subs.length+' หัวข้อย่อย · เลื่อนดูได้ในหน้าเดียว</small></div>'; }
@@ -8734,12 +10393,73 @@
       });
     }
 
+    // เปิดกลุ่มตาม URL hash (#pane-xxx) ถ้ามี — ไว้ใช้ตอนโหลดหน้าและตอนกด back/forward
+    function paneFromHash(){
+      var m=(location.hash||"").match(/^#pane-(.+)$/);
+      if(m && PANE_GROUP[m[1]]) return m[1];
+      return null;
+    }
+    function showFromHashOrDefault(){
+      var p=paneFromHash();
+      if(p) showGroup(PANE_GROUP[p], p); else showGroup("world");
+    }
+
+    /* ---------- ค้นหาหัวข้อในไซด์บาร์ (77 หัวข้อย่อย) ---------- */
+    function escHtml(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+    function hiliteInto(el, text, q){
+      if(!q){ el.textContent=text; return; }
+      var i=text.toLowerCase().indexOf(q.toLowerCase());
+      if(i<0){ el.textContent=text; return; }
+      el.innerHTML=escHtml(text.slice(0,i))+"<mark>"+escHtml(text.slice(i,i+q.length))+"</mark>"+escHtml(text.slice(i+q.length));
+    }
+    function runNavSearch(q){
+      q=(q||"").trim();
+      var host=$("#sideNav"), noHit=$("#navNoHit"), clearBtn=$("#navSearchClear");
+      if(clearBtn) clearBtn.hidden = !q;
+      var glow=host?host.querySelector(".nav-glow"):null;
+      var anyGroup=false;
+      NAV.forEach(function(g){
+        var grpEl=$('.nav-group[data-group="'+g.id+'"]'); if(!grpEl) return;
+        var lbl=grpEl.querySelector(".ng-label");
+        var groupHit = g.label.toLowerCase().indexOf(q.toLowerCase())>=0;
+        var subHits=0;
+        g.subs.forEach(function(s){
+          var sb=grpEl.querySelector('.ng-sub[data-pane="'+s.pane+'"]'); if(!sb) return;
+          var lab=sb.querySelector(".s-label");
+          var hit = !q || groupHit || s.label.toLowerCase().indexOf(q.toLowerCase())>=0;
+          sb.style.display = hit? "" : "none";
+          if(hit && q && lab) hiliteInto(lab, s.label, groupHit?"":q); else if(lab) lab.textContent=s.label;
+          if(hit) subHits++;
+        });
+        if(lbl) hiliteInto(lbl, g.label, q);
+        var visible = !q ? false : (groupHit || subHits>0);
+        grpEl.style.display = (!q || subHits>0 || groupHit) ? "" : "none";
+        // ระหว่างค้นหา: กางทุกกลุ่มที่มีผลลัพธ์เพื่อให้เห็นหัวข้อย่อย
+        if(q){ grpEl.classList.toggle("open", subHits>0 || groupHit); }
+        if(subHits>0 || groupHit) anyGroup=true;
+      });
+      if(q){ if(glow) glow.classList.remove("on"); }
+      else { // เคลียร์: กลับสู่สถานะ accordion ปกติของกลุ่มที่ active
+        var act=$(".nav-group.active-group");
+        NAV.forEach(function(g){ var el=$('.nav-group[data-group="'+g.id+'"]'); if(el){ el.style.display=""; el.classList.toggle("open", el===act); } });
+        afterPaint(moveNavGlow);
+      }
+      if(noHit){ noHit.hidden = !(q && !anyGroup); var sp=noHit.querySelector("span"); if(sp) sp.textContent=q; }
+    }
+    function initNavSearch(){
+      var inp=$("#navSearch"), clr=$("#navSearchClear");
+      if(inp){ inp.addEventListener("input", function(){ runNavSearch(inp.value); }); }
+      if(clr){ clr.addEventListener("click", function(){ if(inp){ inp.value=""; inp.focus(); } runNavSearch(""); }); }
+    }
+
     function initNav(){
       buildNav();
       $$(".ng-sub").forEach(function(b){
         b.addEventListener("click", function(){ var pane=b.getAttribute("data-pane"); showGroup(PANE_GROUP[pane], pane); });
       });
-      showGroup("world"); // เปิดหัวข้อหลักแรก แสดงหัวข้อรองทั้งหมดในหน้าเดียว
+      showFromHashOrDefault(); // เปิดตามลิงก์ #pane-xxx ถ้ามี ไม่งั้นเปิดกลุ่มแรก
+      window.addEventListener("hashchange", function(){ var p=paneFromHash(); if(p) showGroup(PANE_GROUP[p], p); });
+      initNavSearch();
       // วัดตำแหน่งแถบไฟซ้ำเมื่อ layout/ฟอนต์พร้อม (ครั้งแรกอาจวัดก่อนจัดวางเสร็จ)
       setTimeout(moveNavGlow, 80);
       window.addEventListener("load", moveNavGlow);
