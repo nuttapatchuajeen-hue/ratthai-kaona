@@ -6,8 +6,10 @@
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t='light';/* default light เพื่อให้หน้านี้ดู airy เหมือน machineryofgovernment.uk (สลับมืดได้ด้วยปุ่ม) */document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>โครงสร้างหน่วยงานรัฐไทย</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/bb8-toggle.css">
+<link rel="stylesheet" href="css/global-search.css">
+<script src="js/global-search.js" defer></script>
 <style>
 /* ═══════════════════════════════════════
    THEME TOKENS — Dark (default)
@@ -42,6 +44,11 @@
   --panel-w:    310px;
   --radius:     8px;
   --radius-lg:  13px;
+  /* แสงวิ่งช่องค้นหา (conic) — โทนทองให้เข้าหน้านี้ · มุม --sb-a ขับด้วย rAF ท้ายไฟล์ (เหมือน election/glow.js) */
+  --sb-a:       0deg;
+  --sb-base:    #12100a;
+  --sb-1:       #e8c24e;
+  --sb-2:       #8a6f34;
 }
 
 /* ═══════════════════════════════════════
@@ -57,7 +64,7 @@
   --gold-dim:   #c9a84c;
   --gold-glow:  rgba(160,120,32,.10);
   --text:       #1a2030;
-  --text-dim:   #8a97aa;
+  --text-dim:   #5a6678;   /* was #8a97aa — 2.59:1 บนการ์ดไม่ผ่าน AA · ตอนนี้ 5.10:1 (light) */
   --text-mid:   #4a5568;
   --green:      #0ce760;
   --blue:       #1a65c0;
@@ -72,6 +79,10 @@
   --center-fill:#d4a820;
   --center-str: #8a6010;
   --center-txt: #ffffff;
+  /* แสงวิ่งช่องค้นหา — โทนทองอ่อนสำหรับพื้นสว่าง */
+  --sb-base:    #e8dfca;
+  --sb-1:       #c9a84c;
+  --sb-2:       #a9903f;
 }
 
 /* ═══════════════════════════════════════
@@ -205,7 +216,7 @@ body::before {
   .stat-chip { display: none !important; }
   .hd-right { gap: 6px; align-items: center; }
   #mob-menu-btn { flex-shrink: 0; }
-  #btn-cabinet { font-size: 11px; padding: 4px 10px; min-height: 32px; flex-shrink: 0; }
+  #btn-cabinet { font-size: 12.5px; padding: 4px 10px; min-height: 32px; flex-shrink: 0; }
 
   /* second row pinned to the header bottom — even segmented control */
   .view-toggle {
@@ -214,7 +225,7 @@ body::before {
   }
   .view-btn {
     flex: 1 !important; display: flex; align-items: center; justify-content: center;
-    padding: 6px 4px !important; font-size: 11.5px; min-height: 34px;
+    padding: 6px 4px !important; font-size: 12.5px; min-height: 34px;
   }
   #btn-view-radial::before { content: "◎ "; }
 
@@ -228,8 +239,8 @@ body::before {
     -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   #legend-bar::-webkit-scrollbar { display: none; }
   .leg-section { padding: 6px 10px; flex-shrink: 0; }
-  .leg-section-title { font-size: 7.5px; margin-bottom: 3px; }
-  .leg-item { font-size: 9px; }
+  .leg-section-title { font-size: 12px; margin-bottom: 3px; }
+  .leg-item { font-size: 12px; }
   .leg-dot { width: 7px; height: 7px; }
 
   /* filter pills — horizontal scroll */
@@ -239,7 +250,7 @@ body::before {
     scrollbar-width: none; padding-bottom: 10px;
   }
   .filter-row::-webkit-scrollbar { display: none; }
-  .fp { flex-shrink: 0; white-space: nowrap; font-size: 11px; padding: 5px 10px; }
+  .fp { flex-shrink: 0; white-space: nowrap; font-size: 12.5px; padding: 5px 10px; }
 
   /* ministry list rows */
   .min-row { padding: 8px 12px; }
@@ -268,6 +279,9 @@ body::before {
   /* grid view cards */
   .grid-card { padding: 10px 12px; }
   .grid-card-name { font-size: 12px; }
+  .grid-card-avatar { width: 44px !important; height: 56px !important; }
+  .grid-pm-avatar { width: 60px !important; height: 76px !important; }
+  .grid-pm-name { font-size: 16px !important; }
 
   /* ── Corrupt overlay mobile ── */
   #corrupt-topbar { padding: 10px 12px 0; }
@@ -302,7 +316,7 @@ body::before {
   .corrupt-source {
     grid-column: 1 / -1;
     grid-row: 3;
-    font-size: 9px; margin-top: 3px;
+    font-size: 12px; margin-top: 3px;
   }
   .corrupt-bar-wrap {
     grid-column: 1 / -1;
@@ -316,7 +330,7 @@ body::before {
     padding: 8px 0; font-size: 12px;
     min-height: 36px;
   }
-  .c-sort-btn { padding: 6px 8px; font-size: 10px; min-height: 32px; }
+  .c-sort-btn { padding: 6px 8px; font-size: 12.5px; min-height: 32px; }
   #corrupt-search { padding: 7px 10px; font-size: 13px; }
   .c-results-count { display: none; }
 }
@@ -384,7 +398,7 @@ body::before {
   color: var(--gold); letter-spacing: .2px; line-height: 1.2;
 }
 .hd-brand-text p {
-  font-size: 9.5px; color: var(--text-dim);
+  font-size: 12px; color: var(--text-dim);
   font-family: 'IBM Plex Mono', monospace; letter-spacing: .4px; margin-top: 1px;
 }
 
@@ -394,7 +408,21 @@ body::before {
 }
 
 /* Search */
-.search-wrap { position: relative; flex: 1; max-width: 380px; }
+.search-wrap { position: relative; flex: 1; max-width: 380px; isolation: isolate; }
+/* แสงวิ่ง (conic glow) รอบช่องค้นหา — พอร์ตจาก .searchbox หน้า ส.ส. รีคัลเลอร์เป็นทอง
+   มุมหมุน --sb-a ขับด้วย rAF ท้ายไฟล์ (แทน @property/keyframes ที่มือถือไม่หมุน) */
+.search-wrap::before, .search-wrap::after {
+  content: ""; position: absolute; pointer-events: none; z-index: -1;
+  background: conic-gradient(from var(--sb-a),
+    var(--sb-base), var(--sb-1) 45deg, var(--sb-base) 110deg, var(--sb-base) 180deg,
+    var(--sb-2) 235deg, var(--sb-base) 300deg, var(--sb-base));
+  transition: opacity .25s, filter .25s;
+}
+.search-wrap::before { inset: -4px; border-radius: calc(var(--radius) + 4px); filter: blur(7px);   opacity: .5; }
+.search-wrap::after  { inset: -2px; border-radius: calc(var(--radius) + 2px); filter: blur(1.2px); opacity: .8; }
+.search-wrap:hover::before,  .search-wrap:hover::after        { opacity: .92; }
+.search-wrap:focus-within::before { opacity: .95; filter: blur(8px); }
+.search-wrap:focus-within::after  { opacity: 1;   filter: blur(1px); }
 .search-wrap input {
   width: 100%;
   background: var(--bg3);
@@ -404,6 +432,7 @@ body::before {
   font-family: 'Sarabun', sans-serif; font-size: 13px;
   padding: 6px 12px 6px 34px;
   outline: none;
+  position: relative; z-index: 0;   /* อยู่เหนือแสง conic (z-index:-1) แต่ในสแต็กของ .search-wrap */
   transition: border-color .2s, box-shadow .2s, background .3s, color .3s;
 }
 .search-wrap input:focus {
@@ -437,7 +466,7 @@ body::before {
 .sr-item:last-child { border-bottom: none; }
 .sr-item:hover { background: var(--bg3); }
 .sr-name { font-size: 12.5px; color: var(--text); }
-.sr-sub  { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
+.sr-sub  { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
 
 /* View toggle */
 .view-toggle {
@@ -471,7 +500,7 @@ body::before {
   background: var(--bg3);
   border: 1px solid var(--border);
   border-radius: 20px;
-  font-size: 11px; color: var(--text-mid);
+  font-size: 12.5px; color: var(--text-mid);
   font-family: 'IBM Plex Mono', monospace;
   white-space: nowrap;
   transition: background .3s;
@@ -510,7 +539,7 @@ body::before {
   top: 3px; left: 3px;
   transition: transform .3s cubic-bezier(.175,.885,.32,1.275);
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
+  font-size: 12.5px;
 }
 [data-theme="light"] #theme-toggle .knob { transform: translateX(34px); }
 
@@ -541,7 +570,7 @@ body::before {
   border-bottom: 1px solid var(--border);
 }
 .sb-label {
-  font-size: 9.5px; font-weight: 600;
+  font-size: 12px; font-weight: 600;
   color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.1px;
   font-family: 'IBM Plex Mono', monospace;
   display: flex; align-items: center; gap: 8px;
@@ -559,7 +588,7 @@ body::before {
   padding: 3px 9px;
   border-radius: 20px; border: 1px solid var(--border2);
   background: transparent; color: var(--text-dim);
-  font-family: 'Sarabun', sans-serif; font-size: 10.5px;
+  font-family: 'Sarabun', sans-serif; font-size: 12.5px;
   cursor: pointer; transition: all .14s;
 }
 .fp .sw { width: 6px; height: 6px; border-radius: 50%; }
@@ -594,13 +623,13 @@ body::before {
 }
 .min-item:hover { background: var(--bg3); border-color: var(--border); }
 .min-item.active { background: var(--gold-glow); border-color: var(--gold-dim); }
-.min-id { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--text-dim); min-width: 20px; text-align: right; }
+.min-id { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: var(--text-dim); min-width: 20px; text-align: right; }
 .min-bar { width: 3px; height: 26px; border-radius: 2px; flex-shrink: 0; }
 .min-text { flex: 1; min-width: 0; }
-.min-name { font-size: 11.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.min-count { font-size: 9.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+.min-name { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.min-count { font-size: 12px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
 .min-badge {
-  font-size: 9.5px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-family: 'IBM Plex Mono', monospace;
   color: var(--text-dim); background: var(--bg3);
   border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px;
 }
@@ -611,7 +640,7 @@ body::before {
   display: flex; flex-direction: column; gap: 6px;
   transition: border-color .3s;
 }
-.leg-row { display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: var(--text-mid); }
+.leg-row { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-mid); }
 .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .leg-sq  { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
 .leg-dia { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; transform: rotate(45deg); }
@@ -663,7 +692,7 @@ canvas:active { cursor: grabbing; }
 /* Coords bar */
 #coords {
   position: absolute; bottom: 20px; left: 20px;
-  font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px; font-family: 'IBM Plex Mono', monospace;
   color: var(--text-dim);
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 5px 10px;
@@ -729,12 +758,27 @@ canvas:active { cursor: grabbing; }
 #info-badge {
   display: inline-flex; align-items: center;
   padding: 2px 9px; border-radius: 20px;
-  font-size: 9.5px; font-weight: 600; letter-spacing: .5px;
+  font-size: 12px; font-weight: 600; letter-spacing: .5px;
   margin-bottom: 8px;
   font-family: 'IBM Plex Mono', monospace;
 }
 #info-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; padding-right: 26px; }
-#info-abbr  { font-size: 10.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+#info-abbr  { font-size: 12.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 3px; }
+
+/* ปุ่มฟังเสียงบรรยายกระทรวง (เล่นไฟล์ audio/ministries/min-XX.mp3) */
+#info-audio {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 5px 12px;
+  background: var(--gold-glow); border: 1px solid var(--gold-dim);
+  border-radius: 20px; color: var(--gold);
+  font-family: 'Sarabun', sans-serif; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; transition: background .15s, border-color .15s, color .15s, opacity .15s;
+}
+#info-audio[hidden] { display: none; }
+#info-audio:hover { background: var(--gold-dim); color: var(--center-txt); }
+#info-audio.playing { background: var(--gold); border-color: var(--gold); color: var(--center-txt); }
+#info-audio.missing { opacity: .6; cursor: default; }
+#info-audio:focus-visible { outline: 2px solid var(--gold-dim); outline-offset: 2px; }
 
 .ip-body {
   padding: 12px 16px; max-height: 380px; overflow-y: auto;
@@ -755,14 +799,14 @@ canvas:active { cursor: grabbing; }
 }
 .minister-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11.5px; font-weight: 600; color: var(--text);
+  font-size: 12.5px; font-weight: 600; color: var(--text);
   background: var(--gold-glow); border: 1px solid var(--gold-dim);
   border-radius: 20px; padding: 3px 10px 3px 8px;
   margin: 2px 3px 2px 0;
 }
-.minister-badge::before { content: "👤"; font-size: 10px; }
+.minister-badge::before { content: "👤"; font-size: 12.5px; }
 .minister-role {
-  font-size: 9.5px; color: var(--text-dim); font-weight: 400;
+  font-size: 12px; color: var(--text-dim); font-weight: 400;
   white-space: nowrap;
 }
 .info-val   { color: var(--text); flex: 1; }
@@ -771,7 +815,7 @@ canvas:active { cursor: grabbing; }
 
 #info-orgs-list { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 #info-orgs-list h5 {
-  font-size: 9.5px; font-weight: 600; color: var(--text-dim);
+  font-size: 12px; font-weight: 600; color: var(--text-dim);
   text-transform: uppercase; letter-spacing: 1px;
   font-family: 'IBM Plex Mono', monospace; margin-bottom: 7px;
 }
@@ -779,7 +823,7 @@ canvas:active { cursor: grabbing; }
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 8px;
   background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 5px; font-size: 10.5px; color: var(--text-mid);
+  border-radius: 5px; font-size: 12.5px; color: var(--text-mid);
   cursor: pointer; transition: all .12s; margin: 2px;
 }
 .org-chip:hover { border-color: var(--border2); color: var(--text); background: var(--border); }
@@ -800,7 +844,7 @@ canvas:active { cursor: grabbing; }
   cursor: pointer;
 }
 #cab-panel.state-mini .cab-header:hover { background: var(--gold-glow); }
-#cab-panel.state-mini .cab-header-title { font-size: 10px; }
+#cab-panel.state-mini .cab-header-title { font-size: 12.5px; }
 #cab-panel.state-mini #cab-body { display: none; }
 #cab-panel.state-mini #cab-size-btns { display: none; }
 
@@ -812,7 +856,7 @@ canvas:active { cursor: grabbing; }
   width: 18px; height: 18px;
   background: var(--bg2); border: 1px solid var(--border2);
   border-radius: 4px; color: var(--text-dim);
-  cursor: pointer; font-size: 9px;
+  cursor: pointer; font-size: 12px;
   display: flex; align-items: center; justify-content: center;
   transition: all .14s; flex-shrink: 0;
   line-height: 1;
@@ -832,7 +876,7 @@ canvas:active { cursor: grabbing; }
   display: flex; align-items: stretch; flex-wrap: wrap;
   z-index: 30;
   overflow: hidden;
-  transition: background .3s, border-color .3s;
+  transition: background .3s, border-color .3s, transform .26s cubic-bezier(.4,0,.2,1);
 }
 #legend-bar::before {
   content: '';
@@ -848,7 +892,7 @@ canvas:active { cursor: grabbing; }
 }
 .leg-section:last-child { border-right: none; flex: 1; }
 .leg-section-title {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--gold); font-family: 'IBM Plex Mono', monospace;
   margin-bottom: 7px;
@@ -858,7 +902,7 @@ canvas:active { cursor: grabbing; }
 }
 .leg-item {
   display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--text-mid); white-space: nowrap;
+  font-size: 12.5px; color: var(--text-mid); white-space: nowrap;
   font-family: 'Sarabun', sans-serif;
 }
 .leg-item:hover { color: var(--text); cursor: default; }
@@ -878,6 +922,56 @@ canvas:active { cursor: grabbing; }
   clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
 }
 .li-link { width: 16px; height: 0; flex-shrink: 0; border-top: 2.5px dashed; align-self: center; }
+
+/* ═══════════════════════════════════════
+   PANEL TOGGLES — ปุ่มพับ/กาง แถบข้าง + แถบคำอธิบายล่าง
+═══════════════════════════════════════ */
+.panel-tog {
+  position: absolute; z-index: 32;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  color: var(--text-mid);
+  padding: 0; line-height: 1; cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 14px rgba(0,0,0,.28);
+  transition: color .16s, background .16s, border-color .16s,
+              bottom .26s cubic-bezier(.4,0,.2,1);
+}
+.panel-tog:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+.panel-tog .tog-ar { transition: transform .26s cubic-bezier(.4,0,.2,1); }
+
+/* แถบข้าง — แท็บติดขอบซ้ายของพื้นที่แผนผัง */
+#sb-toggle {
+  left: 0; top: 50%; transform: translateY(-50%);
+  width: 19px; height: 64px;
+  border-left: none; border-radius: 0 9px 9px 0;
+}
+#sb-toggle .tog-ar { font-size: 15px; }
+body.sb-collapsed #sb-toggle .tog-ar { transform: rotate(180deg); }
+
+/* แถบคำอธิบาย — แท็บติดขอบบนของแถบล่าง */
+#leg-toggle {
+  left: 50%; transform: translateX(-50%);
+  bottom: 72px;
+  height: 19px; padding: 0 14px; gap: 7px;
+  border-bottom: none; border-radius: 9px 9px 0 0;
+  font-size: 12.5px; letter-spacing: .03em;
+}
+body.leg-collapsed #leg-toggle .tog-ar { transform: rotate(180deg); }
+
+/* สถานะพับ — เดสก์ท็อป (มือถือ sidebar เป็นลิ้นชักของปุ่มแฮมเบอร์เกอร์อยู่แล้ว) */
+@media (min-width: 641px) {
+  #app { transition: grid-template-columns .26s cubic-bezier(.4,0,.2,1); }
+  body.sb-collapsed #app { grid-template-columns: 0 1fr; }
+  body.sb-collapsed #sidebar { border-right-color: transparent; pointer-events: none; }
+}
+body.leg-collapsed #legend-bar { transform: translateY(100%); }
+
+@media (max-width: 640px) {
+  #sb-toggle { display: none; }
+  #leg-toggle { height: 17px; font-size: 12px; padding: 0 11px; }
+}
 
 
 
@@ -906,7 +1000,7 @@ canvas:active { cursor: grabbing; }
 }
 .grid-party-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
 .party-pill {
-  padding: 3px 10px; border-radius: 20px; font-size: 10px;
+  padding: 3px 10px; border-radius: 20px; font-size: 12.5px;
   font-family: 'IBM Plex Mono', monospace; border: 1px solid; cursor: pointer;
   transition: opacity .15s;
 }
@@ -931,29 +1025,79 @@ canvas:active { cursor: grabbing; }
   background: linear-gradient(135deg, var(--bg2), var(--bg3));
   border: 1px solid var(--gold-dim);
   border-radius: 12px; position: relative; overflow: hidden;
+  isolation: isolate;              /* จำกัด mix-blend-mode ของแสงกวาดไว้ในการ์ด */
 }
 .grid-pm-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  content:''; position:absolute; top:0; left:0; right:0; height:2px; z-index:2;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
+
+/* ── ขอบแสงหมุนรอบการ์ดนายกฯ (เทคนิค dots_border จาก CSS 1 — sparkle button Uiverse) ──
+   .pm-rim = ชั้นครอบทั้งใบ · ::before = ลำแสงทองหมุน · ::after = พื้นทึบด้านในเหลือเป็นขอบ 1.5px */
+.pm-rim { position:absolute; inset:0; border-radius:inherit; overflow:hidden; z-index:0; pointer-events:none; }
+.pm-rim::before {
+  content:''; position:absolute; top:50%; left:50%;
+  width:170%; aspect-ratio:1; translate:-50% -50%;
+  background: conic-gradient(from 0deg, transparent 0 60%, var(--gold) 78%, transparent 92%);
+  animation: pmRimSpin 5s linear infinite;
+}
+.pm-rim::after {
+  content:''; position:absolute; inset:1.5px; border-radius:inherit;
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+}
+@keyframes pmRimSpin { to { rotate: 360deg; } }
+/* เนื้อหาต้องอยู่เหนือชั้นขอบแสง */
+.grid-pm-card > .grid-pm-avatar,
+.grid-pm-card > .grid-pm-info,
+.grid-pm-card > button { position:relative; z-index:2; }
+
+/* แสงกวาดผ่านการ์ดนายกฯ ด้วย (ใช้ ::after เพราะ ::before เป็นเส้นทองด้านบน) */
+.grid-pm-card::after {
+  content:''; position:absolute; inset:0; z-index:3;
+  border-radius:inherit; pointer-events:none; mix-blend-mode:overlay;
+  background: linear-gradient(115deg,
+    transparent 0%, transparent 40%,
+    rgba(255,255,255,.10) 45%, rgba(255,255,255,.30) 50%, rgba(255,255,255,.10) 55%,
+    transparent 60%, transparent 100%);
+  background-size:250% 250%; background-position:100% 100%;
+  transition: background-position .7s cubic-bezier(.23,1,.32,1);
+}
+.grid-pm-card:hover::after { background-position:0% 0%; }
+/* รูปนายกฯ = ทรงสูงใหญ่ (เทียบ .pm-card .portrait หน้า ครม.) */
 .grid-pm-avatar {
-  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
-  background: var(--gold-glow); border: 2px solid var(--gold-dim);
+  width: 72px; height: 92px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(160deg, var(--bg3), var(--bg2));
+  border: 1px solid var(--gold);
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
+  font-size: 26px; position: relative; overflow: visible;
+  box-shadow: 0 6px 20px -6px rgba(0,0,0,.6), 0 0 0 4px var(--gold-glow);
 }
 .grid-pm-info { flex: 1; }
-.grid-pm-name { font-size: 16px; font-weight: 800; color: var(--gold); }
-.grid-pm-role { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.grid-pm-name {
+  font-family: 'Noto Serif Thai', 'Sarabun', serif;
+  font-size: 19px; font-weight: 700; color: var(--gold); line-height: 1.15;
+  display: flex; align-items: center; gap: 9px;
+}
+/* จุดทองเต้นจังหวะ (พอร์ต .pm-tag .dot + @keyframes pmpulse หน้า ครม.) */
+.grid-pm-name::before {
+  content:''; width:8px; height:8px; border-radius:50%; flex:none;
+  background: var(--gold); animation: pmpulse 2.4s infinite;
+}
+@keyframes pmpulse {
+  0%   { box-shadow: 0 0 0 0 var(--gold-glow); }
+  70%  { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.grid-pm-role { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
 .grid-pm-meta { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
 .grid-pm-badge {
-  padding: 2px 10px; border-radius: 20px; font-size: 9.5px;
+  padding: 2px 10px; border-radius: 20px; font-size: 12px;
   font-family: 'IBM Plex Mono', monospace;
 }
 
 /* Section headers */
 .grid-section-hd {
-  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  font-size: 12.5px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase; color: var(--text-dim);
   font-family: 'IBM Plex Mono', monospace;
   margin: 10px 0 8px; padding-bottom: 5px;
@@ -967,31 +1111,143 @@ canvas:active { cursor: grabbing; }
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 8px; margin-bottom: 8px;
+  perspective: 900px;              /* ให้การ์ดเอียง 3D ตอน hover ได้ (ลูกเล่นจาก CSS 1 — ticket Uiverse) */
 }
 .grid-card {
+  /* ── สไตล์เดียวกับหน้า "ชุดคณะรัฐมนตรี" (พอร์ต .mcard จาก cabinet/index.html) ──
+     สปอตไลต์ทองวิ่งตามเคอร์เซอร์: --x/--y/--xp ตั้งบน :root โดย js/cursor-glow.js
+     คู่กับ background-attachment:fixed → การ์ดทุกใบเรืองต่อเนื่องเป็นผืนเดียวตามเมาส์จริง */
+  --c-base: 44;          /* hue เริ่มต้น ≈ ทอง */
+  --c-spread: 16;        /* ไล่ในโทนทอง (44–60) */
+  --c-size: 190;         /* เส้นผ่านศูนย์กลางสปอตไลต์ (px) */
+  --c-border: 2;         /* ความหนาขอบเรืองแสง (px) */
+  --c-spot: calc(var(--c-size) * 1px);
+  --c-hue: calc(var(--c-base) + (var(--xp, .5) * var(--c-spread)));
+  display: flex; gap: 12px; align-items: center;
   padding: 12px 14px;
-  background: var(--bg2); border: 1px solid var(--border);
+  background:
+    radial-gradient(var(--c-spot) var(--c-spot) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),
+      hsl(var(--c-hue) 96% 62% / .16), transparent 68%) center/100% 100% fixed no-repeat,
+    linear-gradient(180deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border);
   border-radius: 10px; border-left: 3px solid var(--gcard-color, #888);
-  cursor: pointer; transition: all .15s;
-  animation: fadeInUp .2s ease both;
+  cursor: pointer;
+  transition: transform .28s cubic-bezier(.23,1,.32,1), box-shadow .28s ease, background .15s, border-color .15s;
+  /* ⚠️ ต้องเป็น backwards ไม่ใช่ both — fill:both คงค่า transform:translateY(0) ของคีย์เฟรมไว้
+     แล้วค่า animation ชนะ CSS ปกติ → transform ตอน hover ไม่ทำงานเลย */
+  animation: fadeInUp .2s ease backwards;
   position: relative;
+  isolation: isolate;              /* จำกัด mix-blend-mode ของแสงกวาดไว้ในการ์ด */
+  transform-style: preserve-3d;
 }
-.grid-card:hover { background: var(--bg3); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+.grid-card:hover {
+  /* เอียง 3D เล็กน้อย — ยกจากแบนให้มีมิติ (องศาน้อยๆ กันเวียนหัว) */
+  transform: translateY(-3px) rotateX(4deg) rotateY(-5deg) scale(1.02);
+  border-color: var(--gold-line, var(--gold-dim));
+  /* เงาลึก + เรืองทองตามตำแหน่งเมาส์ (สูตรเดียวกับ .mcard:hover หน้า ครม.) */
+  box-shadow: 0 24px 50px -34px rgba(0,0,0,.9), 0 0 34px -10px hsl(var(--c-hue) 92% 55% / .28);
+}
+.grid-card:active { transform: translateY(-1px) rotateX(8deg) rotateY(-2deg) scale(.985); }
+
+/* ── แสงกวาดผ่านการ์ด (holographic sheen จาก CSS 1 — ticket Uiverse) ── */
+.grid-card::before {
+  content:''; position:absolute; inset:0; z-index:3;
+  border-radius:inherit; pointer-events:none;
+  mix-blend-mode: overlay;
+  background: linear-gradient(115deg,
+    transparent 0%, transparent 40%,
+    rgba(255,255,255,.10) 45%, rgba(255,255,255,.34) 50%, rgba(255,255,255,.10) 55%,
+    transparent 60%, transparent 100%);
+  background-size: 250% 250%;
+  background-position: 100% 100%;
+  transition: background-position .65s cubic-bezier(.23,1,.32,1);
+}
+.grid-card:hover::before { background-position: 0% 0%; }
+/* ── ขอบเรืองแสงตามเคอร์เซอร์ (พอร์ต .mcard::after หน้า ครม. — mask-composite เผยเฉพาะวงขอบ) ── */
+.grid-card::after {
+  content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
+  border: calc(var(--c-border) * 1px) solid transparent; border-radius: inherit;
+  background:
+    radial-gradient(calc(var(--c-spot)*.5) calc(var(--c-spot)*.5) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),
+      hsl(0 0% 100% / .9), transparent 100%) center/100% 100% fixed no-repeat,
+    radial-gradient(calc(var(--c-spot)*.75) calc(var(--c-spot)*.75) at calc(var(--x,0)*1px) calc(var(--y,0)*1px),
+      hsl(var(--c-hue) 96% 60% / 1), transparent 100%) center/100% 100% fixed no-repeat;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: brightness(1.35);
+}
+/* รูปทรงสูงแบบ .portrait หน้า ครม. (ไม่ใช่สี่เหลี่ยมจัตุรัส) */
 .grid-card-avatar {
-  width: 32px; height: 32px; border-radius: 8px; float: right;
-  background: var(--bg3); border: 1px solid var(--border2);
+  width: 52px; height: 66px; border-radius: 9px; flex: none;
+  background: linear-gradient(160deg, var(--bg3), var(--bg2));
+  border: 1px solid var(--gold-dim);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; margin-left: 8px; flex-shrink: 0;
+  font-size: 15px;
+  position: relative; overflow: visible;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,.4);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
 }
-.grid-card-name { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.35; }
-.grid-card-role { font-size: 10px; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+/* ม่านทองไล่ที่ก้นรูป (เหมือน .portrait::after หน้า ครม.) */
+.grid-card-avatar::after,
+.grid-pm-avatar::after {
+  content:''; position:absolute; inset:0; z-index:3; pointer-events:none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, transparent 55%, var(--gold-glow));
+}
+.gc-info { min-width: 0; flex: 1; }
+.grid-card:hover .grid-card-avatar {
+  border-color: var(--gcard-color, var(--border2)); transform: scale(1.04);
+  box-shadow: 0 4px 14px -3px rgba(0,0,0,.5);
+}
+
+/* ── รูปคนในกรอบ avatar (ใช้ .cab-pf จากโมดัลประวัติ) ── */
+/* ⚠️ ต้องกำหนด width/height ทับ — .cab-pf ของโมดัลตั้งไว้ 84×104px จะดันรูปล้นกรอบ */
+.grid-card-avatar .cab-pf,
+.grid-pm-avatar .cab-pf {
+  position:absolute; inset:0; width:100%; height:100%;
+  border-radius:inherit; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; background:var(--bg3);
+}
+.grid-card-avatar .cab-pf img,
+.grid-pm-avatar .cab-pf img {
+  width:100%; height:100%; object-fit:cover; object-position:50% 16%; display:block;  /* ครอปแบบเดียวกับ .portrait หน้า ครม. */
+}
+/* ไม่มีรูป → โชว์อักษรย่อชื่อ (monogram) */
+.grid-card-avatar .cab-pf .cab-mono,
+.grid-pm-avatar  .cab-pf .cab-mono { display:none; }
+.grid-card-avatar .cab-pf.noimg .cab-mono,
+.grid-pm-avatar  .cab-pf.noimg .cab-mono {
+  display:block; font-weight:800; color:var(--gold);
+  font-size:18px; line-height:1;
+}
+.grid-pm-avatar .cab-pf.noimg .cab-mono { font-size:26px; }
+/* emoji ประจำตำแหน่ง → ป้ายเล็กมุมล่างขวา (ไม่บังรูป) */
+.gc-emoji {
+  position:absolute; right:-5px; bottom:-5px; z-index:2;
+  width:19px; height:19px; border-radius:50%;
+  background:var(--bg2); border:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 12.5px; line-height:1;
+  box-shadow:0 2px 6px rgba(0,0,0,.45);
+}
+.grid-pm-avatar .gc-emoji {
+  width:26px; height:26px; font-size:14px; right:-7px; bottom:-7px;
+  background:var(--gold); border-color:var(--gold); color:var(--center-txt);
+}
+/* ชื่อ = serif · ตำแหน่ง = ทอง (โทนเดียวกับ .mc-info หน้า ครม.) */
+.grid-card-name {
+  font-family: 'Noto Serif Thai', 'Sarabun', serif;
+  font-size: 13.5px; font-weight: 600; color: var(--text); line-height: 1.25;
+}
+.grid-card-role { font-size: 12.5px; color: var(--gold); font-weight: 600; margin-top: 3px; line-height: 1.4; }
 .grid-card-footer { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
 .grid-card-party {
-  font-size: 8.5px; padding: 1px 7px; border-radius: 10px;
+  font-size: 12px; padding: 1px 7px; border-radius: 10px;
   font-family: 'IBM Plex Mono', monospace; border: 1px solid; flex-shrink: 0;
 }
 .grid-card-min-btn {
-  margin-left: auto; font-size: 9px;
+  margin-left: auto; font-size: 12px;
   padding: 2px 7px; border-radius: 5px;
   border: 1px solid var(--border2); background: var(--bg3);
   color: var(--text-dim); cursor: pointer; transition: all .14s;
@@ -1003,7 +1259,7 @@ canvas:active { cursor: grabbing; }
 .grid-footer {
   flex-shrink: 0; padding: 8px 20px;
   border-top: 1px solid var(--border); background: var(--bg2);
-  font-size: 9.5px; color: var(--text-dim);
+  font-size: 12px; color: var(--text-dim);
   display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap;
   font-family: 'IBM Plex Mono', monospace;
 }
@@ -1057,7 +1313,7 @@ canvas:active { cursor: grabbing; }
   border-radius: 8px; padding: 8px 14px; flex: 1; min-width: 100px;
 }
 .c-stat-val { font-size: 22px; font-weight: 900; color: var(--red); font-family:'IBM Plex Mono',monospace; line-height:1; }
-.c-stat-lbl { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+.c-stat-lbl { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
 
 /* search + sort row */
 .corrupt-controls {
@@ -1075,13 +1331,13 @@ canvas:active { cursor: grabbing; }
 .c-sort-btn {
   padding: 5px 10px; border-radius: 6px;
   border: 1px solid var(--border2); background: var(--bg2);
-  color: var(--text-mid); font-size: 10.5px; cursor: pointer;
+  color: var(--text-mid); font-size: 12.5px; cursor: pointer;
   font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
   transition: all .14s;
 }
 .c-sort-btn:hover, .c-sort-btn.active { color: var(--red); border-color: var(--red); background: rgba(248,113,113,.08); }
 .c-results-count {
-  font-size: 10px; color: var(--text-dim);
+  font-size: 12.5px; color: var(--text-dim);
   font-family: 'IBM Plex Mono', monospace; margin-left: auto; white-space: nowrap;
 }
 
@@ -1129,12 +1385,12 @@ canvas:active { cursor: grabbing; }
   background: var(--bg3); border: 1px solid var(--border2);
   color: var(--orange);
   padding: 1px 7px; border-radius: 10px;
-  font-size: 9.5px;
+  font-size: 12px;
   font-family: 'IBM Plex Mono', monospace;
 }
 .corrupt-source {
   grid-column: 2; grid-row: 3;
-  font-size: 9.5px; color: var(--text-dim);
+  font-size: 12px; color: var(--text-dim);
   margin-top: 4px; font-style: italic;
 }
 .corrupt-bar-wrap {
@@ -1154,7 +1410,7 @@ canvas:active { cursor: grabbing; }
   align-self: center;
   padding: 4px 9px; border-radius: 6px;
   border: 1px solid var(--border2); background: var(--bg3);
-  color: var(--text-dim); font-size: 10px; cursor: pointer;
+  color: var(--text-dim); font-size: 12.5px; cursor: pointer;
   font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
   transition: all .14s; display: flex; align-items: center; gap: 4px;
 }
@@ -1167,7 +1423,7 @@ canvas:active { cursor: grabbing; }
   padding: 10px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg2);
-  font-size: 9.5px; color: var(--text-dim); font-style: italic;
+  font-size: 12px; color: var(--text-dim); font-style: italic;
   display: flex; gap: 16px; flex-wrap: wrap;
 }
 
@@ -1190,18 +1446,18 @@ canvas:active { cursor: grabbing; }
 }
 .cpi-score-num { font-size: 46px; font-weight: 800; line-height: 1; color: var(--red); font-family: 'Bebas Neue', Archivo, sans-serif; }
 .cpi-score-den { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-.cpi-score-lbl { font-size: 11px; color: var(--text-mid); margin-top: 6px; }
+.cpi-score-lbl { font-size: 12.5px; color: var(--text-mid); margin-top: 6px; }
 .cpi-rank { font-size: 12px; color: var(--text); margin-top: 7px; }
 .cpi-rank b { color: var(--orange); font-size: 15px; }
 .cpi-trend { display: flex; flex-direction: column; gap: 9px; }
 .cpi-trend-row { display: flex; align-items: center; gap: 9px; }
-.cpi-trend-yr { font-size: 11px; color: var(--text-dim); width: 64px; flex: none; }
+.cpi-trend-yr { font-size: 12.5px; color: var(--text-dim); width: 64px; flex: none; }
 .cpi-trend-track { flex: 1; height: 13px; background: var(--bg3); border-radius: 7px; overflow: hidden; }
 .cpi-trend-fill { height: 100%; border-radius: 7px; }
-.cpi-trend-val { font-size: 11px; font-weight: 700; color: var(--text); width: 30px; text-align: right; flex: none; }
-.cpi-note { font-size: 11px; color: var(--text-mid); margin-top: 11px; line-height: 1.6; }
+.cpi-trend-val { font-size: 12.5px; font-weight: 700; color: var(--text); width: 30px; text-align: right; flex: none; }
+.cpi-note { font-size: 12.5px; color: var(--text-mid); margin-top: 11px; line-height: 1.6; }
 .cpi-note b { color: var(--text); }
-.cpi-asean { font-size: 10.5px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
+.cpi-asean { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
 #corrupt-types { margin-top: 8px; }
 .ctype-row {
   display: flex; align-items: flex-start; gap: 10px;
@@ -1229,7 +1485,7 @@ canvas:active { cursor: grabbing; }
 .crd-close:hover { background: var(--border2); }
 .crd-head { padding: 22px 46px 15px 24px; border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, rgba(248,113,113,.10), transparent); }
-.crd-rankbadge { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--red);
+.crd-rankbadge { display: inline-block; font-size: 12.5px; font-weight: 700; color: var(--red);
   border: 1px solid var(--red); border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; }
 .crd-name { font-size: 19px; font-weight: 800; line-height: 1.25; }
 .crd-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
@@ -1241,14 +1497,14 @@ canvas:active { cursor: grabbing; }
 .crd-stat { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 .crd-stat > div { flex: 1; min-width: 116px; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px; }
 .crd-stat b { display: block; font-size: 16px; color: var(--text); }
-.crd-stat span { font-size: 10.5px; color: var(--text-dim); }
-.crd-onote { font-size: 11.5px; color: var(--text-mid); margin-top: 9px; line-height: 1.5; }
+.crd-stat span { font-size: 12.5px; color: var(--text-dim); }
+.crd-onote { font-size: 12.5px; color: var(--text-mid); margin-top: 9px; line-height: 1.5; }
 .crd-case { border-left: 3px solid var(--red); background: var(--bg3); border-radius: 0 9px 9px 0; padding: 9px 12px; margin-top: 8px; }
 .crd-case-t { font-size: 12.5px; font-weight: 700; color: var(--text); }
-.crd-case-d { font-size: 11.5px; color: var(--text-mid); line-height: 1.5; margin-top: 3px; }
-.crd-case a { color: var(--gold); font-size: 11px; text-decoration: none; display: inline-block; margin-top: 5px; }
+.crd-case-d { font-size: 12.5px; color: var(--text-mid); line-height: 1.5; margin-top: 3px; }
+.crd-case a { color: var(--gold); font-size: 12.5px; text-decoration: none; display: inline-block; margin-top: 5px; }
 .crd-case a:hover { text-decoration: underline; }
-.crd-note { font-size: 10.5px; color: var(--text-dim); font-style: italic; margin-top: 16px; line-height: 1.55; border-top: 1px dashed var(--border); padding-top: 11px; }
+.crd-note { font-size: 12.5px; color: var(--text-dim); font-style: italic; margin-top: 16px; line-height: 1.55; border-top: 1px dashed var(--border); padding-top: 11px; }
 @media (max-width:560px){ .crd-stat > div { min-width: 45%; } }
 
 /* ═══════════════════════════════════════
@@ -1262,6 +1518,18 @@ canvas:active { cursor: grabbing; }
   pointer-events: none; z-index: 999; display: none;
   max-width: 220px; line-height: 1.4;
   box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  transition: background .3s;
+}
+/* หัวลูกศรชี้จากกล่องป้ายชื่อกลับไปที่โหนด (ฝั่งซ้ายของกล่อง) */
+#tooltip::after {
+  content: '';
+  position: absolute;
+  left: -6px; top: 5px;
+  width: 10px; height: 10px;
+  background: var(--bg2);
+  border-left: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  transform: rotate(45deg);
   transition: background .3s;
 }
 
@@ -1298,7 +1566,7 @@ canvas:active { cursor: grabbing; }
   background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
 }
 .cab-header-title {
-  font-size: 11px; font-weight: 700; color: var(--gold);
+  font-size: 12.5px; font-weight: 700; color: var(--gold);
   letter-spacing: .5px; text-transform: uppercase;
   font-family: 'IBM Plex Mono', monospace;
   display: flex; align-items: center; gap: 6px;
@@ -1307,7 +1575,7 @@ canvas:active { cursor: grabbing; }
   width: 20px; height: 20px;
   background: var(--bg2); border: 1px solid var(--border2);
   border-radius: 5px; color: var(--text-dim);
-  cursor: pointer; font-size: 11px;
+  cursor: pointer; font-size: 12.5px;
   display: flex; align-items: center; justify-content: center;
   transition: all .14s; flex-shrink: 0;
 }
@@ -1333,12 +1601,12 @@ canvas:active { cursor: grabbing; }
 }
 .cab-pm-info { flex: 1; min-width: 0; }
 .cab-pm-name { font-size: 12px; font-weight: 700; color: var(--gold); line-height: 1.3; }
-.cab-pm-role { font-size: 9.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+.cab-pm-role { font-size: 12px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
 
 /* Section header */
 .cab-section-hd {
   padding: 7px 14px 4px;
-  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase; color: var(--text-dim);
   font-family: 'IBM Plex Mono', monospace;
   border-bottom: 1px solid var(--border);
@@ -1357,10 +1625,10 @@ canvas:active { cursor: grabbing; }
 
 .cab-row-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
 .cab-row-info { flex: 1; min-width: 0; }
-.cab-row-name { font-size: 11.5px; color: var(--text); font-weight: 600; line-height: 1.35; }
-.cab-row-role { font-size: 9.5px; color: var(--text-dim); margin-top: 2px; line-height: 1.3; }
+.cab-row-name { font-size: 12.5px; color: var(--text); font-weight: 600; line-height: 1.35; }
+.cab-row-role { font-size: 12px; color: var(--text-dim); margin-top: 2px; line-height: 1.3; }
 .cab-row-party {
-  font-size: 8.5px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-family: 'IBM Plex Mono', monospace;
   padding: 1px 6px; border-radius: 10px; margin-top: 3px; display: inline-block;
   background: var(--bg3); color: var(--text-mid); border: 1px solid var(--border2);
 }
@@ -1555,7 +1823,7 @@ body {
 }
 
 /* §6 Color — lift secondary-text legibility in dark mode (≈ better contrast) */
-[data-theme="dark"] { --text-dim: #6c7b8f; }
+[data-theme="dark"] { --text-dim: #7c8ba0; } /* was #6c7b8f — 4.08:1 บนการ์ดไม่ผ่าน AA · ตอนนี้ 5.08:1 */
 
 /* §1 Accessibility — visible keyboard focus rings (mouse clicks unaffected) */
 .view-btn:focus-visible, .fp:focus-visible, .action-btn:focus-visible,
@@ -1600,6 +1868,7 @@ body {
 /* §1 Reduced-motion — neutralize decorative motion (transitions kept for usability) */
 @media (prefers-reduced-motion: reduce) {
   .min-item { animation: none !important; }
+  .pm-rim::before { animation: none !important; }   /* ขอบแสงหมุนการ์ดนายกฯ — หยุดหมุน (คงขอบทองไว้) */
   .grid-card:hover, .corrupt-card:hover,
   .min-item:hover, .view-btn:hover, .fp:hover,
   .action-btn:hover, .zbtn:hover, #btn-cabinet:hover { transform: none !important; }
@@ -1640,7 +1909,7 @@ body {
 }
 .sitenav-label {
   padding: 7px 12px 5px;
-  font-size: 9px; font-weight: 600;
+  font-size: 12px; font-weight: 600;
   color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.1px;
   font-family: 'IBM Plex Mono', monospace;
   border-bottom: 1px solid var(--border);
@@ -1658,7 +1927,7 @@ body {
 .sitenav-ico { width: 20px; text-align: center; flex-shrink: 0; }
 .sitenav-now {
   margin-left: auto;
-  font-size: 8.5px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-family: 'IBM Plex Mono', monospace;
   color: var(--gold); border: 1px solid var(--gold-dim);
   border-radius: 20px; padding: 2px 7px; letter-spacing: .5px;
 }
@@ -1765,6 +2034,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       </label>
 
       <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()">👑 ครม.</button>
+      <button class="action-btn" id="btn-export" title="บันทึกภาพแผนภาพเป็นไฟล์ PNG (มุมมองปัจจุบัน)">📷</button>
       <button class="action-btn" id="btn-reset" title="รีเซตมุมมอง">⟳</button>
       <button id="btn-sitenav" title="เมนูหน้าอื่นๆ ของ รัฐไทยก้าวหน้า" aria-expanded="false" aria-controls="sitenav-menu" onclick="toggleSiteNav(event)">▤<span class="snv-txt"> เมนู</span></button>
     </div>
@@ -1798,6 +2068,28 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && menu.classList.contains('show')) closeNav();
     });
+  })();
+  </script>
+
+  <!-- ══════ แสงวิ่งช่องค้นหา: ขับมุม conic --sb-a ทุกเฟรม (พอร์ตจาก election/glow.js) ══════ -->
+  <script>
+  (function(){
+    var box = document.querySelector('.search-wrap');
+    if(!box || !window.requestAnimationFrame) return;
+    var SLOW = 40, FAST = 120;                 // องศา/วินาที: ปกติ ~9วิ/รอบ · โฟกัส/hover ~3วิ/รอบ
+    var root = document.documentElement, angle = 0, last = 0;
+    function active(){ return box.matches(':focus-within') || box.matches(':hover'); }
+    function tick(now){
+      if(document.hidden){ last = 0; return; }  // แท็บซ่อน → พัก (ประหยัดแบต)
+      if(!last) last = now;
+      var dt = (now - last) / 1000; last = now;
+      if(dt > 0.1) dt = 0.1;                    // กันกระโดดตอนสลับแท็บกลับมา
+      angle = (angle + (active() ? FAST : SLOW) * dt) % 360;
+      root.style.setProperty('--sb-a', angle.toFixed(1) + 'deg');
+      requestAnimationFrame(tick);
+    }
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) requestAnimationFrame(tick); });
+    requestAnimationFrame(tick);
   })();
   </script>
 
@@ -1839,6 +2131,18 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
   <!-- ══════════════ CANVAS ══════════════ -->
   <main id="main">
     <canvas id="canvas"></canvas>
+
+    <!-- ปุ่มพับ/กาง แถบด้านข้าง -->
+    <button class="panel-tog" id="sb-toggle" title="ซ่อน/แสดง แถบด้านข้าง"
+            aria-controls="sidebar" aria-expanded="true" onclick="togglePanel('sb')">
+      <span class="tog-ar">‹</span>
+    </button>
+
+    <!-- ปุ่มพับ/กาง แถบคำอธิบายด้านล่าง -->
+    <button class="panel-tog" id="leg-toggle" title="ซ่อน/แสดง แถบคำอธิบายสัญลักษณ์"
+            aria-controls="legend-bar" aria-expanded="true" onclick="togglePanel('leg')">
+      <span class="tog-ar">▾</span><span>คำอธิบายสัญลักษณ์</span>
+    </button>
 
     <div id="zoom-ctrl">
       <button class="zbtn" id="zin">+</button>
@@ -2011,6 +2315,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <div id="info-badge"></div>
     <div id="info-title"></div>
     <div id="info-abbr"></div>
+    <button id="info-audio" type="button" hidden aria-label="ฟังเสียงบรรยายกระทรวงนี้">🔊 ฟังเสียง</button>
   </div>
   <div class="ip-body">
     <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="info-cat"></span></div>
@@ -2129,7 +2434,7 @@ MINISTRIES.forEach((m, i) => {
     <span class="min-id">${m.id}</span>
     <div class="min-bar" style="background:${color}"></div>
     <div class="min-text">
-      <div class="min-name">${m.name.replace('กระทรวง','').replace('สำนักนายกรัฐมนตรี','สนร.').replace('ส่วนราชการไม่สังกัดกระทรวง','ไม่สังกัดกระทรวง').replace('หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร','ไม่อยู่ในบังคับบัญชาฝ่ายบริหาร') || m.name}</div>
+      <div class="min-name" title="${m.name}">${m.name.replace('กระทรวง','').replace('สำนักนายกรัฐมนตรี','สนร.').replace('ส่วนราชการไม่สังกัดกระทรวง','ไม่สังกัดกระทรวง').replace('หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร','ไม่อยู่ในบังคับบัญชาฝ่ายบริหาร') || m.name}</div>
       <div class="min-count">${m.orgs.length} หน่วยงาน</div>
     </div>
     <span class="min-badge">${m.orgs.length}</span>
@@ -2170,6 +2475,12 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let W, H;
 let offsetX = 0, offsetY = 0, scale = 1;
+/* ── ขนาดป้ายบน canvas ตามระดับซูม ─────────────────────────────────────────
+   เดิมใช้ Math.min(cap, base/scale) → บนจอจริง = min(base×scale, cap)
+   = ซูมเข้าเท่าไหร่ป้ายก็ค้างที่ 9–13px ผู้ใช้จึงอ่านชื่อ 760 หน่วยงานไม่ออก
+   ใหม่: ให้ป้ายโตตามซูมแบบนุ่ม (√scale) มีพื้นล่าง base×0.9 และเพดาน base×1.8
+   (คืนค่า "ก่อนคูณ scale" เพราะ ctx.scale(scale) คูณให้อีกที) */
+function lblFs(base){ return base * Math.min(1.8, Math.max(0.9, Math.sqrt(scale))) / scale; }
 let isDragging = false, dragStartX, dragStartY, dragOffX, dragOffY;
 let nodes = [], hoveredNode = null, selectedNode = null;
 let connectedSet = null;  // used in draw() for highlighting connections
@@ -2245,8 +2556,10 @@ const RELATIONS = {
 const REL_SOURCE = 'อ้างอิงอำนาจตาม รธน. 2560 · พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน · กฎหมายจัดตั้งแต่ละองค์กร';
 // คืน key 'ministryID|no' ของโหนด org (ใช้จับคู่ความสัมพันธ์)
 function relKey(n){ return (n && n.type==='org' && n.data) ? (n.ministryID + '|' + n.data.no) : null; }
-// โหนดที่ "ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร" (กระทรวง id 24: ศาล/องค์กรอิสระ/อัยการ/รัฐสภา) → อยู่ในวงปกติ แต่ไม่โยงถึงนายกฯ
-function notPM(n){ return !!(n && (n.standalone || n.ministryID === '24')); }
+// โหนดที่ไม่โยงเส้นถึงนายกฯ (วาดเส้นประ · ไม่รวมใน connectedSet ของนายกฯ):
+//   id 24 = ศาล/องค์กรอิสระ/อัยการ/รัฐสภา (นอกบังคับบัญชาฝ่ายบริหาร)
+//   id 23 = ส่วนราชการไม่สังกัดกระทรวง (ไม่สังกัดสำนักนายกฯ/กระทรวง/ทบวง)
+function notPM(n){ return !!(n && (n.standalone || n.ministryID === '24' || n.ministryID === '23')); }
 // ตัดบรรทัดข้อความตามความกว้าง (ใช้ ctx ปัจจุบัน — ตั้ง font ก่อนเรียก); ไทยยาวเกินบรรทัดจะตัดทีละอักษร
 function wrapText(text, maxW){
   const words = String(text).split(' '), lines = []; let cur = '';
@@ -2285,6 +2598,35 @@ function drawArrowHead(fx, fy, tx, ty, color, size, inset) {
   ctx.fill();
 }
 
+/* ระยะจากกึ่งกลางโหนด n ถึง "ขอบที่วาดจริง" ตามแนวที่เส้นวิ่งเข้ามาจาก (fx,fy) — หน่วย world.
+   ต้องคิดตัวคูณ 1.4 ตอน hover/เลือก และรูปทรงจริง (กระทรวง = สี่เหลี่ยม ไม่ใช่วงกลม)
+   ไม่งั้นตอนซูมเข้า ปลายลูกศรจะไปจมอยู่ใต้ตัวโหนดแล้วโดนวาดทับจนมองไม่เห็น */
+function nodeEdgeDist(n, fx, fy) {
+  if(!n) return 0;
+  const act = (n === hoveredNode || n === selectedNode);   // โหนดถูกวาดโต 1.4 เท่า
+  const r = act ? n.r * 1.4 : n.r;
+  if(n.type === 'ministry') {
+    const hs = r * 0.92 + (act ? 4 : 0);                    // ครึ่งด้าน + วงเรืองตอน hover
+    const dx = n.x - fx, dy = n.y - fy, L = Math.hypot(dx, dy) || 1;
+    const m = Math.max(Math.abs(dx / L), Math.abs(dy / L)) || 1;
+    return hs / m;                                          // ขอบสี่เหลี่ยมตามทิศนั้นจริง ๆ
+  }
+  if(n.type === 'center') return r + (act ? 6 : 0);
+  // org / รัฐมนตรี — สไปรท์กินถึง r+1.6 · วงแหวนกำกับ r+4.5 · hover r+4 · เลนส์นายกฯ r+6
+  let ext = 1.6;
+  const _k = relKey(n);
+  if(_k && RELATIONS[_k]) ext = Math.max(ext, 4.5);
+  if(pmLens && isPmDirect(n)) ext = Math.max(ext, 6);
+  if(act) ext = Math.max(ext, 4);
+  return r + ext;
+}
+
+/* หน่วยขนาดของ "เส้นเชื่อม + หัวลูกศร": ต่ำกว่าซูม 1.6 = คงขนาดพิกเซลบนจอ
+   (ซูมออกแล้วเส้นไม่หนาเทอะทะจนรก) · เกินนั้นคงขนาดใน world → ซูมเข้าแล้ว
+   เส้นและลูกศรโตตามโหนด ไม่บางจนหายไปข้างโหนดที่กว้างเป็นร้อยพิกเซล */
+const EDGE_ZOOM_CAP = 1.6;
+function edgeUnit() { return 1 / Math.min(scale, EDGE_ZOOM_CAP); }
+
 // Curved radial edge (d3 curveBumpRadial style): each end leaves radially and the
 // angular swing happens at the mid radius → graceful bundled curves, not straight rays.
 // Draws from (x0,y0) to (x1,y1) into the CURRENT path; returns the control point next
@@ -2307,12 +2649,14 @@ function radialBump(x0, y0, x1, y1, cx, cy) {
 function resize() {
   const MAIN = document.getElementById('main');
   const LEG  = document.getElementById('legend-bar');
-  const legH = LEG ? LEG.offsetHeight : 72;
+  // แถบคำอธิบายถูกพับอยู่ → คืนพื้นที่ให้ผืนผ้าใบเต็มความสูง
+  const legH = document.body.classList.contains('leg-collapsed') ? 0 : (LEG ? LEG.offsetHeight : 72);
   // keep zoom controls / coords above the (possibly wrapped, taller) legend bar
   ['zoom-ctrl','coords'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.setProperty('bottom', (legH + 16) + 'px', 'important');
   });
+  syncLegToggleBtn();
   const dpr = window.devicePixelRatio || 1;
   W = MAIN.clientWidth;
   H = MAIN.clientHeight - legH;
@@ -3054,11 +3398,11 @@ function draw() {
       ctx.beginPath();
       if(edgeConnected) {
         ctx.strokeStyle = mn.color+'dd';
-        ctx.lineWidth = 1.9 / scale;          // ~1.9px on screen at any zoom
+        ctx.lineWidth = 1.9 * edgeUnit();     // ~1.9px on screen, หนาขึ้นเมื่อซูมเกิน cap
       } else {
         // เหมือน machineryofgovernment.uk: เส้นพื้นหลังเป็นเทาจาง ๆ สม่ำเสมอ (สีจะเด่นเฉพาะตอนเลือก)
         ctx.strokeStyle = edgeOrg;
-        ctx.lineWidth = 0.95 / scale;         // crisp hairline, never sub-pixel
+        ctx.lineWidth = 0.95 * edgeUnit();    // crisp hairline, never sub-pixel
       }
       // curved bump toward the centre (standalone clusters orbit a local hub → keep straight)
       let _afx, _afy;
@@ -3072,9 +3416,10 @@ function draw() {
       ctx.stroke();
       // directional arrowhead at the org end — tangent follows the curve
       if (showArrows) {
-        const aSize = (edgeConnected ? 3.4 : 2.3) / scale;   // ~constant px at any zoom
+        const _au   = edgeUnit();
+        const aSize = (edgeConnected ? 3.4 : 2.3) * _au;
         const aCol  = edgeConnected ? (mn.color + 'ee') : edgeOrg;   // ปกติเทา, เลือกแล้วเป็นสีกระทรวง
-        drawArrowHead(_afx, _afy, n.x, n.y, aCol, aSize, n.r + 2.5/scale);
+        drawArrowHead(_afx, _afy, n.x, n.y, aCol, aSize, nodeEdgeDist(n, _afx, _afy) + 2.5*_au);
       }
     }
   });
@@ -3096,25 +3441,26 @@ function draw() {
       } else {
         ctx.strokeStyle = edgeMin;
       }
-      ctx.lineWidth = (edgeConnected ? 2.6 : 1.4) / scale;
-      const mhh = (n.r || 8) * 0.75;            // ministry rect half-height
+      ctx.lineWidth = (edgeConnected ? 2.6 : 1.4) * edgeUnit();
       const _mnst = ministerMap[n.ministryID]; // ข้อต่อคนบริหาร
       if(_mnst){
         // ลูกโซ่: นายกฯ →(ลูกศร) รัฐมนตรี →(ลูกศร) กระทรวง
         ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(_mnst.x, _mnst.y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(_mnst.x, _mnst.y); ctx.lineTo(n.x, n.y); ctx.stroke();
         if(showArrows){
-          const aw = (edgeConnected ? 3.8 : 3.0)/scale;
+          const _au = edgeUnit();
+          const aw = (edgeConnected ? 3.8 : 3.0) * _au;
           const aMid = edgeConnected ? _rgba(_mnst.color||'#888', 0.95) : edgeMin;
           const aEnd = edgeConnected ? ((n.color||'#e67e22') + 'ee')      : edgeMin;
-          drawArrowHead(c.x, c.y, _mnst.x, _mnst.y, aMid, aw, _mnst.r + 2.6/scale);
-          drawArrowHead(_mnst.x, _mnst.y, n.x, n.y, aEnd, aw, mhh + 3.5/scale);
+          drawArrowHead(c.x, c.y, _mnst.x, _mnst.y, aMid, aw, nodeEdgeDist(_mnst, c.x, c.y) + 2.6*_au);
+          drawArrowHead(_mnst.x, _mnst.y, n.x, n.y, aEnd, aw, nodeEdgeDist(n, _mnst.x, _mnst.y) + 3.5*_au);
         }
       } else {
         ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(c.x, c.y); ctx.stroke();
         if (showArrows) {
           const aCol = edgeConnected ? ((n.color||'#e67e22') + 'ee') : edgeMin;
-          drawArrowHead(c.x, c.y, n.x, n.y, aCol, (edgeConnected ? 4.2 : 3.4)/scale, mhh + 3.5/scale);
+          const _au = edgeUnit();
+          drawArrowHead(c.x, c.y, n.x, n.y, aCol, (edgeConnected ? 4.2 : 3.4) * _au, nodeEdgeDist(n, c.x, c.y) + 3.5*_au);
         }
       }
     }
@@ -3130,10 +3476,10 @@ function draw() {
       _pg.addColorStop(0, _rgba(goldc, 0.95));
       _pg.addColorStop(1, _rgba(goldc, 0.5));
       ctx.strokeStyle = _pg;
-      ctx.lineWidth = 1.9 / scale;
+      ctx.lineWidth = 1.9 * edgeUnit();
       ctx.moveTo(c.x, c.y); ctx.lineTo(n.x, n.y);
       ctx.stroke();
-      if(showArrows) drawArrowHead(c.x, c.y, n.x, n.y, _rgba(goldc, 0.95), 3.4/scale, n.r + 2.5/scale);
+      if(showArrows) { const _au = edgeUnit(); drawArrowHead(c.x, c.y, n.x, n.y, _rgba(goldc, 0.95), 3.4*_au, nodeEdgeDist(n, c.x, c.y) + 2.5*_au); }
     });
   }
 
@@ -3146,10 +3492,10 @@ function draw() {
       ctx.beginPath();
       ctx.moveTo(e.from.x, e.from.y);
       ctx.lineTo(e.to.x, e.to.y);
-      ctx.strokeStyle = _rgba(col, 0.6);
-      ctx.lineWidth = 1.7/scale;
+      ctx.strokeStyle = _rgba(col, 0.75);
+      ctx.lineWidth = 2.0 * edgeUnit();
       ctx.stroke();
-      if(showArrows) drawArrowHead(e.from.x, e.from.y, e.to.x, e.to.y, _rgba(col, 0.95), 3.0/scale, ((e.to.r || 10)*0.9) + 3/scale);
+      if(showArrows) { const _au = edgeUnit(); drawArrowHead(e.from.x, e.from.y, e.to.x, e.to.y, _rgba(col, 0.95), 3.0*_au, nodeEdgeDist(e.to, e.from.x, e.from.y) + 3*_au); }
     });
     ctx.restore();
   }
@@ -3191,7 +3537,7 @@ function draw() {
       // Secondary label at bottom-right
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
-      ctx.font = `${Math.min(9, 9/scale)}px Sarabun, sans-serif`;
+      ctx.font = `${lblFs(9)}px Sarabun, sans-serif`;
       ctx.fillStyle = dark ? 'rgba(248,113,113,0.55)' : 'rgba(192,57,43,0.55)';
       ctx.fillText('ไม่อยู่ภายใต้การบังคับบัญชาของฝ่ายบริหาร', bx2 - 10, by2 - 6);
       ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
@@ -3226,7 +3572,7 @@ function draw() {
       ctx.beginPath(); ctx.arc(n.x,n.y,r*0.6,0,Math.PI*2);
       ctx.strokeStyle=cs+'66'; ctx.lineWidth=0.8; ctx.stroke();
       if(scale > 0.4) {
-        ctx.font=`bold ${Math.min(9,9/scale)}px Sarabun,sans-serif`;
+        ctx.font=`bold ${lblFs(9)}px Sarabun,sans-serif`;
         ctx.shadowColor='rgba(0,0,0,0.9)'; ctx.shadowBlur=4/scale;
         ctx.fillStyle=ct; ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillText('นายกฯ',n.x,n.y);
@@ -3264,7 +3610,7 @@ function draw() {
           .replace('สำนักนายกรัฐมนตรี','สนร.')
           .replace('ส่วนราชการไม่สังกัดกระทรวง','ไม่สังกัด')
           .replace('หน่วยงานที่ไม่อยู่ในการบังคับบัญชาของฝ่ายบริหาร','อิสระ');
-        ctx.font = `bold ${Math.min(11.5, 11/scale)}px Sarabun,sans-serif`;
+        ctx.font = `bold ${lblFs(11)}px Sarabun,sans-serif`;
         ctx.textAlign='center'; ctx.textBaseline='bottom';
         ctx.shadowColor = dark ? 'rgba(0,0,0,0.92)' : 'rgba(255,255,255,0.92)'; ctx.shadowBlur = 5/scale;
         ctx.fillStyle = dark ? '#eef0f6' : '#161922';
@@ -3283,7 +3629,7 @@ function draw() {
       if(n.isDeputy){ ctx.beginPath(); ctx.arc(n.x, n.y, r+2.6, 0, Math.PI*2); ctx.strokeStyle = _rgba(_theme.gold||'#c9a84c', 0.9); ctx.lineWidth = 1.6; ctx.stroke(); }
       if(hover||selected||_lensOn){ ctx.beginPath(); ctx.arc(n.x, n.y, r+4.5, 0, Math.PI*2); ctx.strokeStyle = _rgba(n.color, (hover||selected)?0.5:0.78); ctx.lineWidth = 2; ctx.stroke(); }
       if((hover||selected) && scale > 0.25){
-        ctx.font = 'bold ' + Math.min(11, 11/scale) + 'px Sarabun, sans-serif';
+        ctx.font = 'bold ' + lblFs(11) + 'px Sarabun, sans-serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
         ctx.shadowColor = dark ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)'; ctx.shadowBlur = 4/scale;
         ctx.fillStyle = dark ? '#e8eaf0' : '#1a1d24';
@@ -3293,7 +3639,7 @@ function draw() {
         // กดนายกฯ: โชว์ชื่อรัฐมนตรีทุกคนในวงแหวน ครม. วางพ้นโหนดออกด้านนอกตามแนวรัศมีจากนายกฯ
         const _c0 = nodes[0];
         const _dx = n.x-_c0.x, _dy = n.y-_c0.y, _dd = Math.hypot(_dx,_dy)||1;
-        ctx.font = 'bold ' + Math.min(11.5, 10.5/scale) + 'px Sarabun, sans-serif';
+        ctx.font = 'bold ' + lblFs(10.5) + 'px Sarabun, sans-serif';
         ctx.textAlign = _dx>=0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
         ctx.shadowColor = dark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)'; ctx.shadowBlur = 5/scale;
@@ -3326,7 +3672,7 @@ function draw() {
         const _lbl = (_o.abbr && _o.abbr!=='-' && _o.abbr!=='N/A') ? _o.abbr : (_o.name||'').slice(0,10);
         const _c0 = nodes[0];
         const _dx = n.x-_c0.x, _dy = n.y-_c0.y, _dd = Math.hypot(_dx,_dy)||1;
-        ctx.font = 'bold ' + Math.min(13, 12/scale) + 'px Sarabun, sans-serif';
+        ctx.font = 'bold ' + lblFs(12) + 'px Sarabun, sans-serif';
         ctx.textAlign = _dx>=0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
         ctx.shadowColor = dark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)';
@@ -3575,7 +3921,7 @@ canvas.addEventListener('mouseup', e => {
   if(!moved) {
     const hit=hitTest(e.clientX-r.left,e.clientY-r.top);
     if(hit) { showPanel(hit); spineToNode(hit); }
-    else { selectedNode=null; pmLens=false; panel.classList.remove('show', 'visible'); spineReset(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); }
+    else { selectedNode=null; pmLens=false; clearHash(); panel.classList.remove('show', 'visible'); spineReset(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); }
   }
 });
 canvas.addEventListener('wheel', e => {
@@ -3739,13 +4085,20 @@ const MINISTRY_MISSIONS = {
   '19': 'จัดระบบการศึกษาขั้นพื้นฐาน พัฒนาคุณภาพการศึกษา และส่งเสริมการเรียนรู้ตลอดชีวิต',
   '21': 'ดูแลระบบสาธารณสุข การป้องกันควบคุมโรค การรักษาพยาบาล และคุ้มครองผู้บริโภคด้านสุขภาพ',
   '22': 'พัฒนาและส่งเสริมอุตสาหกรรม สนับสนุนผู้ประกอบการ และกำกับดูแลมาตรฐานโรงงาน',
-  '23': 'ส่วนราชการที่ขึ้นตรงต่อนายกรัฐมนตรีหรือรัฐมนตรี ไม่สังกัดกระทรวงใด',
+  '23': 'ส่วนราชการที่มีฐานะเป็นกรม จัดตั้งตามกฎหมายเฉพาะ ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวง หรือทบวง',
   '24': 'องค์กรอิสระตามรัฐธรรมนูญ องค์กรอัยการ ศาล และรัฐสภา — ไม่อยู่ในบังคับบัญชาของฝ่ายบริหาร',
-  '25': 'หน่วยงานของรัฐรูปแบบอื่นที่จัดตั้งขึ้นตามกฎหมายเฉพาะ',
+  '25': 'หน่วยงานของรัฐรูปแบบอื่นที่ไม่ใช่ส่วนราชการ รัฐวิสาหกิจ หรือองค์การมหาชน จัดตั้งตามกฎหมายเฉพาะเพื่อปฏิบัติภารกิจของรัฐอย่างเป็นอิสระ',
 };
 
 function showPanel(node) {
   selectedNode = node;
+  setHashForNode(node);   // อัปเดต URL #… ให้แชร์/back ได้ (ดู PERMALINK ท้ายไฟล์)
+  // ปุ่มฟังเสียง: ซ่อนไว้ก่อน (เฉพาะกระทรวงถึงจะโชว์) + หยุดเสียงเมื่อสลับไปโหนดอื่น
+  var _ab = document.getElementById('info-audio'); if(_ab) _ab.hidden = true;
+  if(mdAudioEl && !mdAudioEl.paused){
+    var _newAudioId = (node.isMinistry && node.data) ? node.data.id : null;
+    if(_newAudioId !== mdAudioId) stopInfoAudio();
+  }
   // กดนายกฯ (โหนดกลาง) = ไฮไลต์หน่วยที่สั่งตรง พร้อมโครงสร้างกระทรวง (คงตำแหน่งเดิม) · กดโหนดอื่น = กลับปกติ
   const wantLens = (node.type === 'center' && currentView === 'radial');
   if(wantLens !== pmLens) pmLens = wantLens;
@@ -3787,14 +4140,14 @@ function showPanel(node) {
     const _rankC=m=> m.name===CABINET_PM.name?0 : /รองนายกรัฐมนตรี/.test(m.role)?1 : /รมช\./.test(m.role)?3 : 2;
     const deputies=_allC.slice().sort((a,b)=>_rankC(a)-_rankC(b));
     document.getElementById('info-minister').innerHTML = `
-      <div style="margin-bottom:6px;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">คณะรัฐมนตรี (${deputies.length} คน)</div>
-      ${deputies.map(p=>{const pc=PARTY_COLORS[p.party]||'#8a97aa';return `<div style="margin-bottom:5px"><div style="font-size:11px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size:9.5px;color:var(--text-dim)">${p.role}</div><span style="font-size:8px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;}).join('')}
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">สัดส่วนพรรค</div>
+      <div style="margin-bottom:6px;font-size: 12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">คณะรัฐมนตรี (${deputies.length} คน)</div>
+      ${deputies.map(p=>{const pc=PARTY_COLORS[p.party]||'#8a97aa';return `<div style="margin-bottom:5px"><div style="font-size: 12.5px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size: 12px;color:var(--text-dim)">${p.role}</div><span style="font-size: 12px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;}).join('')}
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size: 12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);font-family:'IBM Plex Mono',monospace">สัดส่วนพรรค</div>
       <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">
-        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644">ภูมิใจไทย (หลัก)</span>
-        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#ef444422;color:#ef4444;border:1px solid #ef444444">เพื่อไทย</span>
-        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">รวมไทยสร้างชาติ</span>
-        <span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#10b98122;color:#10b981;border:1px solid #10b98144">ชาติไทยพัฒนา</span>
+        <span style="font-size: 12px;padding:2px 8px;border-radius:10px;background:#3b82f622;color:#3b82f6;border:1px solid #3b82f644">ภูมิใจไทย (หลัก)</span>
+        <span style="font-size: 12px;padding:2px 8px;border-radius:10px;background:#ef444422;color:#ef4444;border:1px solid #ef444444">เพื่อไทย</span>
+        <span style="font-size: 12px;padding:2px 8px;border-radius:10px;background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">รวมไทยสร้างชาติ</span>
+        <span style="font-size: 12px;padding:2px 8px;border-radius:10px;background:#10b98122;color:#10b981;border:1px solid #10b98144">ชาติไทยพัฒนา</span>
       </div>`;
     // Reset cabinet panel highlight
     document.querySelectorAll('.cab-row').forEach(r=>r.classList.remove('active'));
@@ -3836,10 +4189,12 @@ function showPanel(node) {
       document.getElementById('info-minister-row').style.display='flex';
       document.getElementById('info-minister').innerHTML = cabMins.map(p=>{
         const pc=PARTY_COLORS[p.party]||'#8a97aa';
-        return `<div style="margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size:10px;color:var(--text-dim)">${p.role}</div><span style="font-size:8.5px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;
+        return `<div style="margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:var(--text)">${p.name}</div><div style="font-size: 12.5px;color:var(--text-dim)">${p.role}</div><span style="font-size: 12px;font-family:IBM Plex Mono,monospace;padding:1px 6px;border-radius:10px;background:${pc}22;color:${pc};border:1px solid ${pc}44;margin-top:2px;display:inline-block">${p.party}</span></div>`;
       }).join('');
     }
     highlightCabRow(node.data.id);
+    // ปุ่มฟังเสียง: เฉพาะ 20 กระทรวงจริง (ไม่รวมถัง 23/24/25) — ตรงกับไฟล์ min-XX.mp3
+    if(d.name.startsWith('กระทรวง') || d.name==='สำนักนายกรัฐมนตรี') setInfoAudio(node.data.id);
     document.getElementById('info-abbr').textContent='';
     const b=document.getElementById('info-badge');
     const minType=(d.name.startsWith('กระทรวง')||d.name==='สำนักนายกรัฐมนตรี')?'กระทรวง':'อื่นๆ';
@@ -3895,6 +4250,9 @@ function closeInfoPanel(){
   panel.classList.remove('show', 'visible', 'sheet-full');
   panel.style.removeProperty('--ip-drag');
   selectedNode=null; pmLens=false;
+  clearHash();   // ปิดแผง → ล้าง #… ออกจาก URL
+  stopInfoAudio();   // ปิดแผง → หยุดเสียงบรรยาย
+  var _ab2 = document.getElementById('info-audio'); if(_ab2) _ab2.hidden = true;
   spineReset();   // หมุนทุกวงกลับฐาน + คืนกล้อง (แทน draw() เดิม)
   if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden');
 }
@@ -4452,7 +4810,7 @@ const CAB_BIO = {
   .cab-pf .cab-mono{font-family:Georgia,'Noto Serif Thai',serif;font-size:38px;font-weight:800;color:#fff;opacity:.92;z-index:1}
   .cab-pf-name{font-size:21px;font-weight:800;color:var(--text);line-height:1.2}
   .cab-pf-role{color:var(--gold);font-size:13.5px;margin-top:5px;line-height:1.4}
-  .cab-pf-pill{display:inline-block;margin-top:9px;font-size:11.5px;padding:3px 11px;border-radius:999px;border:1px solid var(--border2);color:var(--text-mid)}
+  .cab-pf-pill{display:inline-block;margin-top:9px;font-size: 12.5px;padding:3px 11px;border-radius:999px;border:1px solid var(--border2);color:var(--text-mid)}
   .cab-pf-body{padding:16px 24px 22px}
   .cab-pf-row{display:grid;grid-template-columns:140px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--border)}
   .cab-pf-row:last-child{border-bottom:0}
@@ -4461,7 +4819,7 @@ const CAB_BIO = {
   .cab-pf-src{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;color:var(--gold);
     text-decoration:none;border:1px solid var(--border2);padding:8px 14px;border-radius:9px}
   .cab-pf-src:hover{background:var(--gold-glow)}
-  .cab-pf-note{color:var(--text-dim);font-size:11.5px;margin-top:12px;font-style:italic;line-height:1.5}
+  .cab-pf-note{color:var(--text-dim);font-size: 12.5px;margin-top:12px;font-style:italic;line-height:1.5}
   .grid-card,.grid-pm-card{cursor:pointer}
   .grid-card:focus-visible,.grid-pm-card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   @media(max-width:560px){.cab-pf-row{grid-template-columns:1fr;gap:3px}.cab-pf-head{flex-direction:column;text-align:center}}`;
@@ -4549,13 +4907,16 @@ function buildGridCard(p) {
   card.setAttribute('role','button');
   card.setAttribute('aria-label', p.name + ' — ดูประวัติ');
   card.style.setProperty('--gcard-color', pc);
+  // เลย์เอาต์แบบหน้า ครม.: รูปทรงสูงด้านซ้าย · ข้อมูลด้านขวา
   card.innerHTML = `
-    <div class="grid-card-avatar">${p.emoji}</div>
-    <div class="grid-card-name">${p.name}</div>
-    <div class="grid-card-role">${p.role}</div>
-    <div class="grid-card-footer">
-      <span class="grid-card-party" style="background:${pc}22;color:${pc};border-color:${pc}44">${p.party}</span>
-      ${p.minId ? `<button class="grid-card-min-btn" onclick="event.stopPropagation();goToMinistryFromGrid('${p.minId}')">⊙ ดูกระทรวง</button>` : ''}
+    <div class="grid-card-avatar">${cabPortrait(cabBioKey(p.name))}<span class="gc-emoji">${p.emoji}</span></div>
+    <div class="gc-info">
+      <div class="grid-card-name">${p.name}</div>
+      <div class="grid-card-role">${p.role}</div>
+      <div class="grid-card-footer">
+        <span class="grid-card-party" style="background:${pc}22;color:${pc};border-color:${pc}44">${p.party}</span>
+        ${p.minId ? `<button class="grid-card-min-btn" onclick="event.stopPropagation();goToMinistryFromGrid('${p.minId}')">⊙ ดูกระทรวง</button>` : ''}
+      </div>
     </div>`;
   return card;
 }
@@ -4570,7 +4931,8 @@ function buildGridView() {
          data-nm="อนุทิน ชาญวีรกูล" data-fullname="${CABINET_PM.name}"
          data-role="นายกรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทย" data-min="14"
          tabindex="0" role="button" aria-label="${CABINET_PM.name} — ดูประวัติ">
-      <div class="grid-pm-avatar">👑</div>
+      <i class="pm-rim" aria-hidden="true"></i>
+      <div class="grid-pm-avatar">${cabPortrait('อนุทิน ชาญวีรกูล')}<span class="gc-emoji">👑</span></div>
       <div class="grid-pm-info">
         <div class="grid-pm-name">${CABINET_PM.name}</div>
         <div class="grid-pm-role">${CABINET_PM.role} · พรรค${CABINET_PM.party}</div>
@@ -4580,7 +4942,7 @@ function buildGridView() {
           <span class="grid-pm-badge" style="background:var(--bg3);color:var(--text-dim);border:1px solid var(--border2)">ครม.ชุดที่ 66</span>
         </div>
       </div>
-      <button class="grid-card-min-btn" style="align-self:flex-start;font-size:11px;padding:5px 12px" onclick="event.stopPropagation();goToMinistryFromGrid('14')">⊙ ดูกระทรวงมหาดไทย</button>
+      <button class="grid-card-min-btn" style="align-self:flex-start;font-size: 12.5px;padding:5px 12px" onclick="event.stopPropagation();goToMinistryFromGrid('14')">⊙ ดูกระทรวงมหาดไทย</button>
     </div>`;
   // Deputy PMs
   const depCont = document.getElementById('grid-deputy-cards');
@@ -5049,6 +5411,170 @@ function showCorruptView(on) {
   }
 }
 
+// ═══════════════════════════════════════
+//  PANEL TOGGLES — พับ/กาง แถบด้านข้าง + แถบคำอธิบายล่าง
+// ═══════════════════════════════════════
+const PANEL_TOG = {
+  sb:  { cls: 'sb-collapsed',  key: 'md-struct-sb',  btn: 'sb-toggle'  },
+  leg: { cls: 'leg-collapsed', key: 'md-struct-leg', btn: 'leg-toggle' }
+};
+let panelTogT = null;
+
+// ปุ่มแถบล่างเลื่อนตามความสูงจริงของ legend (72px หรือสูงกว่าเมื่อขึ้นบรรทัดใหม่)
+function syncLegToggleBtn() {
+  const btn = document.getElementById('leg-toggle');
+  const leg = document.getElementById('legend-bar');
+  if (!btn || !leg) return;
+  btn.style.bottom = document.body.classList.contains('leg-collapsed') ? '0px' : leg.offsetHeight + 'px';
+}
+
+function applyPanelState(which, collapsed, save) {
+  const cfg = PANEL_TOG[which];
+  document.body.classList.toggle(cfg.cls, collapsed);
+  const btn = document.getElementById(cfg.btn);
+  if (btn) btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  if (which === 'leg') syncLegToggleBtn();
+  if (save) { try { localStorage.setItem(cfg.key, collapsed ? '1' : '0'); } catch(e) {} }
+}
+
+function togglePanel(which) {
+  applyPanelState(which, !document.body.classList.contains(PANEL_TOG[which].cls), true);
+  // รออนิเมชันจบก่อนค่อยคำนวณผืนผ้าใบใหม่ — resize() อ่านขนาดจริงของ #main
+  clearTimeout(panelTogT);
+  panelTogT = setTimeout(resize, 300);
+}
+
+// คืนค่าที่เคยพับไว้ ก่อน resize() ครั้งแรก
+['sb','leg'].forEach(w => {
+  let v = null;
+  try { v = localStorage.getItem(PANEL_TOG[w].key); } catch(e) {}
+  if (v === '1') applyPanelState(w, true, false);
+});
+
+// ═══════════════════════════════════════════════════════════
+//  EXPORT PNG — บันทึกภาพมุมมองปัจจุบันเป็นไฟล์ (ปุ่ม 📷)
+//  ผืนผ้าใบวาด bg เอง (draw()) → ก๊อปทั้งเฟรมแล้วต่อแถบท้ายใส่ชื่อ+ที่มา
+//  เป็นภาพประกอบรายงานพร้อมใช้ (มีคำบรรยาย+แหล่งอ้างอิงในภาพ)
+// ═══════════════════════════════════════════════════════════
+function exportPNG(){
+  try{
+    const src = canvas, dpr = window.devicePixelRatio || 1, dark = isDark();
+    const pad = Math.round(18*dpr), footH = Math.round(48*dpr);
+    const out = document.createElement('canvas');
+    out.width = src.width; out.height = src.height + footH;
+    const o = out.getContext('2d');
+    const bg = _theme.bg || getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || (dark?'#0a0c10':'#f4f6fa');
+    o.fillStyle = bg; o.fillRect(0,0,out.width,out.height);
+    o.drawImage(src, 0, 0);
+    // เส้นคั่นแถบท้าย
+    o.fillStyle = dark ? 'rgba(255,255,255,.09)' : 'rgba(10,40,60,.10)';
+    o.fillRect(0, src.height, out.width, Math.max(1, Math.round(dpr)));
+    const midY = src.height + footH/2, d = new Date();
+    o.textBaseline = 'middle';
+    // ซ้าย: ชื่อแผนภาพ (หรือชื่อหน่วยงานที่เลือกอยู่)
+    const title = selectedNode ? ('โครงสร้าง · ' + (selectedNode.label || '')) : 'แผนผังโครงสร้างหน่วยงานรัฐไทย';
+    o.textAlign = 'left';  o.fillStyle = dark ? '#dfe7f2' : '#243646';
+    o.font = '600 ' + Math.round(15*dpr) + "px 'Sarabun', sans-serif";
+    o.fillText(title, pad, midY);
+    // ขวา: ที่มา + วันที่
+    o.textAlign = 'right'; o.fillStyle = dark ? '#6c7b8f' : '#5c7686';
+    o.font = Math.round(12*dpr) + "px 'Sarabun', sans-serif";
+    o.fillText('ที่มา: รัฐไทยก้าวหน้า · ' + d.toLocaleDateString('th-TH'), out.width - pad, midY);
+    out.toBlob(function(b){
+      if(!b) return;
+      const url = URL.createObjectURL(b), a = document.createElement('a');
+      const namePart = (selectedNode ? (selectedNode.label||'') : 'โครงสร้างหน่วยงานรัฐไทย').replace(/[\\/:*?"<>|]+/g,'').trim().slice(0,28) || 'โครงสร้าง';
+      a.href = url; a.download = namePart + '-' + d.toISOString().slice(0,10) + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    }, 'image/png');
+  }catch(err){ console.error('exportPNG failed', err); }
+}
+(function(){ const b = document.getElementById('btn-export'); if(b) b.addEventListener('click', exportPNG); })();
+
+// ═══════════════════════════════════════════════════════════
+//  PERMALINK — ลิงก์ตรงถึงหน่วยงานผ่าน #… ใน URL
+//  คลิกกระทรวง/หน่วยงาน → URL เป็น #min-07 / #org-430 / #pm
+//  แชร์ลิงก์นั้น → เปิดมาเด้งเข้าแผงนั้นทันที + ปุ่ม back/forward ใช้ได้
+//  คีย์ใช้ id/no ที่มีในข้อมูลอยู่แล้ว (นิ่ง) · uni/รมต. ไม่ผูก (ล้าง #)
+// ═══════════════════════════════════════════════════════════
+function nodeHashKey(node){
+  if(!node) return null;
+  if(node.type === 'center') return 'pm';
+  if(node.isMinistry && node.data && node.data.id != null) return 'min-' + node.data.id;
+  if(node.data && node.data.no != null) return 'org-' + node.data.no;
+  return null;
+}
+function findNodeByHash(key){
+  if(!key) return null;
+  if(key === 'pm') return nodes.find(n => n.type === 'center');
+  let m;
+  if((m = key.match(/^min-(.+)$/))) return nodes.find(n => n.isMinistry && n.data && String(n.data.id) === m[1]);
+  if((m = key.match(/^org-(.+)$/))) return nodes.find(n => n.data && String(n.data.no) === m[1]);
+  return null;
+}
+function setHashForNode(node){
+  const k = nodeHashKey(node);
+  if(!k){ clearHash(); return; }              // โหนดที่ไม่ผูก (uni/รมต.) → ล้าง # ให้ URL ตรงความจริง
+  const nh = '#' + k;
+  if(location.hash !== nh) location.hash = nh; // สร้าง history entry → back ได้ (hashchange จะ no-op เพราะ selectedNode ตรงแล้ว)
+}
+function clearHash(){
+  if(location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
+function applyHashFromURL(){
+  const key = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+  const node = key ? findNodeByHash(key) : null;
+  if(node){ if(node !== selectedNode){ showPanel(node); spineToNode(node); } }
+  else if(selectedNode && !key){ closeInfoPanel(); }   // back จนสุด → ปิดแผง
+}
+window.addEventListener('hashchange', applyHashFromURL);
+
+// ═══════════════════════════════════════════════════════════
+//  VOICE — ฟังเสียงบรรยายกระทรวง (ไฟล์ static เท่านั้น)
+//  เล่น audio/ministries/min-<id>.mp3 (สร้างล่วงหน้าจาก voice.botnoi.ai)
+//  ไม่มีไฟล์ (ยังไม่ได้โหลด) → ปุ่มขึ้น "ยังไม่มีเสียง" ไม่พัง
+// ═══════════════════════════════════════════════════════════
+var mdAudioEl = null, mdAudioId = null;
+function updateAudioBtn(state){
+  var btn = document.getElementById('info-audio'); if(!btn) return;
+  var map = { idle:'🔊 ฟังเสียง', loading:'⏳ กำลังโหลด…', playing:'⏸ หยุด', missing:'🔇 ยังไม่มีเสียง' };
+  btn.textContent = map[state] || map.idle;
+  btn.classList.toggle('playing', state === 'playing');
+  btn.classList.toggle('missing', state === 'missing');
+}
+function stopInfoAudio(){
+  if(mdAudioEl){ try{ mdAudioEl.pause(); }catch(e){} }
+}
+function loadAndPlay(id){   // โหลดไฟล์ใหม่ + เล่น (ใช้ทั้งตอนคลิกกระทรวง และกดปุ่มข้ามไฟล์)
+  if(mdAudioEl){ try{ mdAudioEl.pause(); }catch(e){} }
+  mdAudioEl = new Audio('audio/ministries/min-' + id + '.mp3');
+  mdAudioId = id;
+  updateAudioBtn('loading');
+  mdAudioEl.addEventListener('ended', function(){ updateAudioBtn('idle'); });
+  mdAudioEl.addEventListener('error', function(){ updateAudioBtn('missing'); });
+  mdAudioEl.play().then(function(){ updateAudioBtn('playing'); }).catch(function(err){
+    // autoplay ถูกบล็อก (โหลดหน้ามาไม่มี user-gesture เช่นเปิดลิงก์ #min-XX) → แค่โชว์ปุ่มไว้ให้กด ไม่ใช่ "ยังไม่มีเสียง"
+    updateAudioBtn(err && err.name === 'NotAllowedError' ? 'idle' : 'missing');
+  });
+}
+function setInfoAudio(id){   // เรียกจาก showPanel เมื่อโหนดเป็นกระทรวง → คลิกครั้งเดียวเล่นเลย (ปุ่มยังอยู่)
+  var btn = document.getElementById('info-audio'); if(!btn) return;
+  btn.hidden = false; btn.dataset.id = id;
+  loadAndPlay(id);
+}
+function toggleInfoAudio(){   // กดปุ่ม: ไฟล์เดิม→สลับเล่น/หยุด · (ปกติ id ตรงกับที่เล่นอยู่)
+  var btn = document.getElementById('info-audio'); if(!btn) return;
+  var id = btn.dataset.id; if(!id) return;
+  if(mdAudioEl && mdAudioId === id){
+    if(mdAudioEl.paused){ mdAudioEl.play().then(function(){ updateAudioBtn('playing'); }).catch(function(){ updateAudioBtn('idle'); }); }
+    else { mdAudioEl.pause(); updateAudioBtn('idle'); }
+    return;
+  }
+  loadAndPlay(id);
+}
+(function(){ var b = document.getElementById('info-audio'); if(b) b.addEventListener('click', toggleInfoAudio); })();
+
 // ── INIT ──
 window.addEventListener('resize',resize);
 refreshThemeCache();   // prime colour cache before the first paint
@@ -5061,8 +5587,11 @@ if (window.matchMedia('(max-width: 640px)').matches) {
 } else {
   document.getElementById('btn-cabinet').classList.add('active');
 }
+applyHashFromURL();   // มากับลิงก์ #… → เปิดแผงหน่วยงานนั้นเลย
 </script>
 <div id="mob-overlay" onclick="toggleMobSidebar()"></div>
+<!-- ตั้งพิกัดเมาส์ --x/--y/--xp บน :root ให้สปอตไลต์การ์ด ครม. (ไฟล์เดียวกับที่ hub ใช้) -->
+<script src="js/cursor-glow.js"></script>
 <script src="js/theme-toggle-drag.js"></script>
 <script src="js/ai-chat.js"></script>
 </body>

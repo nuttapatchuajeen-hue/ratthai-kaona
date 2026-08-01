@@ -11,8 +11,10 @@
   <link rel="stylesheet" href="../css/cursor-glow.css" />
   <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง style.css เพื่อทับกฎ overflow-x เดิม -->
   <link rel="stylesheet" href="../css/hub-nav.css" />
+  <link rel="stylesheet" href="../css/global-search.css" />
   <script src="../js/hub-nav.js" defer></script>
   <script src="../js/cyber-effects.js" defer></script>
+  <script src="../js/global-search.js" defer></script>
 </head>
 <body>
 
@@ -29,8 +31,11 @@
   <header class="site-header">
     <nav>
       <span class="nav-logo">
-        <img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" />
+        <img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" loading="lazy" decoding="async" />
       </span>
+      <button class="search-trigger-btn" style="margin-left: auto; margin-right: 0.8rem;">
+        🔍 ค้นหา <kbd>Ctrl K</kbd>
+      </button>
       <button class="nav-burger" aria-expanded="false" aria-label="เปิดเมนู">
         <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -41,6 +46,7 @@
         <li><a href="../election/index.html" class="nav-tab" data-target="representatives">ส.ส. ผู้แทนราษฎร</a></li>
         <li><a href="../cabinet/index.html" class="nav-tab" data-target="cabinet">ชุดคณะรัฐมนตรี</a></li>
         <li><a href="../stats/index.html" class="nav-tab" data-target="statistics">ข้อมูลสถิติ</a></li>
+        <li><a href="universities.html" class="nav-tab" data-target="universities">มหาวิทยาลัย</a></li>
         <li><a href="about.html" class="nav-tab" data-target="about">เกี่ยวกับเรา</a></li>
         <li><a href="survey.html" class="nav-tab" data-target="survey">แบบประเมิน</a></li>
       </ul>
