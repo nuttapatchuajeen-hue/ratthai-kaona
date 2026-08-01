@@ -6,7 +6,7 @@
   --accent-cyan:   #00E5FF;
   --accent-orange: #FF5C1A;
   --text-primary:  #DCE8F0;
-  --text-muted:    #4A6070;
+  --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
   --font-display:  'Bebas Neue', 'Prompt', sans-serif;
   --font-sub:      'Rajdhani', 'Sarabun', sans-serif;
   --font-mono:     'IBM Plex Mono', 'Sarabun', monospace;
@@ -57,7 +57,7 @@ body {
 
 #loader-percent {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   color: var(--text-muted);
 }
@@ -99,6 +99,10 @@ body {
   gap: 0;
   align-items: stretch;
 }
+
+/* <li> ต้องเป็น flex ด้วย ไม่งั้น <a> ข้างในสูงแค่ตามเนื้อความ (~21px)
+   ทำให้พื้นที่กดจริงเล็กกว่าที่ตาเห็น — ตอนนี้ยืดเต็มความสูง header (64px) */
+.nav-links li { display: flex; }
 
 .nav-tab {
   display: flex;
@@ -147,7 +151,9 @@ body {
 .hero-heading {
   font-family: var(--font-display);
   font-size: clamp(5rem, 13.5vw, 13rem);
-  line-height: 0.87;
+  /* 0.87 ตั้งไว้ตามหน้าตาของ Bebas Neue (ละติน) แต่ตัวไทยใช้ Prompt ซึ่งหมึกสูง ~1.0 เท่า
+     ของ font-size (สระบน+วรรณยุกต์+หาง ฐ/ญ) → 0.87 ทำให้บรรทัดทับกันจริง ~23px */
+  line-height: 1.08;
   letter-spacing: 0.015em;
   display: flex;
   flex-direction: column;
@@ -178,7 +184,7 @@ body {
   display: inline-block;
   padding: 0.9rem 2.6rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
@@ -193,7 +199,7 @@ body {
   display: inline-block;
   padding: 0.9rem 2.6rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
@@ -212,7 +218,7 @@ body {
   display: inline-block;
   padding: 0.9rem 2.6rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
@@ -229,7 +235,7 @@ body {
 .section-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent-cyan);
@@ -302,7 +308,7 @@ body {
 
 .scroll-indicator span {
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: 0.75rem;
   letter-spacing: 0.24em;
   color: var(--text-muted);
   writing-mode: vertical-rl;
@@ -402,7 +408,7 @@ body {
 .news-heading {
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 6vw, 4.5rem);
-  line-height: 0.9;
+  line-height: 1.12;   /* was 0.9 — ตัวไทยทับกัน */
   margin: 0.6rem 0 1rem;
   color: var(--text-primary);
 }
@@ -451,7 +457,7 @@ body {
 .news-date {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent-cyan);
@@ -471,7 +477,7 @@ body {
 .news-source {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -550,7 +556,7 @@ body {
 .section-heading {
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 5.5vw, 5.5rem);
-  line-height: 0.9;
+  line-height: 1.12;   /* was 0.9 — ตัวไทยทับกัน ~8px */
   letter-spacing: 0.02em;
   color: var(--text-primary);
   margin-bottom: 1.6rem;
@@ -625,7 +631,7 @@ body {
 
 .stat-label {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -651,7 +657,7 @@ body {
 .cta-heading {
   font-family: var(--font-display);
   font-size: clamp(4rem, 9.5vw, 10rem);
-  line-height: 0.88;
+  line-height: 1.08;   /* was 0.88 — ตัวไทยทับกัน */
   letter-spacing: 0.04em;
   color: var(--text-primary);
 }
@@ -670,7 +676,7 @@ body {
   margin-top: 0.5rem;
   padding: 1rem 3.2rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   text-decoration: none;
@@ -692,7 +698,7 @@ body {
   display: inline-block;
   padding: 1rem 3.2rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   text-decoration: none;
@@ -1087,7 +1093,7 @@ body::before {
   .stat:first-child { border-left: none; }
   .stat-number { font-size: clamp(2.4rem, 12vw, 3.2rem); }
   .stat-label {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     margin-top: 0.5rem;
     line-height: 1.4;
     text-align: center;
@@ -1098,12 +1104,133 @@ body::before {
   .scroll-indicator { display: none; }
 
   .marquee-text { font-size: 8vw; }
-  .nav-links {
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+  .hero-heading {
+    font-size: clamp(3rem, 14vw, 5.5rem);
+    line-height: 1.1;
   }
-  .nav-links::-webkit-scrollbar { display: none; }
-  .nav-tab { font-size: 0.72rem; padding: 0 0.75rem; }
-  .hero-heading { font-size: clamp(3.5rem, 16vw, 7rem); }
 }
+
+/* ===========================================================================
+   DEVICE ADAPTATION MATRIX (Desktop Monitor, Laptop, Tablet, Mobile)
+   =========================================================================== */
+
+/* 🖥️ 1. DESKTOP MONITOR (Widescreen >= 1440px) */
+@media (min-width: 1440px) {
+  .hero-heading {
+    font-size: clamp(6.5rem, 12vw, 12rem);
+    line-height: 1.05;
+  }
+  #hero-globe {
+    right: -2vw;
+    opacity: 0.95;
+  }
+  .wrap {
+    max-width: 1320px;
+  }
+}
+
+/* 💻 2. NOTEBOOK / LAPTOP (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .hero-heading {
+    font-size: clamp(4rem, 10vw, 8.5rem);
+    line-height: 1.05;
+  }
+  #hero-globe {
+    right: -6vw;
+    scale: 0.85;
+    opacity: 0.85;
+  }
+  .wrap {
+    max-width: 92%;
+  }
+}
+
+/* 💻 2.1 NOTEBOOK HEIGHT-AWARE BREAKPOINT (max-height <= 800px on Notebooks) */
+@media (max-height: 800px) and (min-width: 1024px) {
+  .hero-standalone {
+    padding-bottom: 5vh;
+  }
+  .hero-heading {
+    font-size: clamp(3.5rem, 8vw, 6.8rem);
+    line-height: 1.08;
+  }
+  .hero-tagline {
+    margin-top: 1.4rem;
+  }
+  .hero-actions {
+    margin-top: 1.8rem;
+  }
+}
+
+/* 📲 3. TABLET (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-heading {
+    font-size: clamp(3.8rem, 12vw, 7rem);
+  }
+  #hero-globe {
+    right: -10vw;
+    opacity: 0.65;
+    scale: 0.75;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===========================================================================
+   CYBERPUNK MICRO-INTERACTIONS & HUD TACTICAL COMPONENTS
+   =========================================================================== */
+
+/* Glitch Hover Text */
+.glitch-text {
+  position: relative;
+  transition: text-shadow 0.2s;
+}
+.glitch-text:hover {
+  text-shadow: 2px 0 var(--accent-orange), -2px 0 var(--accent-cyan);
+  animation: glitch-anim 0.25s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Tactical HUD Cut-Corner Card */
+.cyber-card {
+  position: relative;
+  background: rgba(7, 13, 20, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  padding: 1.8rem;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-card:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 10px 30px rgba(0, 229, 255, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.08);
+  transform: translateY(-4px);
+}
+
+/* Cyber Ripple Effect on Click/Tap */
+.cyber-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.6) 0%, transparent 70%);
+  transform: scale(0);
+  animation: ripple-out 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-out {
+  to {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+

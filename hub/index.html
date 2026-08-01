@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400&family=Prompt:wght@700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/cursor-glow.css" />
+  <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง style.css เพื่อทับกฎ overflow-x เดิม -->
+  <link rel="stylesheet" href="../css/hub-nav.css" />
+  <script src="../js/hub-nav.js" defer></script>
+  <script src="../js/cyber-effects.js" defer></script>
 </head>
 <body>
 
@@ -26,6 +31,10 @@
       <span class="nav-logo">
         <img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" />
       </span>
+      <button class="nav-burger" aria-expanded="false" aria-label="เปิดเมนู">
+        <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
       <ul class="nav-links">
         <li><a href="#" class="nav-tab" data-target="home" aria-current="page">หน้าแรก</a></li>
         <li><a href="../structure.html" class="nav-tab" data-target="infrastructure">แผนผังโครงสร้าง</a></li>
@@ -241,5 +250,6 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
   <script src="js/app.js"></script>
   <script src="js/globe.js"></script>
+<script src="../js/cursor-glow.js"></script>
 <script src="../js/ai-chat.js"></script>
 </body>
