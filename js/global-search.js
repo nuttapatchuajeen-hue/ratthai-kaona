@@ -10,7 +10,6 @@
     { title: "ส.ส. ผู้แทนราษฎร (รายเขต / บัญชีรายชื่อ / พรรค)", category: "ผู้แทนราษฎร", url: "election/index.html" },
     { title: "ทำเนียบคณะรัฐมนตรี", category: "คณะรัฐมนตรี", url: "cabinet/index.html" },
     { title: "แดชบอร์ดสถิติข้อมูลภาครัฐ", category: "สถิติ", url: "stats/index.html" },
-    { title: "รายชื่อมหาวิทยาลัยและสังกัดกระทรวง", category: "อุดมศึกษา", url: "hub/universities.html" },
     { title: "เกี่ยวกับโครงการและวิสัยทัศน์", category: "เกี่ยวกับเรา", url: "hub/about.html" },
     { title: "แบบประเมินความพึงพอใจ", category: "ประเมิน", url: "hub/survey.html" },
 
@@ -21,15 +20,7 @@
     { title: "กระทรวงการคลัง (กค.)", category: "กระทรวง", url: "structure.html#mof" },
     { title: "กระทรวงมหาดไทย (มท.)", category: "กระทรวง", url: "structure.html#moi" },
     { title: "กระทรวงศึกษาธิการ (ศธ.)", category: "กระทรวง", url: "structure.html#moe" },
-    { title: "กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม (ดีอี)", category: "กระทรวง", url: "structure.html#mdes" },
-
-    // Universities sample
-    { title: "จุฬาลงกรณ์มหาวิทยาลัย (กรุงเทพมหานคร)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=จุฬา" },
-    { title: "มหาวิทยาลัยเกษตรศาสตร์ (บางเขน / กำแพงแสน / ศรีราชา)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=เกษตร" },
-    { title: "มหาวิทยาลัยเชียงใหม่ (เชียงใหม่)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=เชียงใหม่" },
-    { title: "มหาวิทยาลัยธรรมศาสตร์ (รังสิต / ท่าพระจันทร์ / ลำปาง)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=ธรรมศาสตร์" },
-    { title: "มหาวิทยาลัยมหิดล (ศาลายา / กาญจนบุรี)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=มหิดล" },
-    { title: "มหาวิทยาลัยขอนแก่น (ขอนแก่น)", category: "มหาวิทยาลัย", url: "hub/universities.html?q=ขอนแก่น" }
+    { title: "กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม (ดีอี)", category: "กระทรวง", url: "structure.html#mdes" }
   ];
 
   function createSearchModal() {
