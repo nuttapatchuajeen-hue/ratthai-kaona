@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ไล่เผยผล ส.ส. รายเขต · เลือกตั้ง 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== reveal.html — ฉากไล่เผยผล ส.ส. รายเขต (สไตล์คลิปยูทูบ) =====
+   ใช้ข้อมูลจริงจาก year-<ปี>.js (รายชื่อรายเขต) + standings-<ปี>.js (นายกฯ/turnout/พรรคชนะ)
+   ปุ่มเลือกปีมุมขวาบนมาจาก year-switch.js เหมือนหน้าอื่น ๆ ในโฟลเดอร์นี้         */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070d16; --bg2:#0d1626; --panel:#111d31; --line:#1e3050;
+  --ink:#eaf2ff; --muted:#8ba0bf; --gold:#ffcc4d;
+}
+html,body{height:100%}
+body{
+  font-family:Kanit,sans-serif;background:
+    radial-gradient(1100px 620px at 50% -12%,#16294a 0%,transparent 62%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 60%);
+  color:var(--ink);min-height:100vh;overflow-x:hidden;
+}
+
+/* ---------- หัวเรื่อง ---------- */
+.top{text-align:center;padding:20px 16px 8px}
+.top .yr{font-size:2.4rem;font-weight:700;letter-spacing:.02em;line-height:1}
+.top .yr small{display:inline-block;font-size:.86rem;font-weight:300;color:var(--muted);margin-left:10px;vertical-align:middle}
+.top .sub{font-size:.82rem;color:var(--muted);margin-top:6px}
+
+/* ---------- โครงหลัก: ราง–เวที–ราง ---------- */
+.stagewrap{display:grid;grid-template-columns:262px minmax(0,1fr) 262px;gap:16px;
+  max-width:1400px;margin:10px auto 0;padding:0 16px 130px;align-items:start}
+.rail{background:linear-gradient(180deg,rgba(21,36,60,.9),rgba(13,22,38,.9));
+  border:1px solid var(--line);border-radius:16px;padding:14px;position:sticky;top:14px}
+.rail h3{font-size:.74rem;font-weight:500;color:var(--muted);letter-spacing:.06em;margin-bottom:10px}
+
+/* แถบที่นั่งรายพรรค (ซ้าย) */
+.tally{display:flex;flex-direction:column;gap:9px}
+.trow{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:.8rem}
+.trow .nm{display:flex;align-items:center;gap:6px;min-width:0}
+.trow .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.trow .n{font-weight:600;font-variant-numeric:tabular-nums}
+.bar{grid-column:1/-1;height:5px;border-radius:3px;background:#182a45;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.25,1)}
+
+/* ข้อมูลปี (ขวา) */
+.fact{padding:9px 0;border-bottom:1px dashed rgba(139,160,191,.22)}
+.fact:last-child{border-bottom:0}
+.fact .k{font-size:.68rem;color:var(--muted)}
+.fact .v{font-size:.92rem;font-weight:500;margin-top:2px;line-height:1.45}
+.note{font-size:.74rem;color:var(--muted);line-height:1.65;margin-top:8px}
+
+/* ---------- เวทีตรงกลาง ---------- */
+.stage{min-height:min(62vh,520px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;position:relative;padding:8px 0}
+.chapter{font-size:.8rem;color:var(--gold);letter-spacing:.08em;min-height:1.2em;text-align:center}
+.cards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;width:100%}
+.card{width:216px;background:linear-gradient(180deg,rgba(24,42,70,.96),rgba(15,26,44,.96));
+  border:1px solid var(--line);border-left:4px solid var(--pc,#5b7);border-radius:13px;padding:12px 13px;
+  box-shadow:0 18px 40px -22px rgba(0,0,0,.9);
+  opacity:0;transform:translateY(22px) scale(.95);will-change:transform,opacity}
+.card.in{opacity:1;transform:none;transition:opacity .42s ease,transform .42s cubic-bezier(.2,.85,.3,1)}
+.card.outL{opacity:0;transform:translateX(-70vw) rotate(-7deg);transition:opacity .5s ease,transform .55s cubic-bezier(.5,0,.75,0)}
+.card.outR{opacity:0;transform:translateX(70vw) rotate(7deg);transition:opacity .5s ease,transform .55s cubic-bezier(.5,0,.75,0)}
+.card .zone{font-size:.68rem;color:var(--muted)}
+.card .nme{font-size:1rem;font-weight:500;line-height:1.35;margin:3px 0 7px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .pty{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#cfe0f7}
+.card .vt{font-size:.72rem;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
+.emptybox{color:var(--muted);font-size:.9rem;text-align:center;line-height:1.9;max-width:520px}
+
+/* ---------- แถบควบคุมล่าง ---------- */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:linear-gradient(180deg,rgba(7,13,22,0),rgba(7,13,22,.95) 34%);padding:22px 16px 14px}
+.dockin{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.prog{flex:1 1 100%;height:6px;border-radius:4px;background:#152540;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,#ffcc4d,#ff8a3d);width:0;transition:width .4s}
+.cnt{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;min-width:150px}
+button.ctl,select.ctl{font-family:inherit;font-size:.82rem;color:var(--ink);background:#16243c;
+  border:1px solid var(--line);border-radius:11px;padding:8px 13px;cursor:pointer;transition:.14s}
+button.ctl:hover,select.ctl:hover{border-color:#37598f;background:#1b2d4a}
+button.ctl.pri{background:var(--gold);border-color:var(--gold);color:#20180a;font-weight:600}
+button.ctl.on{border-color:var(--gold);color:var(--gold)}
+.sp{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--muted)}
+.sp input{width:104px;accent-color:var(--gold)}
+.grow{flex:1}
+
+@media(max-width:1060px){
+  .stagewrap{grid-template-columns:1fr;padding-bottom:150px}
+  .rail{position:static}
+  .card{width:min(46vw,216px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .card,.card.in,.card.outL,.card.outR{transition-duration:.01ms!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="yr" id="hYear">—<small id="hDate"></small></div>
+  <div class="sub" id="hSub">กำลังโหลดข้อมูล…</div>
+</div>
+
+<div class="stagewrap">
+  <!-- ราง ซ้าย: ที่นั่งสะสมรายพรรค -->
+  <aside class="rail">
+    <h3>ที่นั่งแบ่งเขตที่เผยแล้ว<br><span style="opacity:.7">(ยังไม่รวมบัญชีรายชื่อ)</span></h3>
+    <div class="tally" id="tally"></div>
+  </aside>
+
+  <!-- เวที -->
+  <main class="stage">
+    <div class="chapter" id="chapter"></div>
+    <div class="cards" id="cards"></div>
+  </main>
+
+  <!-- ราง ขวา: ข้อมูลปีนั้น -->
+  <aside class="rail">
+    <h3>การเลือกตั้งครั้งนี้</h3>
+    <div id="facts"></div>
+    <div class="note" id="ynote"></div>
+  </aside>
+</div>
+
+<div class="dock">
+  <div class="dockin">
+    <div class="prog"><i id="prog"></i></div>
+    <div class="cnt" id="cnt">0 / 0 คน</div>
+    <button class="ctl pri" id="bPlay" type="button">▶ เริ่ม</button>
+    <button class="ctl" id="bSkip" type="button">⏭ ข้ามไปท้าย</button>
+    <button class="ctl" id="bReset" type="button">↺ เริ่มใหม่</button>
+    <span class="sp">ชุดละ <input id="rBatch" type="range" min="5" max="10" value="8"><b id="vBatch">8</b> คน</span>
+    <span class="sp">จังหวะ <input id="rSpeed" type="range" min="60" max="260" step="10" value="150"><b id="vSpeed">1.5</b>วิ</span>
+    <span class="grow"></span>
+    <button class="ctl" id="bSound" type="button">🔇 เปิดเสียง</button>
+    <select class="ctl" id="selSong" aria-label="เลือกเพลงประกอบ"></select>
+  </div>
+</div>
+
+<audio id="bgm" loop preload="none"></audio>
+
+<!-- ===== โหลดข้อมูลจริงของปีที่เลือก =====
+     year-switch.js อ่าน ?y=25xx (หรือค่าที่จำไว้) แล้ว document.write ไฟล์ year-<ปี>.js ให้
+     ต้องเป็น <script> ธรรมดา ห้าม defer/async
+     timeline-data.js = ข้อมูลรายครั้งครบ 2476–2569 (นายกฯ · ผู้มาใช้สิทธิ · พรรคชนะ · หมายเหตุ)
+       ใช้ตัวนี้แทน standings-<ปี>.js เพราะ standings ของปีใหม่ไม่มี eyInfo               -->
+<script>window.EYEARSET = 'year';</script>
+<script src="year-switch.js"></script>
+<script src="timeline-data.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  var D = window.DATA || {}, YI = window.EYEARINFO || {};
+  var PM = D.partyMeta || {};
+  var ZONE = (D.zone || []).slice();
+  var TOTAL = ZONE.length;
+
+  /* หา "ครั้ง" ที่ตรงกับปีที่เลือก — ปี 2500 กับ 2535 มีเลือกตั้ง 2 ครั้ง จึงเทียบวันที่ด้วย */
+  var CUR = (window.EYEARS || []).filter(function (o) { return o.id === window.EYID; })[0] || {};
+  var TLE = (window.TL || []).filter(function (o) {
+    return !o.type && o.be === window.EYEAR && (!CUR.date || o.date === CUR.date);
+  })[0] || (window.TL || []).filter(function (o) { return !o.type && o.be === window.EYEAR; })[0] || {};
+
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (n) { return (n == null ? '' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')); };
+  var metaOf = function (c) { return PM[c] || { short: c || 'อื่น ๆ', color: '#8899aa' }; };
+
+  /* ---------- หัวเรื่อง + รางขวา ---------- */
+  var Y = window.EYEAR;
+  $('hYear').firstChild.nodeValue = 'เลือกตั้ง ' + Y;
+  $('hDate').textContent = TLE.date || CUR.date || YI.note || '';
+  $('hSub').textContent = TOTAL
+    ? 'ไล่เผยผล ' + (window.EYMP || 'ส.ส.') + ' แบบแบ่งเขต ' + num(TOTAL) + ' คน · เรียงตามจังหวัด'
+    : 'ปีนี้ยังไม่มีผลรายเขตในรูปดิจิทัล';
+
+  (function facts() {
+    var rows = [
+      ['ผู้ชนะการเลือกตั้ง', TLE.win || '— (ยังไม่มีพรรคการเมือง)'],
+      ['นายกรัฐมนตรีหลังเลือกตั้ง', TLE.pm ? TLE.pm + (TLE.pmp ? ' · ' + TLE.pmp : '') : '—'],
+      ['ผู้มาใช้สิทธิ', TLE.turnout ? TLE.turnout + '%' : '—'],
+      ['ระบบเลือกตั้ง', TLE.sys || CUR.seats || '—']
+    ];
+    $('facts').innerHTML = rows.map(function (r) {
+      return '<div class="fact"><div class="k">' + r[0] + '</div><div class="v">' + r[1] + '</div></div>';
+    }).join('');
+    $('ynote').textContent = TLE.note || '';
+  })();
+
+  /* ---------- เพลงประกอบ — ไฟล์ mp3 ที่มีอยู่แล้วใน ../songs/ และ ../songs-past/ ---------- */
+  var SONGS = [
+    { n: 'ภูมิใจไทย', f: '../songs/bhumjaithai.mp3' },
+    { n: 'ประชาชน', f: '../songs/peoples.mp3' },
+    { n: 'เพื่อไทย', f: '../songs/pheuthai.mp3' },
+    { n: 'กล้าธรรม', f: '../songs/klatham.mp3' },
+    { n: 'ประชาธิปัตย์', f: '../songs/democrat.mp3' },
+    { n: 'ก้าวไกล', f: '../songs-past/kaoklai.mp3' },
+    { n: 'อนาคตใหม่', f: '../songs-past/anakhotmai.mp3' },
+    { n: 'ไทยรักไทย', f: '../songs-past/thairakthai.mp3' },
+    { n: 'พลังประชาชน', f: '../songs-past/phalangprachachon.mp3' },
+    { n: 'ความหวังใหม่', f: '../songs-past/khwamwangmai.mp3' },
+    { n: 'กิจสังคม', f: '../songs-past/kitsangkhom.mp3' },
+    { n: 'สหประชาไทย', f: '../songs-past/sahaprachathai.mp3' },
+    { n: 'เสรีมนังคศิลา', f: '../songs-past/serimanangkhasila.mp3' }
+  ];
+  var bgm = $('bgm'), sel = $('selSong');
+  sel.innerHTML = SONGS.map(function (s, i) { return '<option value="' + i + '">♪ ' + s.n + '</option>'; }).join('');
+  // เลือกเพลงของพรรคผู้ชนะปีนั้นเป็นค่าเริ่มต้น · ไม่มีก็ใช้มาร์ชยุคเก่า
+  var winName = TLE.win || '';
+  var pick = 0; SONGS.forEach(function (s, i) { if (s.n === winName) pick = i; });
+  if (!winName || SONGS[pick].n !== winName) pick = 12;
+  sel.value = pick; bgm.src = SONGS[pick].f;
+  sel.addEventListener('change', function () {
+    var on = !bgm.paused; bgm.src = SONGS[sel.value].f; if (on) bgm.play().catch(function () { });
+  });
+  // เริ่มแบบเงียบเสมอ (เบราว์เซอร์บล็อกเสียงอัตโนมัติอยู่แล้ว) — ผู้ใช้กดเปิดเอง
+  $('bSound').addEventListener('click', function () {
+    if (bgm.paused) { bgm.volume = .55; bgm.play().then(function () { this.textContent = '🔊 ปิดเสียง'; this.classList.add('on'); }.bind(this)).catch(function () { }); }
+    else { bgm.pause(); this.textContent = '🔇 เปิดเสียง'; this.classList.remove('on'); }
+  });
+
+  /* ---------- ตัวนับที่นั่งรายพรรค (รางซ้าย) ---------- */
+  var seats = {}, maxSeat = 1;
+  function drawTally() {
+    var arr = Object.keys(seats).map(function (c) { return { c: c, n: seats[c] }; })
+      .sort(function (a, b) { return b.n - a.n; }).slice(0, 9);
+    $('tally').innerHTML = arr.map(function (o) {
+      var m = metaOf(o.c);
+      return '<div class="trow">'
+        + '<div class="nm"><i class="dot" style="background:' + m.color + '"></i><span>' + m.short + '</span></div>'
+        + '<div class="n">' + o.n + '</div>'
+        + '<div class="bar"><i style="width:' + (o.n / maxSeat * 100) + '%;background:' + m.color + '"></i></div>'
+        + '</div>';
+    }).join('') || '<div class="note">ยังไม่เริ่มนับ</div>';
+  }
+  drawTally();
+
+  /* ---------- เครื่องเล่นฉาก ---------- */
+  var idx = 0, playing = false, timer = null, live = [];
+  var batch = 8, hold = 1500;
+
+  function makeCard(p) {
+    var m = metaOf(p.code);
+    var el = document.createElement('div');
+    el.className = 'card'; el.style.setProperty('--pc', m.color);
+    el.innerHTML = '<div class="zone">' + p.prov + ' · เขต ' + p.no + '</div>'
+      + '<div class="nme" title="' + p.name + '">' + p.name + '</div>'
+      + '<div class="pty"><i class="dot" style="background:' + m.color + '"></i>' + m.short + '</div>'
+      + (p.votes != null ? '<div class="vt">' + num(p.votes) + ' คะแนน</div>' : '');
+    return el;
+  }
+
+  function clearLive(instant) {
+    live.forEach(function (el, i) {
+      if (instant) { el.remove(); return; }
+      el.classList.remove('in');
+      el.classList.add(i % 2 ? 'outR' : 'outL');       // สลับออกซ้าย–ขวา
+      setTimeout(function () { el.remove(); }, 620);
+    });
+    live = [];
+  }
+
+  function step() {
+    if (idx >= TOTAL) { finish(); return; }
+    clearLive(false);
+    var take = ZONE.slice(idx, idx + batch);
+    idx += take.length;
+
+    var wrap = $('cards');
+    setTimeout(function () {
+      take.forEach(function (p, i) {
+        var el = makeCard(p);
+        wrap.appendChild(el); live.push(el);
+        seats[p.code] = (seats[p.code] || 0) + 1;
+        if (seats[p.code] > maxSeat) maxSeat = seats[p.code];
+        setTimeout(function () { el.classList.add('in'); }, i * 70);
+      });
+      drawTally(); update();
+      $('chapter').textContent = take[0].prov === take[take.length - 1].prov
+        ? take[0].prov : take[0].prov + ' → ' + take[take.length - 1].prov;
+    }, live.length ? 420 : 0);
+
+    timer = setTimeout(step, hold + batch * 70 + 420);
+  }
+
+  function update() {
+    $('cnt').textContent = num(idx) + ' / ' + num(TOTAL) + ' คน';
+    $('prog').style.width = (TOTAL ? idx / TOTAL * 100 : 0) + '%';
+  }
+
+  function finish() {
+    playing = false; $('bPlay').textContent = '▶ เริ่ม';
+    $('chapter').textContent = 'ครบ ' + num(TOTAL) + ' เขตแล้ว';
+  }
+
+  function play() {
+    if (!TOTAL) return;
+    playing = true; $('bPlay').textContent = '⏸ หยุด';
+    step();
+  }
+  function pause() {
+    playing = false; clearTimeout(timer); $('bPlay').textContent = '▶ เริ่ม';
+  }
+
+  $('bPlay').addEventListener('click', function () { playing ? pause() : play(); });
+
+  $('bSkip').addEventListener('click', function () {
+    pause(); clearLive(true);
+    seats = {}; maxSeat = 1;
+    ZONE.forEach(function (p) { seats[p.code] = (seats[p.code] || 0) + 1; if (seats[p.code] > maxSeat) maxSeat = seats[p.code]; });
+    idx = TOTAL; drawTally(); update(); finish();
+  });
+
+  $('bReset').addEventListener('click', function () {
+    pause(); clearLive(true);
+    idx = 0; seats = {}; maxSeat = 1; drawTally(); update(); $('chapter').textContent = '';
+  });
+
+  $('rBatch').addEventListener('input', function () { batch = +this.value; $('vBatch').textContent = batch; });
+  $('rSpeed').addEventListener('input', function () {
+    hold = +this.value * 10; $('vSpeed').textContent = (hold / 1000).toFixed(1);
+  });
+
+  if (!TOTAL) {
+    $('cards').innerHTML = '<div class="emptybox">การเลือกตั้ง พ.ศ. ' + Y
+      + ' ยังไม่มีรายชื่อ ส.ส. รายเขตในไฟล์ข้อมูล<br>'
+      + 'ลองเลือกปีอื่นจากปุ่ม “เลือกตั้ง” มุมขวาบน · หรือดู <a href="standings.html?y='
+      + window.EYID + '" style="color:var(--gold)">ภาพรวมที่นั่งรายพรรค →</a></div>';
+    $('bPlay').disabled = true;
+  }
+  update();
+})();
+</script>
+</body>
+</html>
