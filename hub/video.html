@@ -14,7 +14,7 @@
       --accent-cyan:   #00E5FF;
       --accent-orange: #FF5C1A;
       --text-primary:  #DCE8F0;
-      --text-muted:    #4A6070;
+      --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
       --font-display:  'Bebas Neue', 'Prompt', sans-serif;
       --font-sub:      'Rajdhani', 'Sarabun', sans-serif;
       --font-mono:     'IBM Plex Mono', 'Sarabun', monospace;
@@ -69,22 +69,25 @@
       align-items: center;
     }
 
+    /* เมนู 7 รายการชุดเดียวกับหน้า hub อื่น — ตัวอักษรไทยจึงใช้ font-sub ไม่ใช่ mono ตัวเล็ก */
     .nav-tab {
       display: flex;
       align-items: center;
       padding: 0 1.1rem;
       height: 4rem;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-family: var(--font-sub);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       text-decoration: none;
-      color: var(--text-muted);
-      transition: color 0.3s;
+      color: #fff;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s, opacity 0.2s;
       border-bottom: 2px solid transparent;
     }
 
-    .nav-tab:hover, .nav-tab.active {
+    .nav-tab:hover { color: #fff; opacity: 0.7; }
+    .nav-tab.active, .nav-tab[aria-current="page"] {
       color: var(--accent-cyan);
       border-bottom-color: var(--accent-cyan);
     }
@@ -367,6 +370,9 @@
       }
     }
   </style>
+  <!-- ต้องมาหลัง <style> ของหน้า จึงจะทับกฎเมนูเดิมได้ (เมนูมือถือแบบลิ้นชัก) -->
+  <link rel="stylesheet" href="../css/hub-nav.css" />
+  <script src="../js/hub-nav.js" defer></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -376,7 +382,13 @@
     <nav>
       <a href="index.html" class="nav-logo">รัฐไทยก้าวหน้า</a>
       <ul class="nav-links">
-        <li><a href="index.html" class="nav-tab">← กลับหน้าแรก</a></li>
+        <li><a href="index.html" class="nav-tab">หน้าแรก</a></li>
+        <li><a href="../structure.html" class="nav-tab">แผนผังโครงสร้าง</a></li>
+        <li><a href="../election/index.html" class="nav-tab">ส.ส. ผู้แทนราษฎร</a></li>
+        <li><a href="../cabinet/index.html" class="nav-tab">ชุดคณะรัฐมนตรี</a></li>
+        <li><a href="../stats/index.html" class="nav-tab">ข้อมูลสถิติ</a></li>
+        <li><a href="about.html" class="nav-tab">เกี่ยวกับเรา</a></li>
+        <li><a href="survey.html" class="nav-tab">แบบประเมิน</a></li>
       </ul>
     </nav>
   </header>

@@ -1,0 +1,97 @@
+/* ===========================================================================
+   เมนูมือถือของกลุ่มหน้า hub (index / about / survey)
+   ---------------------------------------------------------------------------
+   ปัญหาเดิม: เมนู 7 รายการถูกวางเรียงแนวนอนแล้วตัดด้วย overflow-x:auto
+   โดยซ่อน scrollbar ไว้ → ที่ 375px มองเห็นจริงแค่ ~3 รายการ (ซ่อนไป 54%)
+   และไม่มีสัญญาณใดบอกผู้ใช้ว่าเลื่อนได้ → อีก 4 หน้าเข้าไม่ถึงเลย
+   วิธีแก้: มือถือเปลี่ยนเป็นปุ่มแฮมเบอร์เกอร์ + ลิ้นชักแนวตั้ง เห็นครบทุกรายการ
+   (เดสก์ท็อปไม่เปลี่ยนแปลงใด ๆ — ปุ่มถูกซ่อนไว้)
+   ไฟล์นี้ต้องถูกลิงก์ "หลัง" สไตล์ของหน้า จึงจะทับกฎ overflow-x เดิมได้
+   =========================================================================== */
+
+.nav-burger { display: none; }
+
+@media (max-width: 768px) {
+
+  .site-header nav { position: relative; }
+
+  /* ── ปุ่มแฮมเบอร์เกอร์ (44×44 ตามเกณฑ์สัมผัส) ── */
+  .nav-burger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    align-self: center;
+    padding: 0;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9px;
+    color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .nav-burger:hover,
+  .nav-burger[aria-expanded="true"] {
+    border-color: var(--accent-cyan, #00E5FF);
+    background: rgba(0, 229, 255, 0.08);
+  }
+  .nav-burger svg { width: 22px; height: 22px; display: block; }
+  .nav-burger .ico-close { display: none; }
+  .nav-burger[aria-expanded="true"] .ico-open  { display: none; }
+  .nav-burger[aria-expanded="true"] .ico-close { display: block; }
+
+  /* ── ลิ้นชักเมนู ── */
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.35rem 0;
+    background: rgba(2, 5, 8, 0.97);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 229, 255, 0.18);
+    border-bottom: 1px solid rgba(0, 229, 255, 0.18);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    /* ทับกฎเดิมที่ตัดเมนูเป็นแถบเลื่อนแนวนอน */
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.28s ease, opacity 0.2s ease, visibility 0.28s;
+  }
+  .nav-links.is-open {
+    max-height: min(70vh, 460px);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-links li { display: flex; }
+
+  .nav-tab {
+    width: 100%;
+    min-height: 52px;              /* พื้นที่กดสบายนิ้ว */
+    padding: 0 6vw !important;
+    font-size: 0.95rem !important; /* ไทยที่ 0.72rem เดิมเล็กเกินอ่าน */
+    letter-spacing: 0 !important;  /* letter-spacing กว้างทำให้สระ/วรรณยุกต์ไทยลอยห่าง */
+    border-bottom: none !important;
+    border-left: 3px solid transparent;
+  }
+  .nav-tab[aria-current="page"],
+  .nav-tab[aria-current="page"]:hover {
+    border-left-color: var(--accent-cyan, #00E5FF);
+    border-bottom-color: transparent !important;
+    background: rgba(0, 229, 255, 0.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-links { transition: none !important; }
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>ไทม์ไลน์ประวัติการเลือกตั้ง ส.ส. ไทย · พ.ศ. 2476–2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/bb8-toggle.css">
+<script src="../js/preloader.js"></script>
+<style>
+/* ===== ไทม์ไลน์ประวัติการเลือกตั้ง ===== */
+.tl-intro{color:var(--muted);font-size:.95rem;max-width:720px;margin:2px 0 4px;line-height:1.7}
+
+/* แถบภาพรวมข้ามยุค */
+.ovbox{padding:20px 20px 14px}
+.ovscroll{display:flex;align-items:flex-end;gap:5px;overflow-x:auto;padding:6px 2px 12px;scroll-behavior:smooth}
+.ovscroll::-webkit-scrollbar{height:8px}.ovscroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
+.ovcol{flex:0 0 auto;width:26px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;border:0;background:transparent;padding:0}
+.ovcol .obar{width:15px;border-radius:4px 4px 2px 2px;transition:transform .14s,filter .14s;box-shadow:0 1px 3px rgba(10,40,60,.18)}
+.ovcol:hover .obar{transform:scaleY(1.05);filter:brightness(1.08)}
+.ovcol.void .obar{background:repeating-linear-gradient(45deg,var(--line-2),var(--line-2) 3px,transparent 3px,transparent 6px)!important;box-shadow:none;border:1px dashed var(--line-2)}
+.ovcol .oy{font-family:'Kanit';font-size:.6rem;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.02em}
+.ovcol:hover .oy{color:var(--ink)}
+.ovlgd{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:.74rem;color:var(--muted)}
+.ovlgd span{display:inline-flex;align-items:center;gap:5px}
+.ovlgd i{width:11px;height:11px;border-radius:3px;flex:none}
+
+/* ปุ่มสลับเรียง */
+.tl-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 20px}
+.sortbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Kanit';font-weight:500;font-size:.86rem;
+  color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px 13px;cursor:pointer;transition:.14s}
+.sortbtn:hover{border-color:var(--orange);color:var(--orange-deep)}
+.sortbtn svg{width:15px;height:15px}
+.tl-count{font-size:.82rem;color:var(--muted)}
+
+/* rail + rows */
+.tl{position:relative;padding:2px 0 8px}
+.tl::before{content:"";position:absolute;left:112px;top:0;bottom:0;width:2px;
+  background:linear-gradient(var(--line-2),var(--line));border-radius:2px}
+.tlrow{position:relative;padding:0 0 20px 138px;min-height:34px}
+.tlrow .yr{position:absolute;left:0;top:2px;width:94px;text-align:right;font-family:'Kanit'}
+.tlrow .yr b{display:block;font-weight:700;font-size:1.18rem;line-height:1.05;letter-spacing:-.01em}
+.tlrow .yr small{display:block;font-size:.68rem;color:var(--muted);font-weight:400}
+.tlrow .node{position:absolute;left:105px;top:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--paper);border:3px solid var(--nc,var(--orange));box-shadow:0 0 0 4px var(--paper);z-index:1}
+
+/* การ์ดการเลือกตั้ง */
+.tlcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--wc,var(--orange));
+  border-radius:15px;box-shadow:var(--shadow);padding:14px 17px;transition:box-shadow .16s,transform .16s}
+.tlcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.tlcard .ch{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:9px}
+.tlcard .ch .dt{font-family:'Kanit';font-weight:600;font-size:.98rem}
+.tlcard .ch .sys{font-size:.76rem;color:var(--muted)}
+.tlcard .turn{margin-left:auto;font-family:'Kanit';font-size:.74rem;color:var(--orange-deep);
+  background:var(--orange-soft);border-radius:20px;padding:3px 9px;white-space:nowrap}
+.tlcard .turn b{font-weight:600}
+
+.winline{display:flex;align-items:center;gap:8px;font-size:.9rem;margin-bottom:9px}
+.winline .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.winline .wl{color:var(--muted);font-size:.82rem}
+.winline .wn{font-weight:600}
+.winline .ws{font-family:'Kanit';font-weight:700;margin-left:2px}
+.winline .ws em{font-style:normal;font-weight:400;color:var(--muted);font-size:.8rem}
+
+.pbar{display:flex;height:16px;border-radius:5px;overflow:hidden;background:var(--wash);margin-bottom:9px}
+.pbar .seg{height:100%;min-width:2px;transition:filter .14s}
+.pbar .seg:hover{filter:brightness(1.1)}
+.plgd{display:flex;flex-wrap:wrap;gap:5px 12px;margin-bottom:11px;font-size:.78rem}
+.plgd span{display:inline-flex;align-items:center;gap:5px;color:var(--ink-2)}
+.plgd i{width:10px;height:10px;border-radius:3px;flex:none}
+.plgd b{font-family:'Kanit';font-weight:600}
+
+.pmline{display:flex;align-items:center;gap:8px;font-size:.86rem;padding-top:9px;border-top:1px dashed var(--line);color:var(--ink-2)}
+.pmline .sw{width:11px;height:11px;border-radius:50%;flex:none}
+.pmline .pl{color:var(--muted);font-size:.8rem}
+.pmline .pn{font-weight:600}
+.tlnote{font-size:.82rem;color:var(--muted);line-height:1.6;margin-top:9px}
+
+.dashrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.dashbtn{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-weight:500;font-size:.8rem;
+  color:var(--orange-deep);background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:9px;
+  padding:6px 11px;transition:.14s}
+.dashbtn:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
+.dashbtn svg{width:14px;height:14px}
+html[data-theme="dark"] .dashbtn:hover{color:#081019}
+
+/* การเลือกตั้งโมฆะ */
+.tlcard.void{border-style:dashed;border-left-color:var(--line-2);background:var(--wash);opacity:.94}
+.voidbadge{display:inline-flex;align-items:center;gap:5px;font-family:'Kanit';font-weight:600;font-size:.74rem;
+  color:#b23b3b;background:rgba(178,59,59,.1);border-radius:20px;padding:3px 10px}
+html[data-theme="dark"] .voidbadge{color:#ff9b9b;background:rgba(255,120,120,.12)}
+
+/* เหตุการณ์ (รัฐประหาร ฯลฯ) */
+.tlrow.ev{padding-bottom:20px}
+.tlrow.ev .node{background:var(--evc,#8a97a3);border-color:var(--paper);width:14px;height:14px;top:5px;left:106px}
+.evcard{display:flex;align-items:flex-start;gap:11px;background:var(--wash);border:1px solid var(--line);
+  border-radius:13px;padding:11px 15px}
+.evcard .eic{font-size:1.15rem;line-height:1.3;flex:none}
+.evcard .et{font-family:'Kanit';font-weight:600;font-size:.9rem;margin-bottom:2px}
+.evcard .ed{font-size:.8rem;color:var(--muted);line-height:1.55}
+.evcard .eyr{font-family:'Kanit';font-size:.74rem;color:var(--orange-deep);margin-top:3px}
+
+@media(max-width:640px){
+  .tl::before{left:8px}
+  .tlrow{padding-left:26px;padding-top:30px}
+  .tlrow .yr{position:static;width:auto;text-align:left;margin-bottom:8px}
+  .tlrow .yr b{display:inline;font-size:1.1rem}.tlrow .yr small{display:inline;margin-left:7px}
+  .tlrow .node{left:1px;top:34px}
+  .tlrow.ev .node{left:2px;top:34px}
+}
+</style>
+</head>
+<body>
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+  <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+  <div class="bb8-toggle__container">
+    <div class="bb8-toggle__scenery">
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="tatto-1"></div><div class="tatto-2"></div>
+      <div class="gomrassen"></div><div class="hermes"></div><div class="chenini"></div>
+      <div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div><div class="bb8-toggle__cloud"></div>
+    </div>
+    <div class="bb8">
+      <div class="bb8__head-container"><div class="bb8__antenna"></div><div class="bb8__antenna"></div><div class="bb8__head"></div></div>
+      <div class="bb8__body"></div>
+    </div>
+    <div class="artificial__hidden"><div class="bb8__shadow"></div></div>
+  </div>
+</label>
+<script>
+function mdApplyTheme(t){var h=document.documentElement;h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}}
+function mdSyncToggle(){var dark=document.documentElement.getAttribute('data-theme')==='dark',cb=document.querySelector('.bb8-toggle__checkbox');if(cb)cb.checked=dark;}
+mdSyncToggle();
+</script>
+
+<script src="nav.js" defer></script>
+
+<div class="subpage">
+  <header class="pagehead">
+    <svg class="tri" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="29" y="5" width="16" height="2.4" rx="1.2" fill="#A51931"/><rect x="29" y="8.4" width="16" height="3.2" rx="1.2" fill="#2D2A4A"/><rect x="29" y="12.6" width="16" height="2.4" rx="1.2" fill="#A51931"/><g transform="rotate(-7 21 13)"><rect x="12" y="3" width="18.5" height="17" rx="2.2" fill="#fff" stroke="#2D2A4A" stroke-width="1.6"/><path d="M16.5 11.3 l3.2 3.3 L26.5 8" stroke="#1FA463" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g><path d="M6.5 22 H41.5 L38 41 H10 Z" fill="#2D2A4A"/><path d="M6.5 22 H41.5 L38.7 27 H9.3 Z" fill="#3b366a"/><rect x="17" y="22.6" width="14" height="3.4" rx="1.7" fill="#fff" opacity=".9"/></svg>
+    <div class="bt">ประวัติการเลือกตั้ง<small>ไทม์ไลน์ ส.ส. ไทย · พ.ศ. 2476–2569</small></div>
+    <div class="ballot"><span class="b46">เลือกตั้ง</span><span class="bx">✕</span></div>
+  </header>
+
+  <div class="wrap">
+    <div class="statrow">
+      <div class="tile"><div class="v num" id="st-count">0</div><div class="l">การเลือกตั้งทั่วไป</div></div>
+      <div class="tile"><div class="v num">2476–2569</div><div class="l">ช่วงปี พ.ศ.</div></div>
+      <div class="tile alt"><div class="v num" id="st-coup">0</div><div class="l">รัฐประหาร/เหตุการณ์</div></div>
+      <div class="tile"><div class="v num" id="st-dash">0</div><div class="l">ปีที่ดูรายเขต/แผนที่ได้</div></div>
+    </div>
+
+    <p class="tl-intro">ประมวลการเลือกตั้งสมาชิกสภาผู้แทนราษฎรของไทย <b>ทุกครั้ง</b>ตั้งแต่ครั้งแรก พ.ศ. 2476 จนถึงล่าสุด
+      พร้อมพรรคที่ได้ที่นั่งมากที่สุด นายกรัฐมนตรีที่ได้ และเหตุการณ์รัฐประหารที่คั่นระหว่างทาง
+      ปีตั้งแต่ 2539 เป็นต้นมากดดู <b>ผลรายเขต · แผนที่ · บัญชีรายชื่อ · รัฐสภา</b> แบบเต็มได้</p>
+
+    <div class="sec-head">
+      <div><span class="kick">Seats at a Glance</span><h1>ภาพรวม<span class="o">ข้ามยุค</span></h1></div>
+      <p>ความสูงของแท่ง = ที่นั่งของพรรคที่ชนะในครั้งนั้น · สีตามพรรค · แถบลาย = การเลือกตั้งที่เป็นโมฆะ (กดเพื่อไปการ์ด)</p>
+    </div>
+    <div class="panelbox ovbox">
+      <div class="ovscroll" id="ovscroll"></div>
+      <div class="ovlgd" id="ovlgd"></div>
+    </div>
+
+    <div class="sec-head">
+      <div><span class="kick">The Timeline</span><h1>ไทม์ไลน์<span class="o">การเลือกตั้ง</span></h1></div>
+      <p>เรียงตามเวลา · แต่ละการ์ดสรุปพรรค นายกฯ และบริบทการเมือง</p>
+    </div>
+    <div class="tl-tools">
+      <button class="sortbtn" id="sortbtn" type="button" aria-label="สลับลำดับการเรียง">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4v16M7 4 4 7M7 4l3 3M17 20V4M17 20l-3-3M17 20l3-3"/></svg>
+        <span id="sortlabel">เก่า → ใหม่</span>
+      </button>
+      <span class="tl-count" id="tlcount"></span>
+    </div>
+    <div class="tl" id="tl"></div>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="fcol"><h4>ไทม์ไลน์ประวัติการเลือกตั้ง</h4><p>รวมการเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไปทุกครั้ง ตั้งแต่ พ.ศ. 2476 ถึง 2569 รวมการเลือกตั้งที่ศาลวินิจฉัยเป็นโมฆะ (2549, 2557) และเหตุการณ์รัฐประหารที่เกี่ยวข้อง</p></div>
+      <div class="fcol"><h4>แหล่งข้อมูล</h4><ul>
+        <li>• ผลการเลือกตั้งแต่ละครั้ง: วิกิพีเดีย — "การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป พ.ศ. …"</li>
+        <li>• ผลนับคะแนน ปี 2544 เป็นต้นมา: สำนักงานคณะกรรมการการเลือกตั้ง (กกต.)</li>
+        <li>• ปี 2539–2569 เชื่อมกับแดชบอร์ดผลรายเขต/บัญชีรายชื่อของเว็บนี้</li></ul>
+        <p class="cite">วิกิพีเดีย สารานุกรมเสรี. (2569). การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป (แต่ละปี). สืบค้นเมื่อ 13 สิงหาคม 2569.</p></div>
+      <div class="fcol"><h4>หมายเหตุ</h4><p>ตัวเลขบางครั้งในยุคก่อน พ.ศ. 2500 อาจต่างกันเล็กน้อยตามแหล่งอ้างอิง (เครื่องหมาย ~ = โดยประมาณ) · หน้านี้จัดทำเพื่อการศึกษาและแสดงผลข้อมูลเท่านั้น</p></div>
+    </div>
+  </footer>
+</div>
+
+<script src="timeline-data.js"></script>
+<script>
+(function () {
+  var TL = window.TL || [], PC = window.TL_PARTY || {};
+  var colOf = function (n) { return PC[n] || '#B9AFA4'; };
+  var elections = TL.filter(function (o) { return !o.type; });
+
+  /* ---- สถิติ ---- */
+  var nDash = elections.filter(function (o) { return o.dash; }).length;
+  var nCoup = TL.filter(function (o) { return o.type === 'event'; }).length;
+  countUp(document.getElementById('st-count'), elections.length);
+  countUp(document.getElementById('st-coup'), nCoup);
+  countUp(document.getElementById('st-dash'), nDash);
+  function countUp(el, target) {
+    if (!el) return; var t0 = performance.now();
+    (function step(t) {
+      var p = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * e); if (p < 1) requestAnimationFrame(step);
+    })(t0);
+    // กันค่าค้าง 0 กรณี rAF ถูกพัก (แท็บไม่โฟกัส/หน้าถูกซ่อนตอนโหลด/reduced-motion)
+    setTimeout(function () { el.textContent = target; }, 1000);
+  }
+
+  /* ---- แถบภาพรวมข้ามยุค ---- */
+  var maxWin = 0;
+  elections.forEach(function (o) { var w = o.parties[0] ? o.parties[0][1] : o.seats; if (o.tag !== 'void' && w > maxWin) maxWin = w; });
+  var ov = document.getElementById('ovscroll');
+  elections.forEach(function (o) {
+    var b = document.createElement('button'); b.className = 'ovcol' + (o.tag === 'void' ? ' void' : '');
+    b.title = 'เลือกตั้ง ' + o.be + (o.win ? ' · ' + o.win + ' ' + o.parties[0][1] + ' ที่นั่ง' : '');
+    var val = o.tag === 'void' ? 30 : (o.parties[0] ? o.parties[0][1] : o.seats);
+    var h = 24 + Math.round(val / maxWin * 76);
+    var c = o.tag === 'void' ? 'var(--line-2)' : (o.win ? colOf(o.win) : '#94A3AE');
+    b.innerHTML = '<div class="obar" style="height:' + h + 'px;background:' + c + '"></div><span class="oy">' + o.be + '</span>';
+    b.addEventListener('click', function () {
+      var card = document.getElementById('tl-' + o.s);
+      if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.style.transition = 'box-shadow .2s'; card.style.boxShadow = '0 0 0 3px var(--orange)';
+        setTimeout(function () { card.style.boxShadow = ''; }, 1300); }
+    });
+    ov.appendChild(b);
+  });
+  document.getElementById('ovlgd').innerHTML =
+    '<span><i style="background:#27AAE1"></i>ประชาธิปัตย์</span>'
+    + '<span><i style="background:#E30613"></i>ไทยรักไทย/เพื่อไทย</span>'
+    + '<span><i style="background:#FF6A13"></i>ก้าวไกล/ประชาชน</span>'
+    + '<span><i style="background:#E90080"></i>ชาติไทย</span>'
+    + '<span><i style="background:#0E2F6B"></i>ภูมิใจไทย</span>'
+    + '<span><i style="background:#94A3AE"></i>ไม่มีพรรค/อิสระ</span>';
+
+  /* ---- ไทม์ไลน์ ---- */
+  var host = document.getElementById('tl');
+  var asc = true;
+  function render() {
+    var list = asc ? TL.slice() : TL.slice().reverse();
+    host.innerHTML = '';
+    list.forEach(function (o) { host.appendChild(o.type === 'event' ? evRow(o) : elRow(o)); });
+    document.getElementById('tlcount').textContent = elections.length + ' การเลือกตั้ง · ' + nCoup + ' เหตุการณ์';
+  }
+
+  function elRow(o) {
+    var wc = o.tag === 'void' ? 'var(--line-2)' : (o.win ? colOf(o.win) : '#94A3AE');
+    var row = document.createElement('div'); row.className = 'tlrow';
+    var seatsTotal = o.seats || 1, shown = 0, segs = '', lgd = '';
+    (o.parties || []).forEach(function (p) {
+      var c = colOf(p[0]); shown += p[1];
+      segs += '<div class="seg" style="width:' + (p[1] / seatsTotal * 100) + '%;background:' + c + '" title="' + p[0] + ' ' + p[1] + '"></div>';
+      lgd += '<span><i style="background:' + c + '"></i>' + p[0] + ' <b>' + p[1] + '</b></span>';
+    });
+    var rest = seatsTotal - shown;
+    if (rest > 0 && o.parties && o.parties.length) {
+      segs += '<div class="seg" style="width:' + (rest / seatsTotal * 100) + '%;background:#B9AFA4" title="อื่น ๆ ' + rest + '"></div>';
+      lgd += '<span><i style="background:#B9AFA4"></i>อื่น ๆ <b>' + rest + '</b></span>';
+    }
+    var winBlock = o.tag === 'void'
+      ? '<div class="winline"><span class="voidbadge">⚠ การเลือกตั้งเป็นโมฆะ</span></div>'
+      : (o.win
+        ? '<div class="winline"><span class="sw" style="background:' + wc + '"></span>'
+          + '<span class="wl">ที่นั่งมากสุด</span><span class="wn">' + o.win + '</span>'
+          + '<span class="ws">' + o.parties[0][1] + '<em> ที่นั่ง</em></span></div>'
+        : '<div class="winline"><span class="sw" style="background:#94A3AE"></span><span class="wn">ยังไม่มีพรรคการเมือง</span>'
+          + '<span class="wl">— ผู้สมัครลงอิสระ</span></div>');
+    var bar = o.parties && o.parties.length ? '<div class="pbar">' + segs + '</div><div class="plgd">' + lgd + '</div>' : '';
+    var pm = o.pm ? '<div class="pmline"><span class="pl">นายกฯ ที่ได้:</span>'
+      + '<span class="sw" style="background:' + (o.pmp ? colOf(o.pmp) : '#94A3AE') + '"></span>'
+      + '<span class="pn">' + o.pm + '</span></div>' : '';
+    var dash = o.dash ? '<div class="dashrow">'
+      + dbtn('index.html', 'รายเขต/แผนที่', o.dash, 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z')
+      + dbtn('partylist.html', 'บัญชีรายชื่อ', o.dash, 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01')
+      + dbtn('standings.html', 'คะแนนพรรค', o.dash, 'M3 3v18h18M7 13v4M12 9v8M17 11v6')
+      + dbtn('parliament.html', 'รัฐสภา', o.dash, 'M4 19a8 8 0 0 1 16 0')
+      + '</div>' : '';
+    row.innerHTML =
+      '<div class="yr"><b>' + o.be + '</b><small>ค.ศ. ' + o.ce + '</small></div>'
+      + '<div class="node" style="--nc:' + wc + '"></div>'
+      + '<div class="tlcard' + (o.tag === 'void' ? ' void' : '') + '" id="tl-' + o.s + '" style="--wc:' + wc + '">'
+      + '<div class="ch"><span class="dt">' + o.date + '</span><span class="sys">' + o.sys + (o.extra ? ' · ' + o.extra : '') + '</span>'
+      + (o.turnout && o.turnout !== '—' ? '<span class="turn">มาใช้สิทธิ <b>' + o.turnout + '%</b></span>' : '') + '</div>'
+      + winBlock + bar + pm
+      + '<div class="tlnote">' + o.note + '</div>' + dash
+      + '</div>';
+    return row;
+  }
+  function dbtn(page, label, y, d) {
+    return '<a class="dashbtn" href="' + page + '?y=' + y + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="' + d + '"/></svg>' + label + '</a>';
+  }
+
+  function evRow(o) {
+    var row = document.createElement('div'); row.className = 'tlrow ev';
+    var isUp = o.icon === '✊';
+    var ec = isUp ? '#2f9e6f' : '#b25a5a';
+    row.innerHTML =
+      '<div class="yr"><b style="font-size:.98rem;color:var(--muted)">พ.ศ. ' + (o.ce + 543) + '</b></div>'
+      + '<div class="node" style="--evc:' + ec + '"></div>'
+      + '<div class="evcard"><span class="eic">' + o.icon + '</span><div>'
+      + '<div class="et">' + o.title + '</div><div class="ed">' + o.desc + '</div>'
+      + '<div class="eyr">' + o.date + '</div></div></div>';
+    return row;
+  }
+
+  render();
+  var sb = document.getElementById('sortbtn'), sl = document.getElementById('sortlabel');
+  sb.addEventListener('click', function () { asc = !asc; sl.textContent = asc ? 'เก่า → ใหม่' : 'ใหม่ → เก่า'; render(); });
+})();
+</script>
+<script src="../js/theme-toggle-drag.js"></script>
+<script src="../js/ai-chat.js"></script>
+</body>
+</html>

@@ -5,6 +5,10 @@ senator_images_200.zip
 bangkok_election_2026_images.zip
 candidate_images.zip
 
+# ต้นฉบับโลโก้ความละเอียดสูง — เก็บไว้ในเครื่องเผื่อต้องสร้างใหม่
+# (ไฟล์ที่เว็บใช้จริงคือ hub/images/logo.png ย่อเหลือ 128×128 แล้ว)
+hub/images/logo-original-1024.png
+
 # Netlify CLI local state (site id อยู่ในเครื่องพอ)
 .netlify/
 
@@ -15,3 +19,7 @@ desktop.ini
 *.tmp
 *~
 .vscode/
+
+# ต้นฉบับความละเอียดสูงของรูปที่ย่อ/แปลงแล้ว — เก็บไว้ในเครื่องเผื่อต้องสร้างใหม่
+cabinet/3629a889-original-1254.png
+hub/images/creator-nook-original.png

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/cursor-glow.css" />
 
   <style>
   :root {
@@ -18,7 +19,7 @@
     --accent-orange: #FF5C1A;
     --text-primary:  #DCE8F0;
     --text-body:     #A7BDCC;
-    --text-muted:    #4A6070;
+    --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
     --line:          rgba(0,229,255,0.12);
     --font-display:  'Bebas Neue', 'Prompt', sans-serif;
     --font-thai:     'Prompt', 'Sarabun', sans-serif;
@@ -71,6 +72,8 @@
   .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
   .nav-logo-img { height: 2.6rem; width: auto; display: block; }
   .nav-links { list-style: none; display: flex; gap: 0; align-items: stretch; }
+  /* <li> ต้องเป็น flex ด้วย ไม่งั้น <a> ข้างในสูงแค่ ~21px (พื้นที่กดเล็กกว่าที่ตาเห็น) */
+  .nav-links li { display: flex; }
   .nav-tab {
     display: flex; align-items: center; padding: 0 1.0rem;
     font-family: var(--font-sub); font-size: 0.82rem; font-weight: 600;
@@ -83,7 +86,7 @@
 
   .section-label {
     display: inline-block; font-family: var(--font-mono);
-    font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--accent-cyan); margin-bottom: 1.3rem;
   }
 
@@ -102,7 +105,7 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .hero-tagline {
-    font-family: var(--font-mono); font-size: clamp(0.72rem, 1.2vw, 0.92rem);
+    font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 0.92rem);
     letter-spacing: 0.1em; color: var(--text-body); margin-top: 1.6rem;
     max-width: 62ch; line-height: 1.9;
   }
@@ -128,7 +131,7 @@
     padding: 1.8rem 1.7rem; margin-bottom: 1.6rem; position: relative; overflow: hidden;
   }
   .panel-num {
-    font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 0.4rem;
   }
   .panel h2 { font-family: var(--font-thai); font-weight: 700; font-size: 1.3rem; margin-bottom: 0.3rem; }
@@ -141,7 +144,7 @@
   .notice-list li::before { content: '▸'; color: var(--accent-cyan); }
   .scale-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
   .scale-chips span {
-    font-family: var(--font-mono); font-size: 0.72rem; padding: 0.3rem 0.7rem;
+    font-family: var(--font-mono); font-size: 0.78rem; padding: 0.3rem 0.7rem;
     border: 1px solid var(--line); border-radius: 999px; color: var(--text-body);
   }
   .scale-chips b { color: var(--accent-cyan); font-weight: 500; }
@@ -172,7 +175,7 @@
   }
   .likert-head { padding: 0.4rem 0 0.7rem; border-bottom: 1px solid var(--line); }
   .likert-head .col {
-    text-align: center; font-family: var(--font-mono); font-size: 0.6rem;
+    text-align: center; font-family: var(--font-mono); font-size: 0.75rem;
     letter-spacing: 0.04em; color: var(--text-muted); line-height: 1.4;
   }
   .likert-head .col b { display: block; font-size: 0.95rem; color: var(--accent-cyan); font-weight: 500; }
@@ -180,14 +183,14 @@
   .likert-row:last-child { border-bottom: none; }
   .likert-row.missing { background: rgba(255,92,26,0.07); border-radius: 8px; }
   .likert-row .item-text { font-size: 0.95rem; color: var(--text-body); padding-right: 0.8rem; }
-  .likert-row .item-text .no { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-right: 0.5rem; }
+  .likert-row .item-text .no { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-right: 0.5rem; }
   .likert-cell { display: flex; justify-content: center; }
   .likert-cell label { cursor: pointer; position: relative; display: block; }
   .likert-cell input { position: absolute; opacity: 0; pointer-events: none; }
   .likert-cell .dot {
     display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
     border: 1px solid rgba(0,229,255,0.28); color: var(--text-muted);
-    font-family: var(--font-mono); font-size: 0.72rem; transition: all 0.18s; user-select: none;
+    font-family: var(--font-mono); font-size: 0.78rem; transition: all 0.18s; user-select: none;
   }
   .likert-cell label:hover .dot { border-color: var(--accent-cyan); color: var(--text-primary); }
   .likert-cell input:checked + .dot {
@@ -240,7 +243,7 @@
   }
   .stat-card .v { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1; }
   .stat-card .v small { font-size: 45%; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.06em; }
-  .stat-card .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.55rem; }
+  .stat-card .k { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.55rem; }
   .stat-card .interp { color: var(--accent-cyan); font-family: var(--font-thai); font-weight: 700; font-size: 1rem; margin-top: 0.2rem; }
 
   .bar-row { display: grid; grid-template-columns: minmax(150px, 1fr) 2fr 110px; gap: 0.9rem; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.045); }
@@ -253,7 +256,7 @@
 
   table.items { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   table.items th, table.items td { padding: 0.55rem 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
-  table.items th { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  table.items th { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
   table.items td.t { text-align: left; color: var(--text-body); }
   table.items td.num { font-family: var(--font-mono); font-size: 0.8rem; }
   table.items td.interp { color: var(--accent-cyan); font-size: 0.85rem; white-space: nowrap; }
@@ -264,12 +267,12 @@
 
   .comment-item { border-top: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 0; }
   .comment-item:first-of-type { border-top: none; }
-  .comment-item .when { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+  .comment-item .when { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
   .comment-item .txt { color: var(--text-body); font-size: 0.94rem; white-space: pre-wrap; }
 
   .results-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2rem; }
   .btn-ghost {
-    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
     padding: 0.55rem 1.2rem; border-radius: 999px; cursor: pointer; text-decoration: none;
     border: 1px solid var(--line); background: transparent; color: var(--text-body); transition: all 0.2s;
   }
@@ -289,18 +292,21 @@
   @media (max-width: 1024px) {
     .nav-links { overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-tab { font-size: 0.74rem; padding: 0 0.72rem; }
+    .nav-tab { font-size: 0.78rem; padding: 0 0.72rem; }
   }
   @media (max-width: 760px) {
     .demo-grid { grid-template-columns: 1fr; }
     .likert-head, .likert-row { grid-template-columns: 1fr repeat(5, 38px); gap: 0 3px; }
-    .likert-head .col { font-size: 0.5rem; }
-    .likert-cell .dot { width: 26px; height: 26px; font-size: 0.66rem; }
+    .likert-head .col { font-size: 0.75rem; }
+    .likert-cell .dot { width: 26px; height: 26px; font-size: 0.75rem; }
     .stat-band { grid-template-columns: 1fr; }
     .bar-row { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-row .val { text-align: left; }
   }
   </style>
+  <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง <style> ของหน้าเพื่อทับกฎ overflow-x เดิม -->
+  <link rel="stylesheet" href="../css/hub-nav.css" />
+  <script src="../js/hub-nav.js" defer></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -379,7 +385,7 @@
           <span class="panel-num">ตอนที่ 3</span>
           <h2>ข้อเสนอแนะเพิ่มเติม</h2>
           <p class="hint">ความคิดเห็นปลายเปิด (ไม่บังคับ)</p>
-          <textarea id="comment" maxlength="2000" placeholder="ข้อเสนอแนะเพื่อปรับปรุงเว็บไซต์…"></textarea>
+          <textarea id="comment" maxlength="2000" aria-label="ข้อเสนอแนะเพิ่มเติม (ไม่บังคับ)" placeholder="ข้อเสนอแนะเพื่อปรับปรุงเว็บไซต์…"></textarea>
           <!-- honeypot: คนจริงมองไม่เห็น บอทชอบกรอก -->
           <div class="hp-field" aria-hidden="true">
             <label>เว็บไซต์ของคุณ <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off" /></label>
@@ -388,7 +394,7 @@
 
         <div class="submit-bar">
           <button type="submit" class="btn-submit" id="btn-submit">ส่งแบบประเมิน</button>
-          <span class="form-msg" id="form-msg"></span>
+          <span class="form-msg" id="form-msg" role="status" aria-live="polite"></span>
         </div>
       </form>
 
@@ -526,14 +532,20 @@
     div.id = 'q-' + q.id;
     const p = document.createElement('p');
     p.className = 'q-text';
-    p.innerHTML = q.text + ' <span class="req">*</span>';
+    p.id = 'lbl-' + q.id;                       // ผูกเป็นชื่อของกลุ่มตัวเลือก
+    p.innerHTML = q.text + ' <span class="req" aria-hidden="true">*</span>';
     div.appendChild(p);
     const chips = document.createElement('div');
     chips.className = 'chips';
+    // กลุ่มตัวเลือกแบบเลือกอย่างเดียว → screen reader อ่าน "คำถาม, กลุ่มตัวเลือก, จำเป็น"
+    chips.setAttribute('role', 'radiogroup');
+    chips.setAttribute('aria-labelledby', p.id);
+    chips.setAttribute('aria-required', 'true');
     for (const c of q.choices) {
       const label = document.createElement('label');
       const input = document.createElement('input');
       input.type = 'radio'; input.name = q.id; input.value = c;
+      input.setAttribute('aria-label', c);      // input ถูกซ่อนด้วย opacity → ต้องมีชื่อของตัวเอง
       const span = document.createElement('span');
       span.className = 'chip'; span.textContent = c;
       label.append(input, span);
@@ -554,27 +566,35 @@
 
     const head = document.createElement('div');
     head.className = 'likert-head';
+    head.setAttribute('aria-hidden', 'true');   // แถวหัวเป็นภาพช่วยจำ — ตัวเลือกแต่ละอันมีชื่อครบในตัวเองแล้ว
     head.innerHTML = '<div></div>' + SCALE.map(([n, t]) => `<div class="col"><b>${n}</b>${t}</div>`).join('');
     likertArea.appendChild(head);
 
     sec.items.forEach((text) => {
       const i = qNo++;
+      // row = กลุ่มตัวเลือกของ 1 คำถาม → screen reader อ่าน "ข้อ N ..., กลุ่มตัวเลือก, จำเป็น"
       const row = document.createElement('div');
       row.className = 'likert-row';
       row.id = 'row-q' + i;
+      row.setAttribute('role', 'radiogroup');
+      row.setAttribute('aria-required', 'true');
       const t = document.createElement('div');
       t.className = 'item-text';
+      t.id = 'lbl-q' + i;
       t.innerHTML = `<span class="no">${i + 1}.</span>${text}`;
+      row.setAttribute('aria-labelledby', t.id);
       row.appendChild(t);
-      for (const [n] of SCALE) {
+      for (const [n, scaleText] of SCALE) {
         const cell = document.createElement('div');
         cell.className = 'likert-cell';
         const label = document.createElement('label');
-        label.title = `${n} คะแนน`;
+        label.title = `${n} ${scaleText}`;
         const input = document.createElement('input');
         input.type = 'radio'; input.name = 'q' + i; input.value = n;
+        // input ถูกซ่อนด้วย opacity:0 → ต้องมีชื่อเต็ม ไม่งั้น SR อ่านแค่ "5" ไม่รู้ว่าคืออะไร
+        input.setAttribute('aria-label', `${n} ${scaleText}`);
         const dot = document.createElement('span');
-        dot.className = 'dot'; dot.textContent = n;
+        dot.className = 'dot'; dot.textContent = n; dot.setAttribute('aria-hidden', 'true');
         label.append(input, dot);
         cell.appendChild(label);
         row.appendChild(cell);
@@ -613,19 +633,33 @@
 
     const data = { ratings: [], comment: document.getElementById('comment').value, website: document.getElementById('hp-website').value };
 
+    // ── ตรวจให้ครบก่อน แล้วค่อยแจ้งทีเดียว (เดิมแจ้งทีละข้อ ต้องกดส่งซ้ำหลายรอบ) ──
+    let firstMissing = null;                 // element แรกที่ต้องพาผู้ใช้ไปหา
+    const demoMissing = [];
     for (const q of DEMO_QUESTIONS) {
       const sel = form.querySelector(`input[name="${q.id}"]:checked`);
-      if (!sel) return showError(`กรุณาตอบตอนที่ 1 ${q.text}`, document.getElementById('q-' + q.id));
-      data[q.id] = sel.value;
+      if (!sel) { demoMissing.push(q); if (!firstMissing) firstMissing = document.getElementById('q-' + q.id); }
+      else data[q.id] = sel.value;
     }
+    const likertMissing = [];
     for (let i = 0; i < ALL_ITEMS.length; i++) {
       const sel = form.querySelector(`input[name="q${i}"]:checked`);
       if (!sel) {
         const row = document.getElementById('row-q' + i);
         row.classList.add('missing');
-        return showError(`กรุณาให้คะแนนตอนที่ 2 ข้อ ${i + 1}`, row);
+        likertMissing.push(i + 1);
+        if (!firstMissing) firstMissing = row;
       }
-      data.ratings.push(Number(sel.value));
+    }
+    if (demoMissing.length || likertMissing.length) {
+      const parts = [];
+      if (demoMissing.length) parts.push(`ตอนที่ 1 อีก ${demoMissing.length} ข้อ`);
+      if (likertMissing.length) parts.push(`ตอนที่ 2 ข้อ ${likertMissing.join(', ')}`);
+      return showError('ยังตอบไม่ครบ — ' + parts.join(' และ '), firstMissing);
+    }
+    // ผ่านครบ → เก็บคะแนนตามลำดับข้อ
+    for (let i = 0; i < ALL_ITEMS.length; i++) {
+      data.ratings.push(Number(form.querySelector(`input[name="q${i}"]:checked`).value));
     }
 
     btnSubmit.disabled = true;
@@ -654,7 +688,13 @@
   function showError(text, scrollTarget) {
     msg.className = 'form-msg err';
     msg.textContent = text;
-    if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // ย้ายโฟกัสไปที่ข้อที่ขาด ไม่ใช่แค่เลื่อนจอ — คนใช้คีย์บอร์ด/SR จะได้ไปต่อจากตรงนั้น
+      const firstInput = scrollTarget.querySelector('input');
+      if (firstInput) firstInput.focus({ preventScroll: true });
+      else { scrollTarget.setAttribute('tabindex', '-1'); scrollTarget.focus({ preventScroll: true }); }
+    }
     return false;
   }
 
@@ -783,6 +823,7 @@
     }
   }
   </script>
+  <script src="../js/cursor-glow.js"></script>
   <script src="../js/ai-chat.js"></script>
 </body>
 </html>

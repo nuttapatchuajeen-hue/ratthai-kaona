@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/cursor-glow.css" />
 
   <style>
   :root {
@@ -18,7 +19,7 @@
     --accent-orange: #FF5C1A;
     --text-primary:  #DCE8F0;
     --text-body:     #A7BDCC;
-    --text-muted:    #4A6070;
+    --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
     --line:          rgba(0,229,255,0.12);
     --font-display:  'Bebas Neue', 'Prompt', sans-serif;
     --font-thai:     'Prompt', 'Sarabun', sans-serif;
@@ -74,6 +75,8 @@
   .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
   .nav-logo-img { height: 2.6rem; width: auto; display: block; }
   .nav-links { list-style: none; display: flex; gap: 0; align-items: stretch; }
+  /* <li> ต้องเป็น flex ด้วย ไม่งั้น <a> ข้างในสูงแค่ ~21px (พื้นที่กดเล็กกว่าที่ตาเห็น) */
+  .nav-links li { display: flex; }
   .nav-tab {
     display: flex; align-items: center; padding: 0 1.1rem;
     font-family: var(--font-sub); font-size: 0.82rem; font-weight: 600;
@@ -88,7 +91,7 @@
   /* shared label */
   .section-label {
     display: inline-block; font-family: var(--font-mono);
-    font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--accent-cyan); margin-bottom: 1.3rem;
   }
 
@@ -120,7 +123,7 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .hero-tagline {
-    font-family: var(--font-mono); font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+    font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 0.95rem);
     letter-spacing: 0.14em; color: var(--text-body); margin-top: 2rem;
     max-width: 56ch; line-height: 1.9;
   }
@@ -164,7 +167,7 @@
     padding: 1.8rem; position: relative; overflow: hidden;
   }
   .side-panel h3 {
-    font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.18em;
     text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 1.2rem;
   }
   .pillar { display: flex; gap: 0.9rem; padding: 0.9rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
@@ -185,7 +188,7 @@
     transform: translateY(-5px); background: rgba(0,229,255,0.08);
     border-color: rgba(0,229,255,0.6); box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.15);
   }
-  .card-num { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.16em; color: var(--text-muted); }
+  .card-num { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; color: var(--text-muted); }
   .card-icon {
     width: 46px; height: 46px; margin: 1.1rem 0 1.3rem; border-radius: 10px;
     display: grid; place-items: center; background: rgba(0,229,255,0.08);
@@ -195,7 +198,7 @@
   .card h3 { font-family: var(--font-thai); font-weight: 700; font-size: 1.22rem; color: var(--text-primary); margin-bottom: 0.5rem; }
   .card p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.65; flex: 1; }
   .card-go {
-    margin-top: 1.4rem; font-family: var(--font-mono); font-size: 0.72rem;
+    margin-top: 1.4rem; font-family: var(--font-mono); font-size: 0.78rem;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-cyan);
     display: inline-flex; align-items: center; gap: 0.5rem;
   }
@@ -214,7 +217,7 @@
   }
   .stat:first-child { border-left: none; }
   .stat-number { font-family: var(--font-display); font-size: clamp(2.6rem, 4.5vw, 4.4rem); line-height: 1; color: var(--text-primary); }
-  .stat-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.7rem; }
+  .stat-label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.7rem; }
 
   /* ── CREATOR ── */
   .creator-grid { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 3.6rem; align-items: center; }
@@ -261,7 +264,7 @@
   }
   .portrait-tag {
     position: absolute; z-index: 4; top: 1rem; left: 1rem;
-    font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--accent-cyan); background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.45);
     padding: 0.3rem 0.65rem; border-radius: 4px;
   }
@@ -330,9 +333,9 @@
       #cfeefb 8px, #cfeefb 12px, transparent 12px, transparent 15px,
       #cfeefb 15px, #cfeefb 16px, transparent 16px, transparent 18px);
   }
-  .tk-barcode-id { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.22em; color: var(--text-muted); }
+  .tk-barcode-id { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.22em; color: var(--text-muted); }
   .tk-admit { text-align: right; flex-shrink: 0; }
-  .tk-admit-text { display: block; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
+  .tk-admit-text { display: block; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
   .tk-admit-num {
     display: block; font-family: var(--font-mono); font-weight: 900; font-size: 2.4em; line-height: 1;
     color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0,229,255,0.5);
@@ -407,7 +410,7 @@
   .tag {
     display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;
     border: 1px solid rgba(0,229,255,0.3); border-radius: 999px;
-    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--text-body);
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--text-body);
     background: rgba(0,229,255,0.04);
   }
   .tag svg { width: 15px; height: 15px; stroke: var(--accent-cyan); }
@@ -426,9 +429,9 @@
     background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.25);
   }
   .contact-ic svg { width: 24px; height: 24px; stroke: var(--accent-cyan); }
-  .contact-meta .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
+  .contact-meta .k { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
   .contact-meta .v { font-family: var(--font-sub); font-weight: 600; font-size: 1.02rem; color: var(--text-primary); margin-top: 0.2rem; word-break: break-word; }
-  .contact-note { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 1.6rem; }
+  .contact-note { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 1.6rem; }
 
   /* ── FOOTER ── */
   .site-footer {
@@ -440,7 +443,7 @@
   .foot-brand span { color: var(--accent-cyan); }
   .back-home {
     display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1.9rem;
-    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
     text-decoration: none; color: var(--accent-cyan); border: 1px solid rgba(0,229,255,0.5);
     border-radius: 4px; background: rgba(0,229,255,0.06);
     box-shadow: 0 0 16px rgba(0,229,255,0.18), inset 0 0 12px rgba(0,229,255,0.05);
@@ -473,7 +476,7 @@
   }
   .back-home .arrow { transition: transform 0.3s; }
   .back-home:hover .arrow { transform: translateX(-4px); }
-  .foot-copy { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; color: var(--text-muted); width: 100%; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .foot-copy { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--text-muted); width: 100%; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,0.05); }
 
   /* ── REVEAL ANIMATION ── */
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
@@ -482,7 +485,7 @@
   /* ── TOOLS LOGO MARQUEE ── */
   .tools-block .block-head { margin-bottom: 2.6rem; }
   .lm-cap {
-    font-family: var(--font-mono); font-size: 0.62rem;
+    font-family: var(--font-mono); font-size: 0.75rem;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--text-muted); margin-bottom: 1rem;
   }
@@ -526,21 +529,24 @@
   @media (max-width: 768px) {
     .nav-links { overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-tab { font-size: 0.74rem; padding: 0 0.72rem; }
+    .nav-tab { font-size: 0.78rem; padding: 0 0.72rem; }
     .block { padding: 4.5rem 0; }
     .hero { min-height: 70vh; padding-top: 8rem; }
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
     .reveal { opacity: 1; transform: none; }
-    /* คงแสงวิ่ง/ambient ให้วิ่งต่อบนมือถือแม้เปิด Reduce Motion (ตั้งใจให้เป็นแสงประดับ) */
-    .marquee-track { animation-duration: 26s !important; animation-iteration-count: infinite !important; }
-    .lm-track { animation-duration: var(--lm-dur, 34s) !important; animation-iteration-count: infinite !important; }
-    .portrait-grid { animation-duration: 18s !important; animation-iteration-count: infinite !important; }
-    .spark-btn .dots-border::before { animation-duration: 2s !important; animation-iteration-count: infinite !important; }
-    .back-home .orbit::before { animation-duration: 2.8s !important; animation-iteration-count: infinite !important; }
+    /* หยุดแถบเลื่อน/แสง ambient ทั้งหมดเมื่อผู้ใช้เปิด Reduce Motion
+       (เดิมเคยสั่งให้วิ่งต่อ แต่แถบเลื่อนอัตโนมัติที่ไม่มีวันหยุดคือสิ่งที่ WCAG 2.2.2 ห้ามไว้ตรง ๆ) */
+    .marquee-track, .lm-track, .portrait-grid { animation: none !important; }
+    .spark-btn .dots-border::before, .back-home .orbit::before { animation: none !important; }
+    /* เนื้อหาในแถบยังเข้าถึงได้ครบ — เปลี่ยนจากเลื่อนเองเป็นให้ผู้ใช้ปัดดูเอง */
+    .marquee, .lm-rail { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   }
   </style>
+  <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง <style> ของหน้าเพื่อทับกฎ overflow-x เดิม -->
+  <link rel="stylesheet" href="../css/hub-nav.css" />
+  <script src="../js/hub-nav.js" defer></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -690,7 +696,7 @@
               <span class="portrait-corner pc-br" aria-hidden="true"></span>
               <div class="tk-main">
                 <span class="portrait-tag">Master Nook</span>
-                <img src="images/creator-nook.png" alt="ณัฐภัทร ช่วยจีน ผู้จัดทำเว็บไซต์รัฐไทยก้าวหน้า" />
+                <img src="images/creator-nook.webp" width="434" height="820" loading="lazy" decoding="async" alt="ณัฐภัทร ช่วยจีน ผู้จัดทำเว็บไซต์รัฐไทยก้าวหน้า" />
                 <span class="portrait-grid" aria-hidden="true"></span>
                 <span class="portrait-shine" aria-hidden="true"></span>
               </div>
@@ -856,6 +862,7 @@
       els.forEach(el => el.classList.add('in'));
     }
   </script>
+<script src="../js/cursor-glow.js"></script>
 <script src="../js/ai-chat.js"></script>
 </body>
 </html>
