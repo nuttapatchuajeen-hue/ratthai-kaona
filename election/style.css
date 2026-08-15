@@ -51,15 +51,17 @@ button{font-family:inherit}
 @media(min-width:861px){ .maparea{ left:398px } }
 svg.thmap{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 svg.thmap.grabbing{cursor:grabbing}
-svg.thmap path.pv{stroke:#fff;stroke-width:.7;transition:fill .15s,opacity .12s}
+/* vector-effect:non-scaling-stroke — เส้นขอบวัดเป็นพิกเซลบนจอ ไม่ใช่หน่วยแผนที่
+   ซูมลึกแค่ไหนขอบก็บางเท่าเดิม (ของเดิมซูม 6 เท่า ขอบขาวหนา 6 เท่าจนกลืนจังหวัดเล็ก) */
+svg.thmap path.pv{stroke:#fff;stroke-width:.9;vector-effect:non-scaling-stroke;transition:fill .15s,opacity .12s}
 svg.thmap path.pv:hover{opacity:.85}
-svg.thmap path.pv.sel{stroke:var(--ink);stroke-width:1.8}
+svg.thmap path.pv.sel{stroke:var(--ink);stroke-width:2;vector-effect:non-scaling-stroke}
 svg.thmap path.pv.dim{opacity:.25}
 .plabel{font-family:'Kanit';font-weight:500;fill:#fff;stroke:rgba(4,16,26,.78);paint-order:stroke;
   stroke-linejoin:round;text-anchor:middle;pointer-events:none;opacity:0;transition:opacity .15s}
 .plabel.show{opacity:1}
 .mkg .mk{cursor:pointer}
-.mkg .mk circle{fill:var(--c,var(--mk));stroke:#fff;stroke-width:1.1;transition:fill .15s}
+.mkg .mk circle{fill:var(--c,var(--mk));stroke:#fff;stroke-width:1.4;vector-effect:non-scaling-stroke;transition:fill .15s}
 .mkg .mk text{fill:#fff;stroke:rgba(0,0,0,.34);stroke-width:.5;paint-order:stroke;font-family:'Kanit';font-weight:600;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .mkg .mk:hover circle,.mkg .mk.flash circle{fill:var(--orange)}
 
@@ -143,6 +145,42 @@ html[data-theme="dark"] .dg .zbound{stroke:#e3edf5;opacity:.82}
 .carea svg{flex:0 0 auto;width:11px;height:11px;margin-top:3px;opacity:.75}
 .carea .ctxt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .carea.open .ctxt{display:block;-webkit-line-clamp:unset;overflow:visible}
+/* † = คะแนนมาจากแหล่งสำรอง (วิกิพีเดียอังกฤษ) — ดูคำอธิบายท้ายหน้า */
+.cvt .vsrc{margin-left:3px;color:var(--orange-deep);font-weight:600;cursor:help}
+
+/* เบอร์ผู้สมัครผู้ชนะ */
+.cbot .cno{font-family:'Kanit';font-size:.7rem;font-weight:600;color:var(--ink-2);background:var(--wash);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px;line-height:1.5;flex:0 0 auto}
+
+/* แถบกาง "ดูผู้สมัครทุกคน & สถิติเขต" */
+.cmore{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px;padding-top:6px;
+  border-top:1px dashed var(--line);font-family:'Kanit';font-size:.7rem;color:var(--muted);cursor:pointer}
+.cmore:hover{color:var(--orange-ink)}
+.cmore svg{width:12px;height:12px;transition:transform .18s}
+.cmore.open svg{transform:rotate(180deg)}
+.cdet{margin-top:7px;border-top:1px dashed var(--line);padding-top:8px}
+.cdmiss{font-family:'Kanit';font-size:.7rem;color:var(--muted);text-align:center;padding:6px 0}
+
+/* สถิติรายเขต: ผู้มีสิทธิ / ผู้มาใช้สิทธิ / บัตรเสีย / ไม่ประสงค์ลงคะแนน */
+.cdstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:5px;margin-bottom:9px}
+.cdst{background:var(--wash);border:1px solid var(--line);border-radius:8px;padding:5px 7px;font-family:'Kanit';line-height:1.35}
+.cdst span{display:block;font-size:.62rem;color:var(--muted)}
+.cdst b{font-size:.78rem;font-weight:600;color:var(--ink)}
+
+/* ตารางผู้สมัครทุกคนในเขต */
+.cdtab{width:100%;border-collapse:collapse;font-family:'Kanit';font-size:.7rem;line-height:1.4}
+.cdtab th{text-align:left;font-weight:500;font-size:.62rem;color:var(--muted);padding:3px 4px;border-bottom:1px solid var(--line)}
+.cdtab td{padding:4px;border-bottom:1px solid var(--line);vertical-align:middle}
+.cdtab tr.win td{background:var(--orange-soft);font-weight:600}
+.cdtab tr:last-child td{border-bottom:0}
+.cdtab .n{width:2.2em;text-align:center;color:var(--muted)}
+.cdtab tr.win .n{color:var(--ink)}
+.cdtab .nm{color:var(--ink)}
+.cdtab .pt{white-space:nowrap;color:var(--ink-2)}
+.cdtab .pt .sw{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.cdtab .v,.cdtab .p{text-align:right;white-space:nowrap}
+.cdtab .p{color:var(--muted);width:3.4em}
+
 /* หมายเหตุรายเขต เช่น เขตที่มีการเลือกตั้งใหม่ (ปีย้อนหลัง) */
 .cnote{margin-top:5px;font-family:'Kanit';font-size:.66rem;line-height:1.45;color:var(--orange-ink);
   background:var(--orange-soft);border-radius:7px;padding:3px 7px;display:inline-block}

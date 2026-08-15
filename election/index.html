@@ -201,14 +201,44 @@ mdSyncToggle();
 
   /* ---- zoom & pan ---- */
   let scale=1,tx=0,ty=0,lastLabelScale=-1;
+  const MAXZ=40;                                // เพดานซูม — ต้องสูงพอให้จังหวัดเล็ก (สมุทรสงคราม/ภูเก็ต) เต็มกรอบได้
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  function apply(){
+  function apply(light){
     if(scale<1)scale=1;
     // clamp ให้แผนที่เต็มกรอบเสมอ ไม่หลุดไปเจอพื้นหลังเทา — แพนตอนซูมเข้าได้ลื่น ไม่เด้งกลับ
     tx=clamp(tx, M.width*(1-scale), 0);
     ty=clamp(ty, M.height*(1-scale), 0);
     zg.setAttribute('transform',`translate(${tx} ${ty}) scale(${scale})`);
-    updateLabels(false);
+    if(light)scaleLabels(); else updateLabels(false);
+  }
+
+  /* ---- บินเข้ากรอบแบบมีแอนิเมชัน (ไอเดียจาก elect.in.th: transition 750ms แล้วค่อยจัดป้าย) ----
+     ระหว่างบินปรับแค่ขนาดตัวอักษร ไม่คำนวณการชนกันของป้าย (getBBox 77 ครั้ง/เฟรม = หนัก)
+     พอบินจบค่อยจัดป้ายเต็มรูปแบบทีเดียว */
+  let flyRaf=0;
+  const easeOut=t=>1-Math.pow(1-t,3);
+  const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function cancelFly(){ if(flyRaf){cancelAnimationFrame(flyRaf);flyRaf=0;} }
+  function flyTo(ns,ntx,nty,dur){
+    cancelFly();
+    if(dur==null)dur=750;
+    // แท็บที่ถูกซ่อนอยู่ rAF จะหยุดเดิน → ถ้าเริ่มบินตอนนั้นแผนที่จะค้าง ข้ามไปผลลัพธ์สุดท้ายเลย
+    if(dur<=0||document.hidden||reduceMotion()){scale=ns;tx=ntx;ty=nty;apply();updateLabels(true);return;}
+    const s0=scale,x0=tx,y0=ty,t0=performance.now();
+    const step=now=>{
+      const u=Math.min(1,(now-t0)/dur),e=easeOut(u);
+      scale=s0+(ns-s0)*e; tx=x0+(ntx-x0)*e; ty=y0+(nty-y0)*e;
+      apply(u<1);
+      if(u<1)flyRaf=requestAnimationFrame(step); else {flyRaf=0;updateLabels(true);}
+    };
+    flyRaf=requestAnimationFrame(step);
+  }
+  function scaleLabels(){
+    for(const l of labelEls){
+      if(l.el.style.display==='none')continue;
+      const fs=clamp(l.base/scale,2.4,60);
+      l.el.setAttribute('font-size',fs); l.el.setAttribute('stroke-width',fs*0.2);
+    }
   }
   function updateLabels(force){
     if(!force && lastLabelScale>0 && Math.abs(scale/lastLabelScale-1)<0.06) return;
@@ -227,7 +257,7 @@ mdSyncToggle();
     }
   }
   function vbPoint(cx,cy){const pt=svg.createSVGPoint();pt.x=cx;pt.y=cy;return pt.matrixTransform(svg.getScreenCTM().inverse());}
-  function zoomAt(vx,vy,f){const ns=clamp(scale*f,1,6),k=ns/scale;tx=vx-(vx-tx)*k;ty=vy-(vy-ty)*k;scale=ns;apply();}
+  function zoomAt(vx,vy,f){cancelFly();const ns=clamp(scale*f,1,MAXZ),k=ns/scale;tx=vx-(vx-tx)*k;ty=vy-(vy-ty)*k;scale=ns;apply();}
   function centerPt(){const r=svg.getBoundingClientRect();return vbPoint(r.left+r.width/2,r.top+r.height/2);}
   // ปุ่มสลับ ซ่อน/แสดง วงหมายเลขเขต (จำสถานะข้ามจังหวัด — set display ที่กลุ่ม mkG ทีเดียว)
   const mkToggleBtn=document.getElementById('mktoggle'); let markersHidden=false;
@@ -242,6 +272,7 @@ mdSyncToggle();
   const pointers=new Map(); let panState=null, pinchPrev=null, moved=false, captured=false, lastTapTime=0, pinching=false;
   svg.addEventListener('pointerdown',e=>{
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    cancelFly();                                  // แตะ/ลากระหว่างกำลังบิน → หยุดบินทันที ให้มือคนคุมแทน
     if(pointers.size===1){panState={x:e.clientX,y:e.clientY,tx,ty,id:e.pointerId,downEl:e.target};moved=false;pinching=false;}
     else{panState=null;pinchPrev=null;}
   });
@@ -252,7 +283,7 @@ mdSyncToggle();
       const a=[...pointers.values()],p1=a[0],p2=a[1];
       const dist=Math.hypot(p1.x-p2.x,p1.y-p2.y),mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
       if(pinchPrev&&pinchPrev.dist>0){
-        const f=dist/pinchPrev.dist,vb=vbPoint(mx,my),ns=clamp(scale*f,1,6),k=ns/scale;
+        const f=dist/pinchPrev.dist,vb=vbPoint(mx,my),ns=clamp(scale*f,1,MAXZ),k=ns/scale;
         tx=vb.x-(vb.x-tx)*k;ty=vb.y-(vb.y-ty)*k;scale=ns;
         tx+=(mx-pinchPrev.mx)*sx;ty+=(my-pinchPrev.my)*sy;apply();
       }
@@ -309,9 +340,22 @@ mdSyncToggle();
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}
   // กลับไปหน้าเลือกจังหวัด: บนมือถือต้องพับ bottom sheet ลงด้วย ไม่งั้นแผ่นจะค้างบานเต็มจอบังแผนที่จนแพน/ซูมไม่ได้
-  function backToAll(){curProvince=null;clearMarkers();highlight(null);scale=1;tx=0;ty=0;apply();renderList();expandSheet(false);}
-  function zoomToProvince(th){const en=th2en[th],p=pathEls[en];if(!p)return;const bb=p.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2,fill=.30;
-    const s=clamp(Math.min(M.width*fill/bb.width,M.height*fill/bb.height),1,3.4);scale=s;tx=M.width/2-cx*s;ty=M.height/2-cy*s;apply();}
+  function backToAll(){curProvince=null;clearMarkers();highlight(null);flyTo(1,0,0);renderList();expandSheet(false);}
+  /* สูตรกรอบแบบ elect.in.th: scale = FILL / max(กว้างจังหวัด/กว้างกรอบ, สูงจังหวัด/สูงกรอบ)
+     → จังหวัดกินพื้นที่ FILL ของกรอบเสมอ ไม่ว่าจะเล็กอย่างสมุทรสงครามหรือใหญ่อย่างนครราชสีมา
+     (ของเดิม FILL=.30 + เพดาน 3.4 ทำให้จังหวัดเล็กซูมไม่เข้า เหลือจุดนิดเดียวกลางจอ)
+     "กรอบ" ต้องเป็นพื้นที่ที่คนเห็นจริง ไม่ใช่ 760×1377 ของ viewBox — preserveAspectRatio=meet
+     ทำให้มีขอบว่างด้านกว้าง กรอบจริงจึงกว้างกว่า viewBox (เว็บอ้างอิงก็ส่งขนาด viewport เข้าสูตร)
+     FILL มือถือต่ำกว่าเพราะแถบค้นหาด้านบนกับแผ่นข้อมูลด้านล่างทับแผนที่ไปส่วนหนึ่ง */
+  function zoomToProvince(th){const en=th2en[th],p=pathEls[en];if(!p)return;
+    const bb=p.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+    const r=svg.getBoundingClientRect();
+    // กรอบยังไม่มีขนาด (ยังไม่จัด layout) → ใช้ขนาด viewBox ไปก่อน ไม่งั้นหารศูนย์ได้ Infinity แล้วซูมไม่ทำงาน
+    const rs=(r.width&&r.height)?(Math.min(r.width/M.width,r.height/M.height)||1):1;
+    const visW=(r.width&&r.height)?r.width/rs:M.width, visH=(r.width&&r.height)?r.height/rs:M.height;
+    const FILL=isMobile()?.52:.72;
+    const s=clamp(FILL/Math.max(bb.width/visW,bb.height/visH),1,MAXZ);
+    flyTo(s, M.width/2-cx*s, M.height/2-cy*s);}
 
   /* ---- district markers ---- */
   let hiddenLabel=null;
@@ -472,9 +516,40 @@ mdSyncToggle();
     return `<div class="ccard" data-no="${r.no}" data-prov="${r.prov}">
       <div class="cav" style="background:${col};box-shadow:0 0 0 3px #fff,0 0 0 4px ${col}">${inner}${NOZONE?'':`<span class="cavno">${r.no}</span>`}</div>
       <div class="cinfo"><div class="ctop"><span class="cname">${r.name}</span><span class="cdist">${NOZONE?(showProv?r.prov:'ส.ส. '+r.prov):(showProv?r.prov+' ':'')+'เขต '+r.no}</span></div>
-      <div class="cbot"><span class="cpt"><span class="sw" style="background:${col}"></span>${shortOf(r.code)}</span>${r.votes!=null?`<span class="cvt">${fmtN(r.votes)} คะแนน</span>`:''}</div>
+      <div class="cbot">${r.ballot!=null?`<span class="cno" title="เบอร์ผู้สมัคร">เบอร์ ${r.ballot}</span>`:''}<span class="cpt"><span class="sw" style="background:${col}"></span>${shortOf(r.code)}</span>${r.votes!=null?`<span class="cvt">${fmtN(r.votes)} คะแนน${r.pct!=null?` · ${r.pct}%`:''}${r.vsrc==='en'?`<span class="vsrc" title="คะแนนนี้มาจากวิกิพีเดียอังกฤษ (2001 Thai general election) เพราะวิกิพีเดียไทยยังไม่มีหน้ารายจังหวัดของปีนี้">†</span>`:''}</span>`:''}</div>
       ${r.note?`<div class="cnote">${r.note}</div>`:''}
-      ${area?`<div class="carea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="ctxt">${area}</span></div>`:''}</div></div>`;}
+      ${area?`<div class="carea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="ctxt">${area}</span></div>`:''}
+      ${hasDetail(r)?`<div class="cmore" data-key="${r.prov}|${+r.no}">ดูผู้สมัครทุกคน &amp; สถิติเขต<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg></div>`:''}</div></div>`;}
+
+  /* ---- รายละเอียดรายเขต: ผู้สมัครทุกคน + สถิติผู้มาใช้สิทธิ ----
+     อยู่ในไฟล์แยก detail-<ปี>.js (ไฟล์ละ ~300–400KB) โหลดตอนกดกางครั้งแรกเท่านั้น
+     เพิ่มปีใหม่ = สร้าง detail-<ปี>.js แล้วเติมเลขปีในลิสต์นี้ */
+  const DETAIL_YEARS=[2569,2566,2562,2554,2550,2548,2544,2539];
+  function hasDetail(r){return !NOZONE && DETAIL_YEARS.includes(+window.EYEAR) && r.prov && r.no!=null;}
+  let detailReq=null;
+  function ensureDetail(){
+    if(window.EDETAIL) return Promise.resolve(window.EDETAIL);
+    if(!DETAIL_YEARS.includes(+window.EYEAR)) return Promise.resolve(null);
+    if(!detailReq) detailReq=new Promise(res=>{const s=document.createElement('script');s.src='detail-'+window.EYEAR+'.js';s.onload=()=>res(window.EDETAIL);s.onerror=()=>res(null);document.head.appendChild(s);});
+    return detailReq;
+  }
+  /* loaded = โหลดไฟล์ของปีนั้นได้แล้วหรือยัง — แยก "โหลดไม่สำเร็จ" ออกจาก "ปีนั้นไม่มีข้อมูลเขตนี้"
+     (เช่น 2544 วิกิพีเดียไทยมีหน้ารายจังหวัดแค่ 58 จังหวัด อีก 18 จังหวัดจึงไม่มีรายชื่อผู้สมัคร) */
+  function detailHTML(d,loaded){
+    if(!d) return `<div class="cdmiss">${loaded?'ยังไม่มีรายชื่อผู้สมัครรายคนของเขตนี้ในแหล่งข้อมูล':'โหลดรายละเอียดเขตไม่สำเร็จ'}</div>`;
+    /* ปีย้อนหลังบางเขตแหล่งข้อมูลไม่มีสถิติ (หรือตัวเลขขัดกันเองจนตัดทิ้ง) → ไม่ต้องขึ้นแถบสถิติ */
+    const s=d.stats;
+    const cell=(k,v)=>v==null||v===''?'':`<div class="cdst"><span>${k}</span><b>${v}</b></div>`;
+    const stat=!s?'':[['ผู้มีสิทธิเลือกตั้ง',fmtN(s.reg)],['ผู้มาใช้สิทธิ',s.turnout==null?'':fmtN(s.turnout)+(s.tpct?` (${s.tpct}%)`:'')],
+      ['บัตรดี',fmtN(s.valid)],['บัตรเสีย',fmtN(s.invalid)],['ไม่ประสงค์ลงคะแนน',fmtN(s.blank)],['หน่วยเลือกตั้ง',fmtN(s.units)]]
+      .map(([k,v])=>cell(k,v)).join('');
+    const rows=(d.cands||[]).map((c,i)=>`<tr${i===0?' class="win"':''}>
+        <td class="n">${c.b==null?'–':c.b}</td><td class="nm">${c.name}</td>
+        <td class="pt"><span class="sw" style="background:${colorOf(c.code)}"></span>${shortOf(c.code)}</td>
+        <td class="v">${fmtN(c.votes)}</td><td class="p">${c.pct==null?'':c.pct+'%'}</td></tr>`).join('');
+    return (stat?`<div class="cdstats">${stat}</div>`:'')+
+      `<table class="cdtab"><thead><tr><th>เบอร์</th><th>ผู้สมัคร</th><th>พรรค</th><th>คะแนน</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
   function provinceRow(th){const st=provStats[th];return `<div class="prow" data-prov="${th}">
       <span class="dot" style="background:${fillOf(st)}"></span><span class="pn">${th}</span>
       <span class="zc"><b>${st.seats}</b> ${NOZONE?'คน':'เขต'}</span>
@@ -514,6 +589,17 @@ mdSyncToggle();
   }
   // แตะบรรทัดพื้นที่เขตเพื่อกาง/พับข้อความเต็ม โดยไม่ไปกระตุ้น onclick ของการ์ด
   panelScroll.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('.carea');if(a){e.stopPropagation();a.classList.toggle('open');}},true);
+  // แตะ "ดูผู้สมัครทุกคน" เพื่อกาง/พับตารางผู้สมัคร + สถิติเขต (โหลด detail-2569.js ครั้งแรกที่กด)
+  panelScroll.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('.cmore'); if(!b) return;
+    e.stopPropagation();
+    const box=b.nextElementSibling;
+    if(box&&box.classList.contains('cdet')){box.remove();b.classList.remove('open');return;}
+    b.classList.add('open');
+    const el=document.createElement('div'); el.className='cdet'; el.innerHTML='<div class="cdmiss">กำลังโหลด…</div>';
+    b.after(el);
+    ensureDetail().then(D=>{ if(el.isConnected) el.innerHTML=detailHTML(D&&D[b.dataset.key],!!D); });
+  },true);
   search.addEventListener('input',e=>renderSearch(e.target.value));
   search.addEventListener('focus',()=>{if(isMobile())expandSheet(true);});
   renderList();
@@ -570,6 +656,11 @@ mdSyncToggle();
   apply();
 })();
 </script>
+<!-- ฉากเปิด: แผงพรรคอันดับ 1/2 เลื่อนเข้าซ้าย-ขวา ค้างไว้แล้วเลื่อนออกเผยแผนที่ -->
+<script src="intro-data.js"></script>
+<script src="intro-seats.js"></script>
+<script src="intro-music.js"></script>
+<script src="intro.js"></script>
 <script src="glow.js"></script>
 <script src="../js/theme-toggle-drag.js"></script>
 <script src="../js/ai-chat.js"></script>

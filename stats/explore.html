@@ -103,6 +103,12 @@
   .card .sub{margin:2px 0 14px;font-size:13px;color:var(--ink-soft);max-width:70ch}
   .plot{width:100%;min-height:60px;overflow-x:auto}
   .plot svg{max-width:100%;height:auto;display:block}
+  /* แผนที่คลิกซูมได้ (zoomifyMaps) — vector-effect ทำให้เส้นขอบวัดเป็นพิกเซลจอ
+     ซูมลึกแค่ไหนขอบประเทศก็บางเท่าเดิม ไม่หนาบวมตามสเกล */
+  svg g[aria-label*="geo"] path{vector-effect:non-scaling-stroke;cursor:pointer}
+  #enMap path,#floodBivMap path,#eduMapChart path,#bkkMap path{vector-effect:non-scaling-stroke;cursor:pointer}
+  svg.mz-on{touch-action:none;cursor:grab}
+  svg.mz-drag{cursor:grabbing}
   .src{margin-top:12px;font-size:12.5px;color:var(--ink-soft);border-top:1px dashed var(--rule);padding-top:9px}
   .src a{color:var(--green);font-weight:600}
   .state-msg{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px}
@@ -4783,6 +4789,8 @@
   <!-- รูปทรง 50 เขต กทม. (dissolve จาก ADM3) + ข้อมูลเปรียบเทียบรายเขต -->
   <script src="bkk-districts.js"></script>
   <script src="bkk-metrics.js"></script>
+  <!-- เอนจินซูมแผนที่ใช้ร่วมกับหน้า ส.ส./ประชามติ/กทม. (ไอเดียบินเข้ากรอบจาก elect.in.th) -->
+  <script src="../js/mapzoom.js"></script>
   <script src="explore-data.js"></script>
   <script>
   (function(){
@@ -6020,7 +6028,49 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); }
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); afterPaint(zoomifyMaps); }
+
+    /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
+       แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
+       คลิกรูปไหน = บินเข้ากรอบรูปนั้น · คลิกซ้ำ/คลิกที่ว่าง = บินกลับมุมมองเต็ม
+       สแกนจาก <svg> ที่มีมาร์ก geo อยู่ข้างใน แล้วห่อเนื้อในด้วย <g> ตัวเดียวเพื่อรับ transform
+       ทำครั้งเดียวต่อ svg (_mzWired) เพราะ renderAll ถูกเรียกซ้ำทุกครั้งที่สลับหมวด/สลับธีม
+       — Plot วาดใหม่ทั้งอัน svg เก่าถูกทิ้งไปเอง ตัวใหม่ค่อยต่อสายให้
+       แผนที่ใหม่ที่เพิ่มทีหลังได้ของนี้ฟรี ไม่ต้องแก้อะไรเพิ่ม */
+    /* แผนที่ไทย/กทม. ที่ปั้นเองด้วย d3 (ไม่ใช่ Plot.geo จึงไม่มี aria-label="geo" ให้จับ) */
+    var HAND_MAPS="#enMap,#floodBivMap,#eduMapChart,#bkkMap";
+    function wireMapZoom(svg){
+      if(!window.MapZoom || !svg || svg._mzWired) return;
+      var geo=svg.querySelector('g[aria-label*="geo"]');
+      var hand=svg.closest(HAND_MAPS)||(svg.matches&&svg.matches(HAND_MAPS)?svg:null);
+      if(!geo && !hand) return;
+      // แผนที่ไล่ปี (#mapChart) วาดใหม่ทุกก้าวปี ซูมค้างไว้ไม่ได้ — ข้ามไป ไม่งั้นเด้งกลับเองน่ารำคาญ
+      if(svg.closest("#mapChart")) return;
+      // แผนที่ปั้นเองตั้งขนาดผ่าน viewBox (width เป็น % / คุมด้วย CSS) จึงอ่าน viewBox ก่อน
+      var vb=(svg.getAttribute("viewBox")||"").split(/[\s,]+/).map(Number),
+          W=(vb.length===4&&vb[2])||+svg.getAttribute("width")||svg.clientWidth,
+          H=(vb.length===4&&vb[3])||+svg.getAttribute("height")||svg.clientHeight;
+      if(!W||!H) return;
+      svg._mzWired=true;
+      var g=document.createElementNS("http://www.w3.org/2000/svg","g");
+      while(svg.firstChild) g.appendChild(svg.firstChild);
+      svg.appendChild(g);
+      var mz=MapZoom.create(svg,g,{ width:W, height:H, maxZoom:24, fill:.70, fillMobile:.60,
+        onScale:function(s){ svg.classList.toggle("mz-on", s>1.001); } });
+      var cur=null;
+      svg.addEventListener("click",function(e){
+        var p=e.target&&e.target.closest?e.target.closest("path"):null;
+        // แผนที่ปั้นเอง: รูปทั้งหมดอยู่ในกลุ่มซูม ไม่มีกลุ่ม geo แยก จึงเช็คแค่ว่าคลิกโดนรูป
+        if(!p || (geo && !geo.contains(p))){ if(cur){ cur=null; mz.reset(); } return; }
+        if(cur===p){ cur=null; mz.reset(); } else { cur=p; mz.fitEl(p); }
+      });
+    }
+    function zoomifyMaps(){ if(window.MapZoom) $$("svg").forEach(wireMapZoom); }
+    /* กันพลาด: แผนที่บางอันวาดเสร็จหลัง zoomifyMaps รอบล่าสุด (รอ topojson จาก CDN / วาดซ้ำตอนสลับธีม)
+       จึงต่อสายให้ตอน pointerdown ด้วย — ตัว listener ที่เพิ่งผูกจะรับ event "click" ที่ตามมาทัน */
+    document.addEventListener("pointerdown",function(e){
+      var s=e.target&&e.target.closest?e.target.closest("svg"):null; if(s) wireMapZoom(s);
+    },true);
 
     /* ===================== แท็บอาเซียน (World Bank — live, ยิงตรง CORS) ===================== */
     // ชื่อ EN ตรงกับ world-atlas (Natural Earth) เพื่อ join แผนที่ · สีประจำชาติสำหรับ treemap/เส้น
@@ -7588,6 +7638,7 @@
           renderHeatField();
           renderPmField();
           renderSeaRoutes();
+          afterPaint(zoomifyMaps);   // แผนที่โลกเพิ่งวาดเสร็จหลังโหลด topojson → ต่อสายซูมให้ด้วย
         })
         .catch(function(){ $("#mapChart").innerHTML = '<div class="state-msg err">เชื่อมต่อข้อมูลแผนที่ไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>'; });
     }

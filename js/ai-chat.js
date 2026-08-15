@@ -35,14 +35,15 @@
     "--mdai-dim:#9aa3b2;--mdai-border:rgba(255,255,255,.12);--mdai-shadow:0 18px 50px -12px rgba(0,0,0,.6)}",
     // ปุ่มลอยแบบ pill ✨ (ดำ-เงิน ตามแบบที่ผู้ใช้เลือก — คงโทนเดียวกันทั้งโหมดสว่าง/มืด)
     // ลากย้ายได้ (touch-action:none ให้ pointer events คุมการลากบนจอสัมผัส)
-    "#mdai-fab{position:fixed;right:18px;bottom:20px;z-index:99998;display:inline-flex;align-items:center;gap:9px;height:48px;",
+    "#mdai-fab{position:fixed;right:18px;bottom:20px;z-index:99998;display:inline-flex;align-items:center;gap:9px;height:48px;max-width:280px;",
     "padding:0 20px 0 16px;border:0;border-radius:999px;cursor:pointer;touch-action:none;overflow:hidden;isolation:isolate;",
-    "-webkit-tap-highlight-color:transparent;",
+    "-webkit-tap-highlight-color:transparent;box-sizing:border-box;",
     "background:linear-gradient(140deg,rgba(159,180,199,.42),rgba(159,180,199,.14));",
     "box-shadow:0 12px 30px -10px rgba(0,0,0,.55),0 0 16px rgba(0,229,255,.14);",
-    "transition:box-shadow .18s ease, transform .12s ease}",
+    "transform:translateX(var(--mdai-tx,0px)) scale(var(--mdai-sc,1));",
+    "transition:box-shadow .18s ease, transform .24s cubic-bezier(.2,.8,.3,1.15), width .24s ease, padding .24s ease, opacity .2s ease}",
     "#mdai-fab:hover{box-shadow:0 16px 36px -12px rgba(0,0,0,.65),0 0 22px rgba(0,229,255,.3)}",
-    "#mdai-fab:active{transform:scale(.97)}",
+    "#mdai-fab:active{--mdai-sc:.97}",
     // แสงฟ้าวิ่งรอบขอบปุ่ม — ใบพัด conic หมุนด้วย transform (ลื่นทั้ง iOS/Android ไม่พึ่ง @property ที่ iOS ไม่รีเพนต์)
     "#mdai-fab::before{content:'';position:absolute;z-index:0;left:50%;top:50%;width:320px;height:320px;pointer-events:none;",
     "transform:translate(-50%,-50%);",
@@ -54,7 +55,24 @@
     "@keyframes mdai-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}",
     "#mdai-fab svg{position:relative;z-index:2;width:19px;height:19px;color:#7FE8FF;filter:drop-shadow(0 0 6px rgba(0,229,255,.55));flex:0 0 auto}",
     "#mdai-fab b{position:relative;z-index:2;font-family:'Kanit','IBM Plex Sans Thai',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;white-space:nowrap;",
+    "max-width:200px;overflow:hidden;transition:max-width .22s ease, opacity .16s ease;",
     "background:linear-gradient(180deg,#F4F8FC 25%,#9FB4C7 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}",
+    // ปุ่มย่อ (ลูกศรเล็กท้ายพิลล์) → กดแล้วหุบไปซ่อนครึ่งตัวนอกขอบจอ
+    "#mdai-min{position:relative;z-index:2;flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;margin:0 -10px 0 -1px;",
+    "border-radius:7px;color:#8FA6B8;cursor:pointer;transition:background .15s,color .15s,opacity .18s}",
+    "#mdai-min svg{width:14px;height:14px;color:inherit;filter:none;transition:transform .2s ease}",
+    "#mdai-min:hover{background:rgba(255,255,255,.14);color:#CFE9F5}",
+    "#mdai-fab.mdai-side-l #mdai-min{order:-1;margin:0 -1px 0 -10px}",
+    "#mdai-fab.mdai-side-l #mdai-min svg{transform:rotate(180deg)}",
+    // สถานะย่อ: หุบเหลือไอคอน ✨ แล้วเลื่อนออกนอกขอบจอ (ระยะ --mdai-tx คำนวณจาก JS ให้เหลือโผล่ 22px พอดี)
+    // ไอคอนต้องชิดฝั่งที่โผล่พ้นขอบจอ (ขวา→ชิดซ้ายของแถบ / ซ้าย→ชิดขวาของแถบ)
+    "#mdai-fab.mdai-tuck{gap:0;padding:0 0 0 4px;opacity:.92}", // ความกว้างตั้งจาก JS (TAB_W) เพื่อให้ระยะเลื่อนแม่น
+    "#mdai-fab.mdai-side-l.mdai-tuck{justify-content:flex-end;padding:0 4px 0 0}",
+    "#mdai-fab.mdai-tuck b{max-width:0;opacity:0}",
+    "#mdai-fab.mdai-tuck #mdai-min{display:none}",
+    // ⚠️ ห้ามให้ hover ขยับตำแหน่งแถบ! (เคยทำแล้วเมาส์แตะ→แถบเลื่อนหนี→หลุด hover→เลื่อนกลับ = เด้งวนไม่หยุด กดไม่ได้)
+    "#mdai-fab.mdai-tuck:hover{opacity:1;box-shadow:0 12px 30px -10px rgba(0,0,0,.55),0 0 26px rgba(0,229,255,.55)}",
+    "#mdai-fab.mdai-notrans{transition:none}",
     // หน้าต่างแชต
     "#mdai-panel{position:fixed;right:18px;bottom:88px;z-index:99999;width:380px;max-width:calc(100vw - 36px);height:70vh;max-height:560px;",
     "display:none;flex-direction:column;overflow:hidden;border-radius:18px;background:var(--mdai-surface);color:var(--mdai-text);",
@@ -107,7 +125,7 @@
     // หน้าที่มีปุ่มสลับธีม 🌙: เดสก์ท็อปปุ่มธีมลอยสูง (bottom:118) ไม่ชนกัน / จอแคบปุ่มธีมอยู่ bottom:72 → ย้าย pill ไปเคียงซ้าย
     "@media(max-width:860px){#mdai-root.mdai-avoid #mdai-fab{right:62px;bottom:72px}#mdai-root.mdai-avoid #mdai-panel{bottom:132px}}",
     // ตอน snap ติดขอบให้ลื่น ๆ (ใส่ class ชั่วคราว เพราะตอนลากต้องขยับทันทีไม่หน่วง)
-    "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease}",
+    "#mdai-fab.mdai-snap{transition:left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease, box-shadow .18s ease, border-color .18s ease, transform .24s ease, max-width .24s ease, padding .24s ease}",
     // Reduce Motion: ปิดเฉพาะ transition/typing ที่ไม่จำเป็น แต่คงแสงวิ่งรอบปุ่มไว้ (ตั้งใจให้วิ่งบนมือถือ)
     "@media(prefers-reduced-motion:reduce){#mdai-fab,#mdai-panel,#mdai-fab.mdai-snap{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before{animation:none}}",
   ].join("");
@@ -132,7 +150,10 @@
         '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
         '<path d="M11 1.5c.85 4.2 3.45 6.8 7.65 7.65-4.2.85-6.8 3.45-7.65 7.65-.85-4.2-3.45-6.8-7.65-7.65 4.2-.85 6.8-3.45 7.65-7.65Z"/>' +
         '<path d="M19 13.5c.4 2 1.6 3.2 3.6 3.6-2 .4-3.2 1.6-3.6 3.6-.4-2-1.6-3.2-3.6-3.6 2-.4 3.2-1.6 3.6-3.6Z"/></svg>' +
-        "<b>ผู้ช่วย AI</b></button>"
+        "<b>ผู้ช่วย AI</b>" +
+        '<span id="mdai-min" role="button" tabindex="0" aria-label="ย่อไปขอบจอ" title="ย่อไปขอบจอ">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" ' +
+        'stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>'
     );
 
     var panel = el(
@@ -154,6 +175,79 @@
     // เลี่ยงปุ่มสลับธีมลอยมุมขวาล่าง — จัดตำแหน่งผ่าน CSS class (ดู @media ด้านบน)
     if (document.querySelector(".md-theme-toggle")) root.classList.add("mdai-avoid");
 
+    // ---- ย่อไปซ่อนขอบจอ (เหลือแถบเล็ก ๆ ให้กดเรียกกลับ) — จำสถานะข้ามหน้าด้วย localStorage ----
+    var TUCK_KEY = "mdai-tuck-v1";
+    var TAB_W = 46, PEEK = 27; // ขนาดแถบตอนหุบ / ส่วนที่ยังโผล่พ้นขอบจอให้กดเรียกกลับ (พอดีไอคอน ✨)
+    var tucked = false, skipClick = false, fullW = 0;
+    var minBtn = fab.querySelector("#mdai-min");
+    // ปุ่มอยู่ขอบซ้ายหรือขวา → กำหนดทิศหัวลูกศร
+    function setSide() {
+      var r = fab.getBoundingClientRect();
+      fab.classList.toggle("mdai-side-l", r.left + r.width / 2 < document.documentElement.clientWidth / 2);
+    }
+    // ระยะที่ต้องเลื่อนออกนอกจอ — เรียกได้เฉพาะตอนยังไม่ย่อ (ต้องวัดขนาดจริง ไม่โดน transform กวน)
+    function tuckOffset() {
+      var r = fab.getBoundingClientRect();
+      var vw = document.documentElement.clientWidth;
+      var isL = r.left + r.width / 2 < vw / 2;
+      // หุบแล้วขอบไหนอยู่กับที่: วางด้วย left (เคยลาก) → ขอบซ้ายนิ่ง / วางด้วย right (ค่าเริ่มต้น) → ขอบขวานิ่ง
+      var left = fab.style.left ? r.left : r.right - TAB_W;
+      return (isL ? PEEK - TAB_W - left : vw - PEEK - left) + "px";
+    }
+    function tuck() {
+      if (tucked) return;
+      setSide();
+      fullW = fab.offsetWidth;      // ตรึงความกว้างเดิมไว้ก่อน จะได้ transition ไป 46px ได้ (auto → px ไม่วิ่ง)
+      fab.style.width = fullW + "px";
+      void fab.offsetWidth;
+      fab.style.setProperty("--mdai-tx", tuckOffset());
+      fab.style.width = TAB_W + "px";
+      tucked = true;
+      fab.classList.add("mdai-tuck");
+      fab.setAttribute("aria-label", "แสดงผู้ช่วย AI");
+      fab.title = "แสดงผู้ช่วย AI";
+      if (opened) close();
+      try { localStorage.setItem(TUCK_KEY, "1"); } catch (err) {}
+    }
+    function untuck() {
+      if (!tucked) return;
+      tucked = false;
+      fab.classList.remove("mdai-tuck");
+      fab.style.removeProperty("--mdai-tx");
+      fab.style.width = (fullW || TAB_W) + "px";
+      setTimeout(function () { if (!tucked) fab.style.width = ""; }, 280); // กางเสร็จค่อยปล่อยกลับเป็น auto
+      fab.setAttribute("aria-label", "เปิดผู้ช่วย AI");
+      fab.removeAttribute("title");
+      try { localStorage.setItem(TUCK_KEY, "0"); } catch (err) {}
+    }
+    // ตอนย่อ ตัว fab ถูก transform ไว้ → วัด rect เพี้ยน จึงคลายชั่วคราวแบบไม่มีอนิเมชันก่อนคำนวณตำแหน่ง
+    function withUntucked(fn) {
+      if (!tucked) return fn();
+      fab.classList.add("mdai-notrans");
+      fab.classList.remove("mdai-tuck");
+      fab.style.removeProperty("--mdai-tx");
+      fab.style.width = "";
+      void fab.offsetWidth;
+      fn(); // fn ต้องตั้ง --mdai-tx ใหม่เอง (เพราะตำแหน่งอาจเปลี่ยน)
+      fab.style.width = TAB_W + "px";
+      fab.classList.add("mdai-tuck");
+      void fab.offsetWidth;
+      fab.classList.remove("mdai-notrans");
+    }
+    minBtn.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
+    minBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      tuck();
+    });
+    minBtn.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        tuck();
+      }
+    });
+
     // ---- ลากย้ายปุ่มได้ (pointer events ครอบทั้งเมาส์/นิ้ว) — ขยับเกิน 7px ถึงนับเป็นลาก ----
     var drag = { active: false, moved: false, touch: false, px: 0, py: 0, bx: 0, by: 0 };
     function setFabPos(l, t) {
@@ -166,6 +260,12 @@
       fab.style.bottom = "auto";
     }
     fab.addEventListener("pointerdown", function (e) {
+      // ตอนย่ออยู่: แตะแถบ = กางกลับอย่างเดียว (ไม่เปิดแชต ไม่เริ่มลาก)
+      skipClick = tucked;
+      if (tucked) {
+        untuck();
+        return;
+      }
       drag.active = true;
       drag.moved = false;
       drag.touch = e.pointerType === "touch"; // นิ้วสั่นง่ายกว่าเมาส์ → ต้องใช้ระยะกันลากพลาดมากกว่า
@@ -199,6 +299,7 @@
     fab.addEventListener("pointerup", function () {
       if (drag.active && drag.moved) {
         snapFab(true);
+        setSide();
         try {
           localStorage.setItem("mdai-pos-v2", JSON.stringify({ l: parseFloat(fab.style.left), t: parseFloat(fab.style.top) }));
         } catch (err) {}
@@ -207,6 +308,8 @@
       drag.active = false;
     });
     fab.addEventListener("click", function () {
+      if (tucked) { untuck(); skipClick = false; return; } // กันคลิกที่ไม่มี pointerdown นำ (เช่นสั่งจากสคริปต์)
+      if (skipClick) { skipClick = false; return; } // เพิ่งกางกลับจากสถานะย่อ
       if (drag.moved) { drag.moved = false; return; } // จบการลาก — ไม่นับเป็นกดเปิด/ปิด
       toggle();
     });
@@ -218,11 +321,25 @@
         snapFab(false); // จอเปลี่ยนขนาดไปจากครั้งก่อนก็ยังติดขอบพอดี
       }
     } catch (err) {}
-    window.addEventListener("resize", function () {
-      if (fab.style.left) {
-        setFabPos(parseFloat(fab.style.left), parseFloat(fab.style.top));
-        snapFab(false);
+    setSide();
+    // เคยย่อไว้ครั้งก่อน → ย่อกลับทันทีตอนโหลด (ไม่ต้องมีอนิเมชันวิ่งเข้ามาให้สะดุดตา)
+    try {
+      if (localStorage.getItem(TUCK_KEY) === "1") {
+        fab.classList.add("mdai-notrans");
+        tuck();
+        void fab.offsetWidth;
+        fab.classList.remove("mdai-notrans");
       }
+    } catch (err) {}
+    window.addEventListener("resize", function () {
+      withUntucked(function () {
+        if (fab.style.left) {
+          setFabPos(parseFloat(fab.style.left), parseFloat(fab.style.top));
+          snapFab(false);
+        }
+        setSide();
+        if (tucked) fab.style.setProperty("--mdai-tx", tuckOffset()); // จอเปลี่ยนขนาด → ระยะซ่อนต้องคำนวณใหม่
+      });
       if (opened) placePanel();
     });
 

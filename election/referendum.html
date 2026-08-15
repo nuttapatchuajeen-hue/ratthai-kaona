@@ -82,10 +82,13 @@ html[data-theme="dark"] .rbtn.active{background:var(--orange);color:#081019}
 .maplegend .sw{width:12px;height:12px;border-radius:4px}
 .maplegend b{font-family:'Kanit';font-weight:600;margin-left:auto}
 .mapbox{background:radial-gradient(circle at 50% 42%, var(--wash), transparent 75%);border:1px solid var(--line);border-radius:var(--radius);padding:10px;display:grid;place-items:center;min-height:420px}
-svg.refmap{width:100%;height:auto;max-height:720px;display:block}
-svg.refmap path.pv{stroke:var(--paper);stroke-width:1;cursor:pointer;transition:opacity .14s,filter .14s}
+svg.refmap{width:100%;height:auto;max-height:720px;display:block;touch-action:pan-y}
+svg.refmap.zoomed{touch-action:none;cursor:grab}   /* ซูมเข้าแล้วนิ้วใช้ลากแพนแทนเลื่อนหน้า */
+svg.refmap.mz-drag{cursor:grabbing}
+/* non-scaling-stroke: เส้นขอบวัดเป็นพิกเซลจอ ซูมลึกแค่ไหนก็บางเท่าเดิม */
+svg.refmap path.pv{stroke:var(--paper);stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .14s,filter .14s}
 svg.refmap path.pv:hover{filter:brightness(.88)}
-svg.refmap path.pv.sel{stroke:var(--ink);stroke-width:2.6}
+svg.refmap path.pv.sel{stroke:var(--ink);stroke-width:2.6;vector-effect:non-scaling-stroke}
 svg.refmap path.pv.dim{opacity:.16}
 svg.refmap path.pv.nodata{cursor:default}
 .mapdetail{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:13px;align-self:start;position:sticky;top:80px}
@@ -314,6 +317,7 @@ mdSyncToggle();
 <div class="maptip" id="maptip"></div>
 
 <script src="referendum-data.js"></script>
+<script src="../js/mapzoom.js"></script>
 <script>
 (function(){
   const R=window.REFDATA, P=R.prov, RG=R.regions, T=R.totals;
@@ -393,14 +397,21 @@ mdSyncToggle();
   svg.setAttribute('preserveAspectRatio','xMidYMid meet');
   const tip=document.getElementById('maptip');
   const pathEls={};
+  const zg=document.createElementNS(NS,'g');   // กลุ่มรับ transform ของการซูม
+  svg.appendChild(zg);
   Object.entries(R.map.paths).forEach(([en,d])=>{
     const th=R.en2th[en], st=th?P[th]:null;
     const p=document.createElementNS(NS,'path');
     p.setAttribute('d',d); p.setAttribute('class','pv'+(st?'':' nodata'));
     p.setAttribute('fill', st ? (st.yes>=st.no?'#00A65A':'#E5484D') : '#D9E5EC');
     if(th){p.dataset.th=th; pathEls[th]=p;}
-    svg.appendChild(p);
+    zg.appendChild(p);
   });
+  /* ซูมเข้าจังหวัดที่เลือกแบบบินลื่น ๆ (ดู js/mapzoom.js — ไอเดียจาก elect.in.th)
+     ล้อเมาส์ไม่ดักไว้ เพราะแผนที่อยู่ในสายเลื่อนหน้า จะไปแย่งการสกรอลล์
+     ตอนซูมเข้าแล้วค่อยปิด touch-action เพื่อให้ลากแพนด้วยนิ้วได้ */
+  const mz=MapZoom.create(svg,zg,{width:R.map.width,height:R.map.height,
+    onScale:s=>svg.classList.toggle('zoomed',s>1.001)});
 
   /* state: {type:'all'} | {type:'region',key} | {type:'prov',name} + ค้นหา */
   let state={type:'all'}, q='';
@@ -419,6 +430,8 @@ mdSyncToggle();
       p.classList.toggle('sel', state.type==='prov'&&state.name===th);
     });
     Object.entries(sideBtns).forEach(([k,b])=>b.classList.toggle('active',(state.type==='region'&&state.key===k)||(state.type==='all'&&k==='ALL')));
+    if(state.type==='prov') mz.fitEl(pathEls[state.name]);
+    else if(mz.scale>1.001) mz.reset();
   }
   function statRows(o,b){
     return `

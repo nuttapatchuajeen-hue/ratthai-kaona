@@ -43,9 +43,12 @@
 
 .mapwrap{position:relative;padding:6px 10px 2px}
 #bkkmap{width:100%;height:auto;display:block;max-height:70vh;touch-action:pan-y}
-.khet{cursor:pointer;stroke:rgba(255,255,255,.7);stroke-width:1;transition:opacity .14s,stroke-width .12s;stroke-linejoin:round}
+/* non-scaling-stroke: เส้นขอบวัดเป็นพิกเซลจอ ซูมลึกแค่ไหนก็บางเท่าเดิม */
+.khet{cursor:pointer;stroke:rgba(255,255,255,.7);stroke-width:1;vector-effect:non-scaling-stroke;transition:opacity .14s,stroke-width .12s;stroke-linejoin:round}
 .khet:hover{stroke:var(--ink);stroke-width:2}
 .khet.sel{stroke:var(--ink);stroke-width:2.6}
+#bkkmap.zoomed{touch-action:none;cursor:grab}   /* ซูมเข้าแล้วนิ้วใช้ลากแพนแทนเลื่อนหน้า */
+#bkkmap.mz-drag{cursor:grabbing}
 .khet.dim{opacity:.15}
 html[data-theme="dark"] .khet{stroke:rgba(6,14,22,.55)}
 .klabel{font-family:'Kanit';font-weight:600;fill:#fff;stroke:rgba(6,18,28,.72);stroke-width:2.4;paint-order:stroke;stroke-linejoin:round;text-anchor:middle;pointer-events:none;opacity:0}
@@ -343,8 +346,10 @@ mdSyncToggle();
       <div class="mapwrap">
         <div class="mapbadge" id="mapBadge"></div>
         <svg id="bkkmap" xmlns="http://www.w3.org/2000/svg" aria-label="แผนที่ผลเลือกตั้ง กทม. รายเขต">
-          <g id="khetG"></g>
-          <g id="labelG"></g>
+          <g id="zoomG">
+            <g id="khetG"></g>
+            <g id="labelG"></g>
+          </g>
         </svg>
       </div>
       <div class="legendwrap" id="legend"></div>
@@ -371,6 +376,7 @@ mdSyncToggle();
 <div class="yt-audio-dock"><div id="ytdock"></div></div>
 
 <script src="bangkok-geo.js"></script>
+<script src="../js/mapzoom.js"></script>
 <script src="bangkok-data.js"></script>
 <script src="bkk-photos.js"></script>
 <script>
@@ -466,6 +472,13 @@ Object.entries(GEO.districts).forEach(([name,g])=>{
 // data-coverage guard
 Object.keys(GEO.districts).forEach(n=>{ if(state && !SK.districts[n]) console.warn('no ส.ก. data for',n); });
 
+/* ซูมเข้าเขตที่เลือกแบบบินลื่น ๆ (ดู js/mapzoom.js — ไอเดียจาก elect.in.th)
+   กทม. เป็นแผนที่แบน (1000×795) แต่ละเขตเล็ก จึงเปิดเพดานให้สูงพอ
+   ล้อเมาส์ไม่ดักไว้ เพราะแผนที่อยู่ในสายเลื่อนหน้า จะไปแย่งการสกรอลล์ */
+const VB=(GEO.meta.viewBox||'0 0 1000 795').split(/\s+/).map(Number);
+const mz=MapZoom.create(svg,el('zoomG'),{width:VB[2],height:VB[3],maxZoom:14,
+  fill:.62,fillMobile:.5,onScale:s=>svg.classList.toggle('zoomed',s>1.001)});
+
 /* ---------- tooltip ---------- */
 const tip=el('ptip');
 function tipHTML(name){
@@ -501,6 +514,9 @@ function recolor(){
       if(state.sel===name) p.classList.add('sel');
     }
   });
+  // เลือกเขตแล้วบินเข้าไปหา · ไม่มีเขตที่เลือก (สลับแท็บ/กดกลับทุกเขต) ก็บินกลับมุมมองเต็ม
+  if(state.view==='sk'&&state.sel&&paths[state.sel]) mz.fitEl(paths[state.sel]);
+  else if(mz.scale>1.001) mz.reset();
 }
 window.bkkRecolor=recolor;
 
