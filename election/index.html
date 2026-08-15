@@ -104,6 +104,7 @@ mdSyncToggle();
     </button>
     <button id="zin" aria-label="ขยาย">+</button>
     <button id="zout" aria-label="ย่อ">−</button>
+    <button id="zreset" aria-label="กลับทั้งแผนที่" title="กลับทั้งแผนที่">⤢</button>
   </div>
 </div>
 
@@ -209,6 +210,7 @@ mdSyncToggle();
     tx=clamp(tx, M.width*(1-scale), 0);
     ty=clamp(ty, M.height*(1-scale), 0);
     zg.setAttribute('transform',`translate(${tx} ${ty}) scale(${scale})`);
+    scaleMarkers();                       // วงหมายเลขเขตคงขนาดบนจอเสมอ ไม่พองตามซูม
     if(light)scaleLabels(); else updateLabels(false);
   }
 
@@ -233,6 +235,28 @@ mdSyncToggle();
     };
     flyRaf=requestAnimationFrame(step);
   }
+  /* ---- ขนาดวงหมายเลขเขต: วัดเป็น "พิกเซลบนจอ" ไม่ใช่หน่วยแผนที่ ----
+     เดิมคิดรัศมีจากขนาดกรอบจังหวัด → พอเปิดเพดานซูมเป็น 40 เท่า จังหวัดเล็กที่เขตเยอะ (กทม. 33 เขต)
+     วงจะพองตามจนกลืนทั้งจังหวัด · เว็บอ้างอิงใช้ 20/16/12 พิกเซลตามจำนวนเขต แล้วหารด้วยสเกลปัจจุบัน
+     (r = R_px / scale) วงจึงเท่าเดิมเสมอไม่ว่าซูมลึกแค่ไหน */
+  let VBPP=1;          // หน่วย viewBox ต่อ 1 พิกเซลจอ — แคชไว้ อ่าน rect ทุกเฟรมทำให้เบราว์เซอร์คำนวณ layout ใหม่
+  function refreshVBPP(){const r=svg.getBoundingClientRect();
+    VBPP=(r.width&&r.height)?1/(Math.min(r.width/M.width,r.height/M.height)||1):1;}
+  let fitScale=1;      // สเกลปลายทางของการบินเข้าจังหวัด — ใช้จัดวางวงตั้งแต่ก่อนบินถึงที่
+  function mkRpx(N){const m=isMobile();return N<10?(m?15:19):N<16?(m?11:15):(m?8:11);}
+  function mkR(N,s){return mkRpx(N)*VBPP/Math.max(s,1);}
+  function scaleMarkers(){
+    const N=+mkG.dataset.n||0; if(!N)return;
+    // rcap = เพดานจากพื้นที่ว่างจริงในจังหวัด (จังหวัดที่โปรยจุดเอง) — ซูมออกแล้ววงต้องไม่โตจนทับกัน
+    const r=Math.min(mkR(N,scale), +mkG.dataset.rcap||Infinity);
+    mkG.querySelectorAll('.mk').forEach(g=>{
+      const c=g.firstChild, t=g.lastChild;
+      c.setAttribute('r',r);
+      t.setAttribute('font-size',r*1.05);   // halo คุมที่ CSS (non-scaling-stroke) ไม่ต้องตั้งที่นี่
+    });
+  }
+  refreshVBPP();
+  addEventListener('resize',()=>{refreshVBPP();scaleMarkers();});
   function scaleLabels(){
     for(const l of labelEls){
       if(l.el.style.display==='none')continue;
@@ -268,6 +292,8 @@ mdSyncToggle();
   // ซูมออกจนสุดขณะกำลังดูจังหวัด → เด้งกลับไปหน้าเลือกจังหวัด (เหมือนเว็บอ้างอิง)
   function maybeExitProvince(){if(curProvince&&scale<=1.1){backToAll();return true;}return false;}
   document.getElementById('zout').onclick=()=>{const p=centerPt();zoomAt(p.x,p.y,1/1.45);if(!maybeExitProvince()&&scale<=1.001){tx=0;ty=0;apply();}};
+  // ปุ่มกลับทั้งแผนที่: ทางออกทางเดียวจบจากสภาพซูมค้าง ไม่ต้องกดย่อทีละขั้น
+  document.getElementById('zreset').onclick=()=>{if(curProvince)backToAll();else flyTo(1,0,0);};
   svg.addEventListener('wheel',e=>{e.preventDefault();const p=vbPoint(e.clientX,e.clientY);zoomAt(p.x,p.y,e.deltaY<0?1.12:1/1.12);if(e.deltaY>0)maybeExitProvince();},{passive:false});
   const pointers=new Map(); let panState=null, pinchPrev=null, moved=false, captured=false, lastTapTime=0, pinching=false;
   svg.addEventListener('pointerdown',e=>{
@@ -310,7 +336,9 @@ mdSyncToggle();
       const mk=downEl.closest&&downEl.closest('.mk');
       if(mk){flashCard(mk.dataset.no);}
       else if(downEl.classList&&downEl.classList.contains('tam')){flashCard(downEl.dataset.z);}
-      else if(downEl.classList&&downEl.classList.contains('pv')){const th=en2th[downEl.dataset.en];if(th&&provStats[th])selectProvince(th);}
+      // แตะจังหวัดเดิมซ้ำ = ถอยกลับไปมุมมองทั้งประเทศ (ทางออกจากสภาพซูมค้าง — เหมือนเว็บอ้างอิง)
+      else if(downEl.classList&&downEl.classList.contains('pv')){const th=en2th[downEl.dataset.en];
+        if(th&&provStats[th]){ if(curProvince===th) backToAll(); else selectProvince(th); }}
     }
     if(pointers.size===0&&pinching){pinching=false;maybeExitProvince();}
   }
@@ -340,7 +368,7 @@ mdSyncToggle();
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}
   // กลับไปหน้าเลือกจังหวัด: บนมือถือต้องพับ bottom sheet ลงด้วย ไม่งั้นแผ่นจะค้างบานเต็มจอบังแผนที่จนแพน/ซูมไม่ได้
-  function backToAll(){curProvince=null;clearMarkers();highlight(null);flyTo(1,0,0);renderList();expandSheet(false);}
+  function backToAll(){curProvince=null;fitScale=1;clearMarkers();highlight(null);flyTo(1,0,0);renderList();expandSheet(false);}
   /* สูตรกรอบแบบ elect.in.th: scale = FILL / max(กว้างจังหวัด/กว้างกรอบ, สูงจังหวัด/สูงกรอบ)
      → จังหวัดกินพื้นที่ FILL ของกรอบเสมอ ไม่ว่าจะเล็กอย่างสมุทรสงครามหรือใหญ่อย่างนครราชสีมา
      (ของเดิม FILL=.30 + เพดาน 3.4 ทำให้จังหวัดเล็กซูมไม่เข้า เหลือจุดนิดเดียวกลางจอ)
@@ -355,6 +383,7 @@ mdSyncToggle();
     const visW=(r.width&&r.height)?r.width/rs:M.width, visH=(r.width&&r.height)?r.height/rs:M.height;
     const FILL=isMobile()?.52:.72;
     const s=clamp(FILL/Math.max(bb.width/visW,bb.height/visH),1,MAXZ);
+    refreshVBPP(); fitScale=s;          // วงหมายเลขเขตต้องรู้สเกลปลายทางตั้งแต่ตอนจัดวาง (ยังบินไม่ถึง)
     flyTo(s, M.width/2-cx*s, M.height/2-cy*s);}
 
   /* ---- district markers ---- */
@@ -435,7 +464,7 @@ mdSyncToggle();
     if(!r||!r.mix||r.mix.length<2)return '';
     return r.mix.map(m=>shortOf(m.code)+' '+m.n).join(' · ');
   }
-  function clearMarkers(){mkG.textContent='';clearDistricts();if(hiddenLabel){hiddenLabel.style.display='';hiddenLabel=null;}updateLabels(true);}
+  function clearMarkers(){mkG.textContent='';delete mkG.dataset.n;delete mkG.dataset.rcap;clearDistricts();if(hiddenLabel){hiddenLabel.style.display='';hiddenLabel=null;}updateLabels(true);}
   function spread(points,N){if(points.length<=N)return points.slice();const chosen=[points[Math.floor(points.length/2)]];
     while(chosen.length<N){let best=null,bd=-1;for(const p of points){let d=Infinity;for(const c of chosen){const dd=(c[0]-p[0])**2+(c[1]-p[1])**2;if(dd<d)d=dd;}if(d>bd){bd=d;best=p;}}chosen.push(best);}return chosen;}
   function renderMarkers(th){
@@ -446,12 +475,12 @@ mdSyncToggle();
       const hasDist=hasData&&renderDistricts(th);
       const recs=markerRecs(th);const N=recs.length,bb=pe.getBBox();
       const cx=bb.x+bb.width/2, cy=bb.y+bb.height/2;
-      let pts, r;
+      let pts, r, rcap=Infinity;
       const D2=hasDist?getDist(th):null;
       if(D2&&D2.labels&&D2.labels.length){
         // วงหมายเลขเขตวางที่ "ศูนย์ถ่วงพื้นที่จริง" ของแต่ละเขต (ไม่ใช่โปรยมั่ว)
         const byNo={};D2.labels.forEach(l=>{byNo[+l.no]=[l.x,l.y];});
-        r=Math.max(3.4, 0.34*Math.min(bb.width,bb.height)/Math.sqrt(N));
+        r=mkR(N,fitScale);
         pts=recs.map(rec=>{const q=byNo[+rec.no];return q?[q[0],q[1]]:[cx,cy];});
         // คลายเฉพาะวงที่ทับกัน (จังหวัดเขตถี่อย่างขอนแก่น/โคราช) — ดันออกเบาๆ ไม่ดึงออกจากเขต
         const minSep=2*r*1.02;
@@ -464,9 +493,10 @@ mdSyncToggle();
         const inside=[],g=Math.max(8,Math.ceil(Math.sqrt(N)*3.4));
         for(let i=0;i<g;i++)for(let j=0;j<g;j++){const x=bb.x+bb.width*(i+.5)/g,y=bb.y+bb.height*(j+.5)/g;if(inFill(x,y))inside.push([x,y]);}
         if(!inside.length)inside.push([cx,cy]);
-        // รัศมีวงกลม: อิงพื้นที่จริงในจังหวัด ÷ จำนวนเขต (ไม่ตั้งพื้นขั้นต่ำใหญ่เกินไป) → จังหวัดเขตเยอะอย่าง กทม. 33 เขต จะไม่ทับกัน
+        // รัศมีวงกลมวัดเป็นพิกเซลบนจอ (mkR) แต่ห้ามใหญ่เกินพื้นที่ว่างจริงในจังหวัด ไม่งั้นจังหวัดเขตถี่จะทับกัน
         const fillFrac=Math.max(inside.length/(g*g),0.3), fillArea=fillFrac*bb.width*bb.height;
-        r=Math.max(2.6,Math.min(Math.min(bb.width,bb.height)/(Math.sqrt(N)+2.6), 0.46*Math.sqrt(fillArea/N)));
+        rcap=0.46*Math.sqrt(fillArea/N);
+        r=Math.min(mkR(N,fitScale), rcap);
         // กระจายจุดให้ห่างกันมากสุดเป็นจุดเริ่ม แล้ว “ผลัก” จุดที่ใกล้กันออกจากกันจนไม่ทับ (de-cluster) พร้อมดึงให้อยู่ในเขตจังหวัด
         const minSep=2*r*1.06;
         pts=spread(inside,N).map(p=>[p[0],p[1]]);
@@ -487,8 +517,11 @@ mdSyncToggle();
         const grp=document.createElementNS(NS,'g');grp.setAttribute('class','mk');grp.dataset.no=rec.no;
         grp.style.setProperty('--c', colorOf(rec.code));   // สีวงกลม = สีพรรคที่ชนะเขตนี้
         const c=document.createElementNS(NS,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',r);
-        const t=document.createElementNS(NS,'text');t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);t.setAttribute('font-size',r*1.05);t.textContent=rec.no;
+        const t=document.createElementNS(NS,'text');t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);
+        t.setAttribute('font-size',r*1.05);t.textContent=rec.no;
         grp.appendChild(c);grp.appendChild(t);mkG.appendChild(grp);});
+      mkG.dataset.n=N; if(rcap<Infinity)mkG.dataset.rcap=rcap; else delete mkG.dataset.rcap;
+      scaleMarkers();                     // ถ้ายังบินไม่ถึง สเกลจริงต่างจาก fitScale → ปรับให้ตรงทันที
       const lab=labelEls.find(l=>l.en===en);if(lab){lab.el.style.display='none';hiddenLabel=lab.el;}
       updateLabels(true);
     });

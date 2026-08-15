@@ -498,7 +498,8 @@ function moveTip(e){ const pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
   tip.style.left=x+'px'; tip.style.top=y+'px'; }
 function onLeave(){ tip.classList.remove('on'); }
 function onClick(name){
-  if(state.view==='sk'){ state.sel=name; renderPanel(); recolor(); }
+  // แตะเขตเดิมซ้ำ = ยกเลิกการเลือก → recolor() จะสั่งบินกลับมุมมองเต็ม (ทางออกจากสภาพซูมค้าง)
+  if(state.view==='sk'){ state.sel=(state.sel===name)?null:name; renderPanel(); recolor(); }
   else { // gov: flash
     const p=paths[name]; p.classList.add('sel'); setTimeout(()=>p.classList.remove('sel'),600);
   }

@@ -62,7 +62,8 @@ svg.thmap path.pv.dim{opacity:.25}
 .plabel.show{opacity:1}
 .mkg .mk{cursor:pointer}
 .mkg .mk circle{fill:var(--c,var(--mk));stroke:#fff;stroke-width:1.4;vector-effect:non-scaling-stroke;transition:fill .15s}
-.mkg .mk text{fill:#fff;stroke:rgba(0,0,0,.34);stroke-width:.5;paint-order:stroke;font-family:'Kanit';font-weight:600;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+/* halo ตัวเลขก็ต้องวัดเป็นพิกเซลจอ ไม่งั้นตอนซูมลึก (กทม. 20 เท่า) ขอบจะหนา 6px รอบตัวเลข 11px = ตัวเลขทึบ */
+.mkg .mk text{fill:#fff;stroke:rgba(0,0,0,.34);stroke-width:1.5;vector-effect:non-scaling-stroke;paint-order:stroke;font-family:'Kanit';font-weight:600;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .mkg .mk:hover circle,.mkg .mk.flash circle{fill:var(--orange)}
 
 /* district mosaic — ลงสีตำบลตามเขตเลือกตั้ง + เส้นแบ่งเขต (นำร่อง) */
@@ -190,6 +191,7 @@ html[data-theme="dark"] .dg .zbound{stroke:#e3edf5;opacity:.82}
   background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
 .zoomctl button{width:48px;height:46px;border:0;background:transparent;font-size:1.45rem;color:var(--ink);cursor:pointer;display:grid;place-items:center;transition:.12s}
 .zoomctl button:not(:last-child){border-bottom:1px solid var(--line)}
+.zoomctl button#zreset{font-size:1.05rem}   /* ⤢ ตัวใหญ่กว่า +/− อยู่แล้ว ลดลงให้ดูเท่ากัน */
 .zoomctl button:hover{background:var(--orange-soft);color:var(--orange-deep)}
 /* ปุ่มสลับวงหมายเลขเขต */
 .mktgl .num{fill:var(--paper);font-family:'Kanit'}

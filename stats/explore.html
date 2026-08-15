@@ -6066,8 +6066,13 @@
       });
     }
     function zoomifyMaps(){ if(window.MapZoom) $$("svg").forEach(wireMapZoom); }
-    /* กันพลาด: แผนที่บางอันวาดเสร็จหลัง zoomifyMaps รอบล่าสุด (รอ topojson จาก CDN / วาดซ้ำตอนสลับธีม)
-       จึงต่อสายให้ตอน pointerdown ด้วย — ตัว listener ที่เพิ่งผูกจะรับ event "click" ที่ตามมาทัน */
+    /* แผนที่หลายอันวาดเสร็จหลัง zoomifyMaps รอบล่าสุด (รอ topojson จาก CDN / ยิง API ข้อมูลเอง /
+       วาดซ้ำตอนสลับธีม) ถ้ารอแต่ pointerdown ปุ่มซูมจะยังไม่โผล่จนกว่าจะแตะแผนที่ก่อน
+       → เฝ้าดู DOM แล้วสแกนซ้ำแบบหน่วง 200ms (wireMapZoom ทำซ้ำได้ ไม่ต่อสายซ้ำอยู่แล้ว) */
+    var mzScanT=null;
+    new MutationObserver(function(){ clearTimeout(mzScanT); mzScanT=setTimeout(zoomifyMaps,200); })
+      .observe(document.body,{ childList:true, subtree:true });
+    /* กันพลาดอีกชั้น: ต่อสายให้ตอน pointerdown — listener ที่เพิ่งผูกจะรับ event "click" ที่ตามมาทัน */
     document.addEventListener("pointerdown",function(e){
       var s=e.target&&e.target.closest?e.target.closest("svg"):null; if(s) wireMapZoom(s);
     },true);
