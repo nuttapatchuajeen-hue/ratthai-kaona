@@ -205,7 +205,11 @@
         ? document.title.replace(/25\d\d/, y)
         : document.title + ' · เลือกตั้ง ' + y;
       document.title = document.title.replace('ว่าที่ ส.ส.', 'ส.ส.').replace(' + สว. 200', '');
-      if (cur.total && cur.total !== 500) document.title = document.title.replace('500', cur.total);
+      /* แทนจำนวน ส.ส. ต้องจับ "500" ที่เป็นตัวเลขเดี่ยว ๆ เท่านั้น
+         ไม่งั้นปี 2500 จะโดนแทนที่เลขปีตัวเอง (2500 → 2160) ถ้าปีมาก่อนจำนวนคนในหัวเรื่อง */
+      if (cur.total && cur.total !== 500) {
+        document.title = document.title.replace(/(^|[^\d])500(?!\d)/, '$1' + cur.total);
+      }
     }
 
     // หน้าลูก (บัญชีรายชื่อ/คะแนนพรรค/รัฐสภา) มีหัวข้อท้ายหน้า "ว่าที่ ส.ส. 500 · 2569"

@@ -32,6 +32,16 @@
   var noParty = !!S.heat || !rows.length;
   var leaderOf = function (p) { var L = I.leaders || {}; return L[p.short] || L[p.code] || ''; };
   var pmName = I.pm || '';
+  /* มีชื่อนายกฯ แต่ไม่มีการ์ดพรรคไหนได้ ✓ เลย → ต้องบอกด้วยแถบล่าง ไม่งั้นคนดูไม่รู้ว่าใครเป็นนายกฯ
+     เกิดได้ 2 แบบ · ไม่สังกัดพรรค (2522 เกรียงศักดิ์ · 2526/2529 เปรม)
+                  · สังกัดพรรคที่ไม่มีในผลคะแนนครั้งนั้น (2500 รอบ ธ.ค. ถนอม — ชาติสังคม) */
+  var pmParty = I.pmp || '';
+  var pmOutsider = !noParty && !!pmName && !rows.some(function (p) {
+    return !!pmParty && (pmParty === p.code || pmParty === p.short);
+  });
+  var pmNote = I.pmnote || (pmParty
+    ? 'พรรค' + pmParty + ' — ไม่มีในผลคะแนนครั้งนี้'
+    : 'ไม่ได้สังกัดพรรคการเมือง — ไม่มีพรรคใดได้เป็นนายกฯ');
 
   /* ---------- สไตล์ ---------- */
   var CSS = ''
@@ -49,7 +59,7 @@
     /* แผงใหญ่ 2 ข้าง */
     /* top ใช้ความสูงจริงของแถบบน (--barh วัดตอนรันไทม์) ไม่งั้นเหลือช่องว่างคั่นระหว่างแถบกับแผง
        จอใหญ่: แผงยาวถึงขอบล่าง แล้ววางการ์ดอันดับ 3–5 ไว้ "ในช่องกลาง" ระหว่างสองแผง */
-    + '#eintro .side{position:absolute;top:var(--barh,52px);bottom:0;width:31%;max-width:400px;padding:22px 22px;'
+    + '#eintro .side{position:absolute;top:var(--barh,52px);bottom:var(--pmh,0px);width:31%;max-width:400px;padding:22px 22px;'
     + 'display:flex;flex-direction:column;justify-content:center;color:#fff;'
     + 'transition:transform .75s cubic-bezier(.4,0,.2,1)}'
     + '#eintro .side.l{left:0;transform:translateX(-102%)}'
@@ -73,9 +83,21 @@
     + '#eintro .votes i{font-style:normal;font-size:.7rem;opacity:.75}'
     + '#eintro .pmtag{display:inline-block;margin-top:10px;padding:5px 12px;border-radius:999px;'
     + 'background:rgba(255,255,255,.18);font-size:.74rem;font-family:Sarabun,sans-serif}'
+    /* แถบล่าง: ปีที่นายกฯ เป็น "คนนอก" ไม่ได้สังกัดพรรคไหนในสภา (2522/2526/2529)
+       จึงไม่มีพรรคไหนได้ ✓ — ถ้าไม่บอกตรงนี้ คนดูจะไม่รู้เลยว่าใครได้เป็นนายกฯ
+       แถบกินที่ด้านล่างจริง จึงต้องดัน .side/.mrow/.ctl ขึ้นด้วย --pmh (วัดตอนรันไทม์) */
+    /* ⚠ ห้ามทำเป็น flex — ข้อความไทยไม่มีช่องว่าง flex item จะหดลงเหลือ min-content
+       แล้วตกบรรทัดทีละคำจนแถบสูงเป็น 250px ดันการ์ดหายจากจอ · ใช้บล็อก 2 บรรทัดตายตัว */
+    + '#eintro .pmbar{position:absolute;left:0;right:0;bottom:0;padding:10px 16px;text-align:center;'
+    + 'background:#070f17;color:#fff;'
+    + 'transform:translateY(100%);transition:transform .6s cubic-bezier(.4,0,.2,1) .25s}'
+    + '#eintro.on .pmbar{transform:none}'
+    + '#eintro .pmbar b{display:block;font-size:1.05rem;font-weight:600;line-height:1.3}'
+    + '#eintro .pmbar span{display:block;margin-top:2px;font-size:.78rem;opacity:.72;'
+    + 'font-family:Sarabun,sans-serif;line-height:1.35}'
     /* แถวอันดับ 3–5 ด้านล่าง */
     /* วางกลางจอเสมอและ "ห้ามตกบรรทัด" — ถ้าช่องกลางแคบก็ให้ล้ำทับแผงได้ (การ์ดมีพื้นหลังของตัวเอง) */
-    + '#eintro .mrow{position:absolute;left:50%;bottom:58px;display:flex;gap:8px;justify-content:center;'
+    + '#eintro .mrow{position:absolute;left:50%;bottom:calc(58px + var(--pmh,0px));display:flex;gap:8px;justify-content:center;'
     + 'flex-wrap:nowrap;max-width:calc(100% - 20px);'
     + 'transform:translate(-50%,180%);transition:transform .7s cubic-bezier(.4,0,.2,1) .15s}'
     + '#eintro.on .mrow{transform:translate(-50%,0)}'
@@ -92,7 +114,7 @@
     + 'text-align:center;color:#fff;transition:opacity .6s,transform .6s}'
     + '#eintro.on .solo{opacity:1;transform:translate(-50%,-50%) scale(1)}'
     /* ปุ่มควบคุม */
-    + '#eintro .ctl{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;'
+    + '#eintro .ctl{position:absolute;bottom:calc(14px + var(--pmh,0px));left:50%;transform:translateX(-50%);display:flex;gap:8px;'
     + 'pointer-events:auto;opacity:0;transition:opacity .4s}'
     + '#eintro.on .ctl{opacity:1}'
     + '#eintro .ctl button{font-family:Kanit,sans-serif;font-size:.8rem;color:#fff;background:rgba(255,255,255,.14);'
@@ -113,8 +135,10 @@
     + '@media(max-width:860px){'
     /* มือถือ: แผงสองข้างเต็มความกว้าง ไม่มีช่องกลาง → การ์ดอันดับ 3–5 ต้องลงไปอยู่ใต้แผง
        และตกบรรทัดเป็น 2 แถว (สูง ~90px) จึงต้องเว้นล่างมากกว่าจอใหญ่ */
-    + '#eintro .side{width:50%;max-width:none;padding:14px 12px;bottom:200px}'
-    + '#eintro .mrow{bottom:104px}'
+    + '#eintro .side{width:50%;max-width:none;padding:14px 12px;bottom:calc(200px + var(--pmh,0px))}'
+    + '#eintro .mrow{bottom:calc(104px + var(--pmh,0px))}'
+    + '#eintro .pmbar{padding:7px 12px}'
+    + '#eintro .pmbar b{font-size:.86rem}#eintro .pmbar span{font-size:.68rem}'
     + '#eintro .face{height:96px;margin:6px 0 2px}'
     + '#eintro .pname{font-size:1rem}#eintro .num{font-size:2rem;margin-top:8px}'
     + '#eintro .lead{font-size:.76rem}#eintro .unit{font-size:.68rem}#eintro .bar b{font-size:1.15rem}'
@@ -124,7 +148,7 @@
     + '#eintro .mini .mface,#eintro .mini .mdot{width:30px;height:30px;border-radius:8px}'
     + '#eintro .mini .mp{font-size:.74rem}#eintro .mini .ml{display:none}'
     + '#eintro .mini .mn{font-size:1rem;padding-left:5px}'
-    + '#eintro .ctl{bottom:66px}}';
+    + '#eintro .ctl{bottom:calc(66px + var(--pmh,0px))}}';
 
   /* ---------- ชิ้นส่วน ---------- */
   function facePath(leader, cls) {
@@ -185,7 +209,9 @@
     + (pmName ? '<div class="lead">นายกรัฐมนตรีหลังเลือกตั้ง · ' + pmName + '</div>' : '') + '</div>'
     : sideHtml(rows[0], 'l', 'อันดับ 1')
     + (rows[1] ? sideHtml(rows[1], 'r', 'อันดับ 2') : '')
-    + (rows.length > 2 ? '<div class="mrow">' + rows.slice(2, 5).map(miniHtml).join('') + '</div>' : '');
+    + (rows.length > 2 ? '<div class="mrow">' + rows.slice(2, 5).map(miniHtml).join('') + '</div>' : '')
+    + (pmOutsider ? '<div class="pmbar"><b>นายกรัฐมนตรีหลังเลือกตั้ง · ' + pmName + '</b>'
+      + '<span>' + pmNote + '</span></div>' : '');
   el.innerHTML = head + body
     + '<div class="ctl"><button type="button" data-a="sound">เปิดเสียง</button>'
     + '<button type="button" data-a="skip">ข้าม</button></div>';
@@ -194,9 +220,15 @@
   document.head.appendChild(st); document.body.appendChild(el);
 
   // แผงสองข้างต้องเริ่มต่อจากแถบบนพอดี — วัดความสูงจริงแทนการเดา
-  var barEl = el.querySelector('.bar');
-  var syncBar = function () { el.style.setProperty('--barh', barEl.offsetHeight + 'px'); };
+  var barEl = el.querySelector('.bar'), pmBarEl = el.querySelector('.pmbar');
+  var syncBar = function () {
+    el.style.setProperty('--barh', barEl.offsetHeight + 'px');
+    // แถบนายกฯ คนนอกกินที่ล่างจริง (มือถือตกบรรทัดได้) → วัดแล้วดันการ์ด/ปุ่มขึ้นตาม
+    el.style.setProperty('--pmh', (pmBarEl ? pmBarEl.offsetHeight : 0) + 'px');
+  };
   syncBar(); addEventListener('resize', syncBar);
+  // วัดซ้ำหลังฟอนต์ Kanit/Sarabun มาถึง — วัดตอนฟอนต์สำรองยังอยู่ ข้อความจะตกบรรทัดคนละแบบ ค่าที่ได้เพี้ยน
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncBar);
 
   // ไม่มีทั้ง .png และ .jpg → ซ่อนรูป ไม่ให้ขึ้นไอคอนรูปเสีย
   Array.prototype.forEach.call(el.querySelectorAll('.face,.mface'), function (im) {

@@ -89,10 +89,47 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
 .sp input{width:104px;accent-color:var(--gold)}
 .grow{flex:1}
 
+/* ---------- ปุ่มกลับแดชบอร์ด (มุมซ้ายบน) ---------- */
+.backbtn{position:fixed;top:14px;left:14px;z-index:59;display:inline-flex;align-items:center;gap:8px;
+  font-family:Kanit,sans-serif;font-size:.84rem;font-weight:500;color:var(--ink);text-decoration:none;
+  background:rgba(22,36,60,.92);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 12px 30px -14px rgba(0,0,0,.9);padding:9px 13px;transition:.14s}
+.backbtn:hover{border-color:var(--gold);color:var(--gold)}
+.backbtn .bk{font-size:1rem;line-height:1;margin-top:-1px}
+.backbtn .bl{font-size:.7rem;color:var(--muted)}
+.backbtn:hover .bl{color:inherit;opacity:.8}
+
+/* ปุ่ม/เมนู "เลือกตั้ง 25xx" มาจาก year-switch.js ซึ่งเป็นธีมสว่างของหน้าอื่น
+   หน้านี้พื้นมืด จึงย้อมทับ + ยกขึ้นมาอยู่แถวเดียวกับปุ่มกลับ (หน้านี้ไม่มีแถบเมนูด้านบน)
+   ใช้ตัวเลือก body ... เพื่อให้ชนะ CSS ของ year-switch.js ที่ฉีดทีหลัง */
+body .yearbtn{top:14px;right:14px;color:var(--ink);background:rgba(22,36,60,.92);
+  border-color:var(--line);box-shadow:0 12px 30px -14px rgba(0,0,0,.9)}
+body .yearbtn:hover{border-color:var(--gold)}
+body .yearbtn .yl{color:var(--muted)}
+body .yearmenu{top:62px;right:14px;background:var(--panel);border-color:var(--line);
+  box-shadow:0 18px 44px -16px rgba(0,0,0,.85)}
+body .yearmenu .yhead{color:var(--muted)}
+body .yearmenu .yb{color:var(--ink)}
+body .yearmenu .yb:hover:not(:disabled){background:#1b2d4a}
+body .yearmenu .yb.on{background:var(--gold)}
+body .yearmenu .yb.on .y1,body .yearmenu .yb.on .y2{color:#20180a}
+body .yearmenu .yb.on .y1 em{color:rgba(32,24,10,.72)}
+body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
+
 @media(max-width:1060px){
   .stagewrap{grid-template-columns:1fr;padding-bottom:150px}
   .rail{position:static}
   .card{width:min(46vw,216px)}
+}
+@media(max-width:860px){
+  /* ปุ่มสองอันกินแถวบนสุด → ดันหัวเรื่องลงมา ไม่ให้ทับกัน */
+  .top{padding-top:62px}
+  .top .yr{font-size:1.9rem}
+  .backbtn{padding:8px 11px}
+  .backbtn .bl{display:none}
+  body .yearbtn{top:14px;right:10px;padding:8px 11px}
+  /* แถบควบคุมอยู่ล่างจอ → เมนูปีต้องกางลงจากข้างบน ไม่ใช่ชีตล่าง */
+  body .yearmenu{top:62px;bottom:auto;left:10px;right:10px;width:auto;max-height:60vh}
 }
 @media(prefers-reduced-motion:reduce){
   .card,.card.in,.card.outL,.card.outR{transition-duration:.01ms!important;transform:none!important}
@@ -100,6 +137,10 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
 </style>
 </head>
 <body>
+
+<a class="backbtn" id="bBack" href="index.html">
+  <span class="bk">←</span><span><span class="bl">กลับ</span> แดชบอร์ด ส.ส.</span>
+</a>
 
 <div class="top">
   <div class="yr" id="hYear">—<small id="hDate"></small></div>
@@ -109,7 +150,7 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
 <div class="stagewrap">
   <!-- ราง ซ้าย: ที่นั่งสะสมรายพรรค -->
   <aside class="rail">
-    <h3>ที่นั่งแบ่งเขตที่เผยแล้ว<br><span style="opacity:.7">(ยังไม่รวมบัญชีรายชื่อ)</span></h3>
+    <h3>ที่นั่งแบ่งเขตที่เผยแล้ว<br><span id="tallyNote" style="opacity:.7">(ยังไม่รวมบัญชีรายชื่อ)</span></h3>
     <div class="tally" id="tally"></div>
   </aside>
 
@@ -161,6 +202,11 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
   var ZONE = (D.zone || []).slice();
   var TOTAL = ZONE.length;
 
+  /* ปี 2476/2489/2491/2495/2500(ทั้ง 2 ครั้ง)/2512 ไฟล์ข้อมูลไม่มีเลขเขต — ทุกคนเป็น "เขต 1"
+     ถ้าเอาขึ้นการ์ดจะได้ "กรุงเทพมหานคร · เขต 1" ซ้ำ 7 ใบ ดูเหมือนบั๊ก จึงตัดเลขเขตทิ้งทั้งปี
+     (ปี 2518–2550 เลขเขตซ้ำในจังหวัดได้จริง เพราะเขตหนึ่งมี ส.ส. 2–3 คน → ยังโชว์เลขเขตตามเดิม) */
+  var HASNO = ZONE.some(function (p) { return +p.no > 1; });
+
   /* หา "ครั้ง" ที่ตรงกับปีที่เลือก — ปี 2500 กับ 2535 มีเลือกตั้ง 2 ครั้ง จึงเทียบวันที่ด้วย */
   var CUR = (window.EYEARS || []).filter(function (o) { return o.id === window.EYID; })[0] || {};
   var TLE = (window.TL || []).filter(function (o) {
@@ -171,13 +217,32 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
   var num = function (n) { return (n == null ? '' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')); };
   var metaOf = function (c) { return PM[c] || { short: c || 'อื่น ๆ', color: '#8899aa' }; };
 
-  /* ---------- หัวเรื่อง + รางขวา ---------- */
+  /* ---------- หัวเรื่อง + ปุ่มกลับ + รางขวา ---------- */
   var Y = window.EYEAR;
-  $('hYear').firstChild.nodeValue = 'เลือกตั้ง ' + Y;
+
+  /* ปี 2500 กับ 2535 เลือกตั้งปีละ 2 ครั้ง — เติม "ครั้งที่ N" ให้แยกออกจากกัน
+     เรียงตามเลขสภา (set) จากน้อยไปมาก = ครั้งแรกไปครั้งหลัง */
+  var sameY = (window.EYEARS || []).filter(function (o) { return o.y === Y; }), round = '';
+  if (sameY.length > 1) {
+    sameY.slice().sort(function (a, b) { return (a.set || 0) - (b.set || 0); })
+      .forEach(function (o, i) { if (o.id === window.EYID) round = ' ครั้งที่ ' + (i + 1); });
+  }
+
+  $('hYear').firstChild.nodeValue = 'เลือกตั้ง ' + Y + round;
   $('hDate').textContent = TLE.date || CUR.date || YI.note || '';
   $('hSub').textContent = TOTAL
-    ? 'ไล่เผยผล ' + (window.EYMP || 'ส.ส.') + ' แบบแบ่งเขต ' + num(TOTAL) + ' คน · เรียงตามจังหวัด'
+    ? (HASNO
+      ? 'ไล่เผยผล ' + (window.EYMP || 'ส.ส.') + ' แบบแบ่งเขต ' + num(TOTAL) + ' คน · เรียงตามจังหวัด'
+      : 'ไล่เผยผล ' + (window.EYMP || 'ส.ส.') + ' ' + num(TOTAL) + ' คน · เรียงตามจังหวัด (ข้อมูลไม่แยกเขต)')
     : 'ปีนี้ยังไม่มีผลรายเขตในรูปดิจิทัล';
+
+  // ปุ่มกลับ: พาไปแดชบอร์ดรายเขต "ของปีเดียวกัน"
+  $('bBack').href = 'index.html' + (window.EYID ? '?y=' + window.EYID : '');
+
+  /* ปีก่อน 2544 ยังไม่มี ส.ส. บัญชีรายชื่อ · ปี 2550 เรียกว่า "แบบสัดส่วน" ไม่ใช่บัญชีรายชื่อ */
+  $('tallyNote').textContent = CUR.noList
+    ? '(ปีนี้มีเฉพาะแบบแบ่งเขต)'
+    : '(ยังไม่รวม' + String(window.EYLIST || 'แบบบัญชีรายชื่อ').replace('แบบ', '') + ')';
 
   (function facts() {
     var rows = [
@@ -210,10 +275,18 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
   ];
   var bgm = $('bgm'), sel = $('selSong');
   sel.innerHTML = SONGS.map(function (s, i) { return '<option value="' + i + '">♪ ' + s.n + '</option>'; }).join('');
-  // เลือกเพลงของพรรคผู้ชนะปีนั้นเป็นค่าเริ่มต้น · ไม่มีก็ใช้มาร์ชยุคเก่า
-  var winName = TLE.win || '';
-  var pick = 0; SONGS.forEach(function (s, i) { if (s.n === winName) pick = i; });
-  if (!winName || SONGS[pick].n !== winName) pick = 12;
+  /* ค่าเริ่มต้น: ไล่จากพรรคที่ได้ที่นั่งมากสุดลงมา หาพรรคแรกที่มีไฟล์เพลง
+     (ผู้ชนะบางปีไม่มีเพลง เช่น ชาติไทย/สามัคคีธรรม/สหภูมิ — จะได้เพลงร่วมยุคแทน
+      ไม่ใช่มาร์ชปี 2500 ทุกปีเหมือนเดิม) · ปีที่ยังไม่มีพรรคการเมืองใช้มาร์ชยุคเก่าสุด */
+  var byName = {}; SONGS.forEach(function (s, i) { byName[s.n] = i; });
+  var pick = byName[TLE.win || ''];
+  if (pick == null) {
+    (TLE.parties || []).some(function (p) {
+      if (byName[p[0]] != null) { pick = byName[p[0]]; return true; }
+      return false;
+    });
+  }
+  if (pick == null) pick = 12;
   sel.value = pick; bgm.src = SONGS[pick].f;
   sel.addEventListener('change', function () {
     var on = !bgm.paused; bgm.src = SONGS[sel.value].f; if (on) bgm.play().catch(function () { });
@@ -248,7 +321,7 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
     var m = metaOf(p.code);
     var el = document.createElement('div');
     el.className = 'card'; el.style.setProperty('--pc', m.color);
-    el.innerHTML = '<div class="zone">' + p.prov + ' · เขต ' + p.no + '</div>'
+    el.innerHTML = '<div class="zone">' + (HASNO ? p.prov + ' · เขต ' + p.no : p.prov) + '</div>'
       + '<div class="nme" title="' + p.name + '">' + p.name + '</div>'
       + '<div class="pty"><i class="dot" style="background:' + m.color + '"></i>' + m.short + '</div>'
       + (p.votes != null ? '<div class="vt">' + num(p.votes) + ' คะแนน</div>' : '');
@@ -298,8 +371,15 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
     $('chapter').textContent = 'ครบ ' + num(TOTAL) + ' เขตแล้ว';
   }
 
+  function resetAll() {
+    pause(); clearLive(true);
+    idx = 0; seats = {}; maxSeat = 1;
+    drawTally(); update(); $('chapter').textContent = '';
+  }
+
   function play() {
     if (!TOTAL) return;
+    if (idx >= TOTAL) resetAll();          // ดูจบแล้วกด ▶ ซ้ำ = เริ่มรอบใหม่
     playing = true; $('bPlay').textContent = '⏸ หยุด';
     step();
   }
@@ -316,15 +396,21 @@ button.ctl.on{border-color:var(--gold);color:var(--gold)}
     idx = TOTAL; drawTally(); update(); finish();
   });
 
-  $('bReset').addEventListener('click', function () {
-    pause(); clearLive(true);
-    idx = 0; seats = {}; maxSeat = 1; drawTally(); update(); $('chapter').textContent = '';
-  });
+  $('bReset').addEventListener('click', resetAll);
 
   $('rBatch').addEventListener('input', function () { batch = +this.value; $('vBatch').textContent = batch; });
   $('rSpeed').addEventListener('input', function () {
     hold = +this.value * 10; $('vSpeed').textContent = (hold / 1000).toFixed(1);
   });
+
+  /* ชื่อแท็บ — year-switch.js ปรับ title ให้ทุกหน้าอยู่แล้ว แต่ปีที่ ส.ส. ไม่ครบ 500
+     มันแทนเลข "500" ตัวแรกที่เจอ ซึ่งของปี 2500 ดันเป็นเลขปีเอง (2500 → 2160)
+     หน้านี้จึงเขียนทับเองหลัง mount ของ year-switch ทำงานเสร็จ (มันจดฟังไว้ก่อนเรา) */
+  function setTitle() {
+    document.title = 'ไล่เผยผล ' + (window.EYMP || 'ส.ส.') + ' รายเขต · เลือกตั้ง ' + Y + round;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setTitle);
+  else setTitle();
 
   if (!TOTAL) {
     $('cards').innerHTML = '<div class="emptybox">การเลือกตั้ง พ.ศ. ' + Y

@@ -119,7 +119,8 @@ body::before {
 #app {
   position: relative;
   display: grid;
-  grid-template-rows: var(--header-h) 1fr;
+  /* แถวที่ 2 = auto → แถบเตือน #data-notice (ยุบเป็น 0 เมื่อถูกปิด) */
+  grid-template-rows: var(--header-h) auto 1fr;
   grid-template-columns: var(--sidebar-w) 1fr;
   width: 100vw; height: 100vh;
   z-index: 1;
@@ -127,7 +128,9 @@ body::before {
 
 /* ═══ MOBILE RESPONSIVE ═══ */
 @media (max-width: 640px) {
-  :root { --header-h: 138px; --sidebar-w: 0px; }
+  /* 96px = แถวปุ่ม 40 + ช่องค้นหาที่ absolute อยู่ top:48 สูง ~40 + เว้นล่าง 8
+     (เดิม 138 เพราะมีแถวปุ่มสลับมุมมองเป็นแถวที่ 2 — ย้ายไป #fx-toolbar แล้ว) */
+  :root { --header-h: 96px; --sidebar-w: 0px; }
   /* z-index:auto บนมือถือ: ไม่งั้น z-index:1 ของ #app ขัง #sidebar(z200) ไว้ในกล่องตัวเอง
      แล้ว #mob-overlay(z190) ที่อยู่นอก #app เลยทับ sidebar ทั้งแถบ → กดฟิลเตอร์/รายการไม่ได้ */
   #app { grid-template-columns: 0 1fr; z-index: auto; }
@@ -218,16 +221,8 @@ body::before {
   #mob-menu-btn { flex-shrink: 0; }
   #btn-cabinet { font-size: 12.5px; padding: 4px 10px; min-height: 32px; flex-shrink: 0; }
 
-  /* second row pinned to the header bottom — even segmented control */
-  .view-toggle {
-    position: absolute; left: 10px; right: 10px; bottom: 8px;
-    display: flex; gap: 6px;
-  }
-  .view-btn {
-    flex: 1 !important; display: flex; align-items: center; justify-content: center;
-    padding: 6px 4px !important; font-size: 12.5px; min-height: 34px;
-  }
-  #btn-view-radial::before { content: "◎ "; }
+  /* ปุ่มสลับมุมมองย้ายออกจาก header ไปอยู่แถบลอย #fx-toolbar บนแคนวาสแล้ว
+     (เดิมเป็นแถวที่ 2 ของ header จึงต้องใช้ --header-h 138px) */
 
   /* zoom controls — bigger touch targets */
   #zoom-ctrl { bottom: 62px !important; right: 10px; }
@@ -557,7 +552,7 @@ body::before {
    SIDEBAR
 ═══════════════════════════════════════ */
 #sidebar {
-  grid-column: 1; grid-row: 2;
+  grid-column: 1; grid-row: 3;   /* แถว 2 = แถบเตือน #data-notice */
   background: var(--bg2);
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
@@ -655,7 +650,7 @@ body::before {
    MAIN CANVAS
 ═══════════════════════════════════════ */
 #main {
-  grid-column: 2; grid-row: 2;
+  grid-column: 2; grid-row: 3;   /* แถว 2 = แถบเตือน #data-notice */
   position: relative; overflow: hidden;
   background: var(--canvas-bg);
   transition: background .3s;
@@ -785,6 +780,215 @@ canvas:active { cursor: grabbing; }
 }
 .ip-body::-webkit-scrollbar { width: 3px; }
 .ip-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ═══ แถบแท็บในแผงรายละเอียด ═══ */
+.ip-tabs {
+  display: flex; gap: 0; padding: 0 6px;
+  background: var(--bg3); border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.ip-tabs::-webkit-scrollbar { display: none; }
+.ip-tab {
+  flex: 0 0 auto; position: relative;
+  padding: 9px 6px 8px; border: none; background: none;
+  color: var(--text-dim); cursor: pointer; white-space: nowrap;
+  font-family: 'Sarabun', sans-serif; font-size: 12px; font-weight: 600;
+  border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
+}
+.ip-tab:hover { color: var(--text); }
+.ip-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.ip-tab[hidden] { display: none; }
+.ip-tab-badge {
+  display: inline-block; margin-left: 3px; padding: 0 4px;
+  border-radius: 9px; background: var(--border); color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600;
+}
+.ip-tab-badge:empty { display: none; }
+.ip-tab.active .ip-tab-badge { background: var(--gold-glow); color: var(--gold); }
+.ip-pane[hidden] { display: none; }
+
+/* ── การ์ดตัวเลขสรุป (KPI) ── */
+.ip-kpis { display: flex; gap: 6px; margin-bottom: 12px; }
+.ip-kpi {
+  flex: 1; min-width: 0; padding: 8px 9px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+}
+.ip-kpi-lbl {
+  font-size: 10px; letter-spacing: .4px; text-transform: uppercase;
+  color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-bottom: 3px;
+}
+.ip-kpi-val { font-size: 15px; font-weight: 700; color: var(--gold); line-height: 1.2; }
+.ip-kpi-val small { font-size: 10.5px; font-weight: 500; color: var(--text-dim); }
+
+/* ── แถบแท็บย่อย (sub-tab) ── */
+.ip-subtabs { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+.ip-subtab {
+  padding: 3px 10px; border-radius: 20px; cursor: pointer;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text-dim); font-family: 'Sarabun', sans-serif; font-size: 11.5px; font-weight: 600;
+  transition: all .14s;
+}
+.ip-subtab:hover { color: var(--text); }
+.ip-subtab.active { background: var(--gold-glow); border-color: var(--gold-dim); color: var(--gold); }
+
+/* ── แถวแท่งเปรียบเทียบ ── */
+.ip-bar-row { margin-bottom: 7px; }
+.ip-bar-row.self .ip-bar-name { color: var(--gold); font-weight: 700; }
+.ip-bar-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+.ip-bar-name { font-size: 11.5px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ip-bar-val  { font-size: 11px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; flex: 0 0 auto; }
+.ip-bar-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.ip-bar-fill  { height: 100%; background: var(--text-dim); border-radius: 3px; }
+.ip-bar-row.self .ip-bar-fill { background: var(--gold); }
+
+/* ── การ์ดอำนาจหน้าที่ ── */
+.ip-power {
+  padding: 10px; margin-bottom: 9px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+}
+.ip-power-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; flex-wrap: wrap; }
+.ip-power-kind {
+  padding: 1px 8px; border-radius: 4px;
+  background: var(--gold-glow); color: var(--gold); border: 1px solid var(--gold-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: .5px;
+}
+.ip-power-since { font-size: 10.5px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+.ip-power-title { font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ip-power-desc  { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
+.ip-power-src {
+  margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
+  font-size: 10px; letter-spacing: .4px; text-transform: uppercase;
+  color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;
+}
+.ip-power-law { display: flex; align-items: flex-start; gap: 6px; margin-top: 4px; }
+.ip-power-law .tag {
+  flex: 0 0 auto; padding: 1px 6px; border-radius: 3px;
+  background: var(--border); color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 700;
+}
+.ip-power-law a { font-size: 11.5px; color: var(--gold); text-decoration: none; line-height: 1.45; }
+.ip-power-law a:hover { text-decoration: underline; }
+.ip-power-note {
+  margin-top: 7px; padding: 6px 8px; border-radius: 6px;
+  background: var(--border); font-size: 11px; color: var(--text-dim); line-height: 1.5;
+}
+
+/* ── สถานะว่าง (ยังไม่มีข้อมูล) ── */
+.ip-empty {
+  padding: 22px 12px; text-align: center;
+  color: var(--text-dim); font-size: 12px; line-height: 1.6;
+}
+.ip-empty .ico { display: block; font-size: 20px; margin-bottom: 7px; opacity: .55; }
+
+/* ── ที่มา + ข้อความเตือนท้ายแผง ── */
+.ip-src {
+  margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);
+  font-size: 10.5px; color: var(--text-dim); line-height: 1.55;
+}
+.ip-src a { color: var(--gold); text-decoration: none; }
+.ip-src a:hover { text-decoration: underline; }
+.ip-asof {
+  margin-top: 10px; padding: 7px 9px; border-radius: 6px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-left: 2px solid var(--gold-dim);
+  font-size: 10.5px; color: var(--text-dim); line-height: 1.55;
+}
+.ip-asof b { color: var(--text); font-weight: 600; }
+.ip-asof button {
+  margin-top: 4px; padding: 0; border: none; background: none;
+  color: var(--gold); cursor: pointer; font-family: 'Sarabun', sans-serif;
+  font-size: 10.5px; font-weight: 600; text-decoration: underline;
+}
+
+/* ═══ แถบลอยสลับมุมมอง (บนแคนวาส · ย้ายมาจาก header ให้อยู่ที่เดียวแบบ MoG) ═══ */
+#fx-toolbar {
+  position: absolute; top: 18px; right: 200px; z-index: 90;
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px; border-radius: 24px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  box-shadow: 0 3px 14px rgba(0,0,0,.22);
+}
+#fx-toolbar .view-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  background: none; border: 1px solid transparent;
+  color: var(--text-dim); cursor: pointer; white-space: nowrap;
+  font-family: 'Sarabun', sans-serif; font-size: 12.5px; font-weight: 600;
+  transition: background .15s, color .15s, border-color .15s;
+}
+#fx-toolbar .view-btn:hover { color: var(--text); background: var(--bg3); }
+#fx-toolbar .view-btn.active {
+  background: var(--gold-glow); border-color: var(--gold-dim); color: var(--gold);
+}
+#fx-toolbar .vb-ico { font-size: 13px; line-height: 1; }
+#fx-toolbar .fx-sep { width: 1px; height: 18px; background: var(--border2); margin: 0 2px; }
+/* ตำแหน่ง right ถูกคำนวณสดโดย syncFxToolbar() ให้หลบแผง ครม./แผงรายละเอียด */
+@media (max-width: 640px) {
+  #fx-toolbar { top: 10px; right: 10px !important; gap: 2px; padding: 4px; }
+  #fx-toolbar .vb-tx { display: none; }            /* มือถือ: เหลือไอคอน */
+  #fx-toolbar .view-btn { padding: 5px 9px; min-height: 32px; }
+  #fx-toolbar .fx-sep { margin: 0; }
+}
+
+/* ═══ แถบเตือนใต้หัวเว็บ (ปิดได้) — จุดที่ 2 ═══ */
+#data-notice {
+  grid-column: 1 / -1; grid-row: 2;   /* แถวของตัวเอง เต็มความกว้าง — ไม่งั้นถูกบีบลงช่อง sidebar */
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 16px;
+  background: var(--bg3); border-bottom: 1px solid var(--border);
+  color: var(--text-dim); font-size: 12px; line-height: 1.5;
+}
+#data-notice[hidden] { display: none; }
+#data-notice .dn-ico { flex: 0 0 auto; color: var(--gold); }
+#data-notice .dn-tx { flex: 1; min-width: 0; }
+#data-notice .dn-tx b { color: var(--text); font-weight: 600; }
+#data-notice button {
+  flex: 0 0 auto; padding: 2px 9px; border-radius: 20px;
+  background: none; border: 1px solid var(--border2); color: var(--text-dim);
+  cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 11.5px; font-weight: 600;
+  transition: all .14s;
+}
+#data-notice button:hover { color: var(--text); border-color: var(--gold-dim); }
+#data-notice .dn-more { color: var(--gold); border-color: var(--gold-dim); }
+@media (max-width: 640px) {
+  #data-notice { padding: 6px 10px; font-size: 11px; gap: 6px; }
+  #data-notice .dn-long { display: none; }   /* มือถือ: เหลือบรรทัดเดียว — ข้อความเต็มอยู่ในกล่อง "ที่มาข้อมูล" */
+}
+
+/* ═══ กล่อง "ที่มาข้อมูล" — จุดที่ 3 ═══ */
+#src-modal {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#src-modal[hidden] { display: none; }
+#src-modal .sm-box {
+  width: min(560px, 100%); max-height: 82vh; overflow-y: auto;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 20px 22px;
+  box-shadow: 0 12px 50px rgba(0,0,0,.5);
+}
+#src-modal h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+#src-modal .sm-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.6; }
+#src-modal .sm-warn {
+  padding: 9px 11px; margin-bottom: 14px; border-radius: 8px;
+  background: var(--gold-glow); border: 1px solid var(--gold-dim);
+  color: var(--text); font-size: 12px; line-height: 1.65;
+}
+#src-modal .sm-item {
+  padding: 9px 0; border-top: 1px solid var(--border);
+  font-size: 12px; line-height: 1.6;
+}
+#src-modal .sm-item .t { color: var(--text); font-weight: 600; }
+#src-modal .sm-item .o { color: var(--text-dim); }
+#src-modal .sm-item a { color: var(--gold); text-decoration: none; }
+#src-modal .sm-item a:hover { text-decoration: underline; }
+#src-modal .sm-close {
+  margin-top: 16px; width: 100%; padding: 8px;
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--text); cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 600;
+}
+#src-modal .sm-close:hover { border-color: var(--gold-dim); color: var(--gold); }
 
 .info-row {
   display: flex; gap: 8px; padding: 6px 0;
@@ -1981,12 +2185,6 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <div id="search-results"></div>
       </div>
 
-      <div class="view-toggle">
-        <button class="view-btn active" id="btn-view-radial">◎ Radial</button>
-        <button class="view-btn" id="btn-view-grid">⊞ ครม.Grid</button>
-        <button class="view-btn" id="btn-view-force">⚠ ทุจริต</button>
-      </div>
-
       <div class="stat-chip">
         <div class="stat-dot" style="background:var(--gold)"></div>
         <strong>20</strong> กระทรวง
@@ -2039,6 +2237,14 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       <button id="btn-sitenav" title="เมนูหน้าอื่นๆ ของ รัฐไทยก้าวหน้า" aria-expanded="false" aria-controls="sitenav-menu" onclick="toggleSiteNav(event)">▤<span class="snv-txt"> เมนู</span></button>
     </div>
   </header>
+
+  <!-- ══════ ข้อความเตือนความสดของข้อมูล — จุดที่ 2: แถบใต้หัวเว็บ (ปิดได้) ══════ -->
+  <div id="data-notice" hidden>
+    <span class="dn-ico">ⓘ</span>
+    <span class="dn-tx" id="dn-tx"></span>
+    <button class="dn-more" type="button" onclick="openSrcModal()">ที่มาข้อมูล</button>
+    <button type="button" onclick="dismissDataNotice()" title="ปิดข้อความนี้">✕</button>
+  </div>
 
   <!-- ══════════════ SITE NAV DROPDOWN ══════════════ -->
   <nav id="sitenav-menu" aria-label="เมนูหลัก รัฐไทยก้าวหน้า">
@@ -2143,6 +2349,21 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
             aria-controls="legend-bar" aria-expanded="true" onclick="togglePanel('leg')">
       <span class="tog-ar">▾</span><span>คำอธิบายสัญลักษณ์</span>
     </button>
+
+    <!-- แถบลอยสลับมุมมอง (แบบ machineryofgovernment.uk) — ย้ายออกจาก header มารวมไว้ที่เดียว -->
+    <div id="fx-toolbar" role="group" aria-label="สลับมุมมองแผนผัง">
+      <button class="view-btn active" id="btn-view-radial"  type="button" title="ผังรวม — เห็นทุกหน่วยงานพร้อมกันเป็นวงแหวนรอบนายกฯ">
+        <span class="vb-ico">◎</span><span class="vb-tx">ผังรวม</span></button>
+      <button class="view-btn"        id="btn-view-focus"   type="button" title="ผังเจาะจง — โหนดที่เลือกอยู่กลาง กางเฉพาะสายของมัน">
+        <span class="vb-ico">⊡</span><span class="vb-tx">ผังเจาะจง</span></button>
+      <button class="view-btn"        id="btn-view-gravity" type="button" title="ผังกลุ่ม — แต่ละกระทรวงเป็นกล่อง หน่วยงานลูกอัดอยู่ข้างใน">
+        <span class="vb-ico">⊝</span><span class="vb-tx">ผังกลุ่ม</span></button>
+      <span class="fx-sep" aria-hidden="true"></span>
+      <button class="view-btn"        id="btn-view-grid"    type="button" title="กระดานคณะรัฐมนตรี">
+        <span class="vb-ico">⊞</span><span class="vb-tx">ครม.</span></button>
+      <button class="view-btn"        id="btn-view-force"   type="button" title="สถานการณ์คอร์รัปชัน">
+        <span class="vb-ico">⚠</span><span class="vb-tx">ทุจริต</span></button>
+    </div>
 
     <div id="zoom-ctrl">
       <button class="zbtn" id="zin">+</button>
@@ -2285,6 +2506,8 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
           <div class="leg-item"><span class="li-link" style="border-color:#fbbf24"></span>🏢 กำกับรัฐวิสาหกิจ</div>
           <div class="leg-item"><span class="li-link" style="border-color:#fb7185"></span>🏛️ ตรวจสอบโดยรัฐสภา</div>
           <div class="leg-item"><span class="li-link" style="border-color:#2dd4bf"></span>🤝 คณะกรรมการระดับชาติ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#38bdf8"></span>🚦 กำกับกิจการขนส่ง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#f472b6"></span>🏥 กำกับบริการ/ผลิตภัณฑ์สุขภาพ</div>
         </div>
       </div>
 
@@ -2317,25 +2540,54 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <div id="info-abbr"></div>
     <button id="info-audio" type="button" hidden aria-label="ฟังเสียงบรรยายกระทรวงนี้">🔊 ฟังเสียง</button>
   </div>
+  <!-- แถบแท็บ — ถอดโครงจาก machineryofgovernment.uk (Info / Powers / Budget / Staff) -->
+  <div class="ip-tabs" id="ip-tabs" role="tablist">
+    <button class="ip-tab active" data-tab="info"   role="tab">ข้อมูล</button>
+    <button class="ip-tab"        data-tab="law"    role="tab">อำนาจหน้าที่<span class="ip-tab-badge" id="tabb-law"></span></button>
+    <button class="ip-tab"        data-tab="budget" role="tab">งบประมาณ<span class="ip-tab-badge" id="tabb-budget"></span></button>
+    <button class="ip-tab"        data-tab="staff"  role="tab">บุคลากร<span class="ip-tab-badge" id="tabb-staff"></span></button>
+  </div>
+
   <div class="ip-body">
-    <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="info-cat"></span></div>
-    <div class="info-row"><span class="info-label">ภารกิจ</span><span class="info-val" id="info-mission"></span></div>
-    <div class="info-row"><span class="info-label">ผู้บริหาร</span><span class="info-val" id="info-exec"></span></div>
-    <div class="info-row" id="info-minister-row" style="display:none"><span class="info-label">รัฐมนตรี</span><div class="info-val" id="info-minister"></div></div>
-    <div class="info-row" id="info-web">
-      <span class="info-label">เว็บไซต์</span><span class="info-val"></span>
+    <div class="ip-pane" id="pane-info">
+      <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="info-cat"></span></div>
+      <div class="info-row"><span class="info-label">ภารกิจ</span><span class="info-val" id="info-mission"></span></div>
+      <div class="info-row"><span class="info-label">ผู้บริหาร</span><span class="info-val" id="info-exec"></span></div>
+      <div class="info-row" id="info-minister-row" style="display:none"><span class="info-label">รัฐมนตรี</span><div class="info-val" id="info-minister"></div></div>
+      <div class="info-row" id="info-web">
+        <span class="info-label">เว็บไซต์</span><span class="info-val"></span>
+      </div>
+      <div id="info-orgs-list" style="display:none">
+        <h5 id="info-orgs-count"></h5>
+        <div id="info-orgs-chips"></div>
+      </div>
     </div>
-    <div id="info-orgs-list" style="display:none">
-      <h5 id="info-orgs-count"></h5>
-      <div id="info-orgs-chips"></div>
-    </div>
+
+    <div class="ip-pane" id="pane-law"    hidden></div>
+    <div class="ip-pane" id="pane-budget" hidden></div>
+    <div class="ip-pane" id="pane-staff"  hidden></div>
+
+    <!-- ข้อความเตือนความสดของข้อมูล — จุดที่ 1: ท้ายแผงทุกโหนด -->
+    <div class="ip-asof" id="ip-asof"></div>
   </div>
 </div>
 
 <!-- Tooltip -->
 <div id="tooltip"></div>
 
+<!-- ══════ ข้อความเตือน — จุดที่ 3: กล่อง "ที่มาข้อมูล / เกี่ยวกับชุดข้อมูล" ══════ -->
+<div id="src-modal" hidden onclick="if(event.target===this) closeSrcModal()">
+  <div class="sm-box" role="dialog" aria-modal="true" aria-label="ที่มาข้อมูล">
+    <h3>เกี่ยวกับชุดข้อมูล</h3>
+    <div class="sm-sub" id="sm-sub"></div>
+    <div class="sm-warn" id="sm-warn"></div>
+    <div id="sm-list"></div>
+    <button class="sm-close" type="button" onclick="closeSrcModal()">ปิด</button>
+  </div>
+</div>
+
 <script src="structure-data.js"></script>
+<script src="structure-detail.js"></script>
 <script>
 // ═══════════════════════════════════════
 //  THEME TOGGLE
@@ -2512,6 +2764,8 @@ const REL_TYPES = {
   soe:        { color:'#fbbf24', icon:'🏢', label:'กำกับรัฐวิสาหกิจ (คลัง/สคร.)' },
   legislative:{ color:'#fb7185', icon:'🏛️', label:'ตรวจสอบโดยรัฐสภา' },
   committee:  { color:'#2dd4bf', icon:'🤝', label:'คณะกรรมการระดับชาติ' },
+  transport:  { color:'#38bdf8', icon:'🚦', label:'กำกับกิจการขนส่ง' },
+  health:     { color:'#f472b6', icon:'🏥', label:'กำกับบริการ/ผลิตภัณฑ์สุขภาพ' },
 };
 // หน่วยแม่ข่าย (key = ministryID|no) → {ประเภท, คำกริยาอำนาจ, ปลายทาง}
 //   to = 'MIN' → 20 กระทรวง (ทุกส่วนราชการ) · หรือ array ของ 'ministryID|no' (หน่วยที่ถูกกำกับเจาะจง)
@@ -2552,6 +2806,28 @@ const RELATIONS = {
   '12|434': { type:'committee', verb:'คณะกรรมการนโยบายพลังงานแห่งชาติ (กพช.)',       to:['M03','M08','M14','M22','M09'] },          // สนพ.
   '09|091': { type:'committee', verb:'คณะกรรมการสิ่งแวดล้อมแห่งชาติ',               to:['M22','M12','M07','M14','M08'] },          // สผ. (ONEP)
   '11|435': { type:'committee', verb:'คณะกรรมการดิจิทัลเพื่อเศรษฐกิจและสังคมแห่งชาติ', to:['M03','M22','M18','M19'] },             // สดช.
+
+  // ══ ชุดที่เพิ่ม 2026-08-16 ══════════════════════════════════════════════
+  // กำกับกิจการขนส่งรายโหมด — กรมผู้กำกับ (regulator) กับรัฐวิสาหกิจผู้ให้บริการ (operator)
+  // เป็นคนละบทบาทกัน แม้อยู่กระทรวงคมนาคมเหมือนกัน
+  '08|404': { type:'transport', verb:'กำกับความปลอดภัยการบินพลเรือน · ออกใบรับรองผู้ดำเนินการเดินอากาศ', to:['08|184','08|185','08|447'] }, // กพท. → ทอท./บวท./สบพ.
+  '08|073': { type:'transport', verb:'กำกับกิจการขนส่งทางราง · ออกใบอนุญาตประกอบกิจการ',                to:['08|182','08|188'] },          // ขร. → รฟท./รฟม.
+  '08|072': { type:'transport', verb:'กำกับการขนส่งทางบก · ใบอนุญาตประกอบการขนส่ง/รถโดยสารสาธารณะ',     to:['08|183','08|446'] },          // ขบ. → ขสมก./บขส.
+  '08|071': { type:'transport', verb:'กำกับการเดินเรือและท่าเรือ · ประกาศนียบัตรคนประจำเรือ',            to:['08|181'] },                   // จท. → กทท.
+  // กำกับบริการและผลิตภัณฑ์สุขภาพ
+  '21|237': { type:'health', verb:'บริหารกองทุนหลักประกันสุขภาพ · ขึ้นทะเบียนและกำกับหน่วยบริการ', to:['21|136','21|137','21|279'] }, // สปสช.
+  '21|144': { type:'health', verb:'อนุญาต-กำกับ ยา อาหาร เครื่องมือแพทย์ เครื่องสำอาง',            to:['21|210'] },                    // อย. → องค์การเภสัชกรรม
+  '21|280': { type:'health', verb:'รับรองคุณภาพสถานพยาบาล (HA)',                                    to:['21|136','21|279'] },           // สรพ.
+  // ตรวจสอบทุจริตในฝ่ายบริหาร — คู่ขนานกับ ป.ป.ช. (ระดับเจ้าหน้าที่ของรัฐที่ไม่ใช่ผู้ดำรงตำแหน่งระดับสูง)
+  '23|157': { type:'oversight', verb:'ไต่สวนการทุจริตของเจ้าหน้าที่ของรัฐในฝ่ายบริหาร', to:'MIN' },   // ป.ป.ท.
+  // บูรณาการนโยบายน้ำข้ามกระทรวง (สทนช. ขึ้นตรงนายกฯ · กนช. เป็นกลไกกลาง)
+  '01|014': { type:'committee', verb:'จัดทำแผนแม่บทน้ำ · บูรณาการหน่วยงานน้ำข้ามกระทรวง', to:['07|057','09|086','09|087','14|204','14|205'] }, // สทนช.
+  // กำกับตลาด/ผู้บริโภค — ปลายทางเป็นภาคเอกชน จึงไม่มีโหนดปลายทางในแผนภาพ (เหมือน สขค./คปภ.)
+  '01|003': { type:'regulator', verb:'คุ้มครองผู้บริโภค · สั่งระงับโฆษณา/ห้ามขายสินค้าอันตราย', to:[] }, // สคบ.
+  '13|102': { type:'regulator', verb:'จดทะเบียนนิติบุคคล · กำกับบัญชีและธรรมาภิบาลธุรกิจ',       to:[] }, // DBD
+  '22|150': { type:'regulator', verb:'กำหนดและบังคับใช้มาตรฐานผลิตภัณฑ์อุตสาหกรรม (มอก.)',       to:[] }, // สมอ.
+  '16|126': { type:'regulator', verb:'บริหารกองทุนประกันสังคม · กำกับการขึ้นทะเบียนนายจ้าง-ลูกจ้าง', to:[] }, // สปส.
+  '01|013': { type:'committee', verb:'อนุมัติสิทธิประโยชน์ส่งเสริมการลงทุน (บีโอไอ)',            to:[] }, // BOI
 };
 const REL_SOURCE = 'อ้างอิงอำนาจตาม รธน. 2560 · พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน · กฎหมายจัดตั้งแต่ละองค์กร';
 // คืน key 'ministryID|no' ของโหนด org (ใช้จับคู่ความสัมพันธ์)
@@ -2947,6 +3223,10 @@ function fitView() {
     minX=Math.min(minX,n.x-pad); maxX=Math.max(maxX,n.x+pad);
     minY=Math.min(minY,n.y-pad); maxY=Math.max(maxY,n.y+pad);
   });
+  if(currentView === 'focus' && fxBox){   // กล่องกลุ่มอาจกว้างกว่าโหนดข้างใน
+    minX=Math.min(minX,fxBox.x-8); maxX=Math.max(maxX,fxBox.x+fxBox.w+8);
+    minY=Math.min(minY,fxBox.y-8); maxY=Math.max(maxY,fxBox.y+fxBox.h+8);
+  }
   const gW=maxX-minX, gH=maxY-minY;
   const avH = H - legH;
   // ขยายเต็มขึ้นในโหมด radial (วงเดียว) เพื่อให้ใกล้เคียงเว็บอ้างอิง
@@ -3024,8 +3304,510 @@ function forceStep(dt) {
   });
 }
 
+// ═══════════════════════════════════════════════════════════
+//  FOCUS VIEW — ถอดแบบโหมด "⊡ Focus" ของ machineryofgovernment.uk
+//  โหนดที่เลือก = ศูนย์กลาง แล้วกาง พ่อ/ปู่/ลูก/หลาน ออกมาเป็นส่วนโค้ง
+//   · คน (นายกฯ/รัฐมนตรี) = หกเหลี่ยม · องค์กร = สี่เหลี่ยมมน
+//   · ถ้าสิ่งที่โฟกัสเป็นสมาชิก ครม. → วาด "กล่องกลุ่ม" มีชื่อกลุ่มครอบ
+//   · เส้นเชื่อมมีป้ายกำกับความสัมพันธ์
+//   · กดโหนดไหน = โหนดนั้นกลายเป็นศูนย์กลางใหม่ (จัดผังใหม่ทั้งหน้า)
+// ═══════════════════════════════════════════════════════════
+let fxKey   = 'center';   // คีย์ของสิ่งที่โฟกัสอยู่
+let fxBox   = null;       // กล่องกลุ่ม {x,y,w,h,label}
+let fxEdges = [];         // [{a,b,verb}] a,b = โหนดใน nodes
+let fxTooMany = 0;        // จำนวนหลานที่เยอะเกินจนไม่วาด (แสดงเป็นหมายเหตุ)
+
+// ── คีย์ ↔ descriptor ──
+function fxKeyOfDesc(d){
+  if(d.k==='center')   return 'center';
+  if(d.k==='minister') return 'min|'+d.mid;
+  if(d.k==='ministry') return 'mny|'+d.mid;
+  if(d.k==='uni')      return 'uni|'+d.mid+'|'+d.name;
+  return 'org|'+d.mid+'|'+d.no;
+}
+function fxDescOfKey(key){
+  const p = String(key||'center').split('|');
+  if(p[0]==='min') return {k:'minister', mid:p[1]};
+  if(p[0]==='mny') return {k:'ministry', mid:p[1]};
+  if(p[0]==='uni') return {k:'uni', mid:p[1], name:p.slice(2).join('|')};
+  if(p[0]==='org') return {k:'org', mid:p[1], no:p[2]};
+  return {k:'center'};
+}
+function fxKeyOfNode(n){
+  if(!n) return 'center';
+  if(n.type==='center')   return 'center';
+  if(n.type==='minister') return 'min|'+n.ministryID;
+  if(n.isMinistry && n.data) return 'mny|'+n.data.id;
+  if(n.isUni)  return 'uni|'+(n.ministryID||'18')+'|'+n.label;
+  if(n.data && n.data.no){
+    let mid = n.ministryID;
+    if(!mid){ const m = MINISTRIES.find(x=>x.orgs.some(o=>o.no===n.data.no)); mid = m ? m.id : ''; }
+    return 'org|'+mid+'|'+n.data.no;
+  }
+  return 'center';
+}
+
+// ── ลูกของแต่ละชั้น (ตามสายบังคับบัญชา นายกฯ→รมต.→กระทรวง→หน่วยงาน) ──
+function fxOrgsOf(mid){
+  const m = MINISTRIES.find(x=>x.id===mid);
+  const out = m ? m.orgs.map(o=>({k:'org', mid, no:o.no})) : [];
+  UNIS.forEach(u=>{ if((UNI_PARENT[u.m]||u.m) === mid) out.push({k:'uni', mid, name:u.n}); });
+  return out;
+}
+function fxHasMinister(mid){ return ((CABINET[mid]||[]).length > 0); }
+
+// ── สร้างโหนดวาดได้จาก descriptor (รูปร่างเหมือนโหนดใน radial เพื่อให้ showPanel/hitTest ใช้ได้เลย) ──
+function fxMakeNode(d, x, y, r){
+  const key = fxKeyOfDesc(d);
+  if(d.k==='center')
+    return {type:'center', fxKey:key, fxPerson:true, x, y, r:r||22,
+            label:'นายกรัฐมนตรี', sub:CABINET_PM.name, color:'#c9a84c', data:null, isMinistry:false};
+  if(d.k==='minister'){
+    const c = (CABINET[d.mid]||[])[0] || {name:'—', role:'รัฐมนตรี', party:''};
+    return {type:'minister', fxKey:key, fxPerson:true, ministryID:d.mid, x, y, r:r||20,
+            label:c.name, sub:c.role, role:c.role, party:c.party,
+            color:PARTY_COLORS[c.party]||'#8a97aa',
+            isDeputy:/รองนายกรัฐมนตรี/.test(c.role),
+            data:{isMinister:true, ministryId:d.mid, list:CABINET[d.mid]||[]}, isMinistry:false};
+  }
+  if(d.k==='ministry'){
+    const m = MINISTRIES.find(x=>x.id===d.mid);
+    return {type:'ministry', fxKey:key, ministryID:d.mid, x, y, r:r||18,
+            label:m?m.name:'-', sub:'กระทรวง',
+            color:MIN_COLORS[MINISTRIES.indexOf(m)]||'#e67e22', data:m, isMinistry:true};
+  }
+  if(d.k==='uni'){
+    const u = UNIS.find(z=>z.n===d.name) || {n:d.name, p:'', w:''};
+    return {type:'org', fxKey:key, isUni:true, ministryID:d.mid, x, y, r:r||12,
+            label:d.name, sub:'สถาบันอุดมศึกษา', color:getColor('09'), catID:'09',
+            data:{name:d.name, abbr:u.p||'', cat:'สถาบันอุดมศึกษา', catID:'09',
+                  web:u.w||'', mission:'สถาบันอุดมศึกษา'+(u.p?' · จ.'+u.p:''), no:null},
+            isMinistry:false};
+  }
+  const m = MINISTRIES.find(x=>x.id===d.mid);
+  const o = m && m.orgs.find(z=>z.no===d.no);
+  return {type:'org', fxKey:key, ministryID:d.mid, x, y, r:r||13,
+          label:o?o.name:'หน่วยงาน', sub:o?o.cat:'', color:getColor(o?o.catID:'01'),
+          catID:o?o.catID:'01', data:o||null, isMinistry:false};
+}
+
+// วางรายการเป็น "ส่วนโค้ง" ด้านขวาของจุดยึด
+// รัศมีวงแรกคำนวณจากจำนวนรายการ (ให้ระยะห่างเชิงมุมพอ) · ล้นก็ขยับออกวงถัดไป
+// โดยวงนอกรับได้มากกว่าตามความยาวส่วนโค้งจริง → ไม่เกิด 14 วงซ้อนกันเวลามี 300+ หน่วย
+function fxPlaceArc(items, ax, ay, minR, span, spacing, mkR){
+  const out = [];
+  const total = items.length;
+  if(!total) return out;
+  if(total === 1){ out.push(fxMakeNode(items[0], ax + minR, ay, mkR)); out[0].fxAngle = 0; return out; }
+  // วงแรกกว้างพอให้รายการเรียงไม่ชนกัน แต่ไม่ปล่อยให้บานเกิน (345 หน่วยของ อว. จะได้ไม่กลายเป็นวงรัศมี 2000px)
+  let idx = 0, rr = Math.max(minR, Math.min(minR * 3.2, (total * spacing) / span * 0.55));
+  // ถ้าจำนวนน้อยพอที่จะเขียนป้ายชื่อ ต้องเว้นระยะระหว่างวงให้ป้ายของวงในไม่ทับโหนดวงนอก
+  const ringGap = spacing * 2.2 + (total <= 60 ? 155 : 0);
+  while(idx < total){
+    const cap = Math.max(5, Math.floor((rr * span) / spacing));
+    const cnt = Math.min(cap, total - idx);
+    for(let j=0; j<cnt; j++, idx++){
+      const a = (cnt>1 ? (j/(cnt-1) - 0.5) : 0) * span;
+      const n = fxMakeNode(items[idx], ax + rr*Math.cos(a), ay + rr*Math.sin(a), mkR);
+      n.fxAngle = a;
+      out.push(n);
+    }
+    rr += ringGap;
+  }
+  return out;
+}
+
+function buildFocusLayout(){
+  nodes = []; fxEdges = []; fxBox = null; ringGuides = [];
+  const d = fxDescOfKey(fxKey);
+  const inCabinet = (d.k==='center' || d.k==='minister');
+  const cy = H/2;
+  let anchor = null;   // โหนดที่เส้นความสัมพันธ์ยิงออกมา
+
+  if(inCabinet){
+    // ── กล่องกลุ่ม "คณะรัฐมนตรี": นายกฯ + รัฐมนตรีทุกกระทรวง เป็นหกเหลี่ยมเรียงกริด ──
+    const members = [{k:'center'}].concat(
+      MINISTRIES.filter(m=>fxHasMinister(m.id)).map(m=>({k:'minister', mid:m.id})));
+    const COLS = 5, CW = 96, CH = 80, PAD = 18, TITLE = 20;
+    const rows = Math.ceil(members.length/COLS);
+    const bw = COLS*CW + PAD*2, bh = rows*CH + PAD*2 + TITLE;
+    const bx = W*0.26 - bw/2, by = cy - bh/2;
+    fxBox = {x:bx, y:by, w:bw, h:bh, label:'คณะรัฐมนตรี ชุดที่ 66'};
+    members.forEach((md,i)=>{
+      const n = fxMakeNode(md,
+        bx + PAD + CW*(i%COLS + 0.5),
+        by + PAD + TITLE + CH*(Math.floor(i/COLS) + 0.5), 26);
+      n.fxHex = true;
+      n.fxFocused = (n.fxKey === fxKey);
+      if(n.fxFocused) anchor = n;
+      nodes.push(n);
+    });
+    if(!anchor) anchor = nodes[0];
+  } else {
+    // ── สายบังคับบัญชาขึ้นบน (พ่อ/ปู่) วางเป็นโซ่ทางซ้าย ──
+    const chain = [];
+    if(d.k==='ministry'){
+      if(fxHasMinister(d.mid)) chain.push({k:'minister', mid:d.mid});
+      chain.push({k:'center'});
+    } else {                                    // org / uni
+      chain.push({k:'ministry', mid:d.mid});
+      if(fxHasMinister(d.mid)) chain.push({k:'minister', mid:d.mid});
+      else chain.push({k:'center'});
+    }
+    anchor = fxMakeNode(d, W*0.40, cy, d.k==='ministry' ? 30 : 26);
+    anchor.fxFocused = true;
+    anchor.fxHex = false;
+    nodes.push(anchor);
+    // ปู่อยู่ไกลสุด — ไล่ออกไปทางซ้าย
+    chain.forEach((cd,i)=>{
+      const n = fxMakeNode(cd, anchor.x - 210*(i+1), cy, 22);
+      n.fxHex = (cd.k==='center' || cd.k==='minister');
+      n.fxParentSide = true;
+      nodes.push(n);
+      fxEdges.push({a:n, b:(i===0 ? anchor : nodes[nodes.length-2]), chain:true,
+                    verb: cd.k==='center' ? 'แต่งตั้ง' : (cd.k==='minister' ? 'กำกับดูแล' : 'ในสังกัด')});
+    });
+  }
+
+  // ── ลูก (และหลาน) กางเป็นส่วนโค้งด้านขวา ──
+  let level1 = [], level2 = [], verb1 = 'กำกับดูแล', verb2 = 'ในสังกัด';
+  if(d.k==='center'){        level1 = MINISTRIES.map(m=>({k:'ministry', mid:m.id})); }
+  else if(d.k==='minister'){ level1 = [{k:'ministry', mid:d.mid}]; level2 = fxOrgsOf(d.mid); verb2 = 'ในสังกัด'; }
+  else if(d.k==='ministry'){ level1 = fxOrgsOf(d.mid); verb1 = 'ในสังกัด'; }
+
+  const ax = inCabinet ? (fxBox.x + fxBox.w - 10) : anchor.x;
+  const ay = anchor.y;
+  const SPAN = Math.PI * 0.86;              // ~155° หันไปทางขวา (ไม่อ้อมมาทับกล่อง)
+  const baseR = Math.max(200, Math.min(W,H)*0.28);
+
+  const n1 = fxPlaceArc(level1, ax, ay, baseR, SPAN, level1.length>40 ? 30 : 52,
+                        level1.length>40 ? 11 : 19);
+  n1.forEach(n=>{ nodes.push(n); fxEdges.push({a:anchor, b:n, verb:verb1}); });
+
+  if(level2.length && level2.length <= 90){
+    const far = n1.reduce((m,n)=>Math.max(m, Math.hypot(n.x-ax, n.y-ay)), baseR);
+    const n2 = fxPlaceArc(level2, ax, ay, far + 130, SPAN*1.06, 30, 10);
+    const p1 = n1[0] || anchor;
+    n2.forEach(n=>{ nodes.push(n); fxEdges.push({a:p1, b:n, verb:verb2}); });
+  } else if(level2.length){
+    fxTooMany = level2.length;   // หลานเยอะเกินไป → ไม่วาด (ขึ้นหมายเหตุใน drawFocus แทน)
+  }
+}
+
+// ── รูปหกเหลี่ยม (คน) ──
+function fxHexPath(g, x, y, r){
+  g.beginPath();
+  for(let i=0;i<6;i++){
+    const a = Math.PI/180*(60*i - 30);
+    const px = x + r*Math.cos(a), py = y + r*Math.sin(a);
+    i ? g.lineTo(px,py) : g.moveTo(px,py);
+  }
+  g.closePath();
+}
+// ── ข้อความหลายบรรทัดในกล่อง ──
+function fxWrap(g, text, maxW, maxLines){
+  const words = String(text).split(/(\s+)/);
+  const lines = []; let cur = '';
+  for(const w of words){
+    const t = cur + w;
+    if(g.measureText(t).width > maxW && cur){ lines.push(cur.trim()); cur = w.trim(); }
+    else cur = t;
+    if(lines.length >= maxLines) break;
+  }
+  if(cur && lines.length < maxLines) lines.push(cur.trim());
+  if(lines.length === maxLines){
+    let last = lines[maxLines-1];
+    while(g.measureText(last+'…').width > maxW && last.length>1) last = last.slice(0,-1);
+    if(lines.join('').length < String(text).replace(/\s/g,'').length) lines[maxLines-1] = last+'…';
+  }
+  return lines;
+}
+
+function drawFocus(){
+  const dark = isDark();
+  const T = _theme;
+  const txt = T.text || (dark ? '#e8eaed' : '#1f2328');
+  const dim = T.textDim || (dark ? '#8a97aa' : '#6b7280');
+  const bd  = T.border || (dark ? '#2a3140' : '#e3e6ea');
+  const gold = T.gold || '#c9a84c';
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(scale, scale);
+
+  // ── กล่องกลุ่ม ──
+  if(fxBox){
+    ctx.fillStyle = _rgba(gold, dark ? 0.06 : 0.05);
+    ctx.strokeStyle = _rgba(gold, 0.55);
+    ctx.lineWidth = 1.4;
+    const R = 12;
+    ctx.beginPath();
+    ctx.moveTo(fxBox.x+R, fxBox.y);
+    ctx.arcTo(fxBox.x+fxBox.w, fxBox.y,          fxBox.x+fxBox.w, fxBox.y+fxBox.h, R);
+    ctx.arcTo(fxBox.x+fxBox.w, fxBox.y+fxBox.h,  fxBox.x,          fxBox.y+fxBox.h, R);
+    ctx.arcTo(fxBox.x,         fxBox.y+fxBox.h,  fxBox.x,          fxBox.y,         R);
+    ctx.arcTo(fxBox.x,         fxBox.y,          fxBox.x+fxBox.w,  fxBox.y,         R);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = gold;
+    ctx.font = '600 13px Sarabun, sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(fxBox.label, fxBox.x + 14, fxBox.y + 8);
+  }
+
+  // ── เส้นเชื่อม + ป้ายกำกับความสัมพันธ์ ──
+  // ป้ายจะรกถ้าเขียนทุกเส้น (ข้อความซ้ำกันหมด) → เขียนเฉพาะเส้นสายบังคับบัญชา
+  // กับเส้นของโหนดที่เมาส์ชี้อยู่
+  ctx.lineWidth = 1 / Math.max(scale, .4);
+  fxEdges.forEach(e=>{
+    const lit = (hoveredNode === e.b) || (hoveredNode === e.a && fxEdges.length <= 8);
+    ctx.strokeStyle = lit ? _rgba(gold, 0.85) : _rgba(dim, 0.38);
+    ctx.lineWidth = (lit ? 1.8 : 1) / Math.max(scale, .4);
+    ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
+    const showVerb = scale > 0.5 && (lit || e.chain);
+    if(showVerb && e.verb){
+      const mx = (e.a.x+e.b.x)/2, my = (e.a.y+e.b.y)/2;
+      ctx.font = '10px "IBM Plex Mono", monospace';
+      const w = ctx.measureText(e.verb).width;
+      ctx.fillStyle = _rgba(T.bg || (dark?'#0d1117':'#ffffff'), 0.88);
+      ctx.fillRect(mx-w/2-3, my-7, w+6, 13);
+      ctx.fillStyle = dim;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(e.verb, mx, my);
+    }
+  });
+
+  // ── โหนด ──
+  const labelAll = nodes.length <= 60;
+  nodes.forEach(n=>{
+    const isFocus = !!n.fxFocused;
+    const col = n.color || '#8a97aa';
+    const sel = (hoveredNode === n) || isFocus;
+
+    if(n.fxHex || n.fxPerson){
+      fxHexPath(ctx, n.x, n.y, n.r);
+      ctx.fillStyle = _rgba(col, isFocus ? 0.42 : 0.20);
+      ctx.fill();
+      ctx.strokeStyle = isFocus ? gold : _rgba(col, 0.85);
+      ctx.lineWidth = (isFocus ? 2.4 : 1.3) / Math.max(scale,.4);
+      ctx.stroke();
+    } else {
+      const w = n.r*2.3, h = n.r*1.7, R = 5;
+      const x = n.x - w/2, y = n.y - h/2;
+      ctx.beginPath();
+      ctx.moveTo(x+R,y);
+      ctx.arcTo(x+w,y, x+w,y+h, R); ctx.arcTo(x+w,y+h, x,y+h, R);
+      ctx.arcTo(x,y+h, x,y, R);     ctx.arcTo(x,y, x+w,y, R);
+      ctx.closePath();
+      ctx.fillStyle = _rgba(col, isFocus ? 0.45 : 0.22);
+      ctx.fill();
+      ctx.strokeStyle = isFocus ? gold : _rgba(col, 0.8);
+      ctx.lineWidth = (isFocus ? 2.4 : 1.2) / Math.max(scale,.4);
+      ctx.stroke();
+    }
+
+    // ── ป้ายชื่อ ──
+    // โหนดในกล่องกลุ่ม / โหนดที่โฟกัส / สายบังคับบัญชา = เขียนข้อความในตัวโหนดเลย
+    // โหนดบนส่วนโค้ง = เขียนแนวรัศมีชี้ออกนอกวง (กันชนกันเองเหมือนป้ายวงใน radial)
+    const inBox = n.fxHex || n.fxParentSide || isFocus;
+    if(inBox){
+      ctx.font = (isFocus ? '700 ' : '600 ') + '10px Sarabun, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const lines = fxWrap(ctx, n.label, n.r*1.9, 3);
+      ctx.fillStyle = isFocus ? gold : txt;
+      const lh = 11, y0 = n.y - (lines.length-1)*lh/2;
+      lines.forEach((L,i)=> ctx.fillText(L, n.x, y0 + i*lh));
+    } else if(n.fxAngle != null && (labelAll || sel)){
+      const ca = Math.cos(n.fxAngle), sa = Math.sin(n.fxAngle);
+      const lx = n.x + (n.r*1.25 + 6)*ca, ly = n.y + (n.r*1.25 + 6)*sa;
+      ctx.font = (sel ? '700 ' : '500 ') + '11px Sarabun, sans-serif';
+      ctx.textAlign = ca >= -0.15 ? 'left' : 'right';
+      ctx.textBaseline = 'middle';
+      let s = n.label;
+      const LIM = 190;
+      while(ctx.measureText(s).width > LIM && s.length > 4) s = s.slice(0, -2);
+      if(s !== n.label) s += '…';
+      if(sel){
+        const w = ctx.measureText(s).width, ox = ctx.textAlign==='left' ? 0 : -w;
+        ctx.fillStyle = _rgba(T.bg || (dark?'#0d1117':'#ffffff'), 0.9);
+        ctx.fillRect(lx + ox - 3, ly - 8, w + 6, 16);
+      }
+      ctx.fillStyle = sel ? gold : txt;
+      ctx.fillText(s, lx, ly);
+    }
+  });
+
+  ctx.restore();
+
+  // ── แถบบอกสถานะ (screen space) ──
+  ctx.save();
+  ctx.font = '600 12px Sarabun, sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillStyle = dim;
+  const note = 'โหมดเจาะจง · กดโหนดใดก็ได้เพื่อย้ายศูนย์กลาง'
+    + (fxTooMany ? '  ·  หน่วยงานย่อย ' + fxTooMany + ' แห่ง (เยอะเกินไป ไม่แสดงชั้นหลาน)' : '');
+  ctx.fillText(note, 16, 14);
+  ctx.restore();
+}
+
+// ย้ายศูนย์กลางไปโหนดใหม่
+function focusOn(node){
+  const k = fxKeyOfNode(node);
+  if(!k || k === fxKey) return;
+  fxKey = k; fxTooMany = 0;
+  buildFocusLayout(); flyFitCurrent();   // ย้ายศูนย์กลางแล้วบินเข้ากรอบผังใหม่
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GRAVITY VIEW ("ผังกลุ่ม") — ถอดแบบโหมด ⊝ Gravity ของ machineryofgovernment.uk
+//  แต่ละกระทรวง = กล่องแท่งกว้าง · หน่วยงานลูกเป็นจุดอัดเรียงอยู่ข้างใน
+//  ขนาดกล่องแปรตามจำนวนลูก แล้วผลักกล่องออกจากกันจนไม่ทับ
+//  ⚠ คำนวณครั้งเดียวตอนสร้างผัง — ไม่มี rAF/อนิเมชัน (ตามกฎ "ผังนิ่ง" ของหน้านี้)
+// ═══════════════════════════════════════════════════════════
+let gvBoxes = [];
+
+function buildGravityLayout(){
+  nodes = []; ringGuides = []; gvBoxes = [];
+  const DOT = 9, PADX = 11, PADTOP = 20, PADBOT = 9;
+
+  // 1) กล่องของแต่ละกระทรวง — จำนวนคอลัมน์ตั้งให้กล่องออกมาแบนกว้าง (~5:1) เหมือนต้นแบบ
+  const boxes = MINISTRIES.map((min, idx) => {
+    const kids = min.orgs.map(o => ({org:o, catID:String(o.catID)}));
+    UNIS.forEach(u => { if((UNI_PARENT[u.m]||u.m) === min.id) kids.push({uni:u, catID:'09'}); });
+    if(!kids.length) return null;
+    const cols = Math.max(4, Math.round(Math.sqrt(kids.length * 5)));
+    const rows = Math.ceil(kids.length / cols);
+    return {
+      min, idx, kids, cols,
+      w: cols*DOT + PADX*2,
+      h: rows*DOT + PADTOP + PADBOT,
+      color: MIN_COLORS[idx] || '#e67e22',
+      x: 0, y: 0
+    };
+  }).filter(Boolean);
+
+  // 2) หว่านตำแหน่งเริ่มต้นแบบก้นหอยมุมทอง (กล่องใหญ่ไว้ใกล้กลาง) แล้วคลายการทับซ้อน
+  boxes.sort((a,b) => (b.w*b.h) - (a.w*a.h));
+  boxes.forEach((b,i) => {
+    const a = i * 2.399963, rr = 34*Math.sqrt(i);
+    b.x = W/2 + rr*Math.cos(a)*2.1;
+    b.y = H/2 + rr*Math.sin(a)*1.15;
+  });
+  const GAPX = 20, GAPY = 16;
+  for(let it=0; it<300; it++){
+    for(let i=0; i<boxes.length; i++){
+      const A = boxes[i];
+      A.x += (W/2 - A.x) * 0.005;            // แรงดึงเข้ากลางเบา ๆ = กลุ่มไม่กระจายหลุด
+      A.y += (H/2 - A.y) * 0.005;
+      for(let j=i+1; j<boxes.length; j++){
+        const B = boxes[j];
+        const dx = B.x - A.x, dy = B.y - A.y;
+        const ox = (A.w + B.w)/2 + GAPX - Math.abs(dx);
+        const oy = (A.h + B.h)/2 + GAPY - Math.abs(dy);
+        if(ox > 0 && oy > 0){                 // ทับกัน → ดันแยกตามแกนที่ทับน้อยกว่า
+          if(ox < oy){ const s = (dx < 0 ? -1 : 1) * ox/2; A.x -= s; B.x += s; }
+          else       { const s = (dy < 0 ? -1 : 1) * oy/2; A.y -= s; B.y += s; }
+        }
+      }
+    }
+  }
+
+  // 3) สร้างโหนด: กล่อง = โหนดกระทรวง · จุดข้างใน = หน่วยงานลูก
+  boxes.forEach(b => {
+    nodes.push({
+      type:'ministry', gvBox:b, x:b.x, y:b.y, r:Math.max(9, Math.min(b.h, b.w)/2 - 2),
+      label:b.min.name, data:b.min, isMinistry:true, ministryID:b.min.id, color:b.color
+    });
+    b.kids.forEach((k,i) => {
+      const x = b.x - b.w/2 + PADX + DOT/2 + (i % b.cols)*DOT;
+      const y = b.y - b.h/2 + PADTOP + DOT/2 + Math.floor(i / b.cols)*DOT;
+      nodes.push(k.org
+        ? { type:'org', x, y, r:3.3, label:k.org.name, color:getColor(k.org.catID),
+            data:k.org, isMinistry:false, ministryID:b.min.id, catID:String(k.org.catID) }
+        : { type:'org', x, y, r:3.3, isUni:true, label:k.uni.n, color:getColor('09'),
+            data:{ name:k.uni.n, abbr:k.uni.p||'', cat:'สถาบันอุดมศึกษา', catID:'09',
+                   web:k.uni.w||'', mission:'สถาบันอุดมศึกษา' + (k.uni.p ? ' · จ.'+k.uni.p : ''), no:null },
+            isMinistry:false, ministryID:b.min.id, catID:'09' });
+    });
+  });
+  gvBoxes = boxes;
+}
+
+function drawGravity(){
+  const dark = isDark(), T = _theme;
+  const txt = T.text || (dark ? '#e8eaed' : '#1f2328');
+  const dim = T.textDim || (dark ? '#8a97aa' : '#6b7280');
+  const gold = T.gold || '#c9a84c';
+  const focus = hoveredNode || selectedNode;
+  const focusMin = focus ? (focus.ministryID || (focus.isMinistry && focus.data ? focus.data.id : null)) : null;
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(scale, scale);
+
+  // ── กล่องกระทรวง ──
+  gvBoxes.forEach(b => {
+    const lit = !focusMin || b.min.id === focusMin;
+    const R = 9, x = b.x - b.w/2, y = b.y - b.h/2;
+    ctx.beginPath();
+    ctx.moveTo(x+R, y);
+    ctx.arcTo(x+b.w, y,      x+b.w, y+b.h, R); ctx.arcTo(x+b.w, y+b.h, x, y+b.h, R);
+    ctx.arcTo(x,     y+b.h,  x,     y,     R); ctx.arcTo(x,     y,     x+b.w, y, R);
+    ctx.closePath();
+    ctx.fillStyle = _rgba(b.color, lit ? (dark ? 0.20 : 0.16) : 0.05);
+    ctx.fill();
+    ctx.strokeStyle = _rgba(b.color, lit ? 0.6 : 0.15);
+    ctx.lineWidth = 1.2 / Math.max(scale, .35);
+    ctx.stroke();
+  });
+
+  // ── จุดหน่วยงานลูก (เคารพตัวกรองประเภทในแถบข้าง) ──
+  nodes.forEach(n => {
+    if(n.isMinistry) return;
+    if(!activeFilters.has(n.catID || '01')) return;
+    const lit = !focusMin || n.ministryID === focusMin;
+    ctx.globalAlpha = lit ? 1 : 0.18;
+    ctx.fillStyle = n.color;
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+    if(n === focus){
+      ctx.strokeStyle = gold; ctx.lineWidth = 2 / Math.max(scale,.35);
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 3, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+
+  // ── ชื่อกระทรวง (หัวกล่อง) ──
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  gvBoxes.forEach(b => {
+    const lit = !focusMin || b.min.id === focusMin;
+    ctx.font = '600 11px Sarabun, sans-serif';
+    let s = b.min.name.replace(/^กระทรวง/, '');
+    const room = b.w - 20;
+    while(ctx.measureText(s).width > room && s.length > 4) s = s.slice(0, -2);
+    if(s !== b.min.name.replace(/^กระทรวง/, '')) s += '…';
+    ctx.fillStyle = lit ? _rgba(b.color, dark ? 0.95 : 0.85) : _rgba(dim, 0.3);
+    ctx.fillText(s, b.x - b.w/2 + 10, b.y - b.h/2 + 11);
+    if(lit){
+      ctx.font = '10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = _rgba(dim, 0.75);
+      const cnt = String(b.kids.length);
+      ctx.fillText(cnt, b.x + b.w/2 - 8 - ctx.measureText(cnt).width, b.y - b.h/2 + 11);
+    }
+  });
+  ctx.restore();
+
+  // ── หมายเหตุมุมบนซ้าย ──
+  ctx.save();
+  ctx.font = '600 12px Sarabun, sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillStyle = dim;
+  ctx.fillText('ผังกลุ่ม · ขนาดกล่อง = จำนวนหน่วยงานในสังกัด · ชี้กล่องเพื่อเน้นเฉพาะกระทรวงนั้น', 16, 14);
+  ctx.restore();
+}
+
 function buildLayout() {
-  if(currentView==='radial') buildRadialLayout();
+  if(currentView==='radial')       buildRadialLayout();
+  else if(currentView==='focus')   buildFocusLayout();
+  else if(currentView==='gravity') buildGravityLayout();
   else buildForceLayout();
 }
 
@@ -3063,8 +3845,10 @@ function applyRotation(){
 }
 // หมุนหลายวงพร้อมกันไปยังเป้าหมาย (targets: Map ringKey→มุม; วงที่ไม่อยู่ใน targets = กลับ 0)
 // offsetDeltaX = เลื่อนกล้องแนวนอนระหว่างหมุน (กันชนแผงข้อมูลขวา)
-function animateRingsTo(targets, offsetDeltaX){
+function animateRingsTo(targets, offsetDeltaX, onDone){
   const odx = offsetDeltaX || 0;
+  camCancel();   // การหมุนวงขับ offsetX เอง — ถ้ากล้องกำลังบินอยู่จะแย่งกัน
+  const done = () => { if(typeof onDone === 'function') onDone(); };
   const keys = new Set(ringRot.keys());
   if(targets) targets.forEach((v,k)=>keys.add(k));
   const plan = [];
@@ -3078,9 +3862,9 @@ function animateRingsTo(targets, offsetDeltaX){
   const finalize = ()=>{
     plan.forEach(s=>{ if(Math.abs(s.target) < 1e-6) ringRot.delete(s.k); else ringRot.set(s.k, s.start + s.delta); });
   };
-  if(currentView !== 'radial'){ finalize(); offsetX += odx; return; }   // วิวอื่น = ตั้งค่าทันที ไม่อนิเมต
+  if(currentView !== 'radial'){ finalize(); offsetX += odx; done(); return; }   // วิวอื่น = ตั้งค่าทันที ไม่อนิเมต
   const moving = plan.some(s=>Math.abs(s.delta) > 0.001) || Math.abs(odx) > 0.5;
-  if(!moving){ finalize(); applyRotation(); draw(); return; }
+  if(!moving){ finalize(); applyRotation(); draw(); done(); return; }
   const ox0 = offsetX, dur = 600, t0 = (performance||Date).now();
   if(rotAnimRAF) cancelAnimationFrame(rotAnimRAF);
   function frame(now){
@@ -3091,7 +3875,7 @@ function animateRingsTo(targets, offsetDeltaX){
     applyRotation();
     draw();
     if(p < 1) rotAnimRAF = requestAnimationFrame(frame);
-    else { offsetX = ox0 + odx; finalize(); rotAnimRAF = null; applyRotation(); draw(); }
+    else { offsetX = ox0 + odx; finalize(); rotAnimRAF = null; applyRotation(); draw(); done(); }
   }
   rotAnimRAF = requestAnimationFrame(frame);
 }
@@ -3132,7 +3916,8 @@ function spineToNode(node){
     odx = desired - panelShiftX;
     panelShiftX = desired;
   }
-  animateRingsTo(targets, odx);
+  // หมุนวงให้สายเรียงตัวก่อน แล้วค่อยบินเข้ากรอบ (ทำพร้อมกันจะเวียนหัว)
+  animateRingsTo(targets, odx, () => zoomToNode(node));
 }
 // ยกเลิกการเลือก → ทุกวงหมุนกลับฐาน + คืนกล้อง
 function spineReset(){
@@ -3173,6 +3958,10 @@ function refreshThemeCache(){
   _theme.cs   = cs.getPropertyValue('--center-str').trim();
   _theme.ct   = cs.getPropertyValue('--center-txt').trim();
   _theme.gold = cs.getPropertyValue('--gold').trim() || '#c9a84c';
+  // ใช้ในมุมมอง Focus (ข้อความ/เส้นขอบบนแคนวาส)
+  _theme.text    = cs.getPropertyValue('--text').trim()     || '#e8eaed';
+  _theme.textDim = cs.getPropertyValue('--text-dim').trim() || '#8a97aa';
+  _theme.border  = cs.getPropertyValue('--border').trim()   || '#2a3140';
   _spriteCache = {};                     // org colours shift per theme
 }
 
@@ -3210,8 +3999,89 @@ function orgSprite(color, shape){
   return cv;
 }
 
-// camera setter — jump to a target offset + scale, then repaint
-function flyTo(ox, oy, s){ offsetX = ox; offsetY = oy; scale = s; draw(); }
+// ═══════════════════════════════════════════════════════════
+//  กล้อง — พอร์ตพฤติกรรมมาจาก js/mapzoom.js (หน้า ส.ส. รายเขต)
+//  ที่นั่นเป็น SVG transform ส่วนนี่เป็น canvas offsetX/offsetY/scale
+//  จึงยกมาเฉพาะ "วิธีคิด" 3 ข้อ:
+//   1) บินแบบ tween ease-out cubic 750ms แทนการกระโดด (เดิม flyTo ตั้งค่าแล้ววาดเลย)
+//   2) สูตรกรอบ scale = FILL / max(กว้างกรอบ/กว้างจอ, สูงกรอบ/สูงจอ)
+//      → พื้นที่ที่เลือกกินจอเท่ากันเสมอ ไม่ว่าจะกระทรวงเล็กหรือใหญ่
+//   3) แท็บถูกซ่อน (rAF หยุดเดิน) หรือผู้ใช้ตั้ง reduced-motion → ข้ามไปผลลัพธ์สุดท้ายทันที
+// ═══════════════════════════════════════════════════════════
+const CAM_DUR = 750;
+const camEase = t => 1 - Math.pow(1 - t, 3);
+const camReduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let camRAF = 0;
+function camCancel(){ if(camRAF){ cancelAnimationFrame(camRAF); camRAF = 0; } }
+
+// camera setter — บินไปยัง offset/scale ปลายทางแบบนุ่ม ๆ (dur=0 = กระโดดทันทีแบบเดิม)
+function flyTo(ox, oy, s, dur){
+  camCancel();
+  if(dur == null) dur = CAM_DUR;
+  if(dur <= 0 || document.hidden || camReduceMotion()){
+    offsetX = ox; offsetY = oy; scale = s; draw(); return;
+  }
+  const x0 = offsetX, y0 = offsetY, s0 = scale, t0 = performance.now();
+  const step = now => {
+    const u = Math.min(1, (now - t0) / dur), e = camEase(u);
+    offsetX = x0 + (ox - x0)*e;
+    offsetY = y0 + (oy - y0)*e;
+    scale   = s0 + (s  - s0)*e;
+    draw();
+    if(u < 1) camRAF = requestAnimationFrame(step);
+    else camRAF = 0;
+  };
+  camRAF = requestAnimationFrame(step);
+}
+
+// บินเข้ากรอบพิกัดโลก (สูตร FILL/max เหมือนหน้า ส.ส.)
+function flyToBox(minX, minY, maxX, maxY, dur){
+  const isMob = window.innerWidth <= 640;
+  const vw = W, vh = H;                       // W/H = ขนาดผืนผ้าใบจริง (resize() หักแถบ legend ให้แล้ว)
+  const bw = Math.max(maxX - minX, 1), bh = Math.max(maxY - minY, 1);
+  const FILL = isMob ? 0.62 : 0.72;
+  const s = Math.max(0.12, Math.min(6, FILL / Math.max(bw/vw, bh/vh)));
+  const cx = (minX + maxX)/2, cy = (minY + maxY)/2;
+  flyTo(vw/2 - cx*s, vh/2 - cy*s, s, dur);
+}
+
+// กรอบของ "สายที่เกี่ยวข้อง" กับโหนดที่กด — ใช้ตัดสินว่าจะบินไปกินพื้นที่แค่ไหน
+function nodeFocusBox(node){
+  if(!node) return null;
+  const set = new Set([node]);
+  const mid = node.ministryID || (node.isMinistry && node.data ? node.data.id : null);
+  if(node.type === 'center'){
+    nodes.forEach(n => { if(n.type==='ministry' || n.type==='minister') set.add(n); });
+  } else if(node.isMinistry || node.type === 'minister'){
+    nodes.forEach(n => { if(n.ministryID === mid) set.add(n); });
+    // ⚠ ผังกลุ่มไม่มีโหนดนายกฯ → nodes[0] คือกล่องกระทรวงใหญ่สุด ห้ามเหมารวม
+    if(nodes[0] && nodes[0].type === 'center') set.add(nodes[0]);
+  } else {
+    // หน่วยงานย่อย: กรอบ = ตัวมัน + กระทรวงต้นสังกัด + พี่น้องใกล้เคียง
+    nodes.forEach(n => { if(n.isMinistry && n.ministryID === mid) set.add(n); });
+  }
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  set.forEach(n => {
+    const p = (n.gvBox ? Math.max(n.gvBox.w, n.gvBox.h)/2 : n.r) + 26;
+    minX=Math.min(minX,n.x-p); maxX=Math.max(maxX,n.x+p);
+    minY=Math.min(minY,n.y-p); maxY=Math.max(maxY,n.y+p);
+  });
+  return isFinite(minX) ? {minX, minY, maxX, maxY, count:set.size} : null;
+}
+
+// กดโหนด → บินเข้ากรอบสายนั้น (ใช้ได้ทุกมุมมองบนแคนวาส)
+function zoomToNode(node, dur){
+  const b = nodeFocusBox(node);
+  if(b) flyToBox(b.minX, b.minY, b.maxX, b.maxY, dur);
+}
+// จัดกล้องให้พอดีผังปัจจุบันแบบบินนุ่ม ๆ (ไม่สร้างผังใหม่ — ต่างจาก flyToFit)
+function flyFitCurrent(dur){
+  const oX = offsetX, oY = offsetY, oS = scale;
+  fitView();
+  const tX = offsetX, tY = offsetY, tS = scale;
+  offsetX = oX; offsetY = oY; scale = oS;
+  flyTo(tX, tY, tS, dur);
+}
 
 // ── DRAW ──
 function draw() {
@@ -3222,6 +4092,9 @@ function draw() {
   const bg = _theme.bg || getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
   ctx.fillStyle = bg;
   ctx.fillRect(0,0,W,H);
+
+  if(currentView === 'focus'){   drawFocus();   return; }   // มุมมองเจาะจง = ตัวเรนเดอร์แยก
+  if(currentView === 'gravity'){ drawGravity(); return; }   // ผังกลุ่ม = ตัวเรนเดอร์แยก
 
   ctx.save();
   ctx.translate(offsetX, offsetY);
@@ -3912,7 +4785,11 @@ canvas.addEventListener('mouseup', e => {
   const r=MAIN.getBoundingClientRect();
   const moved=Math.abs(e.clientX-dragStartX)>4||Math.abs(e.clientY-dragStartY)>4;
   if(draggedNode) {
-    if(!moved) { showPanel(draggedNode); spineToNode(draggedNode); }
+    if(!moved) {
+      showPanel(draggedNode);
+      if(currentView === 'radial') spineToNode(draggedNode);
+      else if(currentView === 'gravity') zoomToNode(draggedNode);
+    }
     draggedNode=null;
     canvas.style.cursor='default';
     return;
@@ -3920,8 +4797,14 @@ canvas.addEventListener('mouseup', e => {
   isDragging=false;
   if(!moved) {
     const hit=hitTest(e.clientX-r.left,e.clientY-r.top);
-    if(hit) { showPanel(hit); spineToNode(hit); }
-    else { selectedNode=null; pmLens=false; clearHash(); panel.classList.remove('show', 'visible'); spineReset(); if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden'); }
+    if(hit) {
+      showPanel(hit);
+      // radial = หมุนวงก่อนแล้วค่อยบิน (spineToNode ยิง zoomToNode ต่อเอง)
+      // ผังกลุ่ม = บินเข้ากล่องกระทรวงนั้นเลย · ผังเจาะจง = จัดผังใหม่+fitView อยู่แล้ว
+      if(currentView === 'radial') spineToNode(hit);
+      else if(currentView === 'gravity') zoomToNode(hit);
+    }
+    else { selectedNode=null; pmLens=false; clearHash(); panel.classList.remove('show', 'visible'); spineReset(); if(cabVisible && currentView !== 'focus') document.getElementById('cab-panel').classList.remove('hidden'); }
   }
 });
 canvas.addEventListener('wheel', e => {
@@ -4254,9 +5137,268 @@ function closeInfoPanel(){
   stopInfoAudio();   // ปิดแผง → หยุดเสียงบรรยาย
   var _ab2 = document.getElementById('info-audio'); if(_ab2) _ab2.hidden = true;
   spineReset();   // หมุนทุกวงกลับฐาน + คืนกล้อง (แทน draw() เดิม)
-  if(cabVisible) document.getElementById('cab-panel').classList.remove('hidden');
+  if(cabVisible && currentView !== 'focus') document.getElementById('cab-panel').classList.remove('hidden');
 }
 document.getElementById('info-close').onclick=closeInfoPanel;
+
+// ═══════════════════════════════════════════════════════════════════
+//  แผงรายละเอียด 4 แท็บ — ข้อมูล / อำนาจหน้าที่ / งบประมาณ / บุคลากร
+//  ถอดโครงจาก machineryofgovernment.uk · ข้อมูลอยู่ใน structure-detail.js
+// ═══════════════════════════════════════════════════════════════════
+const IP_TABS = ['info','law','budget','staff'];
+let ipTab = 'info', ipBudgetSub = 'self';
+
+const fmtMB = n => n.toLocaleString('th-TH', {maximumFractionDigits:1});
+// 397,856 ล้านบาท → "3.98 แสนล้าน" ให้อ่านง่ายในการ์ด KPI
+function fmtBudgetShort(mb){
+  if (mb >= 1000000) return (mb/1000000).toFixed(2) + ' ล้านล้าน';
+  if (mb >= 100000)  return (mb/100000).toFixed(2)  + ' แสนล้าน';
+  if (mb >= 10000)   return (mb/10000).toFixed(2)   + ' หมื่นล้าน';
+  if (mb >= 1000)    return (mb/1000).toFixed(2)    + ' พันล้าน';
+  return fmtMB(mb) + ' ล้าน';
+}
+const minName = id => (MINISTRIES.find(m=>m.id===id)||{}).name || '';
+
+// หากระทรวงต้นสังกัดของโหนด (คืน id เช่น '03' หรือ null)
+function ipMinistryId(node){
+  if(!node) return null;
+  if(node.type === 'minister' || node.isUni) return node.ministryID || null;
+  if(node.isMinistry && node.data) return node.data.id;
+  if(node.ministryID) return node.ministryID;
+  if(node.data && node.data.no){
+    const m = MINISTRIES.find(x => x.orgs.some(o => o.no === node.data.no));
+    if(m) return m.id;
+  }
+  return null;
+}
+
+// แท็บไหนควรโชว์สำหรับโหนดนี้ + ตัวเลข badge
+function ipTabPlan(node){
+  const mid = ipMinistryId(node);
+  const hasBudget = mid && BUDGET_2569.min[mid] != null;
+  const hasLaw    = mid && MIN_LAW[mid];
+  if(node.type === 'center')
+    return { show:{info:1, budget:1}, badge:{budget:'2569'} };
+  if(node.type === 'minister')
+    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget},
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':''} };
+  if(node.isMinistry)
+    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, staff:1},
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':''} };
+  // กรม / รัฐวิสาหกิจ / องค์การมหาชน / มหาวิทยาลัย
+  return { show:{info:1, budget:!!hasBudget, staff:1},
+           badge:{budget: hasBudget?'2569':''} };
+}
+
+function ipSwitchTab(t){
+  ipTab = t;
+  document.querySelectorAll('.ip-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  IP_TABS.forEach(k => { const p = document.getElementById('pane-'+k); if(p) p.hidden = (k !== t); });
+  const body = document.querySelector('.ip-body'); if(body) body.scrollTop = 0;
+}
+document.querySelectorAll('.ip-tab').forEach(b => {
+  b.onclick = () => ipSwitchTab(b.dataset.tab);
+});
+
+// ── เรียกทุกครั้งที่เปิดแผง (ห่อ showPanel เดิมไว้ท้ายไฟล์) ──
+function renderDetailTabs(node){
+  const plan = ipTabPlan(node), mid = ipMinistryId(node);
+  document.querySelectorAll('.ip-tab').forEach(b => {
+    const k = b.dataset.tab;
+    b.hidden = !plan.show[k];
+    const badge = document.getElementById('tabb-'+k);
+    if(badge) badge.textContent = (plan.badge && plan.badge[k]) || '';
+  });
+  renderLawPane(node, mid);
+  renderBudgetPane(node, mid);
+  renderStaffPane(node, mid);
+  ipSwitchTab(plan.show[ipTab] ? ipTab : 'info');   // คงแท็บเดิมไว้ถ้าโหนดใหม่มีแท็บนั้น
+}
+
+// ── แท็บ 2: อำนาจหน้าที่ ──────────────────────────────────────────
+function renderLawPane(node, mid){
+  const el = document.getElementById('pane-law'); if(!el) return;
+  const law = mid && MIN_LAW[mid];
+  if(!law){
+    el.innerHTML = ipEmpty('⚖️','ยังไม่ได้บันทึกข้อมูลอำนาจหน้าที่ตามกฎหมายของหน่วยงานนี้');
+    return;
+  }
+  const name = minName(mid);
+  const isMinisterNode = node.type === 'minister';
+  el.innerHTML = `
+    <div class="ip-power">
+      <div class="ip-power-top">
+        <span class="ip-power-kind">อำนาจหน้าที่</span>
+        <span class="ip-power-since">ตั้งแต่ พ.ศ. ${law.since}</span>
+      </div>
+      <div class="ip-power-title">${name}</div>
+      <div class="ip-power-desc">${MINISTRY_MISSIONS[mid] || '-'}</div>
+      ${law.amend ? `<div class="ip-power-note">📌 ${law.amend}</div>` : ''}
+      <div class="ip-power-src">ฐานอำนาจตามกฎหมาย</div>
+      <div class="ip-power-law">
+        <span class="tag">พ.ร.บ.</span>
+        <a href="${MIN_LAW_URL}" target="_blank" rel="noopener">${MIN_LAW_ACT} · ${law.sec} ↗</a>
+      </div>
+    </div>
+    ${isMinisterNode ? `<div class="ip-src">แสดงอำนาจหน้าที่ของ<b> ${name} </b>ซึ่งเป็นกระทรวงที่ผู้ดำรงตำแหน่งนี้กำกับดูแล — ไม่ใช่อำนาจส่วนบุคคลของรัฐมนตรี</div>` : ''}
+    <div class="ip-src">การแบ่งส่วนราชการภายในกระทรวงเป็นไปตามกฎกระทรวงแบ่งส่วนราชการของแต่ละหน่วยงาน</div>`;
+}
+
+// ── แท็บ 3: งบประมาณ ──────────────────────────────────────────────
+function renderBudgetPane(node, mid){
+  const el = document.getElementById('pane-budget'); if(!el) return;
+  const B = BUDGET_2569;
+
+  // นายกฯ = ภาพรวมทั้งประเทศ
+  if(node.type === 'center'){
+    const sumMin = Object.values(B.min).reduce((a,b)=>a+b,0);
+    el.innerHTML = `
+      <div class="ip-kpis">
+        <div class="ip-kpi"><div class="ip-kpi-lbl">วงเงินรวม</div><div class="ip-kpi-val">${fmtBudgetShort(B.total)}<small> บาท</small></div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">งบกลาง</div><div class="ip-kpi-val">${fmtBudgetShort(B.central)}<small> บาท</small></div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">รวม 20 กระทรวง</div><div class="ip-kpi-val">${fmtBudgetShort(sumMin)}<small> บาท</small></div></div>
+      </div>
+      ${budgetBars(null)}
+      ${budgetSrc()}`;
+    return;
+  }
+
+  const b = mid && B.min[mid];
+  if(b == null){ el.innerHTML = ipEmpty('₿','ยังไม่ได้บันทึกข้อมูลงบประมาณของหน่วยงานนี้'); return; }
+
+  const share = (b / B.total * 100), rank = BUDGET_RANK[mid], name = minName(mid);
+  const isOwn = node.isMinistry;   // โหนดกระทรวงเอง vs โหนดลูก/รัฐมนตรี
+  el.innerHTML = `
+    ${isOwn ? '' : `<div class="ip-src" style="margin:0 0 10px;padding:0;border:none">งบของต้นสังกัด — <b>${name}</b><br>เอกสารงบประมาณจัดสรรในระดับกระทรวง จึงไม่มีตัวเลขแยกรายหน่วยงานย่อย</div>`}
+    <div class="ip-kpis">
+      <div class="ip-kpi"><div class="ip-kpi-lbl">งบปี ${DATA_ASOF.budgetYear}</div><div class="ip-kpi-val">${fmtBudgetShort(b)}<small> บาท</small></div></div>
+      <div class="ip-kpi"><div class="ip-kpi-lbl">สัดส่วนงบประเทศ</div><div class="ip-kpi-val">${share.toFixed(2)}<small>%</small></div></div>
+      <div class="ip-kpi"><div class="ip-kpi-lbl">อันดับ</div><div class="ip-kpi-val">${rank}<small> / 20</small></div></div>
+    </div>
+    <div class="ip-subtabs">
+      <button class="ip-subtab ${ipBudgetSub==='self'?'active':''}" onclick="setBudgetSub('self')">ภาพรวม</button>
+      <button class="ip-subtab ${ipBudgetSub==='cmp' ?'active':''}" onclick="setBudgetSub('cmp')">เทียบ 20 กระทรวง</button>
+    </div>
+    <div id="budget-sub-body">${ipBudgetSub==='cmp' ? budgetBars(mid) : budgetSelf(mid, b, share, rank)}</div>
+    ${budgetSrc()}`;
+}
+function setBudgetSub(s){
+  ipBudgetSub = s;
+  if(selectedNode) renderBudgetPane(selectedNode, ipMinistryId(selectedNode));
+}
+function budgetSelf(mid, b, share, rank){
+  const B = BUDGET_2569, max = Math.max(...Object.values(B.min));
+  return `
+    <div class="ip-bar-row self">
+      <div class="ip-bar-head"><span class="ip-bar-name">${minName(mid)}</span><span class="ip-bar-val">${fmtMB(b)}</span></div>
+      <div class="ip-bar-track"><div class="ip-bar-fill" style="width:${(b/max*100).toFixed(1)}%"></div></div>
+    </div>
+    <div class="ip-src" style="border:none;padding-top:6px">
+      ได้รับจัดสรร <b>${fmtMB(b)} ล้านบาท</b> คิดเป็นร้อยละ <b>${share.toFixed(2)}</b> ของวงเงินงบประมาณทั้งประเทศ
+      (${fmtMB(B.total)} ล้านบาท) — สูงเป็นอันดับที่ <b>${rank}</b> จาก 20 กระทรวง<br><br>
+      เทียบเคียง: งบกลางที่ยังไม่จัดสรรให้หน่วยงานใดมีจำนวน ${fmtMB(B.central)} ล้านบาท (ร้อยละ ${(B.central/B.total*100).toFixed(1)} ของวงเงินรวม)
+    </div>`;
+}
+function budgetBars(selfId){
+  const B = BUDGET_2569;
+  const ids = Object.keys(B.min).sort((a,b)=>B.min[b]-B.min[a]);
+  const max = B.min[ids[0]];
+  return ids.map(id => `
+    <div class="ip-bar-row ${id===selfId?'self':''}">
+      <div class="ip-bar-head">
+        <span class="ip-bar-name">${minName(id)}</span>
+        <span class="ip-bar-val">${fmtMB(B.min[id])}</span>
+      </div>
+      <div class="ip-bar-track"><div class="ip-bar-fill" style="width:${(B.min[id]/max*100).toFixed(1)}%"></div></div>
+    </div>`).join('');
+}
+function budgetSrc(){
+  return `<div class="ip-src">📎 ที่มา: เอกสารงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ. 2569 · หน่วย: ล้านบาท<br>
+    ตัวเลขเป็นวงเงินระดับกระทรวง ไม่รวมงบกลางและหน่วยรับงบประมาณที่ไม่สังกัดกระทรวง (รัฐสภา ศาล องค์กรอิสระ)<br>
+    ⚠ เป็นวงเงินตามที่เสนอในร่าง พ.ร.บ.งบประมาณฯ ยอดหลังการพิจารณาของรัฐสภาอาจต่างจากนี้เล็กน้อย</div>`;
+}
+
+// ── แท็บ 4: บุคลากร ───────────────────────────────────────────────
+function renderStaffPane(node, mid){
+  const el = document.getElementById('pane-staff'); if(!el) return;
+  el.innerHTML = ipEmpty('👥',
+    'ยังไม่ได้บันทึกข้อมูลกำลังคนของหน่วยงานนี้' +
+    '<br><br>ข้อมูลจำนวนข้าราชการรายกระทรวงอยู่ในรายงาน “กำลังคนภาครัฐ” ของสำนักงาน ก.พ. ' +
+    'ซึ่งเผยแพร่เป็นไฟล์ PDF — ยังไม่ได้นำเข้าสู่ชุดข้อมูลของเว็บนี้');
+}
+
+function ipEmpty(ico, msg){
+  return `<div class="ip-empty"><span class="ico">${ico}</span>${msg}</div>`;
+}
+
+// ── ห่อ showPanel เดิม: เรนเดอร์แท็บต่อท้ายทุกครั้งที่เปิดแผง ──
+showPanel = (function(base){
+  return function(node){
+    base(node);
+    try { renderDetailTabs(node); } catch(e) { console.warn('renderDetailTabs', e); }
+    // มุมมองเจาะจง: กดโหนด (หรือชิปในแผง) = ย้ายศูนย์กลางไปที่นั่น
+    if(currentView === 'focus'){ try { focusOn(node); } catch(e) { console.warn('focusOn', e); } }
+  };
+})(showPanel);
+
+// แผงเปิด/ปิด → คลาส body.ip-open (ใช้ขยับปุ่มลอยไม่ให้ชนแผง)
+// ใช้ observer เพราะแผงถูกปิดจากหลายที่ ทั้ง closeInfoPanel และการคลิกพื้นที่ว่าง
+(function watchPanelOpen(){
+  const p = document.getElementById('info-panel'), c = document.getElementById('cab-panel');
+  const sync = () => {
+    if(p) document.body.classList.toggle('ip-open', p.classList.contains('show'));
+    syncFxToolbar();
+  };
+  [p, c].forEach(el => { if(el) new MutationObserver(sync).observe(el, {attributes:true, attributeFilter:['class','style']}); });
+  window.addEventListener('resize', sync);
+  sync();
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+//  ข้อความเตือนความสดของข้อมูล — 3 จุด
+// ═══════════════════════════════════════════════════════════════════
+const DN_KEY = 'md-structure-notice-dismissed';
+function dismissDataNotice(){
+  const el = document.getElementById('data-notice');
+  if(el) el.hidden = true;
+  try { localStorage.setItem(DN_KEY, '1'); } catch(e) {}
+  if(typeof resize === 'function') resize();   // แถบหาย → คืนความสูงให้ผืนผ้าใบ
+}
+function openSrcModal(){
+  const m = document.getElementById('src-modal'); if(!m) return;
+  document.getElementById('sm-sub').innerHTML =
+    `แผนผังนี้รวบรวมโครงสร้างราชการไทย 20 กระทรวง พร้อมหน่วยงานในสังกัด รัฐวิสาหกิจ องค์การมหาชน สถาบันอุดมศึกษา และสภาวิชาชีพ — เปิดเป็นข้อมูลเพื่อการศึกษา`;
+  document.getElementById('sm-warn').innerHTML =
+    `⚠️ <b>ข้อมูลสะท้อนโครงสร้างราชการไทย ณ ${DATA_ASOF.structure}</b><br>
+     คณะรัฐมนตรีอ้างอิง${DATA_ASOF.cabinet} · งบประมาณอ้างอิงปีงบประมาณ พ.ศ. ${DATA_ASOF.budgetYear}<br>
+     โครงสร้างหน่วยงานและผู้ดำรงตำแหน่งเปลี่ยนแปลงบ่อย โปรดตรวจสอบกับเว็บไซต์ราชการก่อนนำไปอ้างอิง`;
+  document.getElementById('sm-list').innerHTML = DATA_ASOF.sources.map(s =>
+    `<div class="sm-item"><div class="t">${s.t}</div>
+     <div class="o">${s.o}</div>
+     <a href="${s.u}" target="_blank" rel="noopener">${s.u} ↗</a></div>`).join('');
+  m.hidden = false;
+}
+function closeSrcModal(){ const m = document.getElementById('src-modal'); if(m) m.hidden = true; }
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeSrcModal(); });
+
+(function initDataNotice(){
+  // จุดที่ 1 — ท้ายแผงรายละเอียดทุกโหนด
+  const asof = document.getElementById('ip-asof');
+  if(asof) asof.innerHTML =
+    `ⓘ <b>ข้อมูล ณ ${DATA_ASOF.structure}</b> · งบประมาณปี ${DATA_ASOF.budgetYear} · ${DATA_ASOF.cabinet}<br>
+     โปรดตรวจสอบกับเว็บไซต์ราชการก่อนนำไปอ้างอิง
+     <br><button type="button" onclick="openSrcModal()">ดูที่มาข้อมูลทั้งหมด →</button>`;
+
+  // จุดที่ 2 — แถบใต้หัวเว็บ (ปิดได้ · จำไว้ใน localStorage)
+  const tx = document.getElementById('dn-tx');
+  if(tx) tx.innerHTML =
+    `<b>ข้อมูล<span class="dn-long">สะท้อนโครงสร้างราชการไทย</span> ณ ${DATA_ASOF.structure}</b>` +
+    `<span class="dn-long"> — โครงสร้างและผู้ดำรงตำแหน่งเปลี่ยนแปลงบ่อย โปรดตรวจสอบกับเว็บไซต์ราชการก่อนนำไปอ้างอิง</span>`;
+  let dismissed = false;
+  try { dismissed = localStorage.getItem(DN_KEY) === '1'; } catch(e) {}
+  const bar = document.getElementById('data-notice');
+  if(bar && !dismissed) bar.hidden = false;
+})();
 
 // ── มือถือ: ปัดขึ้น–ลง บนแถบจับ/หัวแผง (แทนปุ่มปิด) ──
 //   ปัดขึ้น = ขยายเต็มจอ · ปัดลง (จากเต็ม) = กลับ peek · ปัดลง (จาก peek) = ปิด
@@ -4337,24 +5479,62 @@ function exitPmLens(){
 }
 document.getElementById('btn-view-grid').onclick=()=>{
   currentView='grid'; exitPmLens();
-  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='grid'));
+  setViewButtons(); syncFxToolbar();
   showGridView(true);
   showCorruptView(false);
 };
-document.getElementById('btn-view-radial').onclick=()=>{
-  currentView='radial'; ringRot.clear(); panelShiftX=0;
-  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='radial'));
-  showGridView(false);
-  showCorruptView(false);
-  buildLayout(); fitView(); draw();
-};
+document.getElementById('btn-view-radial').onclick=()=> switchCanvasView('radial');
 document.getElementById('btn-view-force').onclick=()=>{
   currentView='force'; exitPmLens();
-  ['radial','force','grid'].forEach(v=>document.getElementById('btn-view-'+v).classList.toggle('active',v==='force'));
+  setViewButtons(); syncFxToolbar();
   showGridView(false);
   showCorruptView(true);
 };
 
+
+// ── วางปุ่มลอยให้หลบแผงที่เปิดอยู่ (แผง ครม. พับ/กาง กว้างไม่เท่ากัน) ──
+function syncFxToolbar(){
+  const tb = document.getElementById('fx-toolbar'); if(!tb) return;
+  if(window.innerWidth <= 640) return;                    // มือถือใช้ตำแหน่งจาก CSS
+  const main = document.getElementById('main').getBoundingClientRect();
+  let leftLimit = main.right - 18;
+  [document.getElementById('info-panel'), document.getElementById('cab-panel')].forEach(el=>{
+    if(!el) return;
+    const cs = getComputedStyle(el);
+    if(cs.display === 'none' || cs.visibility === 'hidden') return;
+    if(el.id === 'cab-panel' && el.classList.contains('hidden')) return;
+    if(el.id === 'info-panel' && !el.classList.contains('show')) return;
+    const b = el.getBoundingClientRect();
+    if(b.width && b.top < main.top + 90) leftLimit = Math.min(leftLimit, b.left - 12);
+  });
+  tb.style.right = Math.max(12, Math.round(main.right - leftLimit)) + 'px';
+}
+
+// ── แถบลอย: 5 มุมมองในที่เดียว ──
+const VIEW_BTNS = ['radial','focus','gravity','grid','force'];
+function setViewButtons(){
+  VIEW_BTNS.forEach(v => {
+    const b = document.getElementById('btn-view-'+v);
+    if(b) b.classList.toggle('active', currentView === v);
+  });
+}
+// มุมมองบนแคนวาส (radial/focus/gravity) ใช้เส้นทางเดียวกัน — ต่างแค่ตัวสร้างผัง
+function switchCanvasView(v){
+  currentView = v;
+  exitPmLens();
+  ringRot.clear(); panelShiftX = 0;
+  if(v === 'focus'){ fxKey = fxKeyOfNode(selectedNode); fxTooMany = 0; }
+  else { fxBox = null; fxEdges = []; fxTooMany = 0; }
+  showGridView(false); showCorruptView(false);
+  // แผง ครม. ซ้ำกับกล่อง "คณะรัฐมนตรี" ในผังเจาะจง + บังส่วนโค้งด้านขวา → พับเฉพาะโหมดนั้น
+  const cab = document.getElementById('cab-panel');
+  if(v === 'focus') cab.classList.add('hidden');
+  else if(cabVisible) cab.classList.remove('hidden');
+  setViewButtons(); syncFxToolbar();
+  buildLayout(); fitView(); draw();
+}
+document.getElementById('btn-view-focus').onclick   = () => switchCanvasView('focus');
+document.getElementById('btn-view-gravity').onclick = () => switchCanvasView('gravity');
 
 function resetView(){ ringRot.clear(); panelShiftX = 0; buildLayout(); fitView(); }
 function flyToFit(){
@@ -5301,8 +6481,7 @@ function renderCorruptFiltered() {
 function goToMinistryFromCorrupt(minId, orgNo) {
   showCorruptView(false);
   currentView = 'radial';
-  ['radial','force','grid'].forEach(v =>
-    document.getElementById('btn-view-'+v).classList.toggle('active', v==='radial'));
+  setViewButtons(); syncFxToolbar();
   buildLayout();
   draw();
 
