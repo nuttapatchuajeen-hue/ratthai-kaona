@@ -5325,7 +5325,12 @@ function showPanel(node) {
     const cabList = CABINET[node.data.id]||[];
     const primaryMin = cabList.length > 0 ? cabList[0].name.replace(/^(นาย|นาง(?:สาว)?|ดร\.?|พล(?:โท|ตรี|เอก|อากาศ(?:เอก|โท|ตรี))?(?:ตำรวจ(?:เอก|โท|ตรี))?\s*)/,'').trim() : '-';
     document.getElementById('info-exec').textContent = primaryMin + (cabList.length > 1 ? ` +${cabList.length-1}` : '');
-    document.getElementById('info-web').querySelector('.info-val').innerHTML='-';
+    const minWeb = (typeof MINISTRY_WEBSITES !== 'undefined' && MINISTRY_WEBSITES[node.data.id]) || (node.data && node.data.web) || null;
+    const wv = document.getElementById('info-web').querySelector('.info-val');
+    if(minWeb && minWeb !== 'N/A' && minWeb !== '-') {
+      const url = minWeb.startsWith('http') ? minWeb : 'https://' + minWeb;
+      wv.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${minWeb} ↗</a>`;
+    } else wv.innerHTML = '-';
     const ol=document.getElementById('info-orgs-list'); ol.style.display='block';
     const chips=document.getElementById('info-orgs-chips'); chips.innerHTML='';
     d.orgs.forEach(o=>{
