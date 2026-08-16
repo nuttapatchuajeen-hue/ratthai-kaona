@@ -37,21 +37,49 @@
 .sortbtn svg{width:15px;height:15px}
 .tl-count{font-size:.82rem;color:var(--muted)}
 
-/* rail + rows */
-.tl{position:relative;padding:2px 0 8px}
-.tl::before{content:"";position:absolute;left:112px;top:0;bottom:0;width:2px;
-  background:linear-gradient(var(--line-2),var(--line));border-radius:2px}
-.tlrow{position:relative;padding:0 0 20px 138px;min-height:34px}
-.tlrow .yr{position:absolute;left:0;top:2px;width:94px;text-align:right;font-family:'Kanit'}
+/* rail + rows (centered line + left/right cards) */
+.tl{position:relative;padding:20px 0 30px;max-width:1040px;margin:0 auto}
+.tl::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;
+  background:linear-gradient(var(--line-2),var(--orange),var(--line));border-radius:2px;transform:translateX(-50%)}
+
+.tlrow{position:relative;width:50%;padding-bottom:28px;box-sizing:border-box;min-height:34px}
+
+/* Left side items */
+.tlrow.left{left:0;padding-right:32px;padding-left:0}
+.tlrow.left .yr{position:absolute;left:calc(100% + 22px);top:4px;width:110px;text-align:left;font-family:'Kanit'}
+.tlrow.left .node{position:absolute;right:-9px;top:6px;width:16px;height:16px;border-radius:50%;
+  background:var(--paper);border:3px solid var(--nc,var(--orange));box-shadow:0 0 0 4px var(--paper);z-index:2}
+
+/* Right side items */
+.tlrow.right{left:50%;padding-left:32px;padding-right:0}
+.tlrow.right .yr{position:absolute;right:calc(100% + 22px);top:4px;width:110px;text-align:right;font-family:'Kanit'}
+.tlrow.right .node{position:absolute;left:-9px;top:6px;width:16px;height:16px;border-radius:50%;
+  background:var(--paper);border:3px solid var(--nc,var(--orange));box-shadow:0 0 0 4px var(--paper);z-index:2}
+
 .tlrow .yr b{display:block;font-weight:700;font-size:1.18rem;line-height:1.05;letter-spacing:-.01em}
 .tlrow .yr small{display:block;font-size:.68rem;color:var(--muted);font-weight:400}
-.tlrow .node{position:absolute;left:105px;top:4px;width:16px;height:16px;border-radius:50%;
-  background:var(--paper);border:3px solid var(--nc,var(--orange));box-shadow:0 0 0 4px var(--paper);z-index:1}
+
+/* Scroll Animation (Fade & Slide in / out) */
+.tlrow .tlcard, .tlrow .evcard {
+  opacity: 0;
+  transition: opacity 0.55s ease-out, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .16s;
+}
+.tlrow.left .tlcard, .tlrow.left .evcard {
+  transform: translateX(-40px);
+}
+.tlrow.right .tlcard, .tlrow.right .evcard {
+  transform: translateX(40px);
+}
+
+.tlrow.is-visible .tlcard, .tlrow.is-visible .evcard {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 /* การ์ดการเลือกตั้ง */
 .tlcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--wc,var(--orange));
-  border-radius:15px;box-shadow:var(--shadow);padding:14px 17px;transition:box-shadow .16s,transform .16s}
-.tlcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+  border-radius:15px;box-shadow:var(--shadow);padding:14px 17px}
+.tlcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)!important}
 .tlcard .ch{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:9px}
 .tlcard .ch .dt{font-family:'Kanit';font-weight:600;font-size:.98rem}
 .tlcard .ch .sys{font-size:.76rem;color:var(--muted)}
@@ -95,8 +123,10 @@ html[data-theme="dark"] .dashbtn:hover{color:#081019}
 html[data-theme="dark"] .voidbadge{color:#ff9b9b;background:rgba(255,120,120,.12)}
 
 /* เหตุการณ์ (รัฐประหาร ฯลฯ) */
-.tlrow.ev{padding-bottom:20px}
-.tlrow.ev .node{background:var(--evc,#8a97a3);border-color:var(--paper);width:14px;height:14px;top:5px;left:106px}
+.tlrow.ev{padding-bottom:28px}
+.tlrow.ev.left .node{right:-8px}
+.tlrow.ev.right .node{left:-8px}
+.tlrow.ev .node{background:var(--evc,#8a97a3);border-color:var(--paper);width:14px;height:14px;top:6px}
 .evcard{display:flex;align-items:flex-start;gap:11px;background:var(--wash);border:1px solid var(--line);
   border-radius:13px;padding:11px 15px}
 .evcard .eic{font-size:1.15rem;line-height:1.3;flex:none}
@@ -104,13 +134,18 @@ html[data-theme="dark"] .voidbadge{color:#ff9b9b;background:rgba(255,120,120,.12
 .evcard .ed{font-size:.8rem;color:var(--muted);line-height:1.55}
 .evcard .eyr{font-family:'Kanit';font-size:.74rem;color:var(--orange-deep);margin-top:3px}
 
-@media(max-width:640px){
-  .tl::before{left:8px}
-  .tlrow{padding-left:26px;padding-top:30px}
-  .tlrow .yr{position:static;width:auto;text-align:left;margin-bottom:8px}
+@media(max-width:768px){
+  .tl::before{left:14px;transform:none}
+  .tlrow.left, .tlrow.right{width:100%;left:0;padding-left:36px;padding-right:0;padding-top:24px}
+  .tlrow .yr{position:static;width:auto;text-align:left;margin-bottom:6px}
   .tlrow .yr b{display:inline;font-size:1.1rem}.tlrow .yr small{display:inline;margin-left:7px}
-  .tlrow .node{left:1px;top:34px}
-  .tlrow.ev .node{left:2px;top:34px}
+  .tlrow.left .node, .tlrow.right .node{left:6px;right:auto;top:28px}
+  .tlrow.left .tlcard, .tlrow.right .tlcard, .tlrow.left .evcard, .tlrow.right .evcard {
+    transform: translateY(20px);
+  }
+  .tlrow.is-visible .tlcard, .tlrow.is-visible .evcard {
+    transform: translateY(0);
+  }
 }
 </style>
 </head>
@@ -250,11 +285,36 @@ mdSyncToggle();
   /* ---- ไทม์ไลน์ ---- */
   var host = document.getElementById('tl');
   var asc = true;
+  var observer = null;
+
+  function initObserver() {
+    if (observer) observer.disconnect();
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.tlrow').forEach(function(r){ r.classList.add('is-visible'); });
+      return;
+    }
+    observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        } else {
+          entry.target.classList.remove('is-visible');
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.tlrow').forEach(function(r) { observer.observe(r); });
+  }
+
   function render() {
     var list = asc ? TL.slice() : TL.slice().reverse();
     host.innerHTML = '';
-    list.forEach(function (o) { host.appendChild(o.type === 'event' ? evRow(o) : elRow(o)); });
+    list.forEach(function (o, idx) {
+      var row = o.type === 'event' ? evRow(o) : elRow(o);
+      row.classList.add(idx % 2 === 0 ? 'left' : 'right');
+      host.appendChild(row);
+    });
     document.getElementById('tlcount').textContent = elections.length + ' การเลือกตั้ง · ' + nCoup + ' เหตุการณ์';
+    setTimeout(initObserver, 50);
   }
 
   function elRow(o) {

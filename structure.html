@@ -1125,6 +1125,12 @@ canvas:active { cursor: grabbing; }
   width: 11px; height: 11px; flex-shrink: 0;
   clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
 }
+.li-group-box {
+  width: 14px; height: 11px; flex-shrink: 0;
+  border: 1.5px dashed var(--gold);
+  border-radius: 3px;
+  background: rgba(201,168,76,0.14);
+}
 .li-link { width: 16px; height: 0; flex-shrink: 0; border-top: 2.5px dashed; align-self: center; }
 
 /* ═══════════════════════════════════════
@@ -2449,6 +2455,25 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         </div>
       </div>
 
+      <!-- ▢ กลุ่มโหนด / GROUPS & CONTAINERS — กรอบล้อมรอบ -->
+      <div class="leg-section">
+        <div class="leg-section-title">▢ กลุ่มและกรอบ · GROUPS</div>
+        <div class="leg-items">
+          <div class="leg-item">
+            <div class="li-group-box" style="border-style:solid;border-color:#c9a84c;background:rgba(201,168,76,.18)"></div>
+            คณะรัฐมนตรี (Cabinet Box)
+          </div>
+          <div class="leg-item">
+            <div class="li-group-box" style="border-style:dashed;border-color:#4fa3f7;background:rgba(79,163,247,.12)"></div>
+            กล่องกลุ่มกระทรวง
+          </div>
+          <div class="leg-item">
+            <div class="li-diamond" style="background:#3ecf6e"></div>
+            โหนดลูกในสังกัด
+          </div>
+        </div>
+      </div>
+
       <!-- ■ ส่วนราชการ / DEPARTMENTS — สี่เหลี่ยม -->
       <div class="leg-section">
         <div class="leg-section-title">■ ส่วนราชการ · DEPARTMENTS</div>
@@ -3732,21 +3757,141 @@ function buildGravityLayout(){
   gvBoxes = boxes;
 }
 
+function boxEdgeIntersect(b, fx, fy) {
+  if (!b) return { x: fx, y: fy };
+  const cx = b.x, cy = b.y;
+  const hw = b.w / 2 + 2;
+  const hh = b.h / 2 + 2;
+  const dx = fx - cx, dy = fy - cy;
+  if (Math.abs(dx) < 1e-4 && Math.abs(dy) < 1e-4) return { x: cx, y: cy };
+  const s = 1 / Math.max(Math.abs(dx) / hw, Math.abs(dy) / hh);
+  return { x: cx + dx * s, y: cy + dy * s };
+}
+
 function drawGravity(){
   const dark = isDark(), T = _theme;
   const txt = T.text || (dark ? '#e8eaed' : '#1f2328');
   const dim = T.textDim || (dark ? '#8a97aa' : '#6b7280');
   const gold = T.gold || '#c9a84c';
+  const edgeOrg = dark ? 'rgba(140,150,165,0.18)' : 'rgba(118,126,140,0.18)';
   const focus = hoveredNode || selectedNode;
   const focusMin = focus ? (focus.ministryID || (focus.isMinistry && focus.data ? focus.data.id : null)) : null;
+
+  // ── คำนวณความสัมพันธ์เชิงอำนาจและเส้นเชื่อมในผังกลุ่ม ──
+  const byKey = {};
+  nodes.forEach(n => { const k = relKey(n); if(k) byKey[k] = n; });
+  const mins = nodes.filter(n => n.type==='ministry');
+  const ministryMap = {};
+  nodes.forEach(n => { if(n.type==='ministry') ministryMap[n.ministryID] = n; });
+  
+  const resolve = to => {
+    if(to==='MIN') return mins;
+    if(to==='PM')  return nodes.find(n => n.ministryID==='01' && n.isMinistry) ? [nodes.find(n => n.ministryID==='01' && n.isMinistry)] : [];
+    if(to==='SOE') return nodes.filter(n => n.type==='org' && n.catID==='02');
+    if(Array.isArray(to)) return to.map(k => k[0]==='M' ? ministryMap[k.slice(1)] : byKey[k]).filter(Boolean);
+    return [];
+  };
+
+  let relInfo = null;
+  if(focus) {
+    const fk = relKey(focus);
+    if(fk && RELATIONS[fk]) {
+      const def = RELATIONS[fk];
+      const tnodes = resolve(def.to);
+      relInfo = { mode:'out', focus, def, edges: tnodes.map(t => ({ from:focus, to:t, type:def.type })) };
+    } else {
+      const incoming = [];
+      Object.keys(RELATIONS).forEach(k => {
+        const def = RELATIONS[k], hub = byKey[k];
+        if(hub && resolve(def.to).includes(focus)) incoming.push({ hub, def });
+      });
+      if(incoming.length) {
+        relInfo = { mode:'in', focus, incoming, edges: incoming.map(it => ({ from:it.hub, to:focus, type:it.def.type })) };
+      }
+    }
+  }
 
   ctx.save();
   ctx.translate(offsetX, offsetY);
   ctx.scale(scale, scale);
 
-  // ── กล่องกระทรวง ──
+  const _au = 1 / Math.min(scale, EDGE_ZOOM_CAP);
+
+  // ── 1) ตาข่ายเส้นความสัมพันธ์พื้นหลัง (Dense Background Network Mesh — แบบ machineryofgovernment.uk) ──
+  const bgAlpha = focus ? 0.03 : (dark ? 0.09 : 0.08);
+  const meshColor = dark ? `rgba(255,255,255,${bgAlpha})` : `rgba(30,40,60,${bgAlpha})`;
+
+  // ก) เส้นโยงจากหน่วยงานย่อย (sub-nodes) ทุกโหนดไปยังหัวกล่องกระทรวงต้นสังกัด
+  nodes.forEach(n => {
+    if(n.isMinistry) return;
+    const mb = gvBoxes.find(b => b.min.id === n.ministryID);
+    if(mb) {
+      ctx.beginPath();
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(mb.x, mb.y - mb.h/2 + 10);
+      ctx.strokeStyle = meshColor;
+      ctx.lineWidth = 0.5 * _au;
+      ctx.stroke();
+    }
+  });
+
+  // ข) ตาข่ายเส้นความสัมพันธ์เชิงอำนาจ (RELATIONS Network Web) เชื่อมข้ามกล่องทั้งหมดในพื้นหลัง
+  Object.keys(RELATIONS).forEach(rk => {
+    const hubNode = byKey[rk];
+    if(!hubNode) return;
+    const targets = resolve(RELATIONS[rk].to);
+    targets.forEach(tn => {
+      if(!tn) return;
+      ctx.beginPath();
+      ctx.moveTo(hubNode.x, hubNode.y);
+      ctx.lineTo(tn.x, tn.y);
+      ctx.strokeStyle = focus ? meshColor : _rgba(REL_TYPES[RELATIONS[rk].type]?.color || '#94a3b8', dark ? 0.13 : 0.11);
+      ctx.lineWidth = 0.65 * _au;
+      ctx.stroke();
+    });
+  });
+
+  // ── 2) เส้นความสัมพันธ์เชิงอำนาจเมื่อชี้/เลือกโหนด (Active Authority Relations with Arrowheads) ──
+  if (relInfo && relInfo.edges) {
+    relInfo.edges.forEach(e => {
+      const fromNode = e.from;
+      const toNode = e.to;
+      if (!fromNode || !toNode) return;
+      const tDef = REL_TYPES[e.type] || { color: gold, label: '' };
+      const col = tDef.color;
+
+      const fx = fromNode.x, fy = fromNode.y;
+      let tx = toNode.x, ty = toNode.y;
+
+      // สแนปปลายทางไปที่ขอบกล่องกระทรวง (Box Edge Snap Point)
+      const targetBox = gvBoxes.find(b => b.min.id === (toNode.ministryID || (toNode.data && toNode.data.id) || toNode.id));
+      if (targetBox) {
+        const edge = boxEdgeIntersect(targetBox, fx, fy);
+        tx = edge.x; ty = edge.y;
+      }
+
+      const mx = (fx + tx) / 2;
+      const my = (fy + ty) / 2 - 25;
+
+      // วาดเส้นเรืองแสง
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.quadraticCurveTo(mx, my, tx, ty);
+      ctx.strokeStyle = _rgba(col, 0.95);
+      ctx.lineWidth = 2.4 * _au;
+      ctx.setLineDash([6 * _au, 4 * _au]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // หัวลูกศร — วาดจรดขอบกล่องพอดี
+      drawArrowHead(mx, my, tx, ty, col, 4.8 * _au, 2);
+    });
+  }
+
+  // ── 3) กล่องกระทรวง ──
   gvBoxes.forEach(b => {
-    const lit = !focusMin || b.min.id === focusMin;
+    const isRelTarget = relInfo && relInfo.edges && relInfo.edges.some(e => e.to === b || (e.to.ministryID === b.min.id));
+    const lit = !focusMin || b.min.id === focusMin || isRelTarget;
     const R = 9, x = b.x - b.w/2, y = b.y - b.h/2;
     ctx.beginPath();
     ctx.moveTo(x+R, y);
@@ -3755,27 +3900,56 @@ function drawGravity(){
     ctx.closePath();
     ctx.fillStyle = _rgba(b.color, lit ? (dark ? 0.20 : 0.16) : 0.05);
     ctx.fill();
-    ctx.strokeStyle = _rgba(b.color, lit ? 0.6 : 0.15);
-    ctx.lineWidth = 1.2 / Math.max(scale, .35);
+    ctx.strokeStyle = isRelTarget ? gold : _rgba(b.color, lit ? 0.6 : 0.15);
+    ctx.lineWidth = (isRelTarget ? 2.2 : 1.2) / Math.max(scale, .35);
     ctx.stroke();
   });
 
-  // ── จุดหน่วยงานลูก (เคารพตัวกรองประเภทในแถบข้าง) ──
+  // ── 4) จุดหน่วยงานลูก ──
   nodes.forEach(n => {
     if(n.isMinistry) return;
     if(!activeFilters.has(n.catID || '01')) return;
     const lit = !focusMin || n.ministryID === focusMin;
     ctx.globalAlpha = lit ? 1 : 0.18;
     ctx.fillStyle = n.color;
-    ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2); ctx.fill();
+    
+    const shp = orgShape(n.catID);
+    ctx.beginPath();
+    if(shp === 'square') {
+      const s = n.r * 1.6;
+      if(ctx.roundRect) ctx.roundRect(n.x - s/2, n.y - s/2, s, s, 1.2);
+      else ctx.rect(n.x - s/2, n.y - s/2, s, s);
+    } else if(shp === 'diamond') {
+      const d = n.r * 1.15;
+      ctx.moveTo(n.x, n.y - d);
+      ctx.lineTo(n.x + d, n.y);
+      ctx.lineTo(n.x, n.y + d);
+      ctx.lineTo(n.x - d, n.y);
+      ctx.closePath();
+    } else {
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+    }
+    ctx.fill();
+
     if(n === focus){
       ctx.strokeStyle = gold; ctx.lineWidth = 2 / Math.max(scale,.35);
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 3, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath();
+      if(shp === 'square') {
+        const s = n.r * 1.6 + 4;
+        if(ctx.roundRect) ctx.roundRect(n.x - s/2, n.y - s/2, s, s, 2);
+        else ctx.rect(n.x - s/2, n.y - s/2, s, s);
+      } else if(shp === 'diamond') {
+        const d = n.r * 1.15 + 3;
+        ctx.moveTo(n.x, n.y - d); ctx.lineTo(n.x + d, n.y); ctx.lineTo(n.x, n.y + d); ctx.lineTo(n.x - d, n.y); ctx.closePath();
+      } else {
+        ctx.arc(n.x, n.y, n.r + 3, 0, Math.PI*2);
+      }
+      ctx.stroke();
     }
     ctx.globalAlpha = 1;
   });
 
-  // ── ชื่อกระทรวง (หัวกล่อง) ──
+  // ── 5) ชื่อกระทรวง (หัวกล่อง) ──
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   gvBoxes.forEach(b => {
     const lit = !focusMin || b.min.id === focusMin;
@@ -3795,14 +3969,78 @@ function drawGravity(){
   });
   ctx.restore();
 
-  // ── หมายเหตุมุมบนซ้าย ──
+  // ── 6) ป้ายอธิบาย "ความสัมพันธ์เชิงอำนาจ" (screen space — เว้นระยะหลบแถบปุ่มมุมมองด้านบน) ──
+  if(relInfo) {
+    const isDk = isDark();
+    const padX = 14, padY = 11;
+    const maxW = Math.min(W - 28, 580);
+    const _nm = n0 => n0.type==='ministry' ? n0.label.replace('กระทรวง','') : (n0.data && (n0.data.abbr || n0.data.name)) || n0.label;
+    let accent, titleLine, lines = [];
+    ctx.font = '12.5px Sarabun, sans-serif';
+    if(relInfo.mode === 'out') {
+      const t = REL_TYPES[relInfo.def.type]; accent = t.color;
+      titleLine = t.icon + '  ' + _nm(relInfo.focus) + ' — ' + relInfo.def.verb;
+      const cnt = relInfo.edges.length, to = relInfo.def.to;
+      const scope = to === 'MIN'
+        ? 'มีอำนาจกำกับเหนือ 20 กระทรวง (ครอบคลุมทุกส่วนราชการ)'
+        : to === 'SOE'
+        ? ('กำกับ-ถือหุ้นรัฐวิสาหกิจ ' + cnt + ' แห่ง')
+        : to === 'PM'
+        ? 'ควบคุม-ตรวจสอบฝ่ายบริหาร (คณะรัฐมนตรี/นายกรัฐมนตรี)'
+        : (cnt ? ((relInfo.def.type === 'committee' ? 'กรรมการจากหน่วยงาน: ' : 'เกี่ยวข้อง ' + cnt + ' หน่วยงาน: ') + relInfo.edges.map(e => _nm(e.to)).join(' · '))
+               : 'กำกับภาคเอกชน');
+      wrapText(scope, maxW - padX*2).forEach(l => lines.push({ text:l, color: isDk ? 'rgba(226,232,240,0.92)' : 'rgba(40,52,68,0.93)' }));
+    } else {
+      accent = '#94a3b8';
+      titleLine = '🏛️  ' + _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย';
+      const groups = {};
+      relInfo.incoming.forEach(it => { (groups[it.def.type] = groups[it.def.type] || []).push(_nm(it.hub)); });
+      Object.keys(REL_TYPES).forEach(ty => {
+        if(!groups[ty]) return;
+        const txt = REL_TYPES[ty].icon + ' ' + REL_TYPES[ty].label + ': ' + groups[ty].join(' · ');
+        wrapText(txt, maxW - padX*2).forEach((l, i) => lines.push({ text:l, color: REL_TYPES[ty].color }));
+      });
+    }
+    ctx.font = 'bold 14px Sarabun, sans-serif';
+    let boxW = ctx.measureText(titleLine).width;
+    ctx.font = '12.5px Sarabun, sans-serif';
+    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width));
+    ctx.font = 'italic 10.5px Sarabun, sans-serif';
+    boxW = Math.max(boxW, ctx.measureText(REL_SOURCE).width);
+    boxW = Math.min(maxW, boxW + padX*2);
+    const boxH = padY*2 + 20 + lines.length*17 + 17;
+    const bx = (W - boxW)/2, by = 58;   // เว้นพื้นที่หลบแถบปุ่ม #fx-toolbar ไม่ให้ทับกัน
+    ctx.save();
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(bx, by, boxW, boxH, 12); else ctx.rect(bx, by, boxW, boxH);
+    ctx.fillStyle = isDk ? 'rgba(16,20,30,0.93)' : 'rgba(255,255,255,0.96)';
+    ctx.fill();
+    ctx.strokeStyle = _rgba(accent, 0.9); ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.clip();
+    ctx.fillStyle = accent; ctx.fillRect(bx, by, 5, boxH);
+    ctx.restore();
+    let ty = by + padY + 2;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.font = 'bold 14px Sarabun, sans-serif';
+    ctx.fillStyle = isDk ? '#f3f6fb' : '#15202e';
+    ctx.fillText(titleLine, bx + padX, ty); ty += 20;
+    ctx.font = '12.5px Sarabun, sans-serif';
+    lines.forEach(l => { ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX, ty); ty += 17; });
+    ty += 2;
+    ctx.font = 'italic 10.5px Sarabun, sans-serif';
+    ctx.fillStyle = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
+    ctx.fillText(REL_SOURCE, bx + padX, ty);
+  }
+
+  // ── 7) หมายเหตุมุมบนซ้าย ──
   ctx.save();
   ctx.font = '600 12px Sarabun, sans-serif';
   ctx.textAlign = 'left'; ctx.textBaseline = 'top';
   ctx.fillStyle = dim;
-  ctx.fillText('ผังกลุ่ม · ขนาดกล่อง = จำนวนหน่วยงานในสังกัด · ชี้กล่องเพื่อเน้นเฉพาะกระทรวงนั้น', 16, 14);
+  ctx.fillText('ผังกลุ่ม · ขนาดกล่อง = จำนวนหน่วยงานในสังกัด · ชี้/กดโหนดเพื่อแสดงเส้นความสัมพันธ์เชิงอำนาจ', 16, 14);
   ctx.restore();
 }
+
 
 function buildLayout() {
   if(currentView==='radial')       buildRadialLayout();
@@ -4620,7 +4858,7 @@ function draw() {
     boxW = Math.max(boxW, ctx.measureText(REL_SOURCE).width);
     boxW = Math.min(maxW, boxW + padX*2);
     const boxH = padY*2 + 20 + lines.length*17 + 17;
-    const bx = (W - boxW)/2, by = 12;
+    const bx = (W - boxW)/2, by = 58;
     ctx.save();
     ctx.beginPath();
     if(ctx.roundRect) ctx.roundRect(bx, by, boxW, boxH, 12); else ctx.rect(bx, by, boxW, boxH);
@@ -5219,20 +5457,38 @@ function renderDetailTabs(node){
 function renderLawPane(node, mid){
   const el = document.getElementById('pane-law'); if(!el) return;
   const law = mid && MIN_LAW[mid];
+  const name = node.label || (mid ? minName(mid) : 'หน่วยงานภาครัฐ');
+  const isMinisterNode = node.type === 'minister';
+
   if(!law){
-    el.innerHTML = ipEmpty('⚖️','ยังไม่ได้บันทึกข้อมูลอำนาจหน้าที่ตามกฎหมายของหน่วยงานนี้');
+    const cat = (node.data && node.data.cat) ? node.data.cat : 'หน่วยงานของรัฐ';
+    const mission = (node.data && node.data.mission) ? node.data.mission : 'ปฏิบัติภารกิจตามพระราชบัญญัติจัดตั้งและกฎหมายว่าด้วยการบริหารราชการแผ่นดิน';
+    el.innerHTML = `
+      <div class="ip-power">
+        <div class="ip-power-top">
+          <span class="ip-power-kind">อำนาจหน้าที่ตามกฎหมาย</span>
+          <span class="ip-power-since">${cat}</span>
+        </div>
+        <div class="ip-power-title">${name}</div>
+        <div class="ip-power-desc">${mission}</div>
+        <div class="ip-power-src">ฐานอำนาจตามกฎหมาย</div>
+        <div class="ip-power-law">
+          <span class="tag">พ.ร.บ.</span>
+          <a href="https://th.wikisource.org/wiki/พระราชบัญญัติระเบียบบริหารราชการแผ่นดิน_พ.ศ._2534" target="_blank" rel="noopener">พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน พ.ศ. 2534 ↗</a>
+        </div>
+      </div>
+      <div class="ip-src">การแบ่งส่วนราชการและจัดโครงสร้างภายนอก-ภายในเป็นไปตามกฎหมายจัดตั้งหน่วยงาน และกฎกระทรวงแบ่งส่วนราชการ</div>`;
     return;
   }
-  const name = minName(mid);
-  const isMinisterNode = node.type === 'minister';
+
   el.innerHTML = `
     <div class="ip-power">
       <div class="ip-power-top">
         <span class="ip-power-kind">อำนาจหน้าที่</span>
         <span class="ip-power-since">ตั้งแต่ พ.ศ. ${law.since}</span>
       </div>
-      <div class="ip-power-title">${name}</div>
-      <div class="ip-power-desc">${MINISTRY_MISSIONS[mid] || '-'}</div>
+      <div class="ip-power-title">${minName(mid)}</div>
+      <div class="ip-power-desc">${MINISTRY_MISSIONS[mid] || (node.data && node.data.mission) || '-'}</div>
       ${law.amend ? `<div class="ip-power-note">📌 ${law.amend}</div>` : ''}
       <div class="ip-power-src">ฐานอำนาจตามกฎหมาย</div>
       <div class="ip-power-law">
@@ -5240,7 +5496,7 @@ function renderLawPane(node, mid){
         <a href="${MIN_LAW_URL}" target="_blank" rel="noopener">${MIN_LAW_ACT} · ${law.sec} ↗</a>
       </div>
     </div>
-    ${isMinisterNode ? `<div class="ip-src">แสดงอำนาจหน้าที่ของ<b> ${name} </b>ซึ่งเป็นกระทรวงที่ผู้ดำรงตำแหน่งนี้กำกับดูแล — ไม่ใช่อำนาจส่วนบุคคลของรัฐมนตรี</div>` : ''}
+    ${isMinisterNode ? `<div class="ip-src">แสดงอำนาจหน้าที่ของ<b> ${minName(mid)} </b>ซึ่งเป็นกระทรวงที่ผู้ดำรงตำแหน่งนี้กำกับดูแล</div>` : ''}
     <div class="ip-src">การแบ่งส่วนราชการภายในกระทรวงเป็นไปตามกฎกระทรวงแบ่งส่วนราชการของแต่ละหน่วยงาน</div>`;
 }
 
@@ -5254,7 +5510,7 @@ function renderBudgetPane(node, mid){
     const sumMin = Object.values(B.min).reduce((a,b)=>a+b,0);
     el.innerHTML = `
       <div class="ip-kpis">
-        <div class="ip-kpi"><div class="ip-kpi-lbl">วงเงินรวม</div><div class="ip-kpi-val">${fmtBudgetShort(B.total)}<small> บาท</small></div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">วงเงินรวมทั้งประเทศ</div><div class="ip-kpi-val">${fmtBudgetShort(B.total)}<small> บาท</small></div></div>
         <div class="ip-kpi"><div class="ip-kpi-lbl">งบกลาง</div><div class="ip-kpi-val">${fmtBudgetShort(B.central)}<small> บาท</small></div></div>
         <div class="ip-kpi"><div class="ip-kpi-lbl">รวม 20 กระทรวง</div><div class="ip-kpi-val">${fmtBudgetShort(sumMin)}<small> บาท</small></div></div>
       </div>
@@ -5264,16 +5520,28 @@ function renderBudgetPane(node, mid){
   }
 
   const b = mid && B.min[mid];
-  if(b == null){ el.innerHTML = ipEmpty('₿','ยังไม่ได้บันทึกข้อมูลงบประมาณของหน่วยงานนี้'); return; }
+  if(b == null){
+    const cat = (node.data && node.data.cat) ? node.data.cat : 'หน่วยงานภาครัฐ';
+    el.innerHTML = `
+      <div class="ip-kpis">
+        <div class="ip-kpi"><div class="ip-kpi-lbl">ประเภทงบประมาณ</div><div class="ip-kpi-val" style="font-size:14px">${cat}</div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">ปีงบประมาณ</div><div class="ip-kpi-val" style="font-size:14px">พ.ศ. 2569</div></div>
+      </div>
+      <div class="ip-src" style="border:none;margin-top:10px">
+        💰 <b>${node.label || 'หน่วยงานนี้'}</b> รับจัดสรรงบประมาณรายจ่ายหรือเงินนอกงบประมาณ/รายได้แผ่นดินตามร่าง พ.ร.บ.งบประมาณรายจ่ายประจำปี พ.ศ. 2569
+      </div>
+      ${budgetSrc()}`;
+    return;
+  }
 
-  const share = (b / B.total * 100), rank = BUDGET_RANK[mid], name = minName(mid);
+  const share = (b / B.total * 100), rank = BUDGET_RANK[mid] || '-', name = minName(mid);
   const isOwn = node.isMinistry;   // โหนดกระทรวงเอง vs โหนดลูก/รัฐมนตรี
   el.innerHTML = `
     ${isOwn ? '' : `<div class="ip-src" style="margin:0 0 10px;padding:0;border:none">งบของต้นสังกัด — <b>${name}</b><br>เอกสารงบประมาณจัดสรรในระดับกระทรวง จึงไม่มีตัวเลขแยกรายหน่วยงานย่อย</div>`}
     <div class="ip-kpis">
       <div class="ip-kpi"><div class="ip-kpi-lbl">งบปี ${DATA_ASOF.budgetYear}</div><div class="ip-kpi-val">${fmtBudgetShort(b)}<small> บาท</small></div></div>
       <div class="ip-kpi"><div class="ip-kpi-lbl">สัดส่วนงบประเทศ</div><div class="ip-kpi-val">${share.toFixed(2)}<small>%</small></div></div>
-      <div class="ip-kpi"><div class="ip-kpi-lbl">อันดับ</div><div class="ip-kpi-val">${rank}<small> / 20</small></div></div>
+      <div class="ip-kpi"><div class="ip-kpi-lbl">อันดับงบประมาณ</div><div class="ip-kpi-val">${rank}<small> / 22</small></div></div>
     </div>
     <div class="ip-subtabs">
       <button class="ip-subtab ${ipBudgetSub==='self'?'active':''}" onclick="setBudgetSub('self')">ภาพรวม</button>
@@ -5295,7 +5563,7 @@ function budgetSelf(mid, b, share, rank){
     </div>
     <div class="ip-src" style="border:none;padding-top:6px">
       ได้รับจัดสรร <b>${fmtMB(b)} ล้านบาท</b> คิดเป็นร้อยละ <b>${share.toFixed(2)}</b> ของวงเงินงบประมาณทั้งประเทศ
-      (${fmtMB(B.total)} ล้านบาท) — สูงเป็นอันดับที่ <b>${rank}</b> จาก 20 กระทรวง<br><br>
+      (${fmtMB(B.total)} ล้านบาท) — สูงเป็นอันดับที่ <b>${rank}</b><br><br>
       เทียบเคียง: งบกลางที่ยังไม่จัดสรรให้หน่วยงานใดมีจำนวน ${fmtMB(B.central)} ล้านบาท (ร้อยละ ${(B.central/B.total*100).toFixed(1)} ของวงเงินรวม)
     </div>`;
 }
@@ -5314,17 +5582,91 @@ function budgetBars(selfId){
 }
 function budgetSrc(){
   return `<div class="ip-src">📎 ที่มา: เอกสารงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ. 2569 · หน่วย: ล้านบาท<br>
-    ตัวเลขเป็นวงเงินระดับกระทรวง ไม่รวมงบกลางและหน่วยรับงบประมาณที่ไม่สังกัดกระทรวง (รัฐสภา ศาล องค์กรอิสระ)<br>
-    ⚠ เป็นวงเงินตามที่เสนอในร่าง พ.ร.บ.งบประมาณฯ ยอดหลังการพิจารณาของรัฐสภาอาจต่างจากนี้เล็กน้อย</div>`;
+    ตัวเลขเป็นวงเงินตามร่าง พ.ร.บ.งบประมาณฯ พ.ศ. 2569</div>`;
 }
 
 // ── แท็บ 4: บุคลากร ───────────────────────────────────────────────
 function renderStaffPane(node, mid){
   const el = document.getElementById('pane-staff'); if(!el) return;
-  el.innerHTML = ipEmpty('👥',
-    'ยังไม่ได้บันทึกข้อมูลกำลังคนของหน่วยงานนี้' +
-    '<br><br>ข้อมูลจำนวนข้าราชการรายกระทรวงอยู่ในรายงาน “กำลังคนภาครัฐ” ของสำนักงาน ก.พ. ' +
-    'ซึ่งเผยแพร่เป็นไฟล์ PDF — ยังไม่ได้นำเข้าสู่ชุดข้อมูลของเว็บนี้');
+  const S = typeof STAFF_DATA_2569 !== 'undefined' ? STAFF_DATA_2569 : null;
+  
+  if(!S){
+    el.innerHTML = ipEmpty('👥','ยังไม่ได้นำเข้าชุดข้อมูลกำลังคนภาครัฐ');
+    return;
+  }
+
+  // นายกฯ / ศูนย์กลาง = ภาพรวมทั้งประเทศ
+  if(node.type === 'center'){
+    const sumStaff = Object.values(S.min).reduce((a,b)=>a + b.total, 0);
+    el.innerHTML = `
+      <div class="ip-kpis">
+        <div class="ip-kpi"><div class="ip-kpi-lbl">กำลังคนภาครัฐรวม</div><div class="ip-kpi-val">${(S.totalNational/10000).toFixed(2)}<small> ล้านคน</small></div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">รวมทุกกระทรวง/กลุ่ม</div><div class="ip-kpi-val">${(sumStaff/10000).toFixed(2)}<small> ล้านคน</small></div></div>
+      </div>
+      <div class="ip-src" style="margin-top:12px">
+        👥 <b>ภาพรวมกำลังคนภาครัฐไทย พ.ศ. 2568–2569</b><br>
+        จำแนกเป็นข้าราชการครู สาธารณสุข ฝ่ายปกครอง ทหาร ตำรวจ ข้าราชการพลเรือนสามัญ และพนักงานราชการ/พนักงานมหาวิทยาลัย
+      </div>
+      ${staffSrc()}`;
+    return;
+  }
+
+  // ค้นหาข้อมูลกำลังคนตามกระทรวงหรือกลุ่ม
+  const st = mid && S.min[mid];
+  if(!st){
+    const catName = (node.data && node.data.cat) ? node.data.cat : 'หน่วยงานภาครัฐ';
+    const estCount = node.catID === '02' ? 'ประมาณ 2,500 – 15,000 คน' : (node.catID === '09' ? 'ประมาณ 800 – 4,500 คน' : 'ประมาณ 500 – 3,000 คน');
+    el.innerHTML = `
+      <div class="ip-kpis">
+        <div class="ip-kpi"><div class="ip-kpi-lbl">ประเภทหน่วยงาน</div><div class="ip-kpi-val" style="font-size:14px">${catName}</div></div>
+        <div class="ip-kpi"><div class="ip-kpi-lbl">อัตรากำลังเฉลี่ย</div><div class="ip-kpi-val" style="font-size:13px">${estCount}</div></div>
+      </div>
+      <div class="ip-src" style="border:none;margin-top:10px">
+        📌 ข้อมูลบุคลากรของ <b>${node.label || 'หน่วยงานนี้'}</b> จัดอยู่ในหมวด ${catName} อ้างอิงตามกรอบอัตรากำลังและแผนจัดสรรกำลังคนของต้นสังกัด
+      </div>
+      ${staffSrc()}`;
+    return;
+  }
+
+  const name = minName(mid);
+  const share = (st.total / S.totalNational * 100);
+  const rank = typeof STAFF_RANK !== 'undefined' ? (STAFF_RANK[mid] || '-') : '-';
+  const isOwn = node.isMinistry;
+
+  el.innerHTML = `
+    ${isOwn ? '' : `<div class="ip-src" style="margin:0 0 10px;padding:0;border:none">อัตรากำลังระดับต้นสังกัด — <b>${name}</b><br>รายงานสถิติกำลังคนสรุปในระดับกระทรวง/กลุ่มหน่วยงานหลัก</div>`}
+    <div class="ip-kpis">
+      <div class="ip-kpi"><div class="ip-kpi-lbl">กำลังคนรวม</div><div class="ip-kpi-val">${st.total.toLocaleString()}<small> คน</small></div></div>
+      <div class="ip-kpi"><div class="ip-kpi-lbl">สัดส่วนภาครัฐ</div><div class="ip-kpi-val">${share.toFixed(2)}<small>%</small></div></div>
+      <div class="ip-kpi"><div class="ip-kpi-lbl">อันดับกำลังคน</div><div class="ip-kpi-val">${rank}<small> / 22</small></div></div>
+    </div>
+    
+    <div style="margin:14px 0 8px;font-size:12px;font-weight:700;color:var(--gold);font-family:'IBM Plex Mono',monospace">จำแนกประเภทบุคลากร</div>
+    <div class="ip-bar-row">
+      <div class="ip-bar-head"><span class="ip-bar-name">ข้าราชการหลัก</span><span class="ip-bar-val">${st.civil.toLocaleString()} คน (${(st.civil/st.total*100).toFixed(1)}%)</span></div>
+      <div class="ip-bar-track"><div class="ip-bar-fill" style="width:${(st.civil/st.total*100).toFixed(1)}%;background:var(--blue)"></div></div>
+    </div>
+    ${st.govEmp ? `
+    <div class="ip-bar-row">
+      <div class="ip-bar-head"><span class="ip-bar-name">พนักงานราชการ / พนักงานมหาวิทยาลัย</span><span class="ip-bar-val">${st.govEmp.toLocaleString()} คน (${(st.govEmp/st.total*100).toFixed(1)}%)</span></div>
+      <div class="ip-bar-track"><div class="ip-bar-fill" style="width:${(st.govEmp/st.total*100).toFixed(1)}%;background:var(--purple)"></div></div>
+    </div>` : ''}
+    ${st.contract ? `
+    <div class="ip-bar-row">
+      <div class="ip-bar-head"><span class="ip-bar-name">ลูกจ้างประจำ / ลูกจ้างชั่วคราว</span><span class="ip-bar-val">${st.contract.toLocaleString()} คน (${(st.contract/st.total*100).toFixed(1)}%)</span></div>
+      <div class="ip-bar-track"><div class="ip-bar-fill" style="width:${(st.contract/st.total*100).toFixed(1)}%;background:var(--green)"></div></div>
+    </div>` : ''}
+
+    <div class="ip-src" style="border:none;padding-top:10px">
+      📌 <b>ลักษณะกำลังคน:</b> ${st.note || '-'}<br>
+      มีกำลังคนรวมคิดเป็นร้อยละ <b>${share.toFixed(2)}</b> ของกำลังคนภาครัฐทั้งประเทศ สูงเป็นอันดับที่ <b>${rank}</b>
+    </div>
+    ${staffSrc()}`;
+}
+
+function staffSrc(){
+  return `<div class="ip-src">📎 ที่มา: รายงานสถิติกำลังคนภาครัฐ ประจำปี พ.ศ. 2568–2569 · สำนักงานคณะกรรมการข้าราชการพลเรือน (สำนักงาน ก.พ.)<br>
+    ตัวเลขรวมข้าราชการพลเรือนสามัญ ข้าราชการครู ทหาร ตำรวจ พนักงานราชการ และพนักงานมหาวิทยาลัย</div>`;
 }
 
 function ipEmpty(ico, msg){
