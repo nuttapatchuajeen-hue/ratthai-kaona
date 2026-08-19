@@ -8,6 +8,8 @@
    เพลง: ค่าเริ่มต้น "เปิดเสียง" และจำสิ่งที่ผู้ใช้เลือกไว้ใช้ทุกปี (localStorage 'el-intro-sound')
          เบราว์เซอร์บล็อก autoplay ถ้ายังไม่มีการคลิกในหน้านั้น → ลองเล่นก่อน ถ้าโดนบล็อก
          ปุ่มจะกลับเป็น "เปิดเสียง" แล้วรอผู้ใช้แตะหน้าครั้งแรก ค่อยเล่นเองอัตโนมัติ
+         พรรคเดิมชนะติดต่อกัน (เพลงไฟล์เดียวกัน + เป็นการเลือกตั้งครั้งที่ติดกัน) = เล่นต่อจากจุดเดิม
+         ไม่ดีดกลับไปท่อนแรก (sessionStorage 'el-intro-pos')
 
    ⚠ ต้องโหลดหลัง year-switch.js · intro-data.js · intro-seats.js */
 (function () {
@@ -326,6 +328,90 @@
   if (MUSIC) { audio.src = MUSIC; audio.loop = true; audio.volume = .45; audio.muted = !want; }
   var hasAudio = !!MUSIC;
   var sndBtn = el.querySelector('[data-a="sound"]');
+
+  /* ---------- พรรคเดิมชนะติดต่อกัน = เพลงเล่นต่อ ไม่เริ่มท่อนแรกใหม่ ----------
+     สลับปีคือ "โหลดหน้าใหม่" (year-switch.js ใช้ location.href) → <audio> ตัวเก่าตายไปพร้อมหน้า
+     ปีที่พรรคเดิมชนะติดกันจึงได้เพลงไฟล์เดียวกันแต่ดีดกลับไปเริ่มต้นทุกครั้ง เช่น
+     ไทยรักไทย 2544→2548 · เพื่อไทย 2554→2562 · ปชป. 2518→2519 · กิจสังคม 2522→2526
+     แก้โดยจดตำแหน่งเพลงตอนออกจากหน้า แล้วปีถัดไปถ้า "ไฟล์เดียวกัน + เป็นครั้งที่ติดกัน"
+     ค่อยเล่นต่อจากจุดนั้น บวกเวลาที่เสียไปตอนโหลดหน้า ให้เพลงเดินต่อเหมือนไม่เคยหยุด
+     ⚠ ต้องเช็กว่าติดกันจริง ไม่ใช่แค่ไฟล์ตรงกัน — ปชป. ปี 2491 กับ 2518 ใช้ไฟล์เดียวกัน
+       แต่ห่างกัน 5 ครั้ง (คนละยุค) แบบนั้นให้เริ่มใหม่ตามปกติ                            */
+  var PKEY = 'el-intro-pos';                          // sessionStorage: อยู่แค่ในแท็บนี้ ปิดแท็บก็หาย
+  var SEQ = (window.EYEARS || []).map(function (o) { return o.id; });   // เรียงครั้งใหม่→เก่า
+  // ห่างเกินนี้ = ไม่ใช่การสลับปีต่อเนื่องแล้ว · เผื่อเน็ตช้าโหลดหน้านาน (จดทุก 1 วิ ค่าจึงสดเสมอ)
+  var GAPMAX = 20;
+  var lastSave = 0;
+
+  function savePos() {
+    if (!hasAudio) return;
+    try {
+      // หยุดเพลงอยู่ = ไม่ต้องจำ (ลบทิ้งด้วย กันของเก่าค้างแล้วปีหน้าเล่นต่อทั้งที่ผู้ใช้สั่งปิด)
+      if (audio.paused || !audio.currentTime) { sessionStorage.removeItem(PKEY); return; }
+      sessionStorage.setItem(PKEY, JSON.stringify(
+        { f: MUSIC, t: audio.currentTime, y: window.EYID, at: Date.now() }));
+    } catch (err) { }
+  }
+
+  function resumeAt() {                               // วินาทีที่ควรเริ่ม · 0 = เริ่มใหม่ตามปกติ
+    var s = null;
+    try { s = JSON.parse(sessionStorage.getItem(PKEY) || 'null'); } catch (err) { }
+    if (!s || s.f !== MUSIC) return 0;                // คนละพรรค/คนละเพลง → เริ่มใหม่
+    var i = SEQ.indexOf(s.y), j = SEQ.indexOf(window.EYID);
+    if (i < 0 || j < 0 || Math.abs(i - j) > 1) return 0;   // 0 = หน้าเดิมโหลดซ้ำ · 1 = ครั้งที่ติดกัน
+    var gap = (Date.now() - (s.at || 0)) / 1000;
+    if (gap < 0 || gap > GAPMAX) return 0;
+    return s.t + gap;
+  }
+
+  if (hasAudio) {
+    var resume = resumeAt();
+    if (resume) {
+      /* เริ่มแบบเงียบไว้ก่อน แล้วค่อยเฟดเข้าหลังกระโดดไปจุดที่ค้างไว้สำเร็จ — กัน 2 อย่าง
+         · เสียง "ป๊อก" เพราะตัดเข้ากลางคลื่นเสียง (ไม่ได้เริ่มที่ศูนย์เหมือนตอนเปิดไฟล์)
+         · ท่อนแรกโผล่มาแวบหนึ่งก่อนกระโดด ในกรณีที่ seek ยังทำไม่ได้ทันที           */
+      audio.volume = 0;
+      var settled = false;
+      function ramp() {
+        var k = 0;
+        // ⚠ ใช้ setInterval ไม่ใช่ rAF — สลับปีมาแล้วแท็บยังไม่ active rAF จะค้าง เสียงจะเบาแหง็กค้างอยู่อย่างนั้น
+        var iv = setInterval(function () {
+          k++; audio.volume = .45 * Math.min(1, k / 9);
+          if (k >= 9) clearInterval(iv);
+        }, 30);
+      }
+      /* ⚠ สั่ง currentTime เฉย ๆ ไม่พอ — ต้องรอให้ช่วงเวลานั้น seekable ก่อน ไม่งั้นสเปกสั่งให้ยกเลิก seek เงียบ ๆ
+         เซิร์ฟเวอร์ที่ไม่รองรับ HTTP Range (static_server.js / election/server.js ที่ใช้พรีวิวในเครื่อง
+         ตอบ 200 เต็มไฟล์เสมอ) จะกระโดดไม่ได้เลยจนกว่าจะโหลดครบทั้งก้อน · GitHub Pages รองรับ Range
+         จึงติดตั้งแต่ loadedmetadata → สั่งซ้ำทุกครั้งที่บัฟเฟอร์เพิ่ม แล้วอ่านค่ากลับมาเช็กว่าติดจริงไหม */
+      var EVS = ['loadedmetadata', 'progress', 'canplay', 'canplaythrough'];
+      var until = Date.now() + 2500;                  // เลยนี้ไปแล้วค่อยกระโดด สะดุดกว่าปล่อยให้เล่นไปเลย
+      function stopSeek() {
+        if (settled) return; settled = true;
+        EVS.forEach(function (e) { audio.removeEventListener(e, trySeek); });
+        ramp();
+      }
+      function trySeek() {
+        var d = audio.duration;
+        if (d && isFinite(d)) {
+          var to = resume % d;
+          try { audio.currentTime = to; } catch (err) { }
+          if (Math.abs(audio.currentTime - to) < 1) return stopSeek();   // ติดแล้ว
+        }
+        if (Date.now() > until) stopSeek();                              // ยอมแพ้ เล่นจากต้นไป
+      }
+      EVS.forEach(function (e) { audio.addEventListener(e, trySeek); });
+      setTimeout(trySeek, 2600);                      // เผื่อไฟล์นิ่งจนไม่มี event ไหนยิงอีกเลย
+    }
+    addEventListener('pagehide', savePos);
+    // pagehide ไม่ยิงในบางกรณี (มือถือสลับแอป/เบราว์เซอร์เก่า) → จดสำรองไว้ทุก 1 วิ และตอนแท็บหาย
+    addEventListener('visibilitychange', function () { if (document.hidden) savePos(); });
+    audio.addEventListener('timeupdate', function () {
+      var n = Date.now();
+      if (n - lastSave < 1000) return;
+      lastSave = n; savePos();
+    });
+  }
 
   /* ปุ่มค้างบนหน้า: ดูฉากเปิดซ้ำ + เปิด/ปิดเสียง */
   var dock = document.createElement('div');

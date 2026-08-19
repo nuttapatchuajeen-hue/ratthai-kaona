@@ -26,8 +26,8 @@
 .tabs button b{font-family:'Kanit';font-weight:700}
 @media(max-width:860px){
   .phead .bt{font-size:1.05rem}
-  .tabs{margin-left:0;width:100%;justify-content:stretch}
-  .tabs button{flex:1;justify-content:center;padding:8px 6px;font-size:.82rem}
+  .tabs{margin-left:0;width:100%;justify-content:stretch;flex-wrap:wrap}
+  .tabs button{flex:1 1 28%;justify-content:center;padding:8px 6px;font-size:.82rem}
 }
 
 .pgrid{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:16px;align-items:start}
@@ -281,6 +281,105 @@ html[data-theme="dark"] .cseat{stroke:rgba(0,0,0,.4)}
 
 .pfoot{margin-top:22px;font-size:.72rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
 .pfoot a{color:var(--orange-deep);text-decoration:underline}
+
+/* ===== แท็บ "ประวัติ" — ไทม์ไลน์เลือกตั้งผู้ว่าฯ กทม. 2518–2569 ===== */
+#histView .hintro{color:var(--muted);font-size:.92rem;max-width:760px;margin:0 0 18px;line-height:1.75}
+#histView .hintro b{color:var(--ink);font-weight:600}
+#histView .statrow{margin-bottom:20px}
+@media(max-width:760px){#histView .statrow{grid-template-columns:repeat(2,1fr)}#histView .tile .v{font-size:1.6rem}}
+
+/* แถบภาพรวมผู้มาใช้สิทธิ */
+#histView .hovbox{padding:18px 18px 12px}
+#histView .hov{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:4px 2px 10px}
+#histView .hov::-webkit-scrollbar{height:7px}
+#histView .hov::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
+#histView .hovc{flex:1 1 0;min-width:38px;display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:none;border:0;padding:0;cursor:pointer;font-family:'Kanit'}
+#histView .hovc .hb{width:70%;min-width:14px;border-radius:5px 5px 2px 2px;transition:transform .14s,filter .14s;box-shadow:0 1px 3px rgba(10,40,60,.18)}
+#histView .hovc:hover .hb{transform:scaleY(1.05);filter:brightness(1.1)}
+#histView .hovc .hv{font-size:.63rem;color:var(--muted);font-variant-numeric:tabular-nums}
+#histView .hovc .hy{font-size:.66rem;font-weight:600;color:var(--ink-2)}
+#histView .hovc:hover .hy{color:var(--orange-deep)}
+#histView .hovlgd{font-size:.74rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:9px}
+
+/* ราง + การ์ด */
+#histView .htl{position:relative;max-width:1040px;margin:0 auto;padding:14px 0 8px}
+#histView .htl::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;border-radius:2px;
+  background:linear-gradient(var(--line-2),var(--orange),var(--line));transform:translateX(-50%)}
+#histView .hrow{position:relative;width:50%;padding-bottom:26px;box-sizing:border-box;min-height:34px}
+#histView .hrow.left{left:0;padding-right:32px}
+#histView .hrow.right{left:50%;padding-left:32px}
+#histView .hrow .hyr{position:absolute;top:2px;width:118px;font-family:'Kanit';line-height:1.15}
+#histView .hrow.left .hyr{left:calc(100% + 22px);text-align:left}
+#histView .hrow.right .hyr{right:calc(100% + 22px);text-align:right}
+#histView .hrow .hyr b{display:block;font-weight:700;font-size:1.16rem;letter-spacing:-.01em}
+#histView .hrow .hyr small{display:block;font-size:.67rem;color:var(--muted);font-weight:400}
+#histView .hrow .hnode{position:absolute;top:6px;width:16px;height:16px;border-radius:50%;z-index:2;
+  background:var(--paper);border:3px solid var(--nc,var(--orange));box-shadow:0 0 0 4px var(--paper)}
+#histView .hrow.left .hnode{right:-9px}
+#histView .hrow.right .hnode{left:-9px}
+
+#histView .hcard,#histView .hev{opacity:0;transition:opacity .5s ease-out,transform .5s cubic-bezier(.16,1,.3,1),box-shadow .16s}
+#histView .hrow.left .hcard,#histView .hrow.left .hev{transform:translateX(-36px)}
+#histView .hrow.right .hcard,#histView .hrow.right .hev{transform:translateX(36px)}
+#histView .hrow.is-visible .hcard,#histView .hrow.is-visible .hev{opacity:1;transform:translateX(0)}
+
+#histView .hcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--wc,var(--orange));
+  border-radius:15px;box-shadow:var(--shadow);padding:14px 17px}
+#histView .hcard:hover{box-shadow:var(--shadow-lg)}
+#histView .hcard.flash{animation:hflash 1.5s ease-out}
+@keyframes hflash{0%,45%{box-shadow:0 0 0 3px var(--wc,var(--orange))}100%{box-shadow:var(--shadow)}}
+#histView .hch{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+#histView .hch .hdt{font-family:'Kanit';font-weight:600;font-size:.96rem}
+#histView .hch .hsys{font-size:.74rem;color:var(--muted)}
+#histView .hch .hturn{margin-left:auto;font-family:'Kanit';font-size:.73rem;color:var(--orange-deep);
+  background:var(--orange-soft);border-radius:20px;padding:3px 9px;white-space:nowrap}
+#histView .hch .hturn b{font-weight:600}
+
+#histView .hwin{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+#histView .hav{width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;
+  font-family:'Kanit';font-weight:700;font-size:1.05rem;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--wc,var(--orange))}
+#histView .hwn{font-family:'Kanit';font-weight:600;font-size:1rem;line-height:1.25}
+#histView .hpt{display:inline-block;font-family:'Sarabun';font-weight:400;font-size:.7rem;color:#fff;
+  padding:2px 9px;border-radius:999px;margin-left:6px;vertical-align:1px}
+#histView .hws{font-family:'Kanit';font-weight:700;font-size:.94rem;font-variant-numeric:tabular-nums}
+#histView .hws em{font-style:normal;font-weight:400;font-size:.78rem;color:var(--muted)}
+
+#histView .hbars{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+#histView .hbl{display:flex;align-items:center;gap:8px;font-size:.74rem;color:var(--muted)}
+#histView .hbt{flex:1;height:9px;border-radius:5px;background:var(--wash);overflow:hidden}
+#histView .hbt i{display:block;height:100%;border-radius:5px}
+#histView .hbn{flex:0 0 auto;width:72px;text-align:right;font-variant-numeric:tabular-nums}
+
+#histView .hrun{font-size:.82rem;color:var(--ink-2);padding-top:9px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#histView .hrun .rl{color:var(--muted);font-size:.78rem}
+#histView .hrun b{font-weight:600}
+#histView .hnote{font-size:.81rem;color:var(--muted);line-height:1.6;margin:9px 0 0}
+#histView .hbtnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+#histView .hbtn{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-weight:500;font-size:.79rem;
+  color:var(--orange-deep);background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:9px;
+  padding:6px 11px;cursor:pointer;transition:.14s;text-decoration:none}
+#histView .hbtn:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
+html[data-theme="dark"] #histView .hbtn:hover{color:#081019}
+
+/* การ์ดเหตุการณ์ (ยุคแต่งตั้ง / รัฐประหาร) */
+#histView .hrow.ev .hnode{background:var(--nc,#8a97a3);border-color:var(--paper);width:14px;height:14px}
+#histView .hev{display:flex;align-items:flex-start;gap:11px;background:var(--wash);border:1px solid var(--line);border-radius:13px;padding:11px 15px}
+#histView .hev .eic{font-size:1.1rem;line-height:1.35;flex:none}
+#histView .hev .et{font-family:'Kanit';font-weight:600;font-size:.89rem;margin-bottom:2px}
+#histView .hev .ed{font-size:.79rem;color:var(--muted);line-height:1.55}
+
+@media(max-width:768px){
+  #histView .htl::before{left:14px;transform:none}
+  #histView .hrow.left,#histView .hrow.right{width:100%;left:0;padding-left:36px;padding-right:0;padding-top:22px}
+  #histView .hrow .hyr{position:static;width:auto;text-align:left;margin-bottom:6px}
+  #histView .hrow .hyr b{display:inline;font-size:1.08rem}
+  #histView .hrow .hyr small{display:inline;margin-left:7px}
+  #histView .hrow.left .hnode,#histView .hrow.right .hnode{left:6px;right:auto;top:26px}
+  #histView .hrow.left .hcard,#histView .hrow.right .hcard,
+  #histView .hrow.left .hev,#histView .hrow.right .hev{transform:translateY(18px)}
+  #histView .hrow.is-visible .hcard,#histView .hrow.is-visible .hev{transform:translateY(0)}
+}
 </style>
 <script src="../js/preloader.js"></script>
 </head>
@@ -329,6 +428,7 @@ mdSyncToggle();
       <button id="tab-sk" onclick="setView('sk')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>ส.ก. <b>50</b></button>
       <button id="tab-council" onclick="setView('council')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9m4 12V9m6 12V9m4 12V9M3 9l9-5 9 5"/></svg>สภา กทม.</button>
       <button id="tab-sum" onclick="setView('sum')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>สรุปคะแนน</button>
+      <button id="tab-hist" onclick="setView('hist')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>ประวัติ</button>
     </div>
   </div>
 
@@ -366,6 +466,9 @@ mdSyncToggle();
 
   <!-- COUNCIL (สภา กทม.) -->
   <div id="councilView" style="display:none"></div>
+
+  <!-- HISTORY (ประวัติการเลือกตั้งผู้ว่าฯ กทม.) -->
+  <div id="histView" style="display:none"></div>
 
   <div class="pfoot" id="foot"></div>
 </div>
@@ -787,16 +890,168 @@ function renderCouncil(){
   });});
 }
 
+/* ---------- ประวัติการเลือกตั้งผู้ว่าฯ กทม. (แท็บ "ประวัติ") ----------
+   ที่มา: วิกิพีเดีย "การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร" + "รายชื่อผู้ว่าราชการกรุงเทพมหานคร"
+   pct = สัดส่วนคะแนนของผู้ชนะ (เว้น null ไว้ในครั้งที่แหล่งอ้างอิงไม่ได้ระบุ) */
+const HPC={'ประชาธิปัตย์':'#27AAE1','กลุ่มรวมพลัง':'#E4572E','พลังธรรม':'#F2A03D',
+           'กลุ่มมดงาน':'#7B5EA7','ประชากรไทย':'#0E4C92','อิสระ':'#00A651'};
+const HIST=[
+ {ev:1,y:2515,ic:'🏛️',c:'#8a97a3',t:'กำเนิด "กรุงเทพมหานคร"',
+  d:'รวมนครหลวงกรุงเทพธนบุรีเป็นกรุงเทพมหานคร (พ.ศ. 2515) ผู้ว่าฯ 4 คนแรกมาจากการแต่งตั้ง — ชำนาญ ยุวบูรณ์ · อรรถ วิสูตรโยธาภิบาล · ศิริ สันติบุตร · สาย หุตะเจริญ'},
+ {y:2518,no:1,date:'10 สิงหาคม 2518',win:'ธรรมนูญ เทียนเงิน',ini:'ธ',party:'ประชาธิปัตย์',
+  votes:99247,pct:null,turn:13.86,cand:null,run:'อาทิตย์ อุไรรัตน์',runP:'พลังใหม่',runV:null,
+  note:'เลือกตั้งผู้ว่าฯ กทม. ครั้งแรก ตาม พ.ร.บ. ระเบียบบริหารราชการกรุงเทพมหานคร พ.ศ. 2518 — ผู้มาใช้สิทธิต่ำที่สุดในประวัติศาสตร์เพียง 13.86%'},
+ {ev:1,y:2520,ic:'⚖️',c:'#b23b3b',t:'ปลดผู้ว่าฯ · กลับสู่ยุคแต่งตั้ง 8 ปี',
+  d:'29 เม.ย. 2520 รัฐบาลปลดธรรมนูญ เทียนเงิน และยุบสภา กทม. หลังจากนั้นผู้ว่าฯ มาจากการแต่งตั้งอีก 4 คน — ชลอ ธรรมศิริ · เชาวน์วัศ สุดลาภา · เทียม มกรานนท์ · อาษา เมฆสวรรค์ จนถึง พ.ศ. 2528'},
+ {y:2528,no:2,date:'14 พฤศจิกายน 2528',win:'จำลอง ศรีเมือง',ini:'จ',party:'กลุ่มรวมพลัง',
+  votes:408233,pct:null,turn:34.65,cand:5,run:'ชนะ รุ่งแสง',runP:'ประชาธิปัตย์',runV:241002,
+  note:'กลับมาเลือกตั้งอีกครั้งตาม พ.ร.บ. ระเบียบบริหารราชการกรุงเทพมหานคร พ.ศ. 2528 — จำลองชนะในนามกลุ่มรวมพลัง แม้ไม่มีพรรคใหญ่หนุนหลัง'},
+ {y:2533,no:3,date:'7 มกราคม 2533',win:'จำลอง ศรีเมือง',ini:'จ',party:'พลังธรรม',
+  votes:703672,pct:null,turn:35.85,cand:5,run:'เดโช สวนานนท์',runP:'ประชากรไทย',runV:283895,
+  note:'จำลองชนะสมัยที่ 2 ในนามพรรคพลังธรรม ทิ้งห่างอันดับ 2 กว่า 4 แสนคะแนน'},
+ {y:2535,no:4,date:'19 เมษายน 2535',win:'กฤษฎา อรุณวงษ์ ณ อยุธยา',ini:'ก',party:'พลังธรรม',
+  votes:363668,pct:null,turn:23.02,cand:5,run:'พิจิตต รัตตกุล',runP:'ประชาธิปัตย์',runV:305740,
+  note:'จำลองลาออกไปเล่นการเมืองระดับชาติ พรรคพลังธรรมส่งกฤษฎาลงแทนและรักษาเก้าอี้ไว้ได้ — ผู้ใช้สิทธิต่ำเป็นอันดับ 2'},
+ {y:2539,no:5,date:'2 มิถุนายน 2539',win:'พิจิตต รัตตกุล',ini:'พ',party:'กลุ่มมดงาน',
+  votes:768994,pct:49.47,turn:43.53,cand:29,run:'จำลอง ศรีเมือง',runP:'พลังธรรม',runV:514401,
+  note:'ผู้สมัครมากถึง 29 คน — พิจิตตลงในนามกลุ่มมดงานแบบอิสระ โค่นจำลองเจ้าของพื้นที่เดิมได้สำเร็จ'},
+ {y:2543,no:6,date:'23 กรกฎาคม 2543',win:'สมัคร สุนทรเวช',ini:'ส',party:'ประชากรไทย',
+  votes:1016096,pct:45.85,turn:58.87,cand:23,run:'สุดารัตน์ เกยุราพันธุ์',runP:'ไทยรักไทย',runV:521184,
+  note:'ครั้งแรกที่ผู้ชนะได้คะแนนทะลุ 1 ล้าน — สมัครชนะขาดเกือบ 2 เท่าของอันดับ 2'},
+ {y:2547,no:7,date:'29 สิงหาคม 2547',win:'อภิรักษ์ โกษะโยธิน',ini:'อ',party:'ประชาธิปัตย์',
+  votes:911441,pct:38.20,turn:62.50,cand:22,run:'ปวีณา หงสกุล',runP:'อิสระ',runV:619039,
+  note:'ประชาธิปัตย์กลับมาครองศาลาว่าการ กทม. อีกครั้งในรอบเกือบ 30 ปี ท่ามกลางผู้ใช้สิทธิสูงถึง 62.5%'},
+ {y:2551,no:8,date:'5 ตุลาคม 2551',win:'อภิรักษ์ โกษะโยธิน',ini:'อ',party:'ประชาธิปัตย์',
+  votes:991018,pct:45.93,turn:54.18,cand:16,run:'ประภัสร์ จงสงวน',runP:'พลังประชาชน',runV:543488,
+  note:'อภิรักษ์ชนะสมัยที่ 2 แต่อยู่ในตำแหน่งไม่ถึง 3 เดือน — ลาออก 19 พ.ย. 2551 หลัง ป.ป.ช. ชี้มูลคดีจัดซื้อรถและเรือดับเพลิง'},
+ {y:2552,no:9,date:'11 มกราคม 2552',win:'ม.ร.ว.สุขุมพันธุ์ บริพัตร',ini:'ส',party:'ประชาธิปัตย์',
+  votes:934602,pct:45.41,turn:51.10,cand:14,run:'ยุรนันท์ ภมรมนตรี',runP:'เพื่อไทย',runV:611669,
+  note:'เลือกตั้งใหม่หลังอภิรักษ์ลาออก — สุขุมพันธุ์รักษาเก้าอี้ไว้ให้ประชาธิปัตย์ได้'},
+ {y:2556,no:10,date:'3 มีนาคม 2556',win:'ม.ร.ว.สุขุมพันธุ์ บริพัตร',ini:'ส',party:'ประชาธิปัตย์',
+  votes:1256349,pct:47.75,turn:63.98,cand:25,run:'พงศพัศ พงษ์เจริญ',runP:'เพื่อไทย',runV:1077899,
+  note:'สูสีที่สุดครั้งหนึ่ง — ทั้งคู่ได้เกิน 1 ล้านคะแนน และเป็นครั้งที่คนกรุงเทพฯ ออกมาใช้สิทธิสูงที่สุด 63.98%'},
+ {ev:1,y:2557,ic:'🪖',c:'#b23b3b',t:'รัฐประหาร 2557 · งดเลือกตั้งท้องถิ่น',
+  d:'22 พ.ค. 2557 คสช. ยึดอำนาจและสั่งงดการเลือกตั้งท้องถิ่นทั่วประเทศ สมาชิกสภากรุงเทพมหานคร (ส.ก.) เปลี่ยนไปใช้วิธีแต่งตั้งแทนการเลือกตั้ง'},
+ {ev:1,y:2559,ic:'📜',c:'#8a97a3',t:'ใช้ ม.44 เปลี่ยนตัวผู้ว่าฯ',
+  d:'18 ต.ค. 2559 หัวหน้า คสช. ใช้อำนาจตามมาตรา 44 ให้ ม.ร.ว.สุขุมพันธุ์พ้นจากตำแหน่ง และแต่งตั้ง พล.ต.อ. อัศวิน ขวัญเมือง เป็นผู้ว่าฯ กทม. ยาวถึง 24 มี.ค. 2565'},
+ {y:2565,no:11,date:'22 พฤษภาคม 2565',win:'ชัชชาติ สิทธิพันธุ์',ini:'ช',party:'อิสระ',
+  votes:1386215,pct:51.85,turn:60.73,cand:31,run:'สุชัชวีร์ สุวรรณสวัสดิ์',runP:'ประชาธิปัตย์',runV:254647,
+  note:'เลือกตั้งครั้งแรกในรอบ 9 ปี — ชัชชาติลงอิสระและทำสถิติคะแนนสูงสุดตลอดกาลในขณะนั้น 1,386,215 คะแนน'},
+ {y:2569,no:12,date:'28 มิถุนายน 2569',win:'ชัชชาติ สิทธิพันธุ์',ini:'ช',party:'อิสระ',
+  votes:1537784,pct:67.94,turn:52.79,cand:18,run:'มัลลิกา มหาสุข',runP:'กลุ่มเพื่อนมัลลิกา',runV:304494,
+  note:'ชัชชาติชนะสมัยที่ 2 ทำลายสถิติคะแนนของตัวเอง กวาดชนะครบทั้ง 50 เขต ด้วยสัดส่วนสูงที่สุดเท่าที่เคยมีมา 67.94%',cur:1}
+];
+
+let histDone=false;
+function renderHist(){
+  if(histDone) return; histDone=true;
+  const es=HIST.filter(o=>!o.ev);
+  const maxV=Math.max(...es.map(o=>o.votes));
+  const maxT=Math.max(...es.map(o=>o.turn));
+  const hc=o=>HPC[o.party]||'#9AA3AE';
+
+  const ov=es.map(o=>`<button class="hovc" type="button" data-y="${o.y}" aria-label="พ.ศ. ${o.y} · ${o.win} · ผู้ใช้สิทธิ ${o.turn}%">
+      <span class="hv">${o.turn}%</span>
+      <span class="hb" style="height:${Math.round(16+o.turn/maxT*104)}px;background:${hc(o)}"></span>
+      <span class="hy">${o.y}</span></button>`).join('');
+
+  const rows=HIST.map((o,i)=>{
+    const lr=(i%2===0)?'left':'right';
+    if(o.ev) return `<div class="hrow ev ${lr}" style="--nc:${o.c}">
+        <div class="hyr"><b>${o.y}</b><small>เหตุการณ์</small></div><div class="hnode"></div>
+        <div class="hev"><div class="eic">${o.ic}</div><div><div class="et">${o.t}</div><div class="ed">${o.d}</div></div></div>
+      </div>`;
+    const c=hc(o), wpc=(o.votes/maxV*100).toFixed(1), rpc=o.runV?(o.runV/maxV*100).toFixed(1):0;
+    return `<div class="hrow ${lr}" style="--nc:${c}">
+      <div class="hyr"><b>${o.y}</b><small>ครั้งที่ ${o.no}</small></div><div class="hnode"></div>
+      <div class="hcard" id="hc-${o.y}" style="--wc:${c}">
+        <div class="hch"><span class="hdt">${o.date}</span>
+          <span class="hsys">${o.cand?'ผู้สมัคร '+o.cand+' คน':'ครั้งที่ '+o.no}</span>
+          <span class="hturn">ผู้ใช้สิทธิ <b>${o.turn}%</b></span></div>
+        <div class="hwin">
+          <div class="hav" style="background:${c}">${o.ini}</div>
+          <div><div class="hwn">${o.win}<span class="hpt" style="background:${c}">${o.party}</span></div>
+            <div class="hws">${fmt(o.votes)} <em>คะแนน${o.pct?' · '+o.pct+'%':''}</em></div></div>
+        </div>
+        <div class="hbars">
+          <div class="hbl"><span class="hbt"><i style="width:${wpc}%;background:${c}"></i></span><span class="hbn">${fmt(o.votes)}</span></div>
+          <div class="hbl"><span class="hbt"><i style="width:${rpc}%;background:var(--line-2)"></i></span><span class="hbn">${o.runV?fmt(o.runV):'—'}</span></div>
+        </div>
+        <div class="hrun"><span class="rl">อันดับ 2</span><b>${o.run}</b><span class="rl">· ${o.runP}</span></div>
+        <p class="hnote">${o.note}</p>
+        ${o.cur?`<div class="hbtnrow">
+          <button class="hbtn" type="button" onclick="setView('gov')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20 3 17V4l6 3 6-3 6 3v13l-6 3-6-3Z"/><path d="M9 7v13M15 4v13"/></svg>ดูแผนที่ผลปี 2569</button>
+          <button class="hbtn" type="button" onclick="setView('sum')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>สรุปคะแนน</button></div>`:''}
+      </div></div>`;
+  }).join('');
+
+  el('histView').innerHTML=`
+  <div class="statrow">
+    <div class="tile"><div class="v">${es.length}</div><div class="l">การเลือกตั้งผู้ว่าฯ กทม.</div></div>
+    <div class="tile"><div class="v">2518–2569</div><div class="l">ช่วงปี พ.ศ.</div></div>
+    <div class="tile alt"><div class="v">8</div><div class="l">ผู้ชนะ (ไม่นับซ้ำคน)</div></div>
+    <div class="tile"><div class="v">9</div><div class="l">ปีที่เว้นว่างนานสุด (2556→2565)</div></div>
+  </div>
+  <p class="hintro">ประมวล<b>การเลือกตั้งผู้ว่าราชการกรุงเทพมหานครทุกครั้ง</b> ตั้งแต่ครั้งแรก พ.ศ. 2518
+    จนถึงครั้งล่าสุด พ.ศ. 2569 รวม ${es.length} ครั้ง พร้อมผู้ชนะ คะแนน คู่แข่งอันดับ 2 และเหตุการณ์การเมือง
+    ที่ทำให้คนกรุงเทพฯ ต้องเว้นว่างจากการเลือกผู้ว่าฯ ของตัวเองไปหลายช่วง
+    (ยุคแต่งตั้ง 2520–2528 และยุค คสช. 2557–2565)</p>
+
+  <div class="sec-head">
+    <div><span class="kick">Turnout at a Glance</span><h1>ผู้มาใช้สิทธิ<span class="o">ข้ามยุค</span></h1></div>
+    <p>ความสูงของแท่ง = ร้อยละผู้มาใช้สิทธิ · สีตามพรรค/กลุ่มของผู้ชนะ · กดเพื่อไปการ์ดของปีนั้น</p>
+  </div>
+  <div class="panelbox hovbox">
+    <div class="hov" id="hov">${ov}</div>
+    <div class="hovlgd">ต่ำสุด <b>13.86%</b> (2518 · ครั้งแรก) → สูงสุด <b>63.98%</b> (2556 · สุขุมพันธุ์ vs พงศพัศ) · ล่าสุด 2569 อยู่ที่ 52.79%</div>
+  </div>
+
+  <div class="sec-head">
+    <div><span class="kick">The Timeline</span><h1>ไทม์ไลน์<span class="o">ผู้ว่าฯ กทม.</span></h1></div>
+    <p>เรียงตามเวลา · แถบสองเส้นในการ์ดคือคะแนนผู้ชนะเทียบกับอันดับ 2 (อ้างอิงกับคะแนนสูงสุดตลอดกาล)</p>
+  </div>
+  <div class="htl" id="htl">${rows}</div>
+
+  <p class="hintro" style="margin-top:18px">ที่มาข้อมูล: วิกิพีเดีย — <b>การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร</b> และ <b>รายชื่อผู้ว่าราชการกรุงเทพมหานคร</b> ·
+    ผลปี 2569 จากการนับคะแนนอย่างไม่เป็นทางการ · อยากดูไทม์ไลน์การเลือกตั้ง ส.ส. ทั้งประเทศ 2476–2569
+    ไปที่หน้า <a href="timeline.html" style="color:var(--orange-deep);text-decoration:underline">ประวัติการเลือกตั้ง</a></p>`;
+
+  // กดแท่งภาพรวม → เลื่อนไปการ์ดปีนั้น
+  el('hov').addEventListener('click',function(e){
+    const b=e.target.closest('.hovc'); if(!b) return;
+    const card=el('hc-'+b.getAttribute('data-y')); if(!card) return;
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
+    setTimeout(()=>card.classList.remove('flash'),1600);
+  });
+
+  // เลื่อนเข้ามาแล้วค่อยโผล่ (ถ้าเบราว์เซอร์ไม่รองรับก็โชว์หมด)
+  const rowEls=[].slice.call(el('htl').querySelectorAll('.hrow'));
+  if(!('IntersectionObserver' in window)){ rowEls.forEach(r=>r.classList.add('is-visible')); return; }
+  const io=new IntersectionObserver(function(en){
+    en.forEach(x=>x.target.classList.toggle('is-visible',x.isIntersecting));
+  },{threshold:.12});
+  rowEls.forEach(r=>io.observe(r));
+  // กันเหนียว: ถ้า observer ไม่ยิงเลย (บางเบราว์เซอร์/พรีวิว) อย่าปล่อยให้การ์ดหายไปทั้งหมด
+  setTimeout(function(){
+    if(!rowEls.some(r=>r.classList.contains('is-visible'))){
+      io.disconnect(); rowEls.forEach(r=>r.classList.add('is-visible'));
+    }
+  },900);
+}
+
 /* ---------- view switch ---------- */
 window.setView=function(v){
   state.view=v; state.focus=null; state.sel=null;
   if(v!=='gov'&&SONG.player&&SONG.playing)SONG.player.pauseVideo();
-  ['gov','sk','sum','council'].forEach(k=>{const b=el('tab-'+k);if(b)b.classList.toggle('active',k===v);});
+  ['gov','sk','sum','council','hist'].forEach(k=>{const b=el('tab-'+k);if(b)b.classList.toggle('active',k===v);});
   const isMap=(v==='gov'||v==='sk');
   el('mapGrid').style.display=isMap?'':'none';
   el('sumView').style.display=v==='sum'?'block':'none';
   el('councilView').style.display=v==='council'?'block':'none';
+  el('histView').style.display=v==='hist'?'block':'none';
   if(v==='council'){ renderCouncil(); return; }
+  if(v==='hist'){ renderHist(); return; }
   if(isMap){
     el('mapTitle').textContent = v==='gov'?'แผนที่ผู้ชนะรายเขต — ผู้ว่าฯ กทม.':'แผนที่ผู้ชนะรายเขต — ส.ก. 50 เขต';
     el('mapMeta').textContent  = v==='gov'?'ชัชชาติ กวาดครบ 50 เขต':'ระบายสีตามพรรค/กลุ่มที่ชนะแต่ละเขต';
