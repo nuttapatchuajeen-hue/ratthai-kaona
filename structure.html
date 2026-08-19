@@ -2613,6 +2613,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
 
 <script src="structure-data.js"></script>
 <script src="structure-detail.js"></script>
+<script src="structure-deep.js"></script>
 <script>
 // ═══════════════════════════════════════
 //  THEME TOGGLE
@@ -7117,6 +7118,12 @@ applyHashFromURL();   // มากับลิงก์ #… → เปิดแ
 </script>
 <div id="mob-overlay" onclick="toggleMobSidebar()"></div>
 <!-- ตั้งพิกัดเมาส์ --x/--y/--xp บน :root ให้สปอตไลต์การ์ด ครม. (ไฟล์เดียวกับที่ hub ใช้) -->
+<!-- ผังเจาะจง (focus) เรนเดอร์ด้วย Cytoscape — วิวอื่นยังใช้แคนวาสเดิม -->
+<script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+<script src="js/structure-focus-cy.js"></script>
+<script src="js/structure-budget-agency.js"></script>
+<script src="js/structure-law-org.js"></script>
+<script src="js/structure-staff-exec.js"></script>
 <script src="js/cursor-glow.js"></script>
 <script src="js/theme-toggle-drag.js"></script>
 <script src="js/ai-chat.js"></script>
