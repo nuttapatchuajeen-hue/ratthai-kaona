@@ -99,8 +99,10 @@ html[data-theme="dark"] .dg .zbound{stroke:#e3edf5;opacity:.82}
 .searchbox input:focus{border-color:var(--green);box-shadow:0 2px 16px -7px rgba(0,137,169,.35)}
 .searchbox svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--green);z-index:1}
 
-/* floating panel (desktop left column / mobile bottom sheet) */
-.panel{position:absolute;left:14px;top:166px;bottom:14px;width:384px;z-index:45;
+/* floating panel (desktop left column / mobile bottom sheet)
+   top:202px = เว้นให้พ้นการ์ดค้นหาที่สูงขึ้นหลังเพิ่มปุ่ม "ไล่เผยผลทีละชุด"
+   (การ์ดจบราว 188px + ช่องไฟ 14px) — เดิม 166px ปุ่มจึงทับแถบพรรค */
+.panel{position:absolute;left:14px;top:202px;bottom:14px;width:384px;z-index:45;
   background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-lg);
   display:flex;flex-direction:column;overflow:hidden}
 .grabber{display:none}

@@ -42,6 +42,12 @@
   var pmNote = I.pmnote || (pmParty
     ? 'พรรค' + pmParty + ' — ไม่มีในผลคะแนนครั้งนี้'
     : 'ไม่ได้สังกัดพรรคการเมือง — ไม่มีพรรคใดได้เป็นนายกฯ');
+  /* เพิ่มจากคลิปต้นฉบับ (แสดงเฉพาะปีที่ข้อมูลครบ = มีคะแนน):
+     · majority = เสียงข้างมากที่ต้องใช้ตั้งรัฐบาล (เกินกึ่งหนึ่งของสภา)
+     · pmBefore = นายกฯ ก่อนการเลือกตั้ง (แบบ "PREM..." มุมขวาบนของคลิป) จาก intro-data.js (I.pmb) */
+  var majority = S.total ? Math.floor(S.total / 2) + 1 : 0;
+  var hasVotes = !noParty && rows.some(function (p) { return p.zVotes || p.lVotes; });
+  var pmBefore = I.pmb || '';
 
   /* ---------- สไตล์ ---------- */
   var CSS = ''
@@ -56,6 +62,10 @@
     + '#eintro.on .bar{transform:none}'
     + '#eintro .bar b{font-size:1.5rem;font-weight:600;letter-spacing:.02em}'
     + '#eintro .bar span{font-size:.82rem;opacity:.75;font-family:Sarabun,sans-serif}'
+    /* แถบหัวแบบคลิปต้นฉบับ: เม็ดยา "เสียงข้างมาก" + ชื่อนายกฯ ก่อนเลือกตั้ง */
+    + '#eintro .bar .maj{align-self:center;font-family:Kanit,sans-serif;font-size:.8rem;font-weight:500;opacity:1;'
+    + 'background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.30);border-radius:999px;padding:3px 12px}'
+    + '#eintro .bar .pmb{font-size:.8rem;opacity:.72;font-family:Sarabun,sans-serif}'
     /* แผงใหญ่ 2 ข้าง */
     /* top ใช้ความสูงจริงของแถบบน (--barh วัดตอนรันไทม์) ไม่งั้นเหลือช่องว่างคั่นระหว่างแถบกับแผง
        จอใหญ่: แผงยาวถึงขอบล่าง แล้ววางการ์ดอันดับ 3–5 ไว้ "ในช่องกลาง" ระหว่างสองแผง */
@@ -69,7 +79,17 @@
     + '#eintro .face{height:168px;width:auto;max-width:100%;object-fit:contain;object-position:top center;'
     + 'margin:8px 0 2px;border-radius:12px;background:rgba(255,255,255,.14);align-self:flex-start}'
     + '#eintro .side.r .face{align-self:flex-end}'
-    + '#eintro .pname{font-size:1.45rem;font-weight:600;line-height:1.25;margin:4px 0 2px}'
+    + '#eintro .pname{font-size:1.45rem;font-weight:600;line-height:1.25;margin:4px 0 2px;display:flex;align-items:center;gap:10px}'
+    + '#eintro .side.r .pname{flex-direction:row-reverse}'
+    /* ชิปโลโก้พรรค: ถ้ามีรูปจริงในโฟลเดอร์ logos/ รูปจะทับชิปสีอัตโนมัติ */
+    + '#eintro .plogo{position:relative;display:inline-flex;align-items:center;justify-content:center;'
+    + 'overflow:hidden;flex:0 0 auto;font-family:Kanit,sans-serif;font-weight:700;line-height:1}'
+    /* เส้นกรอบเฉพาะกล่องที่มีโลโก้จริง — ไม่มีรูป = ไม่มีกรอบ */
+    + '#eintro .plogo.hasimg{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}'
+    + '#eintro .plogo.lg{width:38px;height:38px;border-radius:9px;font-size:.78rem}'
+    + '#eintro .plogo.md{width:40px;height:40px;border-radius:9px;font-size:.8rem}'
+    + '#eintro .plogo .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:inherit}'
+    + '#eintro .plogo.hasimg .pab{display:none}'
     + '#eintro .lead{font-size:.92rem;opacity:.9;font-family:Sarabun,sans-serif;line-height:1.5}'
     + '#eintro .num{font-size:3.1rem;font-weight:700;line-height:1;margin-top:12px;display:flex;align-items:center;gap:10px}'
     + '#eintro .side.r .num{justify-content:flex-end}'
@@ -109,6 +129,8 @@
     + '#eintro .mini .mp{font-size:.84rem;font-weight:500;line-height:1.25;white-space:nowrap}'
     + '#eintro .mini .ml{font-size:.68rem;opacity:.75;font-family:Sarabun,sans-serif;white-space:nowrap}'
     + '#eintro .mini .mn{margin-left:auto;font-size:1.35rem;font-weight:700;padding-left:8px}'
+    + '#eintro .mini .mtext{display:flex;flex-direction:column;justify-content:center}'
+    + '#eintro .mini .mv{font-size:.66rem;opacity:.85;font-family:Sarabun,sans-serif;white-space:nowrap;margin-top:2px}'
     /* ปีที่ยังไม่มีพรรคการเมือง — แผงเดียวตรงกลาง */
     + '#eintro .solo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);opacity:0;'
     + 'text-align:center;color:#fff;transition:opacity .6s,transform .6s}'
@@ -120,6 +142,13 @@
     + '#eintro .ctl button{font-family:Kanit,sans-serif;font-size:.8rem;color:#fff;background:rgba(255,255,255,.14);'
     + 'border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 15px;cursor:pointer;transition:.14s}'
     + '#eintro .ctl button:hover{background:rgba(255,255,255,.26)}'
+    /* เครดิตโลโก้ (ตามสัญญาอนุญาต CC BY/BY-SA) — โผล่เฉพาะปีที่มีโลโก้จริงแสดง (.haslogo) */
+    + '#eintro .cred{position:absolute;left:0;right:0;bottom:3px;text-align:center;display:none;'
+    + 'font-family:Sarabun,sans-serif;font-size:.62rem;opacity:.5;color:#fff;line-height:1.2;'
+    + 'pointer-events:auto;white-space:nowrap}'
+    + '#eintro.haslogo .cred{display:block}'
+    + '#eintro .cred a{color:inherit;text-decoration:underline}'
+    + '#eintro .cred a:hover{opacity:.85}'
     /* ปุ่มค้างบนหน้า (อยู่ต่อหลังฉากเปิดปิดไปแล้ว) — ดูซ้ำ + เปิด/ปิดเสียงเพลงพื้นหลัง */
     + '#eintrodock{position:fixed;right:16px;bottom:118px;z-index:58;display:flex;flex-direction:column;'
     + 'background:var(--paper,#fff);border:1px solid var(--line,#dbe4ea);border-radius:14px;overflow:hidden;'
@@ -145,10 +174,13 @@
     + '#eintro .votes{display:none}#eintro .chk{font-size:1.05rem;padding:2px 7px}'
     + '#eintro .mrow{gap:6px}'
     + '#eintro .mini{min-width:0;padding:5px 9px 5px 5px;gap:7px;border-radius:11px}'
-    + '#eintro .mini .mface,#eintro .mini .mdot{width:30px;height:30px;border-radius:8px}'
-    + '#eintro .mini .mp{font-size:.74rem}#eintro .mini .ml{display:none}'
+    + '#eintro .mini .mface,#eintro .mini .mdot,#eintro .mini .plogo.md{width:30px;height:30px;border-radius:8px;font-size:.64rem}'
+    + '#eintro .plogo.lg{width:30px;height:30px;font-size:.62rem}'
+    + '#eintro .mini .mp{font-size:.74rem}#eintro .mini .ml{display:none}#eintro .mini .mv{display:none}'
+    + '#eintro .bar .pmb{display:none}#eintro .bar .maj{font-size:.66rem;padding:2px 8px}'
     + '#eintro .mini .mn{font-size:1rem;padding-left:5px}'
-    + '#eintro .ctl{bottom:calc(66px + var(--pmh,0px))}}';
+    + '#eintro .ctl{bottom:calc(66px + var(--pmh,0px))}'
+    + '#eintro .cred .credtxt{display:none}#eintro .cred{font-size:.56rem}}';
 
   /* ---------- ชิ้นส่วน ---------- */
   function facePath(leader, cls) {
@@ -156,6 +188,29 @@
     var f = encodeURIComponent(leader.replace(/[\\/:*?"<>|]/g, '_').trim());
     // ลอง .png ก่อน (รูปที่วางเองทับได้) แล้วค่อยตกไป .jpg (รูปจากวิกิ)
     return '<img class="' + cls + '" alt="" data-alt="leaders/' + f + '.jpg" src="leaders/' + f + '.png">';
+  }
+  /* ---------- โลโก้พรรค (ไฮบริด) ----------
+     มีไฟล์จริง logos/<code>.png → ใช้รูป · ไม่มี → ชิปสีพรรค + ตัวย่อ (fallback อัตโนมัติผ่าน onerror)
+     ตัวย่อคีย์ด้วย code เดียวกับ intro-seats.js (ที่ไม่มั่นใจปล่อยเป็นชิปสีล้วน) */
+  var ABBR = {
+    TRT: 'ทรท.', DEM: 'ปชป.', PT: 'พท.', BJT: 'ภท.', PPR: 'พปชร.', PPRP: 'พปชร.',
+    FFP: 'อนค.', MFP: 'กก.', UTN: 'รทสช.', PPC: 'ปชน.', KLT2: 'กธ.', PPP: 'พปช.',
+    X04: 'ชท.', CTP: 'ชทพ.', X05: 'ชพ.', CPN: 'ชพน.', X41: 'สธ.', X32: 'มช.',
+    X20: 'พช.', TRP: 'ทรพ.'
+  };
+  function chipInk(hex) {
+    var m = /^#?([0-9a-fA-F]{6})$/.exec(hex || '');
+    if (!m) return '#fff';
+    var n = parseInt(m[1], 16);
+    return (0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) > 150 ? '#0A1822' : '#fff';
+  }
+  function logoHtml(p, cls) {
+    var code = p.code || '', ab = ABBR[code] || '';
+    var f = encodeURIComponent(code.replace(/[\\/:*?"<>|]/g, '_'));
+    return '<span class="plogo ' + cls + '" style="background:' + p.color + ';color:' + chipInk(p.color) + '">'
+      + (ab ? '<b class="pab">' + ab + '</b>' : '')
+      + (code ? '<img class="pimg" alt="" src="logos/' + f + '.png">' : '')
+      + '</span>';
   }
   function seatText(p) {
     return p.list ? ('เขต ' + p.zone + ' · บัญชีรายชื่อ ' + p.list) : 'ที่นั่ง';
@@ -180,7 +235,7 @@
     return '<div class="side ' + cls + '" style="background:' + p.color + '">'
       + '<div class="rank">' + rank + '</div>'
       + facePath(lead, 'face')
-      + '<div class="pname">' + p.short + '</div>'
+      + '<div class="pname">' + logoHtml(p, 'lg') + '<span>' + p.short + '</span></div>'
       + (lead ? '<div class="lead">' + lead + '</div>' : '')
       + '<div class="num">' + p.total + (isPM ? '<span class="chk">✓</span>' : '') + '</div>'
       + '<div class="unit">' + seatText(p) + (w ? '<br>ชนะ ' + w + ' จังหวัด' : '') + '</div>'
@@ -188,12 +243,19 @@
       + (isPM && pmName ? '<div class="pmtag">ได้เป็นนายกฯ · ' + pmName + '</div>' : '')
       + '</div>';
   }
+  /* พรรครอง (อันดับ 3–5): เติม %/คะแนน แบบคลิปต้นฉบับ · ใช้บัญชีรายชื่อถ้ามี ไม่งั้นใช้แบ่งเขต */
+  function miniVotes(p) {
+    if (!p.zVotes && !p.lVotes) return '';
+    var vp = p.lVotes ? p.lPct : p.zPct, vn = p.lVotes ? p.lVotes : p.zVotes;
+    return '<div class="mv">' + pct(vp) + ' · ' + fmt(vn) + ' คะแนน</div>';
+  }
   function miniHtml(p) {
     var lead = leaderOf(p);
     return '<div class="mini">'
-      + (lead ? facePath(lead, 'mface') : '<span class="mdot" style="background:' + p.color + '"></span>')
-      + '<div><div class="mp" style="border-left:3px solid ' + p.color + ';padding-left:7px">' + p.short + '</div>'
-      + (lead ? '<div class="ml">' + lead + '</div>' : '') + '</div>'
+      + (lead ? facePath(lead, 'mface') : logoHtml(p, 'md'))
+      + '<div class="mtext"><div class="mp" style="border-left:3px solid ' + p.color + ';padding-left:7px">' + p.short + '</div>'
+      + (lead ? '<div class="ml">' + lead + '</div>' : '')
+      + miniVotes(p) + '</div>'
       + '<div class="mn">' + p.total + '</div></div>';
   }
 
@@ -202,7 +264,10 @@
   var head = '<div class="veil"></div>'
     + '<div class="bar"><b>' + Y + '</b><span>' + (cur.date || '')
     + ' · ส.ส. ' + S.total + ' คน' + (S.listSeats ? ' (เขต ' + S.zone + ' + บัญชีรายชื่อ ' + S.listSeats + ')' : '')
-    + '</span></div>';
+    + '</span>'
+    + (hasVotes ? '<span class="maj">เสียงข้างมาก ' + fmt(majority) + ' ที่นั่ง</span>' : '')
+    + (pmBefore ? '<span class="pmb">นายกฯ ก่อนเลือกตั้ง · ' + pmBefore + '</span>' : '')
+    + '</div>';
   var body = noParty
     ? '<div class="solo"><div class="rank">ยุคก่อนมีพรรคการเมือง</div>'
     + '<div class="pname" style="font-size:2rem">ส.ส. ' + S.total + ' คน</div>'
@@ -213,8 +278,11 @@
     + (pmOutsider ? '<div class="pmbar"><b>นายกรัฐมนตรีหลังเลือกตั้ง · ' + pmName + '</b>'
       + '<span>' + pmNote + '</span></div>' : '');
   el.innerHTML = head + body
-    + '<div class="ctl"><button type="button" data-a="sound">เปิดเสียง</button>'
-    + '<button type="button" data-a="skip">ข้าม</button></div>';
+    + '<div class="ctl">'
+    + '<button type="button" data-a="sound">เปิดเสียง</button>'
+    + '<button type="button" data-a="skip">ข้าม</button></div>'
+    + '<div class="cred"><span class="credtxt">โลโก้พรรค: Wikimedia Commons · </span>'
+    + '<a href="logos/CREDITS.txt" target="_blank" rel="noopener">เครดิตโลโก้</a></div>';
 
   var st = document.createElement('style'); st.textContent = CSS;
   document.head.appendChild(st); document.body.appendChild(el);
@@ -235,6 +303,16 @@
     im.addEventListener('error', function () {
       if (im.dataset.alt) { im.src = im.dataset.alt; im.dataset.alt = ''; }
       else im.style.display = 'none';
+    });
+  });
+  // โลโก้พรรค: โหลดได้ → ทับชิป (ซ่อนตัวย่อ) · โหลดไม่ได้ → ซ่อนรูป เหลือชิปสี+ตัวย่อ
+  Array.prototype.forEach.call(el.querySelectorAll('.pimg'), function (im) {
+    im.addEventListener('load', function () { if (im.parentNode) im.parentNode.classList.add('hasimg'); el.classList.add('haslogo'); });
+    im.addEventListener('error', function () {
+      im.style.display = 'none';
+      // แผงใหญ่ (lg): ไม่มีโลโก้จริง → ซ่อนกล่องทั้งใบ (สีชิป = สีแผง จึงเหลือแค่กรอบเปล่า) ให้ชื่อพรรคชิดปกติ
+      var box = im.parentNode;
+      if (box && box.classList && box.classList.contains('lg')) box.style.display = 'none';
     });
   });
 
