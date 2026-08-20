@@ -29,10 +29,18 @@ function api(page, out) {
    รูปร่างฐานเป็นของปี 2569 แต่เราจะปูเลขเขตของปีเก่า ช่วงนั้นบางอำเภอ/จังหวัด
    ยังไม่ถูกแยกออกมา จึงต้องเทียบชื่อเก่า ↔ พื้นที่ปัจจุบันให้ตรงกัน           */
 
-// อำเภอที่ตั้งขึ้นภายหลัง — ปีเก่ายังนับรวมอยู่กับอำเภอแม่
-const AMP_ALIAS = {
-  "เชียงใหม่": { "แม่แจ่ม": ["แม่แจ่ม", "กัลยาณิวัฒนา"] }        // กัลยาณิวัฒนา แยกจากแม่แจ่ม พ.ศ. 2552
+/* อำเภอที่ตั้งขึ้นภายหลัง — ปีก่อนหน้านั้นยังนับรวมอยู่กับอำเภอแม่
+   ต้องผูกกับปีด้วย (before) ไม่งั้นปีที่อำเภอลูกมีอยู่แล้วจะถูกนับซ้ำสองที่ */
+const AMP_ALIAS_RAW = {
+  "เชียงใหม่": [{ before: 2552, map: { "แม่แจ่ม": ["แม่แจ่ม", "กัลยาณิวัฒนา"] } }],   // กัลยาณิวัฒนา 2552
+  "ชลบุรี":   [{ before: 2550, map: { "พนัสนิคม": ["พนัสนิคม", "เกาะจันทร์"] } }]     // เกาะจันทร์ 2550
 };
+const AMP_ALIAS = {};
+Object.entries(AMP_ALIAS_RAW).forEach(([p, rules]) => {
+  const m = {};
+  rules.forEach(r => { if (+ (typeof YEAR !== "undefined" ? YEAR : 0) < r.before) Object.assign(m, r.map); });
+  if (Object.keys(m).length) AMP_ALIAS[p] = m;
+});
 // จังหวัดที่แยกออกไปภายหลัง — ปีก่อนหน้านั้นต้องรวมพื้นที่กลับเข้ามา
 const PROV_MERGE = {
   "หนองคาย": { since: 2554, take: ["บึงกาฬ"] }                    // บึงกาฬ แยกจากหนองคาย พ.ศ. 2554
@@ -79,8 +87,13 @@ const AMPW = isBkk ? "เขต" : "อำเภอ", SUBW = isBkk ? "แขว�
    หรือจบแถว (\n|-) แล้วแต่ว่าอะไรมาก่อน — ถ้าไม่ตัดที่ || จะลากเอา
    "||rowspan=3| || rowspan=3|4 คน" ของคอลัมน์จำนวน ส.ส. ติดมาด้วย */
 function cellAt(pos) {
-  const from = wt.indexOf("||", pos) + 2;
-  let end = wt.indexOf("\n|-", from); if (end < 0) end = wt.length;
+  let rowEnd = wt.indexOf("\n|-", pos); if (rowEnd < 0) rowEnd = wt.length;
+  const bar = wt.indexOf("||", pos);
+  // แถวที่ถูก rowspan ของปีก่อนคลุมอยู่จะไม่มี || ของตัวเองก่อนจบแถว
+  // ถ้าไม่เช็กขอบแถว จะเผลอไปหยิบเซลล์ของแถวถัดไปมาใช้ (ได้จำนวนเขตผิดปี)
+  if (bar < 0 || bar > rowEnd) return "";
+  const from = bar + 2;
+  let end = rowEnd;
   const nextCol = wt.indexOf("||", from);
   if (nextCol > 0 && nextCol < end) end = nextCol;
   return wt.slice(from, end);
@@ -104,9 +117,14 @@ if (!Object.keys(zones).length) {
 
 /* ── 4. กรองรายการที่ไม่ใช่ชื่ออำเภอจริง (ข้อความหมายเหตุท้ายตาราง) ── */
 const junk = [];
+const ampList16 = [...ampSet].filter(a => [...a].length === 16);
+// ชื่อถูกต้องเมื่อ: ตรงเป๊ะ · เป็นชื่อที่ตั้งทีหลัง (AMP_ALIAS) · หรือมีชื่อในไฟล์
+// ที่ถูกตัดเหลือ 16 ตัวและเป็นคำขึ้นต้นของชื่อเต็มนี้ (เช่น เมืองนครศรีธรรมร)
+const knownAmp = a => ampSet.has(a) || (AMP_ALIAS[PROV] && AMP_ALIAS[PROV][a]) ||
+  ampList16.some(k => a.startsWith(k));
 Object.keys(zones).forEach(z => {
   zones[z] = zones[z].filter(r => {
-    if (ampSet.has(r.amp)) return true;
+    if (knownAmp(r.amp)) return true;
     junk.push("เขต " + z + ": " + r.amp);
     return false;
   });
@@ -123,21 +141,68 @@ function put(key, z) { if (!assign.has(key)) assign.set(key, []); assign.get(key
 const byAmp = {};
 base.tambons.forEach(t => { (byAmp[t.amp] = byAmp[t.amp] || []).push(t); });
 
+/* ชื่อตำบลในวิกิสะกดผิดอยู่บ้าง (สนาน↔สนวน, แทนมีย์↔เทนมีย์, หนองปอน↔หนองขอน)
+   เทียบแบบใกล้เคียงได้ แต่ต้องจำกัดวงให้แคบมาก: หาเฉพาะในอำเภอเดียวกัน
+   ยอมรับเมื่อต่างกันไม่เกิน 2 ตัวอักษร และมีตัวเลือกเดียวเท่านั้น
+   (คนละเรื่องกับการ fuzzy-match ข้ามจังหวัดซึ่งอันตรายและห้ามทำ) */
+function editDist(a, b) {
+  const m = a.length, n = b.length;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++)
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[n];
+}
+const fixed = [], truncFix = [];
+function findTam(list, name) {
+  const hit = list.filter(t => t.tam === name);
+  if (hit.length) return hit;
+  let best = [], bd = 3;
+  list.forEach(t => {
+    const d = editDist(t.tam, name);
+    if (d < bd) { bd = d; best = [t]; } else if (d === bd) best.push(t);
+  });
+  if (best.length === 1) {
+    fixed.push(name + " → " + best[0].tam + " (" + best[0].amp + ", ต่าง " + bd + " ตัว)");
+    return best;
+  }
+  return [];
+}
+
 const alias = AMP_ALIAS[PROV] || {};
 Object.keys(zones).forEach(zs => {
   const z = +zs;
   zones[zs].forEach(r => {
     // ชื่ออำเภอในปีเก่าอาจครอบคลุมหลายอำเภอในปัจจุบัน (อำเภอใหม่แยกออกไปทีหลัง)
     const amps = alias[r.amp] || [r.amp];
-    const list = amps.reduce((a, nm) => a.concat(byAmp[nm] || []), []);
+    const list = amps.reduce((a, nm) => {
+      if (byAmp[nm]) return a.concat(byAmp[nm]);
+      // ชุดข้อมูลฐานตัดชื่อที่ยาวเกิน 16 ตัวอักษรทิ้ง (เช่น "เมืองนครศรีธรรมร")
+      // → ยอมรับชื่อในไฟล์ที่เป็นคำขึ้นต้นของชื่อเต็มจากวิกิ
+      const pre = Object.keys(byAmp).filter(k => [...k].length === 16 && nm.startsWith(k));
+      if (pre.length === 1) { truncFix.push(pre[0] + " ← " + nm); return a.concat(byAmp[pre[0]]); }
+      return a;
+    }, []);
+    // แปลงชื่อตำบลในวงเล็บให้ตรงกับที่มีจริงก่อน (แก้คำสะกดผิดของวิกิ)
+    const resolve = names => {
+      const s = new Set();
+      names.forEach(nm => {
+        const hit = findTam(list, nm);
+        if (hit.length) hit.forEach(t => s.add(t.amp + "|" + t.tam));
+        else console.log("  ⚠ เขต " + z + ": ไม่พบ " + r.amp + "/" + nm + " ในไฟล์รูปร่าง");
+      });
+      return s;
+    };
+    const only = r.only.length ? resolve(r.only) : null;
+    const except = r.except.length ? resolve(r.except) : null;
     list.forEach(t => {
-      if (r.only.length) { if (r.only.includes(t.tam)) put(t.amp + "|" + t.tam, z); }
-      else if (r.except.length) { if (!r.except.includes(t.tam)) put(t.amp + "|" + t.tam, z); }
-      else put(t.amp + "|" + t.tam, z);
-    });
-    // เตือนถ้าชื่อแขวง/ตำบลในวงเล็บไม่ตรงกับที่มีจริง
-    [...r.only, ...r.except].forEach(nm => {
-      if (!list.some(t => t.tam === nm)) console.log("  ⚠ เขต " + z + ": ไม่พบ " + r.amp + "/" + nm + " ในไฟล์รูปร่าง");
+      const k = t.amp + "|" + t.tam;
+      if (only) { if (only.has(k)) put(k, z); }
+      else if (except) { if (!except.has(k)) put(k, z); }
+      else put(k, z);
     });
   });
 });
@@ -147,13 +212,15 @@ const none = [], dup = [];
 base.tambons.forEach(t => {
   const k = t.amp + "|" + t.tam, v = assign.get(k);
   if (!v || !v.length) none.push(k);
-  else if (v.length > 1) dup.push(k + " → " + v.join(","));
+  else if (new Set(v).size > 1) dup.push(k + " → " + v.join(","));
 });
 const used = new Set([...assign.values()].flat());
 const missZ = need.filter(z => !used.has(z));
 const extraZ = [...used].filter(z => !need.includes(z)).sort((a, b) => a - b);
 
 console.log("\n── ผลตรวจ ──");
+if (fixed.length) console.log("แก้ชื่อตำบลที่วิกิสะกดผิด: " + [...new Set(fixed)].join(" · "));
+if (truncFix.length) console.log("ชื่ออำเภอในไฟล์ฐานถูกตัดสั้น: " + [...new Set(truncFix)].join(" · "));
 console.log("ตำบลที่ไม่ได้เขต: " + none.length + (none.length ? " → " + none.slice(0, 8).join(", ") : ""));
 console.log("ตำบลที่ได้หลายเขต: " + dup.length + (dup.length ? " → " + dup.slice(0, 8).join(" · ") : ""));
 console.log("เขตที่ยังไม่มีตำบล: " + (missZ.length ? missZ.join(",") : "ไม่มี"));

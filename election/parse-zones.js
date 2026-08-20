@@ -46,8 +46,10 @@ function parseLine(txt, ampWord, subWord) {
     if (txt[k] === "(") {
       const close = txt.indexOf(")", k);
       const inner = txt.slice(k + 1, close);
+      // วิกิบางหน้าพิมพ์ "ตาบล" แทน "ตำบล" (สระอำหาย) → ตัดทั้งสองแบบ
+      const stripSub = new RegExp("^(?:" + subWord + "|ตาบล)");
       const list = inner.replace(/^(เฉพาะ|ยกเว้น)/, "").split(new RegExp("\\s*(?:และ|,)\\s*|\\s+"))
-        .map(s => s.replace(new RegExp("^" + subWord), "").trim()).filter(Boolean);
+        .map(s => s.replace(stripSub, "").trim()).filter(Boolean);
       if (/^เฉพาะ/.test(inner)) rec.only = list;
       else if (/^ยกเว้น/.test(inner)) rec.except = list;
       j = close + 1;
