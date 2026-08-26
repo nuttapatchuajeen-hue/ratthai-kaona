@@ -283,7 +283,10 @@ const COMMITTEES = [
 ];
 
 const colOf = p => PARTY_COL[p] || '#5E7488';
-const initialOf = name => { const parts = name.trim().split(/\s+/); const first = parts.length>1 ? parts[1] : parts[0]; return (first||'?').charAt(0); };
+/* สระนำหน้า (เ แ โ ใ ไ) เขียนก่อนพยัญชนะต้น — "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
+const LEAD_VOWELS = /[เแโใไ]/;
+const initialOf = name => { const parts = name.trim().split(/\s+/); const first = (parts.length>1 ? parts[1] : parts[0]) || '?';
+  return (LEAD_VOWELS.test(first.charAt(0)) && first.length>1) ? first.charAt(1) : first.charAt(0); };
 const cleanName = n => n.replace(/^คณะกรรมาธิการ/, '').trim();
 
 /* รูปประธาน — คณะกรรมาธิการสามัญ 35 คณะ ใช้รูปชุด committee-photos/01..35.jpg

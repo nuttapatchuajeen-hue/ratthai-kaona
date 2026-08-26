@@ -28,6 +28,26 @@
   <a href="bangkok.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg>กทม.</a>
 </nav>`;
 
+  /* แถบเครดิตท้ายหน้า — ภาพจากวิกิมีเดียคอมมอนส์ใช้สัญญาอนุญาตครีเอทีฟคอมมอนส์
+     ซึ่งกำหนดให้ต้องแสดงชื่อผู้สร้างสรรค์ให้ผู้ชมเข้าถึงได้ ลิงก์นี้จึงต้องมีทุกหน้า */
+  var SITEFOOT = `<footer class="sitefoot">
+  <a href="credits.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+    แหล่งที่มาและสัญญาอนุญาตของภาพ
+  </a>
+  <span>จัดทำเพื่อการศึกษา · ไม่ใช่เอกสารราชการ · ไม่มีความเกี่ยวข้องกับพรรคการเมืองหรือหน่วยงานใด</span>
+</footer>`;
+
+  var SITEFOOT_CSS = `
+.sitefoot{max-width:1180px;margin:38px auto 0;padding:16px 20px 26px;
+  border-top:1px solid var(--line);display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;
+  font-family:'Sarabun',system-ui,sans-serif;font-size:.76rem;color:var(--muted);line-height:1.6}
+.sitefoot a{display:inline-flex;align-items:center;gap:6px;color:var(--muted);
+  text-decoration:underline;text-underline-offset:3px;transition:color .15s}
+.sitefoot a:hover{color:var(--ink)}
+.sitefoot svg{flex:0 0 auto;opacity:.8}
+@media(max-width:860px){.sitefoot{margin-top:26px;padding:14px 14px 92px}}`;
+
   /* แผงเมนูหลักของเว็บ — 7 รายการเดียวกับ hub/structure (ส.ส. = เว็บที่กำลังดูอยู่) */
   var SITEMENU = `<div class="smveil" id="siteMenuVeil" hidden></div>
 <div class="smpop" id="siteMenuPop" role="menu" aria-label="เมนูหลัก รัฐไทยก้าวหน้า" hidden>
@@ -79,10 +99,13 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
 
     var st = document.createElement('style');
     st.id = 'siteMenuCss';
-    st.textContent = SITEMENU_CSS;
+    st.textContent = SITEMENU_CSS + SITEFOOT_CSS;
     document.head.appendChild(st);
 
     body.insertAdjacentHTML('afterbegin', NAVPILL);
+    // แถบเครดิตต้องมาก่อน mobnav เพื่อให้อยู่ท้ายเนื้อหาจริง ไม่ใช่ท้ายสุดของ body
+    if (!document.querySelector('.sitefoot') && !/\/credits\.html$/.test(location.pathname))
+      body.insertAdjacentHTML('beforeend', SITEFOOT);
     body.insertAdjacentHTML('beforeend', MOBNAV);
     body.insertAdjacentHTML('beforeend', SITEMENU);
 

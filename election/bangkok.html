@@ -133,7 +133,6 @@ html[data-theme="dark"] .ptip{background:#0E1C29;border:1px solid var(--line-2);
 .songbar i{display:block;height:100%;width:0;background:#00A651;border-radius:4px;transition:width .2s linear}
 .songtime{font-family:'Kanit';font-size:.64rem;color:var(--muted);flex:0 0 auto;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
 .songyt{flex:0 0 auto;font-family:'Kanit';font-weight:700;font-size:.62rem;color:#d00;background:rgba(220,0,0,.08);border:1px solid rgba(220,0,0,.25);border-radius:8px;padding:5px 7px;white-space:nowrap}
-.yt-audio-dock{position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 .songwrap{margin-bottom:13px}
 .songhead{font-family:'Kanit';font-weight:600;font-size:.8rem;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:7px}
 .songhead svg{color:var(--orange-deep);flex:0 0 auto}
@@ -172,6 +171,84 @@ html[data-theme="dark"] .ptip{background:#0E1C29;border:1px solid var(--line-2);
 .ddr b{font-family:'Kanit';font-weight:600}
 .dempty{color:var(--muted);font-size:.85rem;line-height:1.7;padding:6px 2px}
 
+/* ===== แผงขยาย "ดูผู้สมัครทุกคน & สถิติเขต" (แบบเดียวกับหน้ารายเขต ส.ส.) ===== */
+.dmore{margin-top:13px;border-top:1px dashed var(--line);padding-top:12px}
+.dmore>summary{cursor:pointer;list-style:none;font-family:'Kanit';font-size:.82rem;font-weight:500;color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 12px;background:var(--wash);
+  border:1px solid var(--line);border-radius:11px;transition:.14s}
+.dmore>summary::-webkit-details-marker{display:none}
+.dmore>summary:hover{border-color:var(--orange)}
+.dmore[open]>summary{background:var(--orange-soft);border-color:var(--orange-line)}
+.dmore>summary .chev{width:8px;height:8px;border-right:1.8px solid currentColor;border-bottom:1.8px solid currentColor;
+  transform:rotate(45deg) translate(-1px,-2px);opacity:.6;transition:transform .18s}
+.dmore[open]>summary .chev{transform:rotate(-135deg) translate(-2px,-2px)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0 4px}
+.dgrid .dbox{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+.dgrid .dbox.wide{grid-column:1/-1}
+.dgrid .k{font-size:.68rem;color:var(--muted);line-height:1.4}
+.dgrid .v{font-family:'Kanit';font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.3}
+.dgrid .v small{font-size:.72rem;font-weight:400;color:var(--muted);margin-left:3px}
+.dclist{margin-top:12px}
+.dclist .dch{font-size:.7rem;color:var(--muted);margin-bottom:4px}
+.dcand{display:flex;align-items:center;gap:9px;padding:7px 1px;border-bottom:1px dashed var(--line)}
+.dcand:last-child{border-bottom:0}
+.dcand .cno{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;flex:none;
+  font-family:'Kanit';font-size:.72rem;font-weight:600;color:#fff}
+.dcand .cmid{flex:1;min-width:0}
+.dcand .cnm{font-size:.82rem;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcand .cpt{font-size:.68rem;color:var(--muted);line-height:1.3}
+.dcand .cval{text-align:right;flex:none}
+.dcand .cv{font-family:'Kanit';font-size:.82rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
+.dcand .cp{font-size:.68rem;color:var(--muted)}
+.dcand.win .cnm{font-weight:600}
+.dnote{font-size:.71rem;color:var(--muted);line-height:1.6;margin-top:9px}
+
+/* ===== การ์ดซ้ายบนแผนที่: รายชื่อเขต → กดแล้วขึ้นตารางคะแนนของเขตนั้น ===== */
+@media(min-width:901px){.mapwrap.has-side{padding-left:342px}}
+.mapside{position:absolute;left:16px;top:84px;z-index:6;width:310px;max-height:calc(100% - 104px);
+  display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.mapside .msh{display:flex;align-items:center;gap:8px;padding:11px 13px 9px;border-bottom:1px solid var(--line)}
+.mapside .mst{font-family:'Kanit';font-weight:600;font-size:.88rem;flex:1;line-height:1.25}
+.mapside .msc{font-size:.7rem;color:var(--muted);white-space:nowrap}
+.mapside .msback{display:inline-flex;align-items:center;gap:5px;font-family:'Kanit';font-size:.75rem;
+  background:var(--wash);border:1px solid var(--line);border-radius:9px;padding:4px 9px;cursor:pointer;color:var(--ink-2)}
+.mapside .msback:hover{border-color:var(--orange);color:var(--orange-deep)}
+.mapside .mssearch{padding:9px 11px;border-bottom:1px solid var(--line)}
+.mapside .mssearch input{width:100%;font-family:'Kanit';font-size:.8rem;color:var(--ink);background:var(--wash);
+  border:1px solid var(--line);border-radius:10px;padding:7px 11px;outline:none}
+.mapside .mssearch input:focus{border-color:var(--orange)}
+.mapside .msbody{overflow:auto;padding:5px}
+.mapside .msrow{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;
+  border:0;border-radius:10px;padding:7px 8px;cursor:pointer;font-family:'Kanit';transition:.12s}
+.mapside .msrow:hover{background:var(--wash)}
+.mapside .msrow.on{background:var(--orange-soft)}
+.mapside .msrow .sw{width:9px;height:9px;border-radius:3px;flex:none}
+.mapside .msrow .mn{flex:1;font-size:.82rem;line-height:1.25;min-width:0}
+.mapside .msrow .mw{font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.mapside .msrow .mv{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mstab{width:100%;border-collapse:collapse;font-size:.76rem}
+.mstab th{font-family:'Kanit';font-weight:500;font-size:.68rem;color:var(--muted);text-align:left;
+  padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.mstab td{padding:6px;border-bottom:1px dashed var(--line);vertical-align:middle}
+.mstab tr:last-child td{border-bottom:0}
+.mstab tr.win td{background:var(--orange-soft)}
+.mstab .no{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:.68rem;font-weight:600}
+.mstab .nm{font-family:'Kanit';line-height:1.25}
+.mstab .pt{font-size:.66rem;color:var(--muted);line-height:1.2}
+.mstab .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.mstab .pc{text-align:right;font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.msstat{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:9px 8px 4px}
+.msstat div{background:var(--wash);border:1px solid var(--line);border-radius:9px;padding:6px 8px}
+.msstat .k{font-size:.64rem;color:var(--muted)}
+.msstat .v{font-family:'Kanit';font-size:.82rem;font-weight:600;font-variant-numeric:tabular-nums}
+.msnote{font-size:.67rem;color:var(--muted);line-height:1.55;padding:8px 9px 10px}
+@media(max-width:1100px) and (min-width:901px){.mapside{width:250px}.mapwrap.has-side{padding-left:280px}}
+@media(max-width:900px){
+  .mapside{position:static;width:auto;max-height:none;margin:10px 0 4px;box-shadow:none}
+  .mapside .msbody{max-height:340px}
+}
+
 /* ===== SUMMARY VIEW ===== */
 #sumView{display:none}
 .sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
@@ -192,7 +269,9 @@ html[data-theme="dark"] .ptip{background:#0E1C29;border:1px solid var(--line-2);
 .seatbar i{height:100%}
 .dotgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin:6px 0 4px}
 .dotgrid .dot{aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.05) inset}
-.dotgrid .dot.ava{cursor:pointer;overflow:visible;display:block;text-decoration:none;transition:transform .13s ease}
+/* จุดเขต: ไม่มีรูปแล้วจึงแสดงอักษรย่อของผู้ชนะกลางวง (รูปถ้ามีจะซ้อนทับเอง) */
+.dotgrid .dot.ava{cursor:pointer;overflow:visible;display:grid;place-items:center;text-decoration:none;transition:transform .13s ease;
+  font-family:'Kanit';font-weight:700;font-size:clamp(9px,1.5vw,14px);line-height:1;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
 .dotgrid .dot.ava img{object-position:50% 12%;border-radius:50%}
 .dotgrid .dot.ava:hover{transform:translateY(-2px) scale(1.14);z-index:6}
 .dotgrid .dot.ava:focus-visible{transform:translateY(-2px) scale(1.14);z-index:6;outline:3px solid var(--orange-deep);outline-offset:2px}
@@ -451,6 +530,8 @@ mdSyncToggle();
             <g id="labelG"></g>
           </g>
         </svg>
+        <!-- การ์ดซ้าย: รายชื่อเขต → กดแล้วเป็นตารางคะแนนของเขตนั้น (renderMapSide) -->
+        <div class="mapside" id="mapSide" style="display:none"></div>
       </div>
       <div class="legendwrap" id="legend"></div>
       <div class="chamber-note" id="mapNote"></div>
@@ -476,16 +557,32 @@ mdSyncToggle();
 <!-- mobile nav -->
 
 <div class="ptip" id="ptip"></div>
-<div class="yt-audio-dock"><div id="ytdock"></div></div>
 
 <script src="bangkok-geo.js"></script>
 <script src="../js/mapzoom.js"></script>
-<script src="bangkok-data.js"></script>
-<script src="bkk-photos.js"></script>
+<!-- ประวัติ (ใช้ทั้งแท็บ "ประวัติ" และรายการปีในปุ่มเลือกปี) -->
+<script src="bkk-history.js"></script>
+<!-- ปุ่มเลือกปี — document.write ไฟล์ข้อมูล+รูปของปีที่เลือก (ห้าม defer/async) -->
+<script src="bkk-years.js"></script>
+<!-- โหมดสรุปสำหรับปีที่ไม่มีผลรายเขต (ทำงานเมื่อ window.BKKOLD เท่านั้น) -->
+<script src="bkk-oldyear.js"></script>
 <script>
 'use strict';
 (function(){
+if(window.BKKOLD) return;   // ปีที่ไม่มีผลรายเขต → bkk-oldyear.js รับช่วงไปแล้ว (ไม่มี window.BKKDATA)
 const GEO=window.BKKGEO, D=window.BKKDATA, SK=D.sk, GOV=D.gov;
+const YEAR=window.BKKYEAR||2569;        // ปีที่กำลังดูอยู่ (ปุ่มเลือกปี = bkk-years.js)
+const HASGOV=!!(GOV&&GOV.candidates&&GOV.candidates.length);   // บางปีเลือกเฉพาะ ส.ก. (เช่น 2553)
+const GWIN=HASGOV?GOV.candidates[0]:null;   // ผู้ชนะ = รายการแรก (ข้อมูลเรียงคะแนนมาก→น้อย)
+const SWEEP=!!(GOV&&GOV.sweep);         // true = มีแหล่งอ้างอิงว่าชนะครบทั้ง 50 เขต
+/* ปีที่มี "ผลผู้ว่าฯ แยกรายเขต" จริง (2556) → แผนที่แท็บผู้ว่าฯ ระบายสีตามผู้ชนะของแต่ละเขต
+   ปีอื่น กกต. ไม่ได้ประกาศแยกรายเขต → ระบายสีเดียวทั้ง กทม. ตามผู้ชนะรวม */
+const GDIST=(HASGOV&&GOV.byDistrict&&GOV.districts)?GOV.districts:null;
+const GCAND={}; ((GOV&&GOV.mapCands)||[]).forEach(c=>{GCAND[c.key]=c;});
+const GNOMAP=!!(GOV&&GOV.noMap);   // ปีที่รู้แค่ผลรวมทั้ง กทม. — ไม่ระบายสีผู้ชนะทับทั้งแผนที่
+const HASSK=!!(SK&&SK.districts);
+/* ยุคก่อน 2541 กรุงเทพฯ ยังไม่ได้แยกครบ 50 เขต — เขตที่ยังไม่เกิดจะเว้นสีไว้บนแผนที่ */
+const SKPARTIAL=!!(SK&&SK.districts&&Object.keys(SK.districts).length<Object.keys(GEO.districts).length);       // ปีที่ไม่มีเลือกตั้ง ส.ก. (เช่น 2556) → ซ่อนแท็บ ส.ก./สภา
 const NS='http://www.w3.org/2000/svg';
 const fmt=n=>n==null?'—':Number(n).toLocaleString('en-US');
 const el=id=>document.getElementById(id);
@@ -493,58 +590,80 @@ const state={view:'gov', focus:null, sel:null};
 
 // governor candidate accent color
 function govColor(c){
-  if(c.no===9) return GOV.winnerColor;
-  const m={'ประชาชน':'#FF6A13','ประชาธิปัตย์':'#27AAE1','เพื่อไทย':'#ED1C24','เศรษฐกิจ':'#B7791F'};
+  if(c===GWIN) return GOV.winnerColor;
+  const m={'ประชาชน':'#FF6A13','ก้าวไกล':'#FF6A13','ประชาธิปัตย์':'#27AAE1','เพื่อไทย':'#ED1C24',
+           'เศรษฐกิจ':'#B7791F','ไทยสร้างไทย':'#E0218A','พลังประชารัฐ':'#3F51B5','รักษ์กรุงเทพ':'#F0B400'};
   return m[c.party]||'#9AA3AE';
 }
-const skColor=name=>{const d=SK.districts[name]; return d?(SK.colors[d.party]||'#9AA3AE'):'#C9D4DC';};
-
-/* ---------- photos (avatar shows portrait if available, else number/✓) ---------- */
-const PH=window.BKKPHOTOS||{gov:{},sk:{}};
-function govAvatar(c,cls){
-  const f=PH.gov&&PH.gov[c.no];
-  return `<div class="${cls} ava">${c.no}${f?`<img src="bkk-photos/${f}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`;
+const skColor=name=>{if(!HASSK)return '#C9D4DC';const d=SK.districts[name]; return d?(SK.colors[d.party]||'#9AA3AE'):'#C9D4DC';};
+// สีเขตในแท็บผู้ว่าฯ ของปีที่มีผลรายเขต — ตามผู้สมัครที่ชนะเขตนั้น
+const govDistColor=name=>{const d=GDIST&&GDIST[name];if(!d)return '#C9D4DC';
+  const c=GCAND[d.win]; return (c&&c.color)||'#9AA3AE';};
+/* สีของผู้สมัคร ส.ก. ในแผงขยาย — จับจากชื่อพรรค (บทความเขียนยาวกว่าคีย์ที่ใช้ในเว็บ เช่น "ประชาชน (พ.ศ. 2567)") */
+function skCandColor(c){
+  if(!HASSK||!c) return '#9AA3AE';
+  const raw=String(c.party||'').replace(/^พรรค/,'').replace(/^กลุ่ม/,'').replace(/\s*\(.*?\)\s*/g,'').trim();
+  if(SK.colors[raw]) return SK.colors[raw];
+  const hit=Object.keys(SK.colors).find(k=>raw&&(raw.indexOf(k)>=0||k.indexOf(raw)>=0));
+  return hit?SK.colors[hit]:'#9AA3AE';
 }
 
-/* ---------- campaign songs (YouTube official audio) — 2-track playlist ---------- */
+/* ---------- photos (avatar shows portrait if available, else number/อักษรย่อ) ---------- */
+const PH=window.BKKPHOTOS||{gov:{},sk:{}};
+/* อักษรย่อจากชื่อ — ตัดคำนำหน้าออกก่อน (ชุดเดียวกับหน้า ส.ส./บัญชีรายชื่อ)
+   ใช้แทนรูปที่ยังพิสูจน์แหล่งที่มาไม่ได้ */
+const LEAD_VOWELS=/[เแโใไ]/;   /* สระนำหน้าเขียนก่อนพยัญชนะต้น — "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
+const firstLetter=s=>(LEAD_VOWELS.test(s.charAt(0))&&s.length>1)?s.charAt(1):s.charAt(0);
+const initialOf=name=>{const t=String(name||'').replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return firstLetter(t)||firstLetter(String(name||'').replace(/\s/g,''))||'•';};
+function govAvatar(c,cls){
+  const f=c.no!=null&&PH.gov&&PH.gov[c.no];
+  const face=c.no!=null?c.no:((c.name||'?').trim().charAt(0)||'?');   // ปีเก่าไม่มีเบอร์ผู้สมัคร
+  return `<div class="${cls} ava">${face}${f?`<img src="bkk-photos/${f}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`;
+}
+
+/* ---------- campaign songs — เล่นจากไฟล์ mp3 ใน ../songs/ (เสียงอย่างเดียว)
+   + ปุ่ม YT ไว้เป็นลิงก์สำรอง (คลิป official ปิดการฝัง เล่นในหน้าไม่ได้) ---------- */
 const SONGS=[
-  {id:'sQUu4_yDrAI',title:'ชัช-ชัช-ชาติ เอ้า! กา เบอร์ 9',sub:'ทีมชัชชาติ · กรุงเทพฯ ทำงาน · official audio'},
-  {id:'NVJip0Tsub4',title:'เพลงในพลังของท่านชัชชาติ',sub:'เพลงให้กำลังใจท่านชัชชาติ'}
+  {file:'chadchart-vote9.mp3',id:'sQUu4_yDrAI',title:'ชัช-ชัช-ชาติ เอ้า! กา เบอร์ 9',sub:'ทีมชัชชาติ · กรุงเทพฯ ทำงาน · official audio'},
+  {file:'chadchart-power.mp3',id:'NVJip0Tsub4',title:'เพลงในพลังของท่านชัชชาติ',sub:'เพลงให้กำลังใจท่านชัชชาติ'}
 ];
-const SONG={player:null,ready:false,apiLoading:false,cur:-1,playing:false,timer:null,_pending:null,errIdx:-1};
+const SONG={audio:[],cur:-1};
 function fmtTime(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-function songUI(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i);if(!b)return;b.innerHTML=(SONG.cur===i&&SONG.playing)?'❚❚':'▶';});}
-function songTimer(on){clearInterval(SONG.timer);SONG.timer=null;if(!on)return;
-  SONG.timer=setInterval(()=>{if(!SONG.player||SONG.cur<0||!SONG.player.getDuration)return;
-    const d=SONG.player.getDuration()||0,t=SONG.player.getCurrentTime()||0,p=el('songProg'+SONG.cur),tm=el('songTime'+SONG.cur);
-    if(p&&d)p.style.width=(t/d*100).toFixed(1)+'%'; if(tm)tm.textContent=fmtTime(t)+' / '+fmtTime(d);
-  },250);}
-function songCreate(){if(SONG.player)return;
-  SONG.player=new YT.Player('ytdock',{height:'120',width:'120',playerVars:{playsinline:1},
-    events:{onReady:()=>{SONG.ready=true;if(SONG._pending){const c=SONG._pending;SONG._pending=null;c();}},
-      onStateChange:e=>{if(e.data===1){SONG.playing=true;songUI();songTimer(true);}
-        else if(e.data===2||e.data===0){SONG.playing=false;songUI();songTimer(false);
-          if(e.data===0){const p=el('songProg'+SONG.cur);if(p)p.style.width='0%';}}},
-      onError:()=>{SONG.playing=false;songTimer(false);SONG.errIdx=SONG.cur;songUI();
-        const tm=el('songTime'+SONG.cur);if(tm)tm.textContent='เล่นไม่ได้ · กด YT';}}});}
-function songEnsure(cb){if(SONG.player&&SONG.ready){cb();return;}SONG._pending=cb;
-  if(window.YT&&window.YT.Player){songCreate();return;}
-  if(!SONG.apiLoading){SONG.apiLoading=true;window.onYouTubeIframeAPIReady=songCreate;
-    const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);}}
+function songUI(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i),a=SONG.audio[i];
+  if(b)b.innerHTML=(a&&!a.paused)?'❚❚':'▶';});}
+function songRow(i){const a=SONG.audio[i];if(!a)return;
+  const d=a.duration||0,t=a.currentTime||0,p=el('songProg'+i),tm=el('songTime'+i);
+  if(p)p.style.width=(d?(t/d*100):0).toFixed(1)+'%';
+  if(tm)tm.textContent=d?(fmtTime(t)+' / '+fmtTime(d)):fmtTime(t);}
+function songFail(i){const tm=el('songTime'+i);if(tm)tm.textContent='เล่นไม่ได้ · กด YT';}
+/* หยุดทุกเพลงในหน้านี้ — ใช้เป็น window.__mdStop ให้เพลย์เยอร์หน้าอื่นสั่งหยุดได้ */
+function songStop(){SONG.audio.forEach(a=>{if(a&&!a.paused)a.pause();});
+  if(window.__mdStop===songStop)window.__mdStop=null;}
+function songAudio(i){
+  if(SONG.audio[i])return SONG.audio[i];
+  const a=new Audio('../songs/'+SONGS[i].file); a.preload='metadata'; SONG.audio[i]=a;
+  a.addEventListener('loadedmetadata',()=>songRow(i));
+  a.addEventListener('timeupdate',()=>songRow(i));
+  a.addEventListener('play',()=>{SONG.cur=i;songUI();});
+  a.addEventListener('pause',()=>songUI());
+  a.addEventListener('ended',()=>{a.currentTime=0;songRow(i);songUI();
+    if(window.__mdStop===songStop)window.__mdStop=null;});
+  a.addEventListener('error',()=>songFail(i));
+  return a;}
 function songPlay(i){
-  if(SONG.errIdx===i){window.open('https://youtu.be/'+SONGS[i].id,'_blank');return;}
-  if(window.__mdStop)window.__mdStop();
-  window.__mdStop=()=>{if(SONG.player&&SONG.playing)SONG.player.pauseVideo();};
-  songEnsure(()=>{
-    if(SONG.cur===i){ if(SONG.playing)SONG.player.pauseVideo(); else SONG.player.playVideo(); }
-    else { const op=el('songProg'+SONG.cur); if(op)op.style.width='0%'; SONG.cur=i; SONG.errIdx=-1; SONG.player.loadVideoById(SONGS[i].id); }
-    songUI();
-  });}
-function songSeek(i,ev){if(SONG.cur!==i||!SONG.player||!SONG.player.getDuration)return;
+  const a=songAudio(i);
+  if(a.paused){
+    if(window.__mdStop&&window.__mdStop!==songStop)window.__mdStop();   // หยุดเพลงของหน้าอื่นก่อน
+    SONG.audio.forEach((o,j)=>{if(o&&j!==i&&!o.paused)o.pause();});      // เล่นทีละเพลง
+    SONG.cur=i; window.__mdStop=songStop;
+    const p=a.play(); if(p&&p.catch)p.catch(()=>songFail(i));
+  }else a.pause();
+  songUI();}
+function songSeek(i,ev){const a=SONG.audio[i];if(!a||!a.duration)return;
   const bar=el('songBar'+i);if(!bar)return;const r=bar.getBoundingClientRect();
-  const f=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width));
-  SONG.player.seekTo(f*(SONG.player.getDuration()||0),true);}
-function songListHTML(){return `<div class="songwrap"><div class="songhead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>เพลงหาเสียง · ชัชชาติ เบอร์ 9</div><div class="songlist">`+
+  a.currentTime=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*a.duration;
+  songRow(i);}
+function songListHTML(){if(YEAR!==2569)return '';return `<div class="songwrap"><div class="songhead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>เพลงหาเสียง · ชัชชาติ เบอร์ 9</div><div class="songlist">`+
   SONGS.map((s,i)=>`<div class="songcard">`+
     `<button class="songplay" id="songBtn${i}" title="เล่น/หยุดเพลง">▶</button>`+
     `<div class="songinfo"><div class="songttl">${s.title}</div>`+
@@ -553,8 +672,10 @@ function songListHTML(){return `<div class="songwrap"><div class="songhead"><svg
     `<div class="songtime" id="songTime${i}">0:00</div>`+
     `<a class="songyt" href="https://youtu.be/${s.id}" target="_blank" rel="noopener" title="เปิดใน YouTube">YT ▶</a></div>`
   ).join('')+`</div></div>`;}
-function bindSong(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i);if(b)b.onclick=()=>songPlay(i);
-  const bar=el('songBar'+i);if(bar)bar.onclick=e=>songSeek(i,e);});songUI();if(SONG.playing)songTimer(true);}
+function bindSong(){if(YEAR!==2569)return;SONGS.forEach((s,i)=>{songAudio(i);
+  const b=el('songBtn'+i);if(b)b.onclick=()=>songPlay(i);
+  const bar=el('songBar'+i);if(bar)bar.onclick=e=>songSeek(i,e);
+  songRow(i);});songUI();}
 
 /* ---------- build map once ---------- */
 const svg=el('bkkmap'), kg=el('khetG'), lg=el('labelG');
@@ -573,7 +694,8 @@ Object.entries(GEO.districts).forEach(([name,g])=>{
   p.addEventListener('click',()=>onClick(name));
 });
 // data-coverage guard
-Object.keys(GEO.districts).forEach(n=>{ if(state && !SK.districts[n]) console.warn('no ส.ก. data for',n); });
+if(HASSK) Object.keys(GEO.districts).forEach(n=>{ if(!SK.districts[n]) console.warn('no ส.ก. data for',n); });
+if(GDIST) Object.keys(GEO.districts).forEach(n=>{ if(!GDIST[n]) console.warn('no ผู้ว่าฯ รายเขต data for',n); });
 
 /* ซูมเข้าเขตที่เลือกแบบบินลื่น ๆ (ดู js/mapzoom.js — ไอเดียจาก elect.in.th)
    กทม. เป็นแผนที่แบน (1000×795) แต่ละเขตเล็ก จึงเปิดเพดานให้สูงพอ
@@ -586,10 +708,25 @@ const mz=MapZoom.create(svg,el('zoomG'),{width:VB[2],height:VB[3],maxZoom:14,
 const tip=el('ptip');
 function tipHTML(name){
   if(state.view==='gov'){
-    return `<div class="tn">เขต${name}</div><div class="tp"><span class="sw" style="background:${GOV.winnerColor}"></span>ผู้ชนะ: ชัชชาติ สิทธิพันธุ์</div>`;
+    if(GDIST){                                   // ปีที่มีผลผู้ว่าฯ รายเขต — โชว์ผู้ชนะของเขตนั้นจริง ๆ
+      const d=GDIST[name];
+      if(!d) return `<div class="tn">เขต${name}</div><div class="tp" style="opacity:.75">ไม่มีข้อมูลรายเขต</div>`;
+      const c=GCAND[d.win]||{};
+      return `<div class="tn">เขต${name}</div>`+
+        `<div class="tp"><span class="sw" style="background:${govDistColor(name)}"></span>${c.name||d.win} · ${c.party||''}</div>`+
+        (d.votes?`<div class="tp" style="opacity:.85">${fmt(d.votes)} คะแนน${d.pct?' ('+d.pct+'%)':''}`
+          +(d.runVotes?` · นำ ${fmt(d.votes-d.runVotes)}`:'')+`</div>`:'');
+    }
+    return `<div class="tn">เขต${name}</div><div class="tp"><span class="sw" style="background:${GOV.winnerColor}"></span>ผู้ชนะ: ${GWIN.name}</div>`;
   }
   const d=SK.districts[name];
-  if(!d) return `<div class="tn">เขต${name}</div>`;
+  if(!d) return `<div class="tn">เขต${name}</div>`+
+    (SKPARTIAL?`<div class="tp" style="opacity:.75">ปี ${YEAR} ยังไม่มีเขตนี้ (แยกออกมาทีหลัง)</div>`:'');
+  if(d.seats&&d.seats.length>1){          // เขตที่แบ่งเป็น 2 เขตเลือกตั้ง (ปี 2553)
+    return `<div class="tn">เขต${name} <small style="opacity:.7">· ${d.seats.length} ที่นั่ง</small></div>`+
+      d.seats.map(s=>`<div class="tp"><span class="sw" style="background:${SK.colors[s.party]||'#9AA3AE'}"></span>`+
+        `เขตเลือกตั้งที่ ${s.zone} · ${s.winner} (${s.party})</div>`).join('');
+  }
   return `<div class="tn">เขต${name}</div>`+
     `<div class="tp"><span class="sw" style="background:${skColor(name)}"></span>${d.winner||'—'} · ${d.grp||d.party}</div>`+
     (d.votes?`<div class="tp" style="opacity:.85">${fmt(d.votes)} คะแนน (${d.pct}%)</div>`:'');
@@ -602,8 +739,8 @@ function moveTip(e){ const pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
 function onLeave(){ tip.classList.remove('on'); }
 function onClick(name){
   // แตะเขตเดิมซ้ำ = ยกเลิกการเลือก → recolor() จะสั่งบินกลับมุมมองเต็ม (ทางออกจากสภาพซูมค้าง)
-  if(state.view==='sk'){ state.sel=(state.sel===name)?null:name; renderPanel(); recolor(); }
-  else { // gov: flash
+  if(state.view==='sk'||(state.view==='gov'&&GDIST)){ state.sel=(state.sel===name)?null:name; renderPanel(); recolor(); }
+  else { // gov ปีที่ไม่มีผลรายเขต: แค่กะพริบ
     const p=paths[name]; p.classList.add('sel'); setTimeout(()=>p.classList.remove('sel'),600);
   }
 }
@@ -611,15 +748,19 @@ function onClick(name){
 /* ---------- recolor ---------- */
 function recolor(){
   Object.entries(paths).forEach(([name,p])=>{
-    p.setAttribute('fill', state.view==='gov'?GOV.winnerColor:skColor(name));
+    p.setAttribute('fill', state.view==='gov'?(GDIST?govDistColor(name):(GNOMAP?'#C9D4DC':GOV.winnerColor)):skColor(name));
     p.classList.remove('dim','sel');
     if(state.view==='sk'){
       if(state.focus){ const d=SK.districts[name]; if(!d||d.party!==state.focus) p.classList.add('dim'); }
       if(state.sel===name) p.classList.add('sel');
+    }else if(GDIST){                       // แท็บผู้ว่าฯ ของปีที่มีผลรายเขต — ไฮไลต์/หรี่ได้เหมือน ส.ก.
+      if(state.focus){ const d=GDIST[name]; if(!d||d.win!==state.focus) p.classList.add('dim'); }
+      if(state.sel===name) p.classList.add('sel');
     }
   });
   // เลือกเขตแล้วบินเข้าไปหา · ไม่มีเขตที่เลือก (สลับแท็บ/กดกลับทุกเขต) ก็บินกลับมุมมองเต็ม
-  if(state.view==='sk'&&state.sel&&paths[state.sel]) mz.fitEl(paths[state.sel]);
+  renderMapSide();
+  if((state.view==='sk'||(state.view==='gov'&&GDIST))&&state.sel&&paths[state.sel]) mz.fitEl(paths[state.sel]);
   else if(mz.scale>1.001) mz.reset();
 }
 window.bkkRecolor=recolor;
@@ -628,7 +769,17 @@ window.bkkRecolor=recolor;
 function renderLegend(){
   const box=el('legend');
   if(state.view==='gov'){
-    box.innerHTML=`<span class="lchip" style="cursor:default"><span class="sw" style="background:${GOV.winnerColor}"></span>ชัชชาติ สิทธิพันธุ์ <b>ชนะทั้ง 50 เขต</b></span>`+
+    if(GDIST){                                   // ชิปผู้สมัคร + จำนวนเขตที่ชนะ (กดเพื่อไฮไลต์เหมือน ส.ก.)
+      const w=GOV.mapWins||{};
+      box.innerHTML=(GOV.mapCands||[]).filter(c=>w[c.key]).map(c=>
+        `<span class="lchip${state.focus&&state.focus!==c.key?' off':''}${state.focus===c.key?' on':''}" data-k="${c.key}">`+
+        `<span class="sw" style="background:${c.color}"></span>${c.key} <b>${w[c.key]} เขต</b></span>`).join('');
+      box.querySelectorAll('.lchip').forEach(c=>c.onclick=()=>{
+        const k=c.dataset.k; state.focus=(state.focus===k)?null:k; renderLegend(); recolor();
+      });
+      return;
+    }
+    box.innerHTML=`<span class="lchip" style="cursor:default"><span class="sw" style="background:${GOV.winnerColor}"></span>${GWIN.name} <b>${SWEEP?'ชนะทั้ง 50 เขต':'ผู้ชนะรวมทั้ง กทม.'}</b></span>`+
       `<span class="lchip" style="cursor:default;opacity:.75"><span class="sw" style="background:var(--wash);border:1px solid var(--line-2)"></span>ไม่มีผลแยกรายเขต (นับรวมทั้ง กทม.)</span>`;
     return;
   }
@@ -641,7 +792,136 @@ function renderLegend(){
 }
 
 /* ---------- panel ---------- */
+/* ---------- แผงขยาย: ผู้สมัครทุกคน + สถิติของเขตนั้น ----------
+   ใช้ได้ทั้งแท็บ ส.ก. (ผู้สมัครรายเขต) และแท็บผู้ว่าฯ ของปีที่มีผลรายเขต (2556)
+   cands = [{no,name,party,votes,pct}] · st = สถิติเขต · colorOf(c) = สีประจำคน/พรรค */
+function moreHTML(cands,st,colorOf,note){
+  cands=(cands||[]).slice().sort((a,b)=>(b.votes||0)-(a.votes||0));
+  if(!cands.length&&!st) return '';
+  const box=(k,v)=>`<div class="dbox"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const stats=!st?'':`<div class="dgrid">`+
+    box('ผู้มีสิทธิเลือกตั้ง',fmt(st.eligible))+
+    box('ผู้มาใช้สิทธิ',fmt(st.turnout)+(st.turnoutPct!=null?`<small>(${st.turnoutPct}%)</small>`:''))+
+    box('บัตรดี',fmt(st.valid))+box('บัตรเสีย',fmt(st.invalid))+
+    box('ไม่ประสงค์ลงคะแนน',fmt(st.abstain))+`</div>`;
+  const rows=cands.map((c,i)=>{
+    const col=colorOf?colorOf(c):'#9AA3AE';
+    return `<div class="dcand${i===0?' win':''}">`+
+      `<div class="cno" style="background:${col}">${c.no!=null?c.no:(i+1)}</div>`+
+      `<div class="cmid"><div class="cnm">${c.name}</div><div class="cpt">${c.party||''}</div></div>`+
+      `<div class="cval"><div class="cv">${fmt(c.votes)}</div>`+
+      `<div class="cp">${c.pct!=null?c.pct+'%':''}</div></div></div>`;
+  }).join('');
+  return `<details class="dmore"><summary>ดูผู้สมัครทุกคน &amp; สถิติเขต<span class="chev"></span></summary>`+
+    stats+(rows?`<div class="dclist"><div class="dch">ผู้สมัครในเขตนี้ ${cands.length} คน · เรียงตามคะแนน</div>${rows}</div>`:'')+
+    (note?`<div class="dnote">${note}</div>`:'')+`</details>`;
+}
+/* ---------- การ์ดซ้ายบนแผนที่: รายชื่อเขต ↔ ตารางคะแนนรายเขต ----------
+   โหมดรายการ = ทุกเขตพร้อมผู้ชนะ (พิมพ์ค้นหาได้) · กดเขต (ในการ์ดหรือบนแผนที่) = ตารางคะแนนของเขตนั้น */
+let msQuery='';
+/* รูปแผนที่ถูกจำกัดด้วย max-height ทำให้บางจอมีพื้นที่ว่างข้าง ๆ — ถ้าว่างพอก็วางการ์ดทับได้เลย
+   ถ้าไม่พอค่อยใส่ padding ให้แผนที่ (แผนที่เล็กลงแต่ไม่โดนบัง) */
+function msFit(){
+  const box=el('mapSide'); if(!box) return;
+  const wrap=box.parentElement; if(!wrap) return;
+  if(box.style.display==='none'||innerWidth<901){ wrap.classList.remove('has-side'); return; }
+  wrap.classList.remove('has-side');
+  const svg=el('bkkmap'), g=el('khetG'); if(!svg||!g) return;
+  const sr=svg.getBoundingClientRect(), gr=g.getBoundingClientRect();
+  if(!gr.width) return;
+  if((gr.left-sr.left) < box.getBoundingClientRect().width+26) wrap.classList.add('has-side');
+}
+addEventListener('resize',()=>setTimeout(msFit,60));
+function msDistricts(){                       // [{name, party, winner, votes, color, cands, stats, seats}]
+  if(state.view==='sk'&&HASSK) return Object.keys(SK.districts).sort((a,b)=>a.localeCompare(b,'th')).map(n=>{
+    const d=SK.districts[n];
+    return {name:n,winner:d.winner,party:d.grp||d.party,votes:d.votes,color:skColor(n),
+            cands:d.cands||(d.seats&&d.seats[0]&&d.seats[0].cands),
+            stats:d.stats||(d.seats&&d.seats[0]&&d.seats[0].stats),seats:d.seats};
+  });
+  if(state.view==='gov'&&GDIST) return Object.keys(GDIST).sort((a,b)=>a.localeCompare(b,'th')).map(n=>{
+    const d=GDIST[n], c=GCAND[d.win]||{};
+    return {name:n,winner:c.name||d.win,party:c.party||'',votes:d.votes,color:govDistColor(n),gov:d};
+  });
+  return null;
+}
+function msTable(rows,colorOf){
+  return `<table class="mstab"><thead><tr><th>เบอร์</th><th>ผู้สมัคร</th><th class="num">คะแนน</th><th class="pc">%</th></tr></thead><tbody>`+
+    rows.map((c,i)=>`<tr class="${i===0?'win':''}">`+
+      `<td><span class="no" style="background:${colorOf(c)}">${c.no!=null?c.no:(i+1)}</span></td>`+
+      `<td><div class="nm">${c.name}</div><div class="pt">${c.party||''}</div></td>`+
+      `<td class="num">${fmt(c.votes)}</td><td class="pc">${c.pct!=null?c.pct+'%':'—'}</td></tr>`).join('')+
+    `</tbody></table>`;
+}
+function msStats(st){
+  if(!st) return '';
+  const b=(k,v)=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  return `<div class="msstat">`+b('ผู้มีสิทธิ',fmt(st.eligible))+
+    b('ผู้มาใช้สิทธิ',(st.turnoutPct!=null?st.turnoutPct+'%':fmt(st.turnout)))+
+    b('บัตรดี',fmt(st.valid))+b('บัตรเสีย',fmt(st.invalid))+`</div>`;
+}
+function renderMapSide(){
+  const box=el('mapSide'); if(!box) return;
+  const wrap=box.parentElement;
+  const show=v=>{box.style.display=v?'':'none'; if(!v&&wrap) wrap.classList.remove('has-side');};
+  const list=msDistricts();
+  if(!list){
+    /* แท็บผู้ว่าฯ ของปีที่ไม่มีผลรายเขต — ใช้พื้นที่ว่างข้างแผนที่โชว์ตารางคะแนนรวมทั้ง กทม. แทน */
+    if(state.view==='gov'&&HASGOV){
+      show(true);
+      box.innerHTML=`<div class="msh"><span class="mst">ตารางคะแนน · ทั้ง กทม.</span>`+
+          `<span class="msc">${GOV.ncand||GOV.candidates.length} คน</span></div>`+
+        `<div class="msbody">`+msStats(GOV.stats)+
+        msTable(GOV.candidates,c=>govColor(c))+
+        `<div class="msnote">กกต. ไม่ได้ประกาศผลผู้ว่าฯ แยกรายเขต ตารางนี้จึงเป็นคะแนนรวมทั้งกรุงเทพมหานคร`+
+        (HASSK?' · อยากดูรายเขต กดแท็บ “ส.ก.” ด้านบน':'')+`</div></div>`;
+      msFit(); return;
+    }
+    show(false); box.innerHTML=''; return;
+  }
+  show(true);
+  const sel=state.sel&&list.filter(o=>o.name===state.sel)[0];
+  if(sel){                                    // ---------- ตารางคะแนนของเขตที่เลือก ----------
+    let body='';
+    if(sel.seats&&sel.seats.length>1){         // เขตที่มีหลายที่นั่ง (ปี 2553) — แยกตารางต่อที่นั่ง
+      body=sel.seats.map(s=>`<div class="msnote" style="padding:9px 9px 2px;color:var(--ink-2)">เขตเลือกตั้งที่ ${s.zone} · ${s.winner}</div>`+
+        msStats(s.stats)+(s.cands&&s.cands.length?msTable(s.cands.slice().sort((a,b)=>(b.votes||0)-(a.votes||0)),skCandColor):'')).join('');
+    }else if(sel.gov){                         // แท็บผู้ว่าฯ ปีที่มีผลรายเขต (2556)
+      const d=sel.gov, order=(GOV.mapCands||[]).filter(c=>d.all&&d.all[c.key])
+        .map(c=>({no:c.no,name:c.name,party:c.party,votes:d.all[c.key].votes,pct:d.all[c.key].pct,color:c.color}))
+        .sort((a,b)=>(b.votes||0)-(a.votes||0));
+      body=msStats({eligible:d.eligible,turnout:d.total,turnoutPct:d.turnoutPct,valid:null,invalid:null})+
+        msTable(order,c=>c.color||'#9AA3AE');
+    }else{
+      body=msStats(sel.stats)+(sel.cands&&sel.cands.length
+        ? msTable(sel.cands.slice().sort((a,b)=>(b.votes||0)-(a.votes||0)),skCandColor)
+        : `<div class="msnote">แหล่งอ้างอิงของปีนี้ไม่มีคะแนนรายคน — มีเฉพาะรายชื่อผู้ที่ได้รับเลือก</div>`);
+    }
+    box.innerHTML=`<div class="msh"><button class="msback" type="button" onclick="bkkClearSel()">‹ ทุกเขต</button>`+
+      `<span class="mst">เขต${sel.name}</span></div><div class="msbody">${body}</div>`;
+    msFit(); return;
+  }
+  // ---------- โหมดรายการทุกเขต ----------
+  const q=msQuery.trim();
+  const shown=q?list.filter(o=>(o.name+' '+(o.winner||'')+' '+(o.party||'')).indexOf(q)>=0):list;
+  box.innerHTML=`<div class="msh"><span class="mst">${state.view==='gov'?'ผลรายเขต':'ผู้ชนะรายเขต'}</span>`+
+      `<span class="msc">${list.length} เขต</span></div>`+
+    `<div class="mssearch"><input id="msq" type="search" placeholder="ค้นหาเขต / ชื่อผู้ชนะ / พรรค" value="${q.replace(/"/g,'&quot;')}"></div>`+
+    `<div class="msbody">`+(shown.length?shown.map(o=>
+      `<button class="msrow" type="button" data-d="${o.name}"><span class="sw" style="background:${o.color}"></span>`+
+      `<span class="mn">เขต${o.name}<span class="mw">${o.winner||'—'}${o.party?' · '+o.party:''}</span></span>`+
+      `<span class="mv">${o.votes!=null?fmt(o.votes):''}</span></button>`).join('')
+      :`<div class="msnote">ไม่พบเขตที่ตรงกับ "${q}"</div>`)+`</div>`;
+  const inp=el('msq');
+  if(inp) inp.oninput=e=>{msQuery=e.target.value;const p=e.target.selectionStart;renderMapSide();
+    const i2=el('msq'); if(i2){i2.focus();try{i2.setSelectionRange(p,p);}catch(err){}}};
+  box.querySelectorAll('.msrow').forEach(b=>b.onclick=()=>{
+    state.sel=b.dataset.d; renderPanel(); recolor();
+  });
+  msFit();
+}
 function statStrip(s){
+  if(!s) return '';
   return `<div class="sstrip">`+
     `<div class="sfig"><div class="sfk">ผู้มีสิทธิ</div><div class="sfv">${fmt(s.eligible)}</div></div>`+
     `<div class="sfig"><div class="sfk">มาใช้สิทธิ</div><div class="sfv">${s.turnoutPct}<small>%</small></div></div>`+
@@ -653,18 +933,48 @@ function statStrip(s){
 function renderPanel(){
   const panel=el('panel');
   if(state.view==='gov'){
-    const w=GOV.candidates[0], max=w.pct;
+    if(GDIST&&state.sel){                    // ปีที่มีผลผู้ว่าฯ รายเขต — กดเขตแล้วดูคะแนนของเขตนั้น
+      const name=state.sel, d=GDIST[name], col=govDistColor(name);
+      const cw=GCAND[d.win]||{}, order=(GOV.mapCands||[]).filter(c=>d.all&&d.all[c.key]);
+      const maxv=Math.max(...order.map(c=>d.all[c.key].votes||0))||1;
+      const rows=order.map(c=>{
+        const v=d.all[c.key];
+        return `<div class="rrow${c.key===d.win?' win':''}"><div class="rno ava" style="color:${c.color}">${c.no||''}</div>`+
+          `<div class="rmid"><div class="rnm">${c.name}</div><div class="rpt">${c.party}</div>`+
+          `<div class="rbar"><i style="width:${Math.max(2,(v.votes/maxv*100)).toFixed(1)}%;background:${c.color}"></i></div></div>`+
+          `<div class="rval"><div class="rp" style="color:${c.color}">${v.pct!=null?v.pct+'%':'—'}</div><div class="rv">${fmt(v.votes)}</div></div></div>`;
+      }).join('');
+      panel.innerHTML=`<button class="dback" onclick="bkkClearSel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>กลับทุกเขต</button>`+
+        `<div class="ddet"><div class="ddn">เขต${name}</div>`+
+        `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">✓</div>`+
+        `<div><div class="dvn">${cw.name||d.win}</div><div class="dvm">${cw.party||''}</div></div></div>`+
+        `<div class="ddrows">`+
+        `<div class="ddr"><span>คะแนนที่ได้</span><b>${fmt(d.votes)}</b></div>`+
+        `<div class="ddr"><span>ร้อยละของเขต</span><b>${d.pct!=null?d.pct+'%':'—'}</b></div>`+
+        `<div class="ddr"><span>นำอันดับ 2</span><b>${d.runVotes!=null?fmt(d.votes-d.runVotes):'—'}</b></div>`+
+        `<div class="ddr"><span>ผู้มาใช้สิทธิ</span><b>${d.turnoutPct!=null?d.turnoutPct+'%':'—'}</b></div>`+
+        `<div class="ddr"><span>ผู้มีสิทธิ</span><b>${fmt(d.eligible)}</b></div>`+
+        `</div>`+
+        moreHTML(order.map(c=>({no:c.no,name:c.name,party:c.party,votes:d.all[c.key].votes,pct:d.all[c.key].pct})),
+                 {eligible:d.eligible,turnout:d.total,turnoutPct:d.turnoutPct,valid:null,invalid:null,abstain:null},
+                 c=>{const g=(GOV.mapCands||[]).find(x=>x.name===c.name);return (g&&g.color)||'#9AA3AE';},
+                 d.partial?'เขตนี้ไม่มีในตารางของวิกิพีเดีย — ใช้ตัวเลข 2 ผู้สมัครหลักจากรายงานผลรายเขตของ kapook (บวกกับอีก 48 เขตแล้วได้ยอดรวมทางการพอดี) จึงไม่มีสถิติผู้ใช้สิทธิรายเขต':'ตารางผลรายเขตของวิกิพีเดีย (อ้างเว็บไซต์ กทม. election56) ระบุคะแนนไว้ 5 อันดับแรก และไม่ได้แยกบัตรดี/บัตรเสียรายเขต')+
+        `</div>`+
+        `<div class="rank" style="margin-top:12px">${rows}</div>`;
+      return;
+    }
+    const w=GOV.candidates[0], max=(w.pct!=null?w.pct:(w.votes||1));
     const rows=GOV.candidates.map(c=>{
-      const col=govColor(c), wd=Math.max(2,(c.pct/max*100)).toFixed(1);
-      return `<div class="rrow${c.no===9?' win':''}">${govAvatar(c,'rno')}`+
+      const col=govColor(c), base=(c.pct!=null?c.pct:(c.votes||0)), wd=Math.max(2,(base/max*100)).toFixed(1);
+      return `<div class="rrow${c===GWIN?' win':''}">${govAvatar(c,'rno')}`+
         `<div class="rmid"><div class="rnm">${c.name}</div><div class="rpt">${c.party}</div>`+
         `<div class="rbar"><i style="width:${wd}%;background:${col}"></i></div></div>`+
-        `<div class="rval"><div class="rp" style="color:${col}">${c.pct}%</div><div class="rv">${fmt(c.votes)}</div></div></div>`;
+        `<div class="rval"><div class="rp" style="color:${col}">${c.pct!=null?c.pct+'%':''}</div><div class="rv">${fmt(c.votes)}</div></div></div>`;
     }).join('');
-    panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผลผู้ว่าฯ กทม. <span class="sc">ผู้สมัคร ${GOV.candidates.length} คน</span></div>`+
+    panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผลผู้ว่าฯ กทม. <span class="sc">ผู้สมัคร ${GOV.ncand||GOV.candidates.length} คน</span></div>`+
       `<div class="whero" style="background:linear-gradient(135deg,${GOV.winnerColor},${shade(GOV.winnerColor)})">${govAvatar(w,'wav')}`+
-      `<div class="wi"><div class="wn">${w.name}</div><div class="wmeta">${w.party} · เบอร์ ${w.no}</div>`+
-      `<div class="wbig">${fmt(w.votes)} <span>คะแนน · ${w.pct}%</span></div></div></div>`+
+      `<div class="wi"><div class="wn">${w.name}</div><div class="wmeta">${w.party}${w.no!=null?' · เบอร์ '+w.no:''}</div>`+
+      `<div class="wbig">${fmt(w.votes)} <span>คะแนน${w.pct!=null?' · '+w.pct+'%':''}</span></div></div></div>`+
       songListHTML()+
       `<div class="rank">${rows}</div>`+statStrip(GOV.stats);
     bindSong();
@@ -673,15 +983,32 @@ function renderPanel(){
   // sk
   if(state.sel){
     const name=state.sel, d=SK.districts[name], col=skColor(name);
-    panel.innerHTML=`<button class="dback" onclick="bkkClearSel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>กลับทุกเขต</button>`+
+    const back=`<button class="dback" onclick="bkkClearSel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>กลับทุกเขต</button>`;
+    if(d.seats&&d.seats.length>1){        // เขตที่มีมากกว่า 1 ที่นั่ง — โชว์ทุกเขตเลือกตั้ง
+      panel.innerHTML=back+`<div class="ddet"><div class="ddn">เขต${name} <small style="font-size:.7rem;opacity:.7">· ${d.seats.length} ที่นั่ง</small></div>`+
+        d.seats.map(s=>{const c=SK.colors[s.party]||'#9AA3AE';
+          return `<div class="ddwin" style="background:linear-gradient(135deg,${c},${shade(c)});margin-bottom:8px"><div class="dva ava">${s.zone||'✓'}</div>`+
+            `<div><div class="dvn">${s.winner||'—'}</div><div class="dvm">${s.grp||s.party}${s.zone?' · เขตเลือกตั้งที่ '+s.zone:''}</div>`+
+            (s.votes!=null?`<div class="dvm" style="opacity:.85">${fmt(s.votes)} คะแนน${s.pct!=null?' · '+s.pct+'%':''}</div>`:'')+`</div></div>`
+            +moreHTML(s.cands,s.stats,skCandColor,s.zone?'เขตเลือกตั้งที่ '+s.zone+' ของเขต'+name:'');
+        }).join('')+
+        (d.split?`<div style="font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.6">เขตนี้ได้ ส.ก. คนละพรรคกัน — สีบนแผนที่ใช้${SK.noVotes?'พรรคของที่นั่งแรกในตาราง':'ที่นั่งที่คะแนนสูงกว่า'}</div>`:'')+
+        `</div>`;
+      return;
+    }
+    panel.innerHTML=back+
       `<div class="ddet"><div class="ddn">เขต${name}</div>`+
-      `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">${(PH.sk&&PH.sk[name])?`<img src="bkk-photos/${PH.sk[name]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'✓'}</div>`+
+      `<div class="ddwin" style="background:linear-gradient(135deg,${col},${shade(col)})"><div class="dva ava">${initialOf(d.winner)}${(PH.sk&&PH.sk[name])?`<img src="bkk-photos/${PH.sk[name]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`+
       `<div><div class="dvn">${d.winner||'—'}</div><div class="dvm">${d.grp||d.party}</div></div></div>`+
       `<div class="ddrows">`+
       `<div class="ddr"><span>คะแนนที่ได้</span><b>${fmt(d.votes)}</b></div>`+
       `<div class="ddr"><span>ร้อยละของเขต</span><b>${d.pct!=null?d.pct+'%':'—'}</b></div>`+
       `<div class="ddr"><span>สังกัด</span><b>${d.grp||d.party}</b></div>`+
-      `</div></div>`;
+      `</div>`+
+      /* 2569/2565 เก็บผู้สมัครไว้ที่ระดับเขต · 2553 เก็บไว้ในที่นั่ง (seats[0]) */
+      moreHTML(d.cands||(d.seats&&d.seats[0]&&d.seats[0].cands),
+               d.stats||(d.seats&&d.seats[0]&&d.seats[0].stats),skCandColor)+
+      `</div>`;
     return;
   }
   const maxSeat=Math.max(...SK.parties.map(p=>p.seats));
@@ -690,7 +1017,7 @@ function renderPanel(){
     `<span class="pnm">${pt.key}</span><span class="pseat">${pt.seats}<span> ที่นั่ง</span></span></div>`+
     `<div class="ptbar"><i style="width:${(pt.seats/maxSeat*100).toFixed(1)}%;background:${pt.color}"></i></div>`+
     (pt.votes?`<div class="ptv">${fmt(pt.votes)} คะแนน</div>`:'')+`</div>`).join('');
-  panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11"/></svg>ที่นั่ง ส.ก. รายพรรค <span class="sc">รวม 50 เขต</span></div>`+
+  panel.innerHTML=`<div class="sb-head"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11"/></svg>ที่นั่ง ส.ก. รายพรรค <span class="sc">รวม ${SK.totalSeats||50} ที่นั่ง</span></div>`+
     `<div class="ptot">${rows}</div>`+statStrip(SK.stats)+
     `<div style="font-size:.74rem;color:var(--muted);margin-top:12px;line-height:1.6">แตะแผนที่หรือชิปพรรคด้านล่างแผนที่เพื่อเจาะรายเขต</div>`;
 }
@@ -703,59 +1030,106 @@ function shade(hex){ // darken ~18%
 
 /* ---------- summary ---------- */
 function renderSummary(){
-  const w=GOV.candidates[0];
-  const totalSeats=SK.parties.reduce((a,p)=>a+p.seats,0);
-  const seatbar=SK.parties.map(p=>`<i style="width:${(p.seats/totalSeats*100)}%;background:${p.color}" title="${p.key} ${p.seats}"></i>`).join('');
-  let dots=''; SK.parties.forEach(p=>{
-    Object.entries(SK.districts).filter(([,d])=>d.party===p.key).forEach(([name,d])=>{
+  const w=GWIN;
+  // สมัยที่เท่าไหร่ของผู้ชนะ — นับจากไทม์ไลน์ (bkk-history.js) ไม่ใช่ตัวเลขตายตัว
+  const TERM=HASGOV?(window.BKKHIST||[]).filter(o=>!o.ev&&o.win===w.name&&o.y<=YEAR).length:0;
+  /* บรรทัด "อันดับ 2 / อันดับ 3" — ปีเก่าบางปีเก็บผู้สมัครไว้แค่ 2 คน และไม่มีร้อยละ */
+  const rank=i=>{const c=HASGOV&&GOV.candidates[i];if(!c)return '';
+    const val=c.pct!=null?c.pct+'%':fmt(c.votes)+' คะแนน';
+    return (i===1?'':' · ')+'อันดับ '+(i+1)+' <b>'+c.name+'</b> '+val;};
+  const P0=HASSK?SK.parties[0]:null, PREST=HASSK?SK.parties.slice(1):[];
+  const totalSeats=HASSK?SK.parties.reduce((a,p)=>a+p.seats,0):0;
+  const seatbar=HASSK?SK.parties.map(p=>`<i style="width:${(p.seats/totalSeats*100)}%;background:${p.color}" title="${p.key} ${p.seats}"></i>`).join(''):'';
+  /* จุดละ 1 ที่นั่ง — ปีที่เขตใหญ่แบ่ง 2 เขตเลือกตั้งใช้ SK.members (61 คน) ไม่ใช่ 50 เขต */
+  const dotList=HASSK
+    ? ((SK.members&&SK.members.length)
+        ? SK.members.map(m=>[m.dist,{winner:m.winner,party:m.party,grp:m.grp,zone:m.zone}])
+        : Object.entries(SK.districts))
+    : [];
+  let dots=''; if(HASSK) SK.parties.forEach(p=>{
+    dotList.filter(([,d])=>d.party===p.key).forEach(([name,d])=>{
       const f=PH.sk&&PH.sk[name];
-      const wn=d.winner||'—', sub=`เขต${name} · ${d.grp||d.party}`;
-      const q=encodeURIComponent(d.winner?`${d.winner} สมาชิกสภากรุงเทพมหานคร เขต${name}`:`ส.ก. เขต${name} กรุงเทพมหานคร 2569`);
-      dots+=`<a class="dot ava" data-dist="${name}" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener noreferrer" style="background:${p.color};box-shadow:0 0 0 2px ${p.color}" aria-label="${wn} — ${sub} · กดเพื่อดูการ์ดประวัติ">${f?`<img src="bkk-photos/${f}" alt="${d.winner||''}" decoding="async" onerror="this.remove()">`:''}<span class="dtip"><b>${wn}</b><small>${sub}</small></span></a>`;
+      const wn=d.winner||'—', sub=`เขต${name}${d.zone?' เขตเลือกตั้งที่ '+d.zone:''} · ${d.grp||d.party}`;
+      const q=encodeURIComponent(d.winner?`${d.winner} สมาชิกสภากรุงเทพมหานคร เขต${name}`:`ส.ก. เขต${name} กรุงเทพมหานคร ${YEAR}`);
+      dots+=`<a class="dot ava" data-dist="${name}" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener noreferrer" style="background:${p.color};box-shadow:0 0 0 2px ${p.color}" aria-label="${wn} — ${sub} · กดเพื่อดูการ์ดประวัติ">${initialOf(d.winner)}${f?`<img src="bkk-photos/${f}" alt="${d.winner||''}" decoding="async" onerror="this.remove()">`:''}<span class="dtip"><b>${wn}</b><small>${sub}</small></span></a>`;
     });
   });
-  const legend=SK.parties.map(p=>`<span class="lchip" style="cursor:default"><span class="sw" style="background:${p.color}"></span>${p.key} <b>${p.seats}</b></span>`).join('');
-  el('sumView').innerHTML=`
-  <div class="sumgrid">
-    <div class="sumcard">
-      <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผู้ว่าราชการ กทม.</h3>
-      <div class="sub">นับคะแนนอย่างไม่เป็นทางการ · ผู้สมัคร ${GOV.candidates.length} คน</div>
-      <div class="sumwin" style="background:linear-gradient(135deg,${GOV.winnerColor},${shade(GOV.winnerColor)})">
-        ${govAvatar(w,'swa')}
-        <div><div class="swn">${w.name}</div><div class="swm">${w.party} · เบอร์ ${w.no}</div>
-        <div class="swb">${w.pct}% <span>· ${fmt(w.votes)} คะแนน</span></div></div>
-      </div>
-      <ul class="sumfacts">
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span><b>ชนะยกทั้ง 50 เขต</b> ของกรุงเทพมหานคร ครองตำแหน่งผู้ว่าฯ สมัยที่ 2</span></li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg><span>อันดับ 2 <b>${GOV.candidates[1].name}</b> ${GOV.candidates[1].pct}% · อันดับ 3 <b>${GOV.candidates[2].name}</b> ${GOV.candidates[2].pct}%</span></li>
-      </ul>
-      <div class="tcompare">
-        <div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ผู้ว่าฯ)</div><div class="tv">${GOV.stats.turnoutPct}%</div><div class="ts">${fmt(GOV.stats.turnout)} จาก ${fmt(GOV.stats.eligible)}</div></div>
-        <div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ส.ก.)</div><div class="tv">${SK.stats.turnoutPct}%</div><div class="ts">${fmt(SK.stats.turnout)} จาก ${fmt(SK.stats.eligible)}</div></div>
-      </div>
-    </div>
-
+  const legend=HASSK?SK.parties.map(p=>`<span class="lchip" style="cursor:default"><span class="sw" style="background:${p.color}"></span>${p.key} <b>${p.seats}</b></span>`).join(''):'';
+  /* การ์ดที่ 2 = ผลรายเขต — ปีที่มี ส.ก. โชว์องค์ประกอบสภา · ปีที่มีเฉพาะผลผู้ว่าฯ รายเขต (2556) โชว์ผลรายเขตของผู้ว่าฯ แทน */
+  const card2 = HASSK ? `
     <div class="sumcard">
       <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>สภากรุงเทพมหานคร (ส.ก.)</h3>
-      <div class="sub">50 ที่นั่ง · เขตละ 1 คน · องค์ประกอบตามพรรค/กลุ่ม</div>
+      <div class="sub">${totalSeats} ที่นั่ง · ${totalSeats>50?'50 เขต (เขตใหญ่แบ่ง 2 เขตเลือกตั้ง)':'เขตละ 1 คน'} · องค์ประกอบตามพรรค/กลุ่ม</div>
       <div class="seatbar">${seatbar}</div>
       <div class="dotgrid">${dots}</div>
       <div class="legendwrap" style="padding:12px 0 4px;border-top:1px dashed var(--line)">${legend}</div>
       <ul class="sumfacts" style="margin-top:10px">
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V7l-8-5Z"/></svg><span><b>พรรคประชาชน</b> ได้ที่นั่งมากที่สุด <b>22 เขต</b> เพิ่มขึ้น 8 จากเดิม</span></li>
-        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>รองลงมา <b>กลุ่มคนทำงาน</b> 11 · <b>ประชาธิปัตย์</b> 8 · <b>เพื่อไทย</b> 4 · <b>กรุงเทพที่ดีกว่า</b> 2 · <b>อิสระ</b> 3</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V7l-8-5Z"/></svg><span><b>${P0.key}</b> ได้ที่นั่งมากที่สุด <b>${P0.seats} เขต</b> จาก ${totalSeats} เขต</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>รองลงมา ${PREST.map(p=>`<b>${p.key}</b> ${p.seats}`).join(' · ')}</span></li>
       </ul>
-    </div>
+    </div>` : (GDIST ? (function(){
+      const w2=GOV.mapWins||{}, cs=(GOV.mapCands||[]).filter(c=>w2[c.key]);
+      const tot=Object.keys(GDIST).length;
+      const bar=cs.map(c=>`<i style="width:${(w2[c.key]/tot*100)}%;background:${c.color}" title="${c.key} ${w2[c.key]}"></i>`).join('');
+      const chips=cs.map(c=>`<span class="lchip" style="cursor:default"><span class="sw" style="background:${c.color}"></span>${c.key} <b>${w2[c.key]}</b></span>`).join('');
+      const close=Object.entries(GDIST).filter(([,d])=>d.runVotes!=null)
+        .map(([n,d])=>({n,gap:d.votes-d.runVotes})).sort((a,b)=>a.gap-b.gap).slice(0,3);
+      return `
+    <div class="sumcard">
+      <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20 3 17V4l6 3 6-3 6 3v13l-6 3-6-3Z"/><path d="M9 7v13M15 4v13"/></svg>ผลรายเขต ${tot} เขต</h3>
+      <div class="sub">จำนวนเขตที่ผู้สมัครแต่ละคนได้คะแนนสูงสุด</div>
+      <div class="seatbar">${bar}</div>
+      <div class="legendwrap" style="padding:12px 0 4px">${chips}</div>
+      <ul class="sumfacts" style="margin-top:10px">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>${cs.map(c=>`<b>${c.key}</b> ชนะ ${w2[c.key]} เขต`).join(' · ')}</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg><span>เขตที่สูสีที่สุด ${close.map(o=>`<b>${o.n}</b> (ห่าง ${fmt(o.gap)})`).join(' · ')}</span></li>
+      </ul>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:10px;line-height:1.6">ปีนี้ไม่มีการเลือกตั้ง ส.ก. พร้อมผู้ว่าฯ (สภา กทม. ชุดปี 2553 ยังอยู่ในวาระ)</div>
+    </div>`;})() : '');
+  /* การ์ดที่ 1 = ผู้ว่าฯ — ปีที่เลือกเฉพาะ ส.ก. (เช่น 2553) ไม่มีการ์ดนี้ */
+  const card1 = !HASGOV ? '' : `
+    <div class="sumcard">
+      <h3><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>ผู้ว่าราชการ กทม.</h3>
+      <div class="sub">${D.meta.date} · ผู้สมัคร ${GOV.ncand||GOV.candidates.length} คน</div>
+      <div class="sumwin" style="background:linear-gradient(135deg,${GOV.winnerColor},${shade(GOV.winnerColor)})">
+        ${govAvatar(w,'swa')}
+        <div><div class="swn">${w.name}</div><div class="swm">${w.party}${w.no!=null?' · เบอร์ '+w.no:''}</div>
+        <div class="swb">${w.pct!=null?w.pct+'%':fmt(w.votes)} <span>${w.pct!=null?'· '+fmt(w.votes)+' คะแนน':'คะแนน'}</span></div></div>
+      </div>
+      <ul class="sumfacts">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>${SWEEP?'<b>ชนะยกทั้ง 50 เขต</b> ของกรุงเทพมหานคร':'<b>ชนะการเลือกตั้งทั้งกรุงเทพมหานคร</b>'}${TERM>1?` ครองตำแหน่งผู้ว่าฯ สมัยที่ ${TERM}`:''}</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg><span>${rank(1)}${rank(2)}</span></li>
+      </ul>
+      <div class="tcompare">
+        <div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ผู้ว่าฯ)</div><div class="tv">${GOV.stats.turnoutPct!=null?GOV.stats.turnoutPct+'%':'—'}</div><div class="ts">${GOV.stats.turnout?fmt(GOV.stats.turnout)+' จาก '+fmt(GOV.stats.eligible):'แหล่งอ้างอิงไม่ระบุจำนวนคน'}</div></div>
+        ${(HASSK&&SK.stats)
+          ? `<div class="tc"><div class="tk">ผู้มาใช้สิทธิ (ส.ก.)</div><div class="tv">${SK.stats.turnoutPct}%</div><div class="ts">${fmt(SK.stats.turnout)} จาก ${fmt(SK.stats.eligible)}</div></div>`
+          : (GOV.stats.valid
+            ? `<div class="tc"><div class="tk">บัตรดี</div><div class="tv">${(GOV.stats.valid/GOV.stats.turnout*100).toFixed(2)}%</div><div class="ts">${fmt(GOV.stats.valid)} ใบ · เสีย ${fmt(GOV.stats.invalid)}</div></div>`
+            : `<div class="tc"><div class="tk">คะแนนผู้ชนะ</div><div class="tv">${fmt(w.votes)}</div><div class="ts">${GOV.ncand?'ผู้สมัคร '+GOV.ncand+' คน':'ผลรวมทั้ง กทม.'}</div></div>`)}
+      </div>
+    </div>`;
+  el('sumView').innerHTML=`
+  <div class="sumgrid"${!HASGOV?' style="grid-template-columns:1fr"':''}>
+${card1}
+${card2}
   </div>`;
 }
 
 /* ---------- สภา กทม. (hemicycle + roster) ---------- */
 function renderCouncil(){
-  var members=Object.keys(SK.districts).map(function(dist){
-    var d=SK.districts[dist];
-    return {dist:dist,party:d.party,grp:d.grp,winner:d.winner,votes:d.votes,pct:d.pct,
-            color:(SK.colors[d.party]||'#8A94A6'),photo:(PH.sk&&PH.sk[dist])||null};
-  });
+  /* ปีที่เขตใหญ่แบ่งเป็น 2 เขตเลือกตั้ง (เช่น 2553 = 61 ที่นั่งจาก 50 เขต) ส่งรายชื่อมาเป็น SK.members */
+  var members=(SK.members&&SK.members.length)
+    ? SK.members.map(function(m){
+        return {dist:m.dist,zone:m.zone||null,party:m.party,grp:m.grp,winner:m.winner,votes:m.votes,pct:m.pct,
+                color:(SK.colors[m.party]||'#8A94A6'),photo:(PH.sk&&PH.sk[m.dist])||null};
+      })
+    : Object.keys(SK.districts).map(function(dist){
+        var d=SK.districts[dist];
+        return {dist:dist,zone:null,party:d.party,grp:d.grp,winner:d.winner,votes:d.votes,pct:d.pct,
+                color:(SK.colors[d.party]||'#8A94A6'),photo:(PH.sk&&PH.sk[dist])||null};
+      });
+  var NSEAT=members.length;
   var oidx=function(p){var i=SK.order.indexOf(p);return i<0?99:i;};
   members.sort(function(a,b){return (oidx(a.party)-oidx(b.party))||(b.votes-a.votes);});
 
@@ -764,9 +1138,9 @@ function renderCouncil(){
   var A0=205*Math.PI/180, A1=-25*Math.PI/180;
   var radii=[]; for(var ri=0;ri<ROWS;ri++) radii.push(R0+ri*(R1-R0)/(ROWS-1));
   var rsum=radii.reduce(function(a,b){return a+b;},0);
-  var targets=radii.map(function(r){return 50*r/rsum;});
+  var targets=radii.map(function(r){return NSEAT*r/rsum;});
   var counts=targets.map(Math.floor);
-  var rem=50-counts.reduce(function(a,b){return a+b;},0);
+  var rem=NSEAT-counts.reduce(function(a,b){return a+b;},0);
   targets.map(function(t,i){return {i:i,f:t-Math.floor(t)};}).sort(function(a,b){return b.f-a.f;})
          .slice(0,rem).forEach(function(o){counts[o.i]++;});
   var seats=[];
@@ -801,33 +1175,30 @@ function renderCouncil(){
     var m=members[i]; if(!m)return '';
     return '<circle class="cseat" data-dist="'+m.dist+'" cx="'+s.x.toFixed(1)+'" cy="'+s.y.toFixed(1)+'" r="'+SEATR+'" fill="url(#'+gid(m.color)+')"><title>'+m.winner+' — '+(m.grp||m.party)+' · เขต'+m.dist+'</title></circle>';
   }).join('');
-  var hemiSVG='<svg viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนผังที่นั่งสภากรุงเทพมหานคร 50 ที่นั่ง ระบายสีตามพรรค"><defs>'+gradDefs+'</defs><g class="hemi-bg">'+backdrop+'</g><g class="hemi-seats">'+seatSVG+'</g></svg>';
+  var hemiSVG='<svg viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนผังที่นั่งสภากรุงเทพมหานคร '+NSEAT+' ที่นั่ง ระบายสีตามพรรค"><defs>'+gradDefs+'</defs><g class="hemi-bg">'+backdrop+'</g><g class="hemi-seats">'+seatSVG+'</g></svg>';
   var hlegend=SK.parties.map(function(p){
     return '<span class="lchip" style="cursor:default"><span class="sw" style="background:'+p.color+'"></span>'+p.key+' <b>'+p.seats+'</b></span>';
   }).join('');
 
   // roster + party filter chips
-  var chips='<button class="cfilter on" data-k="">ทั้งหมด <b>50</b></button>'+SK.parties.map(function(p){
+  var chips='<button class="cfilter on" data-k="">ทั้งหมด <b>'+NSEAT+'</b></button>'+SK.parties.map(function(p){
     return '<button class="cfilter" data-k="'+p.key+'"><span class="sw" style="background:'+p.color+'"></span>'+p.key+' '+p.seats+'</button>';
   }).join('');
   var roster=members.map(function(m){
-    var q=encodeURIComponent(m.winner?(m.winner+' สมาชิกสภากรุงเทพมหานคร เขต'+m.dist):('ส.ก. เขต'+m.dist+' กรุงเทพมหานคร 2569'));
+    var q=encodeURIComponent(m.winner?(m.winner+' สมาชิกสภากรุงเทพมหานคร เขต'+m.dist):('ส.ก. เขต'+m.dist+' กรุงเทพมหานคร '+YEAR));
     var av=m.photo?('<img src="bkk-photos/'+m.photo+'" alt="" decoding="async" onerror="this.remove()">'):((m.winner||'?').trim().charAt(0)||'?');
     var srch=((m.winner||'')+' '+m.dist+' '+(m.grp||m.party)).toLowerCase().replace(/"/g,'');
     return '<a class="ritem" data-dist="'+m.dist+'" data-party="'+m.party+'" data-search="'+srch+'" '
       +'href="https://www.google.com/search?q='+q+'" target="_blank" rel="noopener noreferrer" aria-label="'+(m.winner||'')+' — เขต'+m.dist+' · กดดูการ์ดประวัติ">'
       +'<span class="rav ava">'+av+'</span>'
       +'<span class="rinfo"><span class="rname">'+(m.winner||'—')+'</span>'
-        +'<span class="rmeta"><i class="pdot" style="background:'+m.color+'"></i><span class="rmt">'+(m.grp||m.party)+' · เขต'+m.dist+'</span></span></span>'
-      +'<span class="rvotes">'+fmt(m.votes)+'<small>คะแนน</small></span></a>';
+        +'<span class="rmeta"><i class="pdot" style="background:'+m.color+'"></i><span class="rmt">'+(m.grp||m.party)+' · เขต'+m.dist+(m.zone?' เขตเลือกตั้งที่ '+m.zone:'')+'</span></span></span>'
+      +(m.votes!=null?'<span class="rvotes">'+fmt(m.votes)+'<small>คะแนน</small></span>':'')+'</a>';
   }).join('');
 
-  // council leadership (ประธาน + รองประธาน 1-2) — REAL from Wikipedia/news, all in our roster
-  var LEADERS=[
-    {role:'ประธานสภากรุงเทพมหานคร',dist:'บางซื่อ',chair:true},
-    {role:'รองประธานสภาฯ คนที่หนึ่ง',dist:'บึงกุ่ม'},
-    {role:'รองประธานสภาฯ คนที่สอง',dist:'บางเขน'}
-  ];
+  // council leadership (ประธาน + รองประธาน 1-2) — มาจากไฟล์ข้อมูลของปีนั้น (SK.leaders)
+  // ปีที่ยังไม่มีข้อมูลผู้บริหารสภา → ข้ามการ์ดชุดนี้ไปเลย ไม่เดา
+  var LEADERS=SK.leaders||[];
   var leadersHTML=LEADERS.map(function(L){
     var d=SK.districts[L.dist]; if(!d)return '';
     var color=(SK.colors[d.party]||'#8A94A6'), f=PH.sk&&PH.sk[L.dist];
@@ -844,16 +1215,17 @@ function renderCouncil(){
 
   el('councilView').innerHTML=
     '<div class="council-wrap">'
-    +'<section class="chamber">'
+    +(leadersHTML?('<section class="chamber">'
       +'<div class="chamber-head"><span class="cn">คณะผู้บริหารสภากรุงเทพมหานคร</span><span class="cm">ประธานสภา + รองประธาน 2 คน · วาระคราวละ 2 ปี</span></div>'
       +'<div class="cbody"><div class="leaders">'+leadersHTML+'</div>'
-        +'<p class="lnote">ที่ประชุมสภา กทม. เลือก <b>ภัทราภรณ์ เก่งรุ่งเรืองชัย</b> (พรรคประชาชน เสียงข้างมาก 22 ที่นั่ง) เป็นประธานสภาฯ หญิงคนแรก เมื่อ 13 ก.ค. 2569 · กดการ์ดเพื่อดูประวัติ · ที่มา: วิกิพีเดีย/ข่าว</p>'
+        +(D.meta.councilNote?'<p class="lnote">'+D.meta.councilNote+'</p>':'')
       +'</div>'
-    +'</section>'
+    +'</section>'):'')
     +'<section class="chamber">'
-      +'<div class="chamber-head"><span class="cn">แผนผังที่นั่ง สภากรุงเทพมหานคร (ส.ก.)</span><span class="cm">50 ที่นั่ง · เขตละ 1 คน · จัดกลุ่มตามพรรค</span></div>'
+      +'<div class="chamber-head"><span class="cn">แผนผังที่นั่ง สภากรุงเทพมหานคร (ส.ก.)</span><span class="cm">'+NSEAT+' ที่นั่ง · เขตเลือกตั้งละ 1 คน · จัดกลุ่มตามพรรค</span></div>'
       +'<div class="phint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11V6a2 2 0 0 1 4 0v5M13 11V8.5a2 2 0 0 1 4 0V11M17 11a2 2 0 0 1 4 0v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-4l-2-3"/></svg><span>กดที่นั่งเพื่อดูการ์ดประวัติ · เอาเมาส์ชี้เพื่อดูชื่อ · เรียงซ้าย→ขวาตามจำนวนที่นั่งของแต่ละพรรค</span></div>'
       +'<div class="hemi-wrap">'+hemiSVG+'</div>'
+      +((!leadersHTML&&D.meta.councilNote)?'<p class="lnote" style="padding:0 16px 14px">'+D.meta.councilNote+'</p>':'')
       +'<div class="legendwrap">'+hlegend+'</div>'
     +'</section>'
     +'<section class="chamber">'
@@ -891,159 +1263,16 @@ function renderCouncil(){
 }
 
 /* ---------- ประวัติการเลือกตั้งผู้ว่าฯ กทม. (แท็บ "ประวัติ") ----------
-   ที่มา: วิกิพีเดีย "การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร" + "รายชื่อผู้ว่าราชการกรุงเทพมหานคร"
-   pct = สัดส่วนคะแนนของผู้ชนะ (เว้น null ไว้ในครั้งที่แหล่งอ้างอิงไม่ได้ระบุ) */
-const HPC={'ประชาธิปัตย์':'#27AAE1','กลุ่มรวมพลัง':'#E4572E','พลังธรรม':'#F2A03D',
-           'กลุ่มมดงาน':'#7B5EA7','ประชากรไทย':'#0E4C92','อิสระ':'#00A651'};
-const HIST=[
- {ev:1,y:2515,ic:'🏛️',c:'#8a97a3',t:'กำเนิด "กรุงเทพมหานคร"',
-  d:'รวมนครหลวงกรุงเทพธนบุรีเป็นกรุงเทพมหานคร (พ.ศ. 2515) ผู้ว่าฯ 4 คนแรกมาจากการแต่งตั้ง — ชำนาญ ยุวบูรณ์ · อรรถ วิสูตรโยธาภิบาล · ศิริ สันติบุตร · สาย หุตะเจริญ'},
- {y:2518,no:1,date:'10 สิงหาคม 2518',win:'ธรรมนูญ เทียนเงิน',ini:'ธ',party:'ประชาธิปัตย์',
-  votes:99247,pct:null,turn:13.86,cand:null,run:'อาทิตย์ อุไรรัตน์',runP:'พลังใหม่',runV:null,
-  note:'เลือกตั้งผู้ว่าฯ กทม. ครั้งแรก ตาม พ.ร.บ. ระเบียบบริหารราชการกรุงเทพมหานคร พ.ศ. 2518 — ผู้มาใช้สิทธิต่ำที่สุดในประวัติศาสตร์เพียง 13.86%'},
- {ev:1,y:2520,ic:'⚖️',c:'#b23b3b',t:'ปลดผู้ว่าฯ · กลับสู่ยุคแต่งตั้ง 8 ปี',
-  d:'29 เม.ย. 2520 รัฐบาลปลดธรรมนูญ เทียนเงิน และยุบสภา กทม. หลังจากนั้นผู้ว่าฯ มาจากการแต่งตั้งอีก 4 คน — ชลอ ธรรมศิริ · เชาวน์วัศ สุดลาภา · เทียม มกรานนท์ · อาษา เมฆสวรรค์ จนถึง พ.ศ. 2528'},
- {y:2528,no:2,date:'14 พฤศจิกายน 2528',win:'จำลอง ศรีเมือง',ini:'จ',party:'กลุ่มรวมพลัง',
-  votes:408233,pct:null,turn:34.65,cand:5,run:'ชนะ รุ่งแสง',runP:'ประชาธิปัตย์',runV:241002,
-  note:'กลับมาเลือกตั้งอีกครั้งตาม พ.ร.บ. ระเบียบบริหารราชการกรุงเทพมหานคร พ.ศ. 2528 — จำลองชนะในนามกลุ่มรวมพลัง แม้ไม่มีพรรคใหญ่หนุนหลัง'},
- {y:2533,no:3,date:'7 มกราคม 2533',win:'จำลอง ศรีเมือง',ini:'จ',party:'พลังธรรม',
-  votes:703672,pct:null,turn:35.85,cand:5,run:'เดโช สวนานนท์',runP:'ประชากรไทย',runV:283895,
-  note:'จำลองชนะสมัยที่ 2 ในนามพรรคพลังธรรม ทิ้งห่างอันดับ 2 กว่า 4 แสนคะแนน'},
- {y:2535,no:4,date:'19 เมษายน 2535',win:'กฤษฎา อรุณวงษ์ ณ อยุธยา',ini:'ก',party:'พลังธรรม',
-  votes:363668,pct:null,turn:23.02,cand:5,run:'พิจิตต รัตตกุล',runP:'ประชาธิปัตย์',runV:305740,
-  note:'จำลองลาออกไปเล่นการเมืองระดับชาติ พรรคพลังธรรมส่งกฤษฎาลงแทนและรักษาเก้าอี้ไว้ได้ — ผู้ใช้สิทธิต่ำเป็นอันดับ 2'},
- {y:2539,no:5,date:'2 มิถุนายน 2539',win:'พิจิตต รัตตกุล',ini:'พ',party:'กลุ่มมดงาน',
-  votes:768994,pct:49.47,turn:43.53,cand:29,run:'จำลอง ศรีเมือง',runP:'พลังธรรม',runV:514401,
-  note:'ผู้สมัครมากถึง 29 คน — พิจิตตลงในนามกลุ่มมดงานแบบอิสระ โค่นจำลองเจ้าของพื้นที่เดิมได้สำเร็จ'},
- {y:2543,no:6,date:'23 กรกฎาคม 2543',win:'สมัคร สุนทรเวช',ini:'ส',party:'ประชากรไทย',
-  votes:1016096,pct:45.85,turn:58.87,cand:23,run:'สุดารัตน์ เกยุราพันธุ์',runP:'ไทยรักไทย',runV:521184,
-  note:'ครั้งแรกที่ผู้ชนะได้คะแนนทะลุ 1 ล้าน — สมัครชนะขาดเกือบ 2 เท่าของอันดับ 2'},
- {y:2547,no:7,date:'29 สิงหาคม 2547',win:'อภิรักษ์ โกษะโยธิน',ini:'อ',party:'ประชาธิปัตย์',
-  votes:911441,pct:38.20,turn:62.50,cand:22,run:'ปวีณา หงสกุล',runP:'อิสระ',runV:619039,
-  note:'ประชาธิปัตย์กลับมาครองศาลาว่าการ กทม. อีกครั้งในรอบเกือบ 30 ปี ท่ามกลางผู้ใช้สิทธิสูงถึง 62.5%'},
- {y:2551,no:8,date:'5 ตุลาคม 2551',win:'อภิรักษ์ โกษะโยธิน',ini:'อ',party:'ประชาธิปัตย์',
-  votes:991018,pct:45.93,turn:54.18,cand:16,run:'ประภัสร์ จงสงวน',runP:'พลังประชาชน',runV:543488,
-  note:'อภิรักษ์ชนะสมัยที่ 2 แต่อยู่ในตำแหน่งไม่ถึง 3 เดือน — ลาออก 19 พ.ย. 2551 หลัง ป.ป.ช. ชี้มูลคดีจัดซื้อรถและเรือดับเพลิง'},
- {y:2552,no:9,date:'11 มกราคม 2552',win:'ม.ร.ว.สุขุมพันธุ์ บริพัตร',ini:'ส',party:'ประชาธิปัตย์',
-  votes:934602,pct:45.41,turn:51.10,cand:14,run:'ยุรนันท์ ภมรมนตรี',runP:'เพื่อไทย',runV:611669,
-  note:'เลือกตั้งใหม่หลังอภิรักษ์ลาออก — สุขุมพันธุ์รักษาเก้าอี้ไว้ให้ประชาธิปัตย์ได้'},
- {y:2556,no:10,date:'3 มีนาคม 2556',win:'ม.ร.ว.สุขุมพันธุ์ บริพัตร',ini:'ส',party:'ประชาธิปัตย์',
-  votes:1256349,pct:47.75,turn:63.98,cand:25,run:'พงศพัศ พงษ์เจริญ',runP:'เพื่อไทย',runV:1077899,
-  note:'สูสีที่สุดครั้งหนึ่ง — ทั้งคู่ได้เกิน 1 ล้านคะแนน และเป็นครั้งที่คนกรุงเทพฯ ออกมาใช้สิทธิสูงที่สุด 63.98%'},
- {ev:1,y:2557,ic:'🪖',c:'#b23b3b',t:'รัฐประหาร 2557 · งดเลือกตั้งท้องถิ่น',
-  d:'22 พ.ค. 2557 คสช. ยึดอำนาจและสั่งงดการเลือกตั้งท้องถิ่นทั่วประเทศ สมาชิกสภากรุงเทพมหานคร (ส.ก.) เปลี่ยนไปใช้วิธีแต่งตั้งแทนการเลือกตั้ง'},
- {ev:1,y:2559,ic:'📜',c:'#8a97a3',t:'ใช้ ม.44 เปลี่ยนตัวผู้ว่าฯ',
-  d:'18 ต.ค. 2559 หัวหน้า คสช. ใช้อำนาจตามมาตรา 44 ให้ ม.ร.ว.สุขุมพันธุ์พ้นจากตำแหน่ง และแต่งตั้ง พล.ต.อ. อัศวิน ขวัญเมือง เป็นผู้ว่าฯ กทม. ยาวถึง 24 มี.ค. 2565'},
- {y:2565,no:11,date:'22 พฤษภาคม 2565',win:'ชัชชาติ สิทธิพันธุ์',ini:'ช',party:'อิสระ',
-  votes:1386215,pct:51.85,turn:60.73,cand:31,run:'สุชัชวีร์ สุวรรณสวัสดิ์',runP:'ประชาธิปัตย์',runV:254647,
-  note:'เลือกตั้งครั้งแรกในรอบ 9 ปี — ชัชชาติลงอิสระและทำสถิติคะแนนสูงสุดตลอดกาลในขณะนั้น 1,386,215 คะแนน'},
- {y:2569,no:12,date:'28 มิถุนายน 2569',win:'ชัชชาติ สิทธิพันธุ์',ini:'ช',party:'อิสระ',
-  votes:1537784,pct:67.94,turn:52.79,cand:18,run:'มัลลิกา มหาสุข',runP:'กลุ่มเพื่อนมัลลิกา',runV:304494,
-  note:'ชัชชาติชนะสมัยที่ 2 ทำลายสถิติคะแนนของตัวเอง กวาดชนะครบทั้ง 50 เขต ด้วยสัดส่วนสูงที่สุดเท่าที่เคยมีมา 67.94%',cur:1}
-];
-
-let histDone=false;
-function renderHist(){
-  if(histDone) return; histDone=true;
-  const es=HIST.filter(o=>!o.ev);
-  const maxV=Math.max(...es.map(o=>o.votes));
-  const maxT=Math.max(...es.map(o=>o.turn));
-  const hc=o=>HPC[o.party]||'#9AA3AE';
-
-  const ov=es.map(o=>`<button class="hovc" type="button" data-y="${o.y}" aria-label="พ.ศ. ${o.y} · ${o.win} · ผู้ใช้สิทธิ ${o.turn}%">
-      <span class="hv">${o.turn}%</span>
-      <span class="hb" style="height:${Math.round(16+o.turn/maxT*104)}px;background:${hc(o)}"></span>
-      <span class="hy">${o.y}</span></button>`).join('');
-
-  const rows=HIST.map((o,i)=>{
-    const lr=(i%2===0)?'left':'right';
-    if(o.ev) return `<div class="hrow ev ${lr}" style="--nc:${o.c}">
-        <div class="hyr"><b>${o.y}</b><small>เหตุการณ์</small></div><div class="hnode"></div>
-        <div class="hev"><div class="eic">${o.ic}</div><div><div class="et">${o.t}</div><div class="ed">${o.d}</div></div></div>
-      </div>`;
-    const c=hc(o), wpc=(o.votes/maxV*100).toFixed(1), rpc=o.runV?(o.runV/maxV*100).toFixed(1):0;
-    return `<div class="hrow ${lr}" style="--nc:${c}">
-      <div class="hyr"><b>${o.y}</b><small>ครั้งที่ ${o.no}</small></div><div class="hnode"></div>
-      <div class="hcard" id="hc-${o.y}" style="--wc:${c}">
-        <div class="hch"><span class="hdt">${o.date}</span>
-          <span class="hsys">${o.cand?'ผู้สมัคร '+o.cand+' คน':'ครั้งที่ '+o.no}</span>
-          <span class="hturn">ผู้ใช้สิทธิ <b>${o.turn}%</b></span></div>
-        <div class="hwin">
-          <div class="hav" style="background:${c}">${o.ini}</div>
-          <div><div class="hwn">${o.win}<span class="hpt" style="background:${c}">${o.party}</span></div>
-            <div class="hws">${fmt(o.votes)} <em>คะแนน${o.pct?' · '+o.pct+'%':''}</em></div></div>
-        </div>
-        <div class="hbars">
-          <div class="hbl"><span class="hbt"><i style="width:${wpc}%;background:${c}"></i></span><span class="hbn">${fmt(o.votes)}</span></div>
-          <div class="hbl"><span class="hbt"><i style="width:${rpc}%;background:var(--line-2)"></i></span><span class="hbn">${o.runV?fmt(o.runV):'—'}</span></div>
-        </div>
-        <div class="hrun"><span class="rl">อันดับ 2</span><b>${o.run}</b><span class="rl">· ${o.runP}</span></div>
-        <p class="hnote">${o.note}</p>
-        ${o.cur?`<div class="hbtnrow">
-          <button class="hbtn" type="button" onclick="setView('gov')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20 3 17V4l6 3 6-3 6 3v13l-6 3-6-3Z"/><path d="M9 7v13M15 4v13"/></svg>ดูแผนที่ผลปี 2569</button>
-          <button class="hbtn" type="button" onclick="setView('sum')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>สรุปคะแนน</button></div>`:''}
-      </div></div>`;
-  }).join('');
-
-  el('histView').innerHTML=`
-  <div class="statrow">
-    <div class="tile"><div class="v">${es.length}</div><div class="l">การเลือกตั้งผู้ว่าฯ กทม.</div></div>
-    <div class="tile"><div class="v">2518–2569</div><div class="l">ช่วงปี พ.ศ.</div></div>
-    <div class="tile alt"><div class="v">8</div><div class="l">ผู้ชนะ (ไม่นับซ้ำคน)</div></div>
-    <div class="tile"><div class="v">9</div><div class="l">ปีที่เว้นว่างนานสุด (2556→2565)</div></div>
-  </div>
-  <p class="hintro">ประมวล<b>การเลือกตั้งผู้ว่าราชการกรุงเทพมหานครทุกครั้ง</b> ตั้งแต่ครั้งแรก พ.ศ. 2518
-    จนถึงครั้งล่าสุด พ.ศ. 2569 รวม ${es.length} ครั้ง พร้อมผู้ชนะ คะแนน คู่แข่งอันดับ 2 และเหตุการณ์การเมือง
-    ที่ทำให้คนกรุงเทพฯ ต้องเว้นว่างจากการเลือกผู้ว่าฯ ของตัวเองไปหลายช่วง
-    (ยุคแต่งตั้ง 2520–2528 และยุค คสช. 2557–2565)</p>
-
-  <div class="sec-head">
-    <div><span class="kick">Turnout at a Glance</span><h1>ผู้มาใช้สิทธิ<span class="o">ข้ามยุค</span></h1></div>
-    <p>ความสูงของแท่ง = ร้อยละผู้มาใช้สิทธิ · สีตามพรรค/กลุ่มของผู้ชนะ · กดเพื่อไปการ์ดของปีนั้น</p>
-  </div>
-  <div class="panelbox hovbox">
-    <div class="hov" id="hov">${ov}</div>
-    <div class="hovlgd">ต่ำสุด <b>13.86%</b> (2518 · ครั้งแรก) → สูงสุด <b>63.98%</b> (2556 · สุขุมพันธุ์ vs พงศพัศ) · ล่าสุด 2569 อยู่ที่ 52.79%</div>
-  </div>
-
-  <div class="sec-head">
-    <div><span class="kick">The Timeline</span><h1>ไทม์ไลน์<span class="o">ผู้ว่าฯ กทม.</span></h1></div>
-    <p>เรียงตามเวลา · แถบสองเส้นในการ์ดคือคะแนนผู้ชนะเทียบกับอันดับ 2 (อ้างอิงกับคะแนนสูงสุดตลอดกาล)</p>
-  </div>
-  <div class="htl" id="htl">${rows}</div>
-
-  <p class="hintro" style="margin-top:18px">ที่มาข้อมูล: วิกิพีเดีย — <b>การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร</b> และ <b>รายชื่อผู้ว่าราชการกรุงเทพมหานคร</b> ·
-    ผลปี 2569 จากการนับคะแนนอย่างไม่เป็นทางการ · อยากดูไทม์ไลน์การเลือกตั้ง ส.ส. ทั้งประเทศ 2476–2569
-    ไปที่หน้า <a href="timeline.html" style="color:var(--orange-deep);text-decoration:underline">ประวัติการเลือกตั้ง</a></p>`;
-
-  // กดแท่งภาพรวม → เลื่อนไปการ์ดปีนั้น
-  el('hov').addEventListener('click',function(e){
-    const b=e.target.closest('.hovc'); if(!b) return;
-    const card=el('hc-'+b.getAttribute('data-y')); if(!card) return;
-    card.scrollIntoView({behavior:'smooth',block:'center'});
-    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
-    setTimeout(()=>card.classList.remove('flash'),1600);
-  });
-
-  // เลื่อนเข้ามาแล้วค่อยโผล่ (ถ้าเบราว์เซอร์ไม่รองรับก็โชว์หมด)
-  const rowEls=[].slice.call(el('htl').querySelectorAll('.hrow'));
-  if(!('IntersectionObserver' in window)){ rowEls.forEach(r=>r.classList.add('is-visible')); return; }
-  const io=new IntersectionObserver(function(en){
-    en.forEach(x=>x.target.classList.toggle('is-visible',x.isIntersecting));
-  },{threshold:.12});
-  rowEls.forEach(r=>io.observe(r));
-  // กันเหนียว: ถ้า observer ไม่ยิงเลย (บางเบราว์เซอร์/พรีวิว) อย่าปล่อยให้การ์ดหายไปทั้งหมด
-  setTimeout(function(){
-    if(!rowEls.some(r=>r.classList.contains('is-visible'))){
-      io.disconnect(); rowEls.forEach(r=>r.classList.add('is-visible'));
-    }
-  },900);
-}
+   ข้อมูล + ตัวเรนเดอร์ย้ายไปอยู่ bkk-history.js แล้ว (ใช้ร่วมกับโหมดสรุปของปีเก่า) */
+function renderHist(){ if(window.BKKrenderHist) window.BKKrenderHist(); }
 
 /* ---------- view switch ---------- */
 window.setView=function(v){
+  // กันพลาด: ปีที่ไม่มีข้อมูลฝั่งนั้น (2553 ไม่มีผู้ว่าฯ · 2556 ไม่มี ส.ก.) ให้เด้งไปแท็บที่มีข้อมูล
+  if(v==='gov'&&!HASGOV) v='sk';
+  if((v==='sk'||v==='council')&&!HASSK) v=HASGOV?'gov':'sum';
   state.view=v; state.focus=null; state.sel=null;
-  if(v!=='gov'&&SONG.player&&SONG.playing)SONG.player.pauseVideo();
+  if(v!=='gov')songStop();   // ออกจากแท็บผู้ว่าฯ แล้วหยุดเพลง
   ['gov','sk','sum','council','hist'].forEach(k=>{const b=el('tab-'+k);if(b)b.classList.toggle('active',k===v);});
   const isMap=(v==='gov'||v==='sk');
   el('mapGrid').style.display=isMap?'':'none';
@@ -1053,23 +1282,42 @@ window.setView=function(v){
   if(v==='council'){ renderCouncil(); return; }
   if(v==='hist'){ renderHist(); return; }
   if(isMap){
-    el('mapTitle').textContent = v==='gov'?'แผนที่ผู้ชนะรายเขต — ผู้ว่าฯ กทม.':'แผนที่ผู้ชนะรายเขต — ส.ก. 50 เขต';
-    el('mapMeta').textContent  = v==='gov'?'ชัชชาติ กวาดครบ 50 เขต':'ระบายสีตามพรรค/กลุ่มที่ชนะแต่ละเขต';
-    el('mapHint').textContent  = v==='gov'?'ชี้ที่เขตเพื่อดูชื่อเขต · ผลผู้ว่าฯ นับรวมทั้ง กทม. (ไม่มีแยกรายเขตจาก กกต.)':'ชี้/แตะเขตเพื่อดูผู้ชนะและคะแนน · แตะชิปพรรคเพื่อไฮไลต์';
+    el('mapTitle').textContent = v==='gov'?(GNOMAP?'ผลการเลือกตั้งผู้ว่าฯ กทม. (รวมทั้งเมือง)':'แผนที่ผู้ชนะรายเขต — ผู้ว่าฯ กทม.'):('แผนที่ผู้ชนะรายเขต — ส.ก. '+(SK.totalSeats||50)+((SK.totalSeats||50)>50?' ที่นั่ง':' เขต'));
+    const govWinTxt=!HASGOV ? '' : (GDIST
+      ? (GOV.mapCands||[]).filter(c=>(GOV.mapWins||{})[c.key]).map(c=>c.key+' '+GOV.mapWins[c.key]).join(' · ')+' เขต'
+      : (SWEEP?GWIN.name.split(' ')[0]+' กวาดครบ 50 เขต':GWIN.name.split(' ')[0]+' ชนะทั้ง กทม.'));
+    el('mapMeta').textContent  = v==='gov'?(GNOMAP?'ผลรวมทั้งกรุงเทพมหานคร · ไม่มีข้อมูลรายเขต':govWinTxt):'ระบายสีตามพรรค/กลุ่มที่ชนะแต่ละเขต';
+    el('mapHint').textContent  = v==='gov'
+      ?(GDIST?'ชี้/แตะเขตเพื่อดูคะแนนรายเขต · แตะชิปผู้สมัครเพื่อไฮไลต์':(GNOMAP?'ปีนี้ไม่มีผลแยกรายเขต — ดูผลรวมทั้ง กทม. และผู้สมัครทุกคนที่แผงด้านขวา':'ชี้ที่เขตเพื่อดูชื่อเขต · ผลผู้ว่าฯ นับรวมทั้ง กทม. (ไม่มีแยกรายเขตจาก กกต.)'))
+      :'ชี้/แตะเขตเพื่อดูผู้ชนะและคะแนน · แตะชิปพรรคเพื่อไฮไลต์';
     el('mapNote').innerHTML = v==='gov'
-      ? 'แผนที่แสดง<strong>ผู้ชนะรายเขต</strong> ซึ่งชัชชาติ สิทธิพันธุ์ (เบอร์ 9) ชนะทั้ง 50 เขต — คะแนนผู้ว่าฯ เป็นการนับรวมทั้งกรุงเทพมหานคร กกต. ไม่ได้ประกาศแยกเป็นรายเขต'
-      : 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) เลือกตั้งแบบแบ่งเขต เขตละ 1 คน รวม 50 คน — สีของแต่ละเขตคือพรรค/กลุ่มของผู้ชนะ';
+      ? (GDIST
+          ? `แผนที่นี้เป็น<strong>ผลผู้ว่าฯ แยกรายเขตจริง</strong> ${Object.keys(GDIST).length} เขต — สีของแต่ละเขตคือผู้สมัครที่ได้คะแนนสูงสุดในเขตนั้น (ที่มา: ตารางผลรายเขตของวิกิพีเดีย อ้างเว็บไซต์ กทม. election56)`
+          : SWEEP
+          ? `แผนที่แสดง<strong>ผู้ชนะรายเขต</strong> ซึ่ง${GWIN.name} (เบอร์ ${GWIN.no}) ชนะทั้ง 50 เขต — คะแนนผู้ว่าฯ เป็นการนับรวมทั้งกรุงเทพมหานคร กกต. ไม่ได้ประกาศแยกเป็นรายเขต`
+          : (GNOMAP
+              ? `การเลือกตั้งครั้งนี้<strong>ไม่มีผลแยกรายเขต</strong>ในแหล่งอ้างอิง แผนที่จึงเว้นสีเทาไว้ — ดูรายชื่อผู้สมัครทั้ง ${GOV.candidates.length} คนพร้อมคะแนนได้ที่แผงด้านขวา`
+              : `แผนที่ระบายสีทั้ง กทม. ด้วยสีของ<strong>ผู้ชนะรวมทั้งกรุงเทพมหานคร</strong> คือ ${GWIN.name} (เบอร์ ${GWIN.no}) — กกต. ไม่ได้ประกาศผลผู้ว่าฯ แยกเป็นรายเขต จึงไม่ใช่ผลรายเขตจริง`))
+      : (SKPARTIAL
+          ? 'ปี '+YEAR+' กรุงเทพฯ ยังแบ่งเป็น '+Object.keys(SK.districts).length+' เขต (ส.ก. '+(SK.totalSeats||0)+' คน) — พื้นที่สีเทาคือเขตที่แยกออกมาภายหลัง สีของแต่ละเขตคือพรรค/กลุ่มที่ครองที่นั่งมากที่สุดในเขตนั้น'
+          : (SK.totalSeats||50)>50
+          ? 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) ปีนี้มี '+SK.totalSeats+' คนจาก 50 เขต — เขตใหญ่แบ่งเป็น 2 เขตเลือกตั้ง เขตละ 1 คน · สีของแต่ละเขตคือพรรคของผู้ชนะ (เขตที่ได้คนละพรรคใช้สีของที่นั่งที่คะแนนสูงกว่า)'
+          : 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) เลือกตั้งแบบแบ่งเขต เขตละ 1 คน รวม 50 คน — สีของแต่ละเขตคือพรรค/กลุ่มของผู้ชนะ');
+    if(D.meta&&D.meta.caveat) el('mapNote').innerHTML+='<br><span style="opacity:.8">⚠ '+D.meta.caveat+'</span>';
     // badge
     el('mapBadge').style.display=v==='gov'?'':'none';
-    if(v==='gov'){const pf=(PH.gov&&PH.gov[9])?`<img src="bkk-photos/${PH.gov[9]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''; el('mapBadge').innerHTML=`<div class="mv ava" style="color:${GOV.winnerColor}">9${pf}</div><div class="mt"><b>ชัชชาติ สิทธิพันธุ์</b><small>ชนะ 50 / 50 เขต · ${GOV.candidates[0].pct}%</small></div>`;}
-    recolor(); renderLegend(); renderPanel();
-  } else { renderSummary(); }
+    if(v==='gov'){const pf=(PH.gov&&PH.gov[GWIN.no])?`<img src="bkk-photos/${PH.gov[GWIN.no]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'';
+      const nWin=GDIST?(GOV.mapWins||{})[(GOV.mapCands||[]).find(c=>c.name===GWIN.name)?((GOV.mapCands||[]).find(c=>c.name===GWIN.name).key):'']:null;
+      const sub=GDIST?(nWin?`ชนะ ${nWin} / ${Object.keys(GDIST).length} เขต`:'ผู้ชนะรวมทั้ง กทม.'):(SWEEP?'ชนะ 50 / 50 เขต':'ผู้ชนะทั้ง กทม.');
+      el('mapBadge').innerHTML=`<div class="mv ava" style="color:${GOV.winnerColor}">${GWIN.no!=null?GWIN.no:((GWIN.name||'?').trim().charAt(0))}${pf}</div><div class="mt"><b>${GWIN.name}</b><small>${sub}${GWIN.pct!=null?' · '+GWIN.pct+'%':' · '+fmt(GWIN.votes)+' คะแนน'}</small></div>`;}
+    recolor(); renderLegend(); renderPanel(); renderMapSide();
+  } else { const ms=el('mapSide'); if(ms){ms.style.display='none'; if(ms.parentElement)ms.parentElement.classList.remove('has-side');} renderSummary(); }
 };
 
 /* ---------- footer ---------- */
-el('foot').innerHTML='ข้อมูลผลการเลือกตั้ง (อย่างไม่เป็นทางการ · รอ กกต. ประกาศรับรอง) · ที่มา: '+
-  '<a href="https://th.wikipedia.org/wiki/การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a>, '+
-  '<a href="https://www.thaipbs.or.th/bkkelection69" target="_blank" rel="noopener">Thai PBS</a>, '+
+el('foot').innerHTML='ข้อมูลผลการเลือกตั้ง กทม. '+YEAR+' ('+D.meta.note+') · ที่มา: '+
+  '<a href="https://th.wikipedia.org/wiki/การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร_พ.ศ._'+YEAR+'" target="_blank" rel="noopener">วิกิพีเดีย</a>, '+
+  (YEAR===2569?'<a href="https://www.thaipbs.or.th/bkkelection69" target="_blank" rel="noopener">Thai PBS</a>, ':'')+
   '<a href="https://www.ect.go.th" target="_blank" rel="noopener">สำนักงาน กกต.</a> · '+
   'ขอบเขตเขต กทม.: OpenGISData-Thailand (chingchai) · จัดทำเพื่อการเรียนรู้';
 
@@ -1083,7 +1331,7 @@ function openSKCard(dist){
   var pObj=SK.parties.find(function(p){return p.key===d.party;});
   var pSeats=pObj?pObj.seats:'—';
   var initial=(d.winner||'?').trim().charAt(0)||'?';
-  var q=encodeURIComponent(d.winner?(d.winner+' สมาชิกสภากรุงเทพมหานคร เขต'+dist):('ส.ก. เขต'+dist+' กรุงเทพมหานคร 2569'));
+  var q=encodeURIComponent(d.winner?(d.winner+' สมาชิกสภากรุงเทพมหานคร เขต'+dist):('ส.ก. เขต'+dist+' กรุงเทพมหานคร '+YEAR));
   var photo=f?('<img src="bkk-photos/'+f+'" alt="'+(d.winner||'')+'" decoding="async" onerror="this.remove()">'):initial;
   if(!skOv){
     skOv=document.createElement('div'); skOv.className='skcard-ov';
@@ -1103,7 +1351,7 @@ function openSKCard(dist){
       +'<div><b>'+d.pct+'%</b><span>สัดส่วนในเขต</span></div>'
       +'<div><b>'+pSeats+'</b><span>ที่นั่งของกลุ่ม</span></div>'
     +'</div>'
-    +'<p class="skcard-note">ชนะการเลือกตั้ง ส.ก. เขต'+dist+' (ผลอย่างไม่เป็นทางการ 2569) · การ์ดนี้แสดงเฉพาะผลคะแนนที่ตรวจสอบได้จาก กกต./วิกิพีเดีย ไม่มีการแต่งประวัติเพิ่มเติม</p>'
+    +'<p class="skcard-note">ชนะการเลือกตั้ง ส.ก. เขต'+dist+' ('+(D.meta&&D.meta.note?D.meta.note:YEAR)+') · การ์ดนี้แสดงเฉพาะผลคะแนนที่ตรวจสอบได้จาก กกต./วิกิพีเดีย ไม่มีการแต่งประวัติเพิ่มเติม</p>'
     +'<a class="skcard-btn" href="https://www.google.com/search?q='+q+'" target="_blank" rel="noopener noreferrer">'
       +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>ค้นหาประวัติเพิ่มเติมใน Google</a>'
     +'</div>';
@@ -1121,8 +1369,11 @@ document.addEventListener('click',function(e){
   openSKCard(a.getAttribute('data-dist'));
 });
 
-// init
-setView('gov');
+// init — ซ่อนแท็บที่ปีนั้นไม่มีข้อมูล (2556 = ไม่มี ส.ก. · 2553 = ไม่มีผู้ว่าฯ)
+if(!HASSK) ['tab-sk','tab-council'].forEach(id=>{const b=el(id);if(b)b.style.display='none';});
+if(!HASGOV){ const g=el('tab-gov'); if(g)g.style.display='none'; }
+if(HASSK){ const sk=el('tab-sk'); if(sk&&sk.querySelector('b')) sk.querySelector('b').textContent=(SK.totalSeats||50); }
+setView(HASGOV?'gov':'sk');
 })();
 </script>
 <script src="../js/theme-toggle-drag.js"></script>

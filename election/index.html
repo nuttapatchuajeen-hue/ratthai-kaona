@@ -92,7 +92,7 @@ mdSyncToggle();
     <div class="grabber" id="grabber"></div>
     <div class="legendbar" id="legendbar"></div>
     <div class="panel-scroll" id="panelScroll"></div>
-    <div class="panel-foot">ภาพถ่าย ส.ส.: สำนักงานเลขาธิการสภาผู้แทนราษฎร · <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a> · พื้นที่เขตเลือกตั้ง: ประกาศ กกต. / <a href="https://th.wikipedia.org/wiki/การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a></div>
+    <div class="panel-foot">พื้นที่เขตเลือกตั้งและรายชื่อ ส.ส.: ประกาศ กกต. / <a href="https://th.wikipedia.org/wiki/การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a></div>
   </aside>
 
   <div class="zoomctl">
@@ -540,7 +540,10 @@ mdSyncToggle();
   /* ---- panel content ---- */
   const panelScroll=document.getElementById('panelScroll'), search=document.getElementById('search');
   let curProvince=null;
-  function initialOf(name){const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return t[0]||name.replace(/\s/g,'')[0]||'•';}
+  /* สระนำหน้า (เ แ โ ใ ไ) เขียนก่อนพยัญชนะต้น — "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
+  const LEAD_VOWELS=/[เแโใไ]/;
+  const firstLetter=s=>(LEAD_VOWELS.test(s.charAt(0))&&s.length>1)?s.charAt(1):s.charAt(0);
+  function initialOf(name){const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return firstLetter(t)||firstLetter(name.replace(/\s/g,''))||'•';}
   function areaOf(r){return (window.ZONE_AREAS&&window.ZONE_AREAS[r.prov+'|'+(+r.no)])||'';}
   /* คลังรูปเก็บชื่อพร้อมคำนำหน้า ("นายกิตติ กิตติธรกุล") แต่ข้อมูลปีย้อนหลังจากวิกิพีเดียไม่มีคำนำหน้า
      → เทียบซ้ำอีกชั้นด้วยชื่อที่ตัดคำนำหน้าออก คนที่เคยมีรูปอยู่แล้วจะยังขึ้นรูปในปีเก่า */
@@ -701,6 +704,7 @@ mdSyncToggle();
 <script src="intro-data.js"></script>
 <script src="intro-seats.js"></script>
 <script src="intro-music.js"></script>
+<script src="intro-youtube.js"></script>
 <script src="intro.js"></script>
 <script src="glow.js"></script>
 <script src="../js/theme-toggle-drag.js"></script>

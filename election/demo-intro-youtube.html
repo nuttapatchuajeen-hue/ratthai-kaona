@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตัวอย่าง ทาง E — การ์ดเพลง YouTube ในฉากเปิด</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ====== หน้าตัวอย่าง (ไม่ใช่หน้าจริงของเว็บ) ====== */
+*{box-sizing:border-box}
+body{margin:0;background:#070d14;color:#e8eef5;font-family:Kanit,sans-serif;min-height:100vh}
+
+.demo-note{max-width:900px;margin:0 auto;padding:22px 20px 0}
+.demo-note h1{font-size:1.2rem;font-weight:600;margin:0 0 6px}
+.demo-note p{font-family:Sarabun,sans-serif;font-size:.85rem;line-height:1.65;color:#93a3b3;margin:0 0 14px}
+.demo-note b{color:#e8eef5}
+
+.switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.switch button{font-family:Kanit,sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;
+  padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);color:#cfdae6;transition:.15s}
+.switch button:hover{background:rgba(255,255,255,.13)}
+.switch button.on{background:#e8eef5;color:#0b1119;border-color:#e8eef5}
+
+/* ====== เวทีจำลองฉากเปิด ====== */
+.stage{position:relative;max-width:900px;margin:0 auto 30px;aspect-ratio:16/9;min-height:430px;
+  border-radius:16px;overflow:hidden;background:
+  radial-gradient(120% 90% at 50% 0%,#16283c 0%,#0a121c 60%,#060c13 100%);
+  border:1px solid rgba(255,255,255,.09)}
+.veil{position:absolute;inset:0;background:rgba(4,12,20,.55)}
+
+.bar{position:absolute;top:0;left:0;right:0;padding:13px 20px;display:flex;align-items:baseline;
+  gap:14px;flex-wrap:wrap;background:linear-gradient(180deg,rgba(3,9,15,.92),rgba(3,9,15,0));z-index:3}
+.bar b{font-size:1.5rem;font-weight:600;letter-spacing:.02em}
+.bar span{font-size:.82rem;opacity:.75;font-family:Sarabun,sans-serif}
+
+.side{position:absolute;top:74px;bottom:74px;width:36%;padding:18px 22px;display:flex;
+  flex-direction:column;justify-content:center;gap:2px;z-index:2}
+.side.l{left:0}
+.side.r{right:0;text-align:right;align-items:flex-end}
+.rank{font-size:.72rem;letter-spacing:.16em;opacity:.72;font-family:Sarabun,sans-serif}
+.pname{font-size:1.45rem;font-weight:600;line-height:1.25;margin:4px 0 2px;display:flex;
+  align-items:center;gap:10px}
+.side.r .pname{flex-direction:row-reverse}
+.plogo{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font-size:.78rem;
+  font-weight:700;flex:0 0 auto}
+.lead{font-size:.92rem;opacity:.9;font-family:Sarabun,sans-serif}
+.num{font-size:3.1rem;font-weight:700;line-height:1;margin-top:12px}
+
+.ctl{position:absolute;left:20px;bottom:18px;display:flex;gap:8px;z-index:6}
+.ctl button{font-family:Kanit,sans-serif;font-size:.78rem;cursor:pointer;padding:7px 14px;
+  border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.14);color:#fff}
+.ctl button:hover{background:rgba(255,255,255,.26)}
+
+.cred{position:absolute;left:20px;bottom:0;font-size:.66rem;opacity:.6;
+  font-family:Sarabun,sans-serif;padding-bottom:4px;z-index:5}
+
+/* ====== การ์ดเพลง YouTube (หัวใจของทาง E) ====== */
+.ytcard{position:absolute;right:18px;bottom:18px;width:360px;max-width:calc(100% - 36px);
+  background:rgba(8,15,24,.86);border:1px solid rgba(255,255,255,.16);border-radius:14px;
+  overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5);z-index:7;
+  backdrop-filter:blur(6px);transition:opacity .4s,transform .4s}
+.ytcard .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.ytcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.ytcard .meta{padding:9px 12px 10px;font-family:Sarabun,sans-serif}
+.ytcard .t{font-family:Kanit,sans-serif;font-weight:500;font-size:.83rem;line-height:1.3}
+.ytcard .c{font-size:.67rem;color:#8b9aab;margin-top:3px;line-height:1.45}
+.ytcard .c a{color:#8b9aab}
+.ytcard.hide{opacity:0;transform:translateY(10px);pointer-events:none}
+
+/* ====== แบบเดิม: ไฟล์ mp3 ที่มองไม่เห็น ====== */
+.oldbox{position:absolute;right:18px;bottom:18px;width:360px;max-width:calc(100% - 36px);
+  border:1px dashed rgba(255,120,120,.5);border-radius:14px;padding:14px 16px;
+  background:rgba(60,12,12,.35);font-family:Sarabun,sans-serif;z-index:7;
+  transition:opacity .4s,transform .4s}
+.oldbox .t{font-family:Kanit,sans-serif;font-weight:500;font-size:.86rem;color:#ffb3b3}
+.oldbox .c{font-size:.72rem;color:#e0a5a5;margin-top:5px;line-height:1.55}
+.oldbox code{font-family:ui-monospace,monospace;font-size:.68rem;background:rgba(0,0,0,.3);
+  padding:1px 5px;border-radius:4px}
+.oldbox.hide{opacity:0;transform:translateY(10px);pointer-events:none}
+
+/* ====== ตารางเทียบ ====== */
+.cmp{max-width:900px;margin:0 auto 60px;padding:0 20px}
+.cmp table{width:100%;border-collapse:collapse;font-family:Sarabun,sans-serif;font-size:.82rem}
+.cmp th,.cmp td{text-align:left;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.09);
+  vertical-align:top}
+.cmp th{font-family:Kanit,sans-serif;font-weight:500;color:#93a3b3;font-size:.76rem}
+.cmp td:first-child{color:#93a3b3;width:34%}
+.yes{color:#5fd99b}.no{color:#ff9a9a}
+
+@media(max-width:760px){
+  .stage{aspect-ratio:auto;min-height:0;padding-bottom:300px}
+  .side{position:static;width:100%;padding:60px 18px 0}
+  .side.r{text-align:left;align-items:flex-start;padding-top:14px}
+  .side.r .pname{flex-direction:row}
+  .ytcard,.oldbox{right:14px;left:14px;bottom:52px;width:auto;max-width:none}
+}
+</style>
+</head>
+<body>
+
+<div class="demo-note">
+  <h1>ตัวอย่าง ทาง E — การ์ดเพลง YouTube ในฉากเปิด</h1>
+  <p>หน้านี้เป็น<b>ตัวอย่างเปรียบเทียบ ไม่ใช่หน้าจริงของเว็บ</b> · กดสลับดูได้ว่าฉากเปิดหน้ารายเขตจะเปลี่ยนไปอย่างไร
+  ถ้าย้ายจากไฟล์ mp3 พื้นหลังมาเป็นการ์ดวิดีโอที่มองเห็นได้</p>
+  <div class="switch">
+    <button type="button" id="bE" class="on">ทาง E — การ์ด YouTube</button>
+    <button type="button" id="bOld">แบบเดิม — mp3 พื้นหลัง</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="veil"></div>
+
+  <div class="bar">
+    <b>2569</b>
+    <span>28 มิถุนายน 2569 · ส.ส. 500 คน (เขต 400 + บัญชีรายชื่อ 100)</span>
+  </div>
+
+  <div class="side l">
+    <div class="rank">อันดับ 1</div>
+    <div class="pname"><span class="plogo" style="background:#1f4fa3">ภท.</span>ภูมิใจไทย</div>
+    <div class="lead">อนุทิน ชาญวีรกูล</div>
+    <div class="num">192</div>
+  </div>
+
+  <div class="side r">
+    <div class="rank">อันดับ 2</div>
+    <div class="pname"><span class="plogo" style="background:#f26522">ปชน.</span>ประชาชน</div>
+    <div class="lead">ณัฐพงษ์ เรืองปัญญาวุฒิ</div>
+    <div class="num">120</div>
+  </div>
+
+  <!-- ทาง E: ตัวเล่นมองเห็นได้จริง ไม่ถูกบัง ขนาด 360×203 (เกินขั้นต่ำ 200×200) -->
+  <div class="ytcard" id="cardE">
+    <div class="frame">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/gbYT1lmJ9uo?rel=0&modestbranding=1"
+        title="เพลงแคมเปญหาเสียง พรรคภูมิใจไทย"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="meta">
+      <div class="t">♪ เพลงประจำปีนี้ · เพลงแคมเปญหาเสียง พรรคภูมิใจไทย</div>
+      <div class="c">ประพันธ์: นิติพงษ์ ห่อนาค · เผยแพร่โดยพรรคภูมิใจไทย —
+        <a href="https://youtu.be/gbYT1lmJ9uo" target="_blank" rel="noopener">ดูบน YouTube ↗</a></div>
+    </div>
+  </div>
+
+  <!-- แบบเดิม -->
+  <div class="oldbox hide" id="cardOld">
+    <div class="t">🔇 เสียงเล่นอยู่ แต่ไม่มีอะไรให้เห็น</div>
+    <div class="c">
+      <code>&lt;audio src="../songs/bhumjaithai-intro.mp3" loop&gt;</code><br>
+      ไฟล์ 3.3 MB เก็บบนเซิร์ฟเวอร์เรา · วนไม่หยุด · เปิด URL ตรงโหลดไฟล์ได้ ·
+      ไม่มีชื่อเพลง ไม่มีเครดิต ไม่มีทางกลับไปหาเจ้าของ
+    </div>
+  </div>
+
+  <div class="ctl">
+    <button type="button">เปิดเสียง</button>
+    <button type="button">ข้าม</button>
+  </div>
+  <div class="cred">โลโก้พรรค: Wikimedia Commons · เครดิตโลโก้</div>
+</div>
+
+<div class="cmp">
+  <table>
+    <tr><th>ประเด็น</th><th>แบบเดิม (mp3 พื้นหลัง)</th><th>ทาง E (การ์ด YouTube)</th></tr>
+    <tr><td>ไฟล์เพลงบนเซิร์ฟเวอร์เรา</td><td class="no">มี — 27 ไฟล์ ~85 MB</td><td class="yes">ไม่มีเลย</td></tr>
+    <tr><td>ทำซ้ำงานของผู้อื่น</td><td class="no">ใช่</td><td class="yes">ไม่ — สตรีมจากช่องเจ้าของ</td></tr>
+    <tr><td>ต้องขออนุญาต</td><td class="no">ต้อง</td><td class="yes">ไม่ต้อง — เจ้าของเปิดปุ่มฝังไว้เอง</td></tr>
+    <tr><td>เครดิต</td><td class="no">ไม่มีในฉากเปิด</td><td class="yes">ชื่อเพลง + ผู้ประพันธ์ + ลิงก์ต้นทาง</td></tr>
+    <tr><td>ยอดวิวไปหาเจ้าของ</td><td class="no">ไม่ไป</td><td class="yes">ไป</td></tr>
+    <tr><td>เพลงที่ได้</td><td>เต็มเพลง</td><td class="yes">เต็มเพลง (ไม่ต้องตัด)</td></tr>
+    <tr><td>เสียงดังเองตอนเปิดหน้า</td><td class="yes">ได้ (ถ้าเบราว์เซอร์ยอม)</td><td class="no">ต้องกดเล่น 1 ครั้ง</td></tr>
+    <tr><td>มีภาพวิดีโอในฉาก</td><td class="yes">ไม่มี</td><td class="no">มี — ต้องจัดวางให้เข้ากับงานออกแบบ</td></tr>
+    <tr><td>ปีที่ไม่มีคลิปบน YouTube</td><td>—</td><td class="no">ต้องใช้ทางอื่น (G/J) มาเสริม</td></tr>
+  </table>
+</div>
+
+<script>
+(function(){
+  var bE=document.getElementById('bE'), bOld=document.getElementById('bOld'),
+      cE=document.getElementById('cardE'), cOld=document.getElementById('cardOld');
+  function show(mode){
+    var isE = mode==='E';
+    cE.classList.toggle('hide', !isE);
+    cOld.classList.toggle('hide', isE);
+    bE.classList.toggle('on', isE);
+    bOld.classList.toggle('on', !isE);
+  }
+  bE.addEventListener('click', function(){ show('E'); });
+  bOld.addEventListener('click', function(){ show('OLD'); });
+})();
+</script>
+
+</body>
+</html>
