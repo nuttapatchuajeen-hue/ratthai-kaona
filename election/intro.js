@@ -5,11 +5,14 @@
    ตัวเลข: intro-seats.js (window.INTRO_SEATS) — เรียงตาม "ที่นั่งรวม" = แบ่งเขต + บัญชีรายชื่อ
            แบ่งเขตนับจาก year-<id>.js (ตรงกับแผนที่) · บัญชีรายชื่อจาก standings-<id>.js
    ชื่อ/รูป: intro-data.js (window.INTRO) + leaders/<ชื่อคน>.png|.jpg
-   เพลง: ค่าเริ่มต้น "เปิดเสียง" และจำสิ่งที่ผู้ใช้เลือกไว้ใช้ทุกปี (localStorage 'el-intro-sound')
+   เพลง: การ์ด YouTube Mini Player ลอยบริเวณอ่าวไทย (ขวาล่างของแผนที่) — intro-youtube.js
+         ฝังผ่าน YouTube IFrame Player API (การฝังอย่างเป็นทางการ ถูกลิขสิทธิ์) แทนไฟล์ .mp3 เดิม
+         ค่าเริ่มต้น "เปิดเสียง" และจำสิ่งที่ผู้ใช้เลือกไว้ใช้ทุกปี (localStorage 'el-intro-sound')
          เบราว์เซอร์บล็อก autoplay ถ้ายังไม่มีการคลิกในหน้านั้น → ลองเล่นก่อน ถ้าโดนบล็อก
          ปุ่มจะกลับเป็น "เปิดเสียง" แล้วรอผู้ใช้แตะหน้าครั้งแรก ค่อยเล่นเองอัตโนมัติ
-         พรรคเดิมชนะติดต่อกัน (เพลงไฟล์เดียวกัน + เป็นการเลือกตั้งครั้งที่ติดกัน) = เล่นต่อจากจุดเดิม
+         พรรคเดิมชนะติดต่อกัน (คลิปเดียวกัน + เป็นการเลือกตั้งครั้งที่ติดกัน) = เล่นต่อจากจุดเดิม
          ไม่ดีดกลับไปท่อนแรก (sessionStorage 'el-intro-pos')
+         ย่อ/ขยาย/ปิดการ์ดได้ · สถานะย่อจำไว้ที่ localStorage 'el-yt-min'
 
    ⚠ ต้องโหลดหลัง year-switch.js · intro-data.js · intro-seats.js */
 (function () {
@@ -18,9 +21,8 @@
   var D = window.DATA, I = (window.INTRO || {})[window.EYID] || {};
   var Y = window.EYEAR;
   var HOLD = 6000;
-  // เพลงประจำปี = เพลงของพรรคอันดับ 1 ปีนั้น (intro-music.js) · ปีที่ยังไม่มีเพลงก็เงียบไป ไม่พัง
-  var MUSIC = (window.INTRO_MUSIC || {})[window.EYID];
-  MUSIC = MUSIC ? '../songs/' + MUSIC : '';
+  // เพลงประจำปี = คลิป YouTube ของพรรคอันดับ 1 ปีนั้น (intro-youtube.js)
+  //               ปีที่ยังไม่มีคลิปก็เงียบไป ไม่พัง (การ์ดและปุ่มลำโพงซ่อนเอง)
 
   var cur = (window.EYEARS || []).filter(function (o) { return o.id === window.EYID; })[0] || {};
   var wins = {};
@@ -184,6 +186,57 @@
     + '#eintro .ctl{bottom:calc(66px + var(--pmh,0px))}'
     + '#eintro .cred .credtxt{display:none}#eintro .cred{font-size:.56rem}}';
 
+  /* ---------- การ์ด YouTube Mini Player (ลอยบริเวณอ่าวไทย ขวาล่างของแผนที่) ----------
+     พื้นหลังกระจก (glassmorphism) — ตัวแปรธีมมาจาก style.css จึงเปลี่ยนตามโหมดสว่าง/มืดเอง
+     z-index 57 = ต่ำกว่า dock ปุ่มเสียง (58) เล็กน้อย แต่ยังสูงกว่าแผนที่/ปุ่มซูม (50) */
+  CSS += '#eintroyt{position:fixed;right:76px;bottom:16px;z-index:57;width:320px;max-width:calc(100vw - 20px);'
+    + 'border-radius:16px;overflow:hidden;font-family:Sarabun,sans-serif;color:var(--ink,#0A1822);'
+    + 'background:rgba(255,255,255,.62);border:1px solid var(--line,#DEEAF1);'
+    + '-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);'
+    + 'box-shadow:var(--shadow-lg,0 18px 50px -22px rgba(10,40,60,.32));'
+    + 'transition:opacity .28s,transform .28s;transform-origin:100% 100%}'
+  + 'html[data-theme="dark"] #eintroyt{background:rgba(14,26,38,.58);border-color:var(--line-2,#1E3A50)}'
+  /* ปิดการ์ด = ยุบหายไปทางมุมขวาล่าง (ไม่ display:none — iframe จะถูกสร้างใหม่ทุกครั้งที่เปิด) */
+  + '#eintroyt.off{opacity:0;transform:scale(.9) translateY(8px);pointer-events:none}'
+  /* หัวการ์ด */
+  + '#eintroyt .ythead{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 11px;'
+    + 'border-bottom:1px solid var(--line,#DEEAF1);background:linear-gradient(180deg,rgba(255,255,255,.34),transparent)}'
+  + 'html[data-theme="dark"] #eintroyt .ythead{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);'
+    + 'border-bottom-color:var(--line-2,#1E3A50)}'
+  + '#eintroyt.min .ythead{border-bottom:0}'
+  + '#eintroyt .ytmark{flex:0 0 auto;display:grid;place-items:center;color:#FF0033;line-height:0}'
+  + '#eintroyt .ytmark svg{width:22px;height:22px}'
+  /* จังหวะเต้นเบา ๆ ตอนกำลังเล่น = บอกสถานะโดยไม่ต้องมีข้อความเพิ่ม */
+  + '#eintroyt.playing .ytmark{animation:ytpulse 1.9s ease-in-out infinite}'
+  + '@keyframes ytpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.13);opacity:.72}}'
+  + '@media(prefers-reduced-motion:reduce){#eintroyt.playing .ytmark{animation:none}}'
+  + '#eintroyt .ytmeta{flex:1 1 auto;min-width:0;line-height:1.25}'
+  + '#eintroyt .ytmeta b{display:block;font-family:Kanit,sans-serif;font-weight:500;font-size:.82rem;'
+    + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+  + '#eintroyt .ytmeta small{display:block;font-size:.68rem;color:var(--muted,#5C7686);'
+    + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+  + '#eintroyt .ythead button{flex:0 0 auto;width:26px;height:26px;border:0;border-radius:8px;padding:0;'
+    + 'background:transparent;color:var(--ink-2,#2C4356);cursor:pointer;display:grid;place-items:center;transition:.12s}'
+  + '#eintroyt .ythead button:hover{background:var(--orange-soft,#E9F0F5);color:var(--orange-deep,#435A6D)}'
+  + '#eintroyt .ythead svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;'
+    + 'stroke-linecap:round;stroke-linejoin:round}'
+  /* ตัวคลิป — ย่อแล้วยุบ grid-template-rows เป็น 0 (อนิเมตได้ ต่างจาก height:auto) */
+  + '#eintroyt .ytbody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}'
+  + '#eintroyt.min .ytbody{grid-template-rows:0fr}'
+  + '#eintroyt .ytinner{overflow:hidden;min-height:0}'
+  + '#eintroyt .ytframe{position:relative;aspect-ratio:16/9;margin:9px 9px 0;border-radius:11px;'
+    + 'overflow:hidden;background:#000}'
+  + '#eintroyt .ytframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}'
+  + '#eintroyt .ytfoot{display:flex;align-items:center;gap:8px;padding:7px 11px 9px;font-size:.68rem}'
+  + '#eintroyt .ytby{flex:1 1 auto;min-width:0;color:var(--muted,#5C7686);'
+    + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+  + '#eintroyt .ytopen{flex:0 0 auto;color:var(--green-deep,#055A75);font-weight:600;'
+    + 'border-bottom:1px solid transparent;transition:.12s}'
+  + '#eintroyt .ytopen:hover{border-bottom-color:currentColor}'
+  /* มือถือ: การ์ดแคบลง ตำแหน่งจริงคำนวณใน placeYT() (เหนือแผงข้อมูลที่โผล่จากด้านล่าง) */
+  + '@media(max-width:860px){#eintroyt{width:270px;right:10px}'
+    + '#eintroyt .ytmeta b{font-size:.78rem}#eintroyt .ytmeta small{font-size:.64rem}}';
+
   /* ---------- ชิ้นส่วน ---------- */
   function facePath(leader, cls) {
     if (!leader) return '';
@@ -286,47 +339,6 @@
     + '<div class="cred"><span class="credtxt">โลโก้พรรค: Wikimedia Commons · </span>'
     + '<a href="logos/CREDITS.txt" target="_blank" rel="noopener">เครดิตโลโก้</a></div>';
 
-  /* ---------- เพลง YouTube Embed: การ์ดวิดีโอถูกลิขสิทธิ์ประจำปี ---------- */
-  var YT_KEY = 'el-yt-open';
-  var YT = (window.INTRO_YOUTUBE || {})[window.EYID];
-  var hasYT = !!(YT && YT.id);
-
-  var cardVisible = false;
-  try { cardVisible = localStorage.getItem(YT_KEY) !== '0'; } catch(e){}
-
-  /* เพิ่ม CSS สำหรับ YouTube Mini Player Card */
-  CSS += ''
-    + '.eytcard{position:fixed;right:76px;bottom:20px;width:320px;max-width:calc(100vw - 32px);'
-    + 'background:var(--paper,#0e1a26);border:1px solid var(--line,rgba(255,255,255,.16));'
-    + 'border-radius:14px;box-shadow:var(--shadow-lg,0 12px 36px rgba(0,0,0,.4));z-index:56;'
-    + 'font-family:Kanit,sans-serif;color:var(--ink,#e8eef5);overflow:hidden;backdrop-filter:blur(10px);'
-    + 'transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s,max-height .35s;}'
-    + '.eytcard.hidden{opacity:0;transform:translateY(16px) scale(.95);pointer-events:none;display:none}'
-    + '.eyt-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;'
-    + 'background:var(--wash,rgba(255,255,255,.05));border-bottom:1px solid var(--line,rgba(255,255,255,.1));cursor:pointer;}'
-    + '.eyt-title-row{display:flex;align-items:center;gap:6px;font-size:.78rem;min-width:0;}'
-    + '.eyt-badge{background:var(--orange-soft,rgba(242,101,34,.16));color:var(--orange, #f26522);'
-    + 'font-weight:600;font-size:.68rem;padding:2px 7px;border-radius:6px;white-space:nowrap;}'
-    + '.eyt-party{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
-    + '.eyt-actions{display:flex;align-items:center;gap:4px;flex:0 0 auto;}'
-    + '.eyt-btn{width:26px;height:26px;border-radius:6px;border:0;background:transparent;'
-    + 'color:var(--muted,#8b9aab);cursor:pointer;display:grid;place-items:center;padding:0;transition:.12s;}'
-    + '.eyt-btn:hover{background:rgba(255,255,255,.12);color:var(--ink,#fff);}'
-    + '.eyt-body{transition:all .3s ease;}'
-    + '.eyt-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;}'
-    + '.eyt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;}'
-    + '.eyt-meta{padding:8px 12px 10px;font-family:Sarabun,sans-serif;font-size:.75rem;}'
-    + '.eyt-song{font-family:Kanit,sans-serif;font-weight:500;font-size:.82rem;line-height:1.3;'
-    + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
-    + '.eyt-artist{font-size:.68rem;color:var(--muted,#8b9aab);margin-top:2px;line-height:1.4;'
-    + 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
-    + '.eyt-artist a{color:var(--orange,#f26522);text-decoration:none;}'
-    + '.eyt-artist a:hover{text-decoration:underline;}'
-    + '.eytcard.min .eyt-body{display:none;}'
-    + '.eytcard.min{width:260px;}'
-    + '@media(max-width:860px){.eytcard{right:12px;left:auto;bottom:80px;width:300px;}}'
-    + '@media(max-width:480px){.eytcard{right:10px;left:10px;bottom:76px;width:auto;}}';
-
   var st = document.createElement('style'); st.textContent = CSS;
   document.head.appendChild(st); document.body.appendChild(el);
 
@@ -334,9 +346,11 @@
   var barEl = el.querySelector('.bar'), pmBarEl = el.querySelector('.pmbar');
   var syncBar = function () {
     el.style.setProperty('--barh', barEl.offsetHeight + 'px');
+    // แถบนายกฯ คนนอกกินที่ล่างจริง (มือถือตกบรรทัดได้) → วัดแล้วดันการ์ด/ปุ่มขึ้นตาม
     el.style.setProperty('--pmh', (pmBarEl ? pmBarEl.offsetHeight : 0) + 'px');
   };
   syncBar(); addEventListener('resize', syncBar);
+  // วัดซ้ำหลังฟอนต์ Kanit/Sarabun มาถึง — วัดตอนฟอนต์สำรองยังอยู่ ข้อความจะตกบรรทัดคนละแบบ ค่าที่ได้เพี้ยน
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncBar);
 
   // ไม่มีทั้ง .png และ .jpg → ซ่อนรูป ไม่ให้ขึ้นไอคอนรูปเสีย
@@ -351,82 +365,319 @@
     im.addEventListener('load', function () { if (im.parentNode) im.parentNode.classList.add('hasimg'); el.classList.add('haslogo'); });
     im.addEventListener('error', function () {
       im.style.display = 'none';
+      // แผงใหญ่ (lg): ไม่มีโลโก้จริง → ซ่อนกล่องทั้งใบ (สีชิป = สีแผง จึงเหลือแค่กรอบเปล่า) ให้ชื่อพรรคชิดปกติ
       var box = im.parentNode;
       if (box && box.classList && box.classList.contains('lg')) box.style.display = 'none';
     });
   });
 
-  /* สร้าง YouTube Mini Player Card */
-  var ytCard = null;
-  if (hasYT) {
-    ytCard = document.createElement('div');
-    ytCard.id = 'eytcard';
-    ytCard.className = 'eytcard' + (cardVisible ? '' : ' hidden');
-    ytCard.innerHTML = ''
-      + '<div class="eyt-head">'
-      + '  <div class="eyt-title-row" title="คลิกเพื่อย่อ/ขยาย">'
-      + '    <span class="eyt-badge">♪ YouTube</span>'
-      + '    <span class="eyt-party">' + (YT.party ? 'พรรค' + YT.party : 'เพลงประจำปี') + '</span>'
-      + '  </div>'
-      + '  <div class="eyt-actions">'
-      + '    <button type="button" class="eyt-btn" data-act="min" title="ย่อ/ขยายตัวเล่น">'
-      + '      <svg class="ic-min" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 13H5v-2h14v2z"/></svg>'
-      + '      <svg class="ic-exp" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:none"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'
-      + '    </button>'
-      + '    <button type="button" class="eyt-btn" data-act="close" title="ปิดการ์ดเพลง">'
-      + '      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>'
-      + '    </button>'
-      + '  </div>'
+  /* ---------- เพลงพื้นหลัง: ไฮบริด YouTube + MP3 ----------
+     ปีไหนมีคลิปใน intro-youtube.js → ใช้ "การ์ด YouTube Mini Player" ลอยบริเวณอ่าวไทย
+       ฝังผ่าน YouTube IFrame Player API = การฝังอย่างเป็นทางการ ถูกลิขสิทธิ์
+       ยอดวิวกลับไปหาเจ้าของผลงาน และไม่ต้องเก็บไฟล์เสียงไว้ในรีโปเอง
+     ปีไหนยังไม่มีคลิป → ตกไปเล่นไฟล์ .mp3 เดิมใน songs/ (intro-music.js) แบบเสียงพื้นหลัง
+       ไม่มีการ์ด มีแค่ปุ่มลำโพงใน dock เหมือนเดิม เช่น 2535 = all-elections.mp3
+     ไม่มีทั้งสองอย่าง → เงียบ และซ่อนปุ่มลำโพงไปเลย
+
+     ค่าเริ่มต้น "เปิดเสียง" และจำสิ่งที่ผู้ใช้เลือกไว้ใช้ทุกปี (localStorage 'el-intro-sound')
+     เบราว์เซอร์บล็อก autoplay ถ้ายังไม่มีการคลิกในหน้านั้น → ลองเล่นก่อน ถ้าโดนบล็อก
+     ปุ่มจะกลับเป็น "เปิดเสียง" แล้วรอผู้ใช้แตะหน้าครั้งแรก ค่อยเล่นเองอัตโนมัติ
+     พรรคเดิมชนะติดต่อกัน (เพลงเดียวกัน + เป็นการเลือกตั้งครั้งที่ติดกัน) = เล่นต่อจากจุดเดิม  */
+  var SKEY = 'el-intro-sound';
+  var want = true;                                    // ยังไม่เคยเลือก = เปิด
+  try { want = localStorage.getItem(SKEY) !== '0'; } catch (err) { }
+
+  var TUNE = (window.INTRO_YOUTUBE || {})[window.EYID] || null;
+  if (TUNE && !TUNE.id) TUNE = null;
+  // มีคลิปแล้วไม่ต้องสน mp3 · ยังไม่มีคลิปค่อยมองหาไฟล์เสียงเดิม
+  var MUSIC = TUNE ? '' : ((window.INTRO_MUSIC || {})[window.EYID] || '');
+  MUSIC = MUSIC ? '../songs/' + MUSIC : '';
+  var MODE = TUNE ? 'yt' : (MUSIC ? 'mp3' : '');      // '' = ปีนั้นไม่มีเพลงเลย
+  var hasAudio = !!MODE;
+  /* กุญแจ "เพลงเดียวกันไหม" ตอนสลับปี — ต้องแยกที่มาด้วย ไม่ใช่แค่ชื่อไฟล์
+     (ปี mp3 กับปี YouTube ที่เป็นเพลงเดียวกัน ก็ถือว่าคนละแหล่ง เริ่มใหม่ตามปกติ) */
+  var SRCKEY = TUNE ? ('yt:' + TUNE.id) : MUSIC;
+  var sndBtn = el.querySelector('[data-a="sound"]');
+  var player = null, ytReady = false, pendingPlay = false, playChk = 0;
+  var audio = null;
+
+  /* ---------- การ์ดลอย ----------
+     วางบริเวณอ่าวไทย (ขวาล่างของแผนที่) — เลี่ยงปุ่มซูม/ปุ่มสลับธีมที่ลอยคอลัมน์ขวาอยู่แล้ว
+     ย่อ (เหลือแถบหัว) / ขยาย / ปิด ได้ · ปิดแล้วเรียกกลับด้วยปุ่มลำโพงใน dock          */
+  var card = null, mount = null, minBtn = null;
+  var MINK = 'el-yt-min';                             // จำสถานะย่อ/ขยายไว้ข้ามปี
+  var minimized = false;
+  try { minimized = localStorage.getItem(MINK) === '1'; } catch (err) { }
+  if (matchMedia('(max-width:860px)').matches) minimized = true;   // มือถือ: เริ่มแบบย่อ ไม่บังแผนที่
+
+  if (MODE === 'yt') {
+    card = document.createElement('div');
+    card.id = 'eintroyt';
+    card.className = 'off' + (minimized ? ' min' : '');
+    card.setAttribute('aria-label', 'เพลงประจำปีเลือกตั้ง ' + Y);
+    card.innerHTML =
+      '<div class="ythead">'
+      + '<span class="ytmark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor">'
+      + '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2'
+      + ' 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4'
+      + 'a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/>'
+      + '</svg></span>'
+      + '<span class="ytmeta"><b></b><small></small></span>'
+      + '<button type="button" data-y="min" aria-label="ย่อ/ขยายการ์ดเพลง">'
+      + '<svg viewBox="0 0 24 24"><path class="i-min" d="M5 12h14"/>'
+      + '<path class="i-max" d="m7 14 5-5 5 5" style="display:none"/></svg></button>'
+      + '<button type="button" data-y="close" title="ปิดการ์ดเพลง" aria-label="ปิดการ์ดเพลง">'
+      + '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>'
       + '</div>'
-      + '<div class="eyt-body">'
-      + '  <div class="eyt-frame">'
-      + '    <iframe id="eytframe"'
-      + '      src="https://www.youtube.com/embed/' + YT.id + '?rel=0"'
-      + '      title="' + YT.title + '"'
-      + '      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"'
-      + '      referrerpolicy="strict-origin-when-cross-origin"'
-      + '      allowfullscreen loading="lazy"></iframe>'
-      + '  </div>'
-      + '  <div class="eyt-meta">'
-      + '    <div class="eyt-song" title="' + YT.title + '">' + YT.title + '</div>'
-      + '    <div class="eyt-artist">' + YT.artist + ' — <a href="' + YT.url + '" target="_blank" rel="noopener">ดูบน YouTube ↗</a></div>'
-      + '  </div>'
-      + '</div>';
-    document.body.appendChild(ytCard);
+      // ⚠ .ytinner ต้องมีชั้นเดียวครอบทุกอย่าง — เทคนิคยุบด้วย grid-template-rows:0fr
+      //   ยุบได้เฉพาะ "แถวที่ประกาศไว้" ลูกตัวที่ 2 จะตกไปอยู่แถว implicit (auto) แล้วไม่ยุบตาม
+      + '<div class="ytbody"><div class="ytinner">'
+      + '<div class="ytframe"><div class="ytmount"></div></div>'
+      + '<div class="ytfoot"><span class="ytby"></span>'
+      + '<a class="ytopen" target="_blank" rel="noopener" title="เปิดคลิปเต็มบน YouTube">ดูบน YouTube ↗</a>'
+      + '</div></div></div>';
+    // ข้อความจากข้อมูล = ใส่ผ่าน textContent ไม่ต่อเข้า innerHTML (ชื่อเพลงมีอัญประกาศ/& ได้)
+    card.querySelector('.ytmeta b').textContent = TUNE.party || '';
+    card.querySelector('.ytmeta small').textContent = TUNE.title || '';
+    card.querySelector('.ytby').textContent = TUNE.artist || TUNE.party || '';
+    card.querySelector('.ytopen').href = TUNE.url || ('https://youtu.be/' + TUNE.id);
+    card.querySelector('.ythead').title = (TUNE.party || '') + ' — ' + (TUNE.title || '');
+    document.body.appendChild(card);
+    mount = card.querySelector('.ytmount');
+    minBtn = card.querySelector('[data-y="min"]');
+    paintMin();
 
-    // ปุ่ม ย่อ / ขยาย / ปิด
-    var headEl = ytCard.querySelector('.eyt-head');
-    var minBtn = ytCard.querySelector('[data-act="min"]');
-    var closeBtn = ytCard.querySelector('[data-act="close"]');
-    var icMin = ytCard.querySelector('.ic-min'), icExp = ytCard.querySelector('.ic-exp');
-
-    function toggleMin(e) {
-      if (e && e.target && e.target.closest && e.target.closest('[data-act="close"]')) return;
-      var isMin = ytCard.classList.toggle('min');
-      icMin.style.display = isMin ? 'none' : '';
-      icExp.style.display = isMin ? '' : 'none';
-    }
-    headEl.addEventListener('click', toggleMin);
-    closeBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      setCardOpen(false);
+    card.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-y]'); if (!b) return;
+      if (b.dataset.y === 'min') {
+        minimized = !minimized;
+        try { localStorage.setItem(MINK, minimized ? '1' : '0'); } catch (err) { }
+        paintMin(); placeYT();
+        return;
+      }
+      setSound(false);            // กากบาท = ปิดเสียง + ซ่อนการ์ด (ปุ่มลำโพงใน dock เรียกกลับได้)
     });
   }
 
-  /* ปุ่มค้างบนหน้า: ดูฉากเปิดซ้ำ + เปิด/ปิดการ์ดเพลง YouTube */
+  function paintMin() {
+    if (!card) return;
+    card.classList.toggle('min', minimized);
+    minBtn.querySelector('.i-min').style.display = minimized ? 'none' : '';
+    minBtn.querySelector('.i-max').style.display = minimized ? '' : 'none';
+    minBtn.title = minimized ? 'ขยายการ์ดเพลง' : 'ย่อการ์ดเพลง';
+  }
+  function showCard(on) { if (card) card.classList.toggle('off', !on); }
+
+  /* วางการ์ดบริเวณอ่าวไทย (ขวาล่าง) โดยไม่ทับของที่ลอยอยู่คอลัมน์ขวาอยู่ก่อนแล้ว
+     — ปุ่มซูม (.zoomctl) · dock เสียง/ดูซ้ำ (#eintrodock) · ปุ่มสลับธีม BB-8 (ลากย้ายได้)
+     วิธี: ตรึงขอบล่างก่อน แล้วดูว่าใครบ้าง "อยู่ในแถบความสูงเดียวกับการ์ด" → ถอยไปทางซ้ายให้พ้นตัวซ้ายสุด
+     ⚠ มือถือ: ปุ่มซูมย้ายไปลอยกลางขอบขวา (top:50%) ไม่ได้อยู่มุมล่างเหมือนจอใหญ่
+       และแผงข้อมูลโผล่จากด้านล่าง → ต้องยกการ์ดขึ้นเหนือแผง
+       ความสูงแผงวัดจาก --peek (ตอนย่อ) ไม่ใช่ rect จริง เพราะแผงใช้ transform ตอนกาง
+       ถ้าวัด rect การ์ดจะกระโดดตามทุกครั้งที่ผู้ใช้ปัดแผงขึ้นลง                          */
+  var YGAP = 12;
+  function placeYT() {
+    if (!card) return;
+    var mob = matchMedia('(max-width:860px)').matches;
+    var edge = mob ? 10 : 16;
+
+    // 1) ขอบล่างก่อน — จอใหญ่ชิดมุมล่าง · มือถือยกขึ้นเหนือแผงข้อมูล + แถบเมนูล่าง (.mobnav 58px)
+    var bottom = edge;
+    if (mob) {
+      var pn = document.getElementById('panel');
+      var peek = pn ? parseFloat(getComputedStyle(pn).getPropertyValue('--peek')) : 0;
+      if (!peek || isNaN(peek)) peek = 104;
+      bottom = 58 + peek + 10;
+    }
+    card.style.bottom = bottom + 'px';
+
+    // 2) แถบความสูงที่การ์ดกินจริงในตอนนี้ (ย่อ/ขยายทำให้ไม่เท่ากัน)
+    var h = card.offsetHeight || 0;
+    var top = innerHeight - bottom - h;
+    var bot = innerHeight - bottom;
+
+    // 3) ใครอยู่แถบเดียวกันบ้าง → ถอยให้พ้นตัวที่ซ้ายสุด
+    var lim = Infinity;
+    ['.zoomctl', '#eintrodock', '.bb8-toggle'].forEach(function (sel) {
+      var e = document.querySelector(sel);
+      if (!e) return;
+      var cs = getComputedStyle(e);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return;
+      var r = e.getBoundingClientRect();
+      if (!r.width || r.bottom <= top || r.top >= bot) return;   // คนละแถบ ไม่เกี่ยวกัน
+      lim = Math.min(lim, r.left);
+    });
+    card.style.right = (isFinite(lim) ? Math.round(innerWidth - lim) + YGAP : edge) + 'px';
+  }
+  // ย่อ/ขยายแล้วความสูงเปลี่ยน → คำนวณตำแหน่งใหม่หลังอนิเมชันจบ (ระหว่างวิ่งค่าจะยังไม่นิ่ง)
+  if (card) card.addEventListener('transitionend', function (e) {
+    if (e.propertyName === 'grid-template-rows') placeYT();
+  });
+
+  /* ---------- พรรคเดิมชนะติดต่อกัน = เพลงเล่นต่อ ไม่เริ่มท่อนแรกใหม่ ----------
+     สลับปีคือ "โหลดหน้าใหม่" (year-switch.js ใช้ location.href) → ตัวเล่นเดิมตายไปพร้อมหน้า
+     ปีที่พรรคเดิมชนะติดกันจึงได้คลิปเดียวกันแต่ดีดกลับไปเริ่มต้นทุกครั้ง เช่น
+     ไทยรักไทย 2544→2548 · เพื่อไทย 2554→2562 · กิจสังคม 2522→2526 · ปชป. 2529→2535/2
+     แก้โดยจดตำแหน่งเพลงตอนออกจากหน้า แล้วปีถัดไปถ้า "คลิปเดียวกัน + เป็นครั้งที่ติดกัน"
+     ค่อยเริ่มที่จุดนั้น บวกเวลาที่เสียไปตอนโหลดหน้า ให้เพลงเดินต่อเหมือนไม่เคยหยุด
+     ⚠ ต้องเช็กว่าติดกันจริง ไม่ใช่แค่คลิปตรงกัน — ห่างกันหลายครั้ง (คนละยุค) ให้เริ่มใหม่ตามปกติ */
+  var PKEY = 'el-intro-pos';                          // sessionStorage: อยู่แค่ในแท็บนี้ ปิดแท็บก็หาย
+  var SEQ = (window.EYEARS || []).map(function (o) { return o.id; });   // เรียงครั้งใหม่→เก่า
+  var GAPMAX = 20;                                    // ห่างเกินนี้ = ไม่ใช่การสลับปีต่อเนื่องแล้ว
+  var lastSave = 0;
+
+  function savePos() {
+    if (!hasAudio) return;
+    try {
+      var t, playing;
+      if (MODE === 'yt') {
+        if (!ytReady) return;
+        t = player.getCurrentTime(); playing = player.getPlayerState() === 1;
+      } else {
+        t = audio.currentTime; playing = !audio.paused;
+      }
+      // ไม่ได้เล่นอยู่ = ไม่ต้องจำ (ลบทิ้งด้วย กันของเก่าค้างแล้วปีหน้าเล่นต่อทั้งที่ผู้ใช้สั่งปิด)
+      if (!playing || !t) { sessionStorage.removeItem(PKEY); return; }
+      sessionStorage.setItem(PKEY, JSON.stringify(
+        { f: SRCKEY, t: t, y: window.EYID, at: Date.now() }));
+    } catch (err) { }
+  }
+
+  function resumeAt() {                               // วินาทีที่ควรเริ่ม · 0 = เริ่มใหม่ตามปกติ
+    var s = null;
+    try { s = JSON.parse(sessionStorage.getItem(PKEY) || 'null'); } catch (err) { }
+    if (!s || s.f !== SRCKEY) return 0;               // คนละพรรค/คนละเพลง/คนละแหล่ง → เริ่มใหม่
+    var i = SEQ.indexOf(s.y), j = SEQ.indexOf(window.EYID);
+    if (i < 0 || j < 0 || Math.abs(i - j) > 1) return 0;   // 0 = หน้าเดิมโหลดซ้ำ · 1 = ครั้งที่ติดกัน
+    var gap = (Date.now() - (s.at || 0)) / 1000;
+    if (gap < 0 || gap > GAPMAX) return 0;
+    return s.t + gap;
+  }
+
+  /* ---------- โหลด IFrame Player API แล้วสร้างตัวเล่น ----------
+     onYouTubeIframeAPIReady เป็น global ตัวเดียวทั้งหน้า → ต่อคิวของเดิมไว้ ไม่ทับใครที่ตั้งไว้ก่อน */
+  function loadYT(cb) {
+    if (window.YT && window.YT.Player) return cb();
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () {
+      if (typeof prev === 'function') { try { prev(); } catch (err) { } }
+      cb();
+    };
+    if (document.getElementById('ytapi')) return;     // มีสคริปต์รออยู่แล้ว แค่ต่อคิวพอ
+    var s = document.createElement('script');
+    s.id = 'ytapi'; s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = noMusic;                              // เน็ตบล็อก YouTube → ซ่อนปุ่มเสียงไปเลย ไม่ค้าง
+    document.head.appendChild(s);
+  }
+
+  var resume = hasAudio ? resumeAt() : 0;
+
+  if (MODE === 'yt') {
+    loadYT(function () {
+      try {
+        player = new YT.Player(mount, {
+          host: 'https://www.youtube-nocookie.com',   // โหมดความเป็นส่วนตัวสูง ไม่หยอดคุกกี้ติดตาม
+          videoId: TUNE.id,
+          playerVars: {
+            autoplay: 0, playsinline: 1, rel: 0, modestbranding: 1,
+            loop: 1, playlist: TUNE.id,               // คลิปเดี่ยวจะวนซ้ำได้ ต้องระบุ playlist ซ้ำตัวเอง
+            start: Math.max(0, Math.floor(resume)) || 0,
+            // เปิดจากไฟล์ตรง ๆ (file://) origin เป็นสตริง "null" — ส่งไปตัวเล่นจะไม่ยอมเล่น
+            // ใส่เฉพาะตอนเสิร์ฟผ่าน http(s) จริงเท่านั้น (ซึ่งเป็นตอนที่มันช่วยกันโดเมนปลอมได้จริง)
+            origin: /^https?:$/.test(location.protocol) ? location.origin : undefined
+          },
+          events: {
+            onReady: function () {
+              ytReady = true;
+              try { player.setVolume(45); } catch (err) { }
+              if (pendingPlay || want) { pendingPlay = false; tryPlay(); }
+            },
+            // 1 = PLAYING · 2 = PAUSED · 0 = ENDED — ปุ่มต้องสะท้อน "ดังจริงไหม" ไม่ใช่ค่าที่ผู้ใช้เลือก
+            onStateChange: function (e) {
+              if (e.data === 1) paint(true);
+              else if (e.data === 2 || e.data === 0) paint(false);
+            },
+            onError: noMusic                          // คลิปถูกลบ/ปิดการฝัง → ซ่อนไป ไม่ให้การ์ดค้างเปล่า
+          }
+        });
+      } catch (err) { noMusic(); }
+    });
+
+  } else if (MODE === 'mp3') {
+    /* ---------- ปีที่ยังไม่มีคลิป YouTube: เล่นไฟล์เสียงเดิมใน songs/ ----------
+       เสียงพื้นหลังล้วน ไม่มีการ์ด — คุมด้วยปุ่มลำโพงใน dock เหมือนก่อนมี YouTube */
+    audio = new Audio();
+    audio.src = MUSIC; audio.loop = true; audio.volume = .45; audio.muted = !want;
+    audio.addEventListener('error', noMusic);
+
+    if (resume) {
+      /* เริ่มแบบเงียบไว้ก่อน แล้วค่อยเฟดเข้าหลังกระโดดไปจุดที่ค้างไว้สำเร็จ — กัน 2 อย่าง
+         · เสียง "ป๊อก" เพราะตัดเข้ากลางคลื่นเสียง (ไม่ได้เริ่มที่ศูนย์เหมือนตอนเปิดไฟล์)
+         · ท่อนแรกโผล่มาแวบหนึ่งก่อนกระโดด ในกรณีที่ seek ยังทำไม่ได้ทันที           */
+      audio.volume = 0;
+      var settled = false;
+      var ramp = function () {
+        var k = 0;
+        // ⚠ ใช้ setInterval ไม่ใช่ rAF — สลับปีมาแล้วแท็บยังไม่ active rAF จะค้าง เสียงจะเบาแหง็กค้างอยู่อย่างนั้น
+        var iv = setInterval(function () {
+          k++; audio.volume = .45 * Math.min(1, k / 9);
+          if (k >= 9) clearInterval(iv);
+        }, 30);
+      };
+      /* ⚠ สั่ง currentTime เฉย ๆ ไม่พอ — ต้องรอให้ช่วงเวลานั้น seekable ก่อน ไม่งั้นสเปกสั่งให้ยกเลิก seek เงียบ ๆ
+         เซิร์ฟเวอร์ที่ไม่รองรับ HTTP Range (static_server.js / election/server.js ที่ใช้พรีวิวในเครื่อง
+         ตอบ 200 เต็มไฟล์เสมอ) จะกระโดดไม่ได้เลยจนกว่าจะโหลดครบทั้งก้อน · Netlify รองรับ Range
+         จึงติดตั้งแต่ loadedmetadata → สั่งซ้ำทุกครั้งที่บัฟเฟอร์เพิ่ม แล้วอ่านค่ากลับมาเช็กว่าติดจริงไหม */
+      var EVS = ['loadedmetadata', 'progress', 'canplay', 'canplaythrough'];
+      var until = Date.now() + 2500;                  // เลยนี้ไปแล้วค่อยกระโดด สะดุดกว่าปล่อยให้เล่นไปเลย
+      var stopSeek = function () {
+        if (settled) return; settled = true;
+        EVS.forEach(function (e) { audio.removeEventListener(e, trySeek); });
+        ramp();
+      };
+      var trySeek = function () {
+        var d = audio.duration;
+        if (d && isFinite(d)) {
+          var to = resume % d;
+          try { audio.currentTime = to; } catch (err) { }
+          if (Math.abs(audio.currentTime - to) < 1) return stopSeek();   // ติดแล้ว
+        }
+        if (Date.now() > until) stopSeek();                              // ยอมแพ้ เล่นจากต้นไป
+      };
+      EVS.forEach(function (e) { audio.addEventListener(e, trySeek); });
+      setTimeout(trySeek, 2600);                      // เผื่อไฟล์นิ่งจนไม่มี event ไหนยิงอีกเลย
+    }
+  }
+
+  if (hasAudio) {
+    addEventListener('pagehide', savePos);
+    // pagehide ไม่ยิงในบางกรณี (มือถือสลับแอป/เบราว์เซอร์เก่า) → จดสำรองตอนแท็บหาย และทุก 1 วิ
+    addEventListener('visibilitychange', function () { if (document.hidden) savePos(); });
+    setInterval(function () {
+      var n = Date.now();
+      if (n - lastSave < 1000) return;
+      lastSave = n; savePos();
+    }, 1000);
+  }
+
+  /* ปุ่มค้างบนหน้า: ดูฉากเปิดซ้ำ + เปิด/ปิดเสียง */
   var dock = document.createElement('div');
   dock.id = 'eintrodock';
   dock.innerHTML =
     '<button type="button" data-a="replay" title="ดูฉากเปิดอีกครั้ง" aria-label="ดูฉากเปิดอีกครั้ง">'
     + '<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>'
-    + '<button type="button" data-a="sound" class="' + (cardVisible && hasYT ? '' : 'off') + '" title="' + (cardVisible && hasYT ? 'ซ่อนการ์ดเพลง YouTube' : 'เปิดการ์ดเพลง YouTube') + '" aria-label="เปิด/ปิดการ์ดเพลง YouTube">'
-    + '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path class="mute" d="m17 9 4 6M21 9l-4 6" style="' + (cardVisible && hasYT ? 'display:none' : '') + '"/>'
-    + '<path class="wave" d="M16 9a4 4 0 0 1 0 6" style="' + (cardVisible && hasYT ? '' : 'display:none') + '"/></svg></button>';
+    + '<button type="button" data-a="sound" class="off" title="เปิดเสียงเพลง" aria-label="เปิด/ปิดเสียงเพลง">'
+    + '<svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path class="mute" d="m17 9 4 6M21 9l-4 6"/>'
+    + '<path class="wave" d="M16 9a4 4 0 0 1 0 6" style="display:none"/></svg></button>';
   document.body.appendChild(dock);
   var dockSnd = dock.querySelector('[data-a="sound"]');
-  var sndBtn = el.querySelector('[data-a="sound"]');
 
+  // วางไว้ติดปุ่มซูมของแผนที่ (ความสูงปุ่มซูมไม่เท่ากันทุกปี — ปีที่ไม่มีเขตจะซ่อนปุ่มหมายเลขเขต)
+  // ⚠️ มือถือ/แท็บเล็ตแนวตั้ง: ปุ่มซูมลอยกลางขอบขวา (top:50%) ส่วน dock เคยตรึงไว้ที่ top:196px ตายตัว
+  //    → จอเตี้ยกว่า ~738px ปุ่มซูมจะเลื่อนขึ้นมาโดน dock ทับ (z-index 58 > 50) กดปุ่ม "เลขเขต/+" ไม่ได้
+  //    เลยต้องวัดช่องว่างจริงในคอลัมน์ขวา: ใต้ปุ่มซูมก่อน → ไม่พอค่อยไปด้านบน → ไม่พออีกก็หลบไปทางซ้าย
   var GAP = 10;
+  // ปุ่ม BB-8 สลับธีมก็ลอยอยู่คอลัมน์ขวาเหมือนกัน (และลากย้ายได้) → นับเป็นสิ่งกีดขวางเมื่ออยู่แนวเดียวกัน
   function bb8In(ref) {
     var b = document.querySelector('.bb8-toggle');
     if (!b || getComputedStyle(b).position !== 'fixed') return null;
@@ -438,22 +689,22 @@
     var vis = z && getComputedStyle(z).display !== 'none';
     var mob = matchMedia('(max-width:860px)').matches;
     dock.style.right = '';
-    if (!vis) {
+    if (!vis) {                                       // ปีเก่าที่ซ่อนปุ่มซูม → ใช้ค่าจาก CSS
       dock.style.top = '';
       dock.style.bottom = mob ? '' : '96px';
       return;
     }
     var zr = z.getBoundingClientRect();
     var br = bb8In(zr);
-    if (!mob) {
+    if (!mob) {                                       // เดสก์ท็อป/แท็บเล็ตแนวนอน: วางเหนือปุ่มซูม (และเหนือ BB-8 ถ้าคั่นอยู่)
       dock.style.top = '';
       dock.style.bottom = (innerHeight - Math.min(zr.top, br ? br.top : Infinity) + 12) + 'px';
       return;
     }
     var h = dock.offsetHeight;
-    var yb = document.querySelector('.yearbtn');
-    var pn = document.getElementById('panel');
-    var sc = document.querySelector('.searchcard');
+    var yb = document.querySelector('.yearbtn');      // ปุ่มเลือกปี = เพดานของคอลัมน์ขวา
+    var pn = document.getElementById('panel');        // แผงข้อมูลด้านล่าง = พื้น
+    var sc = document.querySelector('.searchcard');   // ช่องค้นหาพาดเต็มความกว้างด้านบน
     var ybr = yb ? yb.getBoundingClientRect() : null;
     var ceil = ybr ? ybr.bottom + GAP : 8;
     var floor = Math.min(pn ? pn.getBoundingClientRect().top : innerHeight - 8 + GAP,
@@ -461,12 +712,14 @@
     dock.style.bottom = 'auto';
     if (zr.bottom + GAP + h <= floor) { dock.style.top = (zr.bottom + GAP) + 'px'; return; }
     if (zr.top - GAP - h >= ceil) { dock.style.top = (zr.top - GAP - h) + 'px'; return; }
+    // ไม่พอทั้งบน-ล่าง (จอแนวนอนเตี้ย) → หลบไปเคียงซ้าย และเลยปุ่มเลือกปีด้วยถ้าอยู่ระดับเดียวกัน
     var top = Math.max(sc ? sc.getBoundingClientRect().bottom + GAP : 8, Math.min(zr.top, floor - h));
     var lim = zr.left;
     if (ybr && ybr.bottom > top && ybr.top < top + h) lim = Math.min(lim, ybr.left);
     dock.style.top = Math.round(top) + 'px';
     dock.style.right = Math.round(innerWidth - lim + GAP) + 'px';
   };
+  // ⚠️ แผนที่จัดเลย์เอาต์ใหม่ช้ากว่า event resize → วัดทันทีได้ค่าเก่า ต้องวัดซ้ำอีกรอบหลังนิ่งแล้ว
   var dockTimer;
   var refitDock = function () {
     placeDock();
@@ -477,39 +730,101 @@
   addEventListener('resize', refitDock);
   addEventListener('load', refitDock);
 
-  if (!hasYT) {
+  // จัดตำแหน่งการ์ดเพลงชุดเดียวกับ dock (แผนที่จัดเลย์เอาต์ช้ากว่า event resize → วัดซ้ำหลังนิ่ง)
+  placeYT();
+  addEventListener('resize', function () { placeYT(); setTimeout(placeYT, 280); });
+  addEventListener('load', placeYT);
+
+  function noMusic() {
+    hasAudio = false;
+    pendingPlay = false;
     if (sndBtn) sndBtn.style.display = 'none';
-    if (dockSnd) dockSnd.style.display = 'none';
+    dockSnd.style.display = 'none';
+    if (card) card.remove();
+    card = null;
+  }
+  if (!hasAudio) noMusic();                           // ปีที่ไม่มีทั้งคลิปและไฟล์เสียง → ซ่อนปุ่มเสียงไปเลย
+
+  // shown = "ตอนนี้มีเสียงจริงไหม" (ไม่ใช่ want) — ตอนโดนบล็อก want ยังเปิดอยู่แต่ยังไม่มีเสียง
+  // ปุ่มต้องสลับตามสิ่งที่ผู้ใช้เห็น ไม่งั้นกดปุ่ม "เปิดเสียง" แล้วกลายเป็นสั่งปิด
+  var shown = false;
+  function paint(on) {
+    shown = on;
+    dockSnd.classList.toggle('off', !on);
+    dockSnd.title = on ? 'ปิดเสียงเพลง' : 'เปิดเสียงเพลง';
+    dockSnd.querySelector('.mute').style.display = on ? 'none' : '';
+    dockSnd.querySelector('.wave').style.display = on ? '' : 'none';
+    if (sndBtn) sndBtn.textContent = on ? 'ปิดเสียง' : 'เปิดเสียง';
+    if (card) card.classList.toggle('playing', on);
   }
 
-  function setCardOpen(open) {
-    if (!hasYT || !ytCard) return;
-    cardVisible = open;
-    try { localStorage.setItem(YT_KEY, open ? '1' : '0'); } catch(e){}
-    ytCard.classList.toggle('hidden', !open);
-    if (open && ytCard.classList.contains('min')) {
-      ytCard.classList.remove('min');
-      var icMin = ytCard.querySelector('.ic-min'), icExp = ytCard.querySelector('.ic-exp');
-      if (icMin) icMin.style.display = '';
-      if (icExp) icExp.style.display = 'none';
-    }
-    dockSnd.classList.toggle('off', !open);
-    dockSnd.title = open ? 'ซ่อนการ์ดเพลง YouTube' : 'เปิดการ์ดเพลง YouTube';
-    dockSnd.querySelector('.mute').style.display = open ? 'none' : '';
-    dockSnd.querySelector('.wave').style.display = open ? '' : 'none';
-    if (sndBtn) sndBtn.textContent = open ? 'ซ่อนเพลง' : 'เปิดเพลง';
+  // เบราว์เซอร์บล็อก autoplay จนกว่าจะมีการแตะหน้า → ดักการแตะครั้งแรกไว้เล่นให้เอง
+  var armed = false;
+  function armUnlock() {
+    if (armed) return; armed = true;
+    var h = function (e) {
+      // ปล่อยให้ปุ่มเสียง/ปุ่มบนการ์ดจัดการเอง (ไม่งั้นทั้งเปิดทั้งสลับ = หักล้างกัน)
+      if (e.target && e.target.closest &&
+        (e.target.closest('[data-a="sound"]') || e.target.closest('#eintroyt'))) return;
+      document.removeEventListener('pointerdown', h, true);
+      document.removeEventListener('keydown', h, true);
+      armed = false;
+      if (want) tryPlay();
+    };
+    document.addEventListener('pointerdown', h, true);
+    document.addEventListener('keydown', h, true);
   }
+
+  function tryPlay() {
+    if (!hasAudio) return;
+    if (MODE === 'mp3') {                             // เสียงพื้นหลังแบบเดิม — play() คืน promise บอกได้เลยว่าโดนบล็อกไหม
+      audio.muted = false;
+      var p = audio.play();
+      if (p && p.then) p.then(function () { paint(true); }, function () { paint(false); armUnlock(); });
+      else paint(true);
+      return;
+    }
+    showCard(true);
+    if (!ytReady) { pendingPlay = true; return; }     // API ยังโหลดไม่เสร็จ — เล่นทันทีที่ onReady
+    try { player.unMute(); player.setVolume(45); player.playVideo(); } catch (err) { }
+    /* YT API ไม่คืน promise เหมือน <audio>.play() → ไม่มีทางรู้ทันทีว่าโดนบล็อกไหม
+       ต้องถามสถานะย้อนหลังสักครู่ (เผื่อ buffer ช้า) แล้วค่อยตัดสิน */
+    clearTimeout(playChk);
+    playChk = setTimeout(function () {
+      var st = -1;
+      try { st = player.getPlayerState(); } catch (err) { }
+      if (st === 1 || st === 3) paint(true);          // PLAYING / BUFFERING = ผ่าน
+      else { paint(false); armUnlock(); }
+    }, 1200);
+  }
+
+  // on = สิ่งที่ "ผู้ใช้เลือก" → บันทึกไว้ให้ปีอื่นใช้ด้วย
+  function setSound(on) {
+    want = on;
+    try { localStorage.setItem(SKEY, on ? '1' : '0'); } catch (err) { }
+    if (on) return tryPlay();
+    if (MODE === 'mp3') { audio.pause(); paint(false); return; }
+    pendingPlay = false;
+    clearTimeout(playChk);
+    try { if (player) player.pauseVideo(); } catch (err) { }
+    showCard(false);                                  // ปิดเสียง = เก็บการ์ดไปด้วย
+    paint(false);
+  }
+
+  // วาดตามที่ผู้ใช้เลือกไว้ก่อน (กันปุ่มกะพริบ) แล้วค่อยลองเล่น — ถ้าโดนบล็อก tryPlay จะวาดใหม่เป็น "เปิดเสียง"
+  if (hasAudio) { paint(want); if (want) { if (card) showCard(true); tryPlay(); } }
 
   var timer, closed = false;
   function close() {
     if (closed) return; closed = true;
     clearTimeout(timer);
     el.classList.remove('on');
-    setTimeout(function () { el.classList.add('done'); }, 800);
+    setTimeout(function () { el.classList.add('done'); }, 800);   // เพลงเล่นต่อ ไม่หยุดพร้อมฉาก
   }
   function replay() {
     closed = false;
     el.classList.remove('done');
+    // บังคับให้เบราว์เซอร์คำนวณเลย์เอาต์ใหม่ก่อน แล้วค่อยใส่ .on อนิเมชันจะได้เล่นจริง
     void el.offsetWidth;
     el.classList.add('on');
     clearTimeout(timer);
@@ -518,14 +833,15 @@
   dock.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.a === 'replay') return replay();
-    setCardOpen(!cardVisible);
+    setSound(!shown);
   });
   el.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.a === 'skip') return close();
-    setCardOpen(!cardVisible);
+    setSound(!shown);
   });
 
+  /* ⚠ requestAnimationFrame ไม่ยิงเลยถ้าแท็บไม่ได้แสดงผล → ต้องมี setTimeout สำรอง */
   var started = false;
   function start() {
     if (started) return; started = true;
