@@ -3041,16 +3041,43 @@ function notPM(n){ return !!(n && (n.standalone || n.ministryID === '24' || n.mi
 // ── เนื้อหาป้ายอธิบายความสัมพันธ์ (ใช้ร่วมกันทั้งผังรวมและผังกลุ่ม) ──
 // รองรับ mode 'out' (เป็นผู้กำกับ) · 'in' (เป็นผู้ถูกกำกับ) · 'both' (เป็นทั้งสองอย่าง)
 // ถ้าความสัมพันธ์ระบุ law ไว้ จะอ้างกฎหมายรายเส้นแทนข้อความที่มารวม (แนว Powers tab ของ MoG)
+
+// ── ไอคอน Lucide บน canvas ──
+// canvas.fillText() วาด SVG/HTML ไม่ได้ (มันพ่น markup เป็นตัวหนังสือดิบ) จึงต้องแปลง
+// <symbol> จาก sprite (js/icons.js) เป็นรูป data-URL แล้ว cache ไว้วาดด้วย drawImage
+const _cIconCache = {};
+function canvasIcon(id, color){
+  const key = id + '|' + color;
+  let img = _cIconCache[key];
+  if(img !== undefined) return (img && img.complete && img.naturalWidth) ? img : null;
+  const sym = document.getElementById(id);
+  if(!sym){ _cIconCache[key] = null; return null; }
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="'
+    + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + sym.innerHTML + '</svg>';
+  img = new Image();
+  img.onload = function(){ try { draw(); } catch(e) {} };   // async: รูปเสร็จค่อยวาดรอบใหม่
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  _cIconCache[key] = img;
+  return (img.complete && img.naturalWidth) ? img : null;
+}
+function drawCanvasIcon(id, color, x, y, size){
+  const img = id && canvasIcon(id, color);
+  if(img) ctx.drawImage(img, x, y, size, size);
+}
+// ดึง id ไอคอน (เช่น "i-scale") ออกจากสตริง markup เดิม
+const _relIcoId = s => { const m = /#(i-[a-z0-9-]+)/i.exec(s || ''); return m ? m[1] : null; };
+
 function relPanelContent(relInfo, maxW, padX, isDk, _nm){
   const body = isDk ? 'rgba(226,232,240,0.92)' : 'rgba(40,52,68,0.93)';
   const dim  = isDk ? 'rgba(148,163,184,0.95)' : 'rgba(100,116,139,0.95)';
-  let accent = '#94a3b8', titleLine = '', lines = [];
+  const IND  = 19;                        // ระยะเยื้องข้อความให้พ้นคอลัมน์ไอคอน (~14px + ช่องไฟ)
+  let accent = '#94a3b8', title = { icon:null, text:'' }, lines = [];
   const hasOut = !!relInfo.def && (relInfo.mode === 'out' || relInfo.mode === 'both');
   const hasIn  = !!(relInfo.incoming && relInfo.incoming.length) && (relInfo.mode === 'in' || relInfo.mode === 'both');
   if(hasOut){
-    const t = REL_TYPES[relInfo.def.type] || { color:'#94a3b8', icon:'•' };
+    const t = REL_TYPES[relInfo.def.type] || { color:'#94a3b8', icon:'' };
     accent = t.color;
-    titleLine = t.icon + '  ' + _nm(relInfo.focus) + ' — ' + relInfo.def.verb;
+    title = { icon: _relIcoId(t.icon), text: _nm(relInfo.focus) + ' — ' + relInfo.def.verb };
     const outE = relInfo.edges.filter(e => e.from === relInfo.focus);
     const cnt = outE.length, to = relInfo.def.to;
     const scope = to === 'MIN' ? 'มีอำนาจกำกับเหนือ 20 กระทรวง (ครอบคลุมทุกส่วนราชการ)'
@@ -3062,7 +3089,7 @@ function relPanelContent(relInfo, maxW, padX, isDk, _nm){
              : 'กำกับภาคเอกชน (ไม่มีหน่วยงานในแผนภาพนี้)');
     wrapText(scope, maxW - padX*2).forEach(l => lines.push({ text:l, color: body }));
   } else {
-    titleLine = '<svg class="mdico"><use href="#i-landmark"></use></svg>  ' + _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย';
+    title = { icon:'i-landmark', text: _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย' };
   }
   if(hasIn){
     if(hasOut) lines.push({ text:'▸ และหน่วยนี้ถูกกำกับ/ตรวจสอบโดย', color: dim });
@@ -3070,12 +3097,16 @@ function relPanelContent(relInfo, maxW, padX, isDk, _nm){
     relInfo.incoming.forEach(it => { (groups[it.def.type] = groups[it.def.type] || []).push(_nm(it.hub)); });
     Object.keys(REL_TYPES).forEach(ty => {
       if(!groups[ty]) return;
-      const txt = REL_TYPES[ty].icon + ' ' + REL_TYPES[ty].label + ': ' + groups[ty].join(' · ');
-      wrapText(txt, maxW - padX*2).forEach(l => lines.push({ text:l, color: REL_TYPES[ty].color }));
+      const txt = REL_TYPES[ty].label + ': ' + groups[ty].join(' · ');
+      const id  = _relIcoId(REL_TYPES[ty].icon), col = REL_TYPES[ty].color;
+      // ไอคอนวางเฉพาะบรรทัดแรกของกลุ่ม · ทุกบรรทัดเยื้อง IND เพื่อให้ข้อความเรียงตรงกัน
+      wrapText(txt, maxW - padX*2 - IND).forEach((l, i) => lines.push({ text:l, color: col, icon: i === 0 ? id : null, indent: IND }));
     });
   }
-  const source = (hasOut && relInfo.def.law) ? ('<svg class="mdico"><use href="#i-scale"></use></svg> ' + relInfo.def.law) : REL_SOURCE;
-  return { accent: accent, titleLine: titleLine, lines: lines, source: source };
+  const source = (hasOut && relInfo.def.law)
+    ? { icon:'i-scale', text: relInfo.def.law }
+    : { icon:null, text: REL_SOURCE };
+  return { accent: accent, title: title, lines: lines, source: source, IND: IND };
 }
 
 function wrapText(text, maxW){
@@ -3175,8 +3206,10 @@ function resize() {
   });
   syncLegToggleBtn();
   const dpr = window.devicePixelRatio || 1;
-  W = MAIN.clientWidth;
-  H = MAIN.clientHeight - legH;
+  // กัน W/H ติดลบตอนเฟรมแรก (คอนเทนเนอร์สูง 0 แต่แถบ legend ~72px → H ติดลบ)
+  // ค่าติดลบไหลไปทำ createRadialGradient รัศมีติดลบ (แสงเรือง/vignette) แล้ว throw
+  W = Math.max(0, MAIN.clientWidth);
+  H = Math.max(0, MAIN.clientHeight - legH);
   canvas.width  = W * dpr;
   canvas.height = H * dpr;
   canvas.style.width  = W + 'px';
@@ -4194,13 +4227,13 @@ function drawGravity(){
     const _nm = n0 => n0.type==='ministry' ? n0.label.replace('กระทรวง','') : (n0.data && (n0.data.abbr || n0.data.name)) || n0.label;
     ctx.font = '12.5px Sarabun, sans-serif';
     const _pc = relPanelContent(relInfo, maxW, padX, isDk, _nm);
-    const accent = _pc.accent, titleLine = _pc.titleLine, lines = _pc.lines, relSrc = _pc.source;
+    const accent = _pc.accent, title = _pc.title, lines = _pc.lines, relSrc = _pc.source, IND = _pc.IND;
     ctx.font = 'bold 14px Sarabun, sans-serif';
-    let boxW = ctx.measureText(titleLine).width;
+    let boxW = ctx.measureText(title.text).width + (title.icon ? IND : 0);
     ctx.font = '12.5px Sarabun, sans-serif';
-    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width));
+    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width + (l.indent || 0)));
     ctx.font = 'italic 10.5px Sarabun, sans-serif';
-    boxW = Math.max(boxW, ctx.measureText(relSrc).width);
+    boxW = Math.max(boxW, ctx.measureText(relSrc.text).width + (relSrc.icon ? IND : 0));
     boxW = Math.min(maxW, boxW + padX*2);
     const boxH = padY*2 + 20 + lines.length*17 + 17;
     const bx = (W - boxW)/2, by = 58;   // เว้นพื้นที่หลบแถบปุ่ม #fx-toolbar ไม่ให้ทับกัน
@@ -4217,13 +4250,20 @@ function drawGravity(){
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     ctx.font = 'bold 14px Sarabun, sans-serif';
     ctx.fillStyle = isDk ? '#f3f6fb' : '#15202e';
-    ctx.fillText(titleLine, bx + padX, ty); ty += 20;
+    let tx = bx + padX;
+    if(title.icon){ drawCanvasIcon(title.icon, accent, tx, ty + 1, 14); tx += IND; }
+    ctx.fillText(title.text, tx, ty); ty += 20;
     ctx.font = '12.5px Sarabun, sans-serif';
-    lines.forEach(l => { ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX, ty); ty += 17; });
+    lines.forEach(l => {
+      if(l.icon) drawCanvasIcon(l.icon, l.color, bx + padX, ty + 0.5, 13);
+      ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX + (l.indent || 0), ty); ty += 17;
+    });
     ty += 2;
     ctx.font = 'italic 10.5px Sarabun, sans-serif';
-    ctx.fillStyle = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
-    ctx.fillText(relSrc, bx + padX, ty);
+    const _srcCol = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
+    let sx = bx + padX;
+    if(relSrc.icon){ drawCanvasIcon(relSrc.icon, _srcCol, sx, ty, 12); sx += IND; }
+    ctx.fillStyle = _srcCol; ctx.fillText(relSrc.text, sx, ty);
   }
 
   // ── 7) หมายเหตุมุมบนซ้าย ──
@@ -5039,14 +5079,14 @@ function draw() {
     const _nm = n0 => n0.type==='ministry' ? n0.label.replace('กระทรวง','') : (n0.data && (n0.data.abbr || n0.data.name)) || n0.label;
     ctx.font = '12.5px Sarabun, sans-serif';
     const _pc = relPanelContent(relInfo, maxW, padX, isDk, _nm);
-    const accent = _pc.accent, titleLine = _pc.titleLine, lines = _pc.lines, relSrc = _pc.source;
+    const accent = _pc.accent, title = _pc.title, lines = _pc.lines, relSrc = _pc.source, IND = _pc.IND;
     // วัดขนาดกล่อง
     ctx.font = 'bold 14px Sarabun, sans-serif';
-    let boxW = ctx.measureText(titleLine).width;
+    let boxW = ctx.measureText(title.text).width + (title.icon ? IND : 0);
     ctx.font = '12.5px Sarabun, sans-serif';
-    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width));
+    lines.forEach(l => boxW = Math.max(boxW, ctx.measureText(l.text).width + (l.indent || 0)));
     ctx.font = 'italic 10.5px Sarabun, sans-serif';
-    boxW = Math.max(boxW, ctx.measureText(relSrc).width);
+    boxW = Math.max(boxW, ctx.measureText(relSrc.text).width + (relSrc.icon ? IND : 0));
     boxW = Math.min(maxW, boxW + padX*2);
     const boxH = padY*2 + 20 + lines.length*17 + 17;
     const bx = (W - boxW)/2, by = 58;
@@ -5063,13 +5103,20 @@ function draw() {
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     ctx.font = 'bold 14px Sarabun, sans-serif';
     ctx.fillStyle = isDk ? '#f3f6fb' : '#15202e';
-    ctx.fillText(titleLine, bx + padX, ty); ty += 20;
+    let tx = bx + padX;
+    if(title.icon){ drawCanvasIcon(title.icon, accent, tx, ty + 1, 14); tx += IND; }
+    ctx.fillText(title.text, tx, ty); ty += 20;
     ctx.font = '12.5px Sarabun, sans-serif';
-    lines.forEach(l => { ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX, ty); ty += 17; });
+    lines.forEach(l => {
+      if(l.icon) drawCanvasIcon(l.icon, l.color, bx + padX, ty + 0.5, 13);
+      ctx.fillStyle = l.color; ctx.fillText(l.text, bx + padX + (l.indent || 0), ty); ty += 17;
+    });
     ty += 2;
     ctx.font = 'italic 10.5px Sarabun, sans-serif';
-    ctx.fillStyle = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
-    ctx.fillText(relSrc, bx + padX, ty);
+    const _srcCol = isDk ? 'rgba(148,163,184,0.9)' : 'rgba(100,116,139,0.9)';
+    let sx = bx + padX;
+    if(relSrc.icon){ drawCanvasIcon(relSrc.icon, _srcCol, sx, ty, 12); sx += IND; }
+    ctx.fillStyle = _srcCol; ctx.fillText(relSrc.text, sx, ty);
   }
 
   // ── Ring labels — screen space (อยู่นิ่ง ไม่เลื่อนตามกราฟ) ──
