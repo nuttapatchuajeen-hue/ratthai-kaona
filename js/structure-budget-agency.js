@@ -121,7 +121,7 @@
       : 'ไม่พบรายการของหน่วยงานนี้ในชุดข้อมูลงบประมาณรายหน่วยงาน (ปีงบ 2565–2566) ' +
         'อาจเพราะได้รับจัดสรรผ่านหน่วยงานต้นสังกัด หรือชื่อในเอกสารงบประมาณต่างจากที่แสดงในผัง';
     el.insertAdjacentHTML('beforeend',
-      '<div class="ip-src" style="border:none;margin-top:10px">💰 ' + msg + '</div>' + srcNote());
+      '<div class="ip-src" style="border:none;margin-top:10px"><svg class="mdico"><use href="#i-wallet"></use></svg> ' + msg + '</div>' + srcNote());
   };
 
   /* กดแถวหน่วยงาน → กระโดดไปโหนดนั้น */

@@ -52,16 +52,16 @@
     var others = (O.cand && O.cand > 2) ? (O.cand - 2) : 0;
 
     el('sumView').innerHTML = ''
-      + '<div class="oybanner"><span class="oyi">🗂️</span><div>'
+      + '<div class="oybanner"><span class="oyi"><svg class="mdico"><use href="#i-folder-open"></use></svg></span><div>'
       + 'การเลือกตั้งผู้ว่าฯ กทม. <b>พ.ศ. ' + O.y + '</b> (ครั้งที่ ' + O.no + ' · ' + O.date + ') '
       + 'ยังไม่มีผลแยกเป็น <b>รายเขตทั้ง 50 เขต</b> ในรูปดิจิทัล — แหล่งอ้างอิงเผยแพร่เฉพาะ'
       + '<b>ผลรวมทั้งกรุงเทพมหานคร</b> หน้านี้จึงแสดงผลสรุปแทนแผนที่ (ไม่ประมาณค่าและไม่เดาผู้ชนะรายเขต)'
       + '<div class="oyjump">'
       + Object.keys(YMAP).sort(function (a, b) { return b - a; }).map(function (yy) {
           var lb = (window.BKKYMAPLABEL || {})[yy];
-          return '<a href="bangkok.html?y=' + yy + '">🗺️ แผนที่รายเขต ' + yy + (lb ? ' (' + lb + ')' : '') + '</a>';
+          return '<a href="bangkok.html?y=' + yy + '"><svg class="mdico"><use href="#i-map"></use></svg> แผนที่รายเขต ' + yy + (lb ? ' (' + lb + ')' : '') + '</a>';
         }).join('')
-      + '<a href="#" onclick="setView(\'hist\');return false">🕘 ไทม์ไลน์ผู้ว่าฯ ทุกสมัย</a>'
+      + '<a href="#" onclick="setView(\'hist\');return false"><svg class="mdico"><use href="#i-clock"></use></svg> ไทม์ไลน์ผู้ว่าฯ ทุกสมัย</a>'
       + '</div></div></div>'
 
       + '<div class="sumgrid">'

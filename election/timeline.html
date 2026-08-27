@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../css/bb8-toggle.css">
+<script src="../js/icons.js"></script>
 <script src="../js/preloader.js"></script>
 <style>
 /* ===== ไทม์ไลน์ประวัติการเลือกตั้ง ===== */
@@ -244,7 +245,7 @@ mdSyncToggle();
 
     <div class="sec-head">
       <div><span class="kick">Trends &amp; Analysis</span><h1>แนวโน้ม<span class="o">&amp; วิเคราะห์</span></h1></div>
-      <p>เส้นแนวโน้มข้ามยุค · กด <b>▶ เล่นไล่ปี</b> ให้กราฟค่อย ๆ โตทีละครั้งเลือกตั้งตามเวลา หรือลากแถบเลื่อนดูเอง</p>
+      <p>เส้นแนวโน้มข้ามยุค · กด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่นไล่ปี</b> ให้กราฟค่อย ๆ โตทีละครั้งเลือกตั้งตามเวลา หรือลากแถบเลื่อนดูเอง</p>
     </div>
     <div class="panelbox anbox" id="anpanel">
       <div class="antabs" id="antabs">
@@ -258,7 +259,7 @@ mdSyncToggle();
       </div>
       <div class="anchart" id="anchart"></div>
       <div class="anplay">
-        <button class="anpbtn" id="anplay" type="button">▶ เล่นไล่ปี</button>
+        <button class="anpbtn" id="anplay" type="button"><svg class="mdico"><use href="#i-play"></use></svg> เล่นไล่ปี</button>
         <input class="anscrub" id="anscrub" type="range" min="0" max="0" value="0" aria-label="เลื่อนไล่ปีการเลือกตั้ง">
         <span class="anhint">ลากเพื่อไล่ปีเอง</span>
       </div>
@@ -392,7 +393,7 @@ mdSyncToggle();
       lgd += '<span><i style="background:#B9AFA4"></i>อื่น ๆ <b>' + rest + '</b></span>';
     }
     var winBlock = o.tag === 'void'
-      ? '<div class="winline"><span class="voidbadge">⚠ การเลือกตั้งเป็นโมฆะ</span></div>'
+      ? '<div class="winline"><span class="voidbadge"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> การเลือกตั้งเป็นโมฆะ</span></div>'
       : (o.win
         ? '<div class="winline"><span class="sw" style="background:' + wc + '"></span>'
           + '<span class="wl">ที่นั่งมากสุด</span><span class="wn">' + o.win + '</span>'
@@ -427,7 +428,7 @@ mdSyncToggle();
 
   function evRow(o) {
     var row = document.createElement('div'); row.className = 'tlrow ev';
-    var isUp = o.icon === '✊';
+    var isUp = o.icon === '<svg class="mdico"><use href="#i-hand"></use></svg>';
     var ec = isUp ? '#2f9e6f' : '#b25a5a';
     row.innerHTML =
       '<div class="yr"><b style="font-size:.98rem;color:var(--muted)">พ.ศ. ' + (o.ce + 543) + '</b></div>'
@@ -583,7 +584,7 @@ mdSyncToggle();
 
   function drawTo(idx) { chart.innerHTML = buildSVG(curKey, idx); }
   function setFrame(idx) { cur = idx; if (+scrub.value !== idx) scrub.value = idx; drawTo(idx); readout(curKey, idx); }
-  function setBtn() { btn.textContent = playing ? '⏸ หยุด' : '▶ เล่นไล่ปี'; }
+  function setBtn() { btn.innerHTML = playing ? MDICO('pause')+' หยุด' : MDICO('play')+' เล่นไล่ปี'; }
 
   function stopPlay() { if (raf) cancelAnimationFrame(raf); if (guard) clearTimeout(guard); raf = null; guard = null; playing = false; setBtn(); }
   function play() {

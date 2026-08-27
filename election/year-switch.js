@@ -277,7 +277,7 @@
       var wrapEl = document.querySelector('.wrap');
       if (wrapEl) {
         var bn = document.createElement('div'); bn.className = 'eybanner';
-        bn.innerHTML = '🗳️ การเลือกตั้ง <b>พ.ศ. ' + y + '</b> · ' + cur.date
+        bn.innerHTML = '<svg class="mdico"><use href="#i-vote"></use></svg> การเลือกตั้ง <b>พ.ศ. ' + y + '</b> · ' + cur.date
           + ' — ยุคก่อน พ.ศ. 2539 ยังไม่มีข้อมูลผลรายเขต/แผนที่รายบุคคลในรูปดิจิทัล จึงแสดงเฉพาะ'
           + '<b>ภาพรวมที่นั่งรายพรรค</b> · <a href="timeline.html">ดูไทม์ไลน์ประวัติ →</a>';
         wrapEl.insertBefore(bn, wrapEl.querySelector('.sec-head') || wrapEl.firstChild);

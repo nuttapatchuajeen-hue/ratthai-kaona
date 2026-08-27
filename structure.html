@@ -1033,7 +1033,9 @@ canvas:active { cursor: grabbing; }
   border-radius: 20px; padding: 3px 10px 3px 8px;
   margin: 2px 3px 2px 0;
 }
-.minister-badge::before { content: "👤"; font-size: 12.5px; }
+.minister-badge::before { content: ""; width: 12.5px; height: 12.5px; display: inline-block;
+  background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") center/contain no-repeat; }
 .minister-role {
   font-size: 12px; color: var(--text-dim); font-weight: 400;
   white-space: nowrap;
@@ -2172,6 +2174,7 @@ body {
   #sitenav-menu { left: 8px; right: 8px; min-width: 0; }
 }
 </style>
+  <script src="js/icons.js"></script>
   <script src="js/preloader.js"></script>
 </head>
 <body>
@@ -2194,7 +2197,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
   <!-- ══════════════ HEADER ══════════════ -->
   <header id="header">
     <div class="hd-brand">
-      <div class="hd-emblem">🏛️</div>
+      <div class="hd-emblem"><svg class="mdico"><use href="#i-landmark"></use></svg></div>
       <div class="hd-brand-text">
         <h1>โครงสร้างรัฐไทย</h1>
         <p>GOVERNMENT MAP · 2569</p>
@@ -2262,8 +2265,8 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         </div>
       </label>
 
-      <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()">👑 ครม.</button>
-      <button class="action-btn" id="btn-export" title="บันทึกภาพแผนภาพเป็นไฟล์ PNG (มุมมองปัจจุบัน)">📷</button>
+      <button id="btn-cabinet" title="แสดง/ซ่อน คณะรัฐมนตรี" onclick="toggleCabinet()"><svg class="mdico"><use href="#i-crown"></use></svg> ครม.</button>
+      <button class="action-btn" id="btn-export" title="บันทึกภาพแผนภาพเป็นไฟล์ PNG (มุมมองปัจจุบัน)"><svg class="mdico"><use href="#i-camera"></use></svg></button>
       <button class="action-btn" id="btn-reset" title="รีเซตมุมมอง">⟳</button>
       <button id="btn-sitenav" title="เมนูหน้าอื่นๆ ของ รัฐไทยก้าวหน้า" aria-expanded="false" aria-controls="sitenav-menu" onclick="toggleSiteNav(event)">▤<span class="snv-txt"> เมนู</span></button>
     </div>
@@ -2280,13 +2283,13 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
   <!-- ══════════════ SITE NAV DROPDOWN ══════════════ -->
   <nav id="sitenav-menu" aria-label="เมนูหลัก รัฐไทยก้าวหน้า">
     <div class="sitenav-label">รัฐไทยก้าวหน้า · เมนูหลัก</div>
-    <a class="sitenav-item" href="hub/index.html"><span class="sitenav-ico">🏠</span>หน้าแรก</a>
-    <a class="sitenav-item current" href="structure.html" aria-current="page" onclick="return false;"><span class="sitenav-ico">🗺️</span>แผนผังโครงสร้าง<span class="sitenav-now">หน้านี้</span></a>
-    <a class="sitenav-item" href="election/index.html"><span class="sitenav-ico">🗳️</span>ส.ส. ผู้แทนราษฎร</a>
-    <a class="sitenav-item" href="cabinet/index.html"><span class="sitenav-ico">👑</span>ชุดคณะรัฐมนตรี</a>
-    <a class="sitenav-item" href="stats/index.html"><span class="sitenav-ico">📊</span>ข้อมูลสถิติ</a>
-    <a class="sitenav-item" href="hub/about.html"><span class="sitenav-ico">👤</span>เกี่ยวกับเรา</a>
-    <a class="sitenav-item" href="hub/survey.html"><span class="sitenav-ico">📋</span>แบบประเมิน</a>
+    <a class="sitenav-item" href="hub/index.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-house"></use></svg></span>หน้าแรก</a>
+    <a class="sitenav-item current" href="structure.html" aria-current="page" onclick="return false;"><span class="sitenav-ico"><svg class="mdico"><use href="#i-map"></use></svg></span>แผนผังโครงสร้าง<span class="sitenav-now">หน้านี้</span></a>
+    <a class="sitenav-item" href="election/index.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-vote"></use></svg></span>ส.ส. ผู้แทนราษฎร</a>
+    <a class="sitenav-item" href="cabinet/index.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-crown"></use></svg></span>ชุดคณะรัฐมนตรี</a>
+    <a class="sitenav-item" href="stats/index.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-chart-column"></use></svg></span>ข้อมูลสถิติ</a>
+    <a class="sitenav-item" href="hub/about.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-user"></use></svg></span>เกี่ยวกับเรา</a>
+    <a class="sitenav-item" href="hub/survey.html"><span class="sitenav-ico"><svg class="mdico"><use href="#i-clipboard-list"></use></svg></span>แบบประเมิน</a>
   </nav>
   <script>
   (function(){
@@ -2393,15 +2396,15 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       <button class="view-btn"        id="btn-view-grid"    type="button" title="กระดานคณะรัฐมนตรี">
         <span class="vb-ico">⊞</span><span class="vb-tx">ครม.</span></button>
       <button class="view-btn"        id="btn-view-force"   type="button" title="สถานการณ์คอร์รัปชัน">
-        <span class="vb-ico">⚠</span><span class="vb-tx">ทุจริต</span></button>
+        <span class="vb-ico"><svg class="mdico"><use href="#i-triangle-alert"></use></svg></span><span class="vb-tx">ทุจริต</span></button>
     </div>
 
     <div id="zoom-ctrl">
       <button class="zbtn" id="zin">+</button>
       <button class="zbtn" id="zout">−</button>
       <button class="zbtn" id="zfit" style="font-size:12px" title="Fit">⊡</button>
-      <button class="zbtn active" id="zarrow" style="font-size:14px" title="ทิศทางความสัมพันธ์ (ลูกศร)">➤</button>
-      <button class="zbtn" id="zterr" style="font-size:15px" title="กรองตามเขตพื้นที่รับผิดชอบ">🌍</button>
+      <button class="zbtn active" id="zarrow" style="font-size:14px" title="ทิศทางความสัมพันธ์ (ลูกศร)"><svg class="mdico"><use href="#i-chevron-right"></use></svg></button>
+      <button class="zbtn" id="zterr" style="font-size:15px" title="กรองตามเขตพื้นที่รับผิดชอบ"><svg class="mdico"><use href="#i-globe"></use></svg></button>
     </div>
     <div id="terr-menu" hidden></div>
 
@@ -2426,7 +2429,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <div class="grid-cards" id="grid-minister-cards"></div>
       </div>
       <div class="grid-footer">
-        <span>👑 คณะรัฐมนตรีชุดที่ 66 · รัฐบาลนายอนุทิน ชาญวีรกูล · 2569–ปัจจุบัน</span>
+        <span><svg class="mdico"><use href="#i-crown"></use></svg> คณะรัฐมนตรีชุดที่ 66 · รัฐบาลนายอนุทิน ชาญวีรกูล · 2569–ปัจจุบัน</span>
         <span id="grid-count-label">รมต. 0 คน · พรรค 0 พรรค</span>
       </div>
     </div>
@@ -2434,7 +2437,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <!-- ══════ CORRUPTION OVERLAY ══════ -->
     <div id="corrupt-overlay">
       <div id="corrupt-topbar">
-        <div class="corrupt-title">⚠ สถานการณ์คอร์รัปชันไทย — CPI &amp; สถิติเรื่องร้องเรียน ป.ป.ช.</div>
+        <div class="corrupt-title"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> สถานการณ์คอร์รัปชันไทย — CPI &amp; สถิติเรื่องร้องเรียน ป.ป.ช.</div>
         <div class="corrupt-stats">
           <div class="c-stat"><div class="c-stat-val">33</div><div class="c-stat-lbl">คะแนน CPI 2568 (เต็ม 100)</div></div>
           <div class="c-stat"><div class="c-stat-val">116</div><div class="c-stat-lbl">อันดับโลก (จาก 180)</div></div>
@@ -2442,7 +2445,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
           <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">3</div><div class="c-stat-lbl">หน่วยงานที่แสดง</div></div>
         </div>
         <div class="corrupt-controls">
-          <input id="corrupt-search" type="text" placeholder="🔍  ค้นหาหน่วยงาน หรือ ความเสี่ยง...">
+          <input id="corrupt-search" type="text" placeholder="ค้นหาหน่วยงาน หรือ ความเสี่ยง...">
           <button class="c-sort-btn active" id="csort-rank" onclick="sortCorrupt('rank')">↑ อันดับ</button>
           <button class="c-sort-btn" id="csort-name" onclick="sortCorrupt('name')">A–Z ชื่อ</button>
           <span class="c-results-count" id="c-results-count">แสดง 10 รายการ</span>
@@ -2450,13 +2453,13 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       </div>
       <div id="corrupt-scroll">
         <div id="corrupt-cpi"></div>
-        <div class="corrupt-sec-hd">🏛️ หน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566</div>
+        <div class="corrupt-sec-hd"><svg class="mdico"><use href="#i-landmark"></use></svg> หน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566</div>
         <div id="corrupt-list"></div>
         <div id="corrupt-types"></div>
       </div>
       <div id="corrupt-footer">
-        <span>📎 ที่มา: Transparency International (CPI 2566–2568) · สำนักงาน ป.ป.ช. (สถิติคำกล่าวหา ปีงบ 2566 · ข้อมูล ณ 1 ต.ค. 2565–19 ก.ค. 2566)</span>
-        <span>⚠ ข้อมูลเพื่อการศึกษาเชิงวิชาการ ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
+        <span><svg class="mdico"><use href="#i-paperclip"></use></svg> ที่มา: Transparency International (CPI 2566–2568) · สำนักงาน ป.ป.ช. (สถิติคำกล่าวหา ปีงบ 2566 · ข้อมูล ณ 1 ต.ค. 2565–19 ก.ค. 2566)</span>
+        <span><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ข้อมูลเพื่อการศึกษาเชิงวิชาการ ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
       </div>
     </div>
 
@@ -2551,18 +2554,18 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       <div class="leg-section" style="border-right:none">
         <div class="leg-section-title">↔ อำนาจกำกับ · AUTHORITY <span style="opacity:.6;font-weight:400">(เลื่อน/กดโหนด → ใครกำกับใคร)</span></div>
         <div class="leg-items">
-          <div class="leg-item"><span class="li-link" style="border-color:#22d3ee"></span>⚙️ บริหารราชการกลาง</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#f87171"></span>🔍 ตรวจสอบ·องค์กรอิสระ</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#a78bfa"></span>⚖️ ตุลาการ/อัยการ/เลือกตั้ง</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#34d399"></span>🎛️ กำกับเฉพาะสาขา</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#fbbf24"></span>🏢 กำกับรัฐวิสาหกิจ</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#fb7185"></span>🏛️ ตรวจสอบโดยรัฐสภา</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#2dd4bf"></span>🤝 คณะกรรมการระดับชาติ</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#38bdf8"></span>🚦 กำกับกิจการขนส่ง</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#f472b6"></span>🏥 กำกับบริการ/ผลิตภัณฑ์สุขภาพ</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#c084fc"></span>💰 จัดสรรกองทุน/งบเฉพาะทาง</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#a3e635"></span>📎 กำกับ-สนับสนุนหน่วยในสังกัด</div>
-          <div class="leg-item"><span class="li-link" style="border-color:#fb923c"></span>🔗 ทำงานร่วมกัน (ไม่มีสายบังคับบัญชา)</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#22d3ee"></span><svg class="mdico"><use href="#i-settings"></use></svg> บริหารราชการกลาง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#f87171"></span><svg class="mdico"><use href="#i-search"></use></svg> ตรวจสอบ·องค์กรอิสระ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#a78bfa"></span><svg class="mdico"><use href="#i-scale"></use></svg> ตุลาการ/อัยการ/เลือกตั้ง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#34d399"></span><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> กำกับเฉพาะสาขา</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#fbbf24"></span><svg class="mdico"><use href="#i-building-2"></use></svg> กำกับรัฐวิสาหกิจ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#fb7185"></span><svg class="mdico"><use href="#i-landmark"></use></svg> ตรวจสอบโดยรัฐสภา</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#2dd4bf"></span><svg class="mdico"><use href="#i-handshake"></use></svg> คณะกรรมการระดับชาติ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#38bdf8"></span><svg class="mdico"><use href="#i-traffic-cone"></use></svg> กำกับกิจการขนส่ง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#f472b6"></span><svg class="mdico"><use href="#i-hospital"></use></svg> กำกับบริการ/ผลิตภัณฑ์สุขภาพ</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#c084fc"></span><svg class="mdico"><use href="#i-wallet"></use></svg> จัดสรรกองทุน/งบเฉพาะทาง</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#a3e635"></span><svg class="mdico"><use href="#i-paperclip"></use></svg> กำกับ-สนับสนุนหน่วยในสังกัด</div>
+          <div class="leg-item"><span class="li-link" style="border-color:#fb923c"></span><svg class="mdico"><use href="#i-link"></use></svg> ทำงานร่วมกัน (ไม่มีสายบังคับบัญชา)</div>
         </div>
       </div>
 
@@ -2574,7 +2577,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
 <!-- ══════════════ CABINET PANEL ══════════════ -->
 <div id="cab-panel">
   <div class="cab-header">
-    <div class="cab-header-title">👑 คณะรัฐมนตรี 2569</div>
+    <div class="cab-header-title"><svg class="mdico"><use href="#i-crown"></use></svg> คณะรัฐมนตรี 2569</div>
     <div id="cab-size-btns">
       <button class="cab-sz active" id="csz-full"    title="เต็ม"    onclick="setCabState('full')">▤</button>
       <button class="cab-sz"        id="csz-compact" title="หัวเท่านั้น" onclick="setCabState('compact')">▬</button>
@@ -2593,7 +2596,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <div id="info-badge"></div>
     <div id="info-title"></div>
     <div id="info-abbr"></div>
-    <button id="info-audio" type="button" hidden aria-label="ฟังเสียงบรรยายกระทรวงนี้">🔊 ฟังเสียง</button>
+    <button id="info-audio" type="button" hidden aria-label="ฟังเสียงบรรยายกระทรวงนี้"><svg class="mdico"><use href="#i-volume-2"></use></svg> ฟังเสียง</button>
   </div>
   <!-- แถบแท็บ — ถอดโครงจาก machineryofgovernment.uk (Info / Powers / Budget / Staff) -->
   <div class="ip-tabs" id="ip-tabs" role="tablist">
@@ -2654,14 +2657,15 @@ function toggleTheme() {
   const t = isDark ? 'light' : 'dark';
   html.setAttribute('data-theme', t);
   try { localStorage.setItem('md-theme', t); } catch(e) {}  // sync ข้ามทุกเว็บใน md
-  document.getElementById('knob').textContent = isDark ? '☀️' : '🌙';
+  var knob = document.getElementById('knob');   /* หน้านี้ยังไม่มีปุ่ม knob จริง — กัน null ไว้ */
+  if (knob) knob.innerHTML = MDICO(isDark ? 'sun' : 'moon');
   refreshThemeCache();   // re-read CSS vars + drop sprite cache for the new theme
   draw(); // redraw canvas with new colors
 }
 // ให้ปุ่ม knob ตรงกับธีมที่โหลดมา (เผื่อ localStorage บังคับเป็น light)
 document.addEventListener('DOMContentLoaded', function(){
   var k = document.getElementById('knob');
-  if (k) k.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️';
+  if (k) k.innerHTML = MDICO(document.documentElement.getAttribute('data-theme') === 'dark' ? 'moon' : 'sun');
 });
 
 // ═══════════════════════════════════════
@@ -2838,18 +2842,18 @@ let pmLens = false;
 // เลื่อนเมาส์/กดโหนดไหน → โชว์ "เส้นตรงมีหัวลูกศร" ว่าใครกำกับ/ตรวจสอบ/สั่งการใคร
 // 4 ประเภท: central=บริหารราชการกลาง · oversight=ตรวจสอบ(องค์กรอิสระ) · judicial=ตุลาการ/อัยการ/เลือกตั้ง · regulator=กำกับเฉพาะสาขา
 const REL_TYPES = {
-  central:    { color:'#22d3ee', icon:'⚙️', label:'บริหารราชการกลาง' },
-  oversight:  { color:'#f87171', icon:'🔍', label:'ตรวจสอบ · องค์กรอิสระ' },
-  judicial:   { color:'#a78bfa', icon:'⚖️', label:'ตุลาการ/อัยการ/เลือกตั้ง' },
-  regulator:  { color:'#34d399', icon:'🎛️', label:'กำกับเฉพาะสาขา' },
-  soe:        { color:'#fbbf24', icon:'🏢', label:'กำกับรัฐวิสาหกิจ (คลัง/สคร.)' },
-  legislative:{ color:'#fb7185', icon:'🏛️', label:'ตรวจสอบโดยรัฐสภา' },
-  committee:  { color:'#2dd4bf', icon:'🤝', label:'คณะกรรมการระดับชาติ' },
-  transport:  { color:'#38bdf8', icon:'🚦', label:'กำกับกิจการขนส่ง' },
-  health:     { color:'#f472b6', icon:'🏥', label:'กำกับบริการ/ผลิตภัณฑ์สุขภาพ' },
-  fund:       { color:'#c084fc', icon:'💰', label:'จัดสรรกองทุน/งบเฉพาะทาง' },
-  support:    { color:'#a3e635', icon:'📎', label:'กำกับ-สนับสนุนหน่วยในสังกัด' },
-  partner:    { color:'#fb923c', icon:'🔗', label:'ทำงานร่วมกัน (ไม่มีสายบังคับบัญชา)', noArrow:true, dash:true },
+  central:    { color:'#22d3ee', icon:'<svg class="mdico"><use href="#i-settings"></use></svg>', label:'บริหารราชการกลาง' },
+  oversight:  { color:'#f87171', icon:'<svg class="mdico"><use href="#i-search"></use></svg>', label:'ตรวจสอบ · องค์กรอิสระ' },
+  judicial:   { color:'#a78bfa', icon:'<svg class="mdico"><use href="#i-scale"></use></svg>', label:'ตุลาการ/อัยการ/เลือกตั้ง' },
+  regulator:  { color:'#34d399', icon:'<svg class="mdico"><use href="#i-sliders-horizontal"></use></svg>', label:'กำกับเฉพาะสาขา' },
+  soe:        { color:'#fbbf24', icon:'<svg class="mdico"><use href="#i-building-2"></use></svg>', label:'กำกับรัฐวิสาหกิจ (คลัง/สคร.)' },
+  legislative:{ color:'#fb7185', icon:'<svg class="mdico"><use href="#i-landmark"></use></svg>', label:'ตรวจสอบโดยรัฐสภา' },
+  committee:  { color:'#2dd4bf', icon:'<svg class="mdico"><use href="#i-handshake"></use></svg>', label:'คณะกรรมการระดับชาติ' },
+  transport:  { color:'#38bdf8', icon:'<svg class="mdico"><use href="#i-traffic-cone"></use></svg>', label:'กำกับกิจการขนส่ง' },
+  health:     { color:'#f472b6', icon:'<svg class="mdico"><use href="#i-hospital"></use></svg>', label:'กำกับบริการ/ผลิตภัณฑ์สุขภาพ' },
+  fund:       { color:'#c084fc', icon:'<svg class="mdico"><use href="#i-wallet"></use></svg>', label:'จัดสรรกองทุน/งบเฉพาะทาง' },
+  support:    { color:'#a3e635', icon:'<svg class="mdico"><use href="#i-paperclip"></use></svg>', label:'กำกับ-สนับสนุนหน่วยในสังกัด' },
+  partner:    { color:'#fb923c', icon:'<svg class="mdico"><use href="#i-link"></use></svg>', label:'ทำงานร่วมกัน (ไม่มีสายบังคับบัญชา)', noArrow:true, dash:true },
 };
 // หน่วยแม่ข่าย (key = ministryID|no) → {ประเภท, คำกริยาอำนาจ, ปลายทาง}
 //   to = 'MIN' → 20 กระทรวง (ทุกส่วนราชการ) · หรือ array ของ 'ministryID|no' (หน่วยที่ถูกกำกับเจาะจง)
@@ -3058,7 +3062,7 @@ function relPanelContent(relInfo, maxW, padX, isDk, _nm){
              : 'กำกับภาคเอกชน (ไม่มีหน่วยงานในแผนภาพนี้)');
     wrapText(scope, maxW - padX*2).forEach(l => lines.push({ text:l, color: body }));
   } else {
-    titleLine = '🏛️  ' + _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย';
+    titleLine = '<svg class="mdico"><use href="#i-landmark"></use></svg>  ' + _nm(relInfo.focus) + ' — ถูกกำกับ/ตรวจสอบโดย';
   }
   if(hasIn){
     if(hasOut) lines.push({ text:'▸ และหน่วยนี้ถูกกำกับ/ตรวจสอบโดย', color: dim });
@@ -3070,7 +3074,7 @@ function relPanelContent(relInfo, maxW, padX, isDk, _nm){
       wrapText(txt, maxW - padX*2).forEach(l => lines.push({ text:l, color: REL_TYPES[ty].color }));
     });
   }
-  const source = (hasOut && relInfo.def.law) ? ('⚖ ' + relInfo.def.law) : REL_SOURCE;
+  const source = (hasOut && relInfo.def.law) ? ('<svg class="mdico"><use href="#i-scale"></use></svg> ' + relInfo.def.law) : REL_SOURCE;
   return { accent: accent, titleLine: titleLine, lines: lines, source: source };
 }
 
@@ -5681,7 +5685,7 @@ function renderLawPane(node, mid){
       </div>
       <div class="ip-power-title">${minName(mid)}</div>
       <div class="ip-power-desc">${MINISTRY_MISSIONS[mid] || (node.data && node.data.mission) || '-'}</div>
-      ${law.amend ? `<div class="ip-power-note">📌 ${law.amend}</div>` : ''}
+      ${law.amend ? `<div class="ip-power-note"><svg class="mdico"><use href="#i-pin"></use></svg> ${law.amend}</div>` : ''}
       <div class="ip-power-src">ฐานอำนาจตามกฎหมาย</div>
       <div class="ip-power-law">
         <span class="tag">พ.ร.บ.</span>
@@ -5720,7 +5724,7 @@ function renderBudgetPane(node, mid){
         <div class="ip-kpi"><div class="ip-kpi-lbl">ปีงบประมาณ</div><div class="ip-kpi-val" style="font-size:14px">พ.ศ. 2569</div></div>
       </div>
       <div class="ip-src" style="border:none;margin-top:10px">
-        💰 <b>${node.label || 'หน่วยงานนี้'}</b> รับจัดสรรงบประมาณรายจ่ายหรือเงินนอกงบประมาณ/รายได้แผ่นดินตามร่าง พ.ร.บ.งบประมาณรายจ่ายประจำปี พ.ศ. 2569
+        <svg class="mdico"><use href="#i-wallet"></use></svg> <b>${node.label || 'หน่วยงานนี้'}</b> รับจัดสรรงบประมาณรายจ่ายหรือเงินนอกงบประมาณ/รายได้แผ่นดินตามร่าง พ.ร.บ.งบประมาณรายจ่ายประจำปี พ.ศ. 2569
       </div>
       ${budgetSrc()}`;
     return;
@@ -5773,7 +5777,7 @@ function budgetBars(selfId){
     </div>`).join('');
 }
 function budgetSrc(){
-  return `<div class="ip-src">📎 ที่มา: เอกสารงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ. 2569 · หน่วย: ล้านบาท<br>
+  return `<div class="ip-src"><svg class="mdico"><use href="#i-paperclip"></use></svg> ที่มา: เอกสารงบประมาณรายจ่ายประจำปีงบประมาณ พ.ศ. 2569 · หน่วย: ล้านบาท<br>
     ตัวเลขเป็นวงเงินตามร่าง พ.ร.บ.งบประมาณฯ พ.ศ. 2569</div>`;
 }
 
@@ -5783,7 +5787,7 @@ function renderStaffPane(node, mid){
   const S = typeof STAFF_DATA_2569 !== 'undefined' ? STAFF_DATA_2569 : null;
   
   if(!S){
-    el.innerHTML = ipEmpty('👥','ยังไม่ได้นำเข้าชุดข้อมูลกำลังคนภาครัฐ');
+    el.innerHTML = ipEmpty('<svg class="mdico"><use href="#i-users"></use></svg>','ยังไม่ได้นำเข้าชุดข้อมูลกำลังคนภาครัฐ');
     return;
   }
 
@@ -5796,7 +5800,7 @@ function renderStaffPane(node, mid){
         <div class="ip-kpi"><div class="ip-kpi-lbl">รวมทุกกระทรวง/กลุ่ม</div><div class="ip-kpi-val">${(sumStaff/10000).toFixed(2)}<small> ล้านคน</small></div></div>
       </div>
       <div class="ip-src" style="margin-top:12px">
-        👥 <b>ภาพรวมกำลังคนภาครัฐไทย พ.ศ. 2568–2569</b><br>
+        <svg class="mdico"><use href="#i-users"></use></svg> <b>ภาพรวมกำลังคนภาครัฐไทย พ.ศ. 2568–2569</b><br>
         จำแนกเป็นข้าราชการครู สาธารณสุข ฝ่ายปกครอง ทหาร ตำรวจ ข้าราชการพลเรือนสามัญ และพนักงานราชการ/พนักงานมหาวิทยาลัย
       </div>
       ${staffSrc()}`;
@@ -5814,7 +5818,7 @@ function renderStaffPane(node, mid){
         <div class="ip-kpi"><div class="ip-kpi-lbl">อัตรากำลังเฉลี่ย</div><div class="ip-kpi-val" style="font-size:13px">${estCount}</div></div>
       </div>
       <div class="ip-src" style="border:none;margin-top:10px">
-        📌 ข้อมูลบุคลากรของ <b>${node.label || 'หน่วยงานนี้'}</b> จัดอยู่ในหมวด ${catName} อ้างอิงตามกรอบอัตรากำลังและแผนจัดสรรกำลังคนของต้นสังกัด
+        <svg class="mdico"><use href="#i-pin"></use></svg> ข้อมูลบุคลากรของ <b>${node.label || 'หน่วยงานนี้'}</b> จัดอยู่ในหมวด ${catName} อ้างอิงตามกรอบอัตรากำลังและแผนจัดสรรกำลังคนของต้นสังกัด
       </div>
       ${staffSrc()}`;
     return;
@@ -5850,14 +5854,14 @@ function renderStaffPane(node, mid){
     </div>` : ''}
 
     <div class="ip-src" style="border:none;padding-top:10px">
-      📌 <b>ลักษณะกำลังคน:</b> ${st.note || '-'}<br>
+      <svg class="mdico"><use href="#i-pin"></use></svg> <b>ลักษณะกำลังคน:</b> ${st.note || '-'}<br>
       มีกำลังคนรวมคิดเป็นร้อยละ <b>${share.toFixed(2)}</b> ของกำลังคนภาครัฐทั้งประเทศ สูงเป็นอันดับที่ <b>${rank}</b>
     </div>
     ${staffSrc()}`;
 }
 
 function staffSrc(){
-  return `<div class="ip-src">📎 ที่มา: รายงานสถิติกำลังคนภาครัฐ ประจำปี พ.ศ. 2568–2569 · สำนักงานคณะกรรมการข้าราชการพลเรือน (สำนักงาน ก.พ.)<br>
+  return `<div class="ip-src"><svg class="mdico"><use href="#i-paperclip"></use></svg> ที่มา: รายงานสถิติกำลังคนภาครัฐ ประจำปี พ.ศ. 2568–2569 · สำนักงานคณะกรรมการข้าราชการพลเรือน (สำนักงาน ก.พ.)<br>
     ตัวเลขรวมข้าราชการพลเรือนสามัญ ข้าราชการครู ทหาร ตำรวจ พนักงานราชการ และพนักงานมหาวิทยาลัย</div>`;
 }
 
@@ -5903,9 +5907,9 @@ function openSrcModal(){
   document.getElementById('sm-sub').innerHTML =
     `แผนผังนี้รวบรวมโครงสร้างราชการไทย 20 กระทรวง พร้อมหน่วยงานในสังกัด รัฐวิสาหกิจ องค์การมหาชน สถาบันอุดมศึกษา และสภาวิชาชีพ — เปิดเป็นข้อมูลเพื่อการศึกษา`;
   document.getElementById('sm-warn').innerHTML =
-    `⚠️ <b>ข้อมูลสะท้อนโครงสร้างราชการไทย ณ ${DATA_ASOF.structure}</b><br>
+    `<svg class="mdico"><use href="#i-triangle-alert"></use></svg> <b>ข้อมูลสะท้อนโครงสร้างราชการไทย ณ ${DATA_ASOF.structure}</b><br>
      คณะรัฐมนตรีอ้างอิง${DATA_ASOF.cabinet} · งบประมาณอ้างอิงปีงบประมาณ พ.ศ. ${DATA_ASOF.budgetYear}<br>
-     โครงสร้างหน่วยงานและผู้ดำรงตำแหน่งเปลี่ยนแปลงบ่อย โปรดตรวจสอบกับเว็บไซต์ราชการก่อนนำไปอ้างอิง<br><br>🏛️ <b>อยู่ระหว่างดำเนินการ — ยังไม่มีผลบังคับใช้:</b> ครม. 14 ก.ค. 2569 เห็นชอบหลักการร่าง พ.ร.บ.ปรับปรุงกระทรวง ทบวง กรม รวมภารกิจท่องเที่ยวเข้ากับวัฒนธรรมเป็น &ldquo;กระทรวงวัฒนธรรมและการท่องเที่ยว&rdquo; และแยกตั้ง &ldquo;กระทรวงการกีฬา&rdquo; — ร่างยังไม่ผ่านรัฐสภา ผังนี้จึงยังแสดง 20 กระทรวงตามกฎหมายที่ใช้บังคับอยู่`;
+     โครงสร้างหน่วยงานและผู้ดำรงตำแหน่งเปลี่ยนแปลงบ่อย โปรดตรวจสอบกับเว็บไซต์ราชการก่อนนำไปอ้างอิง<br><br><svg class="mdico"><use href="#i-landmark"></use></svg> <b>อยู่ระหว่างดำเนินการ — ยังไม่มีผลบังคับใช้:</b> ครม. 14 ก.ค. 2569 เห็นชอบหลักการร่าง พ.ร.บ.ปรับปรุงกระทรวง ทบวง กรม รวมภารกิจท่องเที่ยวเข้ากับวัฒนธรรมเป็น &ldquo;กระทรวงวัฒนธรรมและการท่องเที่ยว&rdquo; และแยกตั้ง &ldquo;กระทรวงการกีฬา&rdquo; — ร่างยังไม่ผ่านรัฐสภา ผังนี้จึงยังแสดง 20 กระทรวงตามกฎหมายที่ใช้บังคับอยู่`;
   document.getElementById('sm-list').innerHTML = DATA_ASOF.sources.map(s =>
     `<div class="sm-item"><div class="t">${s.t}</div>
      <div class="o">${s.o}</div>
@@ -6301,7 +6305,7 @@ function buildCabPanel() {
   const pmDiv = document.createElement('div');
   pmDiv.className = 'cab-pm';
   pmDiv.innerHTML = `
-    <div class="cab-pm-icon">👑</div>
+    <div class="cab-pm-icon"><svg class="mdico"><use href="#i-crown"></use></svg></div>
     <div class="cab-pm-info">
       <div class="cab-pm-name">${CABINET_PM.name}</div>
       <div class="cab-pm-role">${CABINET_PM.role}</div>
@@ -6403,58 +6407,58 @@ function toggleCabinet() {
 //  CABINET GRID VIEW
 // ═══════════════════════════════════════
 const GRID_DEPUTIES = [
-  {name:"นายพิพัฒน์ รัชกิจประการ",  role:"รองนายกฯ + รมว.คมนาคม",     party:"ภูมิใจไทย",              minId:"08", emoji:"🚂"},
-  {name:"นายทรงศักดิ์ ทองศรี",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย",              minId:null, emoji:"⚖️"},
-  {name:"นายเอกนิติ นิติทัณฑ์ประภาศ",role:"รองนายกฯ + รมว.คลัง",       party:"ภูมิใจไทย (คนนอก)",      minId:"03", emoji:"💰"},
-  {name:"นายสีหศักดิ์ พวงเกตุแก้ว",  role:"รองนายกฯ + รมว.ต่างประเทศ",  party:"ภูมิใจไทย (คนนอก)",      minId:"04", emoji:"🌐"},
-  {name:"นางศุภจี สุธรรมพันธุ์",      role:"รองนายกฯ + รมว.พาณิชย์",    party:"ภูมิใจไทย (คนนอก)",      minId:"13", emoji:"📦"},
-  {name:"นายปกรณ์ นิลประพันธ์",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย (คนนอก)",      minId:null, emoji:"📜"},
-  {name:"นายยศชนัน วงศ์สวัสดิ์",     role:"รองนายกฯ + รมว.อุดมศึกษา",  party:"เพื่อไทย",               minId:"18", emoji:"🎓"},
+  {name:"นายพิพัฒน์ รัชกิจประการ",  role:"รองนายกฯ + รมว.คมนาคม",     party:"ภูมิใจไทย",              minId:"08", emoji:"<svg class='mdico'><use href='#i-train-front'></use></svg>"},
+  {name:"นายทรงศักดิ์ ทองศรี",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย",              minId:null, emoji:"<svg class='mdico'><use href='#i-scale'></use></svg>"},
+  {name:"นายเอกนิติ นิติทัณฑ์ประภาศ",role:"รองนายกฯ + รมว.คลัง",       party:"ภูมิใจไทย (คนนอก)",      minId:"03", emoji:"<svg class='mdico'><use href='#i-wallet'></use></svg>"},
+  {name:"นายสีหศักดิ์ พวงเกตุแก้ว",  role:"รองนายกฯ + รมว.ต่างประเทศ",  party:"ภูมิใจไทย (คนนอก)",      minId:"04", emoji:"<svg class='mdico'><use href='#i-globe'></use></svg>"},
+  {name:"นางศุภจี สุธรรมพันธุ์",      role:"รองนายกฯ + รมว.พาณิชย์",    party:"ภูมิใจไทย (คนนอก)",      minId:"13", emoji:"<svg class='mdico'><use href='#i-package'></use></svg>"},
+  {name:"นายปกรณ์ นิลประพันธ์",       role:"รองนายกรัฐมนตรี",             party:"ภูมิใจไทย (คนนอก)",      minId:null, emoji:"<svg class='mdico'><use href='#i-scroll'></use></svg>"},
+  {name:"นายยศชนัน วงศ์สวัสดิ์",     role:"รองนายกฯ + รมว.อุดมศึกษา",  party:"เพื่อไทย",               minId:"18", emoji:"<svg class='mdico'><use href='#i-graduation-cap'></use></svg>"},
 ];
 const GRID_MINISTERS = [
   // สำนักนายกรัฐมนตรี (01)
-  {name:"นางสาวศุภมาส อิศรภักดี",      role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
-  {name:"นายนภินทร ศรีสรรพางค์",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
-  {name:"นายภราดร ปริศนานันทกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
-  {name:"นางสุขสมรวย วันทนียกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"🏛️"},
+  {name:"นางสาวศุภมาส อิศรภักดี",      role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"<svg class='mdico'><use href='#i-landmark'></use></svg>"},
+  {name:"นายนภินทร ศรีสรรพางค์",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"<svg class='mdico'><use href='#i-landmark'></use></svg>"},
+  {name:"นายภราดร ปริศนานันทกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"<svg class='mdico'><use href='#i-landmark'></use></svg>"},
+  {name:"นางสุขสมรวย วันทนียกุล",       role:"รมต.ประจำสำนักนายกรัฐมนตรี", party:"ภูมิใจไทย",         minId:"01", emoji:"<svg class='mdico'><use href='#i-landmark'></use></svg>"},
   // กลาโหม (02)
-  {name:"พลโท อดุลย์ บุญธรรมเจริญ",    role:"รมว.กลาโหม",                party:"ภูมิใจไทย (คนนอก)", minId:"02", emoji:"🛡️"},
+  {name:"พลโท อดุลย์ บุญธรรมเจริญ",    role:"รมว.กลาโหม",                party:"ภูมิใจไทย (คนนอก)", minId:"02", emoji:"<svg class='mdico'><use href='#i-shield'></use></svg>"},
   // การท่องเที่ยวและกีฬา (05)
-  {name:"นายสุรศักดิ์ พันธ์เจริญวรกุล", role:"รมว.การท่องเที่ยวและกีฬา",  party:"ภูมิใจไทย",         minId:"05", emoji:"✈️"},
+  {name:"นายสุรศักดิ์ พันธ์เจริญวรกุล", role:"รมว.การท่องเที่ยวและกีฬา",  party:"ภูมิใจไทย",         minId:"05", emoji:"<svg class='mdico'><use href='#i-plane'></use></svg>"},
   // การพัฒนาสังคมฯ (06)
-  {name:"นายนิกร โสมกลาง",             role:"รมว.การพัฒนาสังคมฯ",        party:"เพื่อไทย",          minId:"06", emoji:"🏘️"},
+  {name:"นายนิกร โสมกลาง",             role:"รมว.การพัฒนาสังคมฯ",        party:"เพื่อไทย",          minId:"06", emoji:"<svg class='mdico'><use href='#i-house'></use></svg>"},
   // เกษตรและสหกรณ์ (07)
-  {name:"นายสุริยะ จึงรุ่งเรืองกิจ",   role:"รมว.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
-  {name:"นายวัชระพล ขาวขำ",            role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
-  {name:"นางสาวปิยะรัฐชย์ ติยะไพรัช",   role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"🌾"},
+  {name:"นายสุริยะ จึงรุ่งเรืองกิจ",   role:"รมว.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"<svg class='mdico'><use href='#i-wheat'></use></svg>"},
+  {name:"นายวัชระพล ขาวขำ",            role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"<svg class='mdico'><use href='#i-wheat'></use></svg>"},
+  {name:"นางสาวปิยะรัฐชย์ ติยะไพรัช",   role:"รมช.เกษตรและสหกรณ์",        party:"เพื่อไทย",          minId:"07", emoji:"<svg class='mdico'><use href='#i-wheat'></use></svg>"},
   // คมนาคม (08) — รมว.พิพัฒน์ เป็นรองนายกฯ (อยู่กลุ่มบน)
-  {name:"นายสิริพงศ์ อังคสกุลเกียรติ",  role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
-  {name:"นายภัทรพงศ์ ภัทรประสิทธิ์",    role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
-  {name:"นายสรรเพชญ บุญญามณี",         role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"🚂"},
+  {name:"นายสิริพงศ์ อังคสกุลเกียรติ",  role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"<svg class='mdico'><use href='#i-train-front'></use></svg>"},
+  {name:"นายภัทรพงศ์ ภัทรประสิทธิ์",    role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"<svg class='mdico'><use href='#i-train-front'></use></svg>"},
+  {name:"นายสรรเพชญ บุญญามณี",         role:"รมช.คมนาคม",               party:"ภูมิใจไทย",         minId:"08", emoji:"<svg class='mdico'><use href='#i-train-front'></use></svg>"},
   // ทรัพยากรธรรมชาติฯ (09)
-  {name:"นายสุชาติ ชมกลิ่น",           role:"รมว.ทรัพยากรธรรมชาติฯ",     party:"ภูมิใจไทย",         minId:"09", emoji:"🌿"},
+  {name:"นายสุชาติ ชมกลิ่น",           role:"รมว.ทรัพยากรธรรมชาติฯ",     party:"ภูมิใจไทย",         minId:"09", emoji:"<svg class='mdico'><use href='#i-leaf'></use></svg>"},
   // ดิจิทัลฯ (11)
-  {name:"นายไชยชนก ชิดชอบ",            role:"รมว.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"💻"},
-  {name:"นางสาวบุณย์ธิดา สมชัย",        role:"รมช.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"💻"},
+  {name:"นายไชยชนก ชิดชอบ",            role:"รมว.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"<svg class='mdico'><use href='#i-laptop'></use></svg>"},
+  {name:"นางสาวบุณย์ธิดา สมชัย",        role:"รมช.ดิจิทัลเพื่อเศรษฐกิจฯ", party:"ภูมิใจไทย",         minId:"11", emoji:"<svg class='mdico'><use href='#i-laptop'></use></svg>"},
   // พลังงาน (12)
-  {name:"นายเอกนัฏ พร้อมพันธุ์",        role:"รมว.พลังงาน",              party:"ภูมิใจไทย",         minId:"12", emoji:"⚡"},
+  {name:"นายเอกนัฏ พร้อมพันธุ์",        role:"รมว.พลังงาน",              party:"ภูมิใจไทย",         minId:"12", emoji:"<svg class='mdico'><use href='#i-zap'></use></svg>"},
   // มหาดไทย (14) — รมว. = นายกฯ อนุทิน (อยู่การ์ด PM)
-  {name:"นายพลพีร์ สุวรรณฉวี",         role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
-  {name:"นายเจเศรษฐ์ ไทยเศรษฐ์",        role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
-  {name:"นายวรศิษฎ์ เลียงประสิทธิ์",    role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"🏙️"},
+  {name:"นายพลพีร์ สุวรรณฉวี",         role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"<svg class='mdico'><use href='#i-building-2'></use></svg>"},
+  {name:"นายเจเศรษฐ์ ไทยเศรษฐ์",        role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"<svg class='mdico'><use href='#i-building-2'></use></svg>"},
+  {name:"นายวรศิษฎ์ เลียงประสิทธิ์",    role:"รมช.มหาดไทย",              party:"ภูมิใจไทย",         minId:"14", emoji:"<svg class='mdico'><use href='#i-building-2'></use></svg>"},
   // ยุติธรรม (15)
-  {name:"พลตำรวจโท รุทธพล เนาวรัตน์",  role:"รมว.ยุติธรรม",             party:"ภูมิใจไทย (คนนอก)", minId:"15", emoji:"⚖️"},
+  {name:"พลตำรวจโท รุทธพล เนาวรัตน์",  role:"รมว.ยุติธรรม",             party:"ภูมิใจไทย (คนนอก)", minId:"15", emoji:"<svg class='mdico'><use href='#i-scale'></use></svg>"},
   // แรงงาน (16)
-  {name:"นายจุลพันธ์ อมรวิวัฒน์",      role:"รมว.แรงงาน",               party:"เพื่อไทย",          minId:"16", emoji:"👷"},
+  {name:"นายจุลพันธ์ อมรวิวัฒน์",      role:"รมว.แรงงาน",               party:"เพื่อไทย",          minId:"16", emoji:"<svg class='mdico'><use href='#i-hard-hat'></use></svg>"},
   // วัฒนธรรม (17)
-  {name:"นางสาวซาบีดา ไทยเศรษฐ์",       role:"รมว.วัฒนธรรม",             party:"ภูมิใจไทย",         minId:"17", emoji:"🎭"},
+  {name:"นางสาวซาบีดา ไทยเศรษฐ์",       role:"รมว.วัฒนธรรม",             party:"ภูมิใจไทย",         minId:"17", emoji:"<svg class='mdico'><use href='#i-drama'></use></svg>"},
   // ศึกษาธิการ (19)
-  {name:"นายประเสริฐ จันทรรวงทอง",     role:"รมว.ศึกษาธิการ",           party:"เพื่อไทย",          minId:"19", emoji:"📚"},
-  {name:"นายอัครนันท์ กัณณ์กิตตินันท์", role:"รมช.ศึกษาธิการ",          party:"เพื่อไทย",          minId:"19", emoji:"📚"},
+  {name:"นายประเสริฐ จันทรรวงทอง",     role:"รมว.ศึกษาธิการ",           party:"เพื่อไทย",          minId:"19", emoji:"<svg class='mdico'><use href='#i-library'></use></svg>"},
+  {name:"นายอัครนันท์ กัณณ์กิตตินันท์", role:"รมช.ศึกษาธิการ",          party:"เพื่อไทย",          minId:"19", emoji:"<svg class='mdico'><use href='#i-library'></use></svg>"},
   // สาธารณสุข (21)
-  {name:"นายพัฒนา พร้อมพัฒน์",         role:"รมว.สาธารณสุข",            party:"ภูมิใจไทย",         minId:"21", emoji:"🏥"},
+  {name:"นายพัฒนา พร้อมพัฒน์",         role:"รมว.สาธารณสุข",            party:"ภูมิใจไทย",         minId:"21", emoji:"<svg class='mdico'><use href='#i-hospital'></use></svg>"},
   // อุตสาหกรรม (22)
-  {name:"นายวราวุธ ศิลปอาชา",          role:"รมว.อุตสาหกรรม",           party:"ภูมิใจไทย",         minId:"22", emoji:"🏭"},
+  {name:"นายวราวุธ ศิลปอาชา",          role:"รมว.อุตสาหกรรม",           party:"ภูมิใจไทย",         minId:"22", emoji:"<svg class='mdico'><use href='#i-factory'></use></svg>"},
 ];
 
 // ═══════════════════════════════════════
@@ -6671,7 +6675,7 @@ function buildGridView() {
          data-role="นายกรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทย" data-min="14"
          tabindex="0" role="button" aria-label="${CABINET_PM.name} — ดูประวัติ">
       <i class="pm-rim" aria-hidden="true"></i>
-      <div class="grid-pm-avatar">${cabPortrait('อนุทิน ชาญวีรกูล')}<span class="gc-emoji">👑</span></div>
+      <div class="grid-pm-avatar">${cabPortrait('อนุทิน ชาญวีรกูล')}<span class="gc-emoji"><svg class="mdico"><use href="#i-crown"></use></svg></span></div>
       <div class="grid-pm-info">
         <div class="grid-pm-name">${CABINET_PM.name}</div>
         <div class="grid-pm-role">${CABINET_PM.role} · พรรค${CABINET_PM.party}</div>
@@ -6823,9 +6827,9 @@ const CPI_TREND = [
 ];
 const CPI_ASEAN = 'ตามหลัง สิงคโปร์ 84 · บรูไน 63 · มาเลเซีย 52 · ติมอร์-เลสเต 44 · เวียดนาม 41 · อินโดนีเซีย/ลาว 34';
 const ALLEGATION_TYPES = [
-  {ic:'⚖️', t:'ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ', s:'ประมวลกฎหมายอาญา มาตรา 157 — ฐานความผิดที่ถูกกล่าวหามากที่สุด'},
-  {ic:'📑', t:'การจัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ', s:'มักเกี่ยวกับงบก่อสร้างและการจัดหาพัสดุภาครัฐ'},
-  {ic:'💰', t:'การเรียกรับเงิน / สินบน', s:'เรียกรับจากการอนุมัติ-อนุญาต และการตรวจปล่อย'},
+  {ic:'<svg class="mdico"><use href="#i-scale"></use></svg>', t:'ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ', s:'ประมวลกฎหมายอาญา มาตรา 157 — ฐานความผิดที่ถูกกล่าวหามากที่สุด'},
+  {ic:'<svg class="mdico"><use href="#i-file-text"></use></svg>', t:'การจัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ', s:'มักเกี่ยวกับงบก่อสร้างและการจัดหาพัสดุภาครัฐ'},
+  {ic:'<svg class="mdico"><use href="#i-wallet"></use></svg>', t:'การเรียกรับเงิน / สินบน', s:'เรียกรับจากการอนุมัติ-อนุญาต และการตรวจปล่อย'},
 ];
 
 let _corruptExtrasBuilt = false;
@@ -6841,7 +6845,7 @@ function buildCorruptExtras(){
       + `<span class="cpi-trend-track"><span class="cpi-trend-fill" style="width:${w}%;background:${col}"></span></span>`
       + `<span class="cpi-trend-val">${d.score}</span></div>`;
   }).join('');
-  cpiEl.innerHTML = `<div class="corrupt-sec-hd">📉 ดัชนีภาพลักษณ์คอร์รัปชัน (CPI) ของไทย</div>
+  cpiEl.innerHTML = `<div class="corrupt-sec-hd"><svg class="mdico"><use href="#i-trending-down"></use></svg> ดัชนีภาพลักษณ์คอร์รัปชัน (CPI) ของไทย</div>
     <div class="cpi-card">
       <div class="cpi-score">
         <div class="cpi-score-num">33</div>
@@ -6857,7 +6861,7 @@ function buildCorruptExtras(){
     </div>`;
   const typesEl = document.getElementById('corrupt-types');
   if(typesEl){
-    typesEl.innerHTML = `<div class="corrupt-sec-hd">📌 ฐาน/ประเภทคำกล่าวหาที่พบมากที่สุด</div>`
+    typesEl.innerHTML = `<div class="corrupt-sec-hd"><svg class="mdico"><use href="#i-pin"></use></svg> ฐาน/ประเภทคำกล่าวหาที่พบมากที่สุด</div>`
       + ALLEGATION_TYPES.map(a=>`<div class="ctype-row"><div class="ctype-ic">${a.ic}</div>`
         + `<div class="ctype-txt">${a.t}<br><small>${a.s}</small></div></div>`).join('');
   }
@@ -6934,9 +6938,9 @@ const CORRUPT_DETAIL = {
     const cases = (det.cases||[]).map(c=>`<div class="crd-case"><div class="crd-case-t">${esc(c.t)}</div>
       <div class="crd-case-d">${esc(c.d)}</div>${c.src?`<a href="${c.src}" target="_blank" rel="noopener">อ่านข่าว/ที่มา ↗</a>`:''}</div>`).join('');
     bodyEl.innerHTML = `
-      <div class="crd-sec"><div class="crd-sec-t">⚖️ ฐาน/ประเภทคำกล่าวหา</div>${liList(det.bases)}</div>
-      <div class="crd-sec"><div class="crd-sec-t">🔍 พฤติการณ์ที่พบบ่อย</div>${liList(det.patterns)}</div>
-      <div class="crd-sec"><div class="crd-sec-t">📊 ผลดำเนินการ & ความเสียหาย — ภาพรวม ป.ป.ช. ปีงบ ${NACC_OVERALL.year}</div>
+      <div class="crd-sec"><div class="crd-sec-t"><svg class="mdico"><use href="#i-scale"></use></svg> ฐาน/ประเภทคำกล่าวหา</div>${liList(det.bases)}</div>
+      <div class="crd-sec"><div class="crd-sec-t"><svg class="mdico"><use href="#i-search"></use></svg> พฤติการณ์ที่พบบ่อย</div>${liList(det.patterns)}</div>
+      <div class="crd-sec"><div class="crd-sec-t"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลดำเนินการ & ความเสียหาย — ภาพรวม ป.ป.ช. ปีงบ ${NACC_OVERALL.year}</div>
         <div class="crd-stat">
           <div><b>${NACC_OVERALL.received}</b><span>คำกล่าวหาที่รับ</span></div>
           <div><b>${NACC_OVERALL.investigated}</b><span>รับไว้ไต่สวน</span></div>
@@ -6944,7 +6948,7 @@ const CORRUPT_DETAIL = {
           <div><b>${NACC_OVERALL.damage}</b><span>มูลค่าความเสียหายตามคำกล่าวหา</span></div>
         </div>
         ${det.outcomeNote?`<div class="crd-onote">▸ ${esc(det.outcomeNote)}</div>`:''}</div>
-      <div class="crd-sec"><div class="crd-sec-t">📁 ตัวอย่างคดีที่ ป.ป.ช.ชี้มูล / ศาลพิพากษา</div>${cases||'<div class="crd-li">—</div>'}</div>
+      <div class="crd-sec"><div class="crd-sec-t"><svg class="mdico"><use href="#i-folder"></use></svg> ตัวอย่างคดีที่ ป.ป.ช.ชี้มูล / ศาลพิพากษา</div>${cases||'<div class="crd-li">—</div>'}</div>
       <div class="crd-note">ข้อมูลคดีเป็นกรณีที่ ป.ป.ช.ชี้มูล/ศาลมีคำพิพากษาแล้ว และเผยแพร่เป็นข่าวสาธารณะ · สถิติภาพรวมจากสำนักงาน ป.ป.ช. (ปีงบ 2566) · นำเสนอเพื่อการศึกษา ไม่ใช่การกล่าวหาหน่วยงานหรือบุคคลใดเพิ่มเติม</div>`;
     lastFocus = document.activeElement;
     ov.style.display = 'grid';
@@ -7012,7 +7016,7 @@ function buildCorruptView(data) {
       <div class="corrupt-name">${d.name}</div>
       ${mapBtn}
       <div class="corrupt-risk">${risks}</div>
-      <div class="corrupt-source">📎 ${cntTxt ? cntTxt + ' · ' : ''}${d.source}</div>
+      <div class="corrupt-source"><svg class="mdico"><use href="#i-paperclip"></use></svg> ${cntTxt ? cntTxt + ' · ' : ''}${d.source}</div>
       <div class="corrupt-bar-wrap"><div class="corrupt-bar" style="width:${barW}%"></div></div>
     `;
     list.appendChild(card);
@@ -7276,7 +7280,7 @@ window.addEventListener('hashchange', applyHashFromURL);
 var mdAudioEl = null, mdAudioId = null;
 function updateAudioBtn(state){
   var btn = document.getElementById('info-audio'); if(!btn) return;
-  var map = { idle:'🔊 ฟังเสียง', loading:'⏳ กำลังโหลด…', playing:'⏸ หยุด', missing:'🔇 ยังไม่มีเสียง' };
+  var map = { idle:'<svg class="mdico"><use href="#i-volume-2"></use></svg> ฟังเสียง', loading:'<svg class="mdico"><use href="#i-hourglass"></use></svg> กำลังโหลด…', playing:'<svg class="mdico"><use href="#i-pause"></use></svg> หยุด', missing:'<svg class="mdico"><use href="#i-volume-x"></use></svg> ยังไม่มีเสียง' };
   btn.textContent = map[state] || map.idle;
   btn.classList.toggle('playing', state === 'playing');
   btn.classList.toggle('missing', state === 'missing');

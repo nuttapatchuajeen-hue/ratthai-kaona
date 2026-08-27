@@ -460,6 +460,7 @@ html[data-theme="dark"] #histView .hbtn:hover{color:#081019}
   #histView .hrow.is-visible .hcard,#histView .hrow.is-visible .hev{transform:translateY(0)}
 }
 </style>
+<script src="../js/icons.js"></script>
 <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -630,7 +631,7 @@ const SONGS=[
 const SONG={audio:[],cur:-1};
 function fmtTime(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function songUI(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i),a=SONG.audio[i];
-  if(b)b.innerHTML=(a&&!a.paused)?'❚❚':'▶';});}
+  if(b)b.innerHTML=(a&&!a.paused)?"<svg class='mdico'><use href='#i-pause'></use></svg>":"<svg class='mdico'><use href='#i-play'></use></svg>";});}
 function songRow(i){const a=SONG.audio[i];if(!a)return;
   const d=a.duration||0,t=a.currentTime||0,p=el('songProg'+i),tm=el('songTime'+i);
   if(p)p.style.width=(d?(t/d*100):0).toFixed(1)+'%';
@@ -665,7 +666,7 @@ function songSeek(i,ev){const a=SONG.audio[i];if(!a||!a.duration)return;
   songRow(i);}
 function songListHTML(){if(YEAR!==2569)return '';return `<div class="songwrap"><div class="songhead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>เพลงหาเสียง · ชัชชาติ เบอร์ 9</div><div class="songlist">`+
   SONGS.map((s,i)=>`<div class="songcard">`+
-    `<button class="songplay" id="songBtn${i}" title="เล่น/หยุดเพลง">▶</button>`+
+    `<button class="songplay" id="songBtn${i}" title="เล่น/หยุดเพลง"><svg class='mdico'><use href='#i-play'></use></svg></button>`+
     `<div class="songinfo"><div class="songttl">${s.title}</div>`+
     `<div class="songsub">${s.sub}</div>`+
     `<div class="songbar" id="songBar${i}"><i id="songProg${i}"></i></div></div>`+
@@ -1303,7 +1304,7 @@ window.setView=function(v){
           : (SK.totalSeats||50)>50
           ? 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) ปีนี้มี '+SK.totalSeats+' คนจาก 50 เขต — เขตใหญ่แบ่งเป็น 2 เขตเลือกตั้ง เขตละ 1 คน · สีของแต่ละเขตคือพรรคของผู้ชนะ (เขตที่ได้คนละพรรคใช้สีของที่นั่งที่คะแนนสูงกว่า)'
           : 'สมาชิกสภากรุงเทพมหานคร (ส.ก.) เลือกตั้งแบบแบ่งเขต เขตละ 1 คน รวม 50 คน — สีของแต่ละเขตคือพรรค/กลุ่มของผู้ชนะ');
-    if(D.meta&&D.meta.caveat) el('mapNote').innerHTML+='<br><span style="opacity:.8">⚠ '+D.meta.caveat+'</span>';
+    if(D.meta&&D.meta.caveat) el('mapNote').innerHTML+='<br><span style="opacity:.8"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> '+D.meta.caveat+'</span>';
     // badge
     el('mapBadge').style.display=v==='gov'?'':'none';
     if(v==='gov'){const pf=(PH.gov&&PH.gov[GWIN.no])?`<img src="bkk-photos/${PH.gov[GWIN.no]}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'';

@@ -52,13 +52,13 @@
   var SITEMENU = `<div class="smveil" id="siteMenuVeil" hidden></div>
 <div class="smpop" id="siteMenuPop" role="menu" aria-label="เมนูหลัก รัฐไทยก้าวหน้า" hidden>
   <div class="smhead">รัฐไทยก้าวหน้า · เมนูหลัก</div>
-  <a class="smlink" role="menuitem" href="../hub/index.html"><span class="smico">🏠</span>หน้าแรก</a>
-  <a class="smlink" role="menuitem" href="../structure.html"><span class="smico">🗺️</span>แผนผังโครงสร้าง</a>
-  <a class="smlink cur" role="menuitem" href="index.html" aria-current="true"><span class="smico">🗳️</span>ส.ส. ผู้แทนราษฎร<span class="smnow">อยู่ที่นี่</span></a>
-  <a class="smlink" role="menuitem" href="../cabinet/index.html"><span class="smico">👑</span>ชุดคณะรัฐมนตรี</a>
-  <a class="smlink" role="menuitem" href="../stats/index.html"><span class="smico">📊</span>ข้อมูลสถิติ</a>
-  <a class="smlink" role="menuitem" href="../hub/about.html"><span class="smico">👤</span>เกี่ยวกับเรา</a>
-  <a class="smlink" role="menuitem" href="../hub/survey.html"><span class="smico">📋</span>แบบประเมิน</a>
+  <a class="smlink" role="menuitem" href="../hub/index.html"><span class="smico"><svg class="mdico"><use href="#i-house"></use></svg></span>หน้าแรก</a>
+  <a class="smlink" role="menuitem" href="../structure.html"><span class="smico"><svg class="mdico"><use href="#i-map"></use></svg></span>แผนผังโครงสร้าง</a>
+  <a class="smlink cur" role="menuitem" href="index.html" aria-current="true"><span class="smico"><svg class="mdico"><use href="#i-vote"></use></svg></span>ส.ส. ผู้แทนราษฎร<span class="smnow">อยู่ที่นี่</span></a>
+  <a class="smlink" role="menuitem" href="../cabinet/index.html"><span class="smico"><svg class="mdico"><use href="#i-crown"></use></svg></span>ชุดคณะรัฐมนตรี</a>
+  <a class="smlink" role="menuitem" href="../stats/index.html"><span class="smico"><svg class="mdico"><use href="#i-chart-column"></use></svg></span>ข้อมูลสถิติ</a>
+  <a class="smlink" role="menuitem" href="../hub/about.html"><span class="smico"><svg class="mdico"><use href="#i-user"></use></svg></span>เกี่ยวกับเรา</a>
+  <a class="smlink" role="menuitem" href="../hub/survey.html"><span class="smico"><svg class="mdico"><use href="#i-clipboard-list"></use></svg></span>แบบประเมิน</a>
 </div>`;
 
   var SITEMENU_CSS = `

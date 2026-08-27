@@ -44,7 +44,7 @@
           '<span class="lw-since">พ.ศ. ' + LAW_META.year + '</span></div>' +
         '<div class="lw-t">' + esc(title) + '</div>' +
         (body ? '<div class="lw-d">' + esc(body) + '</div>' : '') +
-        (note ? '<div class="lw-note">⚠ ' + esc(note) + '</div>' : '') +
+        (note ? '<div class="lw-note"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ' + esc(note) + '</div>' : '') +
         '<div class="lw-src"><div class="lw-src-h">ที่มาของอำนาจ</div>' +
           '<span class="lw-badge">พระราชบัญญัติ</span> ' + actLink(srcLabel) + '</div>' +
       '</div>';
@@ -118,7 +118,7 @@
     el.insertAdjacentHTML('beforeend',
       '<div class="ip-sec-h" style="margin-top:16px">ตัวบทกฎหมาย · ' + esc(mp.sec) + '</div>' +
       '<div class="lw-quote">' + esc(nm) + ' ' + esc(mp.text) + '</div>' +
-      (mp.note ? '<div class="lw-note">⚠ ' + esc(mp.note) + '</div>' : '') +
+      (mp.note ? '<div class="lw-note"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ' + esc(mp.note) + '</div>' : '') +
       orgListHtml(mid, mp) +
       '<div class="ip-src">ที่มา: ' + actLink() + ' (ตัวบทจาก th.wikisource.org)</div>');
   };

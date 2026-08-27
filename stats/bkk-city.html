@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>กรุงเทพฯ รายเขต บนแผนที่เมือง — สถิติข้อมูลรัฐ</title>
+<meta name="description" content="ตัวชี้วัดรายเขต 50 เขตกรุงเทพฯ ระบายบนแผนที่ถนนจริง พร้อมหมุดค่าประจำเขต — ฐานแผนที่ OpenFreeMap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+  /* พาเลตต์ชุดเดียวกับโหมดมืดของ explore.html */
+  :root{
+    --paper:#020508; --paper-2:#070D14; --paper-3:#0D1822;
+    --ink:#DCE8F0; --ink-2:#A9BFCD; --ink-soft:#7993A4;
+    --rule:#122230; --rule-strong:#1C3344;
+    --green:#00E5FF; --red:#FF5C1A; --gold:#FFB454;
+    --shadow:18px 22px 40px -28px rgba(0,0,0,.85), 0 0 24px rgba(0,229,255,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+       font-family:"Noto Sans Thai","Archivo",system-ui,-apple-system,sans-serif;
+       display:flex;flex-direction:column;overflow:hidden}
+  a{color:var(--green)}
+
+  /* ---------- แถบบน ---------- */
+  .top{flex:0 0 auto;padding:11px 18px 0;background:var(--paper);border-bottom:1px solid var(--rule)}
+  .row1{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:9px}
+  .back{font-size:13px;font-weight:600;text-decoration:none;color:var(--ink-soft);white-space:nowrap}
+  .back:hover{color:var(--green)}
+  h1{margin:0;font-family:"Noto Serif Thai",serif;font-weight:800;font-size:19px;letter-spacing:-.01em}
+  .lede{font-size:12.5px;color:var(--ink-soft);margin:0}
+
+  .pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .pill{display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+        background:var(--paper-3);border:1px solid var(--rule);color:var(--ink-2);
+        border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:600;
+        transition:border-color .15s,color .15s,background .15s}
+  .pill:hover{border-color:var(--rule-strong);color:var(--ink)}
+  .pill.on{background:rgba(0,229,255,.10);border-color:var(--green);color:var(--green);box-shadow:0 6px 20px -6px rgba(0,229,255,.5)}
+  .pill .kd{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;opacity:.75}
+
+  /* แถบตัวเลขบรรทัดเดียว — กินความสูงน้อย เหลือพื้นที่ให้แผนที่ */
+  .kpis{display:flex;flex-wrap:wrap;gap:5px 24px;padding-bottom:10px;align-items:baseline}
+  .kpi{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .kpi .n{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;line-height:1.15;
+          letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .kpi .n .u{font-size:12px;color:var(--ink-2);font-weight:700;margin-left:2px}
+  .kpi.hi .n{color:var(--red)}
+  .kpi .t{font-size:12px;color:var(--ink-2);font-weight:600}
+  .kpi .s{font-size:11.5px;color:var(--ink-soft)}
+  .kpi .s::before{content:"· "}
+
+  /* ---------- แผนที่ ---------- */
+  .stage{flex:1 1 auto;position:relative;min-height:0}
+  #map{position:absolute;inset:0}
+  .maplibregl-ctrl-group{background:var(--paper-2)!important;border:1px solid var(--rule)}
+  .maplibregl-ctrl-group button+button{border-top-color:var(--rule)}
+  .maplibregl-ctrl-group button span{filter:invert(1) hue-rotate(180deg)}
+  .maplibregl-ctrl-attrib{background:rgba(2,5,8,.8)!important;font-size:10.5px}
+  .maplibregl-ctrl-attrib a{color:var(--ink-soft)!important}
+
+  .float{position:absolute;background:rgba(7,13,20,.92);border:1px solid var(--rule);
+         border-radius:13px;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+
+  .tools{left:12px;top:12px;padding:8px;display:flex;gap:6px;align-items:center}
+  .tbtn{cursor:pointer;background:var(--paper-3);border:1px solid var(--rule);color:var(--ink-2);
+        border-radius:9px;padding:6px 11px;font:inherit;font-size:12px;font-weight:600}
+  .tbtn:hover{border-color:var(--rule-strong);color:var(--ink)}
+  .tbtn.on{background:rgba(0,229,255,.12);border-color:var(--green);color:var(--green)}
+  .tzoom{font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums;padding-left:4px;white-space:nowrap}
+  .pgo{display:block;width:100%;margin-top:11px;cursor:pointer;background:rgba(0,229,255,.10);
+       border:1px solid var(--green);color:var(--green);border-radius:10px;padding:8px 10px;
+       font:inherit;font-size:12.5px;font-weight:700}
+  .pgo:hover{background:rgba(0,229,255,.18)}
+
+  .legend{left:12px;bottom:34px;padding:11px 13px;width:238px}
+  .legend .lh{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-bottom:8px}
+  .legend .sws{display:flex;gap:3px}
+  .legend .sw{flex:1;min-width:0}
+  .legend .sw i{display:block;height:11px;border-radius:3px}
+  .legend .sw span{display:block;margin-top:4px;font-size:9.5px;color:var(--ink-soft);
+                   font-variant-numeric:tabular-nums;text-align:center;overflow:hidden;text-overflow:ellipsis}
+  .legend .sc{font-size:10.5px;color:var(--ink-soft);margin-top:7px;line-height:1.5}
+
+  .panel{right:12px;top:12px;width:272px;max-height:calc(100% - 24px);overflow:auto;padding:14px 16px}
+  .panel .ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+             border-bottom:1px dashed var(--rule);padding-bottom:9px;margin-bottom:9px}
+  .panel .pn{font-family:"Noto Serif Thai",serif;font-weight:800;font-size:17px}
+  .panel .pm{font-size:11.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+  .panel .px{position:absolute;right:11px;top:9px;cursor:pointer;background:none;border:0;
+             color:var(--ink-soft);font-size:17px;line-height:1;padding:3px 5px}
+  .panel .px:hover{color:var(--ink)}
+  .prow{display:grid;grid-template-columns:76px 1fr auto;gap:8px;align-items:center;margin:9px 0}
+  .prow .l{font-size:12px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+  .prow .b{height:7px;border-radius:4px;background:var(--rule);overflow:hidden}
+  .prow .b>i{display:block;height:100%;border-radius:4px}
+  .prow .v{font-family:"Archivo",sans-serif;font-weight:800;font-size:12px;text-align:right;
+           font-variant-numeric:tabular-nums;white-space:nowrap}
+  .prow .v .rk{font-size:11px;color:var(--ink-soft);margin-left:4px}
+  .prow.act .l{color:var(--green)}
+  .psrc{margin-top:11px;padding-top:9px;border-top:1px dashed var(--rule);font-size:11px;color:var(--ink-soft);line-height:1.6}
+
+  /* ---------- การ์ดข้อมูลรายอาคาร (แตะตึกในโหมด 3 มิติ) ---------- */
+  .bpanel{right:12px;top:12px;width:292px;max-height:calc(100% - 24px);overflow:auto;padding:14px 16px}
+  .bpanel .px{position:absolute;right:11px;top:9px;cursor:pointer;background:none;border:0;
+              color:var(--ink-soft);font-size:17px;line-height:1;padding:3px 5px}
+  .bpanel .px:hover{color:var(--ink)}
+  .bpanel .bn{font-family:"Noto Serif Thai",serif;font-weight:800;font-size:16px;line-height:1.4;
+              padding-right:18px;display:block}
+  .bpanel .bn.un{color:var(--ink-2);font-weight:700;font-size:14.5px}
+  .bpanel .bsub{font-size:11.5px;color:var(--ink-soft);margin-top:3px;font-variant-numeric:tabular-nums}
+  .bpanel .bhero{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;
+                 border-top:1px dashed var(--rule);border-bottom:1px dashed var(--rule);
+                 padding:9px 0;margin:10px 0 4px}
+  .bpanel .bnum{font-family:"Archivo",sans-serif;font-weight:800;font-size:27px;line-height:1;
+                letter-spacing:-.02em;color:var(--green);font-variant-numeric:tabular-nums}
+  .bpanel .bnum .u{font-size:13px;color:var(--ink-2);font-weight:700;margin-left:3px}
+  .bpanel .bfl{font-size:12.5px;color:var(--ink-2);font-weight:600}
+  .bpanel .bnum.na{color:var(--ink-soft);font-size:17px}
+  .brow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:8px 0}
+  .brow .l{font-size:12px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+  .brow .v{font-family:"Archivo","Noto Sans Thai",sans-serif;font-weight:700;font-size:12px;
+           text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .brow .v small{color:var(--ink-soft);font-weight:600;margin-left:3px}
+  .bgo{display:block;width:100%;margin-top:11px;text-align:center;text-decoration:none;
+       background:rgba(0,229,255,.10);border:1px solid var(--green);color:var(--green);
+       border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:700}
+  .bgo:hover{background:rgba(0,229,255,.18)}
+  .bsrc{margin-top:10px;padding-top:9px;border-top:1px dashed var(--rule);
+        font-size:10.5px;color:var(--ink-soft);line-height:1.6}
+
+  .note{flex:0 0 auto;padding:8px 18px;font-size:11.5px;color:var(--ink-soft);
+        background:var(--paper);border-top:1px solid var(--rule);line-height:1.6}
+  .err{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;
+       font-size:14px;color:var(--ink-2);line-height:1.8}
+  .loading{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;
+           text-align:center;font-size:13px;color:var(--ink-soft);line-height:1.7;
+           background:var(--paper);pointer-events:none}
+  .loading small{color:var(--rule-strong);font-size:11.5px}
+  .loading .sp{width:22px;height:22px;border-radius:50%;border:2px solid var(--rule);
+               border-top-color:var(--green);animation:spin 900ms linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* โหมดฝัง (?embed=1) — ซ่อนหัวหน้าเว็บ เพราะการ์ดที่ฝังมีหัวข้อของตัวเองอยู่แล้ว */
+  body.embed .row1{display:none}
+  body.embed .top{padding:10px 12px 0;border-bottom:0}
+  body.embed .note{padding:7px 12px}
+
+  /* กรอบแคบ (ฝังในการ์ด/จอมือถือ) — ปุ่มเหลือแค่ไอคอน ไม่งั้นแถบล้นไปทับแผงข้อมูล */
+  @media(max-width:720px){ .tzoom{display:none} }
+  @media(max-width:560px){
+    .tools{padding:6px;gap:4px}
+    .tbtn{padding:6px 9px}
+    .tbtn .lb{display:none}
+  }
+
+  @media(max-width:660px){
+    .top{padding:9px 12px 0}
+    h1{font-size:16px}
+    .lede{display:none}
+    .kpis{gap:4px 16px}
+    .kpi .n{font-size:19px}
+    .kpi .s{display:none}
+    .panel,.bpanel{right:8px;left:8px;top:auto;bottom:34px;width:auto;max-height:46%}
+    .legend{display:none}
+  }
+</style>
+  <script src="../js/icons.js"></script>
+</head>
+<body>
+
+<div class="top">
+  <div class="row1">
+    <a class="back" href="explore.html">← ศูนย์ข้อมูล</a>
+    <h1><svg class="mdico"><use href="#i-building-2"></use></svg> กรุงเทพฯ รายเขต บนแผนที่เมือง</h1>
+    <p class="lede">ระบายสีรายเขตทับแผนที่ถนนจริง + หมุดค่าประจำเขต — แตะหมุดหรือพื้นที่เขตเพื่อดูค่าครบทุกด้าน · ซูมถึงระดับอาคารแล้ว <b>แตะตึกได้ทีละหลัง</b> เพื่อดูความสูง จำนวนชั้น และพื้นที่</p>
+  </div>
+  <div class="pills" id="pills"></div>
+  <div class="kpis" id="kpis"></div>
+</div>
+
+<div class="stage">
+  <div id="map"></div>
+  <div class="float tools" id="tools">
+    <button type="button" class="tbtn" id="btnFit" title="จัดกรอบให้เห็นครบ 50 เขต">⤢<span class="lb"> เต็มเมือง</span></button>
+    <button type="button" class="tbtn on" id="btnTilt" title="ซูมเข้าใกล้แล้วกล้องเอียงลงเองอัตโนมัติ"><svg class="mdico"><use href="#i-ruler"></use></svg><span class="lb"> เอียงอัตโนมัติ</span></button>
+    <button type="button" class="tbtn on" id="btnBldg" title="อาคารจริงรายหลังจาก OpenStreetMap (โผล่เมื่อซูมระดับถนน)"><svg class="mdico"><use href="#i-building-2"></use></svg><span class="lb"> อาคาร</span></button>
+    <button type="button" class="tbtn on" id="btnRail" title="แนวรถไฟฟ้าและทางรถไฟ"><svg class="mdico"><use href="#i-train-front-tunnel"></use></svg><span class="lb"> รถไฟฟ้า</span></button>
+    <span class="tzoom" id="tzoom"></span>
+  </div>
+  <div class="float legend" id="legend"></div>
+  <div class="loading" id="loading"><span class="sp"></span>กำลังโหลดแผนที่เมืองจาก OpenFreeMap…<br><small>ครั้งแรกอาจใช้เวลาสักครู่</small></div>
+</div>
+
+<div class="note" id="note"></div>
+
+<script src="explore-data.js"></script>
+<script src="bkk-districts-geo.js"></script>
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+
+  /* ตัวชี้วัดใช้ชุดเดียวกับ explore.html (BKK_METRIC_CFG ใน explore-data.js) */
+  var CFG = window.BKK_METRIC_CFG || [];
+  /* ไล่สี 5 ขั้น — คงตระกูลสีเดิม แต่กลับทิศเป็น "มืด→สว่าง" ให้อ่านออกบนฐานแผนที่ดาร์ก */
+  var RAMP = {
+    interpolatePuRd:  ["#2b1033","#5e1f5c","#99277f","#d43f8d","#ff8ac0"],
+    interpolateBlues: ["#0b1e3d","#14427a","#1f6fb5","#3fa0e0","#8fd3ff"],
+    interpolateYlOrBr:["#2e1c05","#6b3d07","#a8690c","#dc9a1a","#ffd24a"],
+    interpolateGnBu:  ["#04202b","#0a4257","#0f6e85","#21a0aa","#62dcd0"],
+    interpolateOrRd:  ["#33110a","#6e2210","#a83a17","#dc5f24","#ff9a4a"],
+    interpolateGreens:["#0b2413","#144a24","#1f7a37","#33ad4e","#6fe37f"]
+  };
+  var STYLES = ["https://tiles.openfreemap.org/styles/dark",
+                "https://tiles.openfreemap.org/styles/positron"];
+  var FILL_OP = 0.20;                    // จางไว้ ให้ถนนและป้ายชื่อเมืองเป็นพระเอก — ข้อมูลอยู่ที่หมุด
+
+  var S = { metric:"dens", map:null, fc:null, ext:{}, rank:{}, pin:null, ready:false,
+            tilt:true, bldg:true, rail:true, pitching:false, moved:false, vsrc:null };
+  window.BKKCITY = S;                    // เปิดไว้ debug จาก console (S.map คือตัวแผนที่)
+
+  function comma(v){ return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+  function cfg(k){ for(var i=0;i<CFG.length;i++) if(CFG[i].k===k) return CFG[i]; return CFG[0]; }
+  function fmt(c,v){ return (c.k==="dens"||c.k==="pop") ? comma(v) : String(v); }
+  function ramp(c){ return RAMP[c.ramp] || RAMP.interpolatePuRd; }
+  function props(){ return S.fc.features.map(function(f){ return f.properties; }); }
+  /* ตัวเลขบนหมุดต้องสั้น ไม่งั้นบังแผนที่ */
+  function short(c,v){
+    if(c.k==="pop")  return (v/1000).toFixed(0)+"k";
+    if(c.k==="dens") return (v/1000).toFixed(1)+"k";
+    return String(v);
+  }
+
+  /* กรอบของแต่ละเขต — ใช้ตอน "คลิกแล้วบินเข้าไป" */
+  function prepBounds(){
+    S.bbox = {};
+    S.fc.features.forEach(function(f){
+      var w=180,s=90,e=-180,n=-90;
+      f.geometry.coordinates.forEach(function(poly){
+        poly[0].forEach(function(pt){
+          if(pt[0]<w)w=pt[0]; if(pt[0]>e)e=pt[0];
+          if(pt[1]<s)s=pt[1]; if(pt[1]>n)n=pt[1];
+        });
+      });
+      S.bbox[f.properties.name] = [[w,s],[e,n]];
+    });
+  }
+  function flyToDistrict(name){
+    var b = S.bbox && S.bbox[name]; if(!b) return;
+    S.moved = true;                                  // ตั้งใจไปเอง อย่าให้ตัวจัดกรอบดึงกลับ
+    var el = S.map.getContainer();
+    var pad = Math.max(10, Math.min(50, Math.round(Math.min(el.clientWidth, el.clientHeight) * 0.10)));
+    var cam = S.map.cameraForBounds(b, { padding:pad });
+    if(!cam) return;
+    var z = Math.min(cam.zoom, 14.4);                // อย่าให้เขตเล็ก ๆ พุ่งเข้าไปใกล้เกิน
+    S.map.flyTo({ center:cam.center, zoom:z, pitch:S.tilt?pitchFor(z):S.map.getPitch(),
+                  duration:1400, curve:1.4 });
+  }
+
+  function prep(){
+    var ps = props();
+    prepBounds();
+    CFG.forEach(function(c){
+      var vals = ps.map(function(p){ return p[c.k]; });
+      S.ext[c.k] = [Math.min.apply(null,vals), Math.max.apply(null,vals)];
+      var sorted = ps.slice().sort(function(a,b){ return b[c.k]-a[c.k]; });
+      var r = {}; sorted.forEach(function(p,i){ r[p.name] = i+1; });
+      S.rank[c.k] = r;
+    });
+  }
+  function stats(k){
+    var vals = props().map(function(p){ return p[k]; });
+    var srt = vals.slice().sort(function(a,b){ return a-b; });
+    var sum = vals.reduce(function(a,b){ return a+b; },0);
+    var ord = props().slice().sort(function(a,b){ return b[k]-a[k]; });
+    var mx = srt[srt.length-1], mn = srt[0];
+    return { sum:sum, mean:sum/vals.length, med:srt[Math.floor(srt.length/2)],
+             min:mn, max:mx, ratio: mn ? mx/mn : 0,
+             top:ord[0].name, low:ord[ord.length-1].name,
+             over:function(t){ return vals.filter(function(v){ return v>=t; }).length; },
+             under:function(t){ return vals.filter(function(v){ return v<=t; }).length; } };
+  }
+
+  var KPI = {
+    dens:function(s){ return [
+      ["<svg class='mdico'><use href='#i-users'></use></svg> เขตแน่นที่สุด", comma(s.max), "คน/ตร.กม.", "เขต"+s.top+" — แน่นกว่าเขตโล่งสุด "+Math.round(s.ratio)+" เท่า", 1],
+      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่ากลาง 50 เขต", comma(s.med), "คน/ตร.กม.", "ครึ่งหนึ่งของเขตแน่นกว่านี้", 0],
+      ["<svg class='mdico'><use href='#i-leaf'></use></svg> เขตโล่งที่สุด", comma(s.min), "คน/ตร.กม.", "เขต"+s.low, 0],
+      ["<svg class='mdico'><use href='#i-building-2'></use></svg> แน่นเกิน 10,000", s.over(10000), "เขต", "กระจุกในเขตชั้นใน", 0]
+    ]; },
+    pop:function(s){ return [
+      ["<svg class='mdico'><use href='#i-user'></use></svg> ประชากรรวม กทม.", (s.sum/1e6).toFixed(2), "ล้านคน", "ทะเบียนราษฎร รวม 50 เขต", 1],
+      ["<svg class='mdico'><use href='#i-medal'></use></svg> เขตคนมากที่สุด", comma(s.max), "คน", "เขต"+s.top, 0],
+      ["<svg class='mdico'><use href='#i-medal'></use></svg> เขตคนน้อยที่สุด", comma(s.min), "คน", "เขต"+s.low, 0],
+      ["<svg class='mdico'><use href='#i-trending-up'></use></svg> มีคนเกินแสน", s.over(100000), "เขต", "จากทั้งหมด 50 เขต", 0]
+    ]; },
+    pm:function(s){ return [
+      ["<svg class='mdico'><use href='#i-cloud-fog'></use></svg> เฉลี่ยทั้งเมือง", s.mean.toFixed(1), "µg/m³", "มาตรฐาน WHO ปี 2564 = 5 µg/m³", 1],
+      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตฝุ่นหนาที่สุด", s.max, "µg/m³", "เขต"+s.top, 0],
+      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตฝุ่นบางที่สุด", s.min, "µg/m³", "เขต"+s.low, 0],
+      ["<svg class='mdico'><use href='#i-triangle-alert'></use></svg> เกินมาตรฐาน WHO", s.over(5), "เขต", "ทุกเขตเกินเกณฑ์", 0]
+    ]; },
+    flood:function(s){ return [
+      ["<svg class='mdico'><use href='#i-waves'></use></svg> จุดเฝ้าระวังรวม", s.sum, "จุด", "บัญชีสำนักการระบายน้ำ กทม.", 1],
+      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตมีจุดมากที่สุด", s.max, "จุด", "เขต"+s.top, 0],
+      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> เฉลี่ยต่อเขต", s.mean.toFixed(1), "จุด", "ทุกเขตมีอย่างน้อย 1 จุด", 0],
+      ["<svg class='mdico'><use href='#i-circle-check'></use></svg> มี 2 จุดหรือน้อยกว่า", s.under(2), "เขต", "กลุ่มเสี่ยงน้อยที่สุด", 0]
+    ]; },
+    traf:function(s){ return [
+      ["<svg class='mdico'><use href='#i-car'></use></svg> เขตติดหนักที่สุด", s.max, "/100", "เขต"+s.top, 1],
+      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่าเฉลี่ย 50 เขต", s.mean.toFixed(0), "/100", "ดัชนีประมาณการ", 0],
+      ["<svg class='mdico'><use href='#i-triangle'></use></svg> ดัชนีเกิน 80", s.over(80), "เขต", "เกือบทั้งหมดในวงแหวนชั้นใน", 0],
+      ["🟢 เขตโล่งที่สุด", s.min, "/100", "เขต"+s.low, 0]
+    ]; },
+    cost:function(s){ return [
+      ["<svg class='mdico'><use href='#i-hand-coins'></use></svg> เขตแพงที่สุด", s.max, "ดัชนี", "เขต"+s.top+" — ตั้งเป็นฐาน 100", 1],
+      ["<svg class='mdico'><use href='#i-coins'></use></svg> เขตถูกที่สุด", s.min, "ดัชนี", "เขต"+s.low+" — ต่างกัน "+s.ratio.toFixed(1)+" เท่า", 0],
+      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่ากลาง 50 เขต", s.med, "ดัชนี", "ครึ่งหนึ่งของเขตแพงกว่านี้", 0],
+      ["<svg class='mdico'><use href='#i-triangle'></use></svg> ดัชนีเกิน 80", s.over(80), "เขต", "ใจกลางเมือง + แนวรถไฟฟ้า", 0]
+    ]; }
+  };
+  function drawKpis(){
+    var f = KPI[S.metric]; if(!f) return;
+    $("#kpis").innerHTML = f(stats(S.metric)).map(function(c){
+      return '<div class="kpi'+(c[4]?' hi':'')+'">'+
+             '<span class="n">'+c[1]+'<span class="u">'+c[2]+'</span></span>'+
+             '<span class="t">'+c[0]+'</span>'+
+             '<span class="s">'+c[3]+'</span></div>';
+    }).join("");
+  }
+  function drawPills(){
+    $("#pills").innerHTML = CFG.map(function(c){
+      return '<button type="button" class="pill'+(c.k===S.metric?' on':'')+'" data-k="'+c.k+'">'+
+             '<span>'+c.ico+'</span><span>'+c.lab+'</span><span class="kd">'+c.kind+'</span></button>';
+    }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll("#pills .pill"), function(b){
+      b.addEventListener("click", function(){ S.metric = b.getAttribute("data-k"); apply(); });
+    });
+  }
+
+  /* สี = ไล่ตามควอนไทล์ เพราะข้อมูลรายเขตเบ้แรง (ความหนาแน่น 671 → 20,402 แต่ค่ากลางแค่ 6,156)
+     ถ้าไล่เชิงเส้น 45 เขตจะจมอยู่โทนเดียวกันหมด */
+  function quantiles(k, n){
+    var vals = props().map(function(p){ return p[k]; }).sort(function(a,b){ return a-b; });
+    var out = [];
+    for(var i=0;i<n;i++){
+      var pos = (i/(n-1)) * (vals.length-1), lo = Math.floor(pos), hi = Math.ceil(pos);
+      out.push(vals[lo] + (vals[hi]-vals[lo]) * (pos-lo));
+    }
+    return out;
+  }
+  function colorExpr(c, field){
+    var cols = ramp(c), qs = quantiles(c.k, cols.length);
+    var out = ["interpolate", ["linear"], ["get", field || c.k]], prev = -Infinity;
+    for(var i=0;i<cols.length;i++){
+      var v = qs[i];
+      if(v <= prev) v = prev + 1e-6;      // MapLibre บังคับว่า stop ต้องเรียงจากน้อยไปมาก
+      out.push(v, cols[i]); prev = v;
+    }
+    return out;
+  }
+
+  function drawLegend(){
+    var c = cfg(S.metric), cols = ramp(c), qs = quantiles(c.k, cols.length);
+    var sw = cols.map(function(col,i){
+      return '<div class="sw"><i style="background:'+col+'"></i><span>'+fmt(c, Math.round(qs[i]))+'</span></div>';
+    }).join("");
+    $("#legend").innerHTML = '<div class="lh">'+c.ico+' '+c.lab+' <span style="opacity:.7">('+c.u+')</span></div>'+
+      '<div class="sws">'+sw+'</div>'+
+      '<div class="sc">สีและขนาดหมุด = ลำดับของเขต (ควอนไทล์) · ตัวเลขบนหมุด = ค่าจริง</div>';
+  }
+  function drawNote(){
+    var c = cfg(S.metric);
+    var link = c.url ? '<a href="'+c.url+'" target="_blank" rel="noopener">'+c.src+' ↗</a>' : c.src;
+    $("#note").innerHTML = '<b>'+c.ico+' '+c.lab+'</b> · '+c.kind+' — '+link+' · ปีข้อมูล '+c.year+' · '+c.how+
+      ' <span style="opacity:.75">| ขอบเขตเขตจาก ADM3 OpenGISData Thailand · ฐานแผนที่ OpenFreeMap (OpenMapTiles / OpenStreetMap) — ฟรี ไม่ต้องใช้คีย์</span>';
+  }
+
+  /* หมุดค่าประจำเขต — สร้างใหม่ทุกครั้งที่เปลี่ยนตัวชี้วัด (มีแค่ 50 จุด) */
+  function dotData(){
+    var c = cfg(S.metric), n = S.fc.features.length;
+    return { type:"FeatureCollection", features: S.fc.features.map(function(f){
+      var p = f.properties, rk = S.rank[c.k][p.name];
+      return { type:"Feature",
+        properties:{ name:p.name, v:p[c.k], txt:short(c, p[c.k]), r:(n-rk)/(n-1) },
+        geometry:{ type:"Point", coordinates:[p.lon, p.lat] } };
+    })};
+  }
+
+  function showPanel(name){
+    var old = $("#panel"); if(old) old.remove();
+    if(!name) return;
+    var p = null, ps = props();
+    for(var i=0;i<ps.length;i++) if(ps[i].name === name) p = ps[i];
+    if(!p) return;
+    var rows = CFG.map(function(c){
+      var e = S.ext[c.k], t = (p[c.k]-e[0])/((e[1]-e[0])||1), cols = ramp(c);
+      var col = cols[Math.min(cols.length-1, Math.round(t*(cols.length-1)))];
+      return '<div class="prow'+(c.k===S.metric?' act':'')+'">'+
+        '<span class="l">'+c.ico+' '+c.short+'</span>'+
+        '<span class="b"><i style="width:'+Math.round(6+t*94)+'%;background:'+col+'"></i></span>'+
+        '<span class="v">'+fmt(c,p[c.k])+'<span class="rk">#'+S.rank[c.k][name]+'</span></span></div>';
+    }).join("");
+    var ac = cfg(S.metric);
+    var el = document.createElement("div");
+    el.className = "float panel"; el.id = "panel";
+    el.innerHTML = '<button type="button" class="px" aria-label="ปิด">×</button>'+
+      '<div class="ph"><span class="pn">เขต'+name+'</span>'+
+      '<span class="pm">'+p.area.toFixed(1)+' ตร.กม.</span></div>'+
+      '<div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:4px">อันดับจาก 50 เขต · #1 = สูงสุด</div>'+
+      rows +
+      '<button type="button" class="pgo"><svg class="mdico"><use href="#i-building-2"></use></svg> บินลงไปดูตึกในเขตนี้</button>'+
+      '<div class="psrc"><b>'+ac.ico+' '+ac.short+'</b> — '+ac.src+' · ปีข้อมูล '+ac.year+'</div>';
+    el.querySelector(".px").addEventListener("click", function(){ S.pin = null; showPanel(null); });
+    el.querySelector(".pgo").addEventListener("click", function(){
+      S.moved = true;                       // ตั้งใจไปเอง อย่าให้ตัวจัดกรอบดึงกลับ
+      if(!S.tilt) setTilt(true);
+      S.map.flyTo({ center:[p.lon, p.lat], zoom:15.6, pitch:pitchFor(15.6), duration:2200, curve:1.5 });
+    });
+    document.querySelector(".stage").appendChild(el);
+  }
+
+  function apply(){
+    var c = cfg(S.metric);
+    Array.prototype.forEach.call(document.querySelectorAll("#pills .pill"), function(b){
+      b.classList.toggle("on", b.getAttribute("data-k") === S.metric);
+    });
+    drawKpis(); drawLegend(); drawNote();
+    if(S.ready){
+      S.map.setPaintProperty("dist-fill", "fill-color", colorExpr(c));
+      S.map.getSource("bkk-dot").setData(dotData());
+      S.map.setPaintProperty("dist-dot", "circle-color", colorExpr(c, "v"));
+    }
+    showPanel(S.pin);
+  }
+
+  /* ---------- ระบบการเอียง ----------
+     ซูมออก = มองจากบน อ่านข้อมูลรายเขตได้ทั้งเมือง · ซูมเข้า = กล้างเอียงลงเองจนเห็นอาคารเป็นทรง
+     เอียงตามซูมแบบต่อเนื่อง ไม่ใช่ปุ่มสลับ 2D/3D — และหยุดคุมทันทีที่ผู้ใช้เอียงเอง */
+  var TILT = [[12.6, 0], [14.2, 30], [15.6, 55], [17, 62]];
+  function pitchFor(z){
+    if(z <= TILT[0][0]) return TILT[0][1];
+    for(var i=1;i<TILT.length;i++){
+      if(z <= TILT[i][0]){
+        var a=TILT[i-1], b=TILT[i], t=(z-a[0])/(b[0]-a[0]);
+        return a[1] + (b[1]-a[1])*t;
+      }
+    }
+    return TILT[TILT.length-1][1];
+  }
+  function autoTilt(){
+    if(!S.tilt || !S.ready || S.pitching) return;
+    var want = pitchFor(S.map.getZoom());
+    if(Math.abs(S.map.getPitch() - want) > 0.6) S.map.setPitch(want);
+  }
+  function setTilt(on){
+    S.tilt = on;
+    $("#btnTilt").classList.toggle("on", on);
+    if(!S.ready) return;
+    // ปิดแล้วแบนทันที ไม่ใช้ easeTo เพราะถ้าผู้ใช้ซูมต่อทันทีอนิเมชันจะถูกตัดกลางคัน แล้วค้างเอียงอยู่
+    if(on) autoTilt(); else S.map.setPitch(0);
+  }
+  function setBldg(on){
+    S.bldg = on;
+    $("#btnBldg").classList.toggle("on", on);
+    if(S.ready && S.map.getLayer("bldg-3d"))
+      S.map.setLayoutProperty("bldg-3d", "visibility", on ? "visible" : "none");
+  }
+  function setRail(on){
+    S.rail = on;
+    $("#btnRail").classList.toggle("on", on);
+    if(!S.ready) return;
+    ["rail-hi","transit-hi"].forEach(function(id){
+      if(S.map.getLayer(id)) S.map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+    });
+  }
+  function drawZoomTag(){
+    var el = $("#tzoom"); if(!el || !S.ready) return;
+    var z = S.map.getZoom();
+    var what = z < 12.6 ? "ทั้งเมือง · ข้อมูลรายเขต"
+             : z < 14.2 ? "ระดับย่าน"
+             : z < 15.6 ? "ระดับถนน · อาคารเริ่มขึ้นทรง"
+             : "ระดับอาคาร · แตะตึกดูข้อมูล";
+    el.textContent = "z" + z.toFixed(1) + " · " + Math.round(S.map.getPitch()) + "° — " + what;
+  }
+
+  /* ---------- ข้อมูลรายอาคาร ----------
+     ไทล์อาคารของ OpenMapTiles ส่งมาแค่ความสูง (render_height / render_min_height)
+     ที่เหลือคำนวณเองจากรูปอาคารจริง + จุด poi ในไทล์ที่โหลดอยู่ (ชื่ออาคารอยู่คนละชั้นกับรูปอาคาร) */
+  var M_LAT = 110574;                                   // เมตรต่อองศาละติจูด
+  function mLon(lat){ return 111320 * Math.cos(lat*Math.PI/180); }
+
+  function ringsOf(g){                                  // Polygon/MultiPolygon → เฉพาะวงนอก
+    if(!g) return [];
+    if(g.type === "MultiPolygon") return g.coordinates.map(function(p){ return p[0]; });
+    if(g.type === "Polygon") return [g.coordinates[0]];
+    return [];
+  }
+  function ringArea(ring, lat){                         // ตร.ม. — แปลงองศาเป็นเมตรก่อนใช้สูตรรองเท้า
+    var kx = mLon(lat), s = 0;
+    for(var i=0,n=ring.length;i<n;i++){
+      var a = ring[i], b = ring[(i+1)%n];
+      s += (a[0]*kx)*(b[1]*M_LAT) - (b[0]*kx)*(a[1]*M_LAT);
+    }
+    return Math.abs(s)/2;
+  }
+  function centroidOf(rings){
+    var sx=0, sy=0, n=0;
+    rings.forEach(function(r){ r.forEach(function(p){ sx+=p[0]; sy+=p[1]; n++; }); });
+    return n ? [sx/n, sy/n] : null;
+  }
+  function inRing(pt, ring){                            // ray casting
+    var x=pt[0], y=pt[1], hit=false;
+    for(var i=0,j=ring.length-1;i<ring.length;j=i++){
+      var xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+      if(((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/((yj-yi)||1e-12) + xi)) hit = !hit;
+    }
+    return hit;
+  }
+  function inRings(pt, rings){
+    for(var i=0;i<rings.length;i++) if(inRing(pt, rings[i])) return true;
+    return false;
+  }
+  function distM(a, b){
+    var dx = (a[0]-b[0]) * mLon(b[1]), dy = (a[1]-b[1]) * M_LAT;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  function districtAt(pt){
+    if(!S.fc) return null;
+    for(var i=0;i<S.fc.features.length;i++){
+      var f = S.fc.features[i];
+      if(inRings(pt, ringsOf(f.geometry))) return f.properties;
+    }
+    return null;
+  }
+  function poiName(p){ return p.name || p["name:th"] || p.name_en || p["name:latin"] || ""; }
+  function pois(){
+    if(!S.vsrc) return [];
+    try{ return S.map.querySourceFeatures(S.vsrc, { sourceLayer:"poi" }); }
+    catch(e){ return []; }
+  }
+  function metres(m){ return m < 1000 ? Math.round(m/10)*10 + " ม." : (m/1000).toFixed(1) + " กม."; }
+
+  function closeBldg(){
+    var el = $("#bpanel"); if(el) el.remove();
+    if(S.ready && S.map.getSource("bldg-sel"))
+      S.map.getSource("bldg-sel").setData({ type:"FeatureCollection", features:[] });
+  }
+  function bldgAt(pt){                                  // มีตึกอยู่ใต้จุดที่คลิกไหม (ใช้กันไม่ให้แผงเขตแย่งคลิก)
+    if(!S.ready || !S.bldg || !S.map.getLayer("bldg-3d")) return null;
+    try{
+      var fs = S.map.queryRenderedFeatures(pt, { layers:["bldg-3d"] });
+      return fs && fs.length ? fs[0] : null;
+    }catch(e){ return null; }
+  }
+
+  function showBldg(f){
+    var p = f.properties || {};
+    var rings = ringsOf(f.geometry); if(!rings.length) return;
+    var c = centroidOf(rings); if(!c) return;
+
+    var area  = rings.reduce(function(s,r){ return s + ringArea(r, c[1]); }, 0);
+    var h     = +(p.render_height || 0) || 0;
+    var base  = +(p.render_min_height || 0) || 0;
+    var body  = Math.max(0, h - base);
+    var floors= body > 0 ? Math.max(1, Math.round(body/3.2)) : 0;   // ชั้นละ ~3.2 ม. เป็นค่ากลางของอาคารในเมือง
+
+    /* ชื่ออาคาร = จุด poi ที่ตกอยู่ในรูปตึกหลังนี้ · สถานีใกล้สุด = poi ชั้นราง/สถานีที่ใกล้จุดกึ่งกลางที่สุด */
+    var name = "", st = null, stD = Infinity, near = null, nearD = Infinity;
+    pois().forEach(function(q){
+      var g = q.geometry, pr = q.properties || {};
+      if(!g || g.type !== "Point") return;
+      var nm = poiName(pr); if(!nm) return;
+      var d = distM(g.coordinates, c);
+      if(!name && inRings(g.coordinates, rings)) name = nm;
+      if(d < nearD){ nearD = d; near = nm; }
+      var cl = pr["class"], sc = pr.subclass;
+      if((cl === "railway" || sc === "station" || sc === "subway" || sc === "halt" || sc === "tram_stop")
+         && d < stD){ stD = d; st = nm; }
+    });
+
+    /* สูงเป็นอันดับที่เท่าไหร่ในบรรดาตึกที่มองเห็นอยู่ตอนนี้ */
+    var taller = 0, counted = 0;
+    if(h > 0){
+      try{
+        S.map.queryRenderedFeatures({ layers:["bldg-3d"] }).forEach(function(q){
+          var v = +(q.properties.render_height || 0);
+          if(v > 0){ counted++; if(v > h) taller++; }
+        });
+      }catch(e){ counted = 0; }
+    }
+
+    var dis = districtAt(c);
+    var rows = [];
+    rows.push(["<svg class='mdico'><use href='#i-ruler'></use></svg> พื้นที่ฐานอาคาร", comma(area) + ' <small>ตร.ม.</small>' +
+               (area >= 1600 ? ' <small>(' + (area/1600).toFixed(2) + ' ไร่)</small>' : "")]);
+    if(floors > 0)
+      rows.push(["<svg class='mdico'><use href='#i-hard-hat'></use></svg> พื้นที่ใช้สอย <small>โดยประมาณ</small>", comma(area*floors) + ' <small>ตร.ม.</small>']);
+    if(base > 0)
+      rows.push(["<svg class='mdico'><use href='#i-ruler'></use></svg> ฐานอาคารเริ่มที่", base.toFixed(0) + ' <small>ม. (ส่วนต่อจากตัวล่าง)</small>']);
+    if(counted > 1 && h > 0)
+      rows.push(["<svg class='mdico'><use href='#i-medal'></use></svg> อันดับความสูง", "#" + (taller+1) + ' <small>จาก ~' + comma(counted) + ' หลังในจอนี้</small>']);
+    if(st)
+      rows.push(["<svg class='mdico'><use href='#i-train-front'></use></svg> สถานีใกล้สุด", st + ' <small>' + metres(stD) + '</small>']);
+    if(near && near !== name && nearD < 220)
+      rows.push(["<svg class='mdico'><use href='#i-map-pin'></use></svg> สถานที่ใกล้เคียง", near + ' <small>' + metres(nearD) + '</small>']);
+    if(dis){
+      var dc = cfg("dens");
+      rows.push(["<svg class='mdico'><use href='#i-users'></use></svg> ความหนาแน่นของเขต", comma(dis.dens) + ' <small>คน/ตร.กม. · #' + S.rank[dc.k][dis.name] + '</small>']);
+    }
+
+    closeBldg();
+    S.pin = null; showPanel(null);                       // การ์ดตึกกับแผงเขตอยู่ตำแหน่งเดียวกัน — เปิดทีละอัน
+    if(S.map.getSource("bldg-sel"))
+      S.map.getSource("bldg-sel").setData({ type:"FeatureCollection", features:[
+        { type:"Feature", properties:{ h: h > 0 ? h + 0.4 : 4, b: base }, geometry:f.geometry } ] });
+
+    var el = document.createElement("div");
+    el.className = "float bpanel"; el.id = "bpanel";
+    el.innerHTML = '<button type="button" class="px" aria-label="ปิด">×</button>' +
+      '<span class="bn' + (name ? '' : ' un') + '"><svg class="mdico"><use href="#i-building-2"></use></svg> ' + (name || "อาคารไม่ระบุชื่อ") + '</span>' +
+      '<div class="bsub">' + (dis ? "เขต" + dis.name + " · " : "") +
+        c[1].toFixed(5) + ", " + c[0].toFixed(5) + '</div>' +
+      '<div class="bhero">' +
+        (h > 0 ? '<span class="bnum">' + (h % 1 ? h.toFixed(1) : h.toFixed(0)) + '<span class="u">ม.</span></span>' +
+                 '<span class="bfl" title="ประมาณจากความสูง ÷ 3.2 ม. ต่อชั้น — ตึกที่มียอดแหลมหรือหลังคาสูงจะได้ตัวเลขเกินจริง">≈ ' + floors + ' ชั้น</span>'
+               : '<span class="bnum na">ไม่ระบุความสูง</span>' +
+                 '<span class="bfl">OSM ยังไม่มีแท็ก height</span>') +
+      '</div>' +
+      rows.map(function(r){
+        return '<div class="brow"><span class="l">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
+      }).join("") +
+      '<a class="bgo" href="https://www.openstreetmap.org/#map=19/' + c[1].toFixed(5) + '/' + c[0].toFixed(5) +
+        '" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-map"></use></svg> เปิดจุดนี้ใน OpenStreetMap ↗</a>' +
+      '<div class="bsrc">ความสูงและรูปอาคารจาก <b>OpenStreetMap</b> (แท็ก height / building:levels) ผ่านไทล์ OpenFreeMap · ' +
+        'จำนวนชั้น พื้นที่ฐาน และพื้นที่ใช้สอย <b>คำนวณจากรูปอาคาร</b> จึงเป็นค่าประมาณ · ' +
+        'ชื่ออาคารมีเฉพาะหลังที่อาสาสมัครใส่ไว้</div>';
+    el.querySelector(".px").addEventListener("click", closeBldg);
+    document.querySelector(".stage").appendChild(el);
+  }
+
+  function addLayers(){
+    var c = cfg(S.metric);
+    S.map.addSource("bkk", { type:"geojson", data:S.fc });
+
+    // 1) ระบายสีรายเขต — เข้มตอนดูทั้งเมือง แล้วจางหายตอนซูมลงระดับถนน
+    //    เพราะพอเห็นตึกจริงแล้ว แผ่นสีทับเมืองจะกลายเป็นตัวกวน
+    S.map.addLayer({ id:"dist-fill", type:"fill", source:"bkk",
+      paint:{ "fill-color":colorExpr(c),
+        "fill-opacity":["interpolate",["linear"],["zoom"], 11,FILL_OP, 13.5,FILL_OP, 15.2,0.05] } });
+    // 2) เส้นขอบเขต
+    S.map.addLayer({ id:"dist-line", type:"line", source:"bkk",
+      paint:{ "line-color":"#00E5FF", "line-width":0.9,
+        "line-opacity":["interpolate",["linear"],["zoom"], 11,0.38, 15,0.5, 17,0.22] } });
+
+    // 3) แนวราง — แยกสีรถไฟฟ้าในเมือง (BTS/MRT) ออกจากรถไฟทางไกล
+    if(S.vsrc){
+      try{
+        S.map.addLayer({ id:"rail-hi", type:"line", source:S.vsrc, "source-layer":"transportation",
+          filter:["==",["get","class"],"rail"],
+          paint:{ "line-color":"#FFB454", "line-width":["interpolate",["linear"],["zoom"],9,0.8,14,2.6],
+                  "line-opacity":0.7 } });
+        S.map.addLayer({ id:"transit-hi", type:"line", source:S.vsrc, "source-layer":"transportation",
+          filter:["==",["get","class"],"transit"],
+          paint:{ "line-color":"#3DDC84", "line-width":["interpolate",["linear"],["zoom"],9,1,14,3.4],
+                  "line-opacity":0.85 } });
+      }catch(e){ console.warn("ไม่มีชั้น transportation ในสไตล์นี้:", e.message); }
+    }
+
+    // 4) อาคารจริงรายหลังจาก OpenStreetMap — ไทล์ของ OpenFreeMap แนบ render_height มาให้
+    //    ค่อย ๆ โผล่ตั้งแต่ z14 แล้วชัดเต็มที่ z15.4 · ตึกยิ่งสูงยิ่งสว่าง จะได้อ่านเส้นขอบฟ้าออก
+    if(S.vsrc){
+      try{
+        S.map.addLayer({ id:"bldg-3d", type:"fill-extrusion", source:S.vsrc, "source-layer":"building",
+          minzoom:13.6,
+          paint:{
+            "fill-extrusion-color":["interpolate",["linear"],["get","render_height"],
+              0,"#0e151d", 15,"#141d27", 45,"#1c2836", 100,"#26364a", 200,"#33475f"],
+            "fill-extrusion-height":["interpolate",["linear"],["zoom"],
+              13.6,0, 14.6,["coalesce",["get","render_height"],5]],
+            "fill-extrusion-base":["coalesce",["get","render_min_height"],0],
+            "fill-extrusion-opacity":["interpolate",["linear"],["zoom"], 13.6,0, 15.4,0.92],
+            "fill-extrusion-vertical-gradient":true
+          } });
+      }catch(e){ console.warn("ไม่มีชั้น building ในสไตล์นี้:", e.message); }
+    }
+
+    // 4.5) ตึกที่ถูกเลือก — วาดทับหลังเดิมด้วยสีเน้น (สูงกว่าเดิม 0.4 ม. กันภาพซ้อนกะพริบ)
+    S.map.addSource("bldg-sel", { type:"geojson", data:{ type:"FeatureCollection", features:[] } });
+    S.map.addLayer({ id:"bldg-sel", type:"fill-extrusion", source:"bldg-sel",
+      paint:{ "fill-extrusion-color":"#00E5FF",
+              "fill-extrusion-height":["get","h"], "fill-extrusion-base":["get","b"],
+              "fill-extrusion-opacity":0.62, "fill-extrusion-vertical-gradient":true } });
+
+    // 5) หมุดค่าประจำเขต + ตัวเลข + ชื่อเขต
+    S.map.addSource("bkk-dot", { type:"geojson", data:dotData() });
+    // หมุดเล็กลงตอนซูมออก ไม่งั้น 50 หมุดทับกันจนอ่านไม่ออก
+    S.map.addLayer({ id:"dist-dot", type:"circle", source:"bkk-dot", maxzoom:15.4,
+      paint:{
+        "circle-radius":["interpolate",["linear"],["zoom"],
+          9.5, ["interpolate",["linear"],["get","r"], 0,3.5, 1,8],
+          12.5,["interpolate",["linear"],["get","r"], 0,11,  1,22]],
+        "circle-color":colorExpr(c, "v"),
+        "circle-stroke-color":"#DCE8F0", "circle-stroke-width":1.1, "circle-opacity":0.93
+      } });
+    // ตัวเลขโผล่เมื่อซูมพอให้หมุดใหญ่พอใส่ตัวเลข · หมุดค่าสูงได้สิทธิ์แสดงก่อนเมื่อชนกัน
+    S.map.addLayer({ id:"dist-val", type:"symbol", source:"bkk-dot", minzoom:9.3, maxzoom:15.4,
+      layout:{ "text-field":["get","txt"], "text-size":11.5, "text-font":["Noto Sans Bold"],
+               "text-allow-overlap":false, "text-padding":1, "symbol-sort-key":["-",1,["get","r"]] },
+      paint:{ "text-color":"#FFFFFF", "text-halo-color":"#020508", "text-halo-width":1.1 } });
+    S.map.addLayer({ id:"dist-lbl", type:"symbol", source:"bkk-dot", minzoom:11.2, maxzoom:15.4,
+      layout:{ "text-field":["get","name"], "text-size":11, "text-font":["Noto Sans Regular"],
+               "text-offset":[0,1.9], "text-anchor":"top", "symbol-sort-key":["-",1,["get","r"]] },
+      paint:{ "text-color":"#DCE8F0", "text-halo-color":"#020508", "text-halo-width":1.4 } });
+
+    // คลิกที่เขต = เปิดแผงข้อมูล + บินเข้ากรอบเขตนั้นให้เลย (คลิกซ้ำที่เขตเดิม = ปิดแผง ไม่บิน)
+    function pick(e){
+      // ซูมถึงระดับอาคารแล้วและคลิกโดนตึก = ยกให้การ์ดตึก ไม่ต้องเปิดแผงเขตซ้อน
+      if(S.map.getZoom() >= 15 && bldgAt(e.point)) return;
+      var n = e.features[0].properties.name;
+      if(S.pin === n){ S.pin = null; showPanel(null); return; }
+      closeBldg();
+      S.pin = n; showPanel(n); flyToDistrict(n);
+    }
+    ["dist-dot","dist-fill"].forEach(function(id){
+      S.map.on("click", id, pick);
+      S.map.on("mouseenter", id, function(){ S.map.getCanvas().style.cursor = "pointer"; });
+      S.map.on("mouseleave", id, function(){ S.map.getCanvas().style.cursor = ""; });
+    });
+
+    // คลิกตึก = การ์ดข้อมูลรายอาคาร (เฉพาะตอนซูมถึงระดับอาคาร ตอนที่ตึกทึบพอให้เล็งถูกหลัง)
+    if(S.map.getLayer("bldg-3d")){
+      S.map.on("click", "bldg-3d", function(e){
+        if(S.map.getZoom() < 15 || !e.features || !e.features.length) return;
+        showBldg(e.features[0]);
+      });
+      S.map.on("mouseenter", "bldg-3d", function(){
+        if(S.map.getZoom() >= 15) S.map.getCanvas().style.cursor = "pointer";
+      });
+      S.map.on("mouseleave", "bldg-3d", function(){ S.map.getCanvas().style.cursor = ""; });
+    }
+    // คลิกที่ว่าง = ปิดการ์ดตึก
+    S.map.on("click", function(e){ if(!bldgAt(e.point)) closeBldg(); });
+
+    // แสงดีฟอลต์ของ MapLibre (intensity .5 สีขาว) ฟอกหน้าตึกจนเกือบขาว — หรี่ลงและเอนไปทางฟ้าอมเทา
+    try{ S.map.setLight({ anchor:"viewport", color:"#a8bed2", intensity:0.2, position:[1.5, 215, 40] }); }
+    catch(e){ /* ข้ามได้ถ้ารุ่นไม่รองรับ */ }
+
+    // พอเอียงกล้องลงมาก ๆ จะเห็นเส้นขอบฟ้า — ถ้าไม่ใส่ท้องฟ้าจะเป็นแถบว่างสีพื้น
+    try{ S.map.setSky({ "sky-color":"#050B14", "horizon-color":"#0D1822",
+                        "fog-color":"#070D14", "sky-horizon-blend":0.6, "horizon-fog-blend":0.7 }); }
+    catch(e){ /* MapLibre รุ่นเก่ายังไม่มี setSky — ข้ามได้ ไม่กระทบอย่างอื่น */ }
+
+    S.ready = true;
+  }
+
+  function fail(msg){ $("#map").innerHTML = '<div class="err">'+msg+'</div>'; }
+
+  /* กรอบครอบ "จุดศูนย์กลางของ 50 เขต" ไม่ใช่ขอบเขตดิบ —
+     เพราะบางขุนเทียนมีหางแคบ ๆ ยื่นลงอ่าวไทยไกลมาก ถ้าครอบทั้ง bbox จะซูมออกจนตัวเมืองเล็กจิ๋ว */
+  function bboxOf(fc){
+    var w=180, s=90, e=-180, n=-90;
+    fc.features.forEach(function(f){
+      var p = f.properties;
+      if(p.lon<w)w=p.lon; if(p.lon>e)e=p.lon;
+      if(p.lat<s)s=p.lat; if(p.lat>n)n=p.lat;
+    });
+    return [[w,s],[e,n]];
+  }
+  function fit(){
+    if(!S.map || !S.fc) return;
+    var el = S.map.getContainer();
+    // ขอบยืดตามขนาดกรอบ — จอเตี้ย ๆ ถ้าเว้นขอบตายตัวจะถูกบีบจนซูมออกไกลเกิน
+    var pv = Math.max(6, Math.min(40, Math.round(el.clientHeight * 0.06)));
+    var ph = Math.max(6, Math.min(40, Math.round(el.clientWidth  * 0.05)));
+    S.map.fitBounds(bboxOf(S.fc), { padding:{ top:pv, bottom:pv+16, left:ph, right:ph }, duration:0 });
+  }
+
+  function pickStyle(){
+    var i = 0;
+    function tryNext(resolve){
+      if(i >= STYLES.length) return resolve(null);
+      var url = STYLES[i++];
+      fetch(url).then(function(r){ r.ok ? resolve(url) : tryNext(resolve); })
+                .catch(function(){ tryNext(resolve); });
+    }
+    return new Promise(tryNext);
+  }
+
+  function boot(){
+    if(!CFG.length) return fail("โหลด explore-data.js ไม่สำเร็จ — ไม่มีรายการตัวชี้วัด");
+    if(!window.maplibregl) return fail("โหลด MapLibre GL JS จาก CDN ไม่สำเร็จ<br>หน้านี้ต้องต่ออินเทอร์เน็ต");
+
+    if(/[?&]embed=1/.test(location.search)) document.body.classList.add("embed");
+    drawPills();
+    $("#btnTilt").addEventListener("click", function(){ setTilt(!S.tilt); });
+    $("#btnBldg").addEventListener("click", function(){ setBldg(!S.bldg); });
+    $("#btnRail").addEventListener("click", function(){ setRail(!S.rail); });
+    $("#btnFit").addEventListener("click", function(){ S.moved=false; fit(); autoTilt(); });
+
+    if(!window.BKK_GEOJSON) return fail("โหลด bkk-districts-geo.js ไม่สำเร็จ — ไม่มีรูปร่าง 50 เขต");
+    Promise.all([ Promise.resolve(window.BKK_GEOJSON), pickStyle() ]).then(function(res){
+      S.fc = res[0];
+      var style = res[1];
+      if(!style) return fail("ต่อ OpenFreeMap ไม่ได้ — ลองใหม่อีกครั้ง");
+      prep(); apply();
+
+      S.map = new maplibregl.Map({
+        container:"map", style:style,
+        center:[100.532, 13.752], zoom:10.15, pitch:0, bearing:0,
+        maxPitch:70, attributionControl:{ compact:true }
+      });
+      S.map.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), "top-right");
+      // เลิกจัดกรอบอัตโนมัติทันทีที่ผู้ใช้ขยับแผนที่เอง
+      S.map.on("movestart", function(e){ if(e.originalEvent) S.moved = true; });
+      // ถ้าผู้ใช้เอียงกล้องเอง (ลากเข็มทิศ) ให้หยุดคุมมุมทันที — คนสั่งชนะเครื่องเสมอ
+      S.map.on("pitchstart", function(e){ if(e.originalEvent){ S.pitching = true; setTilt(false); } });
+      S.map.on("pitchend",   function(){ S.pitching = false; });
+      S.map.on("zoom", function(){ autoTilt(); drawZoomTag(); });
+      S.map.on("move", drawZoomTag);
+      // วาดชั้นข้อมูลทันทีที่ "สไตล์" พร้อม ไม่รอ event load ที่รอไทล์ครบทั้งจอ
+      // (ไทล์จาก OpenFreeMap ครั้งแรกช้าได้เป็นสิบวินาที ถ้ารอ load ผู้ใช้จะเห็นจอเปล่านาน)
+      // addLayers กัน S.ready ไว้แล้ว เรียกซ้ำไม่พัง
+      function initLayers(){
+        if(S.ready) return;
+        var srcs = S.map.getStyle().sources;
+        for(var id in srcs) if(srcs[id].type === "vector"){ S.vsrc = id; break; }
+        addLayers(); apply(); setRail(S.rail); setBldg(S.bldg);
+        fit(); autoTilt(); drawZoomTag();
+        var ld = $("#loading"); if(ld) ld.remove();
+        setTimeout(function(){ if(!S.moved){ fit(); autoTilt(); } }, 900);   // ฟอนต์โหลดเสร็จ ความสูงเปลี่ยน จัดกรอบซ้ำ
+      }
+      S.map.on("style.load", initLayers);
+      S.map.on("load", initLayers);
+      S.map.on("error", function(ev){
+        if(ev && ev.error) console.warn("maplibre:", ev.error.message);
+      });
+    }).catch(function(err){
+      fail("โหลดข้อมูลไม่สำเร็จ<br><span style='font-size:12px;opacity:.7'>"+err.message+"</span>");
+    });
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

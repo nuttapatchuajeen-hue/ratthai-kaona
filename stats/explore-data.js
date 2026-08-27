@@ -170,14 +170,14 @@ var MONEY_TIMELINE=[
     ];
 
 var MONEY_THINGS=[
-      { i:"🐚", n:"เบี้ยหอย", d:"จีน แอฟริกา เอเชีย" },
-      { i:"🧂", n:"เกลือ", d:"โรมจ่ายทหารเป็นเกลือ → คำว่า salary" },
-      { i:"🐄", n:"วัว/ปศุสัตว์", d:"หน่วยวัดความมั่งคั่งยุคโบราณ" },
-      { i:"🍫", n:"เมล็ดโกโก้", d:"อารยธรรมแอซเท็ก-มายา" },
-      { i:"🪨", n:"หินไร่ (Rai)", d:"เกาะแยป แผ่นหินยักษ์เป็นเงิน" },
-      { i:"🍵", n:"อิฐใบชา", d:"เอเชียกลาง-ทิเบต หลายร้อยปี" },
-      { i:"🌾", n:"ข้าวบาร์เลย์", d:"เมโสโปเตเมีย หน่วย “เชเขล”" },
-      { i:"🥇", n:"ทอง & เงิน", d:"โลหะมีค่ามาตรฐานสากล" }
+      { i:"<svg class='mdico'><use href='#i-shell'></use></svg>", n:"เบี้ยหอย", d:"จีน แอฟริกา เอเชีย" },
+      { i:"<svg class='mdico'><use href='#i-container'></use></svg>", n:"เกลือ", d:"โรมจ่ายทหารเป็นเกลือ → คำว่า salary" },
+      { i:"<svg class='mdico'><use href='#i-beef'></use></svg>", n:"วัว/ปศุสัตว์", d:"หน่วยวัดความมั่งคั่งยุคโบราณ" },
+      { i:"<svg class='mdico'><use href='#i-candy'></use></svg>", n:"เมล็ดโกโก้", d:"อารยธรรมแอซเท็ก-มายา" },
+      { i:"<svg class='mdico'><use href='#i-mountain'></use></svg>", n:"หินไร่ (Rai)", d:"เกาะแยป แผ่นหินยักษ์เป็นเงิน" },
+      { i:"<svg class='mdico'><use href='#i-coffee'></use></svg>", n:"อิฐใบชา", d:"เอเชียกลาง-ทิเบต หลายร้อยปี" },
+      { i:"<svg class='mdico'><use href='#i-wheat'></use></svg>", n:"ข้าวบาร์เลย์", d:"เมโสโปเตเมีย หน่วย “เชเขล”" },
+      { i:"<svg class='mdico'><use href='#i-medal'></use></svg>", n:"ทอง & เงิน", d:"โลหะมีค่ามาตรฐานสากล" }
     ];
 
 var MONEY_ERA_DUR=[
@@ -337,8 +337,8 @@ var RESCUR_SHARE=[
 /* ============ ประวัติศาสตร์เงินเฟ้อ · ยุคเริ่มต้น → ปัจจุบัน ============ */
 
 var INFL_ANCIENT=[ // ราคาพุ่งกี่เท่าในเหตุการณ์เงินเฟ้อยุคโบราณ-ก่อนสมัยใหม่ (เท่าตัว)
-      { k:"🏺 อียิปต์ทอเลมี · ข้าวสาลี (220–200 ปีก่อน ค.ศ.)", v:60, hl:true },
-      { k:"🏛️ โรม · วิกฤตศตวรรษที่ 3 (ค.ศ. 200–300)", v:100 },
+      { k:"<svg class='mdico'><use href='#i-amphora'></use></svg> อียิปต์ทอเลมี · ข้าวสาลี (220–200 ปีก่อน ค.ศ.)", v:60, hl:true },
+      { k:"<svg class='mdico'><use href='#i-landmark'></use></svg> โรม · วิกฤตศตวรรษที่ 3 (ค.ศ. 200–300)", v:100 },
       { k:"🇪🇺 ยุโรป · การปฏิวัติราคา (ค.ศ. 1500–1650)", v:6 },
       { k:"🇫🇷 ฝรั่งเศส · ธนบัตรอัสซิญาต์ (1790–1796)", v:265, hl:true },
       { k:"🇺🇸 อเมริกา · ธนบัตรคอนติเนนตัล (1775–1781)", v:100 },
@@ -392,7 +392,7 @@ var INFL_TIMELINE=[ // เหตุการณ์เงินเฟ้อสำ
       { yr:1994, y:"พ.ศ. 2537 (1994)", era:"hyper", s:"ยูโกสลาเวีย", t:"ดีนาร์ยูโกสลาเวีย", d:"สงครามกลางเมือง + คว่ำบาตร ราคาเพิ่มเท่าตัวทุก 1.4 วัน ออกธนบัตร 500 พันล้านดีนาร์" },
       { yr:2008, y:"พ.ศ. 2551 (2008)", era:"hyper", s:"ซิมบับเว", t:"ดอลลาร์ซิมบับเว", d:"ปฏิรูปที่ดินทำผลผลิตพัง + พิมพ์เงิน จนออกธนบัตร 100 ล้านล้านดอลลาร์ แล้วเลิกใช้สกุลตัวเอง" },
       { yr:2018, y:"พ.ศ. 2561 (2018)", era:"hyper", s:"เวเนซุเอลา", t:"โบลิวาร์เวเนซุเอลา", d:"รายได้น้ำมันหด + พิมพ์เงินอุดขาดดุล ราคาเพิ่มเท่าตัวทุก ~18 วัน คนอพยพหลายล้าน" },
-      { yr:2022, y:"พ.ศ. 2565 (2022)", era:"oil", s:"หลังโควิด 🌍", t:"เงินเฟ้อหลังโควิด", d:"อัดฉีดเงินมหาศาล + ห่วงโซ่อุปทานสะดุด + สงครามยูเครน — เงินเฟ้อโลก 8.0% สหรัฐฯ 8.0% ไทย 6.1%" }
+      { yr:2022, y:"พ.ศ. 2565 (2022)", era:"oil", s:"หลังโควิด <svg class='mdico'><use href='#i-globe'></use></svg>", t:"เงินเฟ้อหลังโควิด", d:"อัดฉีดเงินมหาศาล + ห่วงโซ่อุปทานสะดุด + สงครามยูเครน — เงินเฟ้อโลก 8.0% สหรัฐฯ 8.0% ไทย 6.1%" }
     ];
 
 var INFL_ERAS={
@@ -476,12 +476,12 @@ var REFINERIES = [
     ];
 
 var EN_CATS = [
-      {id:"fossil", th:"โรงไฟฟ้าก๊าซ/ถ่านหิน", ico:"⚡", c:"#f59e0b"},
-      {id:"hydro",  th:"เขื่อน/พลังน้ำ",        ico:"💧", c:"#3b82f6"},
-      {id:"renew",  th:"พลังงานหมุนเวียน",      ico:"☀️", c:"#22c55e"},
-      {id:"oilgas", th:"น้ำมัน & ก๊าซ",          ico:"🛢️", c:"#ef4444"},
-      {id:"mine",   th:"เหมืองแร่",             ico:"⛏️", c:"#a855f7"},
-      {id:"water",  th:"น้ำประปา",              ico:"🚰", c:"#06b6d4"}
+      {id:"fossil", th:"โรงไฟฟ้าก๊าซ/ถ่านหิน", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", c:"#f59e0b"},
+      {id:"hydro",  th:"เขื่อน/พลังน้ำ",        ico:"<svg class='mdico'><use href='#i-droplet'></use></svg>", c:"#3b82f6"},
+      {id:"renew",  th:"พลังงานหมุนเวียน",      ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", c:"#22c55e"},
+      {id:"oilgas", th:"น้ำมัน & ก๊าซ",          ico:"<svg class='mdico'><use href='#i-fuel'></use></svg>", c:"#ef4444"},
+      {id:"mine",   th:"เหมืองแร่",             ico:"<svg class='mdico'><use href='#i-pickaxe'></use></svg>", c:"#a855f7"},
+      {id:"water",  th:"น้ำประปา",              ico:"<svg class='mdico'><use href='#i-droplets'></use></svg>", c:"#06b6d4"}
     ];
 
 var EN_SITES = [
@@ -863,13 +863,26 @@ var BKK_HLTH_AWARE=[
       {dz:"เบาหวาน",st:"ไม่รู้ตัว",v:27},{dz:"เบาหวาน",st:"รู้ตัว/วินิจฉัยแล้ว",v:73}
     ];
 
+/* src/url/year/how = ที่มาแยกรายตัวชี้วัด — ใช้ทั้งในบล็อก "แหล่งอ้างอิง" และในการ์ดรายเขต (แหล่งเดียว แก้ที่เดียว) */
 var BKK_METRIC_CFG = [
-      { k:"dens",  lab:"ความหนาแน่นประชากร", short:"ความหนาแน่น", ico:"👥", u:"คน/ตร.กม.", ramp:"interpolatePuRd",   kind:"จริง",      real:true },
-      { k:"pop",   lab:"จำนวนประชากร",        short:"ประชากร",     ico:"🧑", u:"คน",         ramp:"interpolateBlues",  kind:"จริง",      real:true },
-      { k:"pm",    lab:"PM2.5 เฉลี่ยรายปี",   short:"PM2.5",       ico:"🌫️", u:"µg/m³",      ramp:"interpolateYlOrBr", kind:"อิงจริง",   real:false },
-      { k:"flood", lab:"จุดเสี่ยงน้ำท่วม",    short:"น้ำท่วม",     ico:"🌊", u:"จุด",        ramp:"interpolateGnBu",   kind:"อิงจริง",   real:false },
-      { k:"traf",  lab:"ดัชนีรถติด",          short:"รถติด",       ico:"🚗", u:"/100",       ramp:"interpolateOrRd",   kind:"ประมาณการ", real:false },
-      { k:"cost",  lab:"ค่าครองชีพ / ราคาที่ดิน", short:"ค่าครองชีพ", ico:"💸", u:"ดัชนี",   ramp:"interpolateGreens", kind:"ประมาณการ", real:false }
+      { k:"dens",  lab:"ความหนาแน่นประชากร", short:"ความหนาแน่น", ico:"<svg class='mdico'><use href='#i-users'></use></svg>", u:"คน/ตร.กม.", ramp:"interpolatePuRd",   kind:"จริง",      real:true,
+        src:"ทะเบียนราษฎร — สำนักบริหารการทะเบียน กรมการปกครอง", url:"", year:"2568",
+        how:"ประชากรตามทะเบียนราษฎร หารด้วยพื้นที่เขตที่คำนวณจากรูปทรง ADM3" },
+      { k:"pop",   lab:"จำนวนประชากร",        short:"ประชากร",     ico:"<svg class='mdico'><use href='#i-user'></use></svg>", u:"คน",         ramp:"interpolateBlues",  kind:"จริง",      real:true,
+        src:"ทะเบียนราษฎร — สำนักบริหารการทะเบียน กรมการปกครอง", url:"", year:"2568",
+        how:"ยอดผู้มีชื่อในทะเบียนบ้านรายเขต ไม่รวมประชากรแฝง" },
+      { k:"pm",    lab:"PM2.5 เฉลี่ยรายปี",   short:"PM2.5",       ico:"<svg class='mdico'><use href='#i-cloud-fog'></use></svg>", u:"µg/m³",      ramp:"interpolateYlOrBr", kind:"อิงจริง",   real:false,
+        src:"สถานีตรวจวัด Air4Thai / กทม.", url:"http://air4thai.pcd.go.th/", year:"2566–2567",
+        how:"ค่าจากสถานีตรวจวัดจริง เกลี่ยเป็นค่าเฉลี่ยรายเขตโดยประมาณ — เขตที่ไม่มีสถานีใช้ค่าจากสถานีใกล้เคียง" },
+      { k:"flood", lab:"จุดเสี่ยงน้ำท่วม",    short:"น้ำท่วม",     ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", u:"จุด",        ramp:"interpolateGnBu",   kind:"อิงจริง",   real:false,
+        src:"บัญชีจุดเฝ้าระวังน้ำท่วม — สำนักการระบายน้ำ กทม.", url:"", year:"2567",
+        how:"นับจำนวนจุดเฝ้าระวังในบัญชีทางการ ไม่ใช่จำนวนครั้งที่ท่วมจริง และไม่ได้บอกความลึก" },
+      { k:"traf",  lab:"ดัชนีรถติด",          short:"รถติด",       ico:"<svg class='mdico'><use href='#i-car'></use></svg>", u:"/100",       ramp:"interpolateOrRd",   kind:"ประมาณการ", real:false,
+        src:"ประมาณการเอง อิงรูปแบบ TomTom Traffic Index", url:"https://www.tomtom.com/traffic-index/city/bangkok/", year:"2568",
+        how:"ให้คะแนนจากทำเล + ความหนาแน่นของถนนสายหลัก ไม่ใช่ค่าที่วัดจากรถจริงรายเขต" },
+      { k:"cost",  lab:"ค่าครองชีพ / ราคาที่ดิน", short:"ค่าครองชีพ", ico:"<svg class='mdico'><use href='#i-hand-coins'></use></svg>", u:"ดัชนี",   ramp:"interpolateGreens", kind:"ประมาณการ", real:false,
+        src:"ราคาประเมินที่ดิน กรมธนารักษ์ + ราคาคอนโดเฉลี่ย", url:"", year:"2566–2569",
+        how:"ดัชนีเทียบกัน 0–100 โดยตั้งเขตที่แพงที่สุดเป็นฐาน 100 ไม่ใช่ค่าครองชีพเป็นบาท" }
     ];
 
 var GPO_AREA={ // name-keyed (Natural Earth) สำหรับ choropleth · km²
@@ -1027,130 +1040,131 @@ var BKK_RAIN=[ {m:"ม.ค.",v:12},{m:"ก.พ.",v:20},{m:"มี.ค.",v:42},{m
                    {m:"ก.ค.",v:172},{m:"ส.ค.",v:198},{m:"ก.ย.",v:344},{m:"ต.ค.",v:292},{m:"พ.ย.",v:56},{m:"ธ.ค.",v:10} ];
 
 var NAV = [
-      { id:"world", ico:"🌍", label:"ศูนย์ข้อมูลโลก", subs:[
-          { pane:"disaster", ico:"🌡️", label:"ภาพรวม โลกร้อน & ภัยพิบัติ", existing:true },
-          { pane:"ice",      ico:"🧊", label:"% การละลายน้ำแข็งโลก", existing:true },
-          { pane:"sinking",  ico:"🌊", label:"ประเทศเสี่ยงจมน้ำ", existing:true },
-          { pane:"heat",     ico:"🔥", label:"คลื่นความร้อน", existing:true },
-          { pane:"pm25",     ico:"🌫️", label:"ฝุ่น PM2.5", existing:true },
-          { pane:"world-satellite", ico:"🛰️", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
-          { pane:"world-flood", ico:"🌊", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
-          { pane:"world-ocean", ico:"🌊", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true }
+      { id:"world", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ศูนย์ข้อมูลโลก", subs:[
+          { pane:"disaster", ico:"<svg class='mdico'><use href='#i-thermometer'></use></svg>", label:"ภาพรวม โลกร้อน & ภัยพิบัติ", existing:true },
+          { pane:"ice",      ico:"<svg class='mdico'><use href='#i-snowflake'></use></svg>", label:"% การละลายน้ำแข็งโลก", existing:true },
+          { pane:"sinking",  ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ประเทศเสี่ยงจมน้ำ", existing:true },
+          { pane:"heat",     ico:"<svg class='mdico'><use href='#i-flame'></use></svg>", label:"คลื่นความร้อน", existing:true },
+          { pane:"pm25",     ico:"<svg class='mdico'><use href='#i-cloud-fog'></use></svg>", label:"ฝุ่น PM2.5", existing:true },
+          { pane:"world-satellite", ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
+          { pane:"world-flood", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
+          { pane:"world-ocean", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true }
       ]},
-      { id:"asean", ico:"🌏", label:"อาเซียน", subs:[
-          { pane:"asean",          ico:"💰", label:"เศรษฐกิจ", existing:true },
-          { pane:"asean-corrupt",  ico:"🕵️", label:"การคอร์รัปชัน", existing:true },
-          { pane:"asean-military", ico:"🎖️", label:"อาวุธทางการทหาร", existing:true },
-          { pane:"asean-geo",      ico:"🗺️", label:"ภูมิศาสตร์อาเซียน", existing:true },
-          { pane:"asean-digital",  ico:"📱", label:"เศรษฐกิจดิจิทัล", existing:true }
+      { id:"asean", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"อาเซียน", subs:[
+          { pane:"asean",          ico:"<svg class='mdico'><use href='#i-wallet'></use></svg>", label:"เศรษฐกิจ", existing:true },
+          { pane:"asean-corrupt",  ico:"<svg class='mdico'><use href='#i-user-search'></use></svg>", label:"การคอร์รัปชัน", existing:true },
+          { pane:"asean-military", ico:"<svg class='mdico'><use href='#i-medal'></use></svg>", label:"อาวุธทางการทหาร", existing:true },
+          { pane:"asean-geo",      ico:"<svg class='mdico'><use href='#i-map'></use></svg>", label:"ภูมิศาสตร์อาเซียน", existing:true },
+          { pane:"asean-digital",  ico:"<svg class='mdico'><use href='#i-smartphone'></use></svg>", label:"เศรษฐกิจดิจิทัล", existing:true }
       ]},
-      { id:"edu", ico:"🎓", label:"ข้อมูลการศึกษาไทย", subs:[
-          { pane:"edu-employ",  ico:"💼", label:"การจ้างงาน", existing:true },
-          { pane:"edu-happy",   ico:"😊", label:"ความสุขของนักเรียนไทย", existing:true },
-          { pane:"edu-quality", ico:"🏫", label:"คุณภาพการศึกษาไทย", existing:true },
-          { pane:"edu-world",   ico:"🌐", label:"เทียบกับโลก", existing:true },
-          { pane:"edu-map",     ico:"🗺️", label:"แผนที่ความเหลื่อมล้ำ & เด็กหลุดจากระบบ", existing:true }
+      { id:"edu", ico:"<svg class='mdico'><use href='#i-graduation-cap'></use></svg>", label:"ข้อมูลการศึกษาไทย", subs:[
+          { pane:"edu-employ",  ico:"<svg class='mdico'><use href='#i-briefcase'></use></svg>", label:"การจ้างงาน", existing:true },
+          { pane:"edu-happy",   ico:"<svg class='mdico'><use href='#i-smile'></use></svg>", label:"ความสุขของนักเรียนไทย", existing:true },
+          { pane:"edu-quality", ico:"<svg class='mdico'><use href='#i-school'></use></svg>", label:"คุณภาพการศึกษาไทย", existing:true },
+          { pane:"edu-world",   ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"เทียบกับโลก", existing:true },
+          { pane:"edu-map",     ico:"<svg class='mdico'><use href='#i-map'></use></svg>", label:"แผนที่ความเหลื่อมล้ำ & เด็กหลุดจากระบบ", existing:true }
       ]},
-      { id:"finance", ico:"💰", label:"การเงิน", subs:[
-          { pane:"fin-inflation", ico:"📈", label:"เงินเฟ้อ", existing:true },
-          { pane:"fin-personal",  ico:"👛", label:"การเงินคนไทย", existing:true },
-          { pane:"fin-debt",      ico:"🏛️", label:"หนี้ประเทศต่อ GDP", existing:true },
-          { pane:"fin-history",   ico:"📜", label:"ประวัติศาสตร์การเงินโลก & ไทย", existing:true },
-          { pane:"fin-moneyall",  ico:"🧭", label:"ประวัติเงินตรา ฉบับรวม 6 ยุค", existing:true },
-          { pane:"fin-money5000", ico:"🪙", label:"กำเนิดเงิน 5,000 ปี", existing:true },
-          { pane:"fin-hyperinflation", ico:"💸", label:"ประวัติศาสตร์เงินเฟ้อ", existing:true },
-          { pane:"fin-soundmoney", ico:"⚖️", label:"เงินมั่นคง vs เงินอ่อนค่า", existing:true },
-          { pane:"fin-wealth",    ico:"💎", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
-          { pane:"fin-macro",     ico:"📊", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
+      { id:"finance", ico:"<svg class='mdico'><use href='#i-wallet'></use></svg>", label:"การเงิน", subs:[
+          { pane:"fin-inflation", ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"เงินเฟ้อ", existing:true },
+          { pane:"fin-personal",  ico:"<svg class='mdico'><use href='#i-wallet'></use></svg>", label:"การเงินคนไทย", existing:true },
+          { pane:"fin-debt",      ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"หนี้ประเทศต่อ GDP", existing:true },
+          { pane:"fin-history",   ico:"<svg class='mdico'><use href='#i-scroll'></use></svg>", label:"ประวัติศาสตร์การเงินโลก & ไทย", existing:true },
+          { pane:"fin-moneyall",  ico:"<svg class='mdico'><use href='#i-compass'></use></svg>", label:"ประวัติเงินตรา ฉบับรวม 6 ยุค", existing:true },
+          { pane:"fin-money5000", ico:"<svg class='mdico'><use href='#i-coins'></use></svg>", label:"กำเนิดเงิน 5,000 ปี", existing:true },
+          { pane:"fin-hyperinflation", ico:"<svg class='mdico'><use href='#i-hand-coins'></use></svg>", label:"ประวัติศาสตร์เงินเฟ้อ", existing:true },
+          { pane:"fin-soundmoney", ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"เงินมั่นคง vs เงินอ่อนค่า", existing:true },
+          { pane:"fin-wealth",    ico:"<svg class='mdico'><use href='#i-gem'></use></svg>", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
+          { pane:"fin-macro",     ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
       ]},
-      { id:"oil", ico:"⛽", label:"น้ำมัน & พลังงาน", subs:[
-          { pane:"en-elec",    ico:"⚡", label:"ไฟฟ้า", existing:true },
-          { pane:"en-renew",   ico:"🌱", label:"พลังงานหมุนเวียน & ราคาที่จ่ายจริง", existing:true },
-          { pane:"en-water",   ico:"🚰", label:"น้ำประปา", existing:true },
-          { pane:"en-mineral", ico:"⛏️", label:"แร่", existing:true },
-          { pane:"oil",        ico:"🛢️", label:"น้ำมัน", existing:true },
-          { pane:"en-map",     ico:"🗺️", label:"แผนที่การผลิตพลังงาน", existing:true }
+      { id:"oil", ico:"<svg class='mdico'><use href='#i-fuel'></use></svg>", label:"น้ำมัน & พลังงาน", subs:[
+          { pane:"en-elec",    ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"ไฟฟ้า", existing:true },
+          { pane:"en-renew",   ico:"<svg class='mdico'><use href='#i-sprout'></use></svg>", label:"พลังงานหมุนเวียน & ราคาที่จ่ายจริง", existing:true },
+          { pane:"en-water",   ico:"<svg class='mdico'><use href='#i-droplets'></use></svg>", label:"น้ำประปา", existing:true },
+          { pane:"en-mineral", ico:"<svg class='mdico'><use href='#i-pickaxe'></use></svg>", label:"แร่", existing:true },
+          { pane:"oil",        ico:"<svg class='mdico'><use href='#i-fuel'></use></svg>", label:"น้ำมัน", existing:true },
+          { pane:"en-map",     ico:"<svg class='mdico'><use href='#i-map'></use></svg>", label:"แผนที่การผลิตพลังงาน", existing:true }
       ]},
-      { id:"bkk", ico:"🏙️", label:"กรุงเทพ", subs:[
-          { pane:"bkk-map",     ico:"🗺️", label:"แผนที่รายเขต", existing:true },
-          { pane:"bkk-traffic", ico:"🚗", label:"การจราจร", existing:true },
-          { pane:"bkk-env",     ico:"🌱", label:"สิ่งแวดล้อม", existing:true },
-          { pane:"bkk-social",  ico:"👥", label:"สังคม", existing:true },
-          { pane:"bkk-econ",    ico:"🏢", label:"เศรษฐกิจ", existing:true },
-          { pane:"bkk-health",  ico:"🏥", label:"โรคที่คนไทยเป็นเยอะ", existing:true },
-          { pane:"bkk-flood",   ico:"🌊", label:"น้ำท่วม & งบประมาณเมือง", existing:true }
+      { id:"bkk", ico:"<svg class='mdico'><use href='#i-building-2'></use></svg>", label:"กรุงเทพ", subs:[
+          { pane:"bkk-map",     ico:"<svg class='mdico'><use href='#i-map'></use></svg>", label:"แผนที่รายเขต", existing:true },
+          { pane:"bkk-city",    ico:"<svg class='mdico'><use href='#i-building-2'></use></svg>", label:"แผนที่เมือง 3 มิติ", existing:true },
+          { pane:"bkk-traffic", ico:"<svg class='mdico'><use href='#i-car'></use></svg>", label:"การจราจร", existing:true },
+          { pane:"bkk-env",     ico:"<svg class='mdico'><use href='#i-sprout'></use></svg>", label:"สิ่งแวดล้อม", existing:true },
+          { pane:"bkk-social",  ico:"<svg class='mdico'><use href='#i-users'></use></svg>", label:"สังคม", existing:true },
+          { pane:"bkk-econ",    ico:"<svg class='mdico'><use href='#i-building-2'></use></svg>", label:"เศรษฐกิจ", existing:true },
+          { pane:"bkk-health",  ico:"<svg class='mdico'><use href='#i-hospital'></use></svg>", label:"โรคที่คนไทยเป็นเยอะ", existing:true },
+          { pane:"bkk-flood",   ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"น้ำท่วม & งบประมาณเมือง", existing:true }
       ]},
-      { id:"geo", ico:"🌐", label:"ภูมิรัฐศาสตร์โลก", subs:[
-          { pane:"geo-territory", ico:"📍", label:"ที่ตั้งและอาณาเขต", existing:true },
-          { pane:"geo-resource",  ico:"⛏️", label:"ทรัพยากรธรรมชาติ", existing:true },
-          { pane:"geo-demo",      ico:"👪", label:"ประชากรศาสตร์", existing:true },
-          { pane:"geo-climate",   ico:"🏔️", label:"ภูมิประเทศและภูมิอากาศ", existing:true },
-          { pane:"geo-military",  ico:"🎖️", label:"อาวุธทางการทหาร", existing:true },
-          { pane:"geo-ai",        ico:"🤖", label:"AI", existing:true },
-          { pane:"geo-finance",   ico:"💵", label:"การเงิน", existing:true },
-          { pane:"geo-intel",     ico:"🛰️", label:"หน่วยข่าวกรอง", existing:true },
-          { pane:"geo-chip",      ico:"🔩", label:"ชิป & เซมิคอนดักเตอร์", existing:true },
-          { pane:"geo-power",     ico:"♟️", label:"วัฏจักรอำนาจ", existing:true }
+      { id:"geo", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ภูมิรัฐศาสตร์โลก", subs:[
+          { pane:"geo-territory", ico:"<svg class='mdico'><use href='#i-map-pin'></use></svg>", label:"ที่ตั้งและอาณาเขต", existing:true },
+          { pane:"geo-resource",  ico:"<svg class='mdico'><use href='#i-pickaxe'></use></svg>", label:"ทรัพยากรธรรมชาติ", existing:true },
+          { pane:"geo-demo",      ico:"<svg class='mdico'><use href='#i-users'></use></svg>", label:"ประชากรศาสตร์", existing:true },
+          { pane:"geo-climate",   ico:"<svg class='mdico'><use href='#i-mountain-snow'></use></svg>", label:"ภูมิประเทศและภูมิอากาศ", existing:true },
+          { pane:"geo-military",  ico:"<svg class='mdico'><use href='#i-medal'></use></svg>", label:"อาวุธทางการทหาร", existing:true },
+          { pane:"geo-ai",        ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"AI", existing:true },
+          { pane:"geo-finance",   ico:"<svg class='mdico'><use href='#i-banknote'></use></svg>", label:"การเงิน", existing:true },
+          { pane:"geo-intel",     ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"หน่วยข่าวกรอง", existing:true },
+          { pane:"geo-chip",      ico:"<svg class='mdico'><use href='#i-wrench'></use></svg>", label:"ชิป & เซมิคอนดักเตอร์", existing:true },
+          { pane:"geo-power",     ico:"<svg class='mdico'><use href='#i-castle'></use></svg>", label:"วัฏจักรอำนาจ", existing:true }
       ]},
-      { id:"thecon", ico:"📈", label:"เศรษฐกิจไทย", subs:[
-          { pane:"te-tourism",    ico:"✈️", label:"การท่องเที่ยว", existing:true },
-          { pane:"te-trade",      ico:"🚢", label:"การค้าระหว่างประเทศ", existing:true },
-          { pane:"te-gdp",        ico:"🔮", label:"การคาดการณ์ GDP", existing:true },
-          { pane:"te-gdpstruct",  ico:"🧩", label:"โครงสร้าง GDP รายภาค (Treemap)", existing:true },
-          { pane:"te-gii",        ico:"💡", label:"ดัชนีนวัตกรรมโลก [GII]", existing:true },
-          { pane:"te-structural", ico:"🏗️", label:"ปัญหาเชิงโครงสร้าง & มหภาค", existing:true },
-          { pane:"te-research",   ico:"🔬", label:"ทิศทางงานวิจัยขับเคลื่อนประเทศ", existing:true },
-          { pane:"te-crisis",     ico:"🏭", label:"วิกฤต ปิดโรงงาน เปิดกิจการใหม่", existing:true },
-          { pane:"te-crisis2",    ico:"⚠️", label:"วิกฤตซ้อนวิกฤต", existing:true },
-          { pane:"te-poplandscape", ico:"🏔️", label:"ภูมิทัศน์ประชากรไทย 3D", existing:true }
+      { id:"thecon", ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"เศรษฐกิจไทย", subs:[
+          { pane:"te-tourism",    ico:"<svg class='mdico'><use href='#i-plane'></use></svg>", label:"การท่องเที่ยว", existing:true },
+          { pane:"te-trade",      ico:"<svg class='mdico'><use href='#i-ship'></use></svg>", label:"การค้าระหว่างประเทศ", existing:true },
+          { pane:"te-gdp",        ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"การคาดการณ์ GDP", existing:true },
+          { pane:"te-gdpstruct",  ico:"<svg class='mdico'><use href='#i-puzzle'></use></svg>", label:"โครงสร้าง GDP รายภาค (Treemap)", existing:true },
+          { pane:"te-gii",        ico:"<svg class='mdico'><use href='#i-lightbulb'></use></svg>", label:"ดัชนีนวัตกรรมโลก [GII]", existing:true },
+          { pane:"te-structural", ico:"<svg class='mdico'><use href='#i-hard-hat'></use></svg>", label:"ปัญหาเชิงโครงสร้าง & มหภาค", existing:true },
+          { pane:"te-research",   ico:"<svg class='mdico'><use href='#i-microscope'></use></svg>", label:"ทิศทางงานวิจัยขับเคลื่อนประเทศ", existing:true },
+          { pane:"te-crisis",     ico:"<svg class='mdico'><use href='#i-factory'></use></svg>", label:"วิกฤต ปิดโรงงาน เปิดกิจการใหม่", existing:true },
+          { pane:"te-crisis2",    ico:"<svg class='mdico'><use href='#i-triangle-alert'></use></svg>", label:"วิกฤตซ้อนวิกฤต", existing:true },
+          { pane:"te-poplandscape", ico:"<svg class='mdico'><use href='#i-mountain-snow'></use></svg>", label:"ภูมิทัศน์ประชากรไทย 3D", existing:true }
       ]},
-      { id:"fiscal", ico:"💵", label:"การคลังภาครัฐ", subs:[
-          { pane:"fiscal-debt",    ico:"🏛️", label:"หนี้สาธารณะ", existing:true },
-          { pane:"fiscal-tax",     ico:"🧾", label:"โครงสร้างรายได้ภาษี", existing:true },
-          { pane:"fiscal-budget",  ico:"📊", label:"งบประมาณรายกระทรวง", existing:true },
-          { pane:"fiscal-balance", ico:"⚖️", label:"ดุลการคลัง & โครงสร้างงบ", existing:true }
+      { id:"fiscal", ico:"<svg class='mdico'><use href='#i-banknote'></use></svg>", label:"การคลังภาครัฐ", subs:[
+          { pane:"fiscal-debt",    ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"หนี้สาธารณะ", existing:true },
+          { pane:"fiscal-tax",     ico:"<svg class='mdico'><use href='#i-receipt'></use></svg>", label:"โครงสร้างรายได้ภาษี", existing:true },
+          { pane:"fiscal-budget",  ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"งบประมาณรายกระทรวง", existing:true },
+          { pane:"fiscal-balance", ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"ดุลการคลัง & โครงสร้างงบ", existing:true }
       ]},
-      { id:"pop", ico:"👥", label:"ประชากร & สังคมสูงวัย", subs:[
-          { pane:"pop-struct",     ico:"👨‍👩‍👧", label:"โครงสร้างประชากร", existing:true },
-          { pane:"pop-birthdeath", ico:"🍼", label:"เกิด–ตาย & เจริญพันธุ์", existing:true },
-          { pane:"pop-aging",      ico:"👴", label:"สังคมสูงวัย", existing:true },
-          { pane:"pop-future",     ico:"🔮", label:"คาดการณ์ประชากร", existing:true }
+      { id:"pop", ico:"<svg class='mdico'><use href='#i-users'></use></svg>", label:"ประชากร & สังคมสูงวัย", subs:[
+          { pane:"pop-struct",     ico:"<svg class='mdico'><use href='#i-user'></use></svg>‍<svg class='mdico'><use href='#i-user'></use></svg>‍<svg class='mdico'><use href='#i-baby'></use></svg>", label:"โครงสร้างประชากร", existing:true },
+          { pane:"pop-birthdeath", ico:"<svg class='mdico'><use href='#i-baby'></use></svg>", label:"เกิด–ตาย & เจริญพันธุ์", existing:true },
+          { pane:"pop-aging",      ico:"<svg class='mdico'><use href='#i-user'></use></svg>", label:"สังคมสูงวัย", existing:true },
+          { pane:"pop-future",     ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"คาดการณ์ประชากร", existing:true }
       ]},
-      { id:"health", ico:"🏥", label:"สาธารณสุขไทย", subs:[
-          { pane:"health-coverage",  ico:"🏥", label:"หลักประกันสุขภาพ", existing:true },
-          { pane:"health-workforce", ico:"👨‍⚕️", label:"บุคลากร & การกระจาย", existing:true },
-          { pane:"health-life",      ico:"⏳", label:"อายุคาดเฉลี่ย", existing:true },
-          { pane:"health-ncd",       ico:"🩺", label:"โรค NCDs & สาเหตุการตาย", existing:true }
+      { id:"health", ico:"<svg class='mdico'><use href='#i-hospital'></use></svg>", label:"สาธารณสุขไทย", subs:[
+          { pane:"health-coverage",  ico:"<svg class='mdico'><use href='#i-hospital'></use></svg>", label:"หลักประกันสุขภาพ", existing:true },
+          { pane:"health-workforce", ico:"<svg class='mdico'><use href='#i-user'></use></svg>‍<svg class='mdico'><use href='#i-cross'></use></svg>", label:"บุคลากร & การกระจาย", existing:true },
+          { pane:"health-life",      ico:"<svg class='mdico'><use href='#i-hourglass'></use></svg>", label:"อายุคาดเฉลี่ย", existing:true },
+          { pane:"health-ncd",       ico:"<svg class='mdico'><use href='#i-stethoscope'></use></svg>", label:"โรค NCDs & สาเหตุการตาย", existing:true }
       ]},
-      { id:"ineq", ico:"⚖️", label:"เหลื่อมล้ำ & หนี้ครัวเรือน", subs:[
-          { pane:"ineq-income", ico:"📊", label:"ความเหลื่อมล้ำรายได้", existing:true },
-          { pane:"ineq-wealth", ico:"💎", label:"ความเหลื่อมล้ำทรัพย์สิน", existing:true },
-          { pane:"hh-debt",     ico:"💳", label:"หนี้ครัวเรือน", existing:true },
-          { pane:"wage-min",    ico:"💵", label:"ค่าจ้างขั้นต่ำ", existing:true }
+      { id:"ineq", ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"เหลื่อมล้ำ & หนี้ครัวเรือน", subs:[
+          { pane:"ineq-income", ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"ความเหลื่อมล้ำรายได้", existing:true },
+          { pane:"ineq-wealth", ico:"<svg class='mdico'><use href='#i-gem'></use></svg>", label:"ความเหลื่อมล้ำทรัพย์สิน", existing:true },
+          { pane:"hh-debt",     ico:"<svg class='mdico'><use href='#i-credit-card'></use></svg>", label:"หนี้ครัวเรือน", existing:true },
+          { pane:"wage-min",    ico:"<svg class='mdico'><use href='#i-banknote'></use></svg>", label:"ค่าจ้างขั้นต่ำ", existing:true }
       ]},
-      { id:"digital", ico:"📱", label:"ดิจิทัล & AI ไทย", subs:[
-          { pane:"dg-connect", ico:"🌐", label:"อินเทอร์เน็ต & มือถือ", existing:true },
-          { pane:"dg-ecom",    ico:"🛒", label:"e-Commerce & เศรษฐกิจดิจิทัล", existing:true },
-          { pane:"dg-ai",      ico:"🤖", label:"ความพร้อมด้าน AI", existing:true },
-          { pane:"dg-pay",     ico:"💸", label:"การชำระเงินดิจิทัล", existing:true }
+      { id:"digital", ico:"<svg class='mdico'><use href='#i-smartphone'></use></svg>", label:"ดิจิทัล & AI ไทย", subs:[
+          { pane:"dg-connect", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"อินเทอร์เน็ต & มือถือ", existing:true },
+          { pane:"dg-ecom",    ico:"<svg class='mdico'><use href='#i-shopping-cart'></use></svg>", label:"e-Commerce & เศรษฐกิจดิจิทัล", existing:true },
+          { pane:"dg-ai",      ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"ความพร้อมด้าน AI", existing:true },
+          { pane:"dg-pay",     ico:"<svg class='mdico'><use href='#i-hand-coins'></use></svg>", label:"การชำระเงินดิจิทัล", existing:true }
       ]},
-      { id:"gov", ico:"🏛️", label:"ธรรมาภิบาล & การเมือง", subs:[
-          { pane:"gov-cpi",       ico:"🕵️", label:"ดัชนีคอร์รัปชัน (CPI)", existing:true },
-          { pane:"gov-press",     ico:"📰", label:"เสรีภาพสื่อ", existing:true },
-          { pane:"gov-democracy", ico:"🗳️", label:"ดัชนีประชาธิปไตย", existing:true },
-          { pane:"gov-rule",      ico:"⚖️", label:"หลักนิติธรรม", existing:true }
+      { id:"gov", ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"ธรรมาภิบาล & การเมือง", subs:[
+          { pane:"gov-cpi",       ico:"<svg class='mdico'><use href='#i-user-search'></use></svg>", label:"ดัชนีคอร์รัปชัน (CPI)", existing:true },
+          { pane:"gov-press",     ico:"<svg class='mdico'><use href='#i-newspaper'></use></svg>", label:"เสรีภาพสื่อ", existing:true },
+          { pane:"gov-democracy", ico:"<svg class='mdico'><use href='#i-vote'></use></svg>", label:"ดัชนีประชาธิปไตย", existing:true },
+          { pane:"gov-rule",      ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"หลักนิติธรรม", existing:true }
       ]},
-      { id:"agri", ico:"🌾", label:"เกษตร & อาหาร", subs:[
-          { pane:"agri-export",    ico:"🌾", label:"ภาพรวมส่งออกเกษตร", existing:true },
-          { pane:"agri-rice",      ico:"🍚", label:"ข้าว", existing:true },
-          { pane:"agri-fruit",     ico:"🍈", label:"ผลไม้ & ทุเรียน", existing:true },
-          { pane:"agri-structure", ico:"🚜", label:"โครงสร้างภาคเกษตร", existing:true }
+      { id:"agri", ico:"<svg class='mdico'><use href='#i-wheat'></use></svg>", label:"เกษตร & อาหาร", subs:[
+          { pane:"agri-export",    ico:"<svg class='mdico'><use href='#i-wheat'></use></svg>", label:"ภาพรวมส่งออกเกษตร", existing:true },
+          { pane:"agri-rice",      ico:"<svg class='mdico'><use href='#i-soup'></use></svg>", label:"ข้าว", existing:true },
+          { pane:"agri-fruit",     ico:"<svg class='mdico'><use href='#i-apple'></use></svg>", label:"ผลไม้ & ทุเรียน", existing:true },
+          { pane:"agri-structure", ico:"<svg class='mdico'><use href='#i-tractor'></use></svg>", label:"โครงสร้างภาคเกษตร", existing:true }
       ]},
-      { id:"transport", ico:"🚆", label:"คมนาคม & โลจิสติกส์", subs:[
-          { pane:"tr-air",       ico:"✈️", label:"สนามบิน (AOT)", existing:true },
-          { pane:"tr-rail",      ico:"🚇", label:"รถไฟฟ้า", existing:true },
-          { pane:"tr-road",      ico:"🛵", label:"อุบัติเหตุทางถนน", existing:true },
-          { pane:"tr-logistics", ico:"📦", label:"โลจิสติกส์", existing:true }
+      { id:"transport", ico:"<svg class='mdico'><use href='#i-train-front'></use></svg>", label:"คมนาคม & โลจิสติกส์", subs:[
+          { pane:"tr-air",       ico:"<svg class='mdico'><use href='#i-plane'></use></svg>", label:"สนามบิน (AOT)", existing:true },
+          { pane:"tr-rail",      ico:"<svg class='mdico'><use href='#i-train-front-tunnel'></use></svg>", label:"รถไฟฟ้า", existing:true },
+          { pane:"tr-road",      ico:"<svg class='mdico'><use href='#i-bike'></use></svg>", label:"อุบัติเหตุทางถนน", existing:true },
+          { pane:"tr-logistics", ico:"<svg class='mdico'><use href='#i-package'></use></svg>", label:"โลจิสติกส์", existing:true }
       ]}
     ];
 

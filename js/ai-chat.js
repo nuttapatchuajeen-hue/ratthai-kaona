@@ -364,7 +364,7 @@
       if (e.key === "Escape" && opened) close();
     });
 
-    addBubble("ai", "สวัสดีครับ 👋 ผมเป็นผู้ช่วย AI ข้อมูลรัฐ ถามได้เลยครับ");
+    addBubble("ai", "สวัสดีครับ ผมเป็นผู้ช่วย AI ข้อมูลรัฐ ถามได้เลยครับ", false, "hand");
   }
 
   // ---------- การทำงาน ----------
@@ -409,13 +409,21 @@
     document.getElementById("mdai-panel").classList.remove("mdai-show");
   }
 
-  function addBubble(who, text, isErr) {
+  function addBubble(who, text, isErr, icon) {
     var msgs = document.getElementById("mdai-msgs");
     var row = document.createElement("div");
     row.className = "mdai-row " + (who === "me" ? "me" : "ai");
     var b = document.createElement("div");
     b.className = "mdai-bubble" + (isErr ? " err" : "");
-    b.textContent = text;
+    /* ไอคอนมาจากโค้ดของเราเอง จึงใส่เป็น HTML ได้ ส่วนตัวข้อความยังคงเป็น
+       text node ล้วนเหมือนเดิม เพื่อกันสคริปต์แปลกปลอมจากคำตอบ AI */
+    if (icon) {
+      var ic = document.createElement("span");
+      ic.innerHTML = MDICO(icon);
+      b.appendChild(ic);
+      b.appendChild(document.createTextNode(" "));
+    }
+    b.appendChild(document.createTextNode(text));
     row.appendChild(b);
     msgs.appendChild(row);
     msgs.scrollTop = msgs.scrollHeight;
@@ -441,7 +449,7 @@
     if (!text || busy) return;
 
     if (PROXY_URL.indexOf("YOUR-SITE") !== -1) {
-      addBubble("ai", "⚙️ ยังไม่ได้ตั้งค่า PROXY_URL — แก้ในไฟล์ js/ai-chat.js ให้เป็น URL Netlify ของคุณก่อนครับ", true);
+      addBubble("ai", "ยังไม่ได้ตั้งค่า PROXY_URL — แก้ในไฟล์ js/ai-chat.js ให้เป็น URL Netlify ของคุณก่อนครับ", true, "settings");
       return;
     }
 

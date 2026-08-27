@@ -135,6 +135,7 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
   .card,.card.in,.card.outL,.card.outR{transition-duration:.01ms!important;transform:none!important}
 }
 </style>
+  <script src="../js/icons.js"></script>
 </head>
 <body>
 
@@ -172,13 +173,13 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
   <div class="dockin">
     <div class="prog"><i id="prog"></i></div>
     <div class="cnt" id="cnt">0 / 0 คน</div>
-    <button class="ctl pri" id="bPlay" type="button">▶ เริ่ม</button>
-    <button class="ctl" id="bSkip" type="button">⏭ ข้ามไปท้าย</button>
+    <button class="ctl pri" id="bPlay" type="button"><svg class="mdico"><use href="#i-play"></use></svg> เริ่ม</button>
+    <button class="ctl" id="bSkip" type="button"><svg class="mdico"><use href="#i-skip-forward"></use></svg> ข้ามไปท้าย</button>
     <button class="ctl" id="bReset" type="button">↺ เริ่มใหม่</button>
     <span class="sp">ชุดละ <input id="rBatch" type="range" min="5" max="10" value="8"><b id="vBatch">8</b> คน</span>
     <span class="sp">จังหวะ <input id="rSpeed" type="range" min="60" max="260" step="10" value="150"><b id="vSpeed">1.5</b>วิ</span>
     <span class="grow"></span>
-    <button class="ctl" id="bSound" type="button">🔇 เปิดเสียง</button>
+    <button class="ctl" id="bSound" type="button"><svg class="mdico"><use href="#i-volume-x"></use></svg> เปิดเสียง</button>
     <select class="ctl" id="selSong" aria-label="เลือกเพลงประกอบ"></select>
   </div>
 </div>
@@ -293,8 +294,8 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
   });
   // เริ่มแบบเงียบเสมอ (เบราว์เซอร์บล็อกเสียงอัตโนมัติอยู่แล้ว) — ผู้ใช้กดเปิดเอง
   $('bSound').addEventListener('click', function () {
-    if (bgm.paused) { bgm.volume = .55; bgm.play().then(function () { this.textContent = '🔊 ปิดเสียง'; this.classList.add('on'); }.bind(this)).catch(function () { }); }
-    else { bgm.pause(); this.textContent = '🔇 เปิดเสียง'; this.classList.remove('on'); }
+    if (bgm.paused) { bgm.volume = .55; bgm.play().then(function () { this.innerHTML = MDICO('volume-2') + ' ปิดเสียง'; this.classList.add('on'); }.bind(this)).catch(function () { }); }
+    else { bgm.pause(); this.innerHTML = MDICO('volume-x') + ' เปิดเสียง'; this.classList.remove('on'); }
   });
 
   /* ---------- ตัวนับที่นั่งรายพรรค (รางซ้าย) ---------- */
@@ -367,7 +368,7 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
   }
 
   function finish() {
-    playing = false; $('bPlay').textContent = '▶ เริ่ม';
+    playing = false; $('bPlay').innerHTML = MDICO('play')+' เริ่ม';
     $('chapter').textContent = 'ครบ ' + num(TOTAL) + ' เขตแล้ว';
   }
 
@@ -380,11 +381,11 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
   function play() {
     if (!TOTAL) return;
     if (idx >= TOTAL) resetAll();          // ดูจบแล้วกด ▶ ซ้ำ = เริ่มรอบใหม่
-    playing = true; $('bPlay').textContent = '⏸ หยุด';
+    playing = true; $('bPlay').innerHTML = MDICO('pause')+' หยุด';
     step();
   }
   function pause() {
-    playing = false; clearTimeout(timer); $('bPlay').textContent = '▶ เริ่ม';
+    playing = false; clearTimeout(timer); $('bPlay').innerHTML = MDICO('play')+' เริ่ม';
   }
 
   $('bPlay').addEventListener('click', function () { playing ? pause() : play(); });

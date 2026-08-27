@@ -307,6 +307,7 @@
   <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง <style> ของหน้าเพื่อทับกฎ overflow-x เดิม -->
   <link rel="stylesheet" href="../css/hub-nav.css" />
   <script src="../js/hub-nav.js" defer></script>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -337,8 +338,8 @@
       <p class="hero-tagline">แบบประเมินความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์ "รัฐไทยก้าวหน้า" — ข้อมูลจะถูกนำไปวิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) เพื่อพัฒนาเว็บไซต์ให้ดียิ่งขึ้น</p>
 
       <div class="tabs" role="tablist">
-        <button class="tab-btn active" id="tab-form" type="button">📝 ทำแบบประเมิน</button>
-        <button class="tab-btn" id="tab-results" type="button">📊 ผลการประเมิน (สด)</button>
+        <button class="tab-btn active" id="tab-form" type="button"><svg class="mdico"><use href="#i-pencil"></use></svg> ทำแบบประเมิน</button>
+        <button class="tab-btn" id="tab-results" type="button"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลการประเมิน (สด)</button>
       </div>
     </section>
 
@@ -399,10 +400,10 @@
       </form>
 
       <div class="thanks" id="thanks" hidden>
-        <div class="big">🙏</div>
+        <div class="big"><svg class="mdico"><use href="#i-heart-handshake"></use></svg></div>
         <h2>ขอบคุณสำหรับการประเมิน</h2>
         <p>ระบบบันทึกคำตอบของท่านเรียบร้อยแล้ว ความคิดเห็นของท่านจะถูกนำไปวิเคราะห์ทางสถิติเพื่อพัฒนาเว็บไซต์ต่อไป</p>
-        <button class="tab-btn active" type="button" id="btn-see-results">📊 ดูผลการประเมินรวม</button>
+        <button class="tab-btn active" type="button" id="btn-see-results"><svg class="mdico"><use href="#i-chart-column"></use></svg> ดูผลการประเมินรวม</button>
         <button class="btn-ghost" type="button" id="btn-again" style="margin-left:0.6rem">ทำแบบประเมินอีกชุด (สำหรับผู้ตอบคนถัดไป)</button>
       </div>
     </section>

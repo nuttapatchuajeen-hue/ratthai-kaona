@@ -373,6 +373,7 @@
   <!-- ต้องมาหลัง <style> ของหน้า จึงจะทับกฎเมนูเดิมได้ (เมนูมือถือแบบลิ้นชัก) -->
   <link rel="stylesheet" href="../css/hub-nav.css" />
   <script src="../js/hub-nav.js" defer></script>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -420,37 +421,37 @@
       <h2 style="font-family: var(--font-display); font-size: 2rem; margin-top: 6rem; color: var(--text-primary);">ข่าวและวิดีโออื่น ๆ</h2>
       <div class="videos-grid" id="videos-grid">
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">📹</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>
           <span class="video-grid-date">02 มิถุนายน 2026</span>
           <h3 class="video-grid-title">นโยบายเทคโนโลยีภาครัฐไทยใหม่</h3>
         </div>
 
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">🎥</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>
           <span class="video-grid-date">01 มิถุนายน 2026</span>
           <h3 class="video-grid-title">การอัปเดตระบบดิจิทัลล่าสุด</h3>
         </div>
 
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">📺</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-tv"></use></svg></div>
           <span class="video-grid-date">31 พฤษภาคม 2026</span>
           <h3 class="video-grid-title">บรรยาย: อธิปไตยดิจิทัล</h3>
         </div>
 
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">🎬</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-clapperboard"></use></svg></div>
           <span class="video-grid-date">28 พฤษภาคม 2026</span>
           <h3 class="video-grid-title">สัมมนาเทคโนโลยีภาครัฐ 2026</h3>
         </div>
 
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">📹</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>
           <span class="video-grid-date">25 พฤษภาคม 2026</span>
           <h3 class="video-grid-title">เปิดตัวแพลตฟอร์ม รัฐไทยก้าวหน้า</h3>
         </div>
 
         <div class="video-grid-item">
-          <div class="video-grid-thumbnail">🎥</div>
+          <div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>
           <span class="video-grid-date">20 พฤษภาคม 2026</span>
           <h3 class="video-grid-title">การปกครองด้วย AI ที่ชาญฉลาด</h3>
         </div>
@@ -540,14 +541,14 @@
         '?rel=0&modestbranding=1&origin=' + encodeURIComponent(location.origin);
     }
     function watchUrl(id) { return 'https://www.youtube.com/watch?v=' + id; }
-    function isLive(title) { return /\blive\b|🔴|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
+    function isLive(title) { return /\blive\b|<svg class="mdico"><use href="#i-circle"></use></svg>|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
 
     function setMain(v, scroll) {
       if (!v || !v.id) return;
       mainVideo.src = embedUrl(v.id);
       if (nowPlaying) {
         nowPlaying.innerHTML = 'กำลังเล่น: ' + v.title +
-          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener">▶ เปิดบน YouTube</a>';
+          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener"><svg class='mdico'><use href='#i-play'></use></svg> เปิดบน YouTube</a>';
       }
       if (scroll) document.querySelector('.video-player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -569,7 +570,7 @@
       grid.innerHTML = vids.map(function (v) {
         var thumb = v.thumb
           ? '<div class="video-grid-thumbnail" style="background-image:url(\'' + v.thumb + '\');background-size:cover;background-position:center;"></div>'
-          : '<div class="video-grid-thumbnail">📹</div>';
+          : '<div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>';
         return '<div class="video-grid-item" data-id="' + v.id + '" data-title="' + v.title.replace(/"/g, '&quot;') + '">' +
           thumb +
           '<span class="video-grid-date">' + v.date + '</span>' +

@@ -265,6 +265,7 @@ html[data-theme="dark"]{--sim-ok:#31D8A0;--sim-ok-soft:rgba(49,216,160,.13);--si
 #bundleG circle.bn{stroke:var(--card);stroke-width:1.1}   /* จุดพรรค — ไม่รวมดุมกลาง (ดุมกำหนดสีเองใน JS) */
 #bundleG text{font-family:'Kanit';font-weight:600;font-size:10px;text-anchor:middle;pointer-events:none}
 </style>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -409,7 +410,7 @@ mdSyncToggle();
         </div>
         <div class="simparties" id="simParties"></div>
         <div class="simact">
-          <button type="button" id="simAuto">⚡ ไล่จากพรรคใหญ่สุดจนครบ 251</button>
+          <button type="button" id="simAuto"><svg class="mdico"><use href="#i-zap"></use></svg> ไล่จากพรรคใหญ่สุดจนครบ 251</button>
           <button type="button" id="simInvert">⇄ สลับขั้ว</button>
           <button type="button" id="simClear">✕ ล้างทั้งหมด</button>
         </div>
@@ -468,7 +469,7 @@ mdSyncToggle();
       <div class="rcard"><div class="rno">๓</div><p><b>คณะกรรมาธิการร่วมกันของรัฐสภา</b> (Joint Committee) — ตั้งขึ้นเมื่อร่างพระราชบัญญัติผ่านสภาผู้แทนราษฎรแล้ว แต่วุฒิสภามีการแก้ไขเพิ่มเติม ประกอบด้วยสมาชิกจาก<b>ทั้งสองสภาจำนวนเท่ากัน</b> เพื่อเจรจาหาข้อตกลงร่วมกัน</p></div>
       <div class="rcard"><div class="rno">๔</div><p><b>คณะกรรมาธิการของรัฐสภา</b> (Parliamentary Committee) — การรวมตัวของสมาชิกทั้งสองสภา เพื่อพิจารณาเรื่องที่มีผลกระทบต่อรัฐสภาโดยรวม เช่น การพิจารณากฎหมายประกอบรัฐธรรมนูญ</p></div>
       <div class="rcard"><div class="rno">๕</div><p><b>คณะกรรมาธิการเต็มสภา</b> (Committee of the Whole) — การประชุมสภาในวาระที่สอง โดยให้<b>สมาชิกทุกคนในสภา</b>เปลี่ยนสถานะเป็นกรรมาธิการ เพื่อพิจารณาร่างกฎหมายไปพร้อมกันทีละมาตรา</p></div>
-      <div class="rcard note"><div class="rno">🔗</div><p>ดูรายชื่อและผลงานแต่ละคณะได้ที่เว็บไซต์คณะกรรมาธิการ <a href="https://www.parliament.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">สภาผู้แทนราษฎร</a> และ <a href="https://www.senate.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">วุฒิสภา</a></p></div>
+      <div class="rcard note"><div class="rno"><svg class="mdico"><use href="#i-link"></use></svg></div><p>ดูรายชื่อและผลงานแต่ละคณะได้ที่เว็บไซต์คณะกรรมาธิการ <a href="https://www.parliament.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">สภาผู้แทนราษฎร</a> และ <a href="https://www.senate.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">วุฒิสภา</a></p></div>
     </div>
   </section>
 
@@ -716,13 +717,13 @@ const DAIS_INFO = {
   vice1: { num:'๒', title:'รองประธาน คนที่หนึ่ง', body: () => 'ที่นั่งด้าน<b>ขวามือของประธาน</b> เป็นที่นั่งของรองประธานคนที่หนึ่ง' },
   vice2: { num:'๒', title:'รองประธาน คนที่สอง', body: () => 'ที่นั่งด้าน<b>ซ้ายมือของประธาน</b> เป็นที่นั่งของรองประธานคนที่สอง' },
   pm: { num:'๓', title:'นายกรัฐมนตรี', body: () => 'ที่นั่งแถวบนทางด้านขวามือของประธาน <b>ที่นั่งแรก</b> เป็นที่นั่งของนายกรัฐมนตรี'
-    + ((simOn && simLead()) ? `<br><br>🏛️ <b>โหมดจำลอง:</b> ขั้วที่คุณจับมี <b>${shortOf(simLead().code)}</b> เป็นพรรคแกนนำ (${seatsOf(simLead().code)} เสียง) รวมทั้งขั้ว <b>${govSeats()}</b> เสียง — ${govSeats() >= MAJORITY ? 'พอโหวตนายกฯ ได้' : `ยังขาดอีก ${MAJORITY - govSeats()} เสียง`}` : ''),
+    + ((simOn && simLead()) ? `<br><br><svg class="mdico"><use href="#i-landmark"></use></svg> <b>โหมดจำลอง:</b> ขั้วที่คุณจับมี <b>${shortOf(simLead().code)}</b> เป็นพรรคแกนนำ (${seatsOf(simLead().code)} เสียง) รวมทั้งขั้ว <b>${govSeats()}</b> เสียง — ${govSeats() >= MAJORITY ? 'พอโหวตนายกฯ ได้' : `ยังขาดอีก ${MAJORITY - govSeats()} เสียง`}` : ''),
     link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
   cabinet: { num:'๔', title:'คณะรัฐมนตรี', body: () => 'ที่นั่งถัดจากนายกรัฐมนตรี<b>ทั้งสองแถว</b> เป็นที่นั่งของคณะรัฐมนตรี (รัฐมนตรีไม่จำเป็นต้องเป็น ส.ส. จึงมีที่นั่งแยกจากผัง 500 ที่นั่ง)', link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
   committee: { num:'๕', title:'คณะกรรมาธิการ', body: () => 'ที่นั่ง <b>๒ แถวด้านซ้ายมือของประธาน</b> เป็นที่นั่งของคณะกรรมาธิการ ที่ต้องขึ้นไปชี้แจงเรื่องต่าง ๆ ให้ที่ประชุมรับทราบ — คณะกรรมาธิการมี <b>๕ ประเภท</b> (สามัญ · วิสามัญ · ร่วมกันของรัฐสภา · ของรัฐสภา · เต็มสภา) ดูรายละเอียดในส่วน "คณะกรรมาธิการ" ท้ายหน้า' },
   secretary: { num:'๖', title:'เลขาธิการ · รองเลขาธิการ', body: () => 'ที่นั่งถัดจากบัลลังก์ลงมา <b>ด้านซ้ายมือ</b>ของประธานเป็นที่นั่งของเลขาธิการ ส่วน<b>ด้านขวามือ</b>เป็นที่นั่งของรองเลขาธิการ ซึ่งทำหน้าที่เป็นเลขานุการของที่ประชุม' },
   // ผู้นำฝ่ายค้าน — ไม่มีที่นั่งบนบัลลังก์ (นั่งรวมกับ ส.ส. ในพรรค) จึงแสดงเป็นชิปในแถบผู้ดำรงตำแหน่งของมุมมอง ส.ส./ประชุมร่วม เท่านั้น
-  opp: { num:'⚖', title:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', body: () => 'ผู้นำฝ่ายค้านฯ คือหัวหน้าพรรคฝ่ายค้านที่มีจำนวน ส.ส. มากที่สุด และสมาชิกพรรคมิได้ดำรงตำแหน่งรัฐมนตรี — แต่งตั้งโดย<b>พระบรมราชโองการ</b> ทำหน้าที่นำฝ่ายค้านในการตรวจสอบการทำงานของรัฐบาลในสภา (ไม่มีที่นั่งบนบัลลังก์ — นั่งรวมกับสมาชิกในพรรค)' }
+  opp: { num:'<svg class="mdico"><use href="#i-scale"></use></svg>', title:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', body: () => 'ผู้นำฝ่ายค้านฯ คือหัวหน้าพรรคฝ่ายค้านที่มีจำนวน ส.ส. มากที่สุด และสมาชิกพรรคมิได้ดำรงตำแหน่งรัฐมนตรี — แต่งตั้งโดย<b>พระบรมราชโองการ</b> ทำหน้าที่นำฝ่ายค้านในการตรวจสอบการทำงานของรัฐบาลในสภา (ไม่มีที่นั่งบนบัลลังก์ — นั่งรวมกับสมาชิกในพรรค)' }
 };
 // rect ตำแหน่ง (ในพิกัด viewBox) — มุมมองแปลน: ประธานหันหน้าเข้าหาที่นั่งสมาชิก → ขวามือประธาน = ขวาของจอ
 // ประชุมร่วม: รัฐธรรมนูญกำหนด "รองประธานรัฐสภา" คนเดียว (ประธานวุฒิสภา) → ซ่อน vice2 ใน joint
@@ -888,7 +889,7 @@ function render(){
   $('chMeta').textContent = metas[view];
   const g = govSeats();
   $('chNote').textContent = (view === 'mp' && simOn && COALITION.size)
-    ? `🏛️ โหมดจำลอง — ผังนี้จัดที่นั่งตามขั้วที่คุณเลือก: ขั้วรัฐบาล ${g} เสียง (ขวามือประธาน) · ฝ่ายค้าน ${500 - g} เสียง (ซ้ายมือประธาน) ${g >= MAJORITY ? '· เสียงพอจัดตั้งรัฐบาลแล้ว' : `· ยังขาดอีก ${MAJORITY - g} เสียงจึงจะถึง 251`}`
+    ? `<svg class="mdico"><use href="#i-landmark"></use></svg> โหมดจำลอง — ผังนี้จัดที่นั่งตามขั้วที่คุณเลือก: ขั้วรัฐบาล ${g} เสียง (ขวามือประธาน) · ฝ่ายค้าน ${500 - g} เสียง (ซ้ายมือประธาน) ${g >= MAJORITY ? '· เสียงพอจัดตั้งรัฐบาลแล้ว' : `· ยังขาดอีก ${MAJORITY - g} เสียงจึงจะถึง 251`}`
     : notes[view];
   renderSeatDetail();
 }
@@ -1172,8 +1173,8 @@ function renderSim(){
   };
   // ยังไม่จับขั้ว = ยังไม่มีทั้งแกนนำและฝ่ายค้าน (อย่าเดาว่าพรรคใหญ่สุดเป็นฝ่ายค้าน)
   const lead = simLead(), opp = COALITION.size ? simOpp() : null;
-  $('simPpl').innerHTML = mkCard(lead, '👑 พรรคแกนนำจัดตั้งรัฐบาล (เสนอชื่อนายกฯ)', true)
-                        + mkCard(opp,  '⚖ พรรคฝ่ายค้านอันดับ ๑ (ผู้นำฝ่ายค้าน)', false);
+  $('simPpl').innerHTML = mkCard(lead, '<svg class="mdico"><use href="#i-crown"></use></svg> พรรคแกนนำจัดตั้งรัฐบาล (เสนอชื่อนายกฯ)', true)
+                        + mkCard(opp,  '<svg class="mdico"><use href="#i-scale"></use></svg> พรรคฝ่ายค้านอันดับ ๑ (ผู้นำฝ่ายค้าน)', false);
   $('simPpl').querySelectorAll('img').forEach(img => img.addEventListener('error', () => {
     const fb = document.createElement('div');
     fb.className = 'av'; fb.style.background = img.dataset.col; fb.textContent = img.dataset.ini;
@@ -1305,7 +1306,7 @@ function selectDais(id){
         <span class="chip"><span class="sw" style="background:${col}"></span>${m.kind === 'sv' ? 'วุฒิสภา · อิสระ' : ((PM[m.code] && PM[m.code].th) || m.code)}</span>
       </div></div>
       <div class="mrows">
-        ${off.note ? `<div class="mrow"><span>📜 ${off.note}</span></div>` : ''}
+        ${off.note ? `<div class="mrow"><span><svg class="mdico"><use href="#i-scroll"></use></svg> ${off.note}</span></div>` : ''}
         <div class="mrow"><span>ที่นั่งสมาชิก: <b>${memberMeta(m)}</b></span></div>
         <div class="mrow"><span>${inf.body(view)}</span></div>
       </div>
@@ -1323,7 +1324,7 @@ function selectDais(id){
     // ทำเนียบเลขาธิการที่มีในเว็บเป็นชุดปัจจุบัน → ปีย้อนหลังไม่แสดง (จะกลายเป็นข้อมูลผิดยุค)
     const groups = !HAS_SENATE ? [] :
       view === 'sv' ? [SECRETARIAT.sv] : view === 'joint' ? [SECRETARIAT.mp, SECRETARIAT.sv] : [SECRETARIAT.mp];
-    const jointNote = view === 'joint' ? `<div class="mrow"><span>📜 ในการประชุมร่วมกันของรัฐสภา <b>เลขาธิการสภาผู้แทนราษฎร</b> ทำหน้าที่เป็นเลขาธิการรัฐสภา</span></div>` : '';
+    const jointNote = view === 'joint' ? `<div class="mrow"><span><svg class="mdico"><use href="#i-scroll"></use></svg> ในการประชุมร่วมกันของรัฐสภา <b>เลขาธิการสภาผู้แทนราษฎร</b> ทำหน้าที่เป็นเลขาธิการรัฐสภา</span></div>` : '';
     $('detailBody').innerHTML = `
       <div class="mview"><div class="avt" style="background:linear-gradient(135deg,#C9A84C,#8a6d22);font-size:2rem">${inf.num}</div>
       <div class="mi"><div class="mn">${inf.title}</div><span class="chip">ตำแหน่งบนบัลลังก์ / แท่นประชุม</span></div></div>
