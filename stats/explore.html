@@ -529,8 +529,218 @@
 <link rel="stylesheet" href="../css/bb8-toggle.css" />
 <script src="../js/icons.js"></script>
 <script src="../js/preloader.js"></script>
+<style id="v21-polish">
+/* ══════════════════════════════════════════════════════════════════════
+   V21 · ชั้นตกแต่ง "แสง–สี–ฟอนต์" สไตล์ 21st.dev
+   วางทับสไตล์เดิมล้วน ๆ ไม่แตะ markup/กราฟ/ข้อมูล
+   ลบ <style id="v21-polish"> ทั้งบล็อก + <div class="v21-bg"> + <script id="v21-js">
+   = กลับเป็นหน้าเดิมทันที
+   ความแรงคุมด้วยตัวแปร --v21-* : โหมดมืด = แรง · โหมดสว่าง = นุ่ม
+   ══════════════════════════════════════════════════════════════════════ */
+:root{
+  --v21-a:#0089A9; --v21-b:#D9480F;
+  /* พื้นหลัง */
+  --v21-aur-1:rgba(0,137,169,.16);
+  --v21-aur-2:rgba(217,72,15,.10);
+  --v21-aur-3:rgba(64,110,200,.10);
+  --v21-dot:rgba(10,40,60,.085); --v21-dot-gap:26px;
+  --v21-grain:.020; --v21-grain-blend:multiply;
+  /* การ์ด */
+  --v21-card:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,0) 46%),var(--paper-2);
+  --v21-card-bd:var(--rule);
+  --v21-edge:rgba(255,255,255,.9);
+  --v21-spot:rgba(0,137,169,.10);
+  --v21-ring:rgba(0,137,169,.42);
+  --v21-halo:0 18px 40px -28px rgba(10,40,60,.5);
+  --v21-halo-hi:0 0 0 1px rgba(0,137,169,.16),0 20px 44px -24px rgba(0,137,169,.42);
+  --v21-num-glow:none;
+  /* ตัวหนังสือ */
+  --v21-h1:linear-gradient(180deg,#0A1822 16%,#3F6379 108%);
+  --v21-h1-shadow:none;
+  --v21-pill-bg:linear-gradient(180deg,rgba(217,72,15,.10),rgba(217,72,15,.03));
+  --v21-pill-bd:rgba(217,72,15,.30);
+  --v21-pulse:rgba(217,72,15,.5);
+  --v21-ease:cubic-bezier(.22,1,.36,1);
+}
+html[data-theme="dark"]{
+  --v21-a:#00E5FF; --v21-b:#FF5C1A;
+  --v21-aur-1:rgba(0,229,255,.30);
+  --v21-aur-2:rgba(255,92,26,.19);
+  --v21-aur-3:rgba(96,86,255,.17);
+  --v21-dot:rgba(0,229,255,.11); --v21-dot-gap:26px;
+  --v21-grain:.055; --v21-grain-blend:overlay;
+  --v21-card:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0) 44%),var(--paper-2);
+  --v21-card-bd:rgba(0,229,255,.14);
+  --v21-edge:rgba(255,255,255,.10);
+  --v21-spot:rgba(0,229,255,.15);
+  --v21-ring:rgba(0,229,255,.48);
+  --v21-halo:0 22px 52px -32px rgba(0,0,0,.92);
+  --v21-halo-hi:0 0 0 1px rgba(0,229,255,.20),0 22px 52px -22px rgba(0,229,255,.28);
+  --v21-num-glow:0 0 30px rgba(0,229,255,.30);
+  --v21-h1:linear-gradient(174deg,#FFFFFF 4%,#C6EDF8 46%,rgba(0,229,255,.86) 108%);
+  --v21-h1-shadow:drop-shadow(0 0 38px rgba(0,229,255,.20));
+  --v21-pill-bg:linear-gradient(180deg,rgba(255,92,26,.20),rgba(255,92,26,.05));
+  --v21-pill-bd:rgba(255,92,26,.42);
+  --v21-pulse:rgba(255,92,26,.55);
+}
+
+/* ───────── 1 · พื้นหลัง: aurora + dot-grid + noise ───────── */
+/* ย้ายสีพื้นไปไว้ที่ <html> เพื่อให้เลเยอร์ z-index:-1 มองเห็นได้ */
+html{background:var(--paper)}
+body{background:transparent}
+.v21-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.v21-bg > span{position:absolute;display:block}
+.v21-aurora{inset:-22% -12%;
+  background:
+    radial-gradient(48% 42% at 16% 6%,  var(--v21-aur-1), transparent 70%),
+    radial-gradient(44% 38% at 90% 0%,  var(--v21-aur-2), transparent 70%),
+    radial-gradient(58% 50% at 62% 46%, var(--v21-aur-3), transparent 72%);
+  will-change:transform;
+  animation:v21drift 30s ease-in-out infinite alternate}
+@keyframes v21drift{
+  from{transform:translate3d(0,0,0) scale(1)}
+  to  {transform:translate3d(-2.6%,1.8%,0) scale(1.07)}
+}
+.v21-dots{inset:0;
+  background-image:radial-gradient(var(--v21-dot) 1px, transparent 1px);
+  background-size:var(--v21-dot-gap) var(--v21-dot-gap);
+  -webkit-mask-image:radial-gradient(118% 80% at 50% 0%,#000 12%,transparent 74%);
+          mask-image:radial-gradient(118% 80% at 50% 0%,#000 12%,transparent 74%)}
+.v21-grain{inset:0;opacity:var(--v21-grain);mix-blend-mode:var(--v21-grain-blend);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  background-size:200px 200px}
+
+/* แถบไล่สีบนสุด — เพิ่มออร่า + แสงวิ่งช้า ๆ */
+.topbar{overflow:hidden;box-shadow:0 0 26px -4px var(--v21-ring)}
+.topbar::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);
+  transform:translateX(-100%);animation:v21sheen 7s ease-in-out 1.5s infinite}
+@keyframes v21sheen{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
+
+/* แถบเมนูบน — เพิ่มความอิ่มสีตอนเบลอ + ขีดใต้เรืองแสง */
+.site-nav{-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);
+  border-bottom-color:var(--v21-card-bd)}
+.snav-links a.active{text-shadow:0 0 22px var(--v21-ring)}
+
+/* ───────── 2 · หัวเรื่อง / ฟอนต์ ───────── */
+.masthead{position:relative;padding:38px 0 8px}
+.masthead .eyebrow{display:inline-flex;align-items:center;gap:9px;
+  padding:5px 14px 5px 11px;border-radius:999px;
+  font-size:11.5px;letter-spacing:.2em;
+  background:var(--v21-pill-bg);border:1px solid var(--v21-pill-bd);
+  box-shadow:inset 0 1px 0 var(--v21-edge)}
+.masthead .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;
+  background:currentColor;flex:none;
+  animation:v21pulse 2.6s ease-out infinite}
+@keyframes v21pulse{
+  0%{box-shadow:0 0 0 0 var(--v21-pulse)}
+  70%{box-shadow:0 0 0 7px rgba(255,92,26,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,92,26,0)}
+}
+.masthead h1{margin-top:14px;letter-spacing:-.025em;
+  background-image:var(--v21-h1);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  filter:var(--v21-h1-shadow)}
+.masthead h1 .dot{-webkit-text-fill-color:var(--green);color:var(--green)}
+.masthead .lead{font-size:15.5px;line-height:1.65}
+
+/* ป้าย breadcrumb ของแต่ละหัวข้อ */
+.ph-crumb{background:linear-gradient(180deg,var(--green-soft),transparent);
+  border-color:var(--v21-ring);color:var(--green);
+  box-shadow:inset 0 1px 0 var(--v21-edge),0 6px 18px -12px var(--v21-ring)}
+.ph-title{letter-spacing:-.02em}
+html[data-theme="dark"] .ph-title{text-shadow:0 0 34px rgba(0,229,255,.14)}
+
+/* ───────── 3 · การ์ดกราฟ (spotlight ตามเมาส์) ───────── */
+.card{position:relative;isolation:isolate;
+  background:var(--v21-card);
+  border-color:var(--v21-card-bd);
+  box-shadow:var(--v21-halo),inset 0 1px 0 var(--v21-edge);
+  transition:border-color .3s ease,box-shadow .3s ease}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  pointer-events:none;opacity:0;transition:opacity .4s ease;
+  background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%),var(--v21-spot),transparent 62%)}
+.card:hover{border-color:var(--v21-ring);
+  box-shadow:var(--v21-halo-hi),inset 0 1px 0 var(--v21-edge)}
+.card:hover::before{opacity:1}
+.card h2{letter-spacing:-.012em}
+.card .tag{background:var(--green-soft);
+  box-shadow:0 0 20px -8px var(--v21-ring),inset 0 1px 0 var(--v21-edge)}
+
+/* ───────── 4 · KPI (ยกขึ้น + ขีดไฟบน + ตัวเลขเรืองแสง) ───────── */
+.kpi{position:relative;isolation:isolate;overflow:hidden;
+  background:var(--v21-card);
+  border-color:var(--v21-card-bd);
+  box-shadow:var(--v21-halo),inset 0 1px 0 var(--v21-edge);
+  transition:transform .28s var(--v21-ease),border-color .28s ease,box-shadow .28s ease}
+.kpi::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),var(--v21-spot),transparent 60%)}
+.kpi::after{content:"";position:absolute;top:0;left:14%;right:14%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--v21-ring),transparent);opacity:.85}
+.kpi:hover{transform:translateY(-3px);border-color:var(--v21-ring);
+  box-shadow:var(--v21-halo-hi),inset 0 1px 0 var(--v21-edge)}
+.kpi:hover::before{opacity:1}
+.kpi .k-top .mdico{color:var(--green);opacity:.95}
+.kpi .k-num{font-size:33px;letter-spacing:-.035em;text-shadow:var(--v21-num-glow)}
+html[data-theme="dark"] .kpi.accent .k-num{text-shadow:0 0 30px rgba(255,92,26,.32)}
+
+/* ───────── 5 · แถบเมนูซ้าย + ไมโครอินเทอแรกชัน ───────── */
+.side{border-color:var(--v21-card-bd);
+  box-shadow:var(--glass-shadow),inset 0 1px 0 var(--v21-edge),0 0 46px -30px var(--v21-ring)}
+.side::-webkit-scrollbar-thumb{background:var(--v21-ring)}
+.snav.active{background:linear-gradient(135deg,var(--green),var(--green-deep));
+  box-shadow:0 8px 24px -10px var(--v21-ring),inset 0 1px 0 rgba(255,255,255,.25)}
+.nav-glow{box-shadow:0 8px 22px -10px var(--v21-ring),inset 0 1px 0 rgba(255,255,255,.22)}
+.ng-sub:hover{box-shadow:inset 0 0 0 1px var(--v21-card-bd)}
+.side-util:hover,.side-util:focus-visible{color:var(--green);border-color:var(--v21-ring);
+  box-shadow:0 6px 18px -12px var(--v21-ring)}
+.nav-search input:focus{border-color:var(--v21-ring);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
+
+/* ปุ่ม/ชิปเล็ก ๆ ทั้งหน้า — hover เรืองแสงชุดเดียวกัน */
+.owid-tab:hover,.tl-btn:hover,.bkkm-pill:hover,.en-chip:hover,.owid-dl:hover{
+  border-color:var(--v21-ring);color:var(--green);
+  box-shadow:0 6px 18px -12px var(--v21-ring)}
+.owid-tab.on,.owid-tab.active,.bkkm-pill.on,.bkkm-pill.active,.en-chip.on,.en-chip.active{
+  box-shadow:0 8px 22px -12px var(--v21-ring)}
+.yp-yr,.owid-tl-yr,.tl-year-lab{text-shadow:0 0 18px var(--v21-ring)}
+
+/* โฟกัสด้วยคีย์บอร์ด — วงแหวนสีธีมทั้งหน้า */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid var(--v21-ring);outline-offset:2px}
+
+/* สกรอลล์บาร์ทั้งหน้า */
+html{scrollbar-color:var(--v21-ring) transparent;scrollbar-width:thin}
+body::-webkit-scrollbar{width:11px}
+body::-webkit-scrollbar-track{background:transparent}
+body::-webkit-scrollbar-thumb{background:var(--v21-ring);border-radius:11px;
+  border:3px solid transparent;background-clip:content-box}
+
+/* ตอนสลับโหมดสว่าง/มืด — ปิด transition ชั่วขณะ ไม่ให้การ์ด 120+ ใบ
+   วิ่งเงา/ขอบพร้อมกันจนกระตุก (คลาสนี้ใส่/ถอดโดย <script id="v21-js">) */
+html.v21-nofx .card,html.v21-nofx .kpi,html.v21-nofx .side,
+html.v21-nofx .snav,html.v21-nofx .ng-sub,html.v21-nofx .nav-glow,
+html.v21-nofx .site-nav,html.v21-nofx .owid-tab,html.v21-nofx .bkkm-pill,
+html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
+
+/* ───────── ปิดการเคลื่อนไหวถ้าผู้ใช้ตั้งค่าไว้ ───────── */
+@media (prefers-reduced-motion:reduce){
+  .v21-aurora,.topbar::after,.masthead .eyebrow::before{animation:none}
+  .kpi{transition:border-color .2s ease,box-shadow .2s ease}
+  .kpi:hover{transform:none}
+}
+/* จอเล็ก — ลดภาระ GPU + ให้ตัวหนังสืออ่านง่าย */
+@media (max-width:720px){
+  .v21-grain{display:none}
+  .masthead{padding-top:26px}
+}
+</style>
 </head>
 <body>
+  <!-- V21 · ชั้นแสงพื้นหลัง (aurora + dot-grid + noise) — ตกแต่งล้วน ๆ ไม่รับคลิก -->
+  <div class="v21-bg" aria-hidden="true"><span class="v21-aurora"></span><span class="v21-dots"></span><span class="v21-grain"></span></div>
   <!-- theme toggle — BB-8 droid (ผูกกับ data-theme/localStorage 'md-theme') -->
   <label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
     <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
@@ -3875,6 +4085,53 @@
       </div>
     </section>
 
+    <!-- ============ ศูนย์ข้อมูลโลก · แผ่นดินไหว (ไล่ตามเวลา · USGS สด) ============ -->
+    <section class="tabpane" id="pane-world-quake" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-zap"></use></svg> แผ่นดินไหว (ไล่เวลา)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> แผ่นดินไหวเมียนมา 2568</div>
+          <div class="k-num">M7.7<span class="u">28 มี.ค. 2568</span></div>
+          <div class="k-sub">รอยเลื่อนสะกาย — สั่นถึง กทม. ตึก สตง.ถล่ม</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> รุนแรงสุดในชุดข้อมูล</div>
+          <div class="k-num"><span id="kQkMax">—</span></div>
+          <div class="k-sub" id="kQkMaxSub">กำลังโหลดข้อมูล…</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> เหตุที่แสดงบนแผนที่</div>
+          <div class="k-num"><span id="kQkCount">—</span><span class="u">ครั้ง · M≥6</span></div>
+          <div class="k-sub">ทั่วโลก ตั้งแต่ปี 2558 (ค.ศ. 2015)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-mountain-snow"></use></svg> ใหญ่สุดในประวัติศาสตร์</div>
+          <div class="k-num">M9.5<span class="u">ชิลี 1960</span></div>
+          <div class="k-sub">แผ่นดินไหววัลดิเวีย — รุนแรงสุดเท่าที่วัดได้</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-globe"></use></svg> แผนที่แผ่นดินไหวโลก — เล่นไล่ตามเวลา</h2><span class="tag">USGS · M≥6 · สด</span></div>
+        <p class="sub"><b>กดปุ่ม ▶ เพื่อดูแผ่นดินไหวโผล่ไล่ตามเวลา</b> — จุดยิ่งใหญ่/สียิ่งเข้ม = ยิ่งรุนแรง · ลากแถบเลื่อนเพื่อย้อน–เดินหน้าเวลาเอง · เลื่อนล้อ/ปุ่ม ＋－ เพื่อซูม · ลากเพื่อเลื่อนแผนที่ · ชี้ที่จุดเพื่อดูขนาดและสถานที่</p>
+        <div id="quakeLegend" class="qk-legend" style="display:flex;flex-wrap:wrap;gap:6px 15px;align-items:center;font-size:12.5px;font-weight:600;margin:2px 0 10px;color:var(--ink-soft)">
+          <span>ระดับความรุนแรง (แมกนิจูด):</span>
+          <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#a855f7;vertical-align:middle;margin-right:4px"></i>Great ≥8.0</span>
+          <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#ec4899;vertical-align:middle;margin-right:4px"></i>Major 7.0–7.9</span>
+          <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#f97316;vertical-align:middle;margin-right:4px"></i>Strong 6.5–6.9</span>
+          <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#fbbf24;vertical-align:middle;margin-right:4px"></i>6.0–6.4</span>
+        </div>
+        <div id="quakeMap" class="qk-map"><div class="state-msg">กำลังโหลดข้อมูลแผ่นดินไหว…</div></div>
+        <div id="quakePlayer"></div>
+        <div class="src">ที่มา: <a href="https://earthquake.usgs.gov/earthquakes/search/" target="_blank" rel="noopener">USGS Earthquake Catalog ↗</a> (FDSN Event Service · ดึงสด · M≥6 ทั่วโลก ตั้งแต่ปี 2015) · เหตุการณ์สำคัญเป็นข้อมูลสำรองเมื่อเชื่อมต่อไม่ได้ · สืบค้นเมื่อ 27 ส.ค. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> จำนวนแผ่นดินไหว M≥6 ต่อปี (ทั่วโลก)</h2><span class="tag">ครั้ง/ปี</span></div>
+        <p class="sub">นับเฉพาะเหตุที่แสดงบนแผนที่ (M≥6) — โดยเฉลี่ยโลกมีแผ่นดินไหว M≥6 ราว 120–150 ครั้งต่อปี · ปีที่มีมหันตภัยใหญ่มักมีอาฟเตอร์ช็อกตามมามาก</p>
+        <div class="plot" id="quakeYearChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: USGS Earthquake Catalog (นับจากชุดข้อมูลเดียวกับแผนที่)</div>
+      </div>
+    </section>
+
     <!-- ============ การคลังภาครัฐ · หนี้สาธารณะ ============ -->
     <section class="tabpane" id="pane-fiscal-debt" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-landmark"></use></svg> หนี้สาธารณะ</h2></div>
@@ -6239,7 +6496,206 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); afterPaint(zoomifyMaps); }
+    /* ================= แผ่นดินไหว (ไล่ตามเวลา) · USGS FDSN สด + ค่าสำรองเหตุการณ์สำคัญ =================
+       แนวคิดจาก Flourish "When the Earth Shakes": จุดแผ่นดินไหวโผล่ไล่ตามเวลา ขนาด=แมกนิจูด สี=ระดับ
+       • ดึงสด USGS (M≥6 ทั่วโลก ตั้งแต่ปี 2015) · ล้มเหลว → ใช้ค่าสำรองเหตุการณ์ใหญ่ที่คัดไว้
+       • แผนที่ปั้นเองด้วย d3 (สร้าง svg ใหม่ทุก render → เข้ากับ MapZoom เหมือน #floodBivMap) */
+    var QUAKES_FALL = [
+      {lat:28.23, lon:84.73,  mag:7.8, t:Date.UTC(2015,3,25,6,11),   place:"Nepal (Gorkha)"},
+      {lat:-31.57,lon:-71.67, mag:8.3, t:Date.UTC(2015,8,16,22,54),  place:"Chile (Illapel)"},
+      {lat:0.38,  lon:-79.92, mag:7.8, t:Date.UTC(2016,3,16,23,58),  place:"Ecuador"},
+      {lat:-42.74,lon:173.05, mag:7.8, t:Date.UTC(2016,10,13,11,2),  place:"New Zealand (Kaikoura)"},
+      {lat:18.55, lon:-98.49, mag:7.1, t:Date.UTC(2017,8,19,18,14),  place:"Mexico (Puebla)"},
+      {lat:-0.18, lon:119.84, mag:7.5, t:Date.UTC(2018,8,28,10,2),   place:"Indonesia (Palu)"},
+      {lat:-5.81, lon:-75.27, mag:8.0, t:Date.UTC(2019,4,26,7,41),   place:"Peru"},
+      {lat:37.90, lon:26.79,  mag:7.0, t:Date.UTC(2020,9,30,11,51),  place:"Aegean Sea (Samos)"},
+      {lat:18.42, lon:-73.48, mag:7.2, t:Date.UTC(2021,7,14,12,29),  place:"Haiti"},
+      {lat:18.28, lon:-103.29,mag:7.6, t:Date.UTC(2022,8,19,18,5),   place:"Mexico (Michoacán)"},
+      {lat:37.17, lon:37.03,  mag:7.8, t:Date.UTC(2023,1,6,1,17),    place:"Turkey–Syria"},
+      {lat:31.06, lon:-8.39,  mag:6.8, t:Date.UTC(2023,8,8,22,11),   place:"Morocco (Marrakesh)"},
+      {lat:34.60, lon:61.90,  mag:6.3, t:Date.UTC(2023,9,7,6,41),    place:"Afghanistan (Herat)"},
+      {lat:37.50, lon:137.30, mag:7.5, t:Date.UTC(2024,0,1,7,10),    place:"Japan (Noto)"},
+      {lat:23.80, lon:121.60, mag:7.4, t:Date.UTC(2024,3,2,23,58),   place:"Taiwan (Hualien)"},
+      {lat:22.00, lon:95.92,  mag:7.7, t:Date.UTC(2025,2,28,6,20),   place:"เมียนมา (สะกาย) — สั่นถึง กทม.", hl:true}
+    ];
+    var QUAKES = QUAKES_FALL.slice();
+    var QK_LIVE = false;
+    var QK = { frac:1, dots:[], tmin:0, tmax:1, raf:0, playing:false, _range:null, _play:null, _date:null };
+
+    function qkColor(m){ return m>=8 ? "#a855f7" : m>=7 ? "#ec4899" : m>=6.5 ? "#f97316" : "#fbbf24"; }
+    function qkRadius(m){ return Math.max(2.4, (m-5)*2.15); }
+    function qkDateTH(t){
+      var d=new Date(t), M=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+      return d.getUTCDate()+" "+M[d.getUTCMonth()]+" "+(d.getUTCFullYear()+543);
+    }
+    function setQuakeKpis(){
+      if(!QUAKES.length) return;
+      var mx=QUAKES[0]; QUAKES.forEach(function(d){ if(d.mag>mx.mag) mx=d; });
+      var el;
+      if((el=$("#kQkMax"))) el.textContent="M"+mx.mag.toFixed(1);
+      if((el=$("#kQkMaxSub"))) el.textContent=(mx.place||"")+" · "+qkDateTH(mx.t);
+      if((el=$("#kQkCount"))) el.textContent=QUAKES.length.toLocaleString("en-US");
+    }
+
+    function renderQuake(){
+      var box=$("#quakeMap"); if(!box || paneHidden(box)) return;
+      var d3=window.d3; if(!d3 || !WORLD) return;
+      var rule=cssVar("--rule"), paper2=cssVar("--paper-2"), paper3=cssVar("--paper-3");
+      var W=Math.max(320, box.clientWidth||900), H=Math.round(W*0.52);
+      box.innerHTML="";
+      var svg=d3.select(box).append("svg")
+        .attr("viewBox","0 0 "+W+" "+H).attr("width","100%").style("height","auto")
+        .style("display","block").style("max-width","1040px").style("margin","0 auto");
+      var g=svg.append("g");
+      var proj=d3.geoNaturalEarth1().fitExtent([[8,8],[W-8,H-8]],{type:"Sphere"});
+      var path=d3.geoPath(proj);
+      g.append("path").attr("d",path({type:"Sphere"})).attr("fill",paper2).attr("stroke",rule).attr("stroke-width",0.7);
+      g.append("path").attr("d",path(d3.geoGraticule10())).attr("fill","none").attr("stroke",rule).attr("stroke-width",0.4).attr("stroke-opacity",0.3);
+      g.append("g").selectAll("path").data(WORLD.features).enter().append("path")
+        .attr("d",path).attr("fill",paper3).attr("stroke",rule).attr("stroke-width",0.4).attr("stroke-opacity",0.7);
+      var gd=g.append("g").attr("class","qk-dots");
+      var arr=QUAKES.slice().sort(function(a,b){ return a.t-b.t; });
+      QK.tmin=arr.length?arr[0].t:0; QK.tmax=arr.length?arr[arr.length-1].t:1;
+      if(QK.tmax<=QK.tmin) QK.tmax=QK.tmin+1;
+      QK.dots=[];
+      arr.forEach(function(dq){
+        var xy=proj([dq.lon,dq.lat]); if(!xy) return;
+        var c=gd.append("circle").attr("cx",xy[0]).attr("cy",xy[1]).attr("r",qkRadius(dq.mag))
+          .attr("fill",qkColor(dq.mag)).attr("fill-opacity",0.82)
+          .attr("stroke",dq.hl?"#ffffff":qkColor(dq.mag)).attr("stroke-width",dq.hl?1.8:0.5)
+          .style("transform-box","fill-box").style("transform-origin","center")
+          .style("vector-effect","non-scaling-stroke")
+          .style("transition","opacity .45s ease, transform .45s ease").style("cursor","pointer");
+        c.append("title").text("M"+dq.mag.toFixed(1)+" · "+(dq.place||"")+" · "+qkDateTH(dq.t));
+        QK.dots.push({el:c.node(), t:dq.t, hl:!!dq.hl, r0:qkRadius(dq.mag)});
+      });
+      // ---- ซูม/ลากแผนที่ (d3.zoom) — ชดเชยรัศมีจุด ÷k ให้จุดไม่บวมตามซูม ----
+      d3.select(box).style("position","relative");
+      var zoom=d3.zoom().scaleExtent([1,8]).extent([[0,0],[W,H]]).translateExtent([[0,0],[W,H]])
+        .filter(function(ev){
+          if(ev.type==="wheel"||ev.type==="dblclick") return true;   // เดสก์ท็อป: ล้อ/ดับเบิลคลิกซูม
+          if(ev.touches) return ev.touches.length>=2;                 // มือถือ: 2 นิ้ว = เลื่อน/ซูม · นิ้วเดียว = เลื่อนหน้าเว็บ
+          return !ev.button;                                          // เมาส์ปุ่มซ้ายลากเลื่อน
+        })
+        .on("zoom", function(ev){
+          var k=ev.transform.k; g.attr("transform", ev.transform);
+          QK.dots.forEach(function(o){ o.el.setAttribute("r", o.r0/k); });   // จุดคงขนาดบนจอ
+        });
+      svg.call(zoom).style("cursor","grab").style("touch-action","pan-y")
+        .on("mousedown.qk",function(){ svg.style("cursor","grabbing"); })
+        .on("mouseup.qk mouseleave.qk",function(){ svg.style("cursor","grab"); });
+      var ctl=d3.select(box).append("div")
+        .style("position","absolute").style("right","10px").style("top","10px")
+        .style("display","flex").style("flex-direction","column").style("gap","5px").style("z-index","3");
+      function qkZbtn(label,title,fn){
+        ctl.append("button").attr("type","button").attr("aria-label",title).attr("title",title).html(label)
+          .style("width","30px").style("height","30px").style("border-radius","8px")
+          .style("border","1px solid "+rule).style("background",paper2).style("color",cssVar("--ink"))
+          .style("font-size","16px").style("font-weight","700").style("cursor","pointer")
+          .style("line-height","1").style("box-shadow","0 1px 4px rgba(0,0,0,.15)").on("click",fn);
+      }
+      qkZbtn("&plus;","ซูมเข้า",function(){ svg.transition().duration(220).call(zoom.scaleBy,1.6); });
+      qkZbtn("&minus;","ซูมออก",function(){ svg.transition().duration(220).call(zoom.scaleBy,1/1.6); });
+      qkZbtn("&#10227;","รีเซ็ตมุมมอง",function(){ svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity); });
+      buildQuakePlayer();
+      qkApply(QK.frac);
+      renderQuakeYear();
+    }
+
+    function buildQuakePlayer(){
+      var host=$("#quakePlayer"); if(!host) return;
+      host.innerHTML="";
+      var ui=document.createElement("div"); ui.className="yp-player"; ui.style.flexWrap="wrap";
+      ui.innerHTML=
+        '<button class="yp-play" type="button" aria-label="เล่นไล่เวลา">'+MDICO("play")+'</button>'+
+        '<input id="qkRange" type="range" min="0" max="1000" value="1000" style="flex:1;min-width:150px;accent-color:'+qkColor(7)+'">'+
+        '<span id="qkDate" style="font-weight:800;min-width:120px;text-align:right;font-variant-numeric:tabular-nums">—</span>';
+      host.appendChild(ui);
+      var range=ui.querySelector("#qkRange"), play=ui.querySelector(".yp-play");
+      range.addEventListener("input", function(){ qkStop(); qkApply(+range.value/1000); });
+      play.addEventListener("click", function(){ if(QK.playing) qkStop(); else qkPlay(); });
+      QK._range=range; QK._play=play; QK._date=ui.querySelector("#qkDate");
+    }
+    function qkApply(frac){
+      QK.frac=frac;
+      var curT=QK.tmin + frac*(QK.tmax-QK.tmin), win=(QK.tmax-QK.tmin)*0.045;
+      QK.dots.forEach(function(o){
+        var s=o.el.style;
+        if(o.t>curT+1){ s.opacity="0"; s.transform="scale(0.01)"; return; }
+        if(curT-o.t<win || o.hl){ s.opacity="1"; s.transform="scale(1.4)"; }
+        else { s.opacity="0.6"; s.transform="scale(1)"; }
+      });
+      if(QK._range && document.activeElement!==QK._range) QK._range.value=Math.round(frac*1000);
+      if(QK._date) QK._date.textContent=qkDateTH(curT);
+    }
+    function qkStop(){
+      QK.playing=false;
+      if(QK.raf){ cancelAnimationFrame(QK.raf); QK.raf=0; }
+      if(QK._play) QK._play.innerHTML=MDICO("play");
+    }
+    function qkPlay(){
+      if(!QK.dots.length) return;
+      qkStop(); QK.playing=true;
+      if(QK._play) QK._play.innerHTML=MDICO("pause");
+      if(QK.frac>=0.999) QK.frac=0;                 // อยู่สุดปลายแล้ว → เริ่มใหม่จากต้น
+      var from=QK.frac, dur=15000, start=performance.now();
+      function step(now){
+        if(!QK.playing) return;
+        var f=from + (now-start)/dur;
+        if(f>=1){ qkApply(1); qkStop(); return; }
+        qkApply(f);
+        QK.raf=requestAnimationFrame(step);
+      }
+      QK.raf=requestAnimationFrame(step);
+    }
+
+    function renderQuakeYear(){
+      var box=$("#quakeYearChart"); if(!box || !window.Plot || paneHidden(box)) return;
+      var by={}; QUAKES.forEach(function(d){ var y=new Date(d.t).getUTCFullYear(); by[y]=(by[y]||0)+1; });
+      var rows=Object.keys(by).sort().map(function(y){ return {year:+y, n:by[y]}; });
+      if(!rows.length) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), orange="#f97316",
+          font="'IBM Plex Sans Thai', system-ui, sans-serif";
+      var W=Math.max(280, box.clientWidth||520);
+      var fig=plotT({
+        width:W, height:280, marginLeft:40, marginBottom:34, marginTop:14, marginRight:12,
+        style:baseStyle(ink,font),
+        x:{ label:null, tickFormat:"d", tickSize:0 },
+        y:{ label:"ครั้ง/ปี", grid:true, ticks:5, tickSize:0 },
+        marks:[
+          Plot.barY(rows, { x:"year", y:"n", fill:orange, rx:2 }),
+          Plot.text(rows, { x:"year", y:"n", text:function(d){ return d.n; }, dy:-8, fill:inkSoft, fontWeight:700, fontSize:11 }),
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.4 })
+        ]
+      });
+      owidBarMount("#quakeYearChart", fig, { rows:rows.map(function(d){ return {k:String(d.year), v:d.n}; }),
+        nameLabel:"ปี", valueLabel:"ครั้ง (M≥6)", valueFmt:function(v){ return v; } });
+    }
+
+    function loadQuake(){
+      var url="https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&minmagnitude=6&orderby=time-asc&limit=2000";
+      fetchJSON(url).then(function(gj){
+        if(!gj || !gj.features || !gj.features.length) throw 0;
+        var arr=[];
+        gj.features.forEach(function(f){
+          var c=(f.geometry&&f.geometry.coordinates)||[], p=f.properties||{};
+          if(c[0]==null||c[1]==null||p.mag==null||p.time==null) return;
+          arr.push({ lon:+c[0], lat:+c[1], mag:+p.mag, t:+p.time, place:p.place||"" });
+        });
+        if(arr.length<20) throw 0;
+        // ทำให้เหตุเมียนมา 28 มี.ค. 2568 เป็นไฮไลต์เสมอ (ป้ายไทย + วงขาว)
+        arr.forEach(function(d){
+          if(d.mag>=7.5 && d.t>Date.UTC(2025,2,27) && d.t<Date.UTC(2025,2,30) && d.lat>19 && d.lat<24 && d.lon>93 && d.lon<98){
+            d.hl=true; d.place="เมียนมา (สะกาย) — สั่นถึง กทม.";
+          }
+        });
+        arr.sort(function(a,b){ return a.t-b.t; });
+        QUAKES=arr; QK_LIVE=true; QK.frac=1;
+        setQuakeKpis(); renderQuake();
+      }).catch(function(){ setQuakeKpis(); });   // เชื่อมต่อไม่ได้ → คงค่าสำรอง
+    }
+
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -7856,6 +8312,7 @@
           renderHeatField();
           renderPmField();
           renderSeaRoutes();
+          renderQuake();             // แผนที่แผ่นดินไหวโลกต้องใช้ WORLD — วาดเมื่อ topojson พร้อม
           afterPaint(zoomifyMaps);   // แผนที่โลกเพิ่งวาดเสร็จหลังโหลด topojson → ต่อสายซูมให้ด้วย
         })
         .catch(function(){ $("#mapChart").innerHTML = '<div class="state-msg err">เชื่อมต่อข้อมูลแผนที่ไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>'; });
@@ -12176,8 +12633,10 @@
         renderFinanceAll();
         renderEnergyAll();
         renderFloodBiv();
+        setQuakeKpis(); renderQuake();
       });
       loadWorld();
+      loadQuake();
       loadSubCables();
       loadAsean();
       loadFinance();
@@ -12299,5 +12758,43 @@
   </script>
   <script src="../js/theme-toggle-drag.js"></script>
   <script src="../js/ai-chat.js"></script>
+  <script id="v21-js">
+  /* V21 · spotlight ตามเมาส์บนการ์ด/KPI — ตั้งค่า --mx/--my ให้ ::before ของ CSS ด้านบน
+     ฟังที่ document ตัวเดียว + คั่นด้วย rAF (ไม่ผูก listener รายการ์ด 120+ ใบ) */
+  (function () {
+    var SEL = ".card,.kpi,.soon-card,.bkkcity-go";
+    var el = null, px = 0, py = 0, tick = 0;
+    function paint() {
+      tick = 0;
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      el.style.setProperty("--mx", (((px - r.left) / r.width) * 100).toFixed(1) + "%");
+      el.style.setProperty("--my", (((py - r.top) / r.height) * 100).toFixed(1) + "%");
+    }
+    document.addEventListener("pointermove", function (e) {
+      var t = e.target, hit = (t && t.closest) ? t.closest(SEL) : null;
+      if (hit !== el) {
+        if (el) { el.style.removeProperty("--mx"); el.style.removeProperty("--my"); }
+        el = hit;
+      }
+      if (!el) return;
+      px = e.clientX; py = e.clientY;
+      if (!tick) tick = requestAnimationFrame(paint);
+    }, { passive: true });
+  })();
+
+  /* V21 · สลับโหมดสว่าง/มืดแล้วอย่าให้ transition ของการ์ดทุกใบวิ่งพร้อมกัน (กระตุก)
+     — ใส่คลาส .v21-nofx ที่ <html> แค่เสี้ยววินาทีระหว่างสลับ */
+  (function () {
+    var H = document.documentElement, t = 0;
+    if (!window.MutationObserver) return;
+    new MutationObserver(function () {
+      H.classList.add("v21-nofx");
+      clearTimeout(t);
+      t = setTimeout(function () { H.classList.remove("v21-nofx"); }, 80);
+    }).observe(H, { attributes: true, attributeFilter: ["data-theme"] });
+  })();
+  </script>
 </body>
 </html>
