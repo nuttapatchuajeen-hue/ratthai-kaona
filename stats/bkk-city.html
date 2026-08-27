@@ -455,6 +455,10 @@
   }
   function autoTilt(){
     if(!S.tilt || !S.ready || S.pitching) return;
+    // ระหว่างกล้องกำลังบินหรือไถลอยู่ ห้ามแตะมุมกล้อง — setPitch ของ MapLibre คือ jumpTo
+    // ซึ่งสั่ง stop() ทุกครั้ง การบินเลยถูกตัดทิ้งกลางทาง (เหตุที่กดแล้วบินไปหยุดกลางคัน)
+    // flyTo ส่ง pitch ไปกับการบินอยู่แล้ว และมี moveend คอยปรับซ้ำตอนจบให้อีกชั้น
+    if(S.map.isEasing && S.map.isEasing()) return;
     var want = pitchFor(S.map.getZoom());
     if(Math.abs(S.map.getPitch() - want) > 0.6) S.map.setPitch(want);
   }
@@ -822,6 +826,8 @@
       S.map.on("pitchstart", function(e){ if(e.originalEvent){ S.pitching = true; setTilt(false); } });
       S.map.on("pitchend",   function(){ S.pitching = false; });
       S.map.on("zoom", function(){ autoTilt(); drawZoomTag(); });
+      // พอบิน/ไถลจบค่อยปรับมุมให้ตรงระดับซูมอีกที (ระหว่างบิน autoTilt ถูกกันไว้ ดูหมายเหตุในนั้น)
+      S.map.on("moveend", autoTilt);
       S.map.on("move", drawZoomTag);
       // วาดชั้นข้อมูลทันทีที่ "สไตล์" พร้อม ไม่รอ event load ที่รอไทล์ครบทั้งจอ
       // (ไทล์จาก OpenFreeMap ครั้งแรกช้าได้เป็นสิบวินาที ถ้ารอ load ผู้ใช้จะเห็นจอเปล่านาน)
