@@ -691,6 +691,121 @@
         </div>
         <div class="src">ที่มา: <a href="https://ourworldindata.org" target="_blank" rel="noopener">Our World in Data ↗</a> (CO₂: Global Carbon Project · ประชากร/GDP: OWID/World Bank) · ดึงสด · แผนที่ฐาน Natural Earth</div>
       </div>
+
+      <div class="ph-head"><span class="ph-crumb">ส่วนขยาย · ENSO</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sun-medium"></use></svg> เอลนีโญ–ลานีญา (ENSO) &amp; ผลต่อไทย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> สถานะ ENSO ตอนนี้</div>
+          <div class="k-num">เอลนีโญ<span class="u">El Niño Advisory</span></div>
+          <div class="k-sub">NOAA ประกาศเตือนเอลนีโญ · สรุปตามการประเมินรอบ ส.ค. 2569</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-trending-up"></use></svg> โอกาสเป็น “กำลังแรงมาก”</div>
+          <div class="k-num">95<span class="u">% · ต.ค.–ธ.ค. 2569</span></div>
+          <div class="k-sub">ขยับขึ้นจาก 81% ที่ NOAA ประเมินไว้เมื่อ ก.ค. 2569</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> โอกาสแรงสุดเท่าที่เคยวัด</div>
+          <div class="k-num">69<span class="u">%</span></div>
+          <div class="k-sub">โอกาสที่ค่า RONI จะถึง +2.5°C ขึ้นไป — เกินทุกเหตุการณ์ตั้งแต่ปี 2493</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> อุณหภูมิโลก 2568</div>
+          <div class="k-num">+1.19<span class="u">°C</span></div>
+          <div class="k-sub">สูงกว่าค่าเฉลี่ย 2494–2523 · ร้อนอันดับ 2 รองจาก 2567 (+1.28°C) — NASA GISTEMP</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-waves"></use></svg> เหตุการณ์เอลนีโญ–ลานีญาที่แรงที่สุดตั้งแต่ปี 2493</h2><span class="tag">ONI สูงสุดของแต่ละเหตุการณ์ · °C</span></div>
+        <p class="sub">ENSO วัดด้วย <b>ONI</b> (Oceanic Niño Index) — ค่าผิดปกติของอุณหภูมิผิวน้ำทะเลกลางแปซิฟิกเขตศูนย์สูตร (พื้นที่ Niño 3.4) เฉลี่ยครั้งละ 3 เดือน · เกิน <b>+0.5°C = เอลนีโญ</b> (ทะเลอุ่นผิดปกติ · แท่งส้ม) ต่ำกว่า <b>−0.5°C = ลานีญา</b> (เย็นผิดปกติ · แท่งฟ้า) · ภาพดาวเทียมของ NOAA ที่เห็นเป็นแถบแดงยาวพาดตามแนวศูนย์สูตร คือค่าเดียวกันนี้ในรูปแผนที่</p>
+        <div class="plot" id="ensoOni"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">NOAA Climate Prediction Center — Oceanic Niño Index ↗</a> (ชุดข้อมูล ERSSTv5) — ค่าจุดสูงสุดต่างกันได้เล็กน้อยตามเวอร์ชันชุดข้อมูล (v4/v5/v6) · <b>หมายเหตุ:</b> ตั้งแต่ ก.พ. 2569 NOAA เปลี่ยนไปใช้ <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso/roni/announcement.php" target="_blank" rel="noopener">RONI ↗</a> เป็นดัชนีทางการแทน ONI เพื่อหักผลของแนวโน้มโลกร้อนระยะยาวออก (โดยทั่วไป RONI จะทำให้เอลนีโญดูอ่อนลงและลานีญาดูแรงขึ้นเมื่อเทียบกับ ONI)</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-thermometer"></use></svg> อุณหภูมิเฉลี่ยผิวโลก — ค่าเฉลี่ยรายทศวรรษ (NASA GISTEMP)</h2><span class="tag">°C เทียบฐาน 2494–2523</span></div>
+        <p class="sub">คนละชุดกับกราฟ “อุณหภูมิเฉลี่ยโลกที่สูงขึ้น” ด้านบนในข้อเดียวกันนี้ (นั่นคือ HadCRUT5 เทียบยุคก่อนอุตสาหกรรม · ดึงสด) — ชุดนี้คือ <b>GISTEMP ของ NASA Goddard</b> เทียบฐาน 2494–2523 ซึ่งเป็นชุดข้อมูลเบื้องหลังภาพเคลื่อนไหวแผนที่โลกแดง–ฟ้าที่เห็นกันบ่อย · ENSO ไม่ได้ทำให้โลกร้อนขึ้นในระยะยาว แต่<b>ทำให้ปีไหนขึ้นแท่นปีร้อนสถิติ</b> — ปีที่ร้อนทำลายสถิติมักเป็นปีถัดจากช่วงที่เอลนีโญขึ้นสูงสุด</p>
+        <div class="plot" id="ensoGistemp"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS — GISTEMP v4 ↗</a> · ภาพเคลื่อนไหว <a href="https://svs.gsfc.nasa.gov/5607" target="_blank" rel="noopener">NASA Goddard SVS — Global Temperature Anomalies 1880–2025 ↗</a> — ค่าเฉลี่ยรายทศวรรษเป็น<b>ค่าประมาณ</b>ที่สรุปจากค่ารายปี (ทศวรรษ 2563 นับเพียง 6 ปี คือ 2563–2568) · ค่ารายปีที่ NASA รายงาน: 2567 = +1.28°C (ร้อนที่สุดในสถิติ 146 ปี) · 2568 = +1.19°C</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-map-pin"></use></svg> ENSO กับภัยพิบัติในไทย — เทียบรายเหตุการณ์</h2><span class="tag">2540–2570</span></div>
+        <p class="sub">กรมอุตุนิยมวิทยาสรุปหลักไว้ว่า ปีที่<b>เอลนีโญรุนแรง ฝนของไทยมักต่ำกว่าปกติและอุณหภูมิสูงกว่าปกติ</b> ส่วน<b>ลานีญาให้ผลตรงข้าม</b> — ตารางนี้วางเหตุการณ์จริงในไทยเทียบกับค่า ONI ของแต่ละรอบ · แถวสุดท้ายเป็น<b>การคาดการณ์</b> ยังไม่ใช่สิ่งที่เกิดขึ้นแล้ว</p>
+        <div class="tbl-wrap">
+          <table class="dataTbl" id="ensoThaiTbl"><tbody><tr><td class="state-msg">กำลังสร้างตาราง…</td></tr></tbody></table>
+        </div>
+        <div class="src">ที่มา: นิยามและผลกระทบต่อไทย — <a href="https://tmd.go.th/info/%E0%B9%80%E0%B8%AD%E0%B8%A5%E0%B8%99%E0%B9%82%E0%B8%8D%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A5%E0%B8%B2%E0%B8%99%E0%B8%8D%E0%B8%B2" target="_blank" rel="noopener">กรมอุตุนิยมวิทยา — เอลนีโญและลานีญา ↗</a> · ค่า ONI — NOAA CPC · สถิติอุณหภูมิสูงสุดของไทย 45.4°C ที่ จ.ตาก (15 เม.ย. 2566) ทำลายสถิติเดิม 44.6°C ที่ จ.แม่ฮ่องสอน (เม.ย. 2559) · จำนวนผู้ได้รับผลกระทบจากมหาอุทกภัย 2554 ใช้ตัวเลขชุดเดียวกับ KPI ด้านบนของข้อนี้ · คาดการณ์ 2569–2570 — <a href="https://www.dcce.go.th/25086/" target="_blank" rel="noopener">กรมการเปลี่ยนแปลงสภาพภูมิอากาศและสิ่งแวดล้อม ↗</a> และคำเตือนของกรมอุตุนิยมวิทยารอบ ส.ค. 2569</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-compass"></use></svg> จากมหาสมุทรถึงโดมความร้อน — กลไก 4 ขั้น</h2><span class="tag">อธิบายกลไก</span></div>
+        <p class="sub">แผนที่อากาศที่เห็นเป็นวงความกดอากาศซ้อนกันเป็นชั้น ๆ รอบตัวอักษร <b>H</b> คือ “<b>ความกดอากาศสูงปิดกั้น</b>” (blocking high) — ตัวกลางที่แปลงความผิดปกติของอุณหภูมิมหาสมุทร ให้กลายเป็นคลื่นความร้อนและภัยแล้งบนแผ่นดินจริง ๆ</p>
+        <div class="tbl-wrap">
+          <table class="dataTbl" id="ensoMechTbl"><tbody><tr><td class="state-msg">กำลังสร้างตาราง…</td></tr></tbody></table>
+        </div>
+        <div class="src">เรียบเรียงจากคำอธิบายกลไก ENSO และการปิดกั้นของกระแสลมกรดของ <a href="https://www.climate.gov/enso" target="_blank" rel="noopener">NOAA Climate.gov — ENSO Blog ↗</a> และ <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml" target="_blank" rel="noopener">NOAA CPC — ENSO Diagnostic Discussion ↗</a> — เป็นคำอธิบายเชิงหลักการ ไม่ใช่การพยากรณ์รายพื้นที่</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-search"></use></svg> แหล่งอ้างอิงของหัวข้อนี้</h2><span class="tag">เปิดทั้งหมด · ไม่ต้องใช้ API key</span></div>
+        <p class="sub">ทุกตัวเลขในหัวข้อนี้ระบุหน่วยงานเจ้าของข้อมูลและปีข้อมูลกำกับไว้ — ตัวเลขที่ไม่บอกปี คือทางที่ข้อมูลเก่าถูกนำมาสวมเป็นปัจจุบัน</p>
+        <div class="bkkm-srcs">
+          <div class="ss-h">แหล่งอ้างอิง · sources</div>
+          <table>
+            <thead><tr><th>หน่วยงาน · แหล่งข้อมูล</th><th>สถานะ</th><th>ใช้กับตัวเลขไหนในหน้านี้</th><th>ปีข้อมูล</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>NOAA CPC</td>
+                <td><span class="bkkm-kind k-real">จริง</span></td>
+                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">Oceanic Niño Index (ONI) ↗</a><span class="ss-how">ค่า ONI สูงสุดของ 10 เหตุการณ์ในกราฟแท่ง · เกณฑ์ ±0.5°C</span></td>
+                <td>2493–2568</td>
+              </tr>
+              <tr>
+                <td>NOAA CPC</td>
+                <td><span class="bkkm-kind k-real">จริง</span></td>
+                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso/roni/announcement.php" target="_blank" rel="noopener">ประกาศเปลี่ยนไปใช้ RONI ↗</a><span class="ss-how">การเปลี่ยนดัชนีทางการเมื่อ ก.พ. 2569 และเกณฑ์ RONI ±0.5°C</span></td>
+                <td>2569</td>
+              </tr>
+              <tr>
+                <td>NOAA CPC</td>
+                <td><span class="bkkm-kind k-est">คาดการณ์</span></td>
+                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml" target="_blank" rel="noopener">ENSO Diagnostic Discussion ↗</a><span class="ss-how">สถานะ El Niño Advisory · โอกาส 95% ที่จะแรงมากช่วง ต.ค.–ธ.ค. 2569 · โอกาส 69% ที่ RONI ≥ +2.5°C</span></td>
+                <td>ส.ค. 2569</td>
+              </tr>
+              <tr>
+                <td>NASA GISS</td>
+                <td><span class="bkkm-kind k-real">จริง</span></td>
+                <td><a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">GISTEMP v4 ↗</a><span class="ss-how">อุณหภูมิเฉลี่ยผิวโลกเทียบฐาน 2494–2523 — ค่ารายปี 2567 (+1.28°C) และ 2568 (+1.19°C)</span></td>
+                <td>2423–2568</td>
+              </tr>
+              <tr>
+                <td>NASA Goddard SVS</td>
+                <td><span class="bkkm-kind k-near">อิงจริง</span></td>
+                <td><a href="https://svs.gsfc.nasa.gov/5607" target="_blank" rel="noopener">Global Temperature Anomalies 1880–2025 ↗</a><span class="ss-how">ภาพเคลื่อนไหวแผนที่อุณหภูมิผิดปกติของโลก — ที่มาของกราฟค่าเฉลี่ยรายทศวรรษ (สรุปเป็นค่าประมาณ)</span></td>
+                <td>2569</td>
+              </tr>
+              <tr>
+                <td>กรมอุตุนิยมวิทยา</td>
+                <td><span class="bkkm-kind k-real">จริง</span></td>
+                <td><a href="https://tmd.go.th/info/%E0%B9%80%E0%B8%AD%E0%B8%A5%E0%B8%99%E0%B9%82%E0%B8%8D%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A5%E0%B8%B2%E0%B8%99%E0%B8%8D%E0%B8%B2" target="_blank" rel="noopener">เอลนีโญและลานีญา ↗</a><span class="ss-how">นิยามปรากฏการณ์ และหลักที่ว่าเอลนีโญรุนแรง = ฝนไทยต่ำกว่าปกติ อุณหภูมิสูงกว่าปกติ</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>สส. (กรมการเปลี่ยนแปลงสภาพภูมิอากาศฯ)</td>
+                <td><span class="bkkm-kind k-est">คาดการณ์</span></td>
+                <td><a href="https://www.dcce.go.th/25086/" target="_blank" rel="noopener">แจ้งเตือนรับมือเอลนีโญลากยาวถึงปี 2570 ↗</a><span class="ss-how">คำเตือนระดับกระทรวงและการเปิดฐานข้อมูลภูมิอากาศความละเอียดสูงเพื่อรับมือภัยแล้ง</span></td>
+                <td>2569</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="ss-foot">
+            <b>จริง</b> = ค่าที่หน่วยงานเจ้าของข้อมูลเผยแพร่ · <b>อิงจริง</b> = สรุป/ย่อจากชุดข้อมูลจริง (เช่น ค่าเฉลี่ยรายทศวรรษในหน้านี้) · <b>คาดการณ์</b> = ตัวเลขพยากรณ์ที่ยังไม่เกิดขึ้นจริง<br>
+            หัวข้อนี้เป็นข้อมูลเพื่อการศึกษา ไม่ใช่ประกาศเตือนภัยทางการ — การเตือนภัยจริงให้ยึดประกาศของ<a href="https://www.tmd.go.th/" target="_blank" rel="noopener">กรมอุตุนิยมวิทยา</a> และ<a href="https://www.disaster.go.th/" target="_blank" rel="noopener">กรมป้องกันและบรรเทาสาธารณภัย (ปภ.)</a> เป็นหลัก
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ============ อาเซียน · เศรษฐกิจ (World Bank live) ============ -->
@@ -3760,124 +3875,6 @@
       </div>
     </section>
 
-    <!-- ============ ศูนย์ข้อมูลโลก · เอลนีโญ–ลานีญา (ENSO) ============ -->
-    <section class="tabpane" id="pane-world-enso" role="tabpanel">
-      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sun-medium"></use></svg> เอลนีโญ–ลานีญา (ENSO) &amp; ผลต่อไทย</h2></div>
-      <div class="kpis">
-        <div class="kpi accent">
-          <div class="k-top"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> สถานะ ENSO ตอนนี้</div>
-          <div class="k-num">เอลนีโญ<span class="u">El Niño Advisory</span></div>
-          <div class="k-sub">NOAA ประกาศเตือนเอลนีโญ · สรุปตามการประเมินรอบ ส.ค. 2569</div>
-        </div>
-        <div class="kpi">
-          <div class="k-top"><svg class="mdico"><use href="#i-trending-up"></use></svg> โอกาสเป็น “กำลังแรงมาก”</div>
-          <div class="k-num">95<span class="u">% · ต.ค.–ธ.ค. 2569</span></div>
-          <div class="k-sub">ขยับขึ้นจาก 81% ที่ NOAA ประเมินไว้เมื่อ ก.ค. 2569</div>
-        </div>
-        <div class="kpi accent">
-          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> โอกาสแรงสุดเท่าที่เคยวัด</div>
-          <div class="k-num">69<span class="u">%</span></div>
-          <div class="k-sub">โอกาสที่ค่า RONI จะถึง +2.5°C ขึ้นไป — เกินทุกเหตุการณ์ตั้งแต่ปี 2493</div>
-        </div>
-        <div class="kpi">
-          <div class="k-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> อุณหภูมิโลก 2568</div>
-          <div class="k-num">+1.19<span class="u">°C</span></div>
-          <div class="k-sub">สูงกว่าค่าเฉลี่ย 2494–2523 · ร้อนอันดับ 2 รองจาก 2567 (+1.28°C) — NASA GISTEMP</div>
-        </div>
-      </div>
-
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-waves"></use></svg> เหตุการณ์เอลนีโญ–ลานีญาที่แรงที่สุดตั้งแต่ปี 2493</h2><span class="tag">ONI สูงสุดของแต่ละเหตุการณ์ · °C</span></div>
-        <p class="sub">ENSO วัดด้วย <b>ONI</b> (Oceanic Niño Index) — ค่าผิดปกติของอุณหภูมิผิวน้ำทะเลกลางแปซิฟิกเขตศูนย์สูตร (พื้นที่ Niño 3.4) เฉลี่ยครั้งละ 3 เดือน · เกิน <b>+0.5°C = เอลนีโญ</b> (ทะเลอุ่นผิดปกติ · แท่งส้ม) ต่ำกว่า <b>−0.5°C = ลานีญา</b> (เย็นผิดปกติ · แท่งฟ้า) · ภาพดาวเทียมของ NOAA ที่เห็นเป็นแถบแดงยาวพาดตามแนวศูนย์สูตร คือค่าเดียวกันนี้ในรูปแผนที่</p>
-        <div class="plot" id="ensoOni"><div class="state-msg">กำลังวาดกราฟ…</div></div>
-        <div class="src">ที่มา: <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">NOAA Climate Prediction Center — Oceanic Niño Index ↗</a> (ชุดข้อมูล ERSSTv5) — ค่าจุดสูงสุดต่างกันได้เล็กน้อยตามเวอร์ชันชุดข้อมูล (v4/v5/v6) · <b>หมายเหตุ:</b> ตั้งแต่ ก.พ. 2569 NOAA เปลี่ยนไปใช้ <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso/roni/announcement.php" target="_blank" rel="noopener">RONI ↗</a> เป็นดัชนีทางการแทน ONI เพื่อหักผลของแนวโน้มโลกร้อนระยะยาวออก (โดยทั่วไป RONI จะทำให้เอลนีโญดูอ่อนลงและลานีญาดูแรงขึ้นเมื่อเทียบกับ ONI)</div>
-      </div>
-
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-thermometer"></use></svg> อุณหภูมิเฉลี่ยผิวโลก — ค่าเฉลี่ยรายทศวรรษ (NASA GISTEMP)</h2><span class="tag">°C เทียบฐาน 2494–2523</span></div>
-        <p class="sub">คนละชุดกับกราฟในหัวข้อ “ภาพรวม โลกร้อน &amp; ภัยพิบัติ” (นั่นคือ HadCRUT5 เทียบยุคก่อนอุตสาหกรรม) — ชุดนี้คือ <b>GISTEMP ของ NASA Goddard</b> เทียบฐาน 2494–2523 ซึ่งเป็นชุดข้อมูลเบื้องหลังภาพเคลื่อนไหวแผนที่โลกแดง–ฟ้าที่เห็นกันบ่อย · ENSO ไม่ได้ทำให้โลกร้อนขึ้นในระยะยาว แต่<b>ทำให้ปีไหนขึ้นแท่นปีร้อนสถิติ</b> — ปีที่ร้อนทำลายสถิติมักเป็นปีถัดจากช่วงที่เอลนีโญขึ้นสูงสุด</p>
-        <div class="plot" id="ensoGistemp"><div class="state-msg">กำลังวาดกราฟ…</div></div>
-        <div class="src">ที่มา: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS — GISTEMP v4 ↗</a> · ภาพเคลื่อนไหว <a href="https://svs.gsfc.nasa.gov/5607" target="_blank" rel="noopener">NASA Goddard SVS — Global Temperature Anomalies 1880–2025 ↗</a> — ค่าเฉลี่ยรายทศวรรษเป็น<b>ค่าประมาณ</b>ที่สรุปจากค่ารายปี (ทศวรรษ 2563 นับเพียง 6 ปี คือ 2563–2568) · ค่ารายปีที่ NASA รายงาน: 2567 = +1.28°C (ร้อนที่สุดในสถิติ 146 ปี) · 2568 = +1.19°C</div>
-      </div>
-
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-map-pin"></use></svg> ENSO กับภัยพิบัติในไทย — เทียบรายเหตุการณ์</h2><span class="tag">2540–2570</span></div>
-        <p class="sub">กรมอุตุนิยมวิทยาสรุปหลักไว้ว่า ปีที่<b>เอลนีโญรุนแรง ฝนของไทยมักต่ำกว่าปกติและอุณหภูมิสูงกว่าปกติ</b> ส่วน<b>ลานีญาให้ผลตรงข้าม</b> — ตารางนี้วางเหตุการณ์จริงในไทยเทียบกับค่า ONI ของแต่ละรอบ · แถวสุดท้ายเป็น<b>การคาดการณ์</b> ยังไม่ใช่สิ่งที่เกิดขึ้นแล้ว</p>
-        <div class="tbl-wrap">
-          <table class="dataTbl" id="ensoThaiTbl"><tbody><tr><td class="state-msg">กำลังสร้างตาราง…</td></tr></tbody></table>
-        </div>
-        <div class="src">ที่มา: นิยามและผลกระทบต่อไทย — <a href="https://tmd.go.th/info/%E0%B9%80%E0%B8%AD%E0%B8%A5%E0%B8%99%E0%B9%82%E0%B8%8D%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A5%E0%B8%B2%E0%B8%99%E0%B8%8D%E0%B8%B2" target="_blank" rel="noopener">กรมอุตุนิยมวิทยา — เอลนีโญและลานีญา ↗</a> · ค่า ONI — NOAA CPC · สถิติอุณหภูมิสูงสุดของไทย 45.4°C ที่ จ.ตาก (15 เม.ย. 2566) ทำลายสถิติเดิม 44.6°C ที่ จ.แม่ฮ่องสอน (เม.ย. 2559) · จำนวนผู้ได้รับผลกระทบจากมหาอุทกภัย 2554 ใช้ตัวเลขชุดเดียวกับหัวข้อ “ภาพรวม โลกร้อน &amp; ภัยพิบัติ” · คาดการณ์ 2569–2570 — <a href="https://www.dcce.go.th/25086/" target="_blank" rel="noopener">กรมการเปลี่ยนแปลงสภาพภูมิอากาศและสิ่งแวดล้อม ↗</a> และคำเตือนของกรมอุตุนิยมวิทยารอบ ส.ค. 2569</div>
-      </div>
-
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-compass"></use></svg> จากมหาสมุทรถึงโดมความร้อน — กลไก 4 ขั้น</h2><span class="tag">อธิบายกลไก</span></div>
-        <p class="sub">แผนที่อากาศที่เห็นเป็นวงความกดอากาศซ้อนกันเป็นชั้น ๆ รอบตัวอักษร <b>H</b> คือ “<b>ความกดอากาศสูงปิดกั้น</b>” (blocking high) — ตัวกลางที่แปลงความผิดปกติของอุณหภูมิมหาสมุทร ให้กลายเป็นคลื่นความร้อนและภัยแล้งบนแผ่นดินจริง ๆ</p>
-        <div class="tbl-wrap">
-          <table class="dataTbl" id="ensoMechTbl"><tbody><tr><td class="state-msg">กำลังสร้างตาราง…</td></tr></tbody></table>
-        </div>
-        <div class="src">เรียบเรียงจากคำอธิบายกลไก ENSO และการปิดกั้นของกระแสลมกรดของ <a href="https://www.climate.gov/enso" target="_blank" rel="noopener">NOAA Climate.gov — ENSO Blog ↗</a> และ <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml" target="_blank" rel="noopener">NOAA CPC — ENSO Diagnostic Discussion ↗</a> — เป็นคำอธิบายเชิงหลักการ ไม่ใช่การพยากรณ์รายพื้นที่</div>
-      </div>
-
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-search"></use></svg> แหล่งอ้างอิงของหัวข้อนี้</h2><span class="tag">เปิดทั้งหมด · ไม่ต้องใช้ API key</span></div>
-        <p class="sub">ทุกตัวเลขในหัวข้อนี้ระบุหน่วยงานเจ้าของข้อมูลและปีข้อมูลกำกับไว้ — ตัวเลขที่ไม่บอกปี คือทางที่ข้อมูลเก่าถูกนำมาสวมเป็นปัจจุบัน</p>
-        <div class="bkkm-srcs">
-          <div class="ss-h">แหล่งอ้างอิง · sources</div>
-          <table>
-            <thead><tr><th>หน่วยงาน · แหล่งข้อมูล</th><th>สถานะ</th><th>ใช้กับตัวเลขไหนในหน้านี้</th><th>ปีข้อมูล</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>NOAA CPC</td>
-                <td><span class="bkkm-kind k-real">จริง</span></td>
-                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">Oceanic Niño Index (ONI) ↗</a><span class="ss-how">ค่า ONI สูงสุดของ 10 เหตุการณ์ในกราฟแท่ง · เกณฑ์ ±0.5°C</span></td>
-                <td>2493–2568</td>
-              </tr>
-              <tr>
-                <td>NOAA CPC</td>
-                <td><span class="bkkm-kind k-real">จริง</span></td>
-                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso/roni/announcement.php" target="_blank" rel="noopener">ประกาศเปลี่ยนไปใช้ RONI ↗</a><span class="ss-how">การเปลี่ยนดัชนีทางการเมื่อ ก.พ. 2569 และเกณฑ์ RONI ±0.5°C</span></td>
-                <td>2569</td>
-              </tr>
-              <tr>
-                <td>NOAA CPC</td>
-                <td><span class="bkkm-kind k-est">คาดการณ์</span></td>
-                <td><a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml" target="_blank" rel="noopener">ENSO Diagnostic Discussion ↗</a><span class="ss-how">สถานะ El Niño Advisory · โอกาส 95% ที่จะแรงมากช่วง ต.ค.–ธ.ค. 2569 · โอกาส 69% ที่ RONI ≥ +2.5°C</span></td>
-                <td>ส.ค. 2569</td>
-              </tr>
-              <tr>
-                <td>NASA GISS</td>
-                <td><span class="bkkm-kind k-real">จริง</span></td>
-                <td><a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">GISTEMP v4 ↗</a><span class="ss-how">อุณหภูมิเฉลี่ยผิวโลกเทียบฐาน 2494–2523 — ค่ารายปี 2567 (+1.28°C) และ 2568 (+1.19°C)</span></td>
-                <td>2423–2568</td>
-              </tr>
-              <tr>
-                <td>NASA Goddard SVS</td>
-                <td><span class="bkkm-kind k-near">อิงจริง</span></td>
-                <td><a href="https://svs.gsfc.nasa.gov/5607" target="_blank" rel="noopener">Global Temperature Anomalies 1880–2025 ↗</a><span class="ss-how">ภาพเคลื่อนไหวแผนที่อุณหภูมิผิดปกติของโลก — ที่มาของกราฟค่าเฉลี่ยรายทศวรรษ (สรุปเป็นค่าประมาณ)</span></td>
-                <td>2569</td>
-              </tr>
-              <tr>
-                <td>กรมอุตุนิยมวิทยา</td>
-                <td><span class="bkkm-kind k-real">จริง</span></td>
-                <td><a href="https://tmd.go.th/info/%E0%B9%80%E0%B8%AD%E0%B8%A5%E0%B8%99%E0%B9%82%E0%B8%8D%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A5%E0%B8%B2%E0%B8%99%E0%B8%8D%E0%B8%B2" target="_blank" rel="noopener">เอลนีโญและลานีญา ↗</a><span class="ss-how">นิยามปรากฏการณ์ และหลักที่ว่าเอลนีโญรุนแรง = ฝนไทยต่ำกว่าปกติ อุณหภูมิสูงกว่าปกติ</span></td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td>สส. (กรมการเปลี่ยนแปลงสภาพภูมิอากาศฯ)</td>
-                <td><span class="bkkm-kind k-est">คาดการณ์</span></td>
-                <td><a href="https://www.dcce.go.th/25086/" target="_blank" rel="noopener">แจ้งเตือนรับมือเอลนีโญลากยาวถึงปี 2570 ↗</a><span class="ss-how">คำเตือนระดับกระทรวงและการเปิดฐานข้อมูลภูมิอากาศความละเอียดสูงเพื่อรับมือภัยแล้ง</span></td>
-                <td>2569</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="ss-foot">
-            <b>จริง</b> = ค่าที่หน่วยงานเจ้าของข้อมูลเผยแพร่ · <b>อิงจริง</b> = สรุป/ย่อจากชุดข้อมูลจริง (เช่น ค่าเฉลี่ยรายทศวรรษในหน้านี้) · <b>คาดการณ์</b> = ตัวเลขพยากรณ์ที่ยังไม่เกิดขึ้นจริง<br>
-            หัวข้อนี้เป็นข้อมูลเพื่อการศึกษา ไม่ใช่ประกาศเตือนภัยทางการ — การเตือนภัยจริงให้ยึดประกาศของ<a href="https://www.tmd.go.th/" target="_blank" rel="noopener">กรมอุตุนิยมวิทยา</a> และ<a href="https://www.disaster.go.th/" target="_blank" rel="noopener">กรมป้องกันและบรรเทาสาธารณภัย (ปภ.)</a> เป็นหลัก
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ============ การคลังภาครัฐ · หนี้สาธารณะ ============ -->
     <section class="tabpane" id="pane-fiscal-debt" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-landmark"></use></svg> หนี้สาธารณะ</h2></div>
@@ -6242,7 +6239,7 @@
           range:["#2ecc71","#f1c40f","#e67e22","#e74c3c","#8e44ad","#7e0023"], legend:true, label:"PM2.5 µg/m³" });
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderWorldEnso(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); afterPaint(zoomifyMaps); }
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -11322,7 +11319,7 @@
       hbarChart("#worldCoral", WORLD_CORAL, {full:true, h:170, ml:170, mr:56, xlab:"% ของแนวปะการังโลก", nameLabel:"เหตุการณ์", fmt:function(v){ return v+"%"; }});
     }
 
-    /* ================= ศูนย์ข้อมูลโลก · เอลนีโญ–ลานีญา (ENSO) =================
+    /* ====== ส่วนขยายในข้อ "ภาพรวม โลกร้อน & ภัยพิบัติ" · เอลนีโญ–ลานีญา (ENSO) ======
        ONI = Oceanic Niño Index (NOAA CPC · ชุด ERSSTv5) — ค่าผิดปกติอุณหภูมิผิวน้ำทะเลพื้นที่ Niño 3.4 เฉลี่ยครั้งละ 3 เดือน
        ตั้งแต่ ก.พ. 2569 NOAA ใช้ RONI เป็นดัชนีทางการแทน ONI (หักแนวโน้มโลกร้อนระยะยาวออก)
        GISTEMP = NASA GISS Surface Temperature Analysis v4 (ฐาน 2494–2523) — ที่นี่สรุปเป็นค่าเฉลี่ยรายทศวรรษโดยประมาณ */
@@ -11409,8 +11406,8 @@
           }).join('')+'</tbody>';
       }
     }
-    function renderWorldEnso(){
-      if(!document.getElementById("pane-world-enso")) return;
+    function renderEnsoBlock(){
+      if(!document.getElementById("ensoOni")) return;
       renderEnsoOni();
       gpoLine("#ensoGistemp", ENSO_GISTEMP, {full:true, h:290, ml:52, ticks:8, ylab:"°C เทียบฐาน 2494–2523",
         color:cssVar("--red"), rule:0, ydomain:[-0.45,1.25],
@@ -11750,7 +11747,7 @@
       if(p) showGroup(PANE_GROUP[p], p); else showGroup("world");
     }
 
-    /* ---------- ค้นหาหัวข้อในไซด์บาร์ (95 หัวข้อย่อย) ---------- */
+    /* ---------- ค้นหาหัวข้อในไซด์บาร์ (94 หัวข้อย่อย) ---------- */
     function escHtml(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
     function hiliteInto(el, text, q){
       if(!q){ el.textContent=text; return; }

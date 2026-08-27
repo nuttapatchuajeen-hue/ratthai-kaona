@@ -1048,8 +1048,7 @@ var NAV = [
           { pane:"pm25",     ico:"<svg class='mdico'><use href='#i-cloud-fog'></use></svg>", label:"ฝุ่น PM2.5", existing:true },
           { pane:"world-satellite", ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
           { pane:"world-flood", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
-          { pane:"world-ocean", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true },
-          { pane:"world-enso", ico:"<svg class='mdico'><use href='#i-sun-medium'></use></svg>", label:"เอลนีโญ–ลานีญา (ENSO)", existing:true }
+          { pane:"world-ocean", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true }
       ]},
       { id:"asean", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"อาเซียน", subs:[
           { pane:"asean",          ico:"<svg class='mdico'><use href='#i-wallet'></use></svg>", label:"เศรษฐกิจ", existing:true },
