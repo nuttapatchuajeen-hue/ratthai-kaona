@@ -339,6 +339,7 @@
 
       <div class="tabs" role="tablist">
         <button class="tab-btn active" id="tab-form" type="button"><svg class="mdico"><use href="#i-pencil"></use></svg> ทำแบบประเมิน</button>
+        <button class="tab-btn" id="tab-report" type="button"><svg class="mdico"><use href="#i-clipboard-list"></use></svg> ผลการประเมิน (รายงาน)</button>
         <button class="tab-btn" id="tab-results" type="button"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลการประเมิน (สด)</button>
       </div>
     </section>
@@ -468,6 +469,129 @@
       </div>
       <div class="empty" id="res-empty" hidden>ยังไม่มีผู้ตอบแบบประเมิน — เป็นคนแรกได้เลย!</div>
     </section>
+    <!-- ════ VIEW 3: REPORT (ผลจริงจากรายงานโครงการ บทที่ 4 · n = 30) ════ -->
+    <section class="wrap" id="view-report" hidden>
+
+      <div class="panel">
+        <span class="panel-num">ที่มาของข้อมูล</span>
+        <h2>ผลการประเมินความพึงพอใจ (n = 30)</h2>
+        <p class="hint">ผลการเก็บข้อมูลจริงที่รายงานไว้ใน <strong>บทที่ 4 ผลการวิจัย</strong> ของโครงการ “รัฐไทยก้าวหน้า” — กลุ่มตัวอย่างคือนักเรียนระดับประกาศนียบัตรวิชาชีพ (ปวช.) และผู้ที่สนใจ จำนวน 30 คน วิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ตัวเลขในหน้านี้เป็นชุดข้อมูลคงที่ตามเล่มรายงาน แยกจากแท็บ “ผลการประเมิน (สด)” ที่ดึงคำตอบล่าสุดจากระบบ</p>
+      </div>
+
+      <div class="stat-band">
+        <div class="stat-card">
+          <div class="v">30</div>
+          <div class="k">ผู้ตอบแบบประเมิน (คน)</div>
+        </div>
+        <div class="stat-card">
+          <div class="v">4.54 <small>/ 5.00</small></div>
+          <div class="k">ค่าเฉลี่ยรวม (x̄)</div>
+          <div class="interp">มากที่สุด</div>
+        </div>
+        <div class="stat-card">
+          <div class="v">0.60</div>
+          <div class="k">ส่วนเบี่ยงเบนมาตรฐานรวม (S.D.)</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">สรุปรายด้าน</span>
+        <h2>ค่าเฉลี่ยความพึงพอใจรายด้าน</h2>
+        <div class="bar-row"><div class="lbl">ด้านประโยชน์และการนำไปใช้</div><div class="bar-track"><div class="bar-fill" style="width:91.6%"></div></div><div class="val">4.58 <small>· S.D. 0.58 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านการออกแบบและการจัดรูปแบบเว็บไซต์</div><div class="bar-track"><div class="bar-fill" style="width:91.4%"></div></div><div class="val">4.57 <small>· S.D. 0.58 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านการใช้งาน</div><div class="bar-track"><div class="bar-fill" style="width:90.4%"></div></div><div class="val">4.52 <small>· S.D. 0.61 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านเนื้อหา</div><div class="bar-track"><div class="bar-fill" style="width:89.8%"></div></div><div class="val">4.49 <small>· S.D. 0.61 · มาก</small></div></div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">รายข้อ</span>
+        <h2>ค่าเฉลี่ย (x̄) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) รายข้อ</h2>
+        <p class="hint">ตารางที่ 4.6 ในเล่มรายงาน · 16 ข้อ แบ่งเป็น 4 ด้าน</p>
+        <div style="overflow-x:auto">
+          <table class="items">
+            <thead>
+              <tr><th style="text-align:left">รายการประเมิน</th><th>x̄</th><th>S.D.</th><th>แปลผล</th></tr>
+            </thead>
+            <tbody>
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านเนื้อหา</td></tr>
+              <tr><td class="t">1. เนื้อหามีความถูกต้อง ครบถ้วน และเป็นปัจจุบัน</td><td class="num">4.50</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">2. การจัดหมวดหมู่ข้อมูลเป็นระบบ ค้นหาง่าย</td><td class="num">4.47</td><td class="num">0.63</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">3. ปริมาณเนื้อหาในแต่ละหน้ามีความเหมาะสม</td><td class="num">4.43</td><td class="num">0.68</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">4. ภาษาที่ใช้อ่านเข้าใจง่าย เหมาะกับผู้ใช้ทั่วไป</td><td class="num">4.57</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านเนื้อหา</td><td class="num" style="font-weight:700">4.49</td><td class="num" style="font-weight:700">0.61</td><td class="interp" style="font-weight:700">มาก</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านการออกแบบและการจัดรูปแบบเว็บไซต์</td></tr>
+              <tr><td class="t">5. การออกแบบหน้าเว็บสวยงาม ทันสมัย</td><td class="num">4.67</td><td class="num">0.55</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">6. สี ขนาดตัวอักษร และความคมชัดเหมาะสม อ่านง่าย</td><td class="num">4.53</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">7. รูปภาพ กราฟิก และแผนภาพประกอบสื่อความหมายชัดเจน</td><td class="num">4.60</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">8. แสดงผลได้เหมาะสมทั้งบนคอมพิวเตอร์และโทรศัพท์มือถือ</td><td class="num">4.50</td><td class="num">0.63</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านการออกแบบและการจัดรูปแบบเว็บไซต์</td><td class="num" style="font-weight:700">4.57</td><td class="num" style="font-weight:700">0.58</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านการใช้งาน</td></tr>
+              <tr><td class="t">9. เว็บไซต์ใช้งานง่าย ไม่ซับซ้อน</td><td class="num">4.53</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">10. เมนูและลิงก์เชื่อมโยงไปยังหน้าต่าง ๆ ชัดเจน</td><td class="num">4.50</td><td class="num">0.60</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">11. ความเร็วในการโหลดและแสดงผลเหมาะสม</td><td class="num">4.43</td><td class="num">0.67</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">12. ผู้ช่วย AI ช่วยให้ค้นหาข้อมูลที่ต้องการได้สะดวกขึ้น</td><td class="num">4.60</td><td class="num">0.61</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านการใช้งาน</td><td class="num" style="font-weight:700">4.52</td><td class="num" style="font-weight:700">0.61</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านประโยชน์และการนำไปใช้</td></tr>
+              <tr><td class="t">13. ได้รับความรู้ความเข้าใจเกี่ยวกับโครงสร้างภาครัฐไทยเพิ่มขึ้น</td><td class="num">4.63</td><td class="num">0.55</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">14. สามารถนำข้อมูลไปใช้อ้างอิงหรือประกอบการเรียน / การทำงานได้</td><td class="num">4.57</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">15. เว็บไซต์ช่วยส่งเสริมการเข้าถึงข้อมูลภาครัฐที่โปร่งใส</td><td class="num">4.53</td><td class="num">0.62</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">16. โดยภาพรวมท่านพึงพอใจต่อเว็บไซต์ “รัฐไทยก้าวหน้า”</td><td class="num">4.60</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านประโยชน์และการนำไปใช้</td><td class="num" style="font-weight:700">4.58</td><td class="num" style="font-weight:700">0.58</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(0,229,255,0.12)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมทั้งฉบับ</td><td class="num" style="font-weight:700">4.54</td><td class="num" style="font-weight:700">0.60</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint" style="margin-top:0.9rem">เกณฑ์แปลผล: 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด</p>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">ข้อมูลทั่วไป</span>
+        <h2>ข้อมูลทั่วไปของผู้ตอบแบบสอบถาม</h2>
+        <p class="hint">ตารางที่ 4.5 ในเล่มรายงาน · จำนวน (คน) และร้อยละ</p>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.2rem 0 0.4rem">1. เพศ</h3>
+        <div class="bar-row"><div class="lbl">ชาย</div><div class="bar-track"><div class="bar-fill" style="width:53.33%"></div></div><div class="val">16 คน <small>· 53.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">หญิง</div><div class="bar-track"><div class="bar-fill" style="width:43.33%"></div></div><div class="val">13 คน <small>· 43.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">ไม่ระบุ</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">2. อายุ</h3>
+        <div class="bar-row"><div class="lbl">ต่ำกว่า 18 ปี</div><div class="bar-track"><div class="bar-fill" style="width:13.33%"></div></div><div class="val">4 คน <small>· 13.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">18 – 25 ปี</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="val">18 คน <small>· 60.00%</small></div></div>
+        <div class="bar-row"><div class="lbl">26 – 35 ปี</div><div class="bar-track"><div class="bar-fill" style="width:16.67%"></div></div><div class="val">5 คน <small>· 16.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">36 – 45 ปี</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">46 ปีขึ้นไป</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">3. สถานภาพ</h3>
+        <div class="bar-row"><div class="lbl">นักเรียน / นักศึกษา</div><div class="bar-track"><div class="bar-fill" style="width:73.33%"></div></div><div class="val">22 คน <small>· 73.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">ข้าราชการ / พนักงานของรัฐ</div><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><div class="val">3 คน <small>· 10.00%</small></div></div>
+        <div class="bar-row"><div class="lbl">พนักงานบริษัทเอกชน</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">ประกอบอาชีพอิสระ / ค้าขาย</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">อื่น ๆ</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">4. ความถี่ในการใช้งานเว็บไซต์</h3>
+        <div class="bar-row"><div class="lbl">ใช้งานครั้งแรก</div><div class="bar-track"><div class="bar-fill" style="width:56.67%"></div></div><div class="val">17 คน <small>· 56.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">เดือนละ 1 – 2 ครั้ง</div><div class="bar-track"><div class="bar-fill" style="width:26.67%"></div></div><div class="val">8 คน <small>· 26.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">สัปดาห์ละ 1 – 2 ครั้ง</div><div class="bar-track"><div class="bar-fill" style="width:13.33%"></div></div><div class="val">4 คน <small>· 13.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">เกือบทุกวัน</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">ข้อเสนอแนะ</span>
+        <h2>ข้อเสนอแนะเพิ่มเติมจากคำถามปลายเปิด</h2>
+        <p class="hint">สรุปได้ 3 ประเด็นสำคัญ</p>
+        <ol style="padding-left:1.2rem;line-height:1.85">
+          <li><strong>ความเป็นปัจจุบันและการจัดหมวดหมู่ของข้อมูล</strong> — ควรปรับปรุงข้อมูลให้เป็นปัจจุบันอย่างต่อเนื่อง และจัดหมวดหมู่เนื้อหาในแต่ละหน้าให้ค้นหาได้ง่ายขึ้น สอดคล้องกับด้านเนื้อหาที่มีค่าเฉลี่ยรวมต่ำสุด 4.49 และข้อ “การจัดหมวดหมู่ข้อมูลเป็นระบบ ค้นหาง่าย” ที่ได้ 4.47</li>
+          <li><strong>ความเร็วในการโหลดและแสดงผล</strong> — ควรปรับปรุงความเร็วในการโหลดหน้าเว็บที่มีแผนภาพและแผนภูมิจำนวนมาก โดยเฉพาะเมื่อใช้งานผ่านโทรศัพท์มือถือ สอดคล้องกับข้อที่มีค่าเฉลี่ยต่ำสุดของทั้งฉบับเท่ากับ 4.43</li>
+          <li><strong>ผู้ช่วยปัญญาประดิษฐ์ (AI)</strong> — ควรพัฒนาผู้ช่วย AI ให้ตอบคำถามได้ครอบคลุมและหลากหลายยิ่งขึ้น แม้ข้อนี้จะมีค่าเฉลี่ยสูงถึง 4.60 สะท้อนว่าผู้ใช้เห็นประโยชน์และคาดหวังให้พัฒนาต่อยอด</li>
+        </ol>
+      </div>
+
+    </section>
+
   </main>
 
   <footer>
@@ -611,15 +735,20 @@
   const viewResults = document.getElementById('view-results');
   let resultsLoadedOnce = false;
 
+  const tabReport = document.getElementById('tab-report');
+  const viewReport = document.getElementById('view-report');
+
   function showView(which) {
-    const isForm = which === 'form';
-    viewForm.hidden = !isForm;
-    viewResults.hidden = isForm;
-    tabForm.classList.toggle('active', isForm);
-    tabResults.classList.toggle('active', !isForm);
-    if (!isForm && !resultsLoadedOnce) loadResults();
+    viewForm.hidden    = which !== 'form';
+    viewReport.hidden  = which !== 'report';
+    viewResults.hidden = which !== 'results';
+    tabForm.classList.toggle('active', which === 'form');
+    tabReport.classList.toggle('active', which === 'report');
+    tabResults.classList.toggle('active', which === 'results');
+    if (which === 'results' && !resultsLoadedOnce) loadResults();
   }
   tabForm.addEventListener('click', () => showView('form'));
+  tabReport.addEventListener('click', () => showView('report'));
   tabResults.addEventListener('click', () => showView('results'));
 
   // ── submit ──

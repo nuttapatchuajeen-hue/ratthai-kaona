@@ -221,10 +221,40 @@
 
   </div>
 
+  <!-- ── แถบผลงานเลื่อนทแยง (ภาพทั้งหมดเรนเดอร์จากข้อมูลในเว็บนี้เอง) ── -->
+  <section class="showcase-band" id="showcase" aria-label="ตัวอย่างผลงานภายในเว็บ">
+    <div class="showcase-rows" id="showcase-rows" aria-hidden="true"></div>
+    <div class="showcase-fade top"></div>
+    <div class="showcase-fade bottom"></div>
+    <div class="showcase-caption">
+      <span class="section-label">009 / ผลงานภายในเว็บ</span>
+      <h2>ข้อมูลรัฐ<br>ที่มองเห็นได้</h2>
+      <p>แผนที่เลือกตั้ง ผังที่นั่งสภา โครงสร้างหน่วยงาน และกราฟสถิติ — สร้างจากข้อมูลจริงภายในเว็บรัฐไทยก้าวหน้า</p>
+    </div>
+  </section>
+
+  <!-- ── เสียงผู้ใช้ / ข้อเสนอแนะจากแบบประเมิน (n = 30) ── -->
+  <section class="voices-area" id="voices">
+    <div class="voices-inner">
+      <div class="voices-head">
+        <span class="voices-pill">010 / ข้อเสนอแนะ</span>
+        <h2 class="voices-heading">เสียงจาก<br>ผู้ใช้งานจริง</h2>
+        <p class="voices-sub">ผลประเมินความพึงพอใจจากผู้ใช้ <strong>30 คน</strong> — ค่าเฉลี่ยรวม <strong>4.54 / 5.00</strong> (ระดับมากที่สุด, S.D. 0.60) พร้อมข้อเสนอแนะปลายเปิดที่นำมาพัฒนาเว็บไซต์ต่อ</p>
+      </div>
+
+      <div class="voices-grid" id="voices-grid"></div>
+
+      <div class="voices-foot">
+        <a href="survey.html" class="voices-cta">ร่วมประเมินเว็บไซต์</a>
+        <p class="voices-note">ข้อมูลจากบทที่ 4 ผลการวิจัย · กลุ่มตัวอย่าง 30 คน · วิเคราะห์ด้วยค่าเฉลี่ยและส่วนเบี่ยงเบนมาตรฐาน</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ── ส่วนข่าวสารทั่วไป (พื้นที่ใหม่ด้านล่างสุด) ── -->
   <section class="news-area" id="news">
     <div class="news-inner">
-      <span class="section-label">009 / ข่าวสารทั่วไป</span>
+      <span class="section-label">011 / ข่าวสารทั่วไป</span>
       <h2 class="news-heading">ข่าวสาร<br>และอัปเดต</h2>
       <p class="news-intro">ข่าวการเมืองและภาครัฐล่าสุด — ดึงสดผ่าน RSS จาก Sanook และ workpointTODAY · คลิกการ์ดเพื่ออ่านต่อที่เว็บต้นทาง</p>
 
@@ -253,6 +283,8 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
   <script src="js/app.js"></script>
   <script src="js/globe.js"></script>
+  <script src="js/showcase-marquee.js"></script>
+  <script src="js/voices.js"></script>
 <script src="../js/cursor-glow.js"></script>
 <script src="../js/ai-chat.js"></script>
 </body>
