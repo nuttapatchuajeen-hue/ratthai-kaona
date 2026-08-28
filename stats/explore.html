@@ -297,6 +297,43 @@
   .sld-track{flex:1;height:5px;border-radius:4px;background:var(--rule);overflow:hidden;min-width:90px}
   .sld-fill{height:100%;width:100%;background:var(--green);border-radius:4px;transition:width .06s linear}
 
+  /* ---------- แผ่นดินไหว: รายการเหตุรุนแรง + แผงรายละเอียดเมื่อกดจุด ---------- */
+  .qk-top{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .qk-top-lab{width:100%;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:2px}
+  .qk-chip{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--paper-3);border:1px solid var(--rule);border-radius:999px;padding:7px 13px;cursor:pointer;transition:border-color .15s,color .15s,transform .12s}
+  .qk-chip:hover{border-color:var(--green);color:var(--green);transform:translateY(-1px)}
+  .qk-chip.on{border-color:var(--green);color:var(--green);box-shadow:var(--glow-cyan)}
+  .qk-chip b{font-family:"Archivo",sans-serif;font-weight:800;font-variant-numeric:tabular-nums}
+  .qk-chip .qk-dotc{width:9px;height:9px;border-radius:50%;flex:none}
+  .qk-chip .yr{color:var(--ink-soft);font-weight:600}
+  .qk-detail{margin-top:14px;border:1px solid var(--rule);border-radius:14px;background:var(--paper-3);padding:15px 17px}
+  .qk-detail.empty{text-align:center;color:var(--ink-soft);font-size:13px;padding:20px;border-style:dashed}
+  .qk-d-head{display:flex;align-items:flex-start;gap:13px}
+  .qk-d-mag{flex:none;width:68px;height:68px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:"Archivo",sans-serif;line-height:1.1;text-shadow:0 1px 3px rgba(0,0,0,.28)}
+  .qk-d-mag span{font-size:21px;font-weight:800}
+  .qk-d-mag i{font-size:10px;font-style:normal;font-weight:700;opacity:.92;letter-spacing:.02em}
+  .qk-d-ttl{flex:1;min-width:0}
+  .qk-d-ttl h4{margin:3px 0 3px;font-size:17px;font-weight:800;color:var(--ink);line-height:1.32}
+  .qk-d-ttl .en{font-size:12px;color:var(--ink-soft);word-break:break-word}
+  .qk-d-close{flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--rule);background:var(--paper-2);color:var(--ink-soft);cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .qk-d-close:hover{border-color:var(--red);color:var(--red)}
+  .qk-d-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:9px;margin-top:13px}
+  .qk-d-cell{background:var(--paper-2);border:1px solid var(--rule);border-radius:11px;padding:9px 11px}
+  .qk-d-cell .k{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:3px}
+  .qk-d-cell .v{font-size:14px;font-weight:800;color:var(--ink);line-height:1.3}
+  .qk-d-cell .n{font-size:11.5px;color:var(--ink-soft);font-weight:500;margin-top:3px;line-height:1.4}
+  .qk-d-note{margin-top:12px;border-left:3px solid var(--red);background:var(--paper-2);border-radius:0 11px 11px 0;padding:11px 13px;font-size:13px;color:var(--ink-2);line-height:1.62}
+  .qk-d-note b{color:var(--ink)}
+  .qk-d-note .th{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed var(--rule)}
+  .qk-d-foot{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:12px}
+  .qk-d-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--green);text-decoration:none}
+  .qk-d-link:hover{text-decoration:underline}
+  .qk-d-src{font-size:11.5px;color:var(--ink-soft)}
+  .qk-sel-ring{fill:none;stroke-width:2.2;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;pointer-events:none;animation:qkPulse 1.7s ease-out infinite}
+  @keyframes qkPulse{0%{opacity:.95;transform:scale(.7)}70%{opacity:0;transform:scale(1.4)}100%{opacity:0;transform:scale(1.4)}}
+  @media(prefers-reduced-motion:reduce){ .qk-sel-ring{animation:none;opacity:.9} }
+  @media(max-width:640px){ .qk-d-mag{width:58px;height:58px} .qk-d-mag span{font-size:18px} .qk-d-ttl h4{font-size:15.5px} }
+
   /* ---------- OWID-style: แท็บ (เส้น/ตาราง/แผนที่) + ไทม์ไลน์เล่นไล่ปี ---------- */
   .oh{display:none!important}
   .owid-tabs{display:flex;gap:6px;margin:2px 0 12px;flex-wrap:wrap}
@@ -4112,7 +4149,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
       <div class="card full">
         <div class="card-head"><h2><svg class="mdico"><use href="#i-globe"></use></svg> แผนที่แผ่นดินไหวโลก — เล่นไล่ตามเวลา</h2><span class="tag">USGS · M≥6 · สด</span></div>
-        <p class="sub"><b>กดปุ่ม ▶ เพื่อดูแผ่นดินไหวโผล่ไล่ตามเวลา</b> — จุดยิ่งใหญ่/สียิ่งเข้ม = ยิ่งรุนแรง · ลากแถบเลื่อนเพื่อย้อน–เดินหน้าเวลาเอง · เลื่อนล้อ/ปุ่ม ＋－ เพื่อซูม · ลากเพื่อเลื่อนแผนที่ · ชี้ที่จุดเพื่อดูขนาดและสถานที่</p>
+        <p class="sub"><b>กดปุ่ม ▶ เพื่อดูแผ่นดินไหวโผล่ไล่ตามเวลา</b> — จุดยิ่งใหญ่/สียิ่งเข้ม = ยิ่งรุนแรง · ลากแถบเลื่อนเพื่อย้อน–เดินหน้าเวลาเอง · เลื่อนล้อ/ปุ่ม ＋－ เพื่อซูม · ลากเพื่อเลื่อนแผนที่ · <b>กดที่จุดเพื่อเปิดรายละเอียดเหตุการณ์</b> (ความลึก · ระดับเตือนภัย · สึนามิ · ผลกระทบที่เกิดขึ้นจริง)</p>
         <div id="quakeLegend" class="qk-legend" style="display:flex;flex-wrap:wrap;gap:6px 15px;align-items:center;font-size:12.5px;font-weight:600;margin:2px 0 10px;color:var(--ink-soft)">
           <span>ระดับความรุนแรง (แมกนิจูด):</span>
           <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:#a855f7;vertical-align:middle;margin-right:4px"></i>Great ≥8.0</span>
@@ -4122,6 +4159,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         </div>
         <div id="quakeMap" class="qk-map"><div class="state-msg">กำลังโหลดข้อมูลแผ่นดินไหว…</div></div>
         <div id="quakePlayer"></div>
+        <div id="quakeTop" class="qk-top"></div>
+        <div id="quakeDetail" class="qk-detail empty">กดที่จุดบนแผนที่ หรือเลือกจากรายการด้านบน เพื่อดูรายละเอียดของเหตุการณ์นั้น</div>
         <div class="src">ที่มา: <a href="https://earthquake.usgs.gov/earthquakes/search/" target="_blank" rel="noopener">USGS Earthquake Catalog ↗</a> (FDSN Event Service · ดึงสด · M≥6 ทั่วโลก ตั้งแต่ปี 2015) · เหตุการณ์สำคัญเป็นข้อมูลสำรองเมื่อเชื่อมต่อไม่ได้ · สืบค้นเมื่อ 27 ส.ค. 2569</div>
       </div>
       <div class="card full">
@@ -6501,26 +6540,27 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
        • ดึงสด USGS (M≥6 ทั่วโลก ตั้งแต่ปี 2015) · ล้มเหลว → ใช้ค่าสำรองเหตุการณ์ใหญ่ที่คัดไว้
        • แผนที่ปั้นเองด้วย d3 (สร้าง svg ใหม่ทุก render → เข้ากับ MapZoom เหมือน #floodBivMap) */
     var QUAKES_FALL = [
-      {lat:28.23, lon:84.73,  mag:7.8, t:Date.UTC(2015,3,25,6,11),   place:"Nepal (Gorkha)"},
-      {lat:-31.57,lon:-71.67, mag:8.3, t:Date.UTC(2015,8,16,22,54),  place:"Chile (Illapel)"},
-      {lat:0.38,  lon:-79.92, mag:7.8, t:Date.UTC(2016,3,16,23,58),  place:"Ecuador"},
-      {lat:-42.74,lon:173.05, mag:7.8, t:Date.UTC(2016,10,13,11,2),  place:"New Zealand (Kaikoura)"},
-      {lat:18.55, lon:-98.49, mag:7.1, t:Date.UTC(2017,8,19,18,14),  place:"Mexico (Puebla)"},
-      {lat:-0.18, lon:119.84, mag:7.5, t:Date.UTC(2018,8,28,10,2),   place:"Indonesia (Palu)"},
-      {lat:-5.81, lon:-75.27, mag:8.0, t:Date.UTC(2019,4,26,7,41),   place:"Peru"},
-      {lat:37.90, lon:26.79,  mag:7.0, t:Date.UTC(2020,9,30,11,51),  place:"Aegean Sea (Samos)"},
-      {lat:18.42, lon:-73.48, mag:7.2, t:Date.UTC(2021,7,14,12,29),  place:"Haiti"},
-      {lat:18.28, lon:-103.29,mag:7.6, t:Date.UTC(2022,8,19,18,5),   place:"Mexico (Michoacán)"},
-      {lat:37.17, lon:37.03,  mag:7.8, t:Date.UTC(2023,1,6,1,17),    place:"Turkey–Syria"},
-      {lat:31.06, lon:-8.39,  mag:6.8, t:Date.UTC(2023,8,8,22,11),   place:"Morocco (Marrakesh)"},
-      {lat:34.60, lon:61.90,  mag:6.3, t:Date.UTC(2023,9,7,6,41),    place:"Afghanistan (Herat)"},
-      {lat:37.50, lon:137.30, mag:7.5, t:Date.UTC(2024,0,1,7,10),    place:"Japan (Noto)"},
-      {lat:23.80, lon:121.60, mag:7.4, t:Date.UTC(2024,3,2,23,58),   place:"Taiwan (Hualien)"},
-      {lat:22.00, lon:95.92,  mag:7.7, t:Date.UTC(2025,2,28,6,20),   place:"เมียนมา (สะกาย) — สั่นถึง กทม.", hl:true}
+      {lat:28.23, lon:84.73,  mag:7.8, t:Date.UTC(2015,3,25,6,11),   dep:8.2, place:"Nepal (Gorkha)"},
+      {lat:-31.57,lon:-71.67, mag:8.3, t:Date.UTC(2015,8,16,22,54),  dep:22.4, place:"Chile (Illapel)"},
+      {lat:0.38,  lon:-79.92, mag:7.8, t:Date.UTC(2016,3,16,23,58),  dep:20.6, place:"Ecuador"},
+      {lat:-42.74,lon:173.05, mag:7.8, t:Date.UTC(2016,10,13,11,2),  dep:15.1, place:"New Zealand (Kaikoura)"},
+      {lat:18.55, lon:-98.49, mag:7.1, t:Date.UTC(2017,8,19,18,14),  dep:48, place:"Mexico (Puebla)"},
+      {lat:-0.18, lon:119.84, mag:7.5, t:Date.UTC(2018,8,28,10,2),   dep:20, place:"Indonesia (Palu)"},
+      {lat:-5.81, lon:-75.27, mag:8.0, t:Date.UTC(2019,4,26,7,41),   dep:122.6, place:"Peru"},
+      {lat:37.90, lon:26.79,  mag:7.0, t:Date.UTC(2020,9,30,11,51),  dep:21, place:"Aegean Sea (Samos)"},
+      {lat:18.42, lon:-73.48, mag:7.2, t:Date.UTC(2021,7,14,12,29),  dep:10, place:"Haiti"},
+      {lat:18.28, lon:-103.29,mag:7.6, t:Date.UTC(2022,8,19,18,5),   dep:15.1, place:"Mexico (Michoacán)"},
+      {lat:37.17, lon:37.03,  mag:7.8, t:Date.UTC(2023,1,6,1,17),    dep:10, place:"Turkey–Syria"},
+      {lat:31.06, lon:-8.39,  mag:6.8, t:Date.UTC(2023,8,8,22,11),   dep:18.5, place:"Morocco (Marrakesh)"},
+      {lat:34.60, lon:61.90,  mag:6.3, t:Date.UTC(2023,9,7,6,41),    dep:14, place:"Afghanistan (Herat)"},
+      {lat:37.50, lon:137.30, mag:7.5, t:Date.UTC(2024,0,1,7,10),    dep:10, place:"Japan (Noto)"},
+      {lat:23.80, lon:121.60, mag:7.4, t:Date.UTC(2024,3,2,23,58),   dep:34.8, place:"Taiwan (Hualien)"},
+      {lat:22.00, lon:95.92,  mag:7.7, t:Date.UTC(2025,2,28,6,20),   dep:10, place:"เมียนมา (สะกาย) — สั่นถึง กทม.", hl:true}
     ];
     var QUAKES = QUAKES_FALL.slice();
     var QK_LIVE = false;
-    var QK = { frac:1, dots:[], tmin:0, tmax:1, raf:0, playing:false, _range:null, _play:null, _date:null };
+    var QK = { frac:1, dots:[], tmin:0, tmax:1, raf:0, playing:false, _range:null, _play:null, _date:null,
+               sel:null, _gd:null, _proj:null, _k:1, _ring:null, _zoomTo:null };
 
     function qkColor(m){ return m>=8 ? "#a855f7" : m>=7 ? "#ec4899" : m>=6.5 ? "#f97316" : "#fbbf24"; }
     function qkRadius(m){ return Math.max(2.4, (m-5)*2.15); }
@@ -6535,6 +6575,302 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       if((el=$("#kQkMax"))) el.textContent="M"+mx.mag.toFixed(1);
       if((el=$("#kQkMaxSub"))) el.textContent=(mx.place||"")+" · "+qkDateTH(mx.t);
       if((el=$("#kQkCount"))) el.textContent=QUAKES.length.toLocaleString("en-US");
+    }
+
+    /* ---- แปลชื่อสถานที่ของ USGS เป็นไทย (คำที่ไม่รู้จักคงภาษาอังกฤษไว้ · แสดงต้นฉบับกำกับเสมอ) ---- */
+    var QK_DIR_TH={N:"เหนือ",S:"ใต้",E:"ตะวันออก",W:"ตะวันตก",NE:"ตะวันออกเฉียงเหนือ",NW:"ตะวันตกเฉียงเหนือ",SE:"ตะวันออกเฉียงใต้",SW:"ตะวันตกเฉียงใต้",
+      NNE:"เหนือค่อนไปทางตะวันออก",ENE:"ตะวันออกค่อนไปทางเหนือ",ESE:"ตะวันออกค่อนไปทางใต้",SSE:"ใต้ค่อนไปทางตะวันออก",
+      SSW:"ใต้ค่อนไปทางตะวันตก",WSW:"ตะวันตกค่อนไปทางใต้",WNW:"ตะวันตกค่อนไปทางเหนือ",NNW:"เหนือค่อนไปทางตะวันตก"};
+    var QK_PHRASE_TH=[
+      ["off the west coast of","นอกชายฝั่งตะวันตกของ"],["off the east coast of","นอกชายฝั่งตะวันออกของ"],
+      ["off the south coast of","นอกชายฝั่งใต้ของ"],["off the north coast of","นอกชายฝั่งเหนือของ"],
+      ["near the west coast of","ใกล้ชายฝั่งตะวันตกของ"],["near the east coast of","ใกล้ชายฝั่งตะวันออกของ"],
+      ["near the south coast of","ใกล้ชายฝั่งใต้ของ"],["near the north coast of","ใกล้ชายฝั่งเหนือของ"],
+      ["off the coast of","นอกชายฝั่ง"],["near the coast of","ใกล้ชายฝั่ง"],["coast of","ชายฝั่ง"],
+      ["southeast of","ทางตะวันออกเฉียงใต้ของ"],["southwest of","ทางตะวันตกเฉียงใต้ของ"],
+      ["northeast of","ทางตะวันออกเฉียงเหนือของ"],["northwest of","ทางตะวันตกเฉียงเหนือของ"],
+      ["south of the","ทางใต้ของ"],["north of the","ทางเหนือของ"],["east of the","ทางตะวันออกของ"],["west of the","ทางตะวันตกของ"],
+      ["south of","ทางใต้ของ"],["north of","ทางเหนือของ"],["east of","ทางตะวันออกของ"],["west of","ทางตะวันตกของ"],
+      ["southeastern","ทางตะวันออกเฉียงใต้ของ"],["southwestern","ทางตะวันตกเฉียงใต้ของ"],
+      ["northeastern","ทางตะวันออกเฉียงเหนือของ"],["northwestern","ทางตะวันตกเฉียงเหนือของ"],
+      ["central","ตอนกลางของ"],["northern","ตอนเหนือของ"],["southern","ตอนใต้ของ"],
+      ["eastern","ทางตะวันออกของ"],["western","ทางตะวันตกของ"],
+      ["Islands","หมู่เกาะ"],["Island","เกาะ"]
+    ];
+    var QK_GEO_TH={
+      "Indonesia":"อินโดนีเซีย","Japan":"ญี่ปุ่น","Chile":"ชิลี","Peru":"เปรู","Papua New Guinea":"ปาปัวนิวกินี",
+      "Philippines":"ฟิลิปปินส์","Mexico":"เม็กซิโก","Russia":"รัสเซีย","Alaska":"รัฐอะแลสกา สหรัฐฯ","Vanuatu":"วานูอาตู",
+      "Fiji":"ฟิจิ","Tonga":"ตองงา","Solomon หมู่เกาะ":"หมู่เกาะโซโลมอน","New Zealand":"นิวซีแลนด์","Taiwan":"ไต้หวัน",
+      "China":"จีน","India":"อินเดีย","Nepal":"เนปาล","Myanmar":"เมียนมา","Burma":"เมียนมา","Turkey":"ตุรกี",
+      "Greece":"กรีซ","Iran":"อิหร่าน","Afghanistan":"อัฟกานิสถาน","Pakistan":"ปากีสถาน","Argentina":"อาร์เจนตินา",
+      "Ecuador":"เอกวาดอร์","Colombia":"โคลอมเบีย","Costa Rica":"คอสตาริกา","Guatemala":"กัวเตมาลา",
+      "El Salvador":"เอลซัลวาดอร์","Nicaragua":"นิการากัว","Panama":"ปานามา","Honduras":"ฮอนดูรัส","Belize":"เบลีซ",
+      "Haiti":"เฮติ","Puerto Rico":"เปอร์โตริโก","Dominican Republic":"สาธารณรัฐโดมินิกัน","Jamaica":"จาเมกา",
+      "Cuba":"คิวบา","Italy":"อิตาลี","Croatia":"โครเอเชีย","Albania":"แอลเบเนีย","Morocco":"โมร็อกโก",
+      "Algeria":"แอลจีเรีย","Ethiopia":"เอธิโอเปีย","Kenya":"เคนยา","Tanzania":"แทนซาเนีย","Mozambique":"โมซัมบิก",
+      "South Africa":"แอฟริกาใต้","Antarctica":"แอนตาร์กติกา","Iceland":"ไอซ์แลนด์","Norway":"นอร์เวย์",
+      "Portugal":"โปรตุเกส","Spain":"สเปน","Canada":"แคนาดา","United States":"สหรัฐฯ","Hawaii":"ฮาวาย",
+      "California":"รัฐแคลิฟอร์เนีย","Nevada":"รัฐเนวาดา","Oregon":"รัฐออริกอน","Washington":"รัฐวอชิงตัน",
+      "Idaho":"รัฐไอดาโฮ","Utah":"รัฐยูทาห์","Montana":"รัฐมอนแทนา","Oklahoma":"รัฐโอกลาโฮมา","Texas":"รัฐเท็กซัส",
+      "Australia":"ออสเตรเลีย","Malaysia":"มาเลเซีย","Thailand":"ไทย","Laos":"ลาว","Vietnam":"เวียดนาม",
+      "Bangladesh":"บังกลาเทศ","Bhutan":"ภูฏาน","Tajikistan":"ทาจิกิสถาน","Kyrgyzstan":"คีร์กีซสถาน",
+      "Kazakhstan":"คาซัคสถาน","Uzbekistan":"อุซเบกิสถาน","Turkmenistan":"เติร์กเมนิสถาน","Mongolia":"มองโกเลีย",
+      "North Korea":"เกาหลีเหนือ","South Korea":"เกาหลีใต้","Georgia":"จอร์เจีย","Armenia":"อาร์เมเนีย",
+      "Azerbaijan":"อาเซอร์ไบจาน","Iraq":"อิรัก","Syria":"ซีเรีย","Lebanon":"เลบานอน","Israel":"อิสราเอล",
+      "Egypt":"อียิปต์","Cyprus":"ไซปรัส","Romania":"โรมาเนีย","Bulgaria":"บัลแกเรีย","Serbia":"เซอร์เบีย",
+      "Montenegro":"มอนเตเนโกร","Bosnia and Herzegovina":"บอสเนียและเฮอร์เซโกวีนา","France":"ฝรั่งเศส",
+      "Germany":"เยอรมนี","Switzerland":"สวิตเซอร์แลนด์","Austria":"ออสเตรีย","Slovenia":"สโลวีเนีย",
+      "Poland":"โปแลนด์","Ukraine":"ยูเครน","Bolivia":"โบลิเวีย","Brazil":"บราซิล","Venezuela":"เวเนซุเอลา",
+      "Uruguay":"อุรุกวัย","Paraguay":"ปารากวัย","Trinidad and Tobago":"ตรินิแดดและโตเบโก","Barbados":"บาร์เบโดส",
+      "Timor Leste":"ติมอร์-เลสเต","East Timor":"ติมอร์-เลสเต","Brunei":"บรูไน","Singapore":"สิงคโปร์",
+      "Sri Lanka":"ศรีลังกา","Maldives":"มัลดีฟส์","Madagascar":"มาดากัสการ์","Cameroon":"แคเมอรูน",
+      "Kermadec หมู่เกาะ":"หมู่เกาะเคอร์มาเดก","Loyalty หมู่เกาะ":"หมู่เกาะลอยัลตี","New Caledonia":"นิวแคลิโดเนีย",
+      "Bougainville":"เกาะบูเกนวิลล์","New Britain":"เกาะนิวบริเตน","New Ireland":"เกาะนิวไอร์แลนด์",
+      "Kuril หมู่เกาะ":"หมู่เกาะคูริล","Kamchatka Peninsula":"คาบสมุทรคัมชัตกา","Kamchatka":"คาบสมุทรคัมชัตกา","Peninsula":"คาบสมุทร","Sakhalin":"เกาะซาฮาลิน","Honshu":"เกาะฮนชู",
+      "Hokkaido":"เกาะฮกไกโด","Kyushu":"เกาะคีวชู","Shikoku":"เกาะชิโกกุ","Ryukyu หมู่เกาะ":"หมู่เกาะรีวกีว",
+      "Bonin หมู่เกาะ":"หมู่เกาะโบนิน","Volcano หมู่เกาะ":"หมู่เกาะภูเขาไฟ","Mariana หมู่เกาะ":"หมู่เกาะมาเรียนา",
+      "Guam":"กวม","Palau":"ปาเลา","Micronesia":"ไมโครนีเซีย","Marshall หมู่เกาะ":"หมู่เกาะมาร์แชลล์",
+      "American Samoa":"อเมริกันซามัว","Samoa":"ซามัว","Niue":"นีอูเอ","Cook หมู่เกาะ":"หมู่เกาะคุก",
+      "Sumatra":"เกาะสุมาตรา","Sulawesi":"เกาะซูลาเวซี","Sumbawa":"เกาะซุมบาวา","Bali":"เกาะบาหลี",
+      "Lombok":"เกาะลมบก","Flores":"เกาะฟลอเรส","Seram":"เกาะเซอรัม","Halmahera":"เกาะฮัลมาเฮรา",
+      "Molucca Sea":"ทะเลโมลุกกะ","Banda Sea":"ทะเลบันดา","Celebes Sea":"ทะเลเซเลบีส","Java Sea":"ทะเลชวา",
+      "Java":"เกาะชวา","South Sandwich หมู่เกาะ":"หมู่เกาะเซาท์แซนด์วิช","Scotia Sea":"ทะเลสโกเชีย",
+      "Drake Passage":"ช่องแคบเดรก","Mid-Atlantic Ridge":"สันเขากลางมหาสมุทรแอตแลนติก",
+      "Pacific-Antarctic Ridge":"สันเขาแปซิฟิก–แอนตาร์กติก","Southeast Indian Ridge":"สันเขาอินเดียตะวันออกเฉียงใต้",
+      "Central East Pacific Rise":"สันเขาแปซิฟิกตะวันออก","Carlsberg Ridge":"สันเขาคาร์ลสเบิร์ก",
+      "Owen Fracture Zone":"เขตรอยแตกโอเวน","Indian Ocean":"มหาสมุทรอินเดีย","Pacific Ocean":"มหาสมุทรแปซิฟิก",
+      "Atlantic Ocean":"มหาสมุทรแอตแลนติก","Arctic Ocean":"มหาสมุทรอาร์กติก","Southern Ocean":"มหาสมุทรใต้",
+      "Caribbean Sea":"ทะเลแคริบเบียน","Mediterranean Sea":"ทะเลเมดิเตอร์เรเนียน","Aegean Sea":"ทะเลอีเจียน",
+      "Sea of Okhotsk":"ทะเลโอค็อตสค์","Sea of Japan":"ทะเลญี่ปุ่น","Philippine Sea":"ทะเลฟิลิปปิน",
+      "Coral Sea":"ทะเลคอรัล","Tasman Sea":"ทะเลแทสมัน","Bering Sea":"ทะเลแบริง","Gulf of Alaska":"อ่าวอะแลสกา",
+      "Gulf of California":"อ่าวแคลิฟอร์เนีย","Andaman หมู่เกาะ":"หมู่เกาะอันดามัน","Nicobar หมู่เกาะ":"หมู่เกาะนิโคบาร์",
+      "Hindu Kush":"เทือกเขาฮินดูกูช","Xinjiang":"ซินเจียง","Tibet":"ทิเบต","Qinghai":"ชิงไห่","Sichuan":"เสฉวน",
+      "Yunnan":"ยูนนาน","Gansu":"กานซู่",
+      "Aleutian หมู่เกาะ":"หมู่เกาะอะลูเชียน","Andreanof หมู่เกาะ":"หมู่เกาะแอนดรีนอฟ","Rat หมู่เกาะ":"หมู่เกาะแรต",
+      "Fox หมู่เกาะ":"หมู่เกาะฟ็อกซ์","Santa Cruz หมู่เกาะ":"หมู่เกาะซานตาครูซ","Fiji หมู่เกาะ":"หมู่เกาะฟิจิ",
+      "Izu หมู่เกาะ":"หมู่เกาะอิซุ","Babuyan หมู่เกาะ":"หมู่เกาะบาบูยัน","Talaud หมู่เกาะ":"หมู่เกาะตาเลาด์",
+      "Auckland หมู่เกาะ":"หมู่เกาะโอ๊คแลนด์","Balleny หมู่เกาะ":"หมู่เกาะบัลเลนี","Galapagos หมู่เกาะ":"หมู่เกาะกาลาปาโกส",
+      "Prince Edward หมู่เกาะ":"หมู่เกาะปรินซ์เอ็ดเวิร์ด","Easter เกาะ":"เกาะอีสเตอร์","Macquarie เกาะ":"เกาะแมกควอรี",
+      "Alaska Peninsula":"คาบสมุทรอะแลสกา","Sunda Strait":"ช่องแคบซุนดา","Bismarck Sea":"ทะเลบิสมาร์ก",
+      "Solomon Sea":"ทะเลโซโลมอน","South Georgia":"เกาะเซาท์จอร์เจีย","Greenland":"กรีนแลนด์","Svalbard":"สฟาลบาร์",
+      "Jan Mayen":"ยานไมเอน","Papua":"ปาปัว","Mindanao":"เกาะมินดาเนา","Luzon":"เกาะลูซอน","Visayas":"หมู่เกาะวิซายัส",
+      "Kiribati":"คิริบาส","Tuvalu":"ตูวาลู","Nauru":"นาอูรู","Wallis and Futuna":"วาลลิสและฟูตูนา"
+    };
+    var QK_GEO_KEYS=null;
+    function qkGeoTH(s){
+      if(!QK_GEO_KEYS) QK_GEO_KEYS=Object.keys(QK_GEO_TH).sort(function(a,b){ return b.length-a.length; });
+      for(var i=0;i<QK_GEO_KEYS.length;i++){
+        var k=QK_GEO_KEYS[i];
+        if(s.indexOf(k)>=0) s=s.split(k).join(QK_GEO_TH[k]);
+      }
+      return s.split(" the ").join(" ");
+    }
+    function qkRestTH(s){
+      var out=" "+String(s||"")+" ", pre="";
+      if(/\sregion\s*$/.test(out)){ pre="บริเวณ"; out=out.replace(/\sregion\s*$/," "); }
+      QK_PHRASE_TH.forEach(function(p){ out=out.split(p[0]).join(p[1]); });
+      out=qkGeoTH(out).replace(/\s+/g," ").replace(/\s*,\s*/g,", ").replace(/,\s*$/,"").trim();
+      out=out.replace(/ของ\s+/g,"ของ").replace(/ชายฝั่ง\s+/g,"ชายฝั่ง");   /* ไทยไม่ต้องเว้นวรรคหลังคำเชื่อม */
+      return pre+out;
+    }
+    function qkCleanPlace(s){    /* USGS ตั้งชื่อเหตุใหญ่เป็น "2025 Kamchatka Peninsula, Russia Earthquake" */
+      return String(s||"").replace(/^\d{4}\s+/,"").replace(/\s+earthquakes?\s*$/i,"").trim();
+    }
+    function qkPlaceTH(s){
+      s=qkCleanPlace(s); if(!s) return "ไม่ระบุตำแหน่ง";
+      if(/[฀-๿]/.test(s)) return s;                 /* ตั้งชื่อไทยไว้แล้ว (เหตุที่ไฮไลต์) */
+      var m=s.match(/^(\d+(?:\.\d+)?)\s*km\s+([NSEW]{1,3})\s+of\s+([\s\S]+)$/);
+      if(m){ var rt=qkRestTH(m[3]);
+        return "ห่างจาก"+(/^[A-Za-z0-9]/.test(rt)?" ":"")+rt+" ไปทาง"+(QK_DIR_TH[m[2]]||m[2])+" "+Math.round(+m[1]).toLocaleString("en-US")+" กม."; }
+      return qkRestTH(s);
+    }
+    function qkShortPlace(d){
+      var s=qkCleanPlace(d.place);
+      if(/[฀-๿]/.test(s)) return s.split("—")[0].trim();
+      var m=s.match(/^\d+(?:\.\d+)?\s*km\s+[NSEW]{1,3}\s+of\s+([\s\S]+)$/), rest=m?m[1]:s;
+      var seg=rest.split(","), tail=seg[seg.length-1].trim();
+      return qkRestTH(tail.length>2?tail:rest);
+    }
+
+    /* ---- คำอธิบายไทยของเหตุใหญ่ (สรุปจากรายงานทางการ · ยอดผู้เสียชีวิตเป็นค่าประมาณ) ---- */
+    var QK_NOTES=[
+      {d:"2015-04-25",m:7.8,name:"แผ่นดินไหวเนปาล (กอร์คา)",dead:"ราว 8,900 คน",
+       note:"เขย่ากรุงกาฐมาณฑุและเทือกเขาหิมาลัย บ้านเรือนพังหลายแสนหลัง โบราณสถานมรดกโลกหลายแห่งพังทลาย และกระตุ้นหิมะถล่มลงใส่ค่ายฐานยอดเขาเอเวอเรสต์"},
+      {d:"2015-09-16",m:8.3,name:"แผ่นดินไหวชิลี (อีลาเปล)",dead:"15 คน",
+       note:"รุนแรงที่สุดของโลกในปีนั้น เกิดสึนามิสูงหลายเมตรตามชายฝั่ง แต่ทางการอพยพประชาชนราวหนึ่งล้านคนได้ทัน ความสูญเสียจึงต่ำมากเมื่อเทียบกับขนาด"},
+      {d:"2016-04-15",m:7.0,name:"แผ่นดินไหวคุมาโมโตะ ญี่ปุ่น",dead:"ราว 270 คน (รวมผู้เสียชีวิตเกี่ยวเนื่อง)",
+       note:"เกิดหลังแผ่นดินไหวนำ M6.2 เพียงสองวัน ปราสาทคุมาโมโตะเสียหายหนัก และมีผู้ต้องอพยพออกจากบ้านนับแสนคน"},
+      {d:"2016-04-16",m:7.8,name:"แผ่นดินไหวเอกวาดอร์",dead:"ราว 670 คน",
+       note:"ทำลายเมืองชายฝั่งแถบจังหวัดมานาบี อาคารและโรงแรมถล่มจำนวนมาก มีผู้บาดเจ็บกว่า 6,000 คน"},
+      {d:"2016-11-13",m:7.8,name:"แผ่นดินไหวไคคูรา นิวซีแลนด์",dead:"2 คน",
+       note:"รอยเลื่อนแตกต่อเนื่องกันกว่า 20 รอยเลื่อน แผ่นดินบางจุดยกตัวขึ้นหลายเมตร ถนนและทางรถไฟสายหลักถูกตัดขาดนานหลายเดือน"},
+      {d:"2017-09-19",m:7.1,name:"แผ่นดินไหวปวยบลา เม็กซิโก",dead:"ราว 370 คน",
+       note:"อาคารในกรุงเม็กซิโกซิตีถล่มหลายสิบหลัง เกิดขึ้นตรงกับวันครบรอบแผ่นดินไหวใหญ่ปี 1985 พอดี"},
+      {d:"2018-09-05",m:6.6,name:"แผ่นดินไหวฮกไกโด (อิบุริ) ญี่ปุ่น",dead:"41 คน",
+       note:"ดินถล่มทั้งไหล่เขาทับหมู่บ้าน และทำให้ไฟฟ้าดับทั้งเกาะฮกไกโดเป็นครั้งแรกในประวัติศาสตร์"},
+      {d:"2018-09-28",m:7.5,name:"แผ่นดินไหว–สึนามิปาลู อินโดนีเซีย",dead:"ราว 4,340 คน",
+       note:"ตามด้วยสึนามิในอ่าวปาลูและปรากฏการณ์ดินเหลว (liquefaction) ที่ทำให้พื้นดินไหลกลืนบ้านเรือนทั้งหมู่บ้านหายไป"},
+      {d:"2019-05-26",m:8.0,name:"แผ่นดินไหวเปรู",dead:"2 คน",
+       note:"ศูนย์กลางลึกกว่า 100 กิโลเมตรใต้ป่าแอมะซอน จึงรู้สึกได้เป็นวงกว้างทั่วอเมริกาใต้แต่ความเสียหายจำกัด — ตัวอย่างชัดว่าความลึกสำคัญไม่แพ้ขนาด"},
+      {d:"2020-10-30",m:7.0,name:"แผ่นดินไหวทะเลอีเจียน (ซามอส–อิซเมียร์)",dead:"ราว 119 คน",
+       note:"อาคารในเมืองอิซเมียร์ของตุรกีถล่มหลายหลัง และเกิดสึนามิขนาดเล็กซัดเข้าชายฝั่งทั้งฝั่งตุรกีและกรีซ"},
+      {d:"2021-08-14",m:7.2,name:"แผ่นดินไหวเฮติ",dead:"กว่า 2,200 คน",
+       note:"ซ้ำเติมประเทศที่ยังไม่ฟื้นจากแผ่นดินไหวปี 2010 บ้านเรือนเสียหายกว่าแสนหลัง และมีพายุโซนร้อนเข้าซ้ำในอีกไม่กี่วันต่อมา"},
+      {d:"2022-09-19",m:7.6,name:"แผ่นดินไหวมิโชอากัง เม็กซิโก",dead:"2 คน",
+       note:"ตรงกับวันที่ 19 กันยายนเป็นครั้งที่สาม ต่อจากปี 1985 และ 2017 — เกิดขึ้นเพียงไม่กี่ชั่วโมงหลังการซ้อมรับมือแผ่นดินไหวประจำปี"},
+      {d:"2023-02-06",m:7.8,name:"แผ่นดินไหวตุรกี–ซีเรีย",dead:"กว่า 59,000 คน",
+       note:"อาคารถล่มนับแสนหลังใน 11 จังหวัดของตุรกีและภาคเหนือของซีเรีย ตามด้วยอาฟเตอร์ช็อก M7.5 ในวันเดียวกัน นับเป็นภัยพิบัติร้ายแรงที่สุดของตุรกีในรอบศตวรรษ"},
+      {d:"2023-09-08",m:6.8,name:"แผ่นดินไหวมาร์ราเกช โมร็อกโก",dead:"ราว 2,960 คน",
+       note:"หมู่บ้านดินบนเทือกเขาแอตลาสสูงพังราบ หน่วยกู้ภัยเข้าถึงยากเพราะถนนภูเขาถูกตัดขาด — ขนาดไม่ถึง M7 แต่ตื้นมากและอาคารไม่ได้ออกแบบต้านแรงสั่น"},
+      {d:"2023-10-07",m:6.3,name:"แผ่นดินไหวเฮรัต อัฟกานิสถาน",dead:"กว่า 1,500 คน",
+       note:"เกิดชุดแผ่นดินไหวขนาดใกล้เคียงกันหลายครั้งภายในสัปดาห์เดียว ทำลายหมู่บ้านดินเหนียวจนราบทั้งหมู่บ้าน"},
+      {d:"2024-01-01",m:7.5,name:"แผ่นดินไหวคาบสมุทรโนโตะ ญี่ปุ่น",dead:"กว่า 200 คน",
+       note:"เกิดในวันปีใหม่ ชายฝั่งบางจุดยกตัวขึ้นกว่า 4 เมตรจนท่าเรือกลายเป็นพื้นดิน และเกิดไฟไหม้ใหญ่กลางเมืองวาจิมะ"},
+      {d:"2024-04-02",m:7.4,name:"แผ่นดินไหวฮวาเหลียน ไต้หวัน",dead:"ราว 18 คน",
+       note:"รุนแรงที่สุดในไต้หวันรอบ 25 ปี แต่ผู้เสียชีวิตน้อยมาก เพราะมาตรฐานอาคารต้านแผ่นดินไหวที่เข้มงวดและระบบเตือนภัยล่วงหน้า"},
+      {d:"2025-03-28",m:7.7,name:"แผ่นดินไหวเมียนมา (รอยเลื่อนสะกาย)",dead:"กว่า 3,700 คนในเมียนมา",
+       note:"รอยเลื่อนสะกายฉีกขาดเป็นแนวยาวหลายร้อยกิโลเมตร มัณฑะเลย์และกรุงเนปยีดอเสียหายหนัก วัดวาอารามและสะพานพังจำนวนมาก",
+       th:"ผลกระทบต่อไทย: แรงสั่นส่งถึงกรุงเทพฯ อาคารสำนักงานการตรวจเงินแผ่นดิน (สตง.) สูง 30 ชั้นที่กำลังก่อสร้างย่านจตุจักรถล่มลงมาทั้งหลัง มีผู้เสียชีวิตกว่า 90 คน กทม. ประกาศเขตพื้นที่ประสบสาธารณภัย และมีการตรวจสอบโครงสร้างอาคารสูงทั่วเมืองตามมา"},
+      {d:"2025-07-29",m:8.8,name:"แผ่นดินไหวคาบสมุทรคัมชัตกา รัสเซีย",dead:"มีรายงานผู้เสียชีวิตน้อยมาก",
+       note:"หนึ่งในแผ่นดินไหวที่แรงที่สุดของโลกนับตั้งแต่ปี 2011 มีการประกาศเตือนภัยสึนามิเป็นวงกว้างทั่วมหาสมุทรแปซิฟิก ตั้งแต่ญี่ปุ่นและฮาวายไปจนถึงชายฝั่งทวีปอเมริกา"}
+    ];
+    function qkNoteFor(dq){
+      var iso=new Date(dq.t).toISOString().slice(0,10);
+      for(var i=0;i<QK_NOTES.length;i++){
+        if(QK_NOTES[i].d===iso && Math.abs(dq.mag-QK_NOTES[i].m)<=0.45) return QK_NOTES[i];
+      }
+      return null;
+    }
+
+    /* ---- ตัวช่วยแปลงค่าดิบเป็นภาษาคน ---- */
+    function qkEsc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+    function qkLevelTH(m){ return m>=8?"Great · มหาภัย":m>=7?"Major · รุนแรงมาก":m>=6.5?"Strong · รุนแรง":"Strong · ปานกลาง–รุนแรง"; }
+    function qkDateTimeTH(t){
+      var d=new Date(t+7*3600*1000), M=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+      var p=function(n){ return (n<10?"0":"")+n; };
+      return d.getUTCDate()+" "+M[d.getUTCMonth()]+" "+(d.getUTCFullYear()+543)+" · "+p(d.getUTCHours())+":"+p(d.getUTCMinutes())+" น.";
+    }
+    function qkLatLonTH(la,lo){
+      return Math.abs(la).toFixed(2)+"° "+(la>=0?"N":"S")+", "+Math.abs(lo).toFixed(2)+"° "+(lo>=0?"E":"W");
+    }
+    function qkDepthTH(km){
+      if(km==null||isNaN(km)) return null;
+      return { lab: km<70?"ระดับตื้น":km<300?"ระดับปานกลาง":"ระดับลึก",
+               note: km<70?"ยิ่งตื้นยิ่งสั่นแรงและเสียหายมากที่ผิวดิน":km<300?"พลังงานกระจายก่อนถึงผิวดิน ความเสียหายมักน้อยกว่าระดับตื้น":"ลึกมาก มักรู้สึกได้เป็นวงกว้างแต่เสียหายน้อย" };
+    }
+    function qkAlertTH(a){
+      return ({ green:{t:"เขียว",n:"คาดว่าไม่มีผู้เสียชีวิต ความเสียหายจำกัด"},
+                yellow:{t:"เหลือง",n:"คาดว่ามีผู้เสียชีวิต/ความเสียหายระดับท้องถิ่น"},
+                orange:{t:"ส้ม",n:"คาดว่ามีผู้เสียชีวิตหลักร้อย ต้องการความช่วยเหลือระดับภูมิภาค"},
+                red:{t:"แดง",n:"คาดว่ามีผู้เสียชีวิตหลักพันขึ้นไป ภัยพิบัติระดับชาติ"} })[a] || null;
+    }
+    function qkMmiTH(v){
+      var ROM=["","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+      var i=Math.max(1,Math.min(12,Math.round(v)));
+      var txt = i<=1?"แทบไม่รู้สึก" : i<=3?"รู้สึกได้เล็กน้อย ของแขวนไหวเบา ๆ" : i===4?"รู้สึกได้ชัดในอาคาร ประตูหน้าต่างสั่น" :
+                i===5?"รู้สึกได้ทั่วไป ของวางตกหล่น คนตื่นตกใจ" : i===6?"ทุกคนรู้สึกได้ ปูนแตกร้าว เสียหายเล็กน้อย" :
+                i===7?"ยืนลำบาก อาคารที่ไม่ได้ออกแบบต้านแรงสั่นเสียหายปานกลาง" : i===8?"อาคารเสียหายรุนแรง บางส่วนพังลงมา" :
+                i===9?"อาคารเสียหายหนักมาก โครงสร้างเคลื่อนหลุดจากฐาน" : "อาคารพังทลาย พื้นดินแตกแยก";
+      return { rom:ROM[i], txt:txt };
+    }
+    function qkHiroTXT(m){
+      var x=Math.pow(10,1.5*m+4.8)/6.3e13;     /* พลังงาน (จูล) ÷ ระเบิดฮิโรชิมา ~15 กิโลตัน */
+      return x<1 ? x.toFixed(2) : x<10 ? x.toFixed(1) : Math.round(x).toLocaleString("en-US");
+    }
+    function qkCell(ico,k,v,n){
+      return '<div class="qk-d-cell"><div class="k">'+MDICO(ico)+' '+qkEsc(k)+'</div><div class="v">'+v+'</div>'+
+             (n?'<div class="n">'+qkEsc(n)+'</div>':'')+'</div>';
+    }
+
+    /* ---- แผงรายละเอียดใต้แผนที่ (เปิดเมื่อกดจุดบนแผนที่ หรือกดชิปในรายการ) ---- */
+    function qkShowDetail(dq){
+      var host=$("#quakeDetail"); if(!host) return;
+      if(!dq){
+        host.className="qk-detail empty";
+        host.innerHTML=MDICO("map-pin")+" กดที่จุดบนแผนที่ หรือเลือกจากรายการด้านบน เพื่อดูรายละเอียดของเหตุการณ์นั้น";
+        return;
+      }
+      host.className="qk-detail";
+      var col=qkColor(dq.mag), note=qkNoteFor(dq), dep=qkDepthTH(dq.dep), al=qkAlertTH(dq.alert);
+      var isTH=/[฀-๿]/.test(String(dq.place||""));
+      var cells="";
+      cells+=qkCell("clock","วัน–เวลา (เวลาไทย)", qkEsc(qkDateTimeTH(dq.t)), "ตามเวลาสากล UTC "+new Date(dq.t).toISOString().slice(11,16)+" น.");
+      cells+=qkCell("mountain","ความลึกจากผิวดิน",
+              dep ? qkEsc((+dq.dep).toFixed(1))+' กม. <span style="font-weight:600;color:'+col+'">· '+dep.lab+'</span>' : "ไม่ระบุ",
+              dep ? dep.note : null);
+      cells+=qkCell("map-pin","พิกัดศูนย์กลาง", qkEsc(qkLatLonTH(dq.lat,dq.lon)), null);
+      cells+=qkCell("bomb","พลังงานที่ปลดปล่อย", "≈ "+qkHiroTXT(dq.mag)+" เท่า",
+              "เทียบกับระเบิดปรมาณูฮิโรชิมา (~15 กิโลตัน) — ขนาดต่างกัน 1.0 คือพลังงานต่างกันราว 32 เท่า");
+      if(al) cells+=qkCell("shield-alert","ระดับเตือนภัย PAGER", "สี"+al.t, al.n+" (ระบบประเมินผลกระทบอัตโนมัติของ USGS)");
+      cells+=qkCell("waves","สึนามิ",
+              dq.tsu==null ? "ไม่มีข้อมูล" : (dq.tsu ? "เข้าเกณฑ์เฝ้าระวัง" : "ไม่เข้าเกณฑ์เฝ้าระวัง"),
+              dq.tsu==null ? "ชุดข้อมูลสำรองแบบออฟไลน์ไม่มีค่าสถานะสึนามิ" :
+              dq.tsu ? "อยู่ในเขตมหาสมุทรและขนาดถึงเกณฑ์ที่ต้องออกประกาศเฝ้าระวังสึนามิ" : "ศูนย์กลางอยู่บนแผ่นดิน หรือขนาด/ความลึกไม่ถึงเกณฑ์");
+      if(dq.felt!=null && dq.felt>0)
+        cells+=qkCell("users","คนรายงานว่ารู้สึกได้", (+dq.felt).toLocaleString("en-US")+" รายงาน",
+                "จากระบบ Did You Feel It? ที่ประชาชนกรอกเข้ามาเองกับ USGS");
+      if(dq.mmi!=null && dq.mmi>0){
+        var mm=qkMmiTH(dq.mmi);
+        cells+=qkCell("zap","ความรุนแรงที่รู้สึกได้ (MMI)",
+                mm.rom+' <span style="font-weight:600;color:var(--ink-soft)">('+(+dq.mmi).toFixed(1)+')</span>', mm.txt);
+      }
+      host.innerHTML=
+        '<div class="qk-d-head">'+
+          '<div class="qk-d-mag" style="background:'+col+'"><span>M'+dq.mag.toFixed(1)+'</span><i>'+qkLevelTH(dq.mag).split(" · ")[0]+'</i></div>'+
+          '<div class="qk-d-ttl"><h4>'+qkEsc(qkPlaceTH(dq.place))+'</h4>'+
+            '<div class="en">'+qkEsc(qkLevelTH(dq.mag))+(isTH?'':' · '+qkEsc(dq.place||""))+'</div></div>'+
+          '<button type="button" class="qk-d-close" aria-label="ปิดรายละเอียด">&#10005;</button>'+
+        '</div>'+
+        '<div class="qk-d-grid">'+cells+'</div>'+
+        (note ? '<div class="qk-d-note"><b>'+qkEsc(note.name)+'</b> — ผู้เสียชีวิต '+qkEsc(note.dead)+'<br>'+qkEsc(note.note)+
+                (note.th ? '<span class="th">'+qkEsc(note.th)+'</span>' : '')+'</div>' : '')+
+        '<div class="qk-d-foot">'+
+          (dq.url ? '<a class="qk-d-link" href="'+qkEsc(dq.url)+'" target="_blank" rel="noopener">'+MDICO("link")+' ดูหน้าเหตุการณ์เต็มที่ USGS ↗</a>' : '')+
+          '<span class="qk-d-src">ข้อมูลเหตุการณ์: USGS Earthquake Catalog'+
+          (note ? ' · สรุปผลกระทบจากรายงานทางการและสำนักข่าวหลัก (ตัวเลขโดยประมาณ)' : '')+'</span>'+
+        '</div>';
+      var cl=host.querySelector(".qk-d-close");
+      if(cl) cl.addEventListener("click", function(){ QK.sel=null; qkShowDetail(null); qkMarkSel(); qkRenderTop(); });
+    }
+
+    /* วงแหวนกะพริบรอบจุดที่เลือก (วาดใหม่ทุกครั้งที่เลือก/รีเรนเดอร์แผนที่) */
+    function qkMarkSel(){
+      if(QK._ring && QK._ring.el && QK._ring.el.parentNode) QK._ring.el.parentNode.removeChild(QK._ring.el);
+      QK._ring=null;
+      var dq=QK.sel; if(!dq || !QK._gd || !QK._proj) return;
+      var xy=QK._proj([dq.lon,dq.lat]); if(!xy) return;
+      var r=qkRadius(dq.mag)+7;
+      var c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx",xy[0]); c.setAttribute("cy",xy[1]); c.setAttribute("r", r/(QK._k||1));
+      c.setAttribute("class","qk-sel-ring"); c.style.stroke=qkColor(dq.mag);
+      QK._gd.appendChild(c); QK._ring={el:c, r0:r};
+    }
+
+    function qkSelect(dq, zoomIn){
+      if(!dq) return;
+      QK.sel=dq;
+      qkStop(); qkApply(1);            /* โชว์จุดให้ครบก่อน ไม่งั้นจุดที่เลือกอาจถูกไทม์ไลน์ซ่อนอยู่ */
+      qkShowDetail(dq); qkMarkSel(); qkRenderTop();
+      if(zoomIn && QK._zoomTo) QK._zoomTo(dq);
+      var host=$("#quakeDetail");
+      if(host && host.scrollIntoView) host.scrollIntoView({behavior:"smooth",block:"nearest"});
+    }
+
+    /* ---- รายการ 10 อันดับแรงสุด (กดแล้วซูมเข้าหาจุด) ---- */
+    function qkRenderTop(){
+      var host=$("#quakeTop"); if(!host) return;
+      var arr=QUAKES.slice().sort(function(a,b){ return b.mag-a.mag || b.t-a.t; }).slice(0,10);
+      var hl=null; QUAKES.forEach(function(d){ if(d.hl) hl=d; });
+      if(hl && arr.indexOf(hl)<0 && arr.length) arr[arr.length-1]=hl;   /* ปักหมุดเหตุใกล้ไทยไว้เสมอ */
+      var html='<div class="qk-top-lab">'+MDICO("zap")+' เหตุรุนแรงที่สุดในชุดข้อมูล — กดเพื่อซูมไปที่จุดนั้นและดูรายละเอียด</div>';
+      arr.forEach(function(d){
+        html+='<button type="button" class="qk-chip'+(QK.sel===d?" on":"")+'">'+
+                '<i class="qk-dotc" style="background:'+qkColor(d.mag)+'"></i>'+
+                '<b>M'+d.mag.toFixed(1)+'</b> '+qkEsc(qkShortPlace(d))+
+                ' <span class="yr">'+(new Date(d.t).getUTCFullYear()+543)+'</span></button>';
+      });
+      host.innerHTML=html;
+      $$(".qk-chip",host).forEach(function(b,i){ b.addEventListener("click", function(){ qkSelect(arr[i], true); }); });
     }
 
     function renderQuake(){
@@ -6554,6 +6890,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       g.append("g").selectAll("path").data(WORLD.features).enter().append("path")
         .attr("d",path).attr("fill",paper3).attr("stroke",rule).attr("stroke-width",0.4).attr("stroke-opacity",0.7);
       var gd=g.append("g").attr("class","qk-dots");
+      QK._gd=gd.node(); QK._proj=proj; QK._k=1; QK._ring=null;   // เก็บไว้ให้แผงรายละเอียด/วงแหวนใช้ต่อ
       var arr=QUAKES.slice().sort(function(a,b){ return a.t-b.t; });
       QK.tmin=arr.length?arr[0].t:0; QK.tmax=arr.length?arr[arr.length-1].t:1;
       if(QK.tmax<=QK.tmin) QK.tmax=QK.tmin+1;
@@ -6566,8 +6903,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           .style("transform-box","fill-box").style("transform-origin","center")
           .style("vector-effect","non-scaling-stroke")
           .style("transition","opacity .45s ease, transform .45s ease").style("cursor","pointer");
-        c.append("title").text("M"+dq.mag.toFixed(1)+" · "+(dq.place||"")+" · "+qkDateTH(dq.t));
-        QK.dots.push({el:c.node(), t:dq.t, hl:!!dq.hl, r0:qkRadius(dq.mag)});
+        c.append("title").text("M"+dq.mag.toFixed(1)+" · "+(dq.place||"")+" · "+qkDateTH(dq.t)+" · กดเพื่อดูรายละเอียด");
+        QK.dots.push({el:c.node(), t:dq.t, hl:!!dq.hl, r0:qkRadius(dq.mag), x:xy[0], y:xy[1], q:dq});
       });
       // ---- ซูม/ลากแผนที่ (d3.zoom) — ชดเชยรัศมีจุด ÷k ให้จุดไม่บวมตามซูม ----
       d3.select(box).style("position","relative");
@@ -6578,8 +6915,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           return !ev.button;                                          // เมาส์ปุ่มซ้ายลากเลื่อน
         })
         .on("zoom", function(ev){
-          var k=ev.transform.k; g.attr("transform", ev.transform);
+          var k=ev.transform.k; g.attr("transform", ev.transform); QK._k=k;
           QK.dots.forEach(function(o){ o.el.setAttribute("r", o.r0/k); });   // จุดคงขนาดบนจอ
+          if(QK._ring) QK._ring.el.setAttribute("r", QK._ring.r0/k);
         });
       svg.call(zoom).style("cursor","grab").style("touch-action","pan-y")
         .on("mousedown.qk",function(){ svg.style("cursor","grabbing"); })
@@ -6597,8 +6935,32 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       qkZbtn("&plus;","ซูมเข้า",function(){ svg.transition().duration(220).call(zoom.scaleBy,1.6); });
       qkZbtn("&minus;","ซูมออก",function(){ svg.transition().duration(220).call(zoom.scaleBy,1/1.6); });
       qkZbtn("&#10227;","รีเซ็ตมุมมอง",function(){ svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity); });
+      // ---- บินไปหาจุดที่เลือก (ใช้กับรายการ 10 อันดับแรงสุด) ----
+      QK._zoomTo=function(dq){
+        var q=proj([dq.lon,dq.lat]); if(!q) return;
+        var k=4.5, tr=d3.zoomIdentity.translate(W/2-k*q[0], H/2-k*q[1]).scale(k);
+        svg.transition().duration(760).call(zoom.transform, tr);
+      };
+      // ---- แตะใกล้ๆ จุด = เลือกจุดที่ใกล้ที่สุด (จุดเล็กมาก กดตรงๆ ยากโดยเฉพาะบนมือถือ) ----
+      var pdn=null;
+      svg.on("pointerdown.qkpick", function(ev){ pdn=[ev.clientX, ev.clientY]; })
+         .on("pointerup.qkpick", function(ev){
+            if(!pdn) return;
+            var mx=ev.clientX-pdn[0], my=ev.clientY-pdn[1]; pdn=null;
+            if(Math.sqrt(mx*mx+my*my)>6) return;                 // ลากแผนที่อยู่ ไม่ใช่การกดเลือก
+            var p=d3.pointer(ev, g.node()), best=null, bd=Infinity;
+            QK.dots.forEach(function(o){
+              var dx=o.x-p[0], dy=o.y-p[1], d2=dx*dx+dy*dy;
+              if(d2<bd){ bd=d2; best=o; }
+            });
+            if(!best) return;
+            var lim=Math.max(10, best.r0+7)/(QK._k||1);
+            if(bd<=lim*lim) qkSelect(best.q, false);
+         });
       buildQuakePlayer();
       qkApply(QK.frac);
+      qkRenderTop();
+      if(QK.sel) qkMarkSel(); else qkShowDetail(null);
       renderQuakeYear();
     }
 
@@ -6680,7 +7042,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         gj.features.forEach(function(f){
           var c=(f.geometry&&f.geometry.coordinates)||[], p=f.properties||{};
           if(c[0]==null||c[1]==null||p.mag==null||p.time==null) return;
-          arr.push({ lon:+c[0], lat:+c[1], mag:+p.mag, t:+p.time, place:p.place||"" });
+          arr.push({ lon:+c[0], lat:+c[1], mag:+p.mag, t:+p.time, place:p.place||"",
+                     dep:(c[2]==null?null:+c[2]), url:p.url||"", alert:p.alert||null, tsu:(p.tsunami==null?null:+p.tsunami),
+                     felt:(p.felt==null?null:+p.felt), mmi:(p.mmi==null?null:+p.mmi), sig:(p.sig==null?null:+p.sig) });
         });
         if(arr.length<20) throw 0;
         // ทำให้เหตุเมียนมา 28 มี.ค. 2568 เป็นไฮไลต์เสมอ (ป้ายไทย + วงขาว)
@@ -6690,7 +7054,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           }
         });
         arr.sort(function(a,b){ return a.t-b.t; });
-        QUAKES=arr; QK_LIVE=true; QK.frac=1;
+        QUAKES=arr; QK_LIVE=true; QK.frac=1; QK.sel=null;
         setQuakeKpis(); renderQuake();
       }).catch(function(){ setQuakeKpis(); });   // เชื่อมต่อไม่ได้ → คงค่าสำรอง
     }
