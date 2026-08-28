@@ -24,7 +24,6 @@ window.MapZoom=(function(){
   'use strict';
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const easeOut=t=>1-Math.pow(1-t,3);
-  const reduceMotion=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function create(svg,g,opt){
     opt=opt||{};
@@ -53,7 +52,9 @@ window.MapZoom=(function(){
       cancel();
       if(dur==null)dur=DUR;
       // แท็บที่ถูกซ่อนอยู่ rAF จะหยุดเดิน → ถ้าเริ่มบินตอนนั้นแผนที่จะค้าง ข้ามไปผลลัพธ์สุดท้ายเลย
-      if(dur<=0||document.hidden||reduceMotion()){scale=ns;tx=ntx;ty=nty;apply();onSettle(scale);return;}
+      // (เดิมมี reduceMotion() ร่วมเงื่อนไขด้วย — เครื่องที่ปิดแอนิเมชันของ Windows
+      //  จะเห็นแผนที่ "ตัด" ไปตำแหน่งใหม่ทันที ไม่ค่อย ๆ ซูม · เอาออกให้บินเสมอ)
+      if(dur<=0||document.hidden){scale=ns;tx=ntx;ty=nty;apply();onSettle(scale);return;}
       const s0=scale,x0=tx,y0=ty,t0=performance.now();
       const step=now=>{
         const u=Math.min(1,(now-t0)/dur), e=easeOut(u);

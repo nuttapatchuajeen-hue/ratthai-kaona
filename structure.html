@@ -4493,7 +4493,6 @@ function orgSprite(color, shape){
 // ═══════════════════════════════════════════════════════════
 const CAM_DUR = 750;
 const camEase = t => 1 - Math.pow(1 - t, 3);
-const camReduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 let camRAF = 0;
 function camCancel(){ if(camRAF){ cancelAnimationFrame(camRAF); camRAF = 0; } }
 
@@ -4521,7 +4520,10 @@ function zoomAt(vx, vy, f){
 function flyTo(ox, oy, s, dur){
   camCancel();
   if(dur == null) dur = CAM_DUR;
-  if(dur <= 0 || document.hidden || camReduceMotion()){
+  // เดิมมี camReduceMotion() ร่วมเงื่อนไขด้วย — เครื่องที่ปิด "Show animations in Windows"
+  // กดโหนดแล้วกล้อง "ตัด" ไปตำแหน่งใหม่ทันที ไม่ค่อย ๆ บิน · เอาออกให้บินเสมอ
+  // เหลือไว้เฉพาะ document.hidden ซึ่งเป็นข้อจำกัดจริง (rAF ไม่เดินตอนแท็บถูกซ่อน)
+  if(dur <= 0 || document.hidden){
     offsetX = ox; offsetY = oy; scale = s; draw(); return;
   }
   const x0 = offsetX, y0 = offsetY, s0 = scale, t0 = performance.now();

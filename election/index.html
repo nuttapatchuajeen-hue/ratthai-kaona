@@ -228,13 +228,14 @@ mdSyncToggle();
      พอบินจบค่อยจัดป้ายเต็มรูปแบบทีเดียว */
   let flyRaf=0;
   const easeOut=t=>1-Math.pow(1-t,3);
-  const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
   function cancelFly(){ if(flyRaf){cancelAnimationFrame(flyRaf);flyRaf=0;} }
   function flyTo(ns,ntx,nty,dur){
     cancelFly();
     if(dur==null)dur=750;
     // แท็บที่ถูกซ่อนอยู่ rAF จะหยุดเดิน → ถ้าเริ่มบินตอนนั้นแผนที่จะค้าง ข้ามไปผลลัพธ์สุดท้ายเลย
-    if(dur<=0||document.hidden||reduceMotion()){scale=ns;tx=ntx;ty=nty;apply();updateLabels(true);return;}
+    // (เดิมมี reduceMotion() ร่วมเงื่อนไขด้วย — เครื่องที่ปิด "Show animations in Windows"
+    //  เลยกดเลือกจังหวัดแล้วภาพ "ตัด" ไปเลย ไม่ค่อย ๆ ซูมเข้า · เอาออกให้บินเสมอ)
+    if(dur<=0||document.hidden){scale=ns;tx=ntx;ty=nty;apply();updateLabels(true);return;}
     const s0=scale,x0=tx,y0=ty,t0=performance.now();
     const step=now=>{
       const u=Math.min(1,(now-t0)/dur),e=easeOut(u);
