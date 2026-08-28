@@ -420,7 +420,9 @@ body {
 .showcase-track { display: flex; flex-shrink: 0; }
 .showcase-track.to-left  { animation: showcase-left  var(--speed) linear infinite; }
 .showcase-track.to-right { animation: showcase-right var(--speed) linear infinite; }
-.showcase-band:hover .showcase-track { animation-play-state: paused; }
+/* เดิม: .showcase-band:hover .showcase-track { animation-play-state: paused; }
+   เอาออก — แถบสูง 60vh เต็มจอ + หัวข้อเป็น pointer-events:none
+   เมาส์วางตรงไหนในแถบก็หยุดหมด จนดูเหมือนภาพไม่ขยับ */
 
 .showcase-half { display: flex; flex-shrink: 0; }
 .showcase-cell { flex-shrink: 0; padding-right: 1.25rem; }
@@ -502,10 +504,9 @@ body {
   .showcase-cell { padding-right: 0.8rem; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .showcase-track.to-left,
-  .showcase-track.to-right { animation: none; }
-}
+/* หมายเหตุ: เดิมมี @media (prefers-reduced-motion: reduce) สั่ง
+   .showcase-track { animation: none; } ทำให้แถบนี้ค้างสนิทบนเครื่องที่ปิด
+   "Show animations in Windows" — เอาออกแล้ว เพื่อให้แถบเลื่อนตลอดทุกเครื่อง */
 
 /* ── VOICES (ข้อเสนอแนะจากแบบประเมิน — การ์ดคำพูด) ── */
 .voices-area {
@@ -592,7 +593,8 @@ body {
   to   { transform: translate3d(0, -50%, 0); }
 }
 
-.voices-marquee:hover .voices-track { animation-play-state: paused; }
+/* เดิม: .voices-marquee:hover .voices-track { animation-play-state: paused; }
+   เอาออกด้วยเหตุผลเดียวกับแถบผลงาน — เมาส์ค้างในพื้นที่การ์ดแล้วรางหยุดทั้งหมด */
 
 .voice-card {
   position: relative;
@@ -699,12 +701,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .voices-track { animation: none; }
-  .voices-marquee {
-    height: auto;
-    -webkit-mask-image: none;
-            mask-image: none;
-  }
+  /* ไม่ปิด animation ของ .voices-track แล้ว และคง height/mask เดิมไว้
+     เพื่อให้รางเลื่อนขึ้นทำงานตลอด */
   .voice-card:hover { transform: none; }
 }
 
