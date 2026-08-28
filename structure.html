@@ -2782,9 +2782,9 @@ MINISTRIES.forEach((m, i) => {
     // focus on ministry node in canvas
     const n = nodes.find(nd => nd.isMinistry && nd.data?.id === m.id);
     if (n) {
-      const MAIN = document.getElementById('main');
-      const cW = MAIN.clientWidth, cH = MAIN.clientHeight;
-      flyTo(cW/2 - n.x * scale, cH/2 - n.y * scale, scale);
+      // ตรึงกลาง "ผืนผ้าใบ" (W/2,H/2) — #main สูงรวมแถบ legend ด้วย
+      // ใช้ clientHeight แล้วโหนดจะไปจอดใต้แถบ legend
+      flyTo(W/2 - n.x * scale, H/2 - n.y * scale, scale);
       showPanel(n);
     }
   });
@@ -3194,6 +3194,7 @@ function radialBump(x0, y0, x1, y1, cx, cy) {
   return { x: c1x, y: c1y };
 }
 
+let _resizeRetry = 0;
 function resize() {
   const MAIN = document.getElementById('main');
   const LEG  = document.getElementById('legend-bar');
@@ -3210,6 +3211,14 @@ function resize() {
   // ค่าติดลบไหลไปทำ createRadialGradient รัศมีติดลบ (แสงเรือง/vignette) แล้ว throw
   W = Math.max(0, MAIN.clientWidth);
   H = Math.max(0, MAIN.clientHeight - legH);
+  // เฟรมแรกคอนเทนเนอร์ยังไม่ได้ขนาดจริง (เคยเจอสด ๆ W=20 H=0) → คำนวณต่อจะได้
+  // scale เป็นศูนย์/ติดลบ แล้วผังค้างพังทั้งหน้าโดยไม่มีอะไรมาแก้ให้
+  // ข้ามรอบนี้แล้วลองใหม่เฟรมหน้า (จำกัดจำนวนครั้ง กัน #main ที่ถูกซ่อนอยู่วนไม่จบ)
+  if(W <= 0 || H <= 0){
+    if(_resizeRetry++ < 60) requestAnimationFrame(resize);
+    return;
+  }
+  _resizeRetry = 0;
   canvas.width  = W * dpr;
   canvas.height = H * dpr;
   canvas.style.width  = W + 'px';
@@ -3484,8 +3493,8 @@ function buildUniNodes(cx, cy, R_min, step, CAT_RING_MAP){
 // ── AUTO-FIT VIEW ──
 function fitView() {
   if(!nodes.length) return;
+  if(W <= 0 || H <= 0) return;      // ผืนผ้าใบยังไม่มีขนาด — คำนวณต่อได้ scale ติดลบ
   const isMob = window.innerWidth <= 640;
-  const legH  = isMob ? 48 : 72;
   const radial = (currentView === 'radial');
   // เฟรมเริ่มต้นแบบ machineryofgovernment.uk: เฟรมรอบ "วงล้อหลัก" เท่านั้น → นายกฯ อยู่
   // กึ่งกลางพอดี + ขยายวงให้เต็มจอ. คลัสเตอร์ standalone ("นอกบังคับบัญชาฝ่ายบริหาร")
@@ -3502,7 +3511,9 @@ function fitView() {
     minY=Math.min(minY,fxBox.y-8); maxY=Math.max(maxY,fxBox.y+fxBox.h+8);
   }
   const gW=maxX-minX, gH=maxY-minY;
-  const avH = H - legH;
+  // H หักแถบ legend ไปแล้วตั้งแต่ resize() — ของเดิมหักซ้ำอีกรอบด้วยค่าคงที่ 48/72
+  // ผังเลยย่อเล็กกว่าที่ควรและเยื้องขึ้นจากกึ่งกลางราวครึ่งหนึ่งของค่าที่หักซ้ำ
+  const avH = H;
   // ขยายเต็มขึ้นในโหมด radial (วงเดียว) เพื่อให้ใกล้เคียงเว็บอ้างอิง
   const fillF = radial ? (isMob ? 0.92 : 0.95) : (isMob ? 0.88 : 0.93);
   scale = Math.min(W/gW, avH/gH) * fillF;
@@ -4486,6 +4497,26 @@ const camReduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-
 let camRAF = 0;
 function camCancel(){ if(camRAF){ cancelAnimationFrame(camRAF); camRAF = 0; } }
 
+// ── เพดาน/พื้นซูม + ตัวคูณต่อสเต็ป ใช้ร่วมกันทุกทางเข้า (ล้อ · ปุ่ม · นิ้ว) ──
+// ของเดิมแต่ละทางใช้ช่วงคนละอย่าง (ล้อ .12–6 · นิ้ว .08–8) ซูมด้วยนิ้วจึงไปได้ไกล
+// กว่าที่ล้อกับปุ่มจะดึงกลับได้
+const ZOOM_MIN = 0.12, ZOOM_MAX = 6;
+const ZOOM_STEP_WHEEL = 1.12, ZOOM_STEP_BTN = 1.2;
+const zClamp = s => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, s));
+
+/* ซูมโดยตรึงจุด (vx,vy) บนผืนผ้าใบไว้กับที่ — วิธีคิดยกมาจาก zoomAt() ของหน้า ส.ส. รายเขต
+   หัวใจคือคิดอัตราส่วน k จาก "สเกลที่ได้จริงหลัง clamp" ไม่ใช่ตัวคูณดิบ
+   ของเดิมเลื่อน offset ด้วยตัวคูณดิบเสมอ พอชนเพดาน/พื้นซูม สเกลไม่ขยับแต่ภาพไหลหนี
+   ~36px ต่อการหมุนล้อ 1 คลิก หมุนค้างไว้แผนผังหลุดจอทั้งที่ตัวเลข % นิ่งสนิท */
+function zoomAt(vx, vy, f){
+  camCancel();                       // ซูมระหว่างกล้องกำลังบิน → หยุดบิน ให้มือคนคุมแทน
+  const ns = zClamp(scale * f), k = ns / scale;
+  offsetX = vx - (vx - offsetX) * k;
+  offsetY = vy - (vy - offsetY) * k;
+  scale = ns;
+  draw();
+}
+
 // camera setter — บินไปยัง offset/scale ปลายทางแบบนุ่ม ๆ (dur=0 = กระโดดทันทีแบบเดิม)
 function flyTo(ox, oy, s, dur){
   camCancel();
@@ -5206,6 +5237,7 @@ let draggedNode = null;
 let nodeDragOffX = 0, nodeDragOffY = 0;
 
 canvas.addEventListener('mousedown', e => {
+  camCancel();          // จับลากระหว่างกล้องกำลังบิน → หยุดบิน ไม่งั้น tween เขียนทับมือคน
   const MAIN=document.getElementById('main');
   const r=MAIN.getBoundingClientRect();
   const hit=hitTest(e.clientX-r.left, e.clientY-r.top);
@@ -5285,14 +5317,10 @@ canvas.addEventListener('mouseup', e => {
 });
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
-  const MAIN=document.getElementById('main');
-  const r=MAIN.getBoundingClientRect();
-  const delta=e.deltaY>0?.88:1.12;
-  const mx=e.clientX-r.left, my=e.clientY-r.top;
-  offsetX=mx-(mx-offsetX)*delta;
-  offsetY=my-(my-offsetY)*delta;
-  scale=Math.max(.12,Math.min(6,scale*delta));
-  draw();
+  const r=document.getElementById('main').getBoundingClientRect();
+  // ขึ้น/ลงต้องเป็นส่วนกลับกันพอดี (1.12 กับ 1/1.12) ของเดิมใช้ .88 คู่กับ 1.12
+  // หมุนเข้าแล้วหมุนออกครบรอบ สเกลเพี้ยนไป -1.44% ทุกรอบ (1 → 1.12 → 0.9856)
+  zoomAt(e.clientX-r.left, e.clientY-r.top, e.deltaY>0 ? 1/ZOOM_STEP_WHEEL : ZOOM_STEP_WHEEL);
 }, {passive:false});
 canvas.addEventListener('mouseleave', () => {
   if(!draggedNode) { hoveredNode=null; draw(); hideTooltip(); }
@@ -5311,6 +5339,7 @@ canvas.addEventListener('touchstart', e => {
   const r = MAIN.getBoundingClientRect();
   if (e.touches.length === 2) {
     // Pinch start
+    camCancel();
     isDragging = false; draggedNode = null;
     pinchDist0  = getTouchDist(e.touches);
     pinchScale0 = scale;
@@ -5341,7 +5370,16 @@ canvas.addEventListener('touchmove', e => {
     const dist = getTouchDist(e.touches);
     const midX = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - r.left;
     const midY = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - r.top;
-    const newScale = Math.min(8, Math.max(0.08, pinchScale0 * (dist / pinchDist0)));
+    /* touchend ตั้ง pinchDist0 = 0 ทุกครั้งที่ยังมีนิ้วเหลือค้างบนจอ
+       ยก 1 นิ้วจาก 3 เหลือ 2 แล้วขยับต่อ → dist/0 = Infinity → สเกลกระโดดสุดเพดานทันที
+       (รีโปรได้จริง: สเกลเด้งเป็น 8 · offset กระโดดไป -1350,-1000 ผังหายจากจอ)
+       เจอค่า 0 ให้ตั้งต้นจับระยะใหม่ แทนที่จะเอาไปหาร */
+    if(!pinchDist0){
+      pinchDist0 = dist; pinchScale0 = scale;
+      pinchMidX = midX;  pinchMidY = midY;
+      e.preventDefault(); return;
+    }
+    const newScale = zClamp(pinchScale0 * (dist / pinchDist0));
     // Zoom around midpoint
     const wx = (pinchMidX - offsetX) / scale;
     const wy = (pinchMidY - offsetY) / scale;
@@ -5372,7 +5410,16 @@ canvas.addEventListener('touchend', e => {
   const moved = e.changedTouches.length &&
     (Math.abs(e.changedTouches[0].clientX - dragStartX) > 8 ||
      Math.abs(e.changedTouches[0].clientY - dragStartY) > 8);
-  if (draggedNode) { if (!moved) { showPanel(draggedNode); spineToNode(draggedNode); } draggedNode = null; }
+  // ให้ตรงกับฝั่งเมาส์: radial = หมุนวงแล้วค่อยบิน · ผังกลุ่ม = บินเข้ากล่องกระทรวง
+  // ของเดิมเรียก spineToNode ทุกมุมมอง ทั้งที่เป็นพฤติกรรมของ radial อย่างเดียว
+  if (draggedNode) {
+    if (!moved) {
+      showPanel(draggedNode);
+      if (currentView === 'radial') spineToNode(draggedNode);
+      else if (currentView === 'gravity') zoomToNode(draggedNode);
+    }
+    draggedNode = null;
+  }
   isDragging = false; pinchDist0 = 0;
 });
 
@@ -6132,18 +6179,19 @@ function flyToFit(){
 document.getElementById('btn-reset').onclick=()=>{ flyToFit(); };
 
 // ── ZOOM ──
-document.getElementById('zin').onclick=()=>{
-  const MAIN=document.getElementById('main');
-  const _ns=Math.min(6,scale*1.2);
-  flyTo(MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*1.2,
-        MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*1.2, _ns);
-};
-document.getElementById('zout').onclick=()=>{
-  const MAIN=document.getElementById('main');
-  const _ns=Math.max(.12,scale*.83);
-  flyTo(MAIN.clientWidth/2-(MAIN.clientWidth/2-offsetX)*.83,
-        MAIN.clientHeight/2-(MAIN.clientHeight/2-offsetY)*.83, _ns);
-};
+/* ปุ่ม +/− ของเดิมมี 2 บั๊กซ้อนกัน
+   1) ตรึงที่ MAIN.clientHeight/2 = กึ่งกลาง #main ซึ่ง "รวมแถบ legend" เข้าไปด้วย
+      แต่ผืนผ้าใบจริงสูงแค่ H → จุดที่มองอยู่ไหลขึ้นราวครึ่งความสูงแถบ legend ต่อการกด 1 ครั้ง
+      (วัดจริง: จอสูง 813px แถบ legend 429px = เพี้ยน 42.9px/ครั้ง · กด 6 ครั้ง = 426px)
+   2) เลื่อน offset ด้วยตัวคูณดิบ (1.2/.83) ทั้งที่สเกลผ่าน clamp มาแล้ว
+      → ชนเพดานซูมเมื่อไร กดต่อภาพก็ไหลหนีทั้งที่ % ไม่ขยับ
+   แก้ทั้งคู่ด้วยสูตรเดียวกับ zoomAt: ตรึงกลางผืนผ้าใบ (W/2,H/2) แล้วคิด k หลัง clamp */
+function zoomStepBtn(f){
+  const ns = zClamp(scale * f), k = ns / scale;
+  flyTo(W/2 - (W/2 - offsetX)*k, H/2 - (H/2 - offsetY)*k, ns, 220);
+}
+document.getElementById('zin').onclick  = () => zoomStepBtn(ZOOM_STEP_BTN);
+document.getElementById('zout').onclick = () => zoomStepBtn(1/ZOOM_STEP_BTN);
 document.getElementById('zfit').onclick=()=>{ flyToFit(); };
 // ── ตัวกรองเขตพื้นที่ (Territory) ──
 (function initTerritory(){
