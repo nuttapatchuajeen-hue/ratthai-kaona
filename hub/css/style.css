@@ -173,6 +173,17 @@ body {
   text-transform: uppercase;
 }
 
+.hero-note {
+  font-family: var(--font-sub);
+  font-size: clamp(0.74rem, 0.95vw, 0.88rem);
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  opacity: 0.8;
+  margin-top: 0.9rem;
+  max-width: 34rem;
+}
+
 .hero-actions {
   display: flex;
   gap: 1.2rem;
@@ -491,7 +502,7 @@ body {
 }
 
 .showcase-caption p {
-  max-width: 46ch;
+  max-width: 34rem;
   margin: 0 auto;
   color: var(--text-secondary);
   text-shadow: 0 2px 16px rgba(2,5,8,0.9);
@@ -1471,6 +1482,10 @@ body::before {
   }
   .hero-tagline {
     margin-top: 1.4rem;
+  }
+  .hero-note {
+    margin-top: 0.7rem;
+    max-width: 100%;
   }
   .hero-actions {
     margin-top: 1.8rem;
