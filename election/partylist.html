@@ -14,6 +14,9 @@
   <script src="../js/preloader.js"></script>
 <script src="../js/disclaimer.js"></script>
   <style>
+  /* ── Widescreen Container (1680px) ── */
+  .pagehead, .wrap, footer .foot-in { max-width: 1680px; }
+
   /* ── แถวรายชื่อแบบมีบทบาทย่อ + คลิกเปิดประวัติ ── */
   .pcard ol li.pl-row{align-items:center;gap:11px;transition:background .12s}
   .pcard ol li.pl-row .pl-nmwrap{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
@@ -26,6 +29,58 @@
   .pcard ol li .pl-chev{flex:0 0 auto;color:var(--line-2);transition:color .12s,transform .12s}
   .pcard ol li.has-bio:hover .pl-chev{color:var(--orange);transform:translateX(2px)}
   .pcard ol li .plav{flex:0 0 auto}
+
+  /* ── View Switcher Bar ── */
+  .pl-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;flex-wrap:wrap}
+  .pl-view-toggle{display:inline-flex;align-items:center;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;padding:3px;gap:2px}
+  html[data-theme="dark"] .pl-view-toggle{background:var(--card)}
+  .vbtn{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-size:.82rem;font-weight:500;color:var(--muted);background:transparent;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;transition:all .15s ease}
+  .vbtn:hover{color:var(--ink)}
+  .vbtn.active{color:var(--paper);background:var(--orange);font-weight:600;box-shadow:0 2px 8px -2px rgba(94,116,136,.4)}
+  html[data-theme="dark"] .vbtn.active{color:#06101a}
+  .vbtn svg{width:14px;height:14px;flex:none}
+
+  /* ── DATA TABLE LIST (สไตล์ getdesign.md ตามรูปภาพ) ── */
+  .pl-table-wrap{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+    overflow-x:auto;overflow-y:hidden;margin-bottom:24px;
+  }
+  .pl-table{width:100%;border-collapse:collapse;text-align:left;min-width:860px}
+  .pl-table thead{background:var(--wash);border-bottom:1px solid var(--line)}
+  .pl-table th{
+    font-family:'Kanit';font-size:.76rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);padding:13px 18px;white-space:nowrap;
+  }
+  .pl-table th.th-num{width:60px;text-align:center}
+  .pl-table th.th-mp{width:280px}
+  .pl-table th.th-party{width:160px}
+  .pl-table th.th-rank{width:100px;text-align:center}
+  .pl-table th.th-bio{width:auto}
+  .pl-table th.th-act{width:60px;text-align:center}
+
+  .pl-table tbody tr{
+    border-bottom:1px solid var(--line);cursor:pointer;
+    transition:background .15s ease,box-shadow .15s ease;
+  }
+  .pl-table tbody tr:last-child{border-bottom:none}
+  .pl-table tbody tr:hover{background:var(--wash)}
+  html[data-theme="dark"] .pl-table tbody tr:hover{background:rgba(255,255,255,.04)}
+
+  .pl-table td{padding:12px 18px;vertical-align:middle;font-size:.9rem}
+  .td-pl-num{font-family:'Kanit',monospace;font-weight:700;font-size:.84rem;color:var(--muted);text-align:center}
+  .td-pl-mp{display:flex;align-items:center;gap:12px}
+  .td-pl-mp .plav{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:.95rem;background:var(--pc,var(--orange));box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--line-2);position:relative;overflow:hidden}
+  .td-pl-mp .plav img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
+  .td-pl-name{font-family:'Kanit';font-weight:600;font-size:.96rem;color:var(--ink);line-height:1.2}
+  .td-pl-party{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.76rem;font-family:'Kanit';font-weight:500;color:var(--ink-2);background:var(--paper);border:1px solid var(--line-2);white-space:nowrap}
+  .td-pl-party .sw{width:8px;height:8px;border-radius:50%;background:var(--pc)}
+  html[data-theme="dark"] .td-pl-party{background:var(--card)}
+  .td-pl-rank{font-family:'Kanit',monospace;font-weight:700;font-size:.86rem;color:var(--muted);text-align:center}
+  .td-pl-desc{font-family:'Sarabun';font-size:.84rem;color:var(--muted);line-height:1.4;max-width:480px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .td-pl-act{text-align:center}
+  .td-pl-act-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--muted);background:var(--paper);border:1px solid var(--line-2);transition:all .15s ease}
+  .pl-table tbody tr:hover .td-pl-act-btn{background:var(--orange);color:#fff;border-color:transparent;transform:translateX(2px)}
+  html[data-theme="dark"] .td-pl-act-btn{background:var(--card)}
 
   /* ── แผงรายละเอียด (modal) ── */
   .pl-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -119,6 +174,7 @@ mdSyncToggle();
       <div><span class="kick">Party-list MPs</span><h1>ส.ส. แบบ<span class="o">บัญชีรายชื่อ</span> · 100 คน</h1></div>
       <p>จัดกลุ่มตามพรรค เรียงตามลำดับบัญชีรายชื่อ (แยกจากการเลือกตั้งแบบแบ่งเขต)</p>
     </div>
+    
     <div class="lcontrols">
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -126,7 +182,41 @@ mdSyncToggle();
       </div>
       <div class="sel"><select id="l-party"></select></div>
     </div>
+
+    <!-- View Switcher & Result Stats -->
+    <div class="pl-bar">
+      <div class="cmt-count" id="plCount" style="font-size:.86rem;color:var(--muted)">แสดง 100 รายชื่อ</div>
+      <div class="pl-view-toggle" id="plViewToggle" role="group" aria-label="สลับมุมมอง">
+        <button type="button" class="vbtn active" id="vbtnGrid" data-view="grid" title="มุมมองการ์ดแยกตามพรรค">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>การ์ดแยกพรรค</span>
+        </button>
+        <button type="button" class="vbtn" id="vbtnTable" data-view="table" title="มุมมองตารางทำเนียบ 100 คน (getdesign.md Style)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <span>ตารางทำเนียบ</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1. Grid Container -->
     <div class="listgrid" id="l-grid"></div>
+
+    <!-- 2. Table Container (สไตล์ getdesign.md) -->
+    <div class="pl-table-wrap" id="plTableWrap" hidden>
+      <table class="pl-table">
+        <thead>
+          <tr>
+            <th class="th-num">#</th>
+            <th class="th-mp">ว่าที่ ส.ส. บัญชีรายชื่อ</th>
+            <th class="th-party">สังกัดพรรค</th>
+            <th class="th-rank">ลำดับในพรรค</th>
+            <th class="th-bio">บทบาท / ภูมิหลังย่อ</th>
+            <th class="th-act">ประวัติ</th>
+          </tr>
+        </thead>
+        <tbody id="plTbody"></tbody>
+      </table>
+    </div>
   </div>
 
   <footer>
@@ -141,13 +231,12 @@ mdSyncToggle();
   </footer>
 </div>
 
-
-
 <script>window.PHOTOS={"นายวรวงศ์ วรปัญญา":"นายวรวงศ์__วรปัญญา.jpg"};</script>
 <!-- ข้อมูลแยกตามปีเลือกตั้ง — year-switch.js ฉีด partylist-25xx.js (ห้ามใส่ defer/async) -->
 <script>window.EYEARSET='partylist';</script>
 <script src="year-switch.js"></script>
-<!-- แผงรายละเอียด ส.ส.บัญชีรายชื่อ (เปิดเมื่อคลิกการ์ด) -->
+
+<!-- แผงรายละเอียด ส.ส.บัญชีรายชื่อ (เปิดเมื่อคลิกการ์ดหรือแถวตาราง) -->
 <div class="pl-modal" id="pl-modal" hidden>
   <div class="pl-modal__backdrop" data-close></div>
   <div class="pl-modal__card" role="dialog" aria-modal="true" aria-labelledby="plm-name">
@@ -169,57 +258,148 @@ mdSyncToggle();
 (function(){
   const D=window.DATA, PM=D.partyMeta, listRecs=D.list, PROF=window.PROFILES||{};
   const shortOf=c=>(PM[c]&&PM[c].short)||c, thOf=c=>(PM[c]&&PM[c].th)||c, colorOf=c=>(PM[c]&&PM[c].color)||'#B9AFA4';
-  /* สระนำหน้า (เ แ โ ใ ไ) เขียนก่อนพยัญชนะต้น — "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
   const LEAD_VOWELS=/[เแโใไ]/;
   const firstLetter=s=>(LEAD_VOWELS.test(s.charAt(0))&&s.length>1)?s.charAt(1):s.charAt(0);
   const initialOf=name=>{const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return firstLetter(t)||firstLetter(name.replace(/\s/g,''))||'•';};
   const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  
   const lParty=document.getElementById('l-party'),lSearch=document.getElementById('l-search'),lGrid=document.getElementById('l-grid');
+  const plTbody=document.getElementById('plTbody'), plCount=document.getElementById('plCount');
+  const gridEl=document.getElementById('l-grid'), tableWrapEl=document.getElementById('plTableWrap');
+  const vbtnGrid=document.getElementById('vbtnGrid'), vbtnTable=document.getElementById('vbtnTable');
+  
+  let currentView = localStorage.getItem('pl-view-mode') || 'grid';
+
   const byParty={};listRecs.forEach(r=>{(byParty[r.code]=byParty[r.code]||[]).push(r);});
   const recByName={};listRecs.forEach(r=>{recByName[r.name]=r;});
   const order=Object.keys(byParty).sort((a,b)=>byParty[b].length-byParty[a].length);
   const chev='<svg class="pl-chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg>';
-  lParty.innerHTML='<option value="">ทุกพรรค ('+order.length+')</option>'+order.map(c=>`<option value="${c}">${shortOf(c)} (${byParty[c].length})</option>`).join('');
-  function apply(){
-    const q=lSearch.value.trim().toLowerCase(),fc=lParty.value;
+  
+  lParty.innerHTML='<option value="">ทุกพรรค ('+order.length+' พรรค)</option>'+order.map(c=>`<option value="${c}">${shortOf(c)} (${byParty[c].length} ที่นั่ง)</option>`).join('');
+
+  function renderGrid(q, fc){
     const cards=order.filter(c=>!fc||c===fc).map(code=>{
-      const items=byParty[code];if(q&&!items.some(r=>r.name.toLowerCase().includes(q)))return'';
-      const col=colorOf(code),lis=items.map(r=>{
+      const items=byParty[code];
+      const matchItems = q ? items.filter(r=>r.name.toLowerCase().includes(q) || (PROF[r.name] && PROF[r.name].r && PROF[r.name].r.toLowerCase().includes(q))) : items;
+      if(q && !matchItems.length) return '';
+      const col=colorOf(code), lis=items.map(r=>{
         const ph=window.PHOTOS&&window.PHOTOS[r.name];
         const av=ph?`<span class="plav"><img src="photos/${encodeURIComponent(ph)}" alt="" loading="lazy"></span>`:`<span class="plav" style="background:${col}">${initialOf(r.name)}</span>`;
         const p=PROF[r.name], role=p&&p.r?`<span class="pl-role-mini">${esc(p.r)}</span>`:'';
-        const cls=['pl-row'];if(q&&r.name.toLowerCase().includes(q))cls.push('hl');if(p)cls.push('has-bio');
+        const isMatch = q && (r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)));
+        const cls=['pl-row'];if(isMatch)cls.push('hl');if(p)cls.push('has-bio');
         return `<li class="${cls.join(' ')}" data-name="${esc(r.name)}" tabindex="${p?'0':'-1'}"><span class="o">${r.no}</span>${av}<span class="pl-nmwrap"><span class="pl-nm">${r.name}</span>${role}</span>${p?chev:''}</li>`;
       }).join('');
       return `<div class="pcard"><div class="pc-h" style="background:${col}"><div class="pc-th">${shortOf(code)}</div><div class="pc-sub">${thOf(code)}</div><div class="pc-n">${items.length}<small>ที่นั่ง</small></div></div><ol>${lis}</ol></div>`;
     }).filter(Boolean);
-    lGrid.innerHTML=cards.length?cards.join(''):'<div class="empty">ไม่พบรายชื่อที่ตรงกับเงื่อนไข</div>';
+    gridEl.innerHTML=cards.length?cards.join(''):'<div class="empty">ไม่พบรายชื่อที่ตรงกับเงื่อนไข</div>';
   }
-  lSearch.addEventListener('input',apply);lParty.addEventListener('change',apply);apply();
 
-  /* ---- แผงรายละเอียด (คลิกการ์ด) ---- */
+  function renderTable(q, fc){
+    let allFiltered = [];
+    let overallIdx = 1;
+    order.forEach(code=>{
+      if(fc && code !== fc) return;
+      byParty[code].forEach(r=>{
+        const p = PROF[r.name];
+        const match = !q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q));
+        if(match){
+          allFiltered.push({ ...r, overallIdx: overallIdx++, p, col: colorOf(code), partyTh: thOf(code), partyShort: shortOf(code) });
+        }
+      });
+    });
+
+    if(!allFiltered.length){
+      plTbody.innerHTML = `<tr><td colspan="6" class="empty">ไม่พบรายชื่อที่ตรงกับเงื่อนไข</td></tr>`;
+      return;
+    }
+
+    plTbody.innerHTML = allFiltered.map(r=>{
+      const ph=window.PHOTOS&&window.PHOTOS[r.name];
+      const av=ph?`<span class="plav"><img src="photos/${encodeURIComponent(ph)}" alt="" loading="lazy"></span>`:`<span class="plav" style="background:${r.col}">${initialOf(r.name)}</span>`;
+      const desc = r.p && r.p.r ? esc(r.p.r) : (r.p && r.p.x ? esc(r.p.x) : '—');
+      return `<tr class="pl-table-row" data-name="${esc(r.name)}" tabindex="0" role="button" aria-label="ดูประวัติ ${esc(r.name)}">
+        <td class="td-pl-num">${String(r.overallIdx).padStart(2,'0')}</td>
+        <td>
+          <div class="td-pl-mp">
+            ${av}
+            <div class="td-pl-name">${esc(r.name)}</div>
+          </div>
+        </td>
+        <td>
+          <span class="td-pl-party" style="--pc:${r.col}">
+            <span class="sw"></span>${esc(r.partyShort)}
+          </span>
+        </td>
+        <td class="td-pl-rank">อันดับ ${r.no}</td>
+        <td class="td-pl-desc" title="${desc}">${desc}</td>
+        <td class="td-pl-act">
+          <span class="td-pl-act-btn" title="ดูประวัติ">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </span>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function apply(){
+    const q=lSearch.value.trim().toLowerCase(), fc=lParty.value;
+    
+    // Count matches
+    let count = 0;
+    listRecs.forEach(r=>{
+      const p = PROF[r.name];
+      if((!fc || r.code===fc) && (!q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)))) count++;
+    });
+    plCount.innerHTML = count === listRecs.length ? `แสดงทั้งหมด <b>${count}</b> รายชื่อ` : `พบ <b>${count}</b> รายชื่อ จากทั้งหมด ${listRecs.length} คน`;
+
+    if(currentView === 'table'){
+      gridEl.hidden = true; tableWrapEl.hidden = false;
+      vbtnGrid.classList.remove('active'); vbtnTable.classList.add('active');
+      renderTable(q, fc);
+    } else {
+      gridEl.hidden = false; tableWrapEl.hidden = true;
+      vbtnGrid.classList.add('active'); vbtnTable.classList.remove('active');
+      renderGrid(q, fc);
+    }
+  }
+
+  vbtnGrid.onclick = ()=>{ currentView='grid'; localStorage.setItem('pl-view-mode','grid'); apply(); };
+  vbtnTable.onclick = ()=>{ currentView='table'; localStorage.setItem('pl-view-mode','table'); apply(); };
+
+  lSearch.addEventListener('input',apply);
+  lParty.addEventListener('change',apply);
+  apply();
+
+  /* ---- แผงรายละเอียด (คลิกการ์ดหรือแถวตาราง) ---- */
   const modal=document.getElementById('pl-modal');
   function openProfile(name){
-    const r=recByName[name], p=PROF[name];if(!r||!p)return;
+    const r=recByName[name], p=PROF[name]||{};
+    if(!r)return;
     const col=colorOf(r.code), ph=window.PHOTOS&&window.PHOTOS[name];
     document.getElementById('plm-av').innerHTML=ph?`<img src="photos/${encodeURIComponent(ph)}" alt="">`:`<span class="plm-ini" style="background:${col}">${initialOf(name)}</span>`;
     const pt=document.getElementById('plm-party');
-    pt.innerHTML=`<span class="sw" style="background:${col}"></span>${esc(thOf(r.code))} · ลำดับ ${r.no}`;
+    pt.innerHTML=`<span class="sw" style="background:${col}"></span>${esc(thOf(r.code))} · บัญชีรายชื่ออันดับ ${r.no}`;
     pt.style.background=col;
     document.getElementById('plm-name').textContent=name;
-    document.getElementById('plm-role').textContent=p.r||'';
+    document.getElementById('plm-role').textContent=p.r||'ว่าที่สมาชิกสภาผู้แทนราษฎร แบบบัญชีรายชื่อ';
     const rows=[];
     if(p.b)rows.push(['เกิด','พ.ศ. '+esc(p.b)]);
     if(p.e)rows.push(['การศึกษา',esc(p.e)]);
     if(p.x)rows.push(['ประสบการณ์ / ภูมิหลัง',esc(p.x)]);
     document.getElementById('plm-body').innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')
-      ||'<dd class="plm-na">ยังไม่มีข้อมูลเพิ่มเติม</dd>';
+      ||'<dd class="plm-na">ยังไม่มีข้อมูลประวัติเพิ่มเติม</dd>';
     modal.hidden=false;document.body.style.overflow='hidden';
     modal.querySelector('.pl-modal__x').focus();
   }
   function closeModal(){modal.hidden=true;document.body.style.overflow='';}
+  
   lGrid.addEventListener('click',e=>{const li=e.target.closest('li.has-bio');if(li)openProfile(li.dataset.name);});
   lGrid.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const li=e.target.closest('li.has-bio');if(li){e.preventDefault();openProfile(li.dataset.name);}}});
+  
+  tableWrapEl.addEventListener('click',e=>{const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name)openProfile(row.dataset.name);});
+  tableWrapEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name){e.preventDefault();openProfile(row.dataset.name);}}});
+
   modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeModal();});
 })();

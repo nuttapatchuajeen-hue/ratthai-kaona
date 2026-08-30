@@ -410,13 +410,14 @@
       <div class="video-player-wrap">
         <iframe
           id="main-video"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-          title="Thailand Digital Government News"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen="">
+          src="https://www.youtube-nocookie.com/embed/-5Lu0jS9U4U?rel=0&amp;modestbranding=1"
+          title="เทคโนโลยีภาครัฐไทย — depa Thailand"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
         </iframe>
       </div>
-      <p class="video-now-playing" id="now-playing"></p>
+      <p class="video-now-playing" id="now-playing">กำลังเล่น: การดำเนินโครงการเทคโนโลยีดิจิทัลภาครัฐ <a class="np-link" href="https://www.youtube.com/watch?v=-5Lu0jS9U4U" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-play"></use></svg> เปิดบน YouTube</a></p>
 
       <!-- Other Videos Grid (ดึงสดจาก YouTube RSS — ดูสคริปต์ท้ายไฟล์) -->
       <h2 style="font-family: var(--font-display); font-size: 2rem; margin-top: 6rem; color: var(--text-primary);">ข่าวและวิดีโออื่น ๆ</h2>
@@ -537,19 +538,23 @@
     var grid = document.getElementById('videos-grid');
 
     function embedUrl(id) {
-      // youtube-nocookie + origin ช่วยลดปัญหา "configuration error" เมื่อรันผ่าน http
+      // เปิดจาก file:// หรือ origin เป็น "null" ห้ามส่ง &origin= เพราะ YouTube จะติด Error 153 (configuration error)
+      var originParam = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
+        ? '&origin=' + encodeURIComponent(location.origin)
+        : '';
       return 'https://www.youtube-nocookie.com/embed/' + id +
-        '?rel=0&modestbranding=1&origin=' + encodeURIComponent(location.origin);
+        '?rel=0&modestbranding=1' + originParam;
     }
     function watchUrl(id) { return 'https://www.youtube.com/watch?v=' + id; }
-    function isLive(title) { return /\blive\b|<svg class="mdico"><use href="#i-circle"></use></svg>|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
+    function isLive(title) { return /\blive\b|🔴|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
 
     function setMain(v, scroll) {
       if (!v || !v.id) return;
       mainVideo.src = embedUrl(v.id);
+      mainVideo.title = v.title || 'เทคโนโลยีภาครัฐไทย';
       if (nowPlaying) {
         nowPlaying.innerHTML = 'กำลังเล่น: ' + v.title +
-          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener"><svg class='mdico'><use href='#i-play'></use></svg> เปิดบน YouTube</a>';
+          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-play"></use></svg> เปิดบน YouTube</a>';
       }
       if (scroll) document.querySelector('.video-player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
