@@ -3,27 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>เกี่ยวกับเรา — รัฐไทยก้าวหน้า</title>
+  <title>เกี่ยวกับเรา — รัฐไทยก้าวหน้า | Scrollytelling</title>
   <meta name="description" content="รัฐไทยก้าวหน้า — โครงงานเว็บไซต์ที่รวบรวมข้อมูลภาครัฐไทย กรม กระทรวง คณะรัฐมนตรี และ ส.ส. ให้เข้าใจง่ายในที่เดียว จัดทำโดย ณัฐภัทร ช่วยจีน" />
   <link rel="icon" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&family=Prompt:wght@400;500;700;800;900&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/cursor-glow.css" />
 
   <style>
   :root {
     --bg-deep:       #020508;
     --bg-dark:       #070D14;
+    --bg-card:       rgba(7, 13, 20, 0.75);
     --accent-cyan:   #00E5FF;
+    --accent-cyan-dim: rgba(0, 229, 255, 0.15);
+    --accent-cyan-glow: rgba(0, 229, 255, 0.45);
     --accent-orange: #FF5C1A;
-    --text-primary:  #DCE8F0;
-    --text-body:     #A7BDCC;
-    --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
-    --line:          rgba(0,229,255,0.12);
+    --accent-pink:   #FF007F;
+    --text-primary:  #EAF3F8;
+    --text-body:     #A6BDCC;
+    --text-muted:    #768F9F;
+    --line:          rgba(0, 229, 255, 0.14);
+    --line-subtle:   rgba(255, 255, 255, 0.06);
     --font-display:  'Bebas Neue', 'Prompt', sans-serif;
     --font-thai:     'Prompt', 'Sarabun', sans-serif;
-    --font-sub:      'Rajdhani', 'Sarabun', sans-serif;
+    --font-sub:      'Rajdhani', 'Prompt', sans-serif;
     --font-mono:     'IBM Plex Mono', 'Sarabun', monospace;
   }
 
@@ -39,13 +44,19 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* fixed background texture: grid + radial glow */
+  ::selection {
+    background: var(--accent-cyan);
+    color: #020508;
+  }
+
+  /* Fixed background texture: grid + radial glows */
   .bg-field {
     position: fixed; inset: 0;
     z-index: 0; pointer-events: none;
     background:
-      radial-gradient(120% 90% at 80% -10%, rgba(0,229,255,0.10), transparent 55%),
-      radial-gradient(90% 70% at 0% 105%, rgba(255,92,26,0.07), transparent 55%);
+      radial-gradient(130% 90% at 85% -10%, rgba(0,229,255,0.09), transparent 55%),
+      radial-gradient(90% 70% at 5% 105%, rgba(255,92,26,0.06), transparent 55%),
+      radial-gradient(70% 50% at 50% 50%, rgba(0,229,255,0.02), transparent 70%);
   }
   .bg-field::before {
     content: ''; position: absolute; inset: 0;
@@ -54,83 +65,184 @@
       linear-gradient(90deg, rgba(0,229,255,0.022) 1px, transparent 1px);
     background-size: 64px 64px;
   }
-  /* scanlines */
+  /* Scanline overlay */
   body::before {
     content: ''; position: fixed; inset: 0; z-index: 500; pointer-events: none;
     background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.035) 2px, rgba(0,0,0,0.035) 4px);
   }
 
-  a { color: inherit; }
+  a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
+
+  /* ── FIXED SCROLLY HUD ── */
+  .scrolly-hud {
+    position: fixed; top: 4.8rem; right: 2rem; z-index: 90;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;
+    pointer-events: none;
+  }
+  .hud-badge {
+    pointer-events: auto;
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent-cyan);
+    background: rgba(2, 5, 8, 0.85); border: 1px solid var(--line);
+    padding: 0.4rem 0.85rem; border-radius: 6px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,229,255,0.1);
+    display: flex; align-items: center; gap: 0.6rem;
+    transition: all 0.3s ease;
+  }
+  .hud-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+    animation: hud-pulse 1.8s infinite;
+  }
+  @keyframes hud-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+
+  /* Top Global Progress Bar */
+  .scrolly-top-bar {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 1001;
+    background: linear-gradient(90deg, var(--accent-cyan), #6df3ff, var(--accent-orange));
+    width: 0%; box-shadow: 0 0 10px var(--accent-cyan);
+    pointer-events: none;
+  }
+
+  /* Right Side Chapter Navigation Dots */
+  .chapter-nav {
+    position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+    z-index: 90; display: flex; flex-direction: column; gap: 1rem;
+  }
+  .chapter-nav-btn {
+    position: relative; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-muted);
+  }
+  .chapter-nav-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .chapter-nav-btn:hover .chapter-nav-dot,
+  .chapter-nav-btn.active .chapter-nav-dot {
+    background: var(--accent-cyan);
+    transform: scale(2);
+    box-shadow: 0 0 10px var(--accent-cyan);
+  }
+  .chapter-nav-tooltip {
+    position: absolute; right: 38px;
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em;
+    color: var(--accent-cyan); background: rgba(7, 13, 20, 0.9);
+    padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid var(--line);
+    white-space: nowrap; opacity: 0; pointer-events: none;
+    transform: translateX(8px); transition: all 0.25s ease;
+  }
+  .chapter-nav-btn:hover .chapter-nav-tooltip {
+    opacity: 1; transform: translateX(0);
+  }
 
   /* ── HEADER / NAV ── */
   .site-header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: linear-gradient(to bottom, rgba(2,5,8,0.94) 0%, rgba(2,5,8,0.6) 70%, rgba(2,5,8,0) 100%);
+    background: linear-gradient(to bottom, rgba(2,5,8,0.95) 0%, rgba(2,5,8,0.7) 70%, rgba(2,5,8,0) 100%);
     padding: 0 5vw;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0, 229, 255, 0.05);
   }
-  .site-header nav { display: flex; justify-content: space-between; align-items: stretch; height: 4rem; }
+  .site-header nav { display: flex; justify-content: space-between; align-items: stretch; height: 4.2rem; }
   .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
   .nav-logo-img { height: 2.6rem; width: auto; display: block; }
   .nav-links { list-style: none; display: flex; gap: 0; align-items: stretch; }
-  /* <li> ต้องเป็น flex ด้วย ไม่งั้น <a> ข้างในสูงแค่ ~21px (พื้นที่กดเล็กกว่าที่ตาเห็น) */
   .nav-links li { display: flex; }
   .nav-tab {
     display: flex; align-items: center; padding: 0 1.1rem;
-    font-family: var(--font-sub); font-size: 0.82rem; font-weight: 600;
+    font-family: var(--font-sub); font-size: 0.84rem; font-weight: 600;
     letter-spacing: 0.04em; color: #fff; text-decoration: none;
     border-bottom: 2px solid transparent; white-space: nowrap;
     transition: color 0.2s, border-color 0.2s, opacity 0.2s;
   }
-  .nav-tab:hover { opacity: 0.7; }
+  .nav-tab:hover { opacity: 0.75; color: var(--accent-cyan); }
   .nav-tab[aria-current="page"] { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
   :focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
 
-  /* shared label */
-  .section-label {
-    display: inline-block; font-family: var(--font-mono);
-    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--accent-cyan); margin-bottom: 1.3rem;
-  }
-
   main { position: relative; z-index: 1; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 6vw; }
-  section { position: relative; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 6vw; }
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 78vh; display: flex; align-items: flex-end;
-    padding: 9rem 6vw 5rem; position: relative; overflow: hidden;
+  /* ── SECTION LABELS ── */
+  .section-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 1.2rem;
   }
-  .hero::before, .hero::after {
-    content: ''; position: absolute; width: 58px; height: 58px;
-    border-color: rgba(0,229,255,0.30); border-style: solid;
+  .section-label::before {
+    content: ''; display: inline-block; width: 6px; height: 6px;
+    background: var(--accent-cyan); border-radius: 1px;
   }
-  .hero::before { top: 6.5rem; left: 6vw; border-width: 1px 0 0 1px; }
-  .hero::after  { bottom: 2.4rem; right: 6vw; border-width: 0 1px 1px 0; }
-  .hero-inner { position: relative; z-index: 2; max-width: 980px; }
-  .hero h1 {
+
+  /* ── HERO SCROLLY SECTION ── */
+  .hero-scrolly {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 6vw 4rem; position: relative; overflow: hidden;
+  }
+  .hero-scrolly-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(0, 229, 255, 0.12) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.6;
+    mask-image: radial-gradient(circle at center, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 30%, transparent 80%);
+  }
+  .hero-bracket {
+    position: absolute; width: 64px; height: 64px;
+    border-color: rgba(0,229,255,0.35); border-style: solid;
+    pointer-events: none;
+  }
+  .hb-tl { top: 6rem; left: 5vw; border-width: 1px 0 0 1px; }
+  .hb-tr { top: 6rem; right: 5vw; border-width: 1px 1px 0 0; }
+  .hb-bl { bottom: 3rem; left: 5vw; border-width: 0 0 1px 1px; }
+  .hb-br { bottom: 3rem; right: 5vw; border-width: 0 1px 1px 0; }
+
+  .hero-scrolly-inner { max-width: 1100px; margin: 0 auto; width: 100%; position: relative; z-index: 2; }
+  
+  .hero-scrolly-title {
     font-family: var(--font-display); font-weight: 400;
-    font-size: clamp(3.6rem, 11vw, 9.5rem); line-height: 0.86;
-    letter-spacing: 0.01em; color: var(--text-primary);
+    font-size: clamp(4.2rem, 13vw, 11rem); line-height: 0.84;
+    letter-spacing: -0.01em; color: var(--text-primary);
+    text-transform: uppercase; margin-bottom: 0.6rem;
   }
-  .hero h1 .accent {
+  .hero-scrolly-title .accent {
     font-family: var(--font-thai); font-weight: 900;
-    display: block;
-    background: linear-gradient(100deg, var(--accent-cyan), #6df3ff 60%, var(--accent-cyan));
+    display: block; font-size: clamp(3.2rem, 10vw, 8.2rem);
+    background: linear-gradient(100deg, var(--accent-cyan) 0%, #7eefff 50%, #ffffff 85%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .hero-tagline {
-    font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 0.95rem);
-    letter-spacing: 0.14em; color: var(--text-body); margin-top: 2rem;
-    max-width: 56ch; line-height: 1.9;
+    text-shadow: 0 0 40px rgba(0, 229, 255, 0.25);
   }
 
-  /* marquee strip */
+  .hero-meta-strip {
+    display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;
+    margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
+  }
+  .hero-meta-item {
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.12em;
+    color: var(--text-body); display: flex; align-items: center; gap: 0.6rem;
+  }
+  .hero-meta-item strong { color: var(--accent-cyan); font-weight: 600; }
+
+  .hero-scroll-prompt {
+    margin-top: 3rem; display: inline-flex; align-items: center; gap: 0.8rem;
+    font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent-cyan);
+    animation: float-bounce 2s ease-in-out infinite;
+  }
+  @keyframes float-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* Marquee strip */
   .marquee {
-    position: relative; z-index: 1; overflow: hidden;
+    position: relative; z-index: 2; overflow: hidden;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
     background: rgba(0,229,255,0.03); padding: 0.9rem 0;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
@@ -138,167 +250,245 @@
   }
   .marquee-track {
     display: inline-flex; white-space: nowrap; will-change: transform;
-    animation: marq 26s linear infinite;
+    animation: marq 24s linear infinite;
   }
   .marquee-track span {
-    font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.08em;
-    color: var(--accent-cyan); text-shadow: 0 0 14px rgba(0,229,255,0.4); padding: 0 1.6rem;
+    font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.1em;
+    color: var(--accent-cyan); text-shadow: 0 0 14px rgba(0,229,255,0.4); padding: 0 1.8rem;
   }
-  .marquee-track span::after { content: '·'; margin-left: 3.2rem; opacity: 0.5; }
+  .marquee-track span::after { content: '///'; margin-left: 3.6rem; opacity: 0.4; }
   @keyframes marq { to { transform: translateX(-50%); } }
 
-  /* ── GENERIC BLOCK ── */
-  .block { padding: 6.5rem 0; }
-  .block-head { max-width: 720px; margin-bottom: 3.2rem; }
-  .h-display {
+  /* ── PINNED SCROLLYTELLING STAGE ── */
+  .scrolly-container {
+    position: relative; width: 100%;
+  }
+
+  /* Section: Text Scrub Reveal (Apple/Basement Studio style) */
+  .scrub-section {
+    padding: 10rem 0 8rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scrub-statement {
     font-family: var(--font-thai); font-weight: 700;
-    font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1;
-    letter-spacing: 0.005em; color: var(--text-primary);
+    font-size: clamp(2rem, 5.5vw, 4.2rem); line-height: 1.25;
+    max-width: 1050px; text-align: left;
   }
-  .lead { font-size: clamp(1rem, 1.4vw, 1.12rem); color: var(--text-body); line-height: 1.85; margin-top: 1.1rem; }
+  .scrub-statement .word {
+    display: inline-block;
+    color: rgba(220, 232, 240, 0.20);
+    will-change: color, text-shadow;
+  }
+  .scrub-statement .word.accent-word {
+    color: rgba(0, 229, 255, 0.22);
+  }
 
-  /* story two-col */
-  .story-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3.5rem; align-items: start; }
-  .story-copy p { color: var(--text-body); font-size: 1.04rem; line-height: 1.9; margin-bottom: 1.2rem; max-width: 52ch; }
-  .story-copy strong { color: var(--text-primary); font-weight: 600; }
-  .side-panel {
-    border: 1px solid var(--line); border-radius: 12px;
-    background: linear-gradient(180deg, rgba(0,229,255,0.05), rgba(2,5,8,0.4));
-    padding: 1.8rem; position: relative; overflow: hidden;
+  /* Pinned 4 Pillars Stage */
+  .pinned-pillars-wrap {
+    position: relative;
+    height: 380vh; /* scroll distance for 4 cards */
   }
-  .side-panel h3 {
-    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 1.2rem;
+  .pinned-pillars-sticky {
+    position: sticky; top: 0; left: 0; width: 100%; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; z-index: 10;
   }
-  .pillar { display: flex; gap: 0.9rem; padding: 0.9rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
-  .pillar:first-of-type { border-top: none; }
-  .pillar svg { flex-shrink: 0; width: 22px; height: 22px; stroke: var(--accent-cyan); }
-  .pillar b { display: block; color: var(--text-primary); font-weight: 600; font-size: 0.98rem; margin-bottom: 0.15rem; }
-  .pillar span { color: var(--text-muted); font-size: 0.86rem; line-height: 1.55; }
+  .pillars-stage-inner {
+    width: 100%; max-width: 1200px; padding: 0 6vw;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem;
+    align-items: center;
+  }
+  .pillars-stage-info {
+    position: relative; z-index: 2; min-height: 380px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .pillars-info-stack {
+    position: relative; width: 100%; min-height: 320px;
+  }
+  .pillar-info-block {
+    position: absolute; top: 0; left: 0; width: 100%;
+    will-change: transform, opacity;
+  }
+  .stage-step-indicator {
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.2em;
+    color: var(--accent-cyan); margin-bottom: 0.8rem;
+  }
+  .stage-step-title {
+    font-family: var(--font-thai); font-weight: 900; font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+    line-height: 1.1; color: #fff; margin-bottom: 1.2rem;
+  }
+  .stage-step-desc {
+    font-size: 1.1rem; color: var(--text-body); line-height: 1.85; max-width: 44ch;
+  }
+  .stage-action-btn {
+    margin-top: 1.8rem; display: inline-flex; align-items: center; gap: 0.7rem;
+    padding: 0.75rem 1.6rem; border-radius: 6px;
+    font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+    background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+    transition: all 0.3s ease;
+  }
+  .stage-action-btn:hover {
+    background: var(--accent-cyan); color: #020508;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5); transform: translateY(-2px);
+  }
 
-  /* ── COLLECTION CARDS ── */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1.4rem; }
-  .card {
-    position: relative; display: flex; flex-direction: column;
-    padding: 1.9rem 1.7rem; border: 1px solid var(--line); border-radius: 12px;
-    background: rgba(0,229,255,0.035); text-decoration: none; color: inherit;
-    overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  /* 3D Stack of Cards */
+  .pillars-3d-scene {
+    position: relative; width: 100%; height: 460px;
+    perspective: 1200px; perspective-origin: 50% 50%;
   }
-  .card:hover {
-    transform: translateY(-5px); background: rgba(0,229,255,0.08);
-    border-color: rgba(0,229,255,0.6); box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.15);
+  .pillar-3d-card {
+    position: absolute; inset: 0; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(10, 22, 34, 0.9) 0%, rgba(5, 13, 21, 0.95) 100%);
+    border: 1px solid var(--line);
+    padding: 2.4rem; display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 229, 255, 0.1);
+    transform-style: preserve-3d;
+    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
   }
-  .card-num { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; color: var(--text-muted); }
-  .card-icon {
-    width: 46px; height: 46px; margin: 1.1rem 0 1.3rem; border-radius: 10px;
-    display: grid; place-items: center; background: rgba(0,229,255,0.08);
-    border: 1px solid rgba(0,229,255,0.25);
+  .pillar-3d-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.12), transparent 60%);
+    pointer-events: none;
   }
-  .card-icon svg { width: 24px; height: 24px; stroke: var(--accent-cyan); }
-  .card h3 { font-family: var(--font-thai); font-weight: 700; font-size: 1.22rem; color: var(--text-primary); margin-bottom: 0.5rem; }
-  .card p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.65; flex: 1; }
-  .card-go {
-    margin-top: 1.4rem; font-family: var(--font-mono); font-size: 0.78rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-cyan);
-    display: inline-flex; align-items: center; gap: 0.5rem;
+  .card-chip-top {
+    display: flex; justify-content: space-between; align-items: center;
   }
-  .card-go .arrow { transition: transform 0.3s; }
-  .card:hover .card-go .arrow { transform: translateX(5px); }
+  .card-sys-num {
+    font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.18em; color: var(--accent-cyan);
+  }
+  .card-sys-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3);
+    display: grid; place-items: center; color: var(--accent-cyan);
+  }
+  .card-sys-icon svg { width: 26px; height: 26px; stroke: currentColor; }
+  .card-sys-main h3 {
+    font-family: var(--font-thai); font-weight: 800; font-size: 1.8rem;
+    color: #fff; margin-bottom: 0.6rem;
+  }
+  .card-sys-main p { font-size: 1rem; color: var(--text-body); line-height: 1.6; }
+  .card-sys-telemetry {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+    padding-top: 1.2rem; border-top: 1px solid var(--line-subtle);
+  }
+  .tele-item .k { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; }
+  .tele-item .v { font-family: var(--font-mono); font-weight: 700; font-size: 1.2rem; color: var(--accent-cyan); margin-top: 0.2rem; }
 
-  /* ── STATS BAND ── */
-  .stats-band {
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    background: rgba(7,13,20,0.5);
+  /* ── CHAPTER 03: THE AI LABORATORY (Basement Studio style) ── */
+  .lab-section {
+    padding: 8rem 0; position: relative;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(2,5,8,0) 0%, rgba(7,13,20,0.6) 50%, rgba(2,5,8,0) 100%);
   }
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 1180px; margin: 0 auto; }
-  .stat {
-    padding: 2.6rem 2rem; border-left: 1px solid rgba(0,229,255,0.10);
-    display: flex; flex-direction: column;
+  .lab-badge {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.25em;
+    color: var(--accent-orange); text-transform: uppercase; margin-bottom: 0.8rem;
+    display: inline-flex; align-items: center; gap: 0.6rem;
   }
-  .stat:first-child { border-left: none; }
-  .stat-number { font-family: var(--font-display); font-size: clamp(2.6rem, 4.5vw, 4.4rem); line-height: 1; color: var(--text-primary); }
-  .stat-label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.7rem; }
+  .lab-badge::before { content: '//'; opacity: 0.6; }
+  .lab-heading {
+    font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 5.5rem);
+    letter-spacing: 0.02em; color: #fff; text-transform: uppercase;
+    line-height: 0.95; margin-bottom: 1.2rem;
+  }
+  .lab-lead {
+    font-size: clamp(1rem, 1.4vw, 1.15rem); color: var(--text-body); max-width: 65ch; line-height: 1.8;
+  }
 
-  /* ── CREATOR ── */
-  .creator-grid { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 3.6rem; align-items: center; }
-  .portrait { position: relative; }
-  /* โครงตั๋ว 3 ท่อน: รูป (tk-main) + รอยปรุ (tk-perf) + ท่อนตั๋ว (tk-stub)
-     รอยบากวงกลมเจาะด้วย radial-gradient ตามเทคนิคตั๋ว Uiverse จากโฟลเดอร์ CSS 1 */
+  .lab-marquee-box {
+    margin-top: 3.5rem;
+  }
+  .lm-band + .lm-band { margin-top: 2rem; }
+  .lm-cap {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.9rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .lm-cap .tagk {
+    background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan);
+    padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;
+  }
+  .lm-rail {
+    overflow: hidden; padding: 0.6rem 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .lm-track { display: flex; width: max-content; animation: marq var(--lm-dur, 32s) linear infinite; }
+  .lm-rail.rev .lm-track { animation-direction: reverse; }
+  .lm-rail:hover .lm-track { animation-play-state: paused; }
+  .lm-group { display: flex; align-items: stretch; gap: 1.2rem; padding-right: 1.2rem; }
+  .lm-chip {
+    display: flex; align-items: center; gap: 0.9rem;
+    height: 70px; padding: 0 1.6rem; flex-shrink: 0;
+    background: #EAF2F7; border-radius: 14px;
+    box-shadow: 0 0 0 1px var(--line), 0 14px 30px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .lm-chip:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 0 0 2px var(--accent-cyan), 0 20px 40px rgba(0,229,255,0.25);
+  }
+  .lm-chip img { height: 40px; width: auto; max-width: 170px; object-fit: contain; }
+  .lm-chip .ic { height: 30px; }
+  .lm-name {
+    font-family: var(--font-sub); font-weight: 700; font-size: 1rem;
+    color: #12222D; letter-spacing: 0.02em; white-space: nowrap;
+  }
+
+  /* ── CHAPTER 04: CREATOR & PHILOSOPHY (3D Collector Ticket) ── */
+  .creator-section {
+    padding: 8rem 0; position: relative;
+  }
+  .creator-grid {
+    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 4.5rem; align-items: center;
+  }
+  .portrait { perspective: 1200px; position: relative; }
   .portrait-frame {
-    position: relative; border-radius: 14px;
-    -webkit-tap-highlight-color: transparent;
+    position: relative; border-radius: 16px; transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.6s ease;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7));
   }
+  .portrait-frame:hover {
+    transform: rotateX(5deg) rotateY(-8deg) scale(1.02);
+    filter: drop-shadow(20px 28px 50px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(0,229,255,0.25));
+  }
+  .portrait-shine {
+    position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+    background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.1) 55%, transparent 65%);
+    background-size: 250% 250%; background-position: 100% 100%;
+    transition: background-position 0.7s cubic-bezier(0.23,1,0.32,1);
+    mix-blend-mode: overlay;
+  }
+  .portrait-frame:hover .portrait-shine { background-position: 0% 0%; }
+  
   .tk-main {
-    position: relative; overflow: hidden; padding-top: 1.4rem;
-    border-top-left-radius: 14px; border-top-right-radius: 14px;
+    position: relative; overflow: hidden; padding-top: 1.6rem;
+    border-top-left-radius: 16px; border-top-right-radius: 16px;
     background-image:
-      radial-gradient(120% 55% at 50% 0%, rgba(0,229,255,0.12), transparent 60%),
-      linear-gradient(180deg, #0a1622 0%, #07111b 55%, rgba(5,13,21,0) 82%),
+      radial-gradient(120% 55% at 50% 0%, rgba(0,229,255,0.16), transparent 60%),
+      linear-gradient(180deg, #0d1e2e 0%, #08131e 55%, rgba(5,13,21,0) 85%),
       radial-gradient(circle at bottom left, transparent 0.95em, #050d15 1em),
       radial-gradient(circle at bottom right, transparent 0.95em, #050d15 1em);
     background-size: 100% 100%, 100% 100%, 51% 100%, 51% 100%;
     background-position: 0 0, 0 0, bottom left, bottom right;
     background-repeat: no-repeat;
   }
-  /* solid color base — grounds the figure & closes the empty bottom (ยกพ้นแนวรอยบาก 1.05em) */
   .tk-main::before {
     content: ''; position: absolute; left: 0; right: 0; bottom: 1.05em; height: 46%;
     background: linear-gradient(to top, #081521 0%, #07121d 36%, rgba(7,18,29,0.5) 74%, transparent 100%);
     z-index: 1; pointer-events: none;
   }
-  /* cyan platform light strip at the base */
-  .tk-main::after {
-    content: ''; position: absolute; left: 50%; bottom: 15%; transform: translateX(-50%);
-    width: 72%; height: 2px; border-radius: 2px;
-    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.85), transparent);
-    box-shadow: 0 0 16px rgba(0,229,255,0.5);
-    opacity: 0.5; z-index: 2; pointer-events: none;
-  }
-  .tk-main img {
-    position: relative; z-index: 0; width: 100%; height: auto; display: block;
-    filter: drop-shadow(0 14px 24px rgba(0,0,0,0.55));
-    user-select: none; -webkit-user-select: none; -webkit-user-drag: none; pointer-events: none;
-    /* เฟดขอบล่างของรูปให้จมหายไปในความมืด — กันไม่ให้เห็นรอยตัดล่างของภาพโผล่เหนือรอยปรุ */
-    -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 97%);
-            mask-image: linear-gradient(to bottom, #000 80%, transparent 97%);
-  }
-  .portrait-tag {
-    position: absolute; z-index: 4; top: 1rem; left: 1rem;
-    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--accent-cyan); background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.45);
-    padding: 0.3rem 0.65rem; border-radius: 4px;
-  }
-  .portrait-corner { position: absolute; width: 34px; height: 34px; border-color: var(--accent-cyan); border-style: solid; z-index: 4; }
-  .pc-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 14px; }
-  .pc-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 14px; }
-
-  /* ── เอฟเฟกต์การ์ด 3D (ปรับจาก CSS 1 — ticket Uiverse, เปลี่ยนม่วงเป็น cyan) ── */
-  .portrait { perspective: 1000px; }
-  .portrait-frame {
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.6s ease;
-    filter: drop-shadow(0 18px 30px rgba(0,0,0,0.55));
-  }
-  .portrait-frame:hover {
-    transform: rotateX(4deg) rotateY(-7deg) scale(1.02);
-    filter: drop-shadow(18px 24px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(0,229,255,0.2));
-  }
-  /* แสงโฮโลแกรมกวาดผ่านการ์ดตอน hover */
-  .portrait-shine {
-    position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
-    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.09) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.09) 55%, transparent 60%);
-    background-size: 250% 250%; background-position: 100% 100%;
-    transition: background-position 0.7s cubic-bezier(0.23,1,0.32,1);
-    mix-blend-mode: overlay;
-  }
-  .portrait-frame:hover .portrait-shine { background-position: 0% 0%; }
-  /* พื้นกริดเพอร์สเปกทีฟเลื่อนใต้ตัว — เหมือนยืนบนพื้นดิจิทัล */
   .portrait-grid {
     position: absolute; left: -14%; right: -14%; bottom: 1.05em; height: 46%;
-    z-index: 1; pointer-events: none; opacity: 0.55;
+    z-index: 1; pointer-events: none; opacity: 0.6;
     background-image:
-      linear-gradient(rgba(0,229,255,0.16) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.16) 1px, transparent 1px);
+      linear-gradient(rgba(0,229,255,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.18) 1px, transparent 1px);
     background-size: 2.4em 2.4em;
     transform: perspective(420px) rotateX(56deg);
     transform-origin: bottom;
@@ -307,22 +497,34 @@
     mask-image: linear-gradient(to top, rgba(0,0,0,0.9) 30%, transparent 90%);
   }
   @keyframes grid-scroll { to { background-position: 0 4.8em; } }
+  .tk-main img {
+    position: relative; z-index: 0; width: 100%; height: auto; display: block;
+    filter: drop-shadow(0 16px 30px rgba(0,0,0,0.6));
+    user-select: none; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 98%);
+    mask-image: linear-gradient(to bottom, #000 82%, transparent 98%);
+  }
+  .portrait-tag {
+    position: absolute; z-index: 4; top: 1.1rem; left: 1.1rem;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent-cyan); background: rgba(0,229,255,0.15); border: 1px solid rgba(0,229,255,0.5);
+    padding: 0.35rem 0.75rem; border-radius: 4px; backdrop-filter: blur(6px);
+  }
+  .portrait-corner { position: absolute; width: 34px; height: 34px; border-color: var(--accent-cyan); border-style: solid; z-index: 4; }
+  .pc-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 16px; }
+  .pc-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 16px; }
 
-  /* รอยปรุระหว่างท่อนตั๋ว */
   .tk-perf { position: relative; z-index: 2; height: 1em; display: flex; align-items: center; }
-  .tk-perf-line { flex: 1; border-top: 2px dashed rgba(0,229,255,0.22); margin: 0 1.7em; }
-  /* ท่อนล่างของตั๋ว: บาร์โค้ด + หมายเลขผู้จัดทำ */
+  .tk-perf-line { flex: 1; border-top: 2px dashed rgba(0,229,255,0.25); margin: 0 1.8em; }
   .tk-stub {
     position: relative;
     display: flex; justify-content: space-between; align-items: center; gap: 1.2em;
     padding: 1.4em 1.8em;
-    border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
     background-image:
-      radial-gradient(circle at top left, transparent 0.95em, #0b1928 1em),
-      radial-gradient(circle at top right, transparent 0.95em, #0b1928 1em);
-    background-size: 51% 100%;
-    background-position: top left, top right;
-    background-repeat: no-repeat;
+      radial-gradient(circle at top left, transparent 0.95em, #0d1e2e 1em),
+      radial-gradient(circle at top right, transparent 0.95em, #0d1e2e 1em);
+    background-size: 51% 100%; background-position: top left, top right; background-repeat: no-repeat;
   }
   .tk-barcode-wrap { display: flex; flex-direction: column; gap: 0.5em; }
   .tk-barcode {
@@ -341,36 +543,53 @@
     color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0,229,255,0.5);
   }
 
-  /* ── ปุ่ม sparkle ขอบแสงหมุน (ปรับจาก CSS 1 — sparkle button Uiverse, เปลี่ยนม่วงเป็น cyan) ── */
-  .spark-wrap { display: flex; justify-content: center; margin-top: 1.6rem; }
+  .creator-name { font-family: var(--font-thai); font-weight: 900; font-size: clamp(2.2rem, 4.5vw, 3.4rem); line-height: 1.1; color: #fff; }
+  .creator-role { font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.12em; color: var(--accent-cyan); margin-top: 0.8rem; text-transform: uppercase; }
+  .creator-bio { color: var(--text-body); font-size: 1.08rem; line-height: 1.9; margin-top: 1.6rem; max-width: 52ch; }
+  .creator-bio strong { color: #fff; font-weight: 600; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.55rem 1.1rem;
+    border: 1px solid rgba(0,229,255,0.3); border-radius: 999px;
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.08em; color: var(--text-primary);
+    background: rgba(0,229,255,0.06); transition: all 0.3s ease;
+  }
+  .tag:hover {
+    background: rgba(0,229,255,0.15); border-color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0,229,255,0.3); transform: translateY(-2px);
+  }
+  .tag svg { width: 16px; height: 16px; stroke: var(--accent-cyan); }
+
+  /* Sparkle Button */
+  .spark-wrap { display: flex; justify-content: flex-start; margin-top: 2.2rem; }
   .spark-btn {
     --active: 0; --sb-radius: 999px; --sb-trans: 0.3s ease-in-out;
     cursor: pointer; position: relative; z-index: 0;
-    display: inline-flex; align-items: center; gap: 0.55rem;
-    padding: 0.95rem 1.9rem; background: transparent; border: none; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.65rem;
+    padding: 1rem 2.2rem; background: transparent; border: none; text-decoration: none;
     border-radius: var(--sb-radius);
-    transform: scale(calc(1 + (var(--active) * 0.08)));
+    transform: scale(calc(1 + (var(--active) * 0.06)));
     transition: transform var(--sb-trans);
   }
   .spark-btn::before {
     content: ''; position: absolute; inset: 0; z-index: 0; border-radius: var(--sb-radius);
-    background-color: #0a141d;
-    box-shadow: inset 0 0.5px rgba(255,255,255,0.16), inset 0 -1px 2px 0 rgba(0,0,0,0.85),
-      0px 4px 10px -4px rgba(0,0,0, calc(1 - var(--active))),
+    background-color: #0b1723;
+    box-shadow: inset 0 0.5px rgba(255,255,255,0.2), inset 0 -1px 2px 0 rgba(0,0,0,0.85),
+      0 4px 15px -4px rgba(0,0,0, calc(1 - var(--active))),
       0 0 0 calc(var(--active) * 0.32rem) rgba(0,229,255,0.35);
     transition: all var(--sb-trans);
   }
   .spark-btn::after {
     content: ''; position: absolute; inset: 0; z-index: 2; border-radius: var(--sb-radius);
-    background-color: rgba(0,229,255,0.18);
+    background-color: rgba(0,229,255,0.2);
     background-image:
-      radial-gradient(at 51% 89%, rgba(120,225,255,0.4) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0,170,220,0.45) 0px, transparent 50%),
-      radial-gradient(at 22% 91%, rgba(0,200,255,0.35) 0px, transparent 50%);
+      radial-gradient(at 51% 89%, rgba(120,225,255,0.45) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(0,170,220,0.5) 0px, transparent 50%),
+      radial-gradient(at 22% 91%, rgba(0,200,255,0.4) 0px, transparent 50%);
     opacity: var(--active); transition: opacity var(--sb-trans);
   }
   .spark-btn:is(:hover, :focus-visible) { --active: 1; }
-  .spark-btn:active { transform: scale(1); }
+  .spark-btn:active { transform: scale(0.98); }
   .spark-btn .dots-border {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: calc(100% + 3px); height: calc(100% + 3px);
@@ -378,183 +597,230 @@
   }
   .spark-btn .dots-border::before {
     content: ''; position: absolute; top: 30%; left: 50%;
-    width: 100%; height: 2rem; background-color: var(--accent-cyan);
+    width: 100%; height: 2.2rem; background-color: var(--accent-cyan);
     transform-origin: left; transform: rotate(0deg);
     -webkit-mask: linear-gradient(transparent 0%, white 120%);
     mask: linear-gradient(transparent 0%, white 120%);
-    animation: spark-rotate 2s linear infinite;
+    animation: spark-rotate 2.2s linear infinite;
   }
   @keyframes spark-rotate { to { transform: rotate(360deg); } }
-  .spark-btn .sparkle { position: relative; z-index: 10; width: 1.45rem; height: 1.45rem; }
+  .spark-btn .sparkle { position: relative; z-index: 10; width: 1.5rem; height: 1.5rem; }
   .spark-btn .sparkle .path { fill: #fff; stroke: none; transform-origin: center; }
-  .spark-btn:is(:hover, :focus) .sparkle .path { animation: spark-path 1.5s linear 0.5s infinite; }
-  .spark-btn .sparkle .path:nth-child(2) { animation-delay: 0.85s; }
-  .spark-btn .sparkle .path:nth-child(3) { animation-delay: 1.2s; }
-  @keyframes spark-path {
-    0%, 34%, 100% { transform: scale(1); }
-    17% { transform: scale(1.2); }
-  }
+  .spark-btn:is(:hover, :focus) .sparkle .path { animation: spark-path 1.5s linear infinite; }
+  @keyframes spark-path { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
   .spark-btn .label {
     position: relative; z-index: 10;
-    font-family: var(--font-thai); font-weight: 700; font-size: 0.98rem;
-    color: transparent;
-    background-image: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255, calc(0.4 + var(--active) * 0.6)) 120%);
-    -webkit-background-clip: text; background-clip: text;
+    font-family: var(--font-thai); font-weight: 700; font-size: 1rem;
+    color: #fff; text-shadow: 0 0 10px rgba(0,229,255,0.4);
   }
 
-  .creator-name { font-family: var(--font-thai); font-weight: 900; font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.06; color: var(--text-primary); }
-  .creator-role { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--accent-cyan); margin-top: 0.8rem; }
-  .creator-bio { color: var(--text-body); font-size: 1.05rem; line-height: 1.9; margin-top: 1.6rem; max-width: 50ch; }
-  .creator-bio strong { color: var(--text-primary); font-weight: 600; }
-  .tags { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
-  .tag {
-    display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;
-    border: 1px solid rgba(0,229,255,0.3); border-radius: 999px;
-    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--text-body);
-    background: rgba(0,229,255,0.04);
+  /* ── CHAPTER 05: STATS TELEMETRY BAND ── */
+  .stats-tele-band {
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    background: rgba(7, 13, 20, 0.7); backdrop-filter: blur(8px);
+    padding: 3rem 0;
   }
-  .tag svg { width: 15px; height: 15px; stroke: var(--accent-cyan); }
+  .stats-tele-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    max-width: 1240px; margin: 0 auto; padding-inline: 6vw;
+  }
+  .stat-card {
+    padding: 2rem; border-left: 1px solid var(--line);
+    display: flex; flex-direction: column; position: relative;
+  }
+  .stat-card:first-child { border-left: none; }
+  .stat-tele-num {
+    font-family: var(--font-display); font-size: clamp(3.2rem, 5.5vw, 5.2rem);
+    line-height: 0.95; color: #fff;
+    background: linear-gradient(180deg, #fff 30%, var(--accent-cyan) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat-tele-lbl {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-muted); margin-top: 0.8rem;
+  }
 
-  /* ── CONTACT ── */
-  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; margin-top: 2.6rem; }
-  .contact-card {
-    display: flex; align-items: center; gap: 1.1rem; padding: 1.5rem 1.6rem;
-    border: 1px solid var(--line); border-radius: 12px; background: rgba(0,229,255,0.035);
-    text-decoration: none; color: inherit; min-height: 44px;
-    transition: transform 0.3s, border-color 0.3s, background 0.3s;
+  /* ── CHAPTER 06: CONTACT & TRANSMISSION ── */
+  .transmission-section {
+    padding: 8rem 0 6rem; position: relative;
   }
-  .contact-card:hover { transform: translateY(-4px); border-color: rgba(0,229,255,0.55); background: rgba(0,229,255,0.08); }
+  .contact-cards-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.6rem; margin-top: 2.8rem;
+  }
+  .contact-card-box {
+    display: flex; align-items: center; gap: 1.2rem; padding: 1.6rem 1.8rem;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: rgba(0, 229, 255, 0.035);
+    text-decoration: none; color: inherit;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative; overflow: hidden;
+  }
+  .contact-card-box::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at left, rgba(0,229,255,0.12), transparent 70%);
+    opacity: 0; transition: opacity 0.35s ease;
+  }
+  .contact-card-box:hover {
+    transform: translateY(-5px); border-color: var(--accent-cyan);
+    background: rgba(0, 229, 255, 0.08);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 229, 255, 0.2);
+  }
+  .contact-card-box:hover::before { opacity: 1; }
   .contact-ic {
-    flex-shrink: 0; width: 48px; height: 48px; border-radius: 11px; display: grid; place-items: center;
-    background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.25);
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 12px;
+    display: grid; place-items: center;
+    background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3);
+    color: var(--accent-cyan);
   }
-  .contact-ic svg { width: 24px; height: 24px; stroke: var(--accent-cyan); }
-  .contact-meta .k { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
-  .contact-meta .v { font-family: var(--font-sub); font-weight: 600; font-size: 1.02rem; color: var(--text-primary); margin-top: 0.2rem; word-break: break-word; }
-  .contact-note { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 1.6rem; }
+  .contact-ic svg { width: 26px; height: 26px; stroke: currentColor; }
+  .contact-meta .k {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .contact-meta .v {
+    font-family: var(--font-sub); font-weight: 700; font-size: 1.08rem;
+    color: #fff; margin-top: 0.25rem; word-break: break-word;
+  }
 
   /* ── FOOTER ── */
   .site-footer {
-    position: relative; z-index: 1; border-top: 1px solid var(--line);
-    margin-top: 2rem; padding: 3.5rem 6vw; background: rgba(7,13,20,0.6);
-    display: flex; flex-wrap: wrap; gap: 1.4rem; align-items: center; justify-content: space-between;
+    position: relative; z-index: 10; border-top: 1px solid var(--line);
+    margin-top: 3rem; padding: 3.5rem 6vw; background: rgba(7, 13, 20, 0.85);
+    display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(10px);
   }
-  .foot-brand { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.14em; color: var(--text-primary); }
+  .foot-brand { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.12em; color: #fff; }
   .foot-brand span { color: var(--accent-cyan); }
   .back-home {
-    display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1.9rem;
-    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+    position: relative; z-index: 0;
+    display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.9rem 2rem;
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
     text-decoration: none; color: var(--accent-cyan); border: 1px solid rgba(0,229,255,0.5);
-    border-radius: 4px; background: rgba(0,229,255,0.06);
-    box-shadow: 0 0 16px rgba(0,229,255,0.18), inset 0 0 12px rgba(0,229,255,0.05);
-    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    border-radius: 6px; background: rgba(0,229,255,0.06);
+    box-shadow: 0 0 20px rgba(0,229,255,0.2);
+    transition: all 0.3s ease;
   }
-  .back-home:hover { background: rgba(0,229,255,0.14); border-color: rgba(0,229,255,0.85); transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,229,255,0.4); }
-
-  /* ── ขอบแสงวิ่งรอบปุ่ม (ปรับจาก CSS 1 — sparkle button Uiverse, เปลี่ยนม่วงเป็น cyan) ── */
-  .back-home { position: relative; z-index: 0; }
+  .back-home:hover {
+    background: rgba(0,229,255,0.16); border-color: var(--accent-cyan);
+    transform: translateY(-2px); box-shadow: 0 0 35px rgba(0,229,255,0.5);
+  }
   .back-home .orbit {
-    position: absolute; inset: -2px; border-radius: 6px; overflow: hidden;
+    position: absolute; inset: -2px; border-radius: 8px; overflow: hidden;
     z-index: -2; pointer-events: none;
   }
   .back-home .orbit::before {
     content: ''; position: absolute; top: 50%; left: 50%;
-    width: 220%; height: 2.2rem;
+    width: 240%; height: 2.4rem;
     background: linear-gradient(90deg, transparent 30%, rgba(0,229,255,0.95));
     transform: translate(-50%,-50%) rotate(0deg);
     animation: orbit-spin 2.8s linear infinite;
   }
   @keyframes orbit-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
-  /* ชั้นทึบด้านในกันแสงพาดผ่านกลางปุ่ม — เหลือเฉพาะขอบที่เห็นแสงวิ่ง */
   .back-home::before {
-    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 4px;
-    background: linear-gradient(rgba(0,229,255,0.06), rgba(0,229,255,0.06)), #08121c;
-    transition: background 0.3s;
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 6px;
+    background: #08131e; transition: background 0.3s;
   }
-  .back-home:hover::before {
-    background: linear-gradient(rgba(0,229,255,0.14), rgba(0,229,255,0.14)), #08121c;
-  }
-  .back-home .arrow { transition: transform 0.3s; }
-  .back-home:hover .arrow { transform: translateX(-4px); }
-  .foot-copy { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--text-muted); width: 100%; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,0.05); }
-
-  /* ── REVEAL ANIMATION ── */
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .reveal.in { opacity: 1; transform: none; }
-
-  /* ── TOOLS LOGO MARQUEE ── */
-  .tools-block .block-head { margin-bottom: 2.6rem; }
-  .lm-cap {
-    font-family: var(--font-mono); font-size: 0.75rem;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--text-muted); margin-bottom: 1rem;
-  }
-  .lm-cap .tagk { color: var(--accent-cyan); }
-  .lm-band + .lm-band { margin-top: 2.8rem; }
-  .lm-rail {
-    overflow: hidden; padding: 0.4rem 0;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  }
-  .lm-track { display: flex; width: max-content; animation: marq var(--lm-dur, 34s) linear infinite; }
-  .lm-rail.rev .lm-track { animation-direction: reverse; }
-  .lm-rail:hover .lm-track { animation-play-state: paused; }
-  .lm-group { display: flex; align-items: stretch; gap: 1.1rem; padding-right: 1.1rem; }
-  .lm-chip {
-    display: flex; align-items: center; gap: 0.8rem;
-    height: 66px; padding: 0 1.5rem; flex-shrink: 0;
-    background: #EAF2F7; border-radius: 14px;
-    box-shadow: 0 0 0 1px var(--line), 0 12px 28px rgba(0,0,0,0.35);
-  }
-  .lm-chip img { height: 38px; width: auto; max-width: 170px; object-fit: contain; }
-  .lm-chip .ic { height: 28px; }
-  .lm-name {
-    font-family: var(--font-sub); font-weight: 700; font-size: 0.95rem;
-    color: #15242E; letter-spacing: 0.02em; white-space: nowrap;
-  }
-  @media (max-width: 768px) {
-    .lm-chip { height: 54px; padding: 0 1.1rem; gap: 0.6rem; border-radius: 11px; }
-    .lm-chip img { height: 30px; max-width: 130px; }
-    .lm-chip .ic { height: 22px; }
-    .lm-name { font-size: 0.83rem; }
+  .foot-copy {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+    color: var(--text-muted); width: 100%; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);
   }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .story-grid, .creator-grid { grid-template-columns: 1fr; gap: 2.4rem; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .stat:nth-child(3) { border-left: none; }
-    .portrait { max-width: 380px; margin: 0 auto; }
+  @media (max-width: 980px) {
+    .scrolly-hud { display: none; }
+    .chapter-nav { display: none; }
+    .pinned-pillars-wrap { height: auto; }
+    .pinned-pillars-sticky { position: relative; height: auto; padding: 5rem 0; }
+    .pillars-stage-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .pillars-stage-info { min-height: auto; }
+    .pillars-info-stack { min-height: auto; }
+    .pillar-info-block { position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-bottom: 2.5rem; }
+    .pillars-3d-scene { height: auto; perspective: none; }
+    .pillar-3d-card { position: relative; inset: auto; transform: none !important; opacity: 1 !important; margin-bottom: 1.5rem; }
+    .creator-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .stats-tele-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-card:nth-child(3) { border-left: none; }
+    .portrait { max-width: 400px; margin: 0 auto; }
   }
+
   @media (max-width: 768px) {
+    .hero-scrolly { padding-top: 7rem; min-height: 80vh; }
+    .site-header { padding: 0 4vw; }
     .nav-links { overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-tab { font-size: 0.78rem; padding: 0 0.72rem; }
-    .block { padding: 4.5rem 0; }
-    .hero { min-height: 70vh; padding-top: 8rem; }
+    .nav-tab { font-size: 0.78rem; padding: 0 0.7rem; }
+    .scrub-section { padding: 6rem 0; }
+    .lm-chip { height: 56px; padding: 0 1.2rem; }
+    .lm-chip img { height: 32px; }
   }
+
   @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
-    .reveal { opacity: 1; transform: none; }
-    /* หยุดแถบเลื่อน/แสง ambient ทั้งหมดเมื่อผู้ใช้เปิด Reduce Motion
-       (เดิมเคยสั่งให้วิ่งต่อ แต่แถบเลื่อนอัตโนมัติที่ไม่มีวันหยุดคือสิ่งที่ WCAG 2.2.2 ห้ามไว้ตรง ๆ) */
-    .marquee-track, .lm-track, .portrait-grid { animation: none !important; }
-    .spark-btn .dots-border::before, .back-home .orbit::before { animation: none !important; }
-    /* เนื้อหาในแถบยังเข้าถึงได้ครบ — เปลี่ยนจากเลื่อนเองเป็นให้ผู้ใช้ปัดดูเอง */
-    .marquee, .lm-rail { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    .marquee-track, .lm-track, .portrait-grid, .back-home .orbit::before { animation: none !important; }
+    .marquee, .lm-rail { overflow-x: auto; }
+    .pinned-pillars-wrap { height: auto; }
+    .pinned-pillars-sticky { position: relative; }
+    .pillar-3d-card { position: relative; transform: none !important; opacity: 1 !important; }
   }
   </style>
-  <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง <style> ของหน้าเพื่อทับกฎ overflow-x เดิม -->
+
+  <!-- External Hub Nav / Global Scripts -->
   <link rel="stylesheet" href="../css/hub-nav.css" />
   <script src="../js/hub-nav.js" defer></script>
   <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
-<script src="../js/disclaimer.js"></script>
+  <script src="../js/disclaimer.js"></script>
 </head>
 <body>
+
+  <!-- Background Ambience -->
   <div class="bg-field" aria-hidden="true"></div>
 
-  <!-- Header -->
+  <!-- Scrollytelling Top Global Progress Bar -->
+  <div class="scrolly-top-bar" id="scrollyTopBar" aria-hidden="true"></div>
+
+  <!-- Scrollytelling Floating HUD Indicator -->
+  <div class="scrolly-hud" aria-hidden="true">
+    <div class="hud-badge">
+      <span class="hud-dot"></span>
+      <span id="hudChapter">CH. 01 // OVERVIEW</span>
+    </div>
+    <div class="hud-badge" style="font-size: 0.68rem; opacity: 0.85;">
+      <span>SCROLL</span>
+      <span id="hudPercent" style="color: #fff;">0%</span>
+    </div>
+  </div>
+
+  <!-- Right Side Chapter Jump Navigation -->
+  <nav class="chapter-nav" aria-label="สารบัญการเลื่อน">
+    <button class="chapter-nav-btn active" data-target="#hero" aria-label="ไปที่ส่วนบนสุด">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">01 // TOP</span>
+    </button>
+    <button class="chapter-nav-btn" data-target="#vision" aria-label="ไปที่วิสัยทัศน์">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">02 // VISION</span>
+    </button>
+    <button class="chapter-nav-btn" data-target="#pillars" aria-label="ไปที่ 4 เสาหลัก">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">03 // 4 PILLARS</span>
+    </button>
+    <button class="chapter-nav-btn" data-target="#laboratory" aria-label="ไปที่ AI Lab">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">04 // AI LAB</span>
+    </button>
+    <button class="chapter-nav-btn" data-target="#creator" aria-label="ไปที่ผู้จัดทำ">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">05 // CREATOR</span>
+    </button>
+    <button class="chapter-nav-btn" data-target="#contact" aria-label="ไปที่ติดต่อเรา">
+      <span class="chapter-nav-dot"></span>
+      <span class="chapter-nav-tooltip">06 // CONTACT</span>
+    </button>
+  </nav>
+
+  <!-- Site Header -->
   <header class="site-header">
     <nav>
       <a href="index.html" class="nav-logo" aria-label="รัฐไทยก้าวหน้า — หน้าแรก">
@@ -573,136 +839,317 @@
   </header>
 
   <main>
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-inner reveal">
-        <span class="section-label">010 / เกี่ยวกับเรา</span>
-        <h1>
-          ABOUT
-          <span class="accent">รัฐไทยก้าวหน้า</span>
+    <!-- ── CHAPTER 01: HERO KINETIC SCROLLY ── -->
+    <section class="hero-scrolly" id="hero">
+      <div class="hero-scrolly-grid"></div>
+      <div class="hero-bracket hb-tl"></div>
+      <div class="hero-bracket hb-tr"></div>
+      <div class="hero-bracket hb-bl"></div>
+      <div class="hero-bracket hb-br"></div>
+
+      <div class="hero-scrolly-inner">
+        <span class="section-label">010 // SCROLLYTELLING ARCHIVE</span>
+        <h1 class="hero-scrolly-title">
+          <span class="word-hero">ABOUT</span>
+          <span class="accent word-hero">รัฐไทยก้าวหน้า</span>
         </h1>
-        <p class="hero-tagline">รวบรวมข้อมูลภาครัฐไทย — กรม กระทรวง คณะรัฐมนตรี และผู้แทนราษฎร — มาไว้ในที่เดียว ในรูปแบบที่ดูง่าย เข้าใจง่าย และเปิดให้ทุกคนเข้าถึง</p>
+
+        <div class="hero-meta-strip">
+          <div class="hero-meta-item">
+            <span>MISSION:</span>
+            <strong>OPEN GOVERNMENT DATA PLATFORM</strong>
+          </div>
+          <div class="hero-meta-item">
+            <span>STACK:</span>
+            <strong>AI-DRIVEN + NEXT-GEN WEB</strong>
+          </div>
+          <div class="hero-meta-item">
+            <span>STATUS:</span>
+            <strong>LIVE & INTERACTIVE</strong>
+          </div>
+        </div>
+
+        <div class="hero-scroll-prompt">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+          <span>SCROLL TO EXPLORE THE STORY</span>
+        </div>
       </div>
     </section>
 
-    <!-- Marquee -->
+    <!-- Marquee Banner -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span>รัฐไทยก้าวหน้า</span><span>OPEN GOV DATA</span><span>เข้าใจรัฐในที่เดียว</span><span>กรม · กระทรวง · ครม.</span>
-        <span>รัฐไทยก้าวหน้า</span><span>OPEN GOV DATA</span><span>เข้าใจรัฐในที่เดียว</span><span>กรม · กระทรวง · ครม.</span>
+        <span>รัฐไทยก้าวหน้า</span>
+        <span>OPEN GOV DATA</span>
+        <span>AI-POWERED ARCHITECTURE</span>
+        <span>เข้าใจรัฐในที่เดียว</span>
+        <span>77 PROVINCES · 500 MPS · 20 MINISTRIES</span>
+        <span>รัฐไทยก้าวหน้า</span>
+        <span>OPEN GOV DATA</span>
+        <span>AI-POWERED ARCHITECTURE</span>
+        <span>เข้าใจรัฐในที่เดียว</span>
+        <span>77 PROVINCES · 500 MPS · 20 MINISTRIES</span>
       </div>
     </div>
 
-    <!-- Story / Mission -->
-    <section class="block">
+    <!-- ── CHAPTER 02: TEXT SCRUB STATEMENT (Basement Studio style) ── -->
+    <section class="scrub-section" id="vision">
       <div class="wrap">
-        <div class="story-grid">
-          <div class="story-copy reveal">
-            <span class="section-label">011 / เรื่องราวของเรา</span>
-            <h2 class="h-display">ทำไมต้อง<br>รัฐไทยก้าวหน้า</h2>
-            <p style="margin-top:1.4rem;"><strong>รัฐไทยก้าวหน้า</strong> เกิดขึ้นจาก <strong>โครงงานเว็บไซต์</strong> ที่ตั้งใจรวบรวมข้อมูลของภาครัฐไทยซึ่งกระจัดกระจายอยู่หลายแหล่ง ให้มารวมกันในที่เดียว</p>
-            <p>ไม่ว่าจะเป็น <strong>กรม</strong> และ <strong>กระทรวง</strong> ต่าง ๆ โครงสร้างของหน่วยงานรัฐ <strong>คณะรัฐมนตรี</strong> ไปจนถึง <strong>ส.ส. ผู้แทนราษฎร</strong> และข้อมูลสถิติ เราจัดระเบียบมันใหม่ให้กลายเป็นเว็บที่ดูง่าย ค้นเร็ว และเข้าใจได้โดยไม่ต้องเป็นผู้เชี่ยวชาญ</p>
-            <p>เป้าหมายเรียบง่าย — ทำให้ข้อมูลรัฐ <strong>โปร่งใส เข้าถึงง่าย และน่าสนใจ</strong> สำหรับทุกคน</p>
+        <span class="section-label">011 // THE MANIFESTO</span>
+        <h2 class="scrub-statement" id="scrubText">
+          <span class="word">รัฐไทยก้าวหน้า</span>
+          <span class="word">เกิดขึ้นจากความตั้งใจ</span>
+          <span class="word">ที่จะรวบรวม</span>
+          <span class="word accent-word">ข้อมูลภาครัฐไทย</span>
+          <span class="word">ที่เคยกระจัดกระจาย</span>
+          <span class="word">ให้มารวมกัน</span>
+          <span class="word accent-word">ในที่เดียว</span>
+          <span class="word">เพื่อทำให้ข้อมูลการปกครอง</span>
+          <span class="word accent-word">โปร่งใส</span>
+          <span class="word">เข้าใจง่าย</span>
+          <span class="word">และเปิดให้คนไทยทุกคน</span>
+          <span class="word accent-word">เข้าถึงได้จริง</span>
+        </h2>
+      </div>
+    </section>
+
+    <!-- ── CHAPTER 03: PINNED 4 PILLARS STAGE ── -->
+    <section class="scrolly-container pinned-pillars-wrap" id="pillars">
+      <div class="pinned-pillars-sticky">
+        <div class="pillars-stage-inner">
+          
+          <!-- Left Info Viewport -->
+          <div class="pillars-stage-info">
+            <span class="section-label">012 // CORE ARCHITECTURE</span>
+            
+            <div class="pillars-info-stack">
+              <!-- Pillar Info 1 -->
+              <div class="pillar-info-block" id="pInfo1">
+                <div class="stage-step-indicator">PILLAR 01 // 04</div>
+                <h2 class="stage-step-title">แผนผังโครงสร้างรัฐ</h2>
+                <p class="stage-step-desc">
+                  แผนผังเชื่อมโยงหน่วยงานภาครัฐ กระทรวง กรม และรัฐวิสาหกิจแบบ Interactive Tree ทำให้เห็นลำดับสายการบังคับบัญชาและความสัมพันธ์ได้อย่างครบถ้วน
+                </p>
+                <a href="../structure.html" class="stage-action-btn">
+                  <span>สำรวจแผนผังโครงสร้าง</span>
+                  <span class="arrow">→</span>
+                </a>
+              </div>
+
+              <!-- Pillar Info 2 -->
+              <div class="pillar-info-block" id="pInfo2">
+                <div class="stage-step-indicator">PILLAR 02 // 04</div>
+                <h2 class="stage-step-title">ส.ส. ผู้แทนราษฎร 500 คน</h2>
+                <p class="stage-step-desc">
+                  ทำเนียบ ส.ส. รายเขต 400 เขต และบัญชีรายชื่อ 100 คน ครบทั้ง 77 จังหวัด พร้อมแผนที่สีพรรคการเมืองและระบบค้นหาที่สะดวกรวดเร็ว
+                </p>
+                <a href="../election/index.html" class="stage-action-btn">
+                  <span>เปิดทำเนียบ ส.ส.</span>
+                  <span class="arrow">→</span>
+                </a>
+              </div>
+
+              <!-- Pillar Info 3 -->
+              <div class="pillar-info-block" id="pInfo3">
+                <div class="stage-step-indicator">PILLAR 03 // 04</div>
+                <h2 class="stage-step-title">ชุดคณะรัฐมนตรี</h2>
+                <p class="stage-step-desc">
+                  โครงสร้างคณะรัฐมนตรี 35 ท่าน พร้อมรายละเอียดกระทรวงที่กำกับดูแล สายงานบริหาร และนโยบายหลักที่ขับเคลื่อนประเทศ
+                </p>
+                <a href="../cabinet/index.html" class="stage-action-btn">
+                  <span>เปิดทำเนียบคณะรัฐมนตรี</span>
+                  <span class="arrow">→</span>
+                </a>
+              </div>
+
+              <!-- Pillar Info 4 -->
+              <div class="pillar-info-block" id="pInfo4">
+                <div class="stage-step-indicator">PILLAR 04 // 04</div>
+                <h2 class="stage-step-title">ข้อมูลสถิติ & สรุปตัวเลข</h2>
+                <p class="stage-step-desc">
+                  แดชบอร์ดสถิติข้อมูลรัฐ รวบรวมตัวเลขสำคัญ งบประมาณ และข้อมูลเชิงลึกในรูปแบบ Data Visualization ที่มองเห็นภาพได้ชัดเจน
+                </p>
+                <a href="../stats/index.html" class="stage-action-btn">
+                  <span>เปิดแดชบอร์ดสถิติ</span>
+                  <span class="arrow">→</span>
+                </a>
+              </div>
+            </div>
           </div>
 
-          <aside class="side-panel reveal">
-            <h3>สิ่งที่เรายึดถือ</h3>
-            <div class="pillar">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
-              <div><b>เข้าใจง่าย</b><span>ออกแบบให้อ่านง่าย ลดความซับซ้อนของข้อมูลราชการ</span></div>
+          <!-- Right 3D Scene -->
+          <div class="pillars-3d-scene">
+            
+            <!-- Card 1 -->
+            <div class="pillar-3d-card" id="pCard1">
+              <div class="card-chip-top">
+                <span class="card-sys-num">SYS.01 // INFRASTRUCTURE</span>
+                <div class="card-sys-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2h12v2"/></svg>
+                </div>
+              </div>
+              <div class="card-sys-main">
+                <h3>ผังโครงสร้างรัฐ & กรมกระทรวง</h3>
+                <p>ลำดับชั้นองค์กรภาครัฐและหน่วยงานอิสระ แสดงสายงานและความรับผิดชอบชัดเจน</p>
+              </div>
+              <div class="card-sys-telemetry">
+                <div class="tele-item"><span class="k">MINISTRIES</span><div class="v">20 กระทรวง</div></div>
+                <div class="tele-item"><span class="k">DEPARTMENTS</span><div class="v">150+ กรม</div></div>
+              </div>
             </div>
-            <div class="pillar">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/><circle cx="12" cy="12" r="9"/></svg>
-              <div><b>เปิดเผย</b><span>รวบรวมจากข้อมูลที่เปิดเผยต่อสาธารณะ เข้าถึงได้ทุกคน</span></div>
+
+            <!-- Card 2 -->
+            <div class="pillar-3d-card" id="pCard2">
+              <div class="card-chip-top">
+                <span class="card-sys-num">SYS.02 // PARLIAMENT</span>
+                <div class="card-sys-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 2.2 4.5 4.8"/></svg>
+                </div>
+              </div>
+              <div class="card-sys-main">
+                <h3>ส.ส. ผู้แทนราษฎร 500 คน</h3>
+                <p>ฐานข้อมูล ส.ส. รายเขตและบัญชีรายชื่อ พร้อมแผนที่ผลการเลือกตั้ง 77 จังหวัด</p>
+              </div>
+              <div class="card-sys-telemetry">
+                <div class="tele-item"><span class="k">ELECTORAL ZONES</span><div class="v">400 เขต</div></div>
+                <div class="tele-item"><span class="k">PARTY-LIST</span><div class="v">100 คน</div></div>
+              </div>
             </div>
-            <div class="pillar">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v5H4z"/><path d="M4 15h16v5H4z"/><path d="M9 9v6M15 9v6"/></svg>
-              <div><b>รวมในที่เดียว</b><span>เชื่อมทุกชุดข้อมูลเข้าด้วยกัน ไม่ต้องเปิดหลายเว็บ</span></div>
+
+            <!-- Card 3 -->
+            <div class="pillar-3d-card" id="pCard3">
+              <div class="card-chip-top">
+                <span class="card-sys-num">SYS.03 // CABINET</span>
+                <div class="card-sys-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg>
+                </div>
+              </div>
+              <div class="card-sys-main">
+                <h3>ชุดคณะรัฐมนตรี</h3>
+                <p>ทำเนียบรัฐมนตรี ข้อมูลประวัติ และกระทรวงที่กำกับดูแลอย่างละเอียด</p>
+              </div>
+              <div class="card-sys-telemetry">
+                <div class="tele-item"><span class="k">MINISTERS</span><div class="v">35 ตำแหน่ง</div></div>
+                <div class="tele-item"><span class="k">PRIME MINISTER</span><div class="v">1 คณะ</div></div>
+              </div>
             </div>
-            <div class="pillar">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>
-              <div><b>ทันสมัย</b><span>ใช้ดีไซน์และเทคโนโลยีเว็บสมัยใหม่ให้ลื่นไหลทุกอุปกรณ์</span></div>
+
+            <!-- Card 4 -->
+            <div class="pillar-3d-card" id="pCard4">
+              <div class="card-chip-top">
+                <span class="card-sys-num">SYS.04 // ANALYTICS</span>
+                <div class="card-sys-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/></svg>
+                </div>
+              </div>
+              <div class="card-sys-main">
+                <h3>ข้อมูลสถิติ & สรุปตัวเลข</h3>
+                <p>แดชบอร์ดสถิติภาครัฐ งบประมาณ และตัวชี้วัดสำคัญในรูปแบบ Data Visualization</p>
+              </div>
+              <div class="card-sys-telemetry">
+                <div class="tele-item"><span class="k">DATA SETS</span><div class="v">OPEN GOV</div></div>
+                <div class="tele-item"><span class="k">PRECISION</span><div class="v">REALTIME</div></div>
+              </div>
             </div>
-          </aside>
+
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Collection cards -->
-    <section class="block" style="padding-top:0;">
+    <!-- ── CHAPTER 04: THE AI & TECH LABORATORY ── -->
+    <section class="lab-section" id="laboratory">
       <div class="wrap">
-        <div class="block-head reveal">
-          <span class="section-label">012 / รวบรวมไว้ในที่เดียว</span>
-          <h2 class="h-display">สำรวจชุดข้อมูล</h2>
-          <p class="lead">แต่ละส่วนคือแดชบอร์ดของตัวเอง — คลิกเพื่อเปิดดูแบบเต็ม</p>
-        </div>
+        <span class="lab-badge">FROM THE LABORATORY...</span>
+        <h2 class="lab-heading">A PEEK INTO<br>OUR TECH STACK</h2>
+        <p class="lab-lead">
+          “รัฐไทยก้าวหน้า” ผสานพลังปัญญาประดิษฐ์และวิศวกรรมเว็บยุคใหม่ เพื่อสร้างประสบการณ์ข้อมูลที่ลื่นไหล ทันสมัย และแม่นยำในระดับสูงสุด
+        </p>
 
-        <div class="cards">
-          <a class="card reveal" href="../structure.html">
-            <span class="card-num">01</span>
-            <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2h12v2"/></svg></span>
-            <h3>แผนผังโครงสร้างรัฐ</h3>
-            <p>ผังโครงสร้างหน่วยงานภาครัฐ กระทรวง กรม และองค์กรในสังกัด</p>
-            <span class="card-go">เปิดดู <span class="arrow">→</span></span>
-          </a>
+        <div class="lab-marquee-box">
+          <!-- AI Suite -->
+          <div class="lm-band">
+            <p class="lm-cap"><span class="tagk">AI CORE</span> ปัญญาประดิษฐ์ที่ช่วยวิเคราะห์ สรุปข้อมูล และพัฒนาระบบ</p>
+            <div class="lm-rail" style="--lm-dur: 28s;">
+              <div class="lm-track">
+                <div class="lm-group">
+                  <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="Claude AI" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="OpenAI Codex" /><span class="lm-name">OpenAI Codex</span></div>
+                  <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="Gemini" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="NotebookLM" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="Manus AI" /><span class="lm-name">Manus AI</span></div>
+                  <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="Canva AI" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="ThaiLLM" /><span class="lm-name">ThaiLLM</span></div>
+                </div>
+                <div class="lm-group" aria-hidden="true">
+                  <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="" /><span class="lm-name">OpenAI Codex</span></div>
+                  <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="" /><span class="lm-name">Manus AI</span></div>
+                  <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="" /></div>
+                  <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="" /><span class="lm-name">ThaiLLM</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <a class="card reveal" href="../election/index.html">
-            <span class="card-num">02</span>
-            <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.3 4.5 2.2 4.5 4.8"/></svg></span>
-            <h3>ส.ส. ผู้แทนราษฎร</h3>
-            <p>ผู้แทนราษฎรรายเขตจากทั่วประเทศ พร้อมข้อมูลพรรคและพื้นที่</p>
-            <span class="card-go">เปิดดู <span class="arrow">→</span></span>
-          </a>
+          <!-- Web Engineering -->
+          <div class="lm-band">
+            <p class="lm-cap"><span class="tagk">FRONTEND & DATA</span> เทคโนโลยีสถาปัตยกรรมและการแสดงผลข้อมูล</p>
+            <div class="lm-rail rev" style="--lm-dur: 34s;">
+              <div class="lm-track">
+                <div class="lm-group">
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS3 / Grid</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript ES6+</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js Data Viz</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
+                </div>
+                <div class="lm-group" aria-hidden="true">
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS3 / Grid</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript ES6+</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js Data Viz</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
+                  <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <a class="card reveal" href="../cabinet/index.html">
-            <span class="card-num">03</span>
-            <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg></span>
-            <h3>ชุดคณะรัฐมนตรี</h3>
-            <p>ทำเนียบคณะรัฐมนตรี รายชื่อรัฐมนตรีและกระทรวงที่รับผิดชอบ</p>
-            <span class="card-go">เปิดดู <span class="arrow">→</span></span>
-          </a>
-
-          <a class="card reveal" href="../stats/index.html">
-            <span class="card-num">04</span>
-            <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/></svg></span>
-            <h3>ข้อมูลสถิติ</h3>
-            <p>แดชบอร์ดสถิติข้อมูลรัฐ ดึงจากแหล่งข้อมูลเปิดของภาครัฐและสากล</p>
-            <span class="card-go">เปิดดู <span class="arrow">→</span></span>
-          </a>
         </div>
       </div>
     </section>
 
-    <!-- Stats band -->
-    <section class="stats-band reveal">
-      <div class="stats-grid">
-        <div class="stat"><span class="stat-number">77</span><span class="stat-label">จังหวัด</span></div>
-        <div class="stat"><span class="stat-number">500</span><span class="stat-label">ส.ส. ผู้แทนราษฎร</span></div>
-        <div class="stat"><span class="stat-number">35</span><span class="stat-label">คณะรัฐมนตรี</span></div>
-        <div class="stat"><span class="stat-number">20</span><span class="stat-label">กระทรวง</span></div>
-      </div>
-    </section>
-
-    <!-- Creator -->
-    <section class="block">
+    <!-- ── CHAPTER 05: CREATOR & PHILOSOPHY ── -->
+    <section class="creator-section" id="creator">
       <div class="wrap">
-        <div class="block-head reveal" style="margin-bottom:2.6rem;">
-          <span class="section-label">013 / ผู้จัดทำ</span>
-          <h2 class="h-display">ประวัติความเป็นมา</h2>
-        </div>
-
+        <span class="section-label">014 // THE CREATOR</span>
+        
         <div class="creator-grid">
-          <div class="portrait reveal">
-            <div class="portrait-frame">
+          <!-- 3D Holographic Ticket -->
+          <div class="portrait">
+            <div class="portrait-frame" id="creatorTicket">
               <span class="portrait-corner pc-tl" aria-hidden="true"></span>
               <span class="portrait-corner pc-br" aria-hidden="true"></span>
+              
               <div class="tk-main">
-                <span class="portrait-tag">Master Nook</span>
+                <span class="portrait-tag">MASTER NOOK</span>
                 <img src="images/creator-nook.webp" width="434" height="820" loading="lazy" decoding="async" alt="ณัฐภัทร ช่วยจีน ผู้จัดทำเว็บไซต์รัฐไทยก้าวหน้า" />
                 <span class="portrait-grid" aria-hidden="true"></span>
                 <span class="portrait-shine" aria-hidden="true"></span>
               </div>
+              
               <div class="tk-perf" aria-hidden="true"><span class="tk-perf-line"></span></div>
+              
               <div class="tk-stub">
                 <div class="tk-barcode-wrap">
                   <span class="tk-barcode" aria-hidden="true"></span>
@@ -714,157 +1161,353 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Creator Details -->
+          <div class="creator-info">
+            <h2 class="creator-name">นาย ณัฐภัทร ช่วยจีน</h2>
+            <div class="creator-role">สาขาคอมพิวเตอร์ — เทคโนโลยีธุรกิจดิจิทัล</div>
+            
+            <p class="creator-bio">
+              ผมเป็นคนที่ <strong>หลงใหลในเทคโนโลยีและ AI</strong> ชอบทดลองลงมือ <strong>สร้างสรรค์สิ่งต่าง ๆ</strong> ด้วยตัวเอง ตั้งแต่การ <strong>สร้างภาพ</strong> ด้วย Generative AI <strong>แต่งเพลง</strong> ไปจนถึงการ <strong>ออกแบบและพัฒนาเว็บไซต์</strong>
+            </p>
+            <p class="creator-bio" style="margin-top: 1rem;">
+              เว็บ “รัฐไทยก้าวหน้า” แห่งนี้ คือผลงานที่รวมเอาทั้งความรู้ ความชอบ และความตั้งใจที่จะทำให้ข้อมูลภาครัฐกลายเป็นเรื่องที่เข้าถึงง่ายสำหรับทุกคน
+            </p>
+
+            <div class="tags">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>AI & Automation</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.6"/><path d="M21 17l-5-4-4 3-2-1.5L3 18"/></svg>Visual Generative</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/><path d="M8.5 18V6l12-2v10"/></svg>Music Production</span>
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 7l-2 10"/></svg>Web Architecture</span>
+            </div>
+
             <div class="spark-wrap">
               <a class="spark-btn" href="#contact">
                 <span class="dots-border" aria-hidden="true"></span>
                 <svg class="sparkle" viewBox="0 0 24 24" aria-hidden="true">
                   <path class="path" d="M14.187 8.096L15 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L21.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09L15 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L8.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09z"/>
-                  <path class="path" d="M6 14.25l.259 1.035c.297 1.187 1.224 2.114 2.411 2.411L9.705 18l-1.035.259a3.375 3.375 0 0 0-2.411 2.411L6 21.705l-.259-1.035a3.375 3.375 0 0 0-2.411-2.411L2.295 18l1.035-.259a3.375 3.375 0 0 0 2.411-2.411L6 14.25z"/>
-                  <path class="path" d="M6.5 4l.197.592c.1.3.336.535.635.635L7.925 5.42l-.593.198a1.005 1.005 0 0 0-.635.635L6.5 6.845l-.197-.592a1.005 1.005 0 0 0-.635-.635L5.075 5.42l.593-.197c.299-.1.535-.336.635-.635L6.5 4z"/>
                 </svg>
-                <span class="label">ติดต่อผม</span>
+                <span class="label">ติดต่อผู้จัดทำ</span>
               </a>
             </div>
           </div>
-
-          <div class="creator-info reveal">
-            <div class="creator-name">นาย ณัฐภัทร ช่วยจีน</div>
-            <div class="creator-role">สาขาคอมพิวเตอร์ — เทคโนโลยีธุรกิจดิจิทัล</div>
-            <p class="creator-bio">ผมเป็นคนที่ <strong>ชอบเรื่อง AI</strong> และเทคโนโลยีใหม่ ๆ ชอบทดลองลงมือ <strong>สร้างสรรค์สิ่งต่าง ๆ</strong> ด้วยตัวเอง ตั้งแต่การ <strong>สร้างภาพ</strong> ด้วย AI <strong>แต่งเพลง</strong> ไปจนถึงการ <strong>สร้างเว็บไซต์</strong> — และเว็บ “รัฐไทยก้าวหน้า” นี้ก็คือหนึ่งในผลงานที่เกิดจากความชอบนั้น</p>
-            <div class="tags">
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>AI</span>
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="1.6"/><path d="M21 17l-5-4-4 3-2-1.5L3 18"/></svg>สร้างภาพ</span>
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/><path d="M8.5 18V6l12-2v10"/></svg>แต่งเพลง</span>
-              <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 7l-2 10"/></svg>ทำเว็บไซต์</span>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- Tools marquee -->
-    <section class="block tools-block" id="tools" style="padding-top:0;">
-      <div class="wrap">
-        <div class="block-head reveal">
-          <span class="section-label">014 / เบื้องหลังการสร้าง</span>
-          <h2 class="h-display">เครื่องมือที่ใช้สร้างเว็บนี้</h2>
-          <p class="lead">AI และเทคโนโลยีทั้งหมดที่อยู่เบื้องหลัง “รัฐไทยก้าวหน้า” — ตั้งแต่ช่วยคิด ช่วยเขียนโค้ด ไปจนถึงเผยแพร่ขึ้นออนไลน์</p>
+    <!-- ── STATS TELEMETRY BAND ── -->
+    <section class="stats-tele-band" id="stats">
+      <div class="stats-tele-grid">
+        <div class="stat-card">
+          <span class="stat-tele-num" data-val="77">0</span>
+          <span class="stat-tele-lbl">จังหวัดทั่วประเทศ</span>
         </div>
-
-        <div class="lm-band reveal">
-          <p class="lm-cap"><span class="tagk">AI</span> // เครื่องมือ AI ทั้งหมดที่ใช้ทำเว็บและโครงสร้าง</p>
-          <div class="lm-rail" style="--lm-dur:30s;">
-            <div class="lm-track">
-              <div class="lm-group">
-                <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="Claude AI" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="" /><span class="lm-name">OpenAI Codex</span></div>
-                <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="Gemini + Nano Banana" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="NotebookLM" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="" /><span class="lm-name">Manus</span></div>
-                <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="Canva" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="" /><span class="lm-name">ThaiLLM</span></div>
-              </div>
-              <div class="lm-group" aria-hidden="true">
-                <div class="lm-chip"><img src="images/logos/ai-claude.png" alt="" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-codex.png" alt="" /><span class="lm-name">OpenAI Codex</span></div>
-                <div class="lm-chip"><img src="images/logos/ai-gemini-nano-banana.png" alt="" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-notebooklm.png" alt="" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-manus.png" alt="" /><span class="lm-name">Manus</span></div>
-                <div class="lm-chip"><img src="images/logos/ai-canva.png" alt="" /></div>
-                <div class="lm-chip"><img src="images/logos/ai-thaillm.png" alt="" /><span class="lm-name">ThaiLLM</span></div>
-              </div>
-            </div>
-          </div>
+        <div class="stat-card">
+          <span class="stat-tele-num" data-val="500">0</span>
+          <span class="stat-tele-lbl">ส.ส. ผู้แทนราษฎร</span>
         </div>
-
-        <div class="lm-band reveal">
-          <p class="lm-cap"><span class="tagk">DEV</span> // เทคโนโลยีที่ใช้ในการพัฒนาเว็บ</p>
-          <div class="lm-rail rev" style="--lm-dur:38s;">
-            <div class="lm-track">
-              <div class="lm-group">
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-githubpages.svg" alt="" /><span class="lm-name">GitHub Pages</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
-              </div>
-              <div class="lm-group" aria-hidden="true">
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-vscode.png" alt="" /><span class="lm-name">VS Code</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-html5.svg" alt="" /><span class="lm-name">HTML5</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-css.svg" alt="" /><span class="lm-name">CSS</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-javascript.svg" alt="" /><span class="lm-name">JavaScript</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-d3.svg" alt="" /><span class="lm-name">D3.js</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-git.svg" alt="" /><span class="lm-name">Git</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-github.svg" alt="" /><span class="lm-name">GitHub</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-githubpages.svg" alt="" /><span class="lm-name">GitHub Pages</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-netlify.svg" alt="" /><span class="lm-name">Netlify</span></div>
-                <div class="lm-chip"><img class="ic" src="images/logos/dev-googlefonts.svg" alt="" /><span class="lm-name">Google Fonts</span></div>
-              </div>
-            </div>
-          </div>
+        <div class="stat-card">
+          <span class="stat-tele-num" data-val="35">0</span>
+          <span class="stat-tele-lbl">คณะรัฐมนตรี</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-tele-num" data-val="20">0</span>
+          <span class="stat-tele-lbl">กระทรวงภาครัฐ</span>
         </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section class="block" id="contact" style="padding-top:0;">
+    <!-- ── CHAPTER 06: TRANSMISSION / CONTACT ── -->
+    <section class="transmission-section" id="contact">
       <div class="wrap">
-        <div class="block-head reveal">
-          <span class="section-label">015 / ช่องทางการติดต่อ</span>
-          <h2 class="h-display">ติดต่อเรา</h2>
-          <p class="lead">มีคำถาม ข้อเสนอแนะ หรืออยากพูดคุย — ทักมาได้เลย</p>
-        </div>
+        <span class="section-label">015 // TRANSMISSION & CONNECT</span>
+        <h2 class="hero-scrolly-title" style="font-size: clamp(2.4rem, 5vw, 4rem); line-height: 1.1;">
+          CONNECT WITH US<br>
+          <span class="accent" style="font-size: clamp(2rem, 4.2vw, 3.2rem);">ร่วมพัฒนาอนาคตข้อมูลเปิด</span>
+        </h2>
+        <p class="lab-lead" style="margin-top: 1rem;">
+          หากคุณมีคำถาม ข้อเสนอแนะ หรือต้องการแลกเปลี่ยนความคิดเห็น สามารถติดต่อได้โดยตรงผ่านช่องทางด้านล่าง
+        </p>
 
-        <div class="contact-grid">
-          <a class="contact-card reveal" href="https://www.facebook.com/share/1Ng7eUQjQn/?mibextid=wwXlfr" target="_blank" rel="noopener" aria-label="เฟซบุ๊ก Master Nook">
-            <span class="contact-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V9H6.5v3H9v9h3v-9h2.5l.5-3H12V6.8c0-.5.4-.8.9-.8H15z"/></svg></span>
-            <span class="contact-meta"><span class="k">Facebook</span><span class="v">Master Nook</span></span>
+        <div class="contact-cards-grid">
+          <a class="contact-card-box" href="https://www.facebook.com/share/1Ng7eUQjQn/?mibextid=wwXlfr" target="_blank" rel="noopener" aria-label="เฟซบุ๊ก Master Nook">
+            <span class="contact-ic">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </span>
+            <div class="contact-meta">
+              <span class="k">Facebook Profile</span>
+              <span class="v">Master Nook</span>
+            </div>
           </a>
 
-          <a class="contact-card reveal" href="mailto:nuttapat.chuajeen@gmail.com" aria-label="ส่งอีเมลถึง nuttapat.chuajeen@gmail.com">
-            <span class="contact-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
-            <span class="contact-meta"><span class="k">Email</span><span class="v">nuttapat.chuajeen@gmail.com</span></span>
+          <a class="contact-card-box" href="mailto:nuttapat.chuajeen@gmail.com" aria-label="ส่งอีเมลถึง nuttapat.chuajeen@gmail.com">
+            <span class="contact-ic">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <div class="contact-meta">
+              <span class="k">Email Transmission</span>
+              <span class="v">nuttapat.chuajeen@gmail.com</span>
+            </div>
           </a>
         </div>
-        <p class="contact-note">// ช่องทางอื่น ๆ กำลังจะตามมาเร็ว ๆ นี้</p>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Site Footer -->
   <footer class="site-footer">
-    <div class="foot-brand">รัฐไทย<span>ก้าวหน้า</span></div>
-    <a class="back-home" href="index.html"><span class="orbit" aria-hidden="true"></span><span class="arrow">←</span> กลับสู่หน้าแรก</a>
-    <div class="foot-copy">© <span id="year"></span> รัฐไทยก้าวหน้า · จัดทำโดย ณัฐภัทร ช่วยจีน — โครงงานเว็บไซต์รวบรวมข้อมูลภาครัฐไทย</div>
+    <div class="foot-brand">รัฐไทย<span>ก้าวหน้า</span> // ABOUT</div>
+    <a class="back-home" href="index.html">
+      <span class="orbit" aria-hidden="true"></span>
+      <span>← กลับสู่หน้าแรก</span>
+    </a>
+    <div class="foot-copy">
+      © <span id="year"></span> รัฐไทยก้าวหน้า · โครงงานเว็บไซต์รวบรวมข้อมูลภาครัฐไทย โดย ณัฐภัทร ช่วยจีน
+    </div>
   </footer>
 
+  <!-- ── SCRIPTS & SCROLLYTELLING CONTROLLER ── -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+
   <script>
+    // Set Year
     document.getElementById('year').textContent = new Date().getFullYear() + 543;
 
-    // Scroll reveal (respects reduced motion via CSS)
-    const els = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            const sib = [...e.target.parentElement.children].indexOf(e.target);
-            e.target.style.transitionDelay = Math.min(sib * 60, 240) + 'ms';
-            e.target.classList.add('in');
-            io.unobserve(e.target);
+    // Check reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 1. Lenis Smooth Scroll Setup
+    let lenis = null;
+    if (!prefersReducedMotion && typeof Lenis !== 'undefined') {
+      lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothTouch: false
+      });
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    // 2. Register GSAP ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Global Scroll Progress & HUD Tracker
+    ScrollTrigger.create({
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        const progressPercent = Math.round(self.progress * 100);
+        document.getElementById('scrollyTopBar').style.width = `${progressPercent}%`;
+        document.getElementById('hudPercent').textContent = `${progressPercent}%`;
+      }
+    });
+
+    // Chapter Navigation & HUD Chapter Label Update
+    const chapters = [
+      { id: 'hero', name: 'CH. 01 // OVERVIEW' },
+      { id: 'vision', name: 'CH. 02 // MANIFESTO' },
+      { id: 'pillars', name: 'CH. 03 // 4 PILLARS' },
+      { id: 'laboratory', name: 'CH. 04 // AI LAB' },
+      { id: 'creator', name: 'CH. 05 // CREATOR' },
+      { id: 'contact', name: 'CH. 06 // TRANSMISSION' }
+    ];
+
+    const hudChapterEl = document.getElementById('hudChapter');
+    const chapterNavBtns = document.querySelectorAll('.chapter-nav-btn');
+
+    chapters.forEach((ch, idx) => {
+      const el = document.getElementById(ch.id);
+      if (!el) return;
+
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 50%',
+        end: 'bottom 50%',
+        onEnter: () => updateActiveNav(idx, ch.name),
+        onEnterBack: () => updateActiveNav(idx, ch.name)
+      });
+    });
+
+    function updateActiveNav(idx, name) {
+      if (hudChapterEl) hudChapterEl.textContent = name;
+      chapterNavBtns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+    }
+
+    // Chapter Nav Jump click handlers
+    chapterNavBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetSelector = btn.getAttribute('data-target');
+        const targetEl = document.querySelector(targetSelector);
+        if (targetEl) {
+          if (lenis) {
+            lenis.scrollTo(targetEl, { offset: -30 });
+          } else {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
           }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-      els.forEach(el => io.observe(el));
+        }
+      });
+    });
+
+    // 3. Chapter 02: Word-by-Word Text Scrubbing (Sequential Spotlight + Fade back to gray on scroll)
+    if (!prefersReducedMotion) {
+      const allWords = document.querySelectorAll('#scrubText .word');
+      
+      const scrubTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#vision',
+          start: 'top 75%',
+          end: 'bottom 25%',
+          scrub: 0.6
+        }
+      });
+
+      allWords.forEach((word, i) => {
+        const isAccent = word.classList.contains('accent-word');
+        const activeColor = isAccent ? '#00E5FF' : '#ffffff';
+        const activeGlow = isAccent ? '0 0 25px rgba(0, 229, 255, 0.85)' : '0 0 20px rgba(0, 229, 255, 0.4)';
+        const dimColor = isAccent ? 'rgba(0, 229, 255, 0.22)' : 'rgba(220, 232, 240, 0.20)';
+
+        const tStart = i * 0.18;
+        
+        // 1. Enlighten into active focus
+        scrubTL.fromTo(word, 
+          { color: dimColor, textShadow: '0 0 0px transparent' },
+          { color: activeColor, textShadow: activeGlow, duration: 0.28, ease: 'power1.inOut' },
+          tStart
+        );
+
+        // 2. Dim back to gray as scroll continues down past this word
+        scrubTL.to(word, 
+          { color: dimColor, textShadow: '0 0 0px transparent', duration: 0.28, ease: 'power1.inOut' },
+          tStart + 0.38
+        );
+      });
     } else {
-      els.forEach(el => el.classList.add('in'));
+      document.querySelectorAll('#scrubText .word').forEach(w => {
+        w.style.color = w.classList.contains('accent-word') ? '#00E5FF' : '#ffffff';
+      });
+    }
+
+    // 4. Chapter 03: Pinned 4 Pillars Interactive 3D Stage (Fully Reversible In-Out)
+    if (!prefersReducedMotion && window.innerWidth > 980) {
+      const pCards = [
+        document.getElementById('pCard1'),
+        document.getElementById('pCard2'),
+        document.getElementById('pCard3'),
+        document.getElementById('pCard4')
+      ];
+
+      const pInfos = [
+        document.getElementById('pInfo1'),
+        document.getElementById('pInfo2'),
+        document.getElementById('pInfo3'),
+        document.getElementById('pInfo4')
+      ];
+
+      // Set initial state for 3D Cards
+      gsap.set(pCards[0], { zIndex: 4, transformOrigin: 'center center', autoAlpha: 1, rotateX: 0, rotateY: 0, yPercent: 0, scale: 1 });
+      gsap.set(pCards[1], { zIndex: 3, transformOrigin: 'center center', autoAlpha: 0.35, rotateX: -6, rotateY: 8, yPercent: 14, scale: 0.94 });
+      gsap.set(pCards[2], { zIndex: 2, transformOrigin: 'center center', autoAlpha: 0.18, rotateX: -12, rotateY: 14, yPercent: 26, scale: 0.88 });
+      gsap.set(pCards[3], { zIndex: 1, transformOrigin: 'center center', autoAlpha: 0.08, rotateX: -18, rotateY: 20, yPercent: 38, scale: 0.82 });
+
+      // Set initial state for Left Info Blocks
+      gsap.set(pInfos[0], { autoAlpha: 1, y: 0 });
+      gsap.set(pInfos[1], { autoAlpha: 0, y: 45 });
+      gsap.set(pInfos[2], { autoAlpha: 0, y: 45 });
+      gsap.set(pInfos[3], { autoAlpha: 0, y: 45 });
+
+      const pillarTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#pillars',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.8
+        }
+      });
+
+      // ── Step 1 -> Step 2 ──
+      pillarTL
+        // Left info 1 slides OUT up, info 2 slides IN from down
+        .to(pInfos[0], { autoAlpha: 0, y: -45, ease: 'power2.inOut', duration: 1 }, 0.5)
+        .to(pInfos[1], { autoAlpha: 1, y: 0, ease: 'power2.inOut', duration: 1 }, 0.6)
+        // Right card 1 exits UP, card 2 enters center focus
+        .to(pCards[0], { autoAlpha: 0, yPercent: -45, rotateX: 18, scale: 1.08, ease: 'power2.inOut', duration: 1.1 }, 0.5)
+        .to(pCards[1], { autoAlpha: 1, rotateX: 0, rotateY: 0, yPercent: 0, scale: 1, ease: 'power2.inOut', duration: 1.1 }, 0.5)
+        .to(pCards[2], { autoAlpha: 0.35, rotateX: -6, rotateY: 8, yPercent: 14, scale: 0.94, ease: 'power2.inOut', duration: 1.1 }, 0.5)
+        .to(pCards[3], { autoAlpha: 0.18, rotateX: -12, rotateY: 14, yPercent: 26, scale: 0.88, ease: 'power2.inOut', duration: 1.1 }, 0.5);
+
+      // ── Step 2 -> Step 3 ──
+      pillarTL
+        // Left info 2 slides OUT up, info 3 slides IN from down
+        .to(pInfos[1], { autoAlpha: 0, y: -45, ease: 'power2.inOut', duration: 1 }, 2.0)
+        .to(pInfos[2], { autoAlpha: 1, y: 0, ease: 'power2.inOut', duration: 1 }, 2.1)
+        // Right card 2 exits UP, card 3 enters center focus
+        .to(pCards[1], { autoAlpha: 0, yPercent: -45, rotateX: 18, scale: 1.08, ease: 'power2.inOut', duration: 1.1 }, 2.0)
+        .to(pCards[2], { autoAlpha: 1, rotateX: 0, rotateY: 0, yPercent: 0, scale: 1, ease: 'power2.inOut', duration: 1.1 }, 2.0)
+        .to(pCards[3], { autoAlpha: 0.35, rotateX: -6, rotateY: 8, yPercent: 14, scale: 0.94, ease: 'power2.inOut', duration: 1.1 }, 2.0);
+
+      // ── Step 3 -> Step 4 ──
+      pillarTL
+        // Left info 3 slides OUT up, info 4 slides IN from down
+        .to(pInfos[2], { autoAlpha: 0, y: -45, ease: 'power2.inOut', duration: 1 }, 3.5)
+        .to(pInfos[3], { autoAlpha: 1, y: 0, ease: 'power2.inOut', duration: 1 }, 3.6)
+        // Right card 3 exits UP, card 4 enters center focus
+        .to(pCards[2], { autoAlpha: 0, yPercent: -45, rotateX: 18, scale: 1.08, ease: 'power2.inOut', duration: 1.1 }, 3.5)
+        .to(pCards[3], { autoAlpha: 1, rotateX: 0, rotateY: 0, yPercent: 0, scale: 1, ease: 'power2.inOut', duration: 1.1 }, 3.5);
+    }
+
+    // 5. Live Count-up for Stats Telemetry
+    const statElements = document.querySelectorAll('.stat-tele-num');
+    statElements.forEach(el => {
+      const targetVal = parseInt(el.getAttribute('data-val'), 10) || 0;
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        onEnter: () => {
+          gsap.fromTo(el, 
+            { innerText: 0 }, 
+            { 
+              innerText: targetVal, 
+              duration: 1.8, 
+              ease: 'power2.out',
+              snap: { innerText: 1 } 
+            }
+          );
+        },
+        once: true
+      });
+    });
+
+    // 6. Creator 3D Holographic Card Mouse Tilt
+    const ticketFrame = document.getElementById('creatorTicket');
+    if (ticketFrame && !prefersReducedMotion) {
+      ticketFrame.addEventListener('mousemove', (e) => {
+        const rect = ticketFrame.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateY = (x / (rect.width / 2)) * 12;
+        const rotateX = -(y / (rect.height / 2)) * 12;
+        ticketFrame.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      });
+
+      ticketFrame.addEventListener('mouseleave', () => {
+        ticketFrame.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+      });
     }
   </script>
-<script src="../js/cursor-glow.js"></script>
-<script src="../js/ai-chat.js"></script>
+
+  <script src="../js/cursor-glow.js"></script>
+  <script src="../js/ai-chat.js"></script>
 </body>
 </html>

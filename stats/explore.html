@@ -94,6 +94,83 @@
   .kpi.accent .k-num{color:var(--red)}
   .kpi .k-sub{margin-top:7px;font-size:12.5px;color:var(--ink-soft)}
 
+  /* ---------- BENTO GRID (ZENTO STYLE) & 21ST.DEV ICONS ---------- */
+  .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(160px,auto);gap:18px;margin:10px 0 24px}
+  .bento-card{background:var(--paper-2);border:1px solid var(--rule);border-radius:20px;padding:22px 24px;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+  .bento-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:var(--shadow),var(--glow-cyan)}
+  
+  /* 21st.dev style icon containers & badges */
+  .bento-ico{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--green-soft);border:1px solid rgba(0,229,255,.2);color:var(--green);flex-shrink:0}
+  .bento-ico svg.mdico{width:18px;height:18px}
+  .bento-ico.text-orange{background:rgba(255,92,26,.12);border-color:rgba(255,92,26,.28);color:var(--red)}
+  .bento-ico-emoji{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--glass-bg-2);border:1px solid var(--rule);font-size:18px}
+  .bento-ico-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--green-soft);border:1px solid rgba(0,229,255,.28);color:var(--green);margin-right:8px;vertical-align:middle}
+
+  .bento-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .bento-title-group{display:flex;align-items:flex-start;gap:12px}
+  .bento-title{margin:0;font-family:"Noto Serif Thai",serif;font-weight:700;font-size:18px;color:var(--ink);line-height:1.3}
+  .bento-sub{margin:4px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.45}
+  .bento-tag{font-family:"Archivo",sans-serif;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);background:var(--green-soft);border-radius:20px;padding:3px 10px;white-space:nowrap}
+  .bento-tag-sm{font-size:11px;font-weight:700;color:var(--ink-soft);background:var(--glass-bg-2);border-radius:10px;padding:2px 8px}
+  .bento-badge-warn{font-size:11px;font-weight:800;color:var(--red);border:1px solid var(--red);background:rgba(255,92,26,.1);border-radius:20px;padding:2px 8px}
+  .bento-pill-live{font-size:11px;font-weight:800;color:var(--green);border:1px solid var(--green);background:var(--green-soft);border-radius:20px;padding:2px 8px}
+
+  .bento-kpi-label{font-size:13px;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:6px}
+  .bento-kpi-num{font-family:"Archivo",sans-serif;font-weight:800;font-size:32px;line-height:1.1;color:var(--ink);letter-spacing:-.02em}
+  .bento-kpi-num.text-cyan{color:var(--green)}
+  .bento-kpi-num.text-orange{color:var(--red)}
+  .bento-kpi-unit{font-size:15px;font-weight:700;color:var(--ink-2);margin-left:4px}
+  .bento-kpi-desc{margin:6px 0 0;font-size:12.5px;color:var(--ink-soft)}
+
+  /* Bento Grid placement */
+  .bento-chart-hero{grid-column:span 2;grid-row:span 2;min-height:380px}
+  .bento-kpi-tall{grid-column:span 1;grid-row:span 2;background:linear-gradient(180deg,var(--paper-3) 0%,var(--paper-2) 100%);border-color:var(--rule-strong)}
+  .bento-kpi-square{grid-column:span 1}
+  .bento-kpi-dual{grid-column:span 2;display:flex;flex-direction:row;align-items:stretch;gap:20px}
+  .dual-col{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+  .bento-dual-divider{width:1px;background:var(--rule)}
+  .bento-card-full{grid-column:span 3}
+  .bento-plot{width:100%;margin-top:10px}
+  .bento-src{margin-top:14px;font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--rule);padding-top:8px}
+  .bento-src a{color:var(--green);font-weight:600}
+
+  .bento-indicator-box{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft);padding:8px 12px;background:var(--glass-bg-2);border-radius:10px;border:1px solid var(--rule);margin-top:12px}
+  .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse-glow 2s infinite}
+  @keyframes pulse-glow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+
+  /* Responsive Optimization (Tablet & Mobile) */
+  @media (max-width:1100px){
+    .bento-grid{grid-template-columns:repeat(2,1fr);gap:14px}
+    .bento-chart-hero{grid-column:span 2}
+    .bento-kpi-tall{grid-column:span 2;grid-row:auto}
+    .bento-kpi-square{grid-column:span 1}
+    .bento-kpi-dual{grid-column:span 1;flex-direction:row}
+    .bento-card-full{grid-column:span 2}
+  }
+
+  @media (max-width:720px){
+    .bento-grid{grid-template-columns:1fr;gap:12px;margin:8px 0 20px}
+    .bento-card{padding:18px 18px 20px;border-radius:16px}
+    .bento-chart-hero,.bento-kpi-tall,.bento-kpi-square,.bento-kpi-dual,.bento-card-full{grid-column:span 1;grid-row:auto}
+    .bento-chart-hero{min-height:290px}
+    .bento-title{font-size:16.5px}
+    .bento-kpi-num{font-size:28px}
+    .bento-card-header{flex-wrap:wrap;gap:8px}
+    .bento-kpi-dual{flex-direction:column;gap:14px}
+    .bento-dual-divider{height:1px;width:100%;background:var(--rule)}
+  }
+
+  @media (max-width:480px){
+    .bento-card{padding:15px 15px 18px;border-radius:14px}
+    .bento-ico{width:32px;height:32px;border-radius:8px}
+    .bento-ico svg.mdico{width:16px;height:16px}
+    .bento-ico-badge{width:32px;height:32px;border-radius:8px}
+    .bento-title{font-size:15.5px}
+    .bento-kpi-num{font-size:25px}
+    .bento-kpi-unit{font-size:13.5px}
+    .bento-sub{font-size:12px}
+  }
+
   /* ---------- CHART CARDS & BENTO GRID ---------- */
   .grid2{display:grid;grid-template-columns:1.42fr 1fr;gap:22px}
   .grid2.equal{grid-template-columns:1fr 1fr}
@@ -1700,42 +1777,105 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
-    <!-- ============ ศูนย์ข้อมูลโลก · % การละลายน้ำแข็งโลก (สด OWID/NSIDC) ============ -->
+    <!-- ============ ศูนย์ข้อมูลโลก · % การละลายน้ำแข็งโลก (Bento Grid สไตล์ Zento) ============ -->
     <section class="tabpane" id="pane-ice" role="tabpanel">
-      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-snowflake"></use></svg> % การละลายน้ำแข็งโลก</h2></div>
-      <div class="kpis">
-        <div class="kpi accent">
-          <div class="k-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> น้ำแข็งอาร์กติกต่ำสุด</div>
-          <div class="k-num"><span id="kIceMin">—</span><span class="u">ล้าน กม.²</span></div>
-          <div class="k-sub">จุดต่ำสุดประจำปี (ก.ย.) ล่าสุด ปี <span id="kIceYear">—</span></div>
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><span class="bento-ico-badge"><svg class="mdico"><use href="#i-snowflake"></use></svg></span> % การละลายน้ำแข็งโลก</h2></div>
+      
+      <div class="bento-grid">
+        <!-- [กล่อง 1] กราฟหลัก (Large Chart Bento Box) -->
+        <div class="bento-card bento-chart-hero">
+          <div class="bento-card-header">
+            <div class="bento-title-group">
+              <span class="bento-ico"><svg class="mdico"><use href="#i-snowflake"></use></svg></span>
+              <div>
+                <h3 class="bento-title">น้ำแข็งทะเลอาร์กติก (ต่ำสุด/สูงสุดรายปี)</h3>
+                <p class="bento-sub">ขอบเขตน้ำแข็งทะเลอาร์กติกรายปี — จุดต่ำสุดปลายฤดูร้อน (ก.ย.) ลดลงชัดเจนกว่าจุดสูงสุด (มี.ค.)</p>
+              </div>
+            </div>
+            <span class="bento-tag">1979–ปัจจุบัน · สด</span>
+          </div>
+          <div class="plot bento-plot" id="arcticChart"><div class="state-msg">กำลังโหลดข้อมูลน้ำแข็ง…</div></div>
+          <div class="bento-src">
+            ที่มา: NSIDC Sea Ice Index v3 · เรียบเรียงโดย <a href="https://ourworldindata.org/grapher/arctic-sea-ice" target="_blank" rel="noopener">Our World in Data ↗</a> · ดึงสด · สืบค้นเมื่อ 1 ก.ค. 2569
+          </div>
         </div>
-        <div class="kpi accent">
-          <div class="k-top"><svg class="mdico"><use href="#i-trending-down"></use></svg> ลดลงจากปี 1979</div>
-          <div class="k-num"><span id="kIceDrop">—</span><span class="u">%</span></div>
-          <div class="k-sub">เทียบจุดต่ำสุดปีแรกของสถิติดาวเทียม</div>
+
+        <!-- [กล่อง 2] KPI เด่นสุด (Tall Hero KPI Card) -->
+        <div class="bento-card bento-kpi-tall">
+          <div class="bento-card-header">
+            <span class="bento-ico"><svg class="mdico"><use href="#i-snowflake"></use></svg></span>
+            <span class="bento-pill-live">Real-time</span>
+          </div>
+          <div class="bento-kpi-body">
+            <span class="bento-kpi-label">น้ำแข็งอาร์กติกต่ำสุด</span>
+            <div class="bento-kpi-num text-cyan"><span id="kIceMin">—</span> <span class="bento-kpi-unit">ล้าน กม.²</span></div>
+            <p class="bento-kpi-desc">จุดต่ำสุดประจำปี (ก.ย.) ล่าสุด ปี <span id="kIceYear">—</span></p>
+          </div>
+          <div class="bento-indicator-box">
+            <span class="pulse-dot"></span>
+            <span>ดาวเทียม NASA/NSIDC</span>
+          </div>
         </div>
-        <div class="kpi">
-          <div class="k-top">🇬🇱 กรีนแลนด์สูญเสียน้ำแข็ง</div>
-          <div class="k-num">~270<span class="u">Gt/ปี</span></div>
-          <div class="k-sub">เฉลี่ยต่อปี (2002–2023 · ดาวเทียม GRACE)</div>
+
+        <!-- [กล่อง 3] KPI เปอร์เซ็นต์ลดลง (Square KPI Card) -->
+        <div class="bento-card bento-kpi-square">
+          <div class="bento-card-header">
+            <span class="bento-ico text-orange"><svg class="mdico"><use href="#i-trending-down"></use></svg></span>
+            <span class="bento-badge-warn">วิกฤตสะสม</span>
+          </div>
+          <div class="bento-kpi-body">
+            <span class="bento-kpi-label">ลดลงจากปี 1979</span>
+            <div class="bento-kpi-num text-orange"><span id="kIceDrop">—</span><span class="bento-kpi-unit">%</span></div>
+            <p class="bento-kpi-desc">เทียบจุดต่ำสุดปีแรกของสถิติดาวเทียม</p>
+          </div>
         </div>
-        <div class="kpi">
-          <div class="k-top">🇦🇶 แอนตาร์กติกาสูญเสีย</div>
-          <div class="k-num">~150<span class="u">Gt/ปี</span></div>
-          <div class="k-sub">เฉลี่ยต่อปี (2002–2023 · ดาวเทียม GRACE)</div>
+
+        <!-- [กล่อง 4] ข้อมูลเปรียบเทียบ 2 ขั้วโลก (Dual Metric Card) -->
+        <div class="bento-card bento-kpi-dual">
+          <div class="dual-col">
+            <div class="bento-card-header">
+              <span class="bento-ico-emoji">🇬🇱</span>
+              <span class="bento-tag-sm">กรีนแลนด์</span>
+            </div>
+            <div>
+              <span class="bento-kpi-label">สูญเสียน้ำแข็ง</span>
+              <div class="bento-kpi-num">~270 <span class="bento-kpi-unit">Gt/ปี</span></div>
+            </div>
+            <p class="bento-kpi-desc">เฉลี่ยต่อปี (2002–2023 · GRACE)</p>
+          </div>
+
+          <div class="bento-dual-divider"></div>
+
+          <div class="dual-col">
+            <div class="bento-card-header">
+              <span class="bento-ico-emoji">🇦🇶</span>
+              <span class="bento-tag-sm">แอนตาร์กติกา</span>
+            </div>
+            <div>
+              <span class="bento-kpi-label">สูญเสียน้ำแข็ง</span>
+              <div class="bento-kpi-num">~150 <span class="bento-kpi-unit">Gt/ปี</span></div>
+            </div>
+            <p class="bento-kpi-desc">เฉลี่ยต่อปี (2002–2023 · GRACE)</p>
+          </div>
         </div>
-      </div>
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-snowflake"></use></svg> น้ำแข็งทะเลอาร์กติก (ต่ำสุด/สูงสุดรายปี)</h2><span class="tag">1979–ปัจจุบัน · สด</span></div>
-        <p class="sub">ขอบเขตน้ำแข็งทะเลอาร์กติกรายปี — จุดต่ำสุดปลายฤดูร้อน (ก.ย.) ลดลงชัดเจนกว่าจุดสูงสุดปลายฤดูหนาว (มี.ค.)</p>
-        <div class="plot" id="arcticChart"><div class="state-msg">กำลังโหลดข้อมูลน้ำแข็ง…</div></div>
-        <div class="src">ที่มา: NSIDC Sea Ice Index v3 · เรียบเรียงโดย <a href="https://ourworldindata.org/grapher/arctic-sea-ice" target="_blank" rel="noopener">Our World in Data ↗</a> · ดึงสด · สืบค้นเมื่อ 1 ก.ค. 2569</div>
-      </div>
-      <div class="card full">
-        <div class="card-head"><h2><svg class="mdico"><use href="#i-snowflake"></use></svg> การสูญเสียมวลแผ่นน้ำแข็ง</h2><span class="tag">เฉลี่ยต่อปี</span></div>
-        <p class="sub">มวลน้ำแข็งที่หายไปเฉลี่ยต่อปี (กิกะตัน) จากดาวเทียม GRACE / GRACE-FO — เป็นตัวขับเคลื่อนหลักของระดับน้ำทะเลที่สูงขึ้น</p>
-        <div class="plot" id="iceMassChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
-        <div class="src">ที่มา: NASA — <a href="https://climate.nasa.gov/vital-signs/ice-sheets/" target="_blank" rel="noopener">Ice Sheets Vital Signs ↗</a> (GRACE/GRACE-FO)</div>
+
+        <!-- [กล่อง 5] กราฟการสูญเสียมวลแผ่นน้ำแข็ง (Wide Secondary Chart) -->
+        <div class="bento-card bento-card-full">
+          <div class="bento-card-header">
+            <div class="bento-title-group">
+              <span class="bento-ico"><svg class="mdico"><use href="#i-snowflake"></use></svg></span>
+              <div>
+                <h3 class="bento-title">การสูญเสียมวลแผ่นน้ำแข็ง</h3>
+                <p class="bento-sub">มวลน้ำแข็งที่หายไปเฉลี่ยต่อปี (กิกะตัน) จากดาวเทียม GRACE / GRACE-FO — เป็นตัวขับเคลื่อนหลักของระดับน้ำทะเลที่สูงขึ้น</p>
+              </div>
+            </div>
+            <span class="bento-tag">เฉลี่ยต่อปี</span>
+          </div>
+          <div class="plot bento-plot" id="iceMassChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="bento-src">
+            ที่มา: NASA — <a href="https://climate.nasa.gov/vital-signs/ice-sheets/" target="_blank" rel="noopener">Ice Sheets Vital Signs ↗</a> (GRACE/GRACE-FO)
+          </div>
+        </div>
       </div>
     </section>
 
