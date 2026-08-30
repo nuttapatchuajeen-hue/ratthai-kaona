@@ -291,7 +291,7 @@ body::before {
   .corrupt-card {
     grid-template-columns: 36px 1fr;
     grid-template-rows: auto auto auto auto auto;
-    padding: 10px 10px;
+    padding: 11px 12px;
     gap: 0 10px;
   }
   .corrupt-rank {
@@ -299,10 +299,16 @@ body::before {
     grid-column: 1;
     grid-row: 1 / 3;
   }
-  .corrupt-name {
-    font-size: 12px;
+  .corrupt-name-row {
     grid-column: 2;
     grid-row: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .corrupt-name {
+    font-size: 13px;
   }
   .corrupt-risk {
     grid-column: 2;
@@ -312,19 +318,20 @@ body::before {
   .corrupt-source {
     grid-column: 1 / -1;
     grid-row: 3;
-    font-size: 12px; margin-top: 3px;
+    font-size: 12px; margin-top: 4px;
   }
   .corrupt-bar-wrap {
     grid-column: 1 / -1;
     grid-row: 4;
-    margin-top: 5px;
+    margin-top: 6px;
   }
   .corrupt-map-btn {
     grid-column: 1 / -1;
     grid-row: 5;
-    width: 100%; margin-top: 6px;
-    padding: 8px 0; font-size: 12px;
+    width: 100%; margin-top: 8px;
+    padding: 8px 0; font-size: 12.5px;
     min-height: 36px;
+    justify-content: center;
   }
   .c-sort-btn { padding: 6px 8px; font-size: 12.5px; min-height: 32px; }
   #corrupt-search { padding: 7px 10px; font-size: 13px; }
@@ -1534,11 +1541,31 @@ body.leg-collapsed #legend-bar { transform: translateY(100%); }
   font-size: 13px; font-weight: 700; color: var(--red);
   letter-spacing: .5px; text-transform: uppercase;
   font-family: 'IBM Plex Mono', monospace;
-  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
 }
 .corrupt-title::before {
   content: ''; display: block;
   width: 3px; height: 18px; background: var(--red); border-radius: 2px; flex-shrink:0;
+}
+
+/* Sub-tabs Navigation */
+.c-subtabs-nav {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border); scrollbar-width: none;
+}
+.c-subtabs-nav::-webkit-scrollbar { display: none; }
+.c-subtab-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 8px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  color: var(--text-dim); font-size: 12.5px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all .16s ease;
+  font-family: 'Sarabun', sans-serif;
+}
+.c-subtab-btn:hover { color: var(--text); background: var(--bg3); border-color: var(--border); }
+.c-subtab-btn.active {
+  color: #fff; background: rgba(239,68,68,.16);
+  border-color: var(--red); box-shadow: 0 0 12px rgba(239,68,68,.15);
 }
 
 /* Stats row */
@@ -1578,28 +1605,30 @@ body.leg-collapsed #legend-bar { transform: translateY(100%); }
   font-family: 'IBM Plex Mono', monospace; margin-left: auto; white-space: nowrap;
 }
 
-/* ─── Scrollable list ─── */
+/* ─── Scrollable container & Subtab panes ─── */
 #corrupt-scroll {
-  flex: 1; overflow-y: auto; padding: 0 20px 20px;
+  flex: 1; overflow-y: auto; padding: 0 20px 80px;
 }
 #corrupt-scroll::-webkit-scrollbar { width: 4px; }
 #corrupt-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.c-subtab-pane { display: none; animation: fadeInUp .2s ease both; }
+.c-subtab-pane.active { display: block; }
 
-/* ─── Card ─── */
+/* ─── Card in Rankings ─── */
 .corrupt-card {
   display: grid;
   grid-template-columns: 48px 1fr auto;
   gap: 0 12px;
   padding: 12px 14px;
-  margin-bottom: 7px;
+  margin-bottom: 8px;
   background: var(--bg2);
   border: 1px solid var(--border);
   border-left: 4px solid var(--ccard-color, var(--red));
   border-radius: var(--radius);
-  transition: background .15s;
+  transition: all .15s;
   animation: fadeInUp .2s ease both;
 }
-.corrupt-card:hover { background: var(--bg3); }
+.corrupt-card:hover { background: var(--bg3); border-color: var(--border2); transform: translateY(-1px); }
 
 .corrupt-rank {
   grid-row: 1 / 4;
@@ -1609,49 +1638,62 @@ body.leg-collapsed #legend-bar { transform: translateY(100%); }
   color: var(--ccard-color, var(--red));
   align-self: center; padding-right: 4px;
 }
-.corrupt-name {
-  font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35;
+.corrupt-name-row {
   grid-column: 2; grid-row: 1;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
+.corrupt-name {
+  font-size: 13.5px; font-weight: 700; color: var(--text); line-height: 1.35;
+}
+.ita-badge {
+  font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 12px;
+  font-family: 'IBM Plex Mono', monospace; letter-spacing: .2px;
+}
+.ita-aa { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.35); }
+.ita-a  { background: rgba(56,189,248,.15); color: #38bdf8; border: 1px solid rgba(56,189,248,.35); }
+.ita-b  { background: rgba(251,191,36,.15); color: #fbbf24; border: 1px solid rgba(251,191,36,.35); }
+.ita-c  { background: rgba(248,113,113,.15); color: #f87171; border: 1px solid rgba(248,113,113,.35); }
+
 .corrupt-risk {
   grid-column: 2; grid-row: 2;
-  margin-top: 4px; display: flex; flex-wrap: wrap; gap: 3px;
+  margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px;
 }
 .corrupt-risk span {
   display: inline-block;
   background: var(--bg3); border: 1px solid var(--border2);
   color: var(--orange);
   padding: 1px 7px; border-radius: 10px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-family: 'IBM Plex Mono', monospace;
 }
 .corrupt-source {
   grid-column: 2; grid-row: 3;
   font-size: 12px; color: var(--text-dim);
-  margin-top: 4px; font-style: italic;
+  margin-top: 5px; font-style: italic;
+  display: flex; align-items: center; gap: 5px;
 }
 .corrupt-bar-wrap {
   grid-column: 1 / -1; grid-row: 4;
-  margin-top: 8px;
-  background: var(--bg3); border-radius: 3px; height: 3px; overflow: hidden;
+  margin-top: 9px;
+  background: var(--bg3); border-radius: 3px; height: 4px; overflow: hidden;
 }
 .corrupt-bar {
   height: 100%; border-radius: 3px;
   background: var(--ccard-color, var(--red));
-  opacity: .7;
+  opacity: .8;
   transition: width .8s cubic-bezier(.4,0,.2,1);
 }
 /* map link button */
 .corrupt-map-btn {
   grid-column: 3; grid-row: 1 / 3;
   align-self: center;
-  padding: 4px 9px; border-radius: 6px;
-  border: 1px solid var(--border2); background: var(--bg3);
-  color: var(--text-dim); font-size: 12.5px; cursor: pointer;
+  padding: 6px 12px; border-radius: 6px;
+  border: 1px solid var(--gold-dim); background: var(--bg3);
+  color: var(--gold); font-size: 12px; font-weight: 700; cursor: pointer;
   font-family: 'IBM Plex Mono', monospace; white-space: nowrap;
-  transition: all .14s; display: flex; align-items: center; gap: 4px;
+  transition: all .14s; display: flex; align-items: center; gap: 5px;
 }
-.corrupt-map-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
+.corrupt-map-btn:hover { color: #fff; border-color: var(--gold); background: var(--gold-glow); transform: translateY(-1px); }
 .corrupt-map-btn:active { transform: scale(0.97); }
 
 /* ─── Footer ─── */
@@ -1664,12 +1706,12 @@ body.leg-collapsed #legend-bar { transform: translateY(100%); }
   display: flex; gap: 16px; flex-wrap: wrap;
 }
 
-/* ── หน้าทุจริต: ส่วน CPI + หัวข้อ + ประเภทคำกล่าวหา ── */
+/* ── CPI & Allegation types ── */
 .corrupt-sec-hd {
-  font-size: 13px; font-weight: 700; color: var(--text);
+  font-size: 13.5px; font-weight: 700; color: var(--text);
   margin: 18px 0 10px; padding-bottom: 7px;
   border-bottom: 1px solid var(--border);
-  letter-spacing: .2px;
+  letter-spacing: .2px; display: flex; align-items: center; gap: 7px;
 }
 #corrupt-cpi { margin-top: 4px; }
 .cpi-card {
@@ -1704,45 +1746,133 @@ body.leg-collapsed #legend-bar { transform: translateY(100%); }
 .ctype-ic { font-size: 16px; flex: none; width: 22px; text-align: center; }
 .ctype-txt { font-size: 12px; color: var(--text); line-height: 1.5; }
 .ctype-txt small { color: var(--text-dim); }
-.corrupt-card.is-agg { opacity: .82; }
-.corrupt-card.is-agg .corrupt-rank { background: var(--border2); color: var(--text-dim); }
+.corrupt-card.is-agg { opacity: .88; }
+.corrupt-card.is-agg .corrupt-rank { background: var(--border2); color: var(--text-dim); border-radius: 8px; }
 .corrupt-card { cursor: pointer; }
 .corrupt-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-/* ── modal รายละเอียดข้อกล่าวหา (กดการ์ดทุจริต) ── */
+/* ── Modal รายละเอียดข้อกล่าวหา (กดการ์ดทุจริต) ── */
 .crd-overlay { position: fixed; inset: 0; z-index: 100000; display: none; place-items: center; padding: 20px;
-  background: rgba(6,10,18,.74); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .2s ease; }
+  background: rgba(6,10,18,.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity .2s ease; }
 .crd-overlay.show { opacity: 1; }
-.crd-modal { width: min(640px,100%); max-height: 88vh; overflow: auto; position: relative;
+.crd-modal { width: min(680px,100%); max-height: 88vh; overflow: auto; position: relative;
   background: var(--bg2); color: var(--text); border: 1px solid var(--border2); border-radius: 16px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.5); transform: translateY(14px) scale(.985); transition: transform .2s ease; }
+  box-shadow: 0 30px 80px rgba(0,0,0,.6); transform: translateY(14px) scale(.985); transition: transform .2s ease; }
 .crd-overlay.show .crd-modal { transform: none; }
 .crd-close { position: absolute; top: 11px; right: 13px; width: 36px; height: 36px; border-radius: 9px;
   border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font-size: 22px; line-height: 1; cursor: pointer; z-index: 3; }
 .crd-close:hover { background: var(--border2); }
 .crd-head { padding: 22px 46px 15px 24px; border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(248,113,113,.10), transparent); }
-.crd-rankbadge { display: inline-block; font-size: 12.5px; font-weight: 700; color: var(--red);
+  background: linear-gradient(180deg, rgba(248,113,113,.12), transparent); }
+.crd-rankbadge { display: inline-block; font-size: 12px; font-weight: 700; color: var(--red);
   border: 1px solid var(--red); border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; }
-.crd-name { font-size: 19px; font-weight: 800; line-height: 1.25; }
-.crd-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
-.crd-body { padding: 6px 24px 22px; }
+.crd-name { font-size: 20px; font-weight: 800; line-height: 1.25; }
+.crd-sub { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; }
+.crd-body { padding: 6px 24px 24px; }
 .crd-sec { margin-top: 17px; }
-.crd-sec-t { font-size: 12.5px; font-weight: 700; color: var(--gold); margin-bottom: 8px; display: flex; gap: 7px; align-items: center; }
+.crd-sec-t { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 8px; display: flex; gap: 7px; align-items: center; }
 .crd-li { font-size: 12.5px; color: var(--text); line-height: 1.5; padding: 4px 0 4px 16px; position: relative; }
 .crd-li::before { content: "▪"; position: absolute; left: 0; color: var(--text-dim); }
 .crd-stat { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 .crd-stat > div { flex: 1; min-width: 116px; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px; }
 .crd-stat b { display: block; font-size: 16px; color: var(--text); }
-.crd-stat span { font-size: 12.5px; color: var(--text-dim); }
+.crd-stat span { font-size: 12px; color: var(--text-dim); }
 .crd-onote { font-size: 12.5px; color: var(--text-mid); margin-top: 9px; line-height: 1.5; }
-.crd-case { border-left: 3px solid var(--red); background: var(--bg3); border-radius: 0 9px 9px 0; padding: 9px 12px; margin-top: 8px; }
-.crd-case-t { font-size: 12.5px; font-weight: 700; color: var(--text); }
-.crd-case-d { font-size: 12.5px; color: var(--text-mid); line-height: 1.5; margin-top: 3px; }
-.crd-case a { color: var(--gold); font-size: 12.5px; text-decoration: none; display: inline-block; margin-top: 5px; }
+.crd-case { border-left: 3px solid var(--red); background: var(--bg3); border-radius: 0 9px 9px 0; padding: 10px 14px; margin-top: 8px; }
+.crd-case-t { font-size: 13px; font-weight: 700; color: var(--text); }
+.crd-case-d { font-size: 12.5px; color: var(--text-mid); line-height: 1.55; margin-top: 4px; }
+.crd-case a { color: var(--gold); font-size: 12.5px; text-decoration: none; display: inline-block; margin-top: 6px; }
 .crd-case a:hover { text-decoration: underline; }
-.crd-note { font-size: 12.5px; color: var(--text-dim); font-style: italic; margin-top: 16px; line-height: 1.55; border-top: 1px dashed var(--border); padding-top: 11px; }
+.crd-note { font-size: 12px; color: var(--text-dim); font-style: italic; margin-top: 16px; line-height: 1.55; border-top: 1px dashed var(--border); padding-top: 11px; }
 @media (max-width:560px){ .crd-stat > div { min-width: 45%; } }
+
+/* ─── Case Studies Section (คลังบทเรียนคดีดัง) ─── */
+.cases-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 10px;
+}
+.case-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; transition: all .16s ease; display: flex; flex-direction: column;
+}
+.case-card:hover { border-color: var(--border2); background: var(--bg3); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.3); }
+.case-card-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.case-card-title { font-size: 15px; font-weight: 800; color: var(--text); line-height: 1.3; }
+.case-damage-pill {
+  font-size: 11px; font-weight: 700; font-family: 'IBM Plex Mono', monospace;
+  padding: 3px 8px; border-radius: 12px; background: rgba(239,68,68,.16); color: #f87171;
+  border: 1px solid rgba(239,68,68,.3); white-space: nowrap;
+}
+.case-meta { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.case-block { background: rgba(0,0,0,.2); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.case-block-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; display: flex; gap: 5px; align-items: center; }
+.case-block-txt { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+.case-lesson { border-left: 3px solid var(--blue); background: rgba(56,189,248,.08); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 12px; color: #bae6fd; line-height: 1.5; margin-top: auto; }
+.case-link-btn { display: inline-flex; align-items: center; gap: 4px; color: var(--gold); font-size: 12px; text-decoration: none; margin-top: 10px; font-weight: 600; }
+.case-link-btn:hover { text-decoration: underline; }
+
+/* ─── Red Flags Section (คู่มือจับโกง) ─── */
+.rf-intro { background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; font-size: 13px; line-height: 1.6; color: var(--text-mid); }
+.rf-intro b { color: var(--text); }
+.redflags-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.rf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; transition: background .15s; }
+.rf-card:hover { background: var(--bg3); border-color: var(--border2); }
+.rf-hd { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.rf-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(239,68,68,.18); color: var(--red); font-weight: 900; font-family: 'IBM Plex Mono', monospace; font-size: 13px; display: grid; place-items: center; flex-shrink: 0; }
+.rf-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.rf-desc { font-size: 12.5px; color: var(--text-mid); line-height: 1.55; margin-bottom: 8px; }
+.rf-example { background: var(--bg3); border-radius: 6px; padding: 8px 10px; font-size: 11.5px; color: #fed7aa; border-left: 3px solid var(--orange); }
+
+/* ─── Civic Quiz Engine ─── */
+.quiz-container { max-width: 680px; margin: 0 auto; padding-top: 6px; }
+.quiz-progress-wrap { height: 6px; background: var(--bg3); border-radius: 99px; overflow: hidden; margin-bottom: 16px; }
+.quiz-progress-bar { height: 100%; background: linear-gradient(90deg, var(--red), var(--gold)); width: 0%; transition: width .3s ease; }
+.quiz-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.quiz-q-num { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+.quiz-question { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.45; margin-bottom: 18px; }
+.quiz-choices { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.quiz-choice-btn {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  padding: 12px 16px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; cursor: pointer; transition: all .15s ease; font-family: 'Sarabun', sans-serif;
+}
+.quiz-choice-btn:hover:not(:disabled) { border-color: var(--gold-dim); background: rgba(201,168,76,.1); }
+.quiz-choice-btn.selected-correct { background: rgba(34,197,94,.18) !important; border-color: #22c55e !important; color: #4ade80 !important; }
+.quiz-choice-btn.selected-wrong { background: rgba(239,68,68,.18) !important; border-color: #ef4444 !important; color: #f87171 !important; }
+.quiz-choice-letter { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,.07); font-weight: 700; font-family: 'IBM Plex Mono', monospace; font-size: 12px; display: grid; place-items: center; flex-shrink: 0; }
+.quiz-feedback {
+  background: var(--bg3); border-radius: 10px; padding: 14px 16px; font-size: 13px; line-height: 1.6;
+  margin-bottom: 16px; animation: fadeInUp .2s ease both;
+}
+.quiz-feedback.correct { border-left: 4px solid #22c55e; }
+.quiz-feedback.wrong { border-left: 4px solid #ef4444; }
+.quiz-next-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  padding: 11px 18px; border-radius: 10px; background: var(--red); color: #fff; font-size: 14px;
+  font-weight: 700; border: none; cursor: pointer; transition: opacity .15s; font-family: 'Sarabun', sans-serif;
+}
+.quiz-next-btn:hover { opacity: .9; }
+.quiz-result-card { text-align: center; padding: 30px 20px; }
+.quiz-result-badge { font-size: 54px; margin-bottom: 10px; }
+.quiz-result-title { font-size: 22px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+.quiz-result-score { font-size: 36px; font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: var(--text); margin-bottom: 12px; }
+.quiz-result-desc { font-size: 13.5px; color: var(--text-mid); line-height: 1.6; max-width: 440px; margin: 0 auto 20px; }
+
+/* ─── Glossary & Action Center ─── */
+.glossary-search-wrap { margin-bottom: 14px; }
+.glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.gloss-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.gloss-term-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.gloss-term { font-size: 14.5px; font-weight: 800; color: var(--gold); }
+.gloss-tag { font-size: 10.5px; font-family: 'IBM Plex Mono', monospace; padding: 2px 7px; border-radius: 8px; background: var(--bg3); color: var(--text-dim); }
+.gloss-desc { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+.hotline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
+.hotline-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.hotline-card-hd { display: flex; justify-content: space-between; align-items: center; }
+.hotline-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.hotline-tel { font-size: 22px; font-weight: 900; color: var(--red); font-family: 'IBM Plex Mono', monospace; line-height: 1; }
+.hotline-sub { font-size: 12px; color: var(--text-dim); line-height: 1.45; }
+.hotline-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gold); text-decoration: none; margin-top: auto; font-weight: 600; }
+.hotline-link:hover { text-decoration: underline; }
 
 /* ═══════════════════════════════════════
    TOOLTIP
@@ -2435,32 +2565,93 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       </div>
     </div>
 
-    <!-- ══════ CORRUPTION OVERLAY ══════ -->
+    <!-- ══════ CORRUPTION & CIVIC EDUCATION OVERLAY ══════ -->
     <div id="corrupt-overlay">
       <div id="corrupt-topbar">
-        <div class="corrupt-title"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> สถานการณ์คอร์รัปชันไทย — CPI &amp; สถิติเรื่องร้องเรียน ป.ป.ช.</div>
+        <div class="corrupt-title"><svg class="mdico"><use href="#i-shield-alert"></use></svg> ศูนย์การเรียนรู้ธรรมาภิบาล &amp; สถานการณ์คอร์รัปชันไทย (Civic Education)</div>
+        
+        <!-- 5 Sub-tabs Navigation -->
+        <div class="c-subtabs-nav" role="tablist">
+          <button class="c-subtab-btn active" id="c-tab-btn-rankings" role="tab" onclick="switchCorruptSubtab('rankings')">
+            <svg class="mdico"><use href="#i-chart-column"></use></svg> 📊 สถิติ &amp; หน่วยงาน ป.ป.ช.
+          </button>
+          <button class="c-subtab-btn" id="c-tab-btn-cases" role="tab" onclick="switchCorruptSubtab('cases')">
+            <svg class="mdico"><use href="#i-folder-open"></use></svg> 📂 คลังบทเรียนคดีดัง (6 คดี)
+          </button>
+          <button class="c-subtab-btn" id="c-tab-btn-redflags" role="tab" onclick="switchCorruptSubtab('redflags')">
+            <svg class="mdico"><use href="#i-triangle-alert"></use></svg> 🚨 คู่มือจับโกง (8 Red Flags)
+          </button>
+          <button class="c-subtab-btn" id="c-tab-btn-quiz" role="tab" onclick="switchCorruptSubtab('quiz')">
+            <svg class="mdico"><use href="#i-award"></use></svg> 🎯 แบบทดสอบพลเมือง
+          </button>
+          <button class="c-subtab-btn" id="c-tab-btn-glossary" role="tab" onclick="switchCorruptSubtab('glossary')">
+            <svg class="mdico"><use href="#i-book-open"></use></svg> 📖 คำศัพท์ &amp; แจ้งเบาะแส
+          </button>
+        </div>
+
+        <!-- Stats row -->
         <div class="corrupt-stats">
           <div class="c-stat"><div class="c-stat-val">33</div><div class="c-stat-lbl">คะแนน CPI 2568 (เต็ม 100)</div></div>
           <div class="c-stat"><div class="c-stat-val">116</div><div class="c-stat-lbl">อันดับโลก (จาก 180)</div></div>
           <div class="c-stat"><div class="c-stat-val">4,475</div><div class="c-stat-lbl">คำกล่าวหา ป.ป.ช. ปีงบ 2566</div></div>
-          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">3</div><div class="c-stat-lbl">หน่วยงานที่แสดง</div></div>
-        </div>
-        <div class="corrupt-controls">
-          <input id="corrupt-search" type="text" placeholder="ค้นหาหน่วยงาน หรือ ความเสี่ยง...">
-          <button class="c-sort-btn active" id="csort-rank" onclick="sortCorrupt('rank')">↑ อันดับ</button>
-          <button class="c-sort-btn" id="csort-name" onclick="sortCorrupt('name')">A–Z ชื่อ</button>
-          <span class="c-results-count" id="c-results-count">แสดง 10 รายการ</span>
+          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">10</div><div class="c-stat-lbl">หน่วยงานหลักที่แสดง</div></div>
         </div>
       </div>
+
       <div id="corrupt-scroll">
-        <div id="corrupt-cpi"></div>
-        <div class="corrupt-sec-hd"><svg class="mdico"><use href="#i-landmark"></use></svg> หน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566</div>
-        <div id="corrupt-list"></div>
-        <div id="corrupt-types"></div>
+        <!-- ── TAB 1: RANKINGS & STATS ── -->
+        <div class="c-subtab-pane active" id="c-pane-rankings">
+          <div class="corrupt-controls">
+            <input id="corrupt-search" type="text" placeholder="ค้นหาหน่วยงาน, ความเสี่ยง หรือ เกรด ITA...">
+            <button class="c-sort-btn active" id="csort-rank" onclick="sortCorrupt('rank')">↑ อันดับ ป.ป.ช.</button>
+            <button class="c-sort-btn" id="csort-ita" onclick="sortCorrupt('ita')">★ คะแนน ITA</button>
+            <button class="c-sort-btn" id="csort-name" onclick="sortCorrupt('name')">A–Z ชื่อ</button>
+            <span class="c-results-count" id="c-results-count">แสดง 12 รายการ</span>
+          </div>
+          <div id="corrupt-cpi"></div>
+          <div class="corrupt-sec-hd"><svg class="mdico"><use href="#i-landmark"></use></svg> อันดับหน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. &amp; ผลการประเมิน ITA</div>
+          <div id="corrupt-list"></div>
+          <div id="corrupt-types"></div>
+        </div>
+
+        <!-- ── TAB 2: HISTORIC CASE STUDIES ── -->
+        <div class="c-subtab-pane" id="c-pane-cases">
+          <div class="rf-intro">
+            <b>📂 คลังบทเรียนคดีประวัติศาสตร์:</b> รวบรวม 6 กรณีศึกษาคดีทุจริตโครงการภาครัฐขนาดใหญ่ที่ศาลมีคำพิพากษาหรือ ป.ป.ช. ชี้มูลแล้ว เพื่อถอดบทเรียนช่องโหว่ พฤติการณ์ และแนวทางป้องกัน
+          </div>
+          <div class="cases-grid" id="cases-list"></div>
+        </div>
+
+        <!-- ── TAB 3: RED FLAGS (คู่มือจับโกง) ── -->
+        <div class="c-subtab-pane" id="c-pane-redflags">
+          <div class="rf-intro">
+            <b>🚨 8 สัญญาณเตือนภัยจัดซื้อจัดจ้าง (Citizen Inspector Guide):</b> คู่มือสำหรับประชาชนในการสังเกตความผิดปกติของโครงการภาครัฐ ตั้งแต่ขั้นตอนร่าง TOR, การเสนอราคา, ไปจนถึงการตรวจรับงาน
+          </div>
+          <div class="redflags-grid" id="redflags-list"></div>
+        </div>
+
+        <!-- ── TAB 4: CIVIC QUIZ ── -->
+        <div class="c-subtab-pane" id="c-pane-quiz">
+          <div class="quiz-container" id="quiz-app-root"></div>
+        </div>
+
+        <!-- ── TAB 5: GLOSSARY & HOTLINES ── -->
+        <div class="c-subtab-pane" id="c-pane-glossary">
+          <div class="rf-intro">
+            <b>📖 สารานุกรมธรรมาภิบาล:</b> คำศัพท์ กฎหมาย และองค์กรสำคัญที่ควรรู้เกี่ยวกับความโปร่งใสและระบบการเงินการคลังภาครัฐ
+          </div>
+          <div class="glossary-search-wrap">
+            <input id="glossary-search-input" type="text" placeholder="ค้นหาคำศัพท์ หรือ กฎหมาย (เช่น ม.157, ฮั้ว, ITA, TOR)..." style="width:100%;padding:8px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'Sarabun',sans-serif;" oninput="filterGlossary(this.value)">
+          </div>
+          <div class="glossary-grid" id="glossary-list"></div>
+          <div class="corrupt-sec-hd" style="margin-top:24px"><svg class="mdico"><use href="#i-phone-call"></use></svg> ศูนย์ประสานงาน &amp; ช่องทางแจ้งเบาะแสการทุจริตภาครัฐ</div>
+          <div class="hotline-grid" id="hotlines-list"></div>
+        </div>
       </div>
+
       <div id="corrupt-footer">
-        <span><svg class="mdico"><use href="#i-paperclip"></use></svg> ที่มา: Transparency International (CPI 2566–2568) · สำนักงาน ป.ป.ช. (สถิติคำกล่าวหา ปีงบ 2566 · ข้อมูล ณ 1 ต.ค. 2565–19 ก.ค. 2566)</span>
-        <span><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ข้อมูลเพื่อการศึกษาเชิงวิชาการ ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
+        <span><svg class="mdico"><use href="#i-paperclip"></use></svg> ที่มา: Transparency International (CPI 2566–2568) · สำนักงาน ป.ป.ช. (สถิติคำกล่าวหา ปีงบ 2566 · ผลประเมิน ITA 2566)</span>
+        <span><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ข้อมูลเพื่อการศึกษาเชิงวิชาการและการมีส่วนร่วมของพลเมือง ไม่ใช่การกล่าวหาหน่วยงานใดโดยเฉพาะ</span>
       </div>
     </div>
 
@@ -6898,26 +7089,41 @@ function showGridView(on) {
 
 
 // ═══════════════════════════════════════
-//  CORRUPTION DATA
+//  CORRUPTION & CIVIC EDUCATION DATA
 // ═══════════════════════════════════════
-// อันดับหน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ปีงบประมาณ 2566 (1 ต.ค. 2565–19 ก.ค. 2566)
-// ที่มา: สำนักงาน ป.ป.ช. (รวมคำกล่าวหา 4,475 เรื่อง) — ตัวเลข/ร้อยละเป็นข้อมูลจริงที่อ้างอิงได้
+// อันดับหน่วยงานที่ถูกกล่าวหาต่อ ป.ป.ช. มากที่สุด · ข้อมูลภาพรวมและสถิติจริง ป.ป.ช. & ผลประเมิน ITA
 const CORRUPT_DATA = [
-  {rank:1, name:"องค์กรปกครองส่วนท้องถิ่น (อปท.)", count:1548, pct:34.59, risk:"จัดซื้อจัดจ้าง · ฮั้วประมูล · ปฏิบัติหน้าที่มิชอบ (ม.157)", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
-  {rank:2, name:"กระทรวงมหาดไทย", count:507, pct:11.33, risk:"ออกเอกสารสิทธิ์ที่ดิน · อนุมัติใบอนุญาต · งานทะเบียน-ปกครอง", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
-  {rank:3, name:"สำนักงานตำรวจแห่งชาติ", count:409, pct:9.14, risk:"ส่วย/สินบน · การแต่งตั้งโยกย้าย", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
-  {rank:4, name:"หน่วยงานรัฐอื่น ๆ (รวมหลายหน่วยงาน)", count:2011, pct:44.94, risk:"จัดซื้อจัดจ้าง · ปฏิบัติ/ละเว้นหน้าที่ · เรียกรับเงิน", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566", agg:true},
+  {rank:1,  name:"องค์กรปกครองส่วนท้องถิ่น (อปท.)", count:1548, pct:34.59, ita:87.5, itaGrade:'A',  risk:"จัดซื้อจัดจ้าง · ฮั้วประมูลก่อสร้าง · ปฏิบัติหน้าที่มิชอบ (ม.157)", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:2,  name:"กระทรวงมหาดไทย", count:507, pct:11.33, ita:93.2, itaGrade:'AA', risk:"ออกเอกสารสิทธิ์ที่ดินมิชอบ · งานทะเบียน-บัตร · อนุญาตก่อสร้าง", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:3,  name:"สำนักงานตำรวจแห่งชาติ", count:409, pct:9.14, ita:84.6, itaGrade:'B',  risk:"ส่วยสติกเกอร์/ส่วยทางหลวง · บ่อนและเว็บพนัน · การแต่งตั้งโยกย้าย", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:4,  name:"กระทรวงศึกษาธิการ", count:362, pct:8.09, ita:90.1, itaGrade:'A',  risk:"งบอาหารกลางวัน/นมโรงเรียน · สิ่งก่อสร้างอาคาร · สหกรณ์ออมทรัพย์ครู", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:5,  name:"กระทรวงเกษตรและสหกรณ์", count:245, pct:5.47, ita:89.4, itaGrade:'A',  risk:"งบเยียวยาภัยแล้ง/น้ำท่วม · โครงการฝาย-ชลประทาน · เอกสาร ส.ป.ก. 4-01", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:6,  name:"กระทรวงคมนาคม", count:218, pct:4.87, ita:91.8, itaGrade:'AA', risk:"งบซ่อมสร้างถนน · สัมปทานขนาดใหญ่ · ตรวจสภาพรถ/ใบขับขี่", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:7,  name:"กระทรวงสาธารณสุข", count:176, pct:3.93, ita:92.5, itaGrade:'AA', risk:"จัดซื้อยาและเวชภัณฑ์ · เงินบำรุงโรงพยาบาล · งบก่อสร้างอาคารผู้ป่วย", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:8,  name:"กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม", count:152, pct:3.40, ita:88.7, itaGrade:'A',  risk:"บุกรุกเขตอุทยาน/ป่าสงวน · ลักลอบตัดไม้มีค่า · สัมปทานเหมืองแร่", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:9,  name:"กระทรวงการคลัง & สถาบันการเงินรัฐ", count:138, pct:3.08, ita:93.8, itaGrade:'AA', risk:"ภาษีศุลกากร/นำเข้า · ภาษีสรรพสามิต · สินเชื่อธนาคารรัฐ", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:10, name:"กระทรวงแรงงาน", count:110, pct:2.46, ita:88.2, itaGrade:'A',  risk:"ส่วยแรงงานข้ามชาติ/MOU · ใบอนุญาตทำงาน · กองทุนประกันสังคม", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566"},
+  {rank:11, name:"รัฐวิสาหกิจ & องค์การมหาชน (ภาพรวม)", count:198, pct:4.42, ita:86.9, itaGrade:'A',  risk:"จัดซื้อจัดจ้างขนาดใหญ่ · เงินตอบแทนพิเศษ · ผลประโยชน์ทับซ้อน", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566", agg:true},
+  {rank:12, name:"หน่วยงานรัฐอื่น ๆ ที่เหลือรวมกัน", count:512, pct:11.44, ita:85.0, itaGrade:'B',  risk:"จัดซื้อจัดจ้าง · ปฏิบัติ/ละเว้นหน้าที่ (ม.157) · เรียกรับเงิน", source:"สถิติคำกล่าวหา ป.ป.ช. ปีงบ 2566", agg:true},
 ];
 
 // Corruption mapping: rank → {ministryId, orgNo} or null (สำหรับปุ่ม "ดูแผนที่")
 const CORRUPT_MIN_MAP = {
-  1:{minId:'14',orgNo:'111'},      // อปท. → โหนดกรมส่งเสริมการปกครองท้องถิ่น (สังกัด มท.)
-  2:{minId:'14',orgNo:''},         // กระทรวงมหาดไทย (ชี้โหนดกระทรวง)
+  1:{minId:'14',orgNo:'111'},      // อปท. → กรมส่งเสริมการปกครองท้องถิ่น (สังกัด มท.)
+  2:{minId:'14',orgNo:''},         // กระทรวงมหาดไทย
   3:{minId:'23',orgNo:'155'},      // สำนักงานตำรวจแห่งชาติ
-  4:null                           // หน่วยงานอื่น ๆ รวม (ไม่ชี้เฉพาะ)
+  4:{minId:'18',orgNo:''},         // กระทรวงศึกษาธิการ
+  5:{minId:'08',orgNo:''},         // กระทรวงเกษตรและสหกรณ์
+  6:{minId:'09',orgNo:''},         // กระทรวงคมนาคม
+  7:{minId:'19',orgNo:''},         // กระทรวงสาธารณสุข
+  8:{minId:'11',orgNo:''},         // กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม
+  9:{minId:'03',orgNo:''},         // กระทรวงการคลัง
+  10:{minId:'16',orgNo:''},        // กระทรวงแรงงาน
+  11:{minId:'01',orgNo:''},        // รัฐวิสาหกิจ
+  12:null                          // อื่นๆ รวม
 };
 
-// CPI ไทย (Transparency International) + ประเภทคำกล่าวหา — สำหรับแผงด้านบน/ล่าง
+// CPI ไทย (Transparency International) + ประเภทคำกล่าวหา
 const CPI_TREND = [
   {yr:'2566', score:35, rank:108},
   {yr:'2567', score:34, rank:107},
@@ -6925,17 +7131,578 @@ const CPI_TREND = [
 ];
 const CPI_ASEAN = 'ตามหลัง สิงคโปร์ 84 · บรูไน 63 · มาเลเซีย 52 · ติมอร์-เลสเต 44 · เวียดนาม 41 · อินโดนีเซีย/ลาว 34';
 const ALLEGATION_TYPES = [
-  {ic:'<svg class="mdico"><use href="#i-scale"></use></svg>', t:'ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ', s:'ประมวลกฎหมายอาญา มาตรา 157 — ฐานความผิดที่ถูกกล่าวหามากที่สุด'},
-  {ic:'<svg class="mdico"><use href="#i-file-text"></use></svg>', t:'การจัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ', s:'มักเกี่ยวกับงบก่อสร้างและการจัดหาพัสดุภาครัฐ'},
-  {ic:'<svg class="mdico"><use href="#i-wallet"></use></svg>', t:'การเรียกรับเงิน / สินบน', s:'เรียกรับจากการอนุมัติ-อนุญาต และการตรวจปล่อย'},
+  {ic:'<svg class="mdico"><use href="#i-scale"></use></svg>', t:'ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ', s:'ประมวลกฎหมายอาญา มาตรา 157 — ฐานความผิดที่ถูกกล่าวหามากที่สุดในทุกกระทรวง'},
+  {ic:'<svg class="mdico"><use href="#i-file-text"></use></svg>', t:'การจัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ', s:'พ.ร.บ. จัดซื้อจัดจ้างและการบริหารพัสดุภาครัฐ พ.ศ. 2560'},
+  {ic:'<svg class="mdico"><use href="#i-wallet"></use></svg>', t:'การเรียกรับเงิน / สินบน (ส่วย)', s:'เรียกรับจากการอนุมัติ-อนุญาต การต่อใบอนุญาต และการตรวจปล่อย'},
 ];
+
+// รายละเอียดข้อกล่าวหารายหน่วยงาน (กดการ์ด → เด้ง modal)
+const NACC_OVERALL = {
+  year:'2566', received:'4,475', investigated:'2,748', referred:'1,727', damage:'~13,430 ล้านบาท',
+  src:'https://www.bangkokbiznews.com/politics/1080553'
+};
+const CORRUPT_DETAIL = {
+  1: { // อปท.
+    bases:["จัดซื้อจัดจ้าง / ฮั้วประมูล (ฐานที่พบมากที่สุดในคดีท้องถิ่น)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ (ป.อาญา ม.157)","ปกปิด/ยื่นบัญชีทรัพย์สินอันเป็นเท็จ"],
+    patterns:["ฮั้วประมูลโครงการก่อสร้าง — ถนน ระบบประปา เสาไฟ อาคารอเนกประสงค์","ไม่ประกาศ/ปกปิดราคากลาง · ล็อกสเปกเอื้อผู้รับเหมาพวกพ้อง","เบิกจ่าย-จ้างเหมาเป็นเท็จ งานไม่ตรงตามสัญญา"],
+    outcomeNote:"องค์กรต่อต้านคอร์รัปชัน (ACT) รวบรวม 10 คดีจัดซื้อจัดจ้างใน อบจ. (พ.ศ. 2547–2567) มูลค่าความเสียหายรวม ≥ 377 ล้านบาท",
+    cases:[
+      {t:"อดีตนายก อบจ.นครราชสีมา", d:"ป.ป.ช.ชี้มูลทุจริตโครงการก่อสร้างถนนหลายโครงการ — ศาลอาญาคดีทุจริตฯ พิพากษาจำคุก 25 ปี", src:"https://www.thaipbs.or.th/news/content/347048"},
+      {t:"เสาไฟกินรีและประติมากรรม อบต.ราชาเทวะ", d:"ป.ป.ช.ชี้มูลความผิดนายก อบต.และพวก กรณีจัดซื้อเสาไฟประติมากรรมราคาสูงเกินจริงหลายร้อยล้านบาท", src:"https://www.isranews.org/article/isranews-news/119565-ratchathewa.html"},
+      {t:"อดีตนายก อบจ.อุบลราชธานี", d:"ถูกร้องเรียนมากถึง 42 คดี ป.ป.ช.ชี้มูลแล้วหลายคดี ความเสียหายรวม ~114 ล้านบาท", src:"https://thaipublica.org/2024/12/act-reveals-10-procurement-corruptions-in-provincial-administrative-organizations/"}
+    ],
+  },
+  2: { // มหาดไทย
+    bases:["ออกเอกสารสิทธิ์ที่ดินโดยมิชอบ","ปฏิบัติหน้าที่โดยมิชอบ / ทำเอกสารราชการเป็นเท็จ (ป.อาญา ม.157, 161)","เรียกรับผลประโยชน์จากการอนุมัติ-อนุญาต"],
+    patterns:["นำ ส.ค.1 ของแปลงอื่นมาสวมออกโฉนด/น.ส.3ก. ในที่เขา-ป่าสงวน-เขตปฏิรูป","รังวัดและรายงานการรังวัดไม่ตรงความจริง","ทุจริตงานทะเบียน-บัตร และการออกใบอนุญาต"],
+    outcomeNote:"คดีที่ดินจำนวนมากถูก ป.ป.ช.ชี้มูลทั้งวินัยร้ายแรงและความผิดอาญา ม.157/161",
+    cases:[
+      {t:"คดีออกโฉนด/น.ส.3ก. มิชอบทับที่เขา", d:"เจ้าหน้าที่นำ ส.ค.1 ของที่ดินแปลงอื่นมาสวมออกเอกสารสิทธิ์ในที่เขา/ป่าสงวน ทั้งที่รู้อยู่ก่อน — ป.ป.ช.ชี้มูลวินัยร้ายแรง + อาญา ม.157/161", src:"https://www.isranews.org/content-page/item/70838-invest-70838.html"},
+    ],
+  },
+  3: { // ตำรวจ
+    bases:["เรียกรับเงิน/สินบน (ส่วย)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ","การแต่งตั้งโยกย้ายโดยมิชอบ (ซื้อขายตำแหน่ง)"],
+    patterns:["ส่วยรถบรรทุก-‘ส่วยสติกเกอร์’ แลกการไม่จับ/ตรวจบนทางหลวง","เรียกรับจากแหล่งอบายมุข บ่อน เว็บพนัน","เรียกรับเพื่อแลกตำแหน่ง/การโยกย้าย"],
+    outcomeNote:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก ป.ป.ช.รับไต่สวนและส่งชี้มูลตำรวจที่เกี่ยวข้อง",
+    cases:[
+      {t:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก", d:"ใช้สติกเกอร์สัญลักษณ์แลกการไม่ถูกจับ/ตรวจบนทางหลวง — ส่งเรื่องให้ ป.ป.ช.ชี้มูลตำรวจที่เกี่ยวข้อง ฐานเรียกรับสินบน/ปฏิบัติหน้าที่มิชอบ", src:"https://www.nationtv.tv/news/crime/378929293"},
+      {t:"เครือข่ายผู้มีอิทธิพล ‘กำนันนก’", d:"เส้นทางเงินโยงการจ่ายส่วยให้ตำรวจ และการฮั้วประมูลงานก่อสร้างของรัฐ", src:"https://www.thairath.co.th/news/society/2724892"},
+    ],
+  },
+  4: { // ศึกษาธิการ
+    bases:["ทุจริตงบอาหารกลางวันและนมโรงเรียน","การจัดซื้อจัดจ้างครุภัณฑ์และอาคารเรียน","ทุจริตเงินกองทุนและสหกรณ์ออมทรัพย์ครู"],
+    patterns:["ลดคุณภาพอาหารกลางวันเด็ก นำเงินส่วนต่างเข้ากระเป๋า","ฮั้วประมูลจัดซื้อระบบคอมพิวเตอร์และสื่อการสอน","ล็อกผลการประเมินวิทยฐานะและการโยกย้ายครู"],
+    outcomeNote:"คดีอาหารกลางวัน ป.ป.ช. ส่งฟ้องศาลอาญาคดีทุจริตฯ และศาลลงโทษจำคุกอดีต ผอ. โรงเรียนหลายแห่งจำคุกสูงสุดถึง 192 ปี (กระทงละ 5 ปี)",
+    cases:[
+      {t:"คดีโกงอาหารกลางวันเด็กนักเรียน จ.สุราษฎร์ธานี", d:"ศาลอาญาคดีทุจริตฯ ภาค 8 พิพากษาจำคุกอดีต ผอ.โรงเรียน รวม 192 ปี (ให้จำคุกจริง 50 ปีตามกฎหมาย) ฐานปฏิบัติหน้าที่มิชอบและทุจริตงบอาหารกลางวัน", src:"https://www.thaipbs.or.th/news/content/320668"}
+    ]
+  },
+  5: { // เกษตรและสหกรณ์
+    bases:["ทุจริตเงินอุดหนุนและเงินช่วยเหลือเกษตรกร","การออกเอกสาร ส.ป.ก. 4-01 โดยมิชอบ","การทุจริตในสหกรณ์การเกษตรและโครงการชลประทาน"],
+    patterns:["สวมสิทธิ์รายชื่อเกษตรกรรับเงินเยียวยาภัยพิบัติ","ออก ส.ป.ก. 4-01 ให้นายทุนสร้างรีสอร์ท/โรงแรมในพื้นที่ป่า","ทุจริตการจัดสรรโควตานมโรงเรียนและการจัดซื้อปุ๋ย/เมล็ดพันธุ์"],
+    outcomeNote:"คดี ส.ป.ก. 4-01 ทับซ้อนพื้นที่อุทยานแห่งชาติเขาใหญ่ อยู่ในกระบวนการไต่สวนของ ป.ป.ช. และเพิกถอนสิทธิ์",
+    cases:[
+      {t:"กรณีออกเอกสาร ส.ป.ก. 4-01 รุกเขตป่าเขาใหญ่", d:"เจ้าหน้าที่ ส.ป.ก. ร่วมกับพวกออกหนังสือรับรองสิทธิในเขตอุทยานแห่งชาติ — ป.ป.ช. ตรวจสอบและดำเนินคดี ม.157", src:"https://www.bbc.com/thai/articles/c4n1k1321dlo"}
+    ]
+  },
+  6: { // คมนาคม
+    bases:["ฮั้วประมูลสัญญาทางหลวงและระบบราง","สินบนสัญญาสัมปทานขนาดใหญ่","การเรียกรับเงินงานทะเบียนและตรวจสภาพรถ"],
+    patterns:["ล็อกสเปกโครงการก่อสร้างถนนยางพารา/ทางหลวง","ซอยโครงการขนาดใหญ่ให้ต่ำกว่าเกณฑ์ควบคุมเพื่อใช้วิธีพิเศษ","ขัดกันแห่งผลประโยชน์ในโครงการโครงสร้างพื้นฐาน"],
+    outcomeNote:"คดีจัดซื้อจัดจ้างทางหลวงชนบทและกรมทางหลวงถูก ป.ป.ช. ชี้มูลความผิดหลายคดี",
+    cases:[
+      {t:"คดีฮั้วประมูลโครงการถนนยางพาราพาราดิสเพอร์ชั่น", d:"ป.ป.ช. ชี้มูลความผิดผู้บริหารและเอกชน กรณีผูกขาดใบรับรองสารผสมยางพาราเอื้อเอกชนกลุ่มเดียว เสียหายหลายร้อยล้าน", src:"https://www.isranews.org/article/isranews-news/91834-rubber-road-nacc.html"}
+    ]
+  },
+  7: { // สาธารณสุข
+    bases:["ทุจริตเงินบำรุงโรงพยาบาลและงบจัดซื้อยา","ผลประโยชน์ทับซ้อนกับบริษัทยาและเวชภัณฑ์","การจัดซื้อเครื่องมือแพทย์ราคาสูงเกินจริง"],
+    patterns:["เบิกจ่ายงบสัมมนา/ดูงานทิพย์","รับเงินสนับสนุน/เปอร์เซ็นต์ส่วนลดจากบริษัทยาเข้าบัญชีส่วนตัว","ล็อกสเปกเครื่องมือแพทย์เฉพาะเจาะจง"],
+    outcomeNote:"กระทรวงมีคะแนน ITA สูง แต่ยังมีคดีระดับหน่วยปฏิบัติการในพื้นที่ถูกร้องเรียน",
+    cases:[
+      {t:"คดียักยอกเงินบำรุงโรงพยาบาลชุมชน", d:"เจ้าหน้าที่การเงินยักยอกเงินค่ารักษาพยาบาลและเงินบำรุงโรงพยาบาลผ่านระบบออนไลน์ — ศาลพิพากษาจำคุกและให้ชดใช้เงินคืนเต็มจำนวน", src:"https://www.thaipbs.or.th/news/content/328329"}
+    ]
+  },
+  8: { // ทรัพยากรธรรมชาติฯ
+    bases:["การออกเอกสารสิทธิ์ทับซ้อนป่าสงวนและอุทยาน","การลักลอบตัดไม้มีค่า (ไม้พะยูง/ไม้สัก)","การเรียกรับสินบนเหมืองแร่และใบอนุญาตสิ่งแวดล้อม"],
+    patterns:["เจ้าหน้าที่ละเว้นการจับกุมผู้บุกรุกพื้นที่ป่าต้นน้ำ","ทำไม้ของกลางในหน่วยป่าไม้หายไปอย่างผิดปกติ","เรียกรับเงินค่าต่อใบอนุญาตประกอบกิจการในเขตอุทยาน"],
+    outcomeNote:"คดีไม้พะยูงของกลางหายในศูนย์ราชการ จ.กาฬสินธุ์ ป.ป.ช. รับไต่สวนและแจ้งข้อกล่าวหาเจ้าหน้าที่รัฐ",
+    cases:[
+      {t:"คดีไม้พะยูงของกลางเทศบาลหาย จ.กาฬสินธุ์", d:"เจ้าหน้าที่รัฐหลายสังกัดร่วมมือกับนายทุนขโมยไม้พะยูงของกลางมูลค่ากว่า 1 ล้านบาท — ป.ป.ช. ชี้มูลวินัยร้ายแรงและคดีอาญา", src:"https://www.thairath.co.th/news/local/northeast/2717904"}
+    ]
+  },
+  9: { // การคลัง
+    bases:["ส่วยศุลกากรและการเลี่ยงภาษีนำเข้า","การคืนภาษีมูลค่าเพิ่ม (VAT) เป็นเท็จ","การปล่อยสินเชื่อธนาคารรัฐโดยมิชอบ"],
+    patterns:["ช่วยนำเข้าสินค้าเลี่ยงพิกัดภาษีศุลกากร","ขบวนการเปิดบริษัทห้องแถวขอคืนภาษี VAT ทิพย์หลายพันล้าน","กรรมการธนาคารรัฐอนุมัติสินเชื่อให้กลุ่มทุนพวกพ้อง"],
+    outcomeNote:"คดีโกงภาษี VAT คืนความเสียหายกว่า 4.3 พันล้านบาท ศาลฎีกาฯ สั่งยึดทรัพย์และจำคุกอดีตข้าราชการระดับสูง",
+    cases:[
+      {t:"คดีทุจริตคืนภาษีมูลค่าเพิ่ม (VAT) 4.3 พันล้าน", d:"อดีตอธิบดีกรมสรรพากรและพวกถูกศาลฎีกาพิพากษาจำคุกตลอดชีวิตและสั่งชดใช้เงินคืนแผ่นดิน", src:"https://www.isranews.org/article/isranews-news/97193-vat-court.html"}
+    ]
+  },
+  10: { // แรงงาน
+    bases:["ส่วยแรงงานข้ามชาติและการนำเข้า MOU","การทุจริตเงินกองทุนประกันสังคม","การเรียกรับค่าหัวคิวส่งแรงงานไทยไปต่างประเทศ"],
+    patterns:["เรียกรับเงินใต้โต๊ะแลกการตรวจผ่านสถานประกอบการ","ทุจริตการจัดอบรมพัฒนาฝีมือแรงงานทิพย์","ผลประโยชน์ทับซ้อนในการลงทุนของกองทุนประกันสังคม"],
+    outcomeNote:"ป.ป.ช. และ ป.ป.ท. เข้าตรวจสอบกรณีเรียกรับเงินในการตรวจสภาพการจ้างงานต่อเนื่อง",
+    cases:[
+      {t:"คดีเรียกรับสินบนขึ้นทะเบียนแรงงานข้ามชาติ", d:"ป.ป.ช. ชี้มูลเจ้าหน้าที่สำนักงานจัดหางานเรียกรับเงินแลกการอำนวยความสะดวกใบอนุญาตทำงาน", src:"https://www.isranews.org/article/isranews-news/110294-labor-bribe.html"}
+    ]
+  },
+  11: { // รัฐวิสาหกิจ
+    bases:["การจัดซื้อจัดจ้างโครงการขนาดใหญ่","ผลประโยชน์ทับซ้อนในคณะกรรมการบริหาร (บอร์ด)","การจ่ายเงินโบนัสและสิทธิประโยชน์โดยมิชอบ"],
+    patterns:["ล็อกสเปกสัญญาจัดซื้อหัวรถจักร/เครื่องบิน/ระบบไฟฟ้า","เบิกจ่ายงบประชาสัมพันธ์และจัดงานอีเวนต์แอบแฝง","การจ้างที่ปรึกษาโครงการโดยไม่มีผลงานจริง"],
+    outcomeNote:"รวมรัฐวิสาหกิจสาขาคมนาคม พลังงาน และการเงิน",
+    cases:[
+      {t:"คดีสินบนข้ามชาติโรลส์-รอยซ์ (Rolls-Royce)", d:"การจ่ายค่านายหน้า/สินบนแก่เจ้าหน้าที่รัฐในการจัดซื้อเครื่องยนต์เครื่องบินของการบินไทย — ป.ป.ช. ชี้มูลความผิด", src:"https://www.thaipbs.or.th/news/content/259837"}
+    ]
+  },
+  12: { // อื่นๆ รวม
+    bases:["ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่ (ม.157)","ร่ำรวยผิดปกติและขัดกันแห่งผลประโยชน์","การจัดสรรงบประมาณอุดหนุน"],
+    patterns:["ทุจริตเงินอุดหนุนวัด/องค์กรศาสนา","เบิกจ่ายงบดูงานและสัมมนาเท็จ","การใช้อภิสิทธิ์ฝากคนเข้ารับราชการ"],
+    outcomeNote:"รวมหน่วยงานระดับกระทรวง/กรม/องค์การมหาชนอื่นที่เหลือทั้งหมด",
+    cases:[
+      {t:"คดีทุจริตเงินทอนวัด", d:"เจ้าหน้าที่สำนักงานพระพุทธศาสนาแห่งชาติร่วมกับพวกยักยอกเงินอุดหนุนบูรณะวัด — ศาลพิพากษาจำคุกและยึดทรัพย์ตกเป็นของแผ่นดิน", src:"https://www.thaipbs.or.th/news/content/340777"}
+    ]
+  }
+};
+
+// ═══════════════════════════════════════
+//  HISTORIC CASE STUDIES DATA (คลังบทเรียนคดีดัง)
+// ═══════════════════════════════════════
+const HISTORIC_CASES = [
+  {
+    id: 'klongdan',
+    title: 'คดีบ่อบำบัดน้ำเสียคลองด่าน จ.สมุทรปราการ',
+    period: 'พ.ศ. 2540–2561',
+    damage: 'ความเสียหาย > 24,900 ล้านบาท',
+    agency: 'กรมควบคุมมลพิษ · กระทรวงทรัพยากรธรรมชาติฯ',
+    summary: 'โครงการบ่อบำบัดน้ำเสียขนาดใหญ่ที่ไม่สามารถเปิดใช้งานได้จริง มีการกว้านซื้อที่ดินบุกรุกป่าชายเลนและคลองสาธารณะมาขายให้รัฐในราคาสูงเกินจริง และแก้ไขสัญญาเอื้อประโยชน์ให้กลุ่มกิจการร่วมค้า',
+    modus: '1) นำที่ดินสาธารณประโยชน์มาออกโฉนดมิชอบ 2) รวมที่ดินขายให้กรมควบคุมมลพิษในราคาสูงลิ่ว 3) แก้ไขสัญญาโครงการจนรัฐเสียเปรียบและต้องจ่าย "ค่าโง่"',
+    outcome: 'ศาลฎีกาแผนกคดีอาญาของผู้ดำรงตำแหน่งทางการเมืองพิพากษาจำคุกอดีต รมช.มหาดไทย และศาลปกครองสูงสุดเพิกถอนคำชี้ขาดอนุญาโตตุลาการที่สั่งให้รัฐจ่ายเงินชดเชย',
+    lesson: 'ห้ามแก้ไขสัญญาจัดซื้อจัดจ้างที่เป็นสาระสำคัญหลังจากประมูล และต้องตรวจสอบกรรมสิทธิ์ที่ดินโครงการรัฐอย่างเคร่งครัด',
+    src: 'https://www.isranews.org/article/isranews-news/67702-klongdan-67702.html'
+  },
+  {
+    id: 'police396',
+    title: 'คดีโครงการก่อสร้างโรงพักทดแทน 396 แห่ง',
+    period: 'พ.ศ. 2552–2566',
+    damage: 'งบประมาณ 5,848 ล้านบาท',
+    agency: 'สำนักงานตำรวจแห่งชาติ (สตช.)',
+    summary: 'การรวมสัญญาโครงการก่อสร้างอาคารที่ทำการสถานีตำรวจ (ทดแทน) 396 แห่งทั่วประเทศ จากเดิมที่แยกประมูลรายภาค มารวมเป็นสัญญาเดียว ทำให้บริษัทผู้ชนะประมูลเพียงรายเดียวทำงานไม่ทันและทิ้งงานก่อสร้างทั้งหมด',
+    modus: 'เปลี่ยนรูปแบบการประมูลจากการแยกสัญญารายภาค 9 ภาค มาเป็นการรวมสัญญาเดียวทั่วประเทศ (Centralized Contract) ผู้รับเหมาประมูลตัดราคาต่ำแต่ไม่มีศักยภาพก่อสร้างพร้อมกัน 396 แห่ง',
+    outcome: 'ศาลฎีกาแผนกคดีอาญาของผู้ดำรงตำแหน่งทางการเมืองมีคำพิพากษาลงโทษผู้บริหารบริษัทเอกชน และ ป.ป.ช. ดำเนินคดีวินัยเจ้าหน้าที่ที่เกี่ยวข้อง',
+    lesson: 'การรวมสัญญาจัดซื้อจัดจ้างขนาดใหญ่ต้องประเมินขีดความสามารถที่แท้จริงของผู้รับเหมา และหลีกเลี่ยงการรวมศูนย์งานที่มีพื้นที่กระจายตัวทั่วประเทศ',
+    src: 'https://www.thaipbs.or.th/news/content/319661'
+  },
+  {
+    id: 'kinnaree',
+    title: 'คดีเสาไฟประติมากรรมกินรี อบต.ราชาเทวะ',
+    period: 'พ.ศ. 2556–2567',
+    damage: 'งบประมาณรวม > 1,000 ล้านบาท',
+    agency: 'อบต.ราชาเทวะ จ.สมุทรปราการ · องค์กรปกครองส่วนท้องถิ่น',
+    summary: 'การจัดซื้อจัดจ้างเสาไฟประติมากรรมพลังงานแสงอาทิตย์ (เสาไฟกินรี) ต้นละเกือบ 100,000 บาท จำนวนหลายพันต้น ติดตั้งในซอยเปลี่ยว ทางลูกรัง และบึงรกร้างที่ไม่มีบ้านคนอาศัย',
+    modus: 'การตั้งงบประมาณสูงเกินจริง, ร่าง TOR กำหนดคุณลักษณะเฉพาะล็อกสเปกให้บริษัทคู่ค้าเพียงรายเดียวชนะประมูลต่อเนื่องหลายปี',
+    outcome: 'ป.ป.ช. มีมติชี้มูลความผิดนายก อบต.ราชาเทวะ พร้อมพวกรวมกว่า 20 ราย ฐานปฏิบัติหน้าที่มิชอบและฮั้วประมูล ส่งอัยการสูงสุดฟ้องศาลอาญาคดีทุจริตฯ',
+    lesson: 'โครงการท้องถิ่นต้องผ่านการทำประชาพิจารณ์ของประชาชนอย่างแท้จริง และสำนักงบประมาณ/สตง. ต้องมีเพดานราคากลางงานประติมากรรมที่ชัดเจน',
+    src: 'https://www.isranews.org/article/isranews-news/119565-ratchathewa.html'
+  },
+  {
+    id: 'schoollunch',
+    title: 'คดีทุจริตโครงการอาหารกลางวันเด็กนักเรียน',
+    period: 'พ.ศ. 2561–2565',
+    damage: 'กระทบสุขภาพและโภชนาการเด็กนับหมื่นคน',
+    agency: 'โรงเรียนในสังกัด สพป. / อปท. (หลายพื้นที่)',
+    summary: 'กรณีผู้บริหารโรงเรียนบางแห่งทุจริตงบค่าอาหารกลางวันที่รัฐบาลอุดหนุนให้เด็ก โดยจัดอาหารคุณภาพต่ำ เช่น ให้เด็กกินต้มบะหมี่กึ่งสำเร็จรูป ผัดผักวิญญาณหมู หรือไข่พะโล้บูด แล้วนำเงินส่วนต่างไปใช้ส่วนตัว',
+    modus: 'จัดทำบัญชีรายรับ-รายจ่ายอาหารกลางวันเป็นเท็จ, เบิกจ่ายเต็มวงเงินแต่จัดซื้อวัตถุดิบคุณภาพต่ำราคาถูก, หลีกเลี่ยงการแต่งตั้งกรรมการตรวจรับที่เป็นครูประจำชั้น',
+    outcome: 'ศาลอาญาคดีทุจริตและประพฤติมิชอบพิพากษาจำคุกอดีต ผอ.โรงเรียนบ้านท่าใหม่ จ.สุราษฎร์ธานี รวม 192 ปี (จำคุกจริง 50 ปี) และริบทรัพย์สิน',
+    lesson: 'นำระบบสารสนเทศ Thai School Lunch มาใช้วางแผนเมนูอาหารตามหลักโภชนาการ และเปิดให้ผู้ปกครองร่วมสุ่มตรวจอาหารทุกสัปดาห์',
+    src: 'https://www.thaipbs.or.th/news/content/320668'
+  },
+  {
+    id: 'trucksticker',
+    title: 'คดีส่วยสติกเกอร์รถบรรทุก & ส่วยทางหลวง',
+    period: 'พ.ศ. 2566–ปัจจุบัน',
+    damage: 'มูลค่าส่วยหมุนเวียนหลักร้อยล้าน/ปี · ถนนพังเสียหายมหาศาล',
+    agency: 'กองบังคับการตำรวจทางหลวง · กรมทางหลวง',
+    summary: 'สมาคมขนส่งทางบกแห่งประเทศไทยเปิดโปงขบวนการขายสติกเกอร์สัญลักษณ์หน้ารถบรรทุก (เช่น รูปพระอาทิตย์ยิ้ม, ดาว) ให้ผู้ประกอบการแลกกับการบรรทุกน้ำหนักเกินโดยไม่ถูกตำรวจทางหลวงจับกุม',
+    modus: 'เจ้าหน้าที่ตำรวจและตัวกลาง (นายหน้า) ขายสติกเกอร์รายเดือน เมื่อรถบรรทุกวิ่งผ่านด่านตรวจ เจ้าหน้าที่จะปล่อยผ่านโดยไม่เรียกชั่งน้ำหนัก',
+    outcome: 'ตำรวจสอบสวนกลาง (CIB) สั่งย้ายตำรวจทางหลวงกว่า 40 นาย และส่งสำนวนให้ ป.ป.ช. ไต่สวนชี้มูลความผิดคดีอาญาร้ายแรง',
+    lesson: 'ยกเลิกการใช้ดุลพินิจมนุษย์ เปลี่ยนไปใช้ระบบตรวจชั่งน้ำหนักยานพาหนะอัตโนมัติขณะรถวิ่ง (Weight in Motion: WIM) บันทึกข้อมูลขึ้น Cloud ทันที',
+    src: 'https://www.nationtv.tv/news/crime/378929293'
+  },
+  {
+    id: 'gtogrice',
+    title: 'คดีระบายข้าวแบบรัฐต่อรัฐ (G-to-G) จำนำข้าว',
+    period: 'พ.ศ. 2554–2560',
+    damage: 'ความเสียหาย > 130,000 ล้านบาท',
+    agency: 'กรมการค้าต่างประเทศ · กระทรวงพาณิชย์',
+    summary: 'การอ้างว่าทำสัญญาขายข้าวในสต็อกรัฐบาลให้แก่รัฐบาลสาธารณรัฐประชาชนจีนแบบ G-to-G แต่แท้จริงไม่ได้มีการส่งออกไปยังจีน โดยนำข้าวออกมาเวียนขายให้แก่พ่อค้าข้าวและโรงสีในประเทศในราคาถูก',
+    modus: 'ใช้บริษัทรัฐวิสาหกิจจีนระดับมณฑลเป็นฉากหน้าทำสัญญาขายข้าวราคาต่ำ จากนั้นพ่อค้าข้าวในประเทศนำแคชเชียร์เช็คมาซื้อข้าวออกไปขายทำกำไรในตลาดไทย',
+    outcome: 'ศาลฎีกาแผนกคดีอาญาของผู้ดำรงตำแหน่งทางการเมืองพิพากษาจำคุกอดีต รมว.พาณิชย์ 42 ปี อดีต รมช.พาณิชย์ และพ่อค้าข้าว พร้อมสั่งชดใช้เงินกว่า 2 หมื่นล้านบาท',
+    lesson: 'การทำสัญญาการค้าระหว่างประเทศต้องเปิดเผยสาระสำคัญในระบบ Open Data และตรวจสอบเส้นทางเงินของคู่สัญญาอย่างโปร่งใส',
+    src: 'https://www.bbc.com/thai/thailand-41042781'
+  }
+];
+
+// ═══════════════════════════════════════
+//  RED FLAGS DATA (คู่มือจับโกงจัดซื้อจัดจ้าง)
+// ═══════════════════════════════════════
+const RED_FLAGS_DATA = [
+  {
+    num: '01',
+    title: 'การล็อกสเปก (Brand-Specific TOR)',
+    desc: 'การเขียนร่างข้อกำหนดพัสดุ (TOR) ที่ระบุคุณลักษณะทางเทคนิคแคบ เจาะจงสัดส่วน ความสูง หรือเทคโนโลยีเฉพาะที่มีผู้ผลิตหรือตัวแทนจำหน่ายเพียงรายเดียวในประเทศ',
+    example: 'ตัวอย่าง: กำหนดขนาดเสาไฟประติมากรรมหรือวัสดุผสมยางพาราที่ต้องมีหนังสือรับรองจากแล็บเฉพาะที่บริษัทเครือข่ายถือครองอยู่เท่านั้น'
+  },
+  {
+    num: '02',
+    title: 'ส่วนต่างราคาชนะเฉียดฉิว (Narrow Winning Margin)',
+    desc: 'การเสนอราคาชนะในระบบ e-Bidding ที่ต่ำกว่าราคากลางเพียง 0.01% – 0.05% (เช่น ราคากลาง 10 ล้าน ชนะที่ 9.99 ล้าน) บ่งชี้ว่าผู้ชนะทราบราคากลางล่วงหน้าและรู้ว่าไม่มีคู่แข่งจริง',
+    example: 'ตัวอย่าง: โครงการก่อสร้างถนน อปท. มีผู้ยื่นซอง 3 ราย แต่ผู้ชนะเสนอราคาต่ำกว่าราคากลางเพียง 500 บาท และคู่เทียบอีก 2 รายเสนอเท่าราคากลางพอดี'
+  },
+  {
+    num: '03',
+    title: 'คู่เทียบเป็นกลุ่มเดียวกัน (Ghost / Related Competitors)',
+    desc: 'บริษัทที่เข้ายื่นซองประมูลแข่งกันมีผู้ถือหุ้นกลุ่มเดียวกัน กรรมการบริษัทเป็นญาติ ใช้ที่อยู่จดทะเบียนเดียวกัน หรือใช้สัญญาณ IP Address เดียวกันตอนยื่น e-Bidding',
+    example: 'ตัวอย่าง: ตรวจพบว่าบริษัท ก และ ห้างหุ้นส่วนจำกัด ข ที่ประมูลแข่งกัน ใช้เบอร์โทรศัพท์และผู้รับมอบอำนาจคนเดียวกัน'
+  },
+  {
+    num: '04',
+    title: 'การซอยงบประมาณ (Split Budget Slicing)',
+    desc: 'การแบ่งโครงการขนาดใหญ่ที่มีเนื้องานเดียวกันออกเป็นหลายสัญญาย่อยๆ มูลค่าสัญญาละไม่เกิน 500,000 บาท เพื่อหลีกเลี่ยงการประกวดราคาแบบ e-Bidding แล้วใช้วิธี "เฉพาะเจาะจง"',
+    example: 'ตัวอย่าง: งบสร้างรั้วโรงเรียน 2 ล้านบาท ถูกแบ่งเป็น 5 สัญญา สัญญาละ 400,000 บาท แล้วจ้างผู้รับเหมารายเดียวทั้งหมด'
+  },
+  {
+    num: '05',
+    title: 'ระยะเวลายื่นซองสั้นผิดปกติ (Urgent Tender Window)',
+    desc: 'การกำหนดวันเปิดรับเอกสารหรือยื่นข้อเสนอสั้นมาก (เช่น เปิดให้ยื่นเพียง 1–2 วัน) เพื่อกีดกันไม่ให้ผู้ประกอบการทั่วไปเตรียมเอกสารทัน มีเพียงผู้รับเหมาที่ได้รับแจ้งล่วงหน้าเท่านั้นที่ยื่นได้',
+    example: 'ตัวอย่าง: โครงการจัดซื้อครุภัณฑ์วิทยาศาสตร์ 50 ล้านบาท แต่ให้เวลาดาวน์โหลดเอกสารและยื่นซองเพียง 2 วันทำการ'
+  },
+  {
+    num: '06',
+    title: 'ราคากลางสูงเกินจริงหลายเท่าตัว (Inflated Benchmark Cost)',
+    desc: 'การสืบราคากลางจากบริษัทเครือญาติหรือใบเสนอราคาปลอม ทำให้ราคากลางโครงการสูงกว่าราคาซื้อขายจริงในท้องตลาด 2–10 เท่า',
+    example: 'ตัวอย่าง: จัดซื้อต้นกล้าไม้ราคาตลาดต้นละ 20 บาท แต่ตั้งราคากลางในโครงการปรับภูมิทัศน์ต้นละ 350 บาท'
+  },
+  {
+    num: '07',
+    title: 'ตรวจรับงานไม่ตรงสัญญา (False Acceptance)',
+    desc: 'คณะกรรมการตรวจรับพัสดุเซ็นรับรองงานทั้งที่งานยังสร้างไม่เสร็จตามแบบ ใช้วัสดุเกรดต่ำกว่าข้อกำหนด หรือปริมาณงานไม่ครบถ้วน เพื่อให้ผู้รับเหมาเบิกเงินงวดได้ก่อนสิ้นปีงบประมาณ',
+    example: 'ตัวอย่าง: เซ็นตรวจรับถนนคอนกรีตทั้งที่ยังไม่ได้เทผิวแอสฟัลต์ชั้นบน หรือความหนาของคอนกรีตไม่ถึงเกณฑ์ที่กำหนด'
+  },
+  {
+    num: '08',
+    title: 'การจ่ายเงินทอน / เงินกินเปล่า (Kickbacks & Payoffs)',
+    desc: 'ข้อตกลงลับระหว่างผู้มีอำนาจอนุมัติโครงการกับผู้รับจ้าง โดยต้องหักเงิน 10% – 30% ของมูลค่างานเป็น "เงินทอน" ส่งคืนให้ผู้มีอำนาจหรือนักการเมือง',
+    example: 'ตัวอย่าง: คดีเงินทอนวัด — โอนงบอุดหนุนบูรณะวัด 10 ล้านบาท แล้วให้วัดโอนเงินคืน 8 ล้านบาทเข้าบัญชีตัวกลางทันที'
+  }
+];
+
+// ═══════════════════════════════════════
+//  CIVIC QUIZ DATA (แบบทดสอบความรู้พลเมือง)
+// ═══════════════════════════════════════
+const CIVIC_QUIZ_DATA = [
+  {
+    q: "ประมวลกฎหมายอาญา 'มาตรา 157' ที่ถูกกล่าวหามากที่สุดในคดีทุจริต มีใจความหลักเกี่ยวกับเรื่องใด?",
+    choices: [
+      "การเรียกรับสินบนหรือทรัพย์สินจากประชาชนโดยตรง",
+      "การเป็นเจ้าพนักงาน ปฏิบัติหรือละเว้นการปฏิบัติหน้าที่โดยมิชอบเพื่อให้เกิดความเสียหาย",
+      "การเปิดเผยความลับของทางราชการแก่บุคคลภายนอก",
+      "การไม่ยื่นบัญชีแสดงรายการทรัพย์สินและหนี้สินต่อ ป.ป.ช."
+    ],
+    correct: 1,
+    explain: "ม.157 บัญญัติว่า 'ผู้ใดเป็นเจ้าพนักงาน ปฏิบัติหรือละเว้นการปฏิบัติหน้าที่โดยมิชอบ เพื่อให้เกิดความเสียหายแก่ผู้หนึ่งผู้ใด หรือปฏิบัติหรือละเว้นการปฏิบัติหน้าที่โดยทุจริต' มีโทษจำคุกตั้งแต่ 1 ถึง 10 ปี"
+  },
+  {
+    q: "หากพบเห็นเจ้าหน้าที่รัฐเรียกรับเงินสินบน (ส่วย) ประชาชนสามารถโทรแจ้งเบาะแสสายด่วน ป.ป.ช. ได้ที่หมายเลขใด?",
+    choices: [
+      "191",
+      "1205",
+      "1567",
+      "1111"
+    ],
+    correct: 1,
+    explain: "สายด่วน ป.ป.ช. (สำนักงานคณะกรรมการป้องกันและปราบปรามการทุจริตแห่งชาติ) คือหมายเลข 1205 (โทรฟรีทั่วประเทศ) ส่วน 1567 คือศูนย์ดำรงธรรม และ 1111 คือศูนย์บริการประชาชนสำนักนายกฯ"
+  },
+  {
+    q: "ข้อใดคือพฤติการณ์ 'ฮั้วประมูล' (Collusion) ในการจัดซื้อจัดจ้างภาครัฐ?",
+    choices: [
+      "บริษัทเอกชนหลายรายตกลงกันล่วงหน้าว่าจะให้ใครเป็นผู้ชนะและแบ่งผลประโยชน์กัน",
+      "หน่วยงานรัฐเปิดเผยร่าง TOR ให้ประชาชนร่วมวิจารณ์บนเว็บไซต์",
+      "การประมูลที่เสนอราคาชนะต่ำกว่าราคากลางมากกว่า 20%",
+      "การจัดซื้อจัดจ้างผ่านระบบอิเล็กทรอนิกส์ (e-GP) ของกรมบัญชีกลาง"
+    ],
+    correct: 0,
+    explain: "การฮั้วประมูล คือการสมยอมกันระหว่างผู้เสนอราคา โดยตกลงกันล่วงหน้าว่าจะให้บริษัทใดชนะ และบริษัทอื่นจะเสนอราคาสูงเป็นคู่เทียบหลอก เพื่อทำลายการแข่งขันที่เป็นธรรม"
+  },
+  {
+    q: "องค์กรใดมีหน้าที่หลักตามรัฐธรรมนูญในการตรวจสอบ 'ความคุ้มค่าของการใช้จ่ายเงินงบประมาณแผ่นดิน' และตรวจบัญชีของหน่วยงานรัฐทั้งหมด?",
+    choices: [
+      "สำนักงานการตรวจเงินแผ่นดิน (สตง.) / คณะกรรมการตรวจเงินแผ่นดิน (คตง.)",
+      "คณะกรรมการการเลือกตั้ง (กกต.)",
+      "คณะกรรมการสิทธิมนุษยชนแห่งชาติ (กสม.)",
+      "ผู้ตรวจการแผ่นดิน"
+    ],
+    correct: 0,
+    explain: "สตง. และ คตง. เป็นองค์กรอิสระตามรัฐธรรมนูญ ทำหน้าที่ตรวจสอบรายงานการเงิน การจัดซื้อจัดจ้าง และความคุ้มค่าของการใช้จ่ายเงินแผ่นดินของหน่วยงานของรัฐทุกแห่ง"
+  },
+  {
+    q: "การที่เจ้าหน้าที่รัฐนำโครงการงบประมาณ 2,000,000 บาท มาแบ่งซอยเป็น 5 สัญญา สัญญาละ 400,000 บาท มักทำเพื่อวัตถุประสงค์ใด?",
+    choices: [
+      "เพื่อให้การก่อสร้างเสร็จรวดเร็วขึ้นตามหลักวิศวกรรม",
+      "เพื่อหลีกเลี่ยงการประกวดราคาแบบ e-Bidding และใช้วิธีเฉพาะเจาะจงจ้างพรรคพวก",
+      "เพื่อปฏิบัติตามมาตรฐานความโปร่งใสของสากล",
+      "เพื่อประหยัดภาษีมูลค่าเพิ่มให้แก่ทางราชการ"
+    ],
+    correct: 1,
+    explain: "ตาม พ.ร.บ. จัดซื้อจัดจ้างฯ วงเงินไม่เกิน 500,000 บาท สามารถใช้วิธี 'เฉพาะเจาะจง' ได้โดยไม่ต้องเปิด e-Bidding การซอยโครงการจึงเป็นช่องโหว่ยอดนิยมในการล็อกตัวผู้รับเหมา"
+  },
+  {
+    q: "ดัชนีภาพลักษณ์คอร์รัปชัน (Corruption Perceptions Index: CPI) ที่จัดทำโดย Transparency International มีเกณฑ์คะแนนเต็มเท่าใด?",
+    choices: [
+      "10 คะแนน",
+      "50 คะแนน",
+      "100 คะแนน",
+      "1,000 คะแนน"
+    ],
+    correct: 2,
+    explain: "CPI มีคะแนนเต็ม 100 คะแนน โดยคะแนน 0 หมายถึงคอร์รัปชันสูงมาก และ 100 หมายถึงมีความโปร่งใสสะอาดสูงสุด (คะแนนเฉลี่ยของโลกอยู่ที่ประมาณ 42 คะแนน)"
+  }
+];
+
+// ═══════════════════════════════════════
+//  GLOSSARY DATA (สารานุกรมศัพท์ธรรมาภิบาล)
+// ═══════════════════════════════════════
+const GOV_GLOSSARY = [
+  { term: 'ม.157 (ป.อาญา)', cat: 'กฎหมาย', desc: 'ฐานความผิดปฏิบัติหรือละเว้นการปฏิบัติหน้าที่โดยมิชอบ เพื่อให้เกิดความเสียหาย หรือปฏิบัติหน้าที่โดยทุจริต มีโทษจำคุก 1–10 ปี หรือปรับ 20,000–200,000 บาท หรือทั้งจำทั้งปรับ' },
+  { term: 'ฮั้วประมูล (Bid Rigging)', cat: 'จัดซื้อจัดจ้าง', desc: 'การที่ผู้ยื่นข้อเสนอราคาร่วมกันตกลงกันล่วงหน้า เพื่อกำหนดผลผู้ชนะ กำหนดราคา หรือกีดกันผู้อื่นไม่ให้เข้าแข่งขันอย่างเป็นธรรม ผิดตาม พ.ร.บ.ว่าด้วยความผิดเกี่ยวกับการเสนอราคาต่อหน่วยงานของรัฐ พ.ศ. 2542' },
+  { term: 'ราคากลาง (Reference Price)', cat: 'งบประมาณ', desc: 'ราคาอ้างอิงสูงสุดที่หน่วยงานรัฐใช้เป็นเกณฑ์ในการจัดซื้อจัดจ้าง โดยคำนวณจากราคามาตรฐานของสำนักงบประมาณ บัญชีราคาพัสดุกรมบัญชีกลาง หรือการสืบราคาตลาดอย่างน้อย 3 ราย' },
+  { term: 'TOR (Terms of Reference)', cat: 'จัดซื้อจัดจ้าง', desc: 'ร่างขอบเขตของงานและข้อกำหนดพัสดุ กำหนดรายละเอียดคุณลักษณะ ปริมาณงาน ระยะเวลา และเงื่อนไขการส่งมอบ เป็นจุดที่มักเกิดการล็อกสเปกหากกำหนดเงื่อนไขแคบเกินไป' },
+  { term: 'e-GP (ระบบจัดซื้อจัดจ้างภาครัฐ)', cat: 'เทคโนโลยี', desc: 'ระบบ Electronic Government Procurement ดำเนินการโดยกรมบัญชีกลาง เพื่อเป็นศูนย์กลางการประกาศเชิญชวน ซื้อเอกสาร และยื่นข้อเสนอราคาแบบอิเล็กทรอนิกส์ (e-Bidding / e-Market)' },
+  { term: 'ITA (Integrity & Transparency Assessment)', cat: 'การประเมิน', desc: 'การประเมินคุณธรรมและความโปร่งใสในการดำเนินงานของหน่วยงานภาครัฐ จัดทำโดยสำนักงาน ป.ป.ช. เพื่อสะท้อนระดับธรรมาภิบาล แบ่งระดับคะแนนตั้งแต่ AA, A, B, C' },
+  { term: 'ป.ป.ช. (NACC)', cat: 'องค์กรอิสระ', desc: 'คณะกรรมการป้องกันและปราบปรามการทุจริตแห่งชาติ มีหน้าที่ไต่สวนคดีทุจริตของนักการเมืองและข้าราชการระดับสูง ตรวจสอบบัญชีทรัพย์สิน และดำเนินมาตรการป้องกันคอร์รัปชัน' },
+  { term: 'ป.ป.ท. (PACC)', cat: 'ฝ่ายบริหาร', desc: 'สำนักงานคณะกรรมการป้องกันและปราบปรามการทุจริตในภาครัฐ สังกัดกระทรวงยุติธรรม รับผิดชอบไต่สวนการทุจริตของเจ้าหน้าที่รัฐระดับปฏิบัติการในฝ่ายบริหาร' },
+  { term: 'สตง. (State Audit Office)', cat: 'องค์กรอิสระ', desc: 'สำนักงานการตรวจเงินแผ่นดิน ตรวจสอบความถูกต้องของงบการเงิน รายงานการรับจ่ายเงินแผ่นดิน และประเมินความคุ้มค่าและประสิทธิภาพของโครงการรัฐ' },
+  { term: 'ศาลอาญาคดีทุจริตและประพฤติมิชอบ', cat: 'ตุลาการ', desc: 'ศาลชำนัญพิเศษที่จัดตั้งขึ้นเพื่อพิจารณาคดีทุจริตต่อหน้าที่ คดีความผิดตามกฎหมาย ป.ป.ช. และคดีร่ำรวยผิดปกติโดยเฉพาะ เพื่อให้การดำเนินคดีรวดเร็วและเด็ดขาด' },
+  { term: 'ผู้แจ้งเบาะแส (Whistleblower)', cat: 'สิทธิพลเมือง', desc: 'บุคคลภายในหรือประชาชนผู้เปิดเผยข้อมูลการกระทำผิดหรือทุจริตในองค์กร โดยกฎหมาย ป.ป.ช. มีมาตรการคุ้มครองพยาน เปลี่ยนชื่อ ที่อยู่ และช่วยเหลือความปลอดภัย' },
+  { term: 'ผลประโยชน์ทับซ้อน (Conflict of Interest)', cat: 'จริยธรรม', desc: 'สถานการณ์ที่ผลประโยชน์ส่วนตัวของเจ้าหน้าที่รัฐ (เช่น ธุรกิจของครอบครัว/พวกพ้อง) ขัดแย้งกับหน้าที่สาธารณะ ทำให้การตัดสินใจขาดความเป็นกลางและเอื้อประโยชน์ส่วนตน' },
+  { term: 'Open Data (ข้อมูลเปิดภาครัฐ)', cat: 'เทคโนโลยี', desc: 'ข้อมูลของรัฐที่เปิดเผยให้ประชาชนเข้าถึง นำไปใช้ต่อ และประมวลผลได้ฟรีในรูปแบบ Machine-Readable เช่น เว็บไซต์ data.go.th และ actai.co' },
+  { term: 'วิธีเฉพาะเจาะจง (Specific Method)', cat: 'จัดซื้อจัดจ้าง', desc: 'วิธีการจัดซื้อจัดจ้างที่หน่วยงานรัฐเชิญชวนผู้ประกอบการที่มีคุณสมบัติตรงเพียงรายเดียวเข้ายื่นข้อเสนอ มักใช้กับวงเงินไม่เกิน 500,000 บาท หรือกรณีฉุกเฉินจำเป็นเร่งด่วน' }
+];
+
+// ═══════════════════════════════════════
+//  HOTLINES DATA (ศูนย์ประสานงานแจ้งเบาะแส)
+// ═══════════════════════════════════════
+const HOTLINES_DATA = [
+  { name: 'สำนักงาน ป.ป.ช. (NACC)', tel: '1205', desc: 'รับเรื่องร้องเรียนเจ้าหน้าที่รัฐทุกระดับ ไต่สวนคดีทุจริต และตรวจสอบทรัพย์สิน', link: 'https://www.nacc.go.th', linkTxt: 'เว็บไซต์ ป.ป.ช. ↗' },
+  { name: 'สำนักงาน ป.ป.ท. (PACC)', tel: '1206', desc: 'ศูนย์รับเรื่องร้องเรียนทุจริตในฝ่ายบริหาร และเจ้าหน้าที่ระดับปฏิบัติการ', link: 'https://www.pacc.go.th', linkTxt: 'เว็บไซต์ ป.ป.ท. ↗' },
+  { name: 'สำนักงานการตรวจเงินแผ่นดิน (สตง.)', tel: '1881', desc: 'แจ้งเบาะแสการใช้จ่ายเงินงบประมาณแผ่นดินที่ไม่โปร่งใสหรือส่อทุจริต', link: 'https://www.audit.go.th', linkTxt: 'เว็บไซต์ สตง. ↗' },
+  { name: 'ศูนย์ดำรงธรรม กระทรวงมหาดไทย', tel: '1567', desc: 'รับเรื่องร้องทุกข์ ปัญหาความเดือดร้อน และพฤติกรรมเจ้าหน้าที่ อปท./มท.', link: 'https://damrongdhama.dopa.go.th', linkTxt: 'ศูนย์ดำรงธรรม ↗' },
+  { name: 'ศูนย์บริการประชาชน สำนักนายกฯ', tel: '1111', desc: 'รับเรื่องราวร้องทุกข์โดยตรงถึงนายกรัฐมนตรีและคณะรัฐมนตรี ตลอด 24 ชม.', link: 'https://www.1111.go.th', linkTxt: 'ระบบ 1111 ↗' },
+  { name: 'องค์กรต่อต้านคอร์รัปชัน (ACT Ai)', tel: 'ACT Ai', desc: 'เครื่องมือค้นหาและตรวจจับความผิดปกติโครงการจัดซื้อจัดจ้างภาครัฐด้วย AI', link: 'https://actai.co', linkTxt: 'เปิดใช้งาน ACT Ai ↗' }
+];
+
+// ── Sub-tabs navigation switch ──
+let currentCorruptSubtab = 'rankings';
+function switchCorruptSubtab(tabName) {
+  currentCorruptSubtab = tabName;
+  document.querySelectorAll('.c-subtab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.c-subtab-pane').forEach(pane => pane.classList.remove('active'));
+  
+  const activeBtn = document.getElementById('c-tab-btn-' + tabName);
+  const activePane = document.getElementById('c-pane-' + tabName);
+  if (activeBtn) activeBtn.classList.add('active');
+  if (activePane) activePane.classList.add('active');
+
+  // Trigger subtab renderers
+  if (tabName === 'cases') renderCaseStudies();
+  else if (tabName === 'redflags') renderRedFlags();
+  else if (tabName === 'quiz') initQuiz();
+  else if (tabName === 'glossary') { renderGlossary(); renderHotlines(); }
+}
+
+// ── Render Case Studies ──
+let _casesBuilt = false;
+function renderCaseStudies() {
+  if (_casesBuilt) return;
+  const el = document.getElementById('cases-list');
+  if (!el) return;
+  el.innerHTML = HISTORIC_CASES.map(c => `
+    <div class="case-card">
+      <div class="case-card-hd">
+        <div class="case-card-title">${c.title}</div>
+        <div class="case-damage-pill">${c.damage}</div>
+      </div>
+      <div class="case-meta">
+        <span><svg class="mdico"><use href="#i-calendar"></use></svg> ${c.period}</span>
+        <span>·</span>
+        <span><svg class="mdico"><use href="#i-landmark"></use></svg> ${c.agency}</span>
+      </div>
+      <div class="case-block">
+        <div class="case-block-label"><svg class="mdico"><use href="#i-search"></use></svg> พฤติการณ์การทุจริต / ช่องโหว่</div>
+        <div class="case-block-txt">${c.modus}</div>
+      </div>
+      <div class="case-block">
+        <div class="case-block-label"><svg class="mdico"><use href="#i-scale"></use></svg> ผลลัพธ์ทางคดี & คำพิพากษา</div>
+        <div class="case-block-txt">${c.outcome}</div>
+      </div>
+      <div class="case-lesson">
+        <b>💡 บทเรียนเชิงนโยบาย:</b> ${c.lesson}
+      </div>
+      ${c.src ? `<a class="case-link-btn" href="${c.src}" target="_blank" rel="noopener">อ่านรายงาน/คำพิพากษาฉบับเต็ม ↗</a>` : ''}
+    </div>
+  `).join('');
+  _casesBuilt = true;
+}
+
+// ── Render Red Flags ──
+let _redflagsBuilt = false;
+function renderRedFlags() {
+  if (_redflagsBuilt) return;
+  const el = document.getElementById('redflags-list');
+  if (!el) return;
+  el.innerHTML = RED_FLAGS_DATA.map(rf => `
+    <div class="rf-card">
+      <div class="rf-hd">
+        <div class="rf-num">${rf.num}</div>
+        <div class="rf-title">${rf.title}</div>
+      </div>
+      <div class="rf-desc">${rf.desc}</div>
+      <div class="rf-example">${rf.example}</div>
+    </div>
+  `).join('');
+  _redflagsBuilt = true;
+}
+
+// ── Quiz Engine ──
+let quizState = { currentIdx: 0, score: 0, answered: false };
+function initQuiz() {
+  quizState = { currentIdx: 0, score: 0, answered: false };
+  renderQuiz();
+}
+function renderQuiz() {
+  const root = document.getElementById('quiz-app-root');
+  if (!root) return;
+  
+  if (quizState.currentIdx >= CIVIC_QUIZ_DATA.length) {
+    // Show final score card
+    const total = CIVIC_QUIZ_DATA.length;
+    const pct = Math.round((quizState.score / total) * 100);
+    let badge = '🥉'; let rankTitle = 'พลเมืองตื่นรู้ระดับพื้นฐาน';
+    let desc = 'คุณมีความรู้เบื้องต้นเกี่ยวกับกลไกภาครัฐ สามารถศึกษาเพิ่มเติมจากกรณีศึกษาและคู่มือ Red Flags เพื่อร่วมเป็นหูเป็นตาให้สังคมได้ดียิ่งขึ้น!';
+    if (pct >= 80) {
+      badge = '🥇'; rankTitle = 'ผู้พิทักษ์ธรรมาภิบาลระดับเหรียญทอง';
+      desc = 'ยอดเยี่ยมมาก! คุณมีความเข้าใจในโครงสร้างกฎหมาย การตรวจสอบงบประมาณ และสัญญาณเตือนภัยการทุจริตอย่างลึกซึ้ง พร้อมทำหน้าที่เป็น Citizen Inspector!';
+    } else if (pct >= 50) {
+      badge = '🥈'; rankTitle = 'นักสืบงบประมาณรุ่นเยาว์ระดับเหรียญเงิน';
+      desc = 'เก่งมาก! คุณรู้เท่าทันกลโกงและช่องทางร้องเรียนหลัก ลองทบทวนข้อที่ตอบผิดเพื่อเพิ่มความเชี่ยวชาญให้เต็มร้อย!';
+    }
+
+    root.innerHTML = `
+      <div class="quiz-card quiz-result-card">
+        <div class="quiz-result-badge">${badge}</div>
+        <div class="quiz-result-title">${rankTitle}</div>
+        <div class="quiz-result-score">${quizState.score} / ${total} คะแนน (${pct}%)</div>
+        <div class="quiz-result-desc">${desc}</div>
+        <button class="quiz-next-btn" onclick="initQuiz()" style="max-width:240px;margin:0 auto;">
+          <svg class="mdico"><use href="#i-refresh-cw"></use></svg> ทำแบบทดสอบอีกครั้ง
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = CIVIC_QUIZ_DATA[quizState.currentIdx];
+  const progressPct = Math.round((quizState.currentIdx / CIVIC_QUIZ_DATA.length) * 100);
+  const letters = ['A', 'B', 'C', 'D'];
+
+  root.innerHTML = `
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-bar" style="width:${progressPct}%"></div>
+    </div>
+    <div class="quiz-card">
+      <div class="quiz-q-num">คำถามข้อที่ ${quizState.currentIdx + 1} จาก ${CIVIC_QUIZ_DATA.length}</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-choices" id="quiz-choices-wrap">
+        ${q.choices.map((c, i) => `
+          <button class="quiz-choice-btn" onclick="answerQuiz(${i})" id="q-choice-${i}">
+            <span class="quiz-choice-letter">${letters[i]}</span>
+            <span>${c}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div id="quiz-feedback-box"></div>
+      <div id="quiz-action-box" style="display:none;margin-top:16px;">
+        <button class="quiz-next-btn" onclick="nextQuizQuestion()">
+          <span>ข้อถัดไป</span> <svg class="mdico"><use href="#i-chevron-right"></use></svg>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(selectedIdx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = CIVIC_QUIZ_DATA[quizState.currentIdx];
+  const isCorrect = selectedIdx === q.correct;
+  if (isCorrect) quizState.score++;
+
+  // Disable buttons & show styling
+  q.choices.forEach((_, i) => {
+    const btn = document.getElementById('q-choice-' + i);
+    if (!btn) return;
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('selected-correct');
+    else if (i === selectedIdx && !isCorrect) btn.classList.add('selected-wrong');
+  });
+
+  const fbBox = document.getElementById('quiz-feedback-box');
+  if (fbBox) {
+    fbBox.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'wrong');
+    fbBox.innerHTML = `
+      <div style="font-weight:700;margin-bottom:4px;color:${isCorrect ? '#4ade80' : '#f87171'}">
+        ${isCorrect ? '✓ ถูกต้อง!' : '✗ ยังไม่ถูกต้อง (คำตอบที่ถูกคือข้อ ' + ['A','B','C','D'][q.correct] + ')'}
+      </div>
+      <div>${q.explain}</div>
+    `;
+  }
+  const actBox = document.getElementById('quiz-action-box');
+  if (actBox) actBox.style.display = 'block';
+}
+
+function nextQuizQuestion() {
+  quizState.currentIdx++;
+  quizState.answered = false;
+  renderQuiz();
+}
+
+// ── Glossary & Hotlines ──
+let _glossaryBuilt = false;
+function renderGlossary(filtered) {
+  const el = document.getElementById('glossary-list');
+  if (!el) return;
+  const data = filtered || GOV_GLOSSARY;
+  el.innerHTML = data.map(g => `
+    <div class="gloss-item">
+      <div class="gloss-term-hd">
+        <div class="gloss-term">${g.term}</div>
+        <div class="gloss-tag">${g.cat}</div>
+      </div>
+      <div class="gloss-desc">${g.desc}</div>
+    </div>
+  `).join('');
+  _glossaryBuilt = true;
+}
+
+function filterGlossary(q) {
+  q = (q || '').toLowerCase().trim();
+  if (!q) { renderGlossary(GOV_GLOSSARY); return; }
+  const res = GOV_GLOSSARY.filter(g => g.term.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q) || g.cat.toLowerCase().includes(q));
+  renderGlossary(res);
+}
+
+let _hotlinesBuilt = false;
+function renderHotlines() {
+  if (_hotlinesBuilt) return;
+  const el = document.getElementById('hotlines-list');
+  if (!el) return;
+  el.innerHTML = HOTLINES_DATA.map(h => `
+    <div class="hotline-card">
+      <div class="hotline-card-hd">
+        <div class="hotline-name">${h.name}</div>
+      </div>
+      <div class="hotline-tel">${h.tel}</div>
+      <div class="hotline-sub">${h.desc}</div>
+      <a class="hotline-link" href="${h.link}" target="_blank" rel="noopener">${h.linkTxt}</a>
+    </div>
+  `).join('');
+  _hotlinesBuilt = true;
+}
 
 let _corruptExtrasBuilt = false;
 function buildCorruptExtras(){
   if(_corruptExtrasBuilt) return;
   const cpiEl = document.getElementById('corrupt-cpi');
   if(!cpiEl) return;
-  const SCALE = 50;   // จุดอ้างอิงแกนคะแนน CPI สำหรับแถบเล็ก
+  const SCALE = 50;
   const trendRows = CPI_TREND.map(d=>{
     const w = Math.round(d.score / SCALE * 100);
     const col = d.score >= 35 ? 'var(--orange)' : 'var(--red)';
@@ -6966,50 +7733,6 @@ function buildCorruptExtras(){
   _corruptExtrasBuilt = true;
 }
 
-// ── รายละเอียดข้อกล่าวหารายหน่วยงาน (กดการ์ด → เด้ง modal) ──
-// ผลภาพรวม ป.ป.ช. ปีงบ 2566 (ที่มา: สำนักงาน ป.ป.ช. / กรุงเทพธุรกิจ)
-const NACC_OVERALL = {
-  year:'2566', received:'4,475', investigated:'2,748', referred:'1,727', damage:'~13,430 ล้านบาท',
-  src:'https://www.bangkokbiznews.com/politics/1080553'
-};
-const CORRUPT_DETAIL = {
-  1: { // อปท.
-    bases:["จัดซื้อจัดจ้าง / ฮั้วประมูล (ฐานที่พบมากที่สุดในคดีท้องถิ่น)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ (ป.อาญา ม.157)","ปกปิด/ยื่นบัญชีทรัพย์สินอันเป็นเท็จ"],
-    patterns:["ฮั้วประมูลโครงการก่อสร้าง — ถนน ระบบประปา อาคาร","ไม่ประกาศ/ปกปิดราคากลาง · ล็อกสเปกเอื้อผู้รับเหมา","เบิกจ่าย-จ้างเหมาเป็นเท็จ งานไม่ตรงสัญญา"],
-    outcomeNote:"องค์กรต่อต้านคอร์รัปชัน (ACT) รวบรวม 10 คดีจัดซื้อจัดจ้างใน อบจ. (พ.ศ. 2547–2567) มูลค่าความเสียหายรวม ≥ 377 ล้านบาท",
-    cases:[
-      {t:"อดีตนายก อบจ.นครราชสีมา", d:"ป.ป.ช.ชี้มูลทุจริตโครงการก่อสร้างถนนหลายโครงการ — ศาลอาญาคดีทุจริตฯ พิพากษาจำคุก 25 ปี", src:"https://www.thaipbs.or.th/news/content/347048"},
-      {t:"อดีตนายก อบจ.อุบลราชธานี", d:"ถูกร้องเรียนมากถึง 42 คดี ป.ป.ช.ชี้มูลแล้วหลายคดี ความเสียหายรวม ~114 ล้านบาท", src:"https://thaipublica.org/2024/12/act-reveals-10-procurement-corruptions-in-provincial-administrative-organizations/"},
-      {t:"อดีตรองนายก อบจ.สงขลา", d:"ป.ป.ช.ชี้มูลทุจริตจัดซื้อจัดจ้าง อบจ.สงขลา ความเสียหาย ~19 ล้านบาท", src:"https://www.isranews.org/article/south-news/south-slide/132131-sknacc.html"},
-    ],
-  },
-  2: { // กระทรวงมหาดไทย
-    bases:["ออกเอกสารสิทธิ์ที่ดินโดยมิชอบ","ปฏิบัติหน้าที่โดยมิชอบ / ทำเอกสารราชการเป็นเท็จ (ป.อาญา ม.157, 161)","เรียกรับผลประโยชน์จากการอนุมัติ-อนุญาต"],
-    patterns:["นำ ส.ค.1 ของแปลงอื่นมาสวมออกโฉนด/น.ส.3ก. ในที่เขา-ป่าสงวน-เขตปฏิรูป","รังวัดและรายงานการรังวัดไม่ตรงความจริง","ทุจริตงานทะเบียน-บัตร และการออกใบอนุญาต"],
-    outcomeNote:"คดีที่ดินจำนวนมากถูก ป.ป.ช.ชี้มูลทั้งวินัยร้ายแรงและความผิดอาญา ม.157/161",
-    cases:[
-      {t:"คดีออกโฉนด/น.ส.3ก. มิชอบ", d:"เจ้าหน้าที่นำ ส.ค.1 ของที่ดินแปลงอื่นมาสวมออกเอกสารสิทธิ์ในที่เขา/ป่าสงวน ทั้งที่รู้อยู่ก่อน — ป.ป.ช.ชี้มูลวินัยร้ายแรง + อาญา ม.157/161", src:"https://www.isranews.org/content-page/item/70838-invest-70838.html"},
-    ],
-  },
-  3: { // สำนักงานตำรวจแห่งชาติ
-    bases:["เรียกรับเงิน/สินบน (ส่วย)","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่โดยมิชอบ","การแต่งตั้งโยกย้ายโดยมิชอบ (ซื้อขายตำแหน่ง)"],
-    patterns:["ส่วยรถบรรทุก-‘ส่วยสติกเกอร์’ แลกการไม่จับ/ตรวจบนทางหลวง","เรียกรับจากแหล่งอบายมุข บ่อน เว็บพนัน","เรียกรับเพื่อแลกตำแหน่ง/การโยกย้าย"],
-    outcomeNote:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก ป.ป.ช.รับไต่สวนและส่งชี้มูลตำรวจที่เกี่ยวข้อง",
-    cases:[
-      {t:"คดี ‘ส่วยสติกเกอร์’ รถบรรทุก", d:"ใช้สติกเกอร์สัญลักษณ์แลกการไม่ถูกจับ/ตรวจบนทางหลวง — ส่งเรื่องให้ ป.ป.ช.ชี้มูลตำรวจที่เกี่ยวข้อง ฐานเรียกรับสินบน/ปฏิบัติหน้าที่มิชอบ", src:"https://www.nationtv.tv/news/crime/378929293"},
-      {t:"เครือข่ายผู้มีอิทธิพล ‘กำนันนก’", d:"เส้นทางเงินโยงการจ่ายส่วยให้ตำรวจ และการฮั้วประมูลงานก่อสร้างของรัฐ", src:"https://www.thairath.co.th/news/society/2724892"},
-    ],
-  },
-  4: { // หน่วยงานอื่น ๆ รวม (ภาพรวม)
-    bases:["จัดซื้อจัดจ้าง / ฮั้วประมูล / เงินทอนโครงการ","ปฏิบัติ/ละเว้นการปฏิบัติหน้าที่ (ม.157)","ร่ำรวยผิดปกติ · ขัดกันแห่งผลประโยชน์"],
-    patterns:["ทุจริตงบจัดซื้อจัดจ้างและโครงการลงทุนของรัฐ","เบิกจ่ายงบสัมมนา/ดูงานเป็นเท็จ","ผลประโยชน์ทับซ้อนในการอนุมัติโครงการ"],
-    outcomeNote:"รวมหน่วยงานระดับกระทรวง/กรม/รัฐวิสาหกิจ และหน่วยงานรัฐอื่นที่เหลือทั้งหมด",
-    cases:[
-      {t:"ทุจริตเงินอุดหนุนวัด", d:"ป.ป.ช.ชี้มูลทุจริตการจัดสรรเงินอุดหนุนบูรณะวัด มูลค่าความเสียหายกว่า 100 ล้านบาท — ส่งอัยการสูงสุดฟ้องศาลอาญาคดีทุจริตฯ", src:"https://www.thaipbs.or.th/news/content/340777"},
-    ],
-  },
-};
-
 /* modal: กดการ์ดทุจริต → เด้งรายละเอียดข้อกล่าวหา */
 (function(){
   if(document.getElementById('crd-overlay')) return;
@@ -7030,9 +7753,10 @@ const CORRUPT_DETAIL = {
     if(!d) return;
     const det = CORRUPT_DETAIL[rank] || {};
     const badge = d.agg ? 'ภาพรวมหลายหน่วยงาน' : ('อันดับ '+d.rank+' · ถูกกล่าวหามากสุด');
-    headEl.innerHTML = `<div class="crd-rankbadge">${badge}</div>
+    const itaHtml = d.ita ? `<span class="ita-badge ita-${(d.itaGrade||'a').toLowerCase()}">ITA ${d.ita} (${d.itaGrade})</span>` : '';
+    headEl.innerHTML = `<div class="crd-rankbadge">${badge}</div> ${itaHtml}
       <div class="crd-name">${esc(d.name)}</div>
-      <div class="crd-sub">เรื่องร้องเรียนต่อ ป.ป.ช. ปีงบ 2566: <b>${d.count.toLocaleString('th-TH')}</b> เรื่อง (${d.pct}% ของทั้งหมด)</div>`;
+      <div class="crd-sub">เรื่องร้องเรียนต่อ ป.ป.ช. ปีงบ 2566: <b>${d.count ? d.count.toLocaleString('th-TH') : '-'}</b> เรื่อง (${d.pct}% ของทั้งหมด)</div>`;
     const cases = (det.cases||[]).map(c=>`<div class="crd-case"><div class="crd-case-t">${esc(c.t)}</div>
       <div class="crd-case-d">${esc(c.d)}</div>${c.src?`<a href="${c.src}" target="_blank" rel="noopener">อ่านข่าว/ที่มา ↗</a>`:''}</div>`).join('');
     bodyEl.innerHTML = `
@@ -7065,7 +7789,7 @@ const CORRUPT_DETAIL = {
   const scroll = document.getElementById('corrupt-scroll');
   if(scroll){
     scroll.addEventListener('click', e=>{
-      if(e.target.closest('.corrupt-map-btn')) return;   // ปุ่มดูแผนที่ทำงานของตัวเอง
+      if(e.target.closest('.corrupt-map-btn') || e.target.closest('.c-subtab-btn') || e.target.closest('.quiz-choice-btn') || e.target.closest('.quiz-next-btn') || e.target.closest('.case-link-btn') || e.target.closest('.hotline-link') || e.target.closest('#glossary-search-input') || e.target.closest('#corrupt-search') || e.target.closest('.c-sort-btn')) return;
       const card = e.target.closest('.corrupt-card');
       if(card && card.dataset.rank) open(card.dataset.rank);
     });
@@ -7081,29 +7805,35 @@ const CORRUPT_DETAIL = {
 let corruptSort = 'rank';
 let corruptQuery = '';
 
-const RANK_COLORS = ['#ff2222','#ff3a3a','#ff5555','#ff7043','#ff8c00','#ffaa00','#ffc200','#e8d44d','#c0c060','#90b090'];
+const RANK_COLORS = ['#ff2222','#ff3a3a','#ff4d4d','#ff6b4a','#ff8c00','#ffa700','#ffc200','#e8d44d','#a4c850','#70b870','#60a5fa','#a855f7'];
 
 function buildCorruptView(data) {
   data = data || CORRUPT_DATA;
   const list = document.getElementById('corrupt-list');
+  if (!list) return;
   list.innerHTML = '';
   const nAgencies = data.filter(d => !d.agg).length;
-  document.getElementById('c-filtered-n').textContent = nAgencies;
-  document.getElementById('c-results-count').textContent = `แสดง ${data.length} รายการ`;
+  const fnEl = document.getElementById('c-filtered-n');
+  if (fnEl) fnEl.textContent = nAgencies;
+  const rcEl = document.getElementById('c-results-count');
+  if (rcEl) rcEl.textContent = `แสดง ${data.length} รายการ`;
+  
   data.forEach((d, i) => {
-    const barW = Math.max(4, Math.round(d.pct || 0));   // แถบ = สัดส่วนของคำกล่าวหาทั้งหมด
+    const barW = Math.max(3, Math.round(d.pct || 0));
     const color = d.agg ? 'var(--text-dim)' : (RANK_COLORS[d.rank - 1] || '#888');
     const risks = d.risk.split('·').map(r => `<span>${r.trim()}</span>`).join('');
     const mapping = CORRUPT_MIN_MAP[d.rank];
     const orgArg = mapping?.orgNo || '';
     const mapBtn = mapping
-      ? `<button class="corrupt-map-btn" onclick="goToMinistryFromCorrupt('${mapping.minId}','${orgArg}')">⊙ ดูแผนที่</button>`
+      ? `<button class="corrupt-map-btn" onclick="goToMinistryFromCorrupt('${mapping.minId}','${orgArg}')"><svg class="mdico"><use href="#i-map"></use></svg> ⊙ ดูแผนที่</button>`
       : '';
     const cntTxt = d.count ? `${d.count.toLocaleString('th-TH')} เรื่อง · ${d.pct}%` : '';
+    const itaPill = d.ita ? `<span class="ita-badge ita-${(d.itaGrade||'a').toLowerCase()}">ITA ${d.ita} (${d.itaGrade})</span>` : '';
+    
     const card = document.createElement('div');
     card.className = 'corrupt-card' + (d.agg ? ' is-agg' : '');
     card.style.setProperty('--ccard-color', color);
-    card.style.animationDelay = (i * 0.045) + 's';
+    card.style.animationDelay = (i * 0.035) + 's';
     card.dataset.rank = d.rank;
     card.dataset.name = d.name;
     card.tabIndex = 0;
@@ -7111,7 +7841,10 @@ function buildCorruptView(data) {
     card.setAttribute('aria-label', d.name + ' — ดูรายละเอียดข้อกล่าวหา');
     card.innerHTML = `
       <div class="corrupt-rank">${d.agg ? '∑' : d.rank}</div>
-      <div class="corrupt-name">${d.name}</div>
+      <div class="corrupt-name-row">
+        <span class="corrupt-name">${d.name}</span>
+        ${itaPill}
+      </div>
       ${mapBtn}
       <div class="corrupt-risk">${risks}</div>
       <div class="corrupt-source"><svg class="mdico"><use href="#i-paperclip"></use></svg> ${cntTxt ? cntTxt + ' · ' : ''}${d.source}</div>
@@ -7124,7 +7857,8 @@ function buildCorruptView(data) {
 function sortCorrupt(by) {
   corruptSort = by;
   document.querySelectorAll('.c-sort-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('csort-'+by).classList.add('active');
+  const btn = document.getElementById('csort-'+by);
+  if (btn) btn.classList.add('active');
   renderCorruptFiltered();
 }
 
@@ -7132,9 +7866,10 @@ function renderCorruptFiltered() {
   let data = [...CORRUPT_DATA];
   if (corruptQuery) {
     const q = corruptQuery.toLowerCase();
-    data = data.filter(d => d.name.toLowerCase().includes(q) || d.risk.toLowerCase().includes(q) || d.source.toLowerCase().includes(q));
+    data = data.filter(d => d.name.toLowerCase().includes(q) || d.risk.toLowerCase().includes(q) || d.source.toLowerCase().includes(q) || (d.itaGrade && d.itaGrade.toLowerCase().includes(q)));
   }
   if (corruptSort === 'name') data.sort((a,b) => a.name.localeCompare(b.name, 'th'));
+  else if (corruptSort === 'ita') data.sort((a,b) => (b.ita || 0) - (a.ita || 0));
   else data.sort((a,b) => a.rank - b.rank);
   buildCorruptView(data);
 }
@@ -7197,7 +7932,7 @@ function goToMinistryFromCorrupt(minId, orgNo) {
       nodes.forEach(n => { if (n.ministryID === targetNode.data?.id) connectedSet.add(n); });
     }
 
-    showPanel(targetNode);   // selection spring + flowing chain provide the "found it" emphasis
+    showPanel(targetNode);
 
     const sb = document.getElementById('sidebar');
     const ov = document.getElementById('mob-overlay');
@@ -7223,24 +7958,26 @@ function showCorruptView(on) {
   if (on) {
     corruptQuery = ''; corruptSort = 'rank';
     document.querySelectorAll('.c-sort-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('csort-rank').classList.add('active');
+    const rBtn = document.getElementById('csort-rank');
+    if (rBtn) rBtn.classList.add('active');
+    switchCorruptSubtab('rankings');
     buildCorruptExtras();
     renderCorruptFiltered();
     overlay.classList.add('show');
     canvas.style.display = 'none';
     zoomCtrl.style.display = 'none';
     coords.style.display = 'none';
-    // Close mobile sidebar when opening corrupt view
     const sb2 = document.getElementById('sidebar');
     const ov2 = document.getElementById('mob-overlay');
     if (sb2) { sb2.classList.remove('mob-open'); }
     if (ov2) { ov2.classList.remove('active'); }
     sidebar.style.display = 'none';
     if (cabVisible) document.getElementById('cab-panel').classList.add('hidden');
-    // wire search
     const srch = document.getElementById('corrupt-search');
-    srch.value = '';
-    srch.oninput = () => { corruptQuery = srch.value.trim(); renderCorruptFiltered(); };
+    if (srch) {
+      srch.value = '';
+      srch.oninput = () => { corruptQuery = srch.value.trim(); renderCorruptFiltered(); };
+    }
   } else {
     overlay.classList.remove('show');
     canvas.style.display = '';
@@ -7379,7 +8116,7 @@ var mdAudioEl = null, mdAudioId = null;
 function updateAudioBtn(state){
   var btn = document.getElementById('info-audio'); if(!btn) return;
   var map = { idle:'<svg class="mdico"><use href="#i-volume-2"></use></svg> ฟังเสียง', loading:'<svg class="mdico"><use href="#i-hourglass"></use></svg> กำลังโหลด…', playing:'<svg class="mdico"><use href="#i-pause"></use></svg> หยุด', missing:'<svg class="mdico"><use href="#i-volume-x"></use></svg> ยังไม่มีเสียง' };
-  btn.textContent = map[state] || map.idle;
+  btn.innerHTML = map[state] || map.idle;
   btn.classList.toggle('playing', state === 'playing');
   btn.classList.toggle('missing', state === 'missing');
 }
@@ -7439,6 +8176,7 @@ applyHashFromURL();   // มากับลิงก์ #… → เปิดแ
 <script src="js/structure-staff-exec.js"></script>
 <script src="js/cursor-glow.js"></script>
 <script src="js/theme-toggle-drag.js"></script>
+<script src="js/structure-toolkit.js"></script>
 <script src="js/ai-chat.js"></script>
 </body>
 </html>

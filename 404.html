@@ -299,7 +299,7 @@ main > *{animation:rise .55s ease both}
   }
   if (best && bestScore >= 0.40) {
     document.getElementById('guess-link').href       = U(best.p);
-    document.getElementById('guess-ico').textContent = best.i;
+    document.getElementById('guess-ico').innerHTML = best.i;
     document.getElementById('guess-tt').textContent  = best.t;
     document.getElementById('guess-sb').textContent  = base + best.p;
     document.getElementById('guess').className       = 'on';

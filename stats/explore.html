@@ -653,7 +653,7 @@
 /* ══════════════════════════════════════════════════════════════════════
    V21 · ชั้นตกแต่ง "แสง–สี–ฟอนต์" สไตล์ 21st.dev
    วางทับสไตล์เดิมล้วน ๆ ไม่แตะ markup/กราฟ/ข้อมูล
-   ลบ <style id="v21-polish"> ทั้งบล็อก + <div class="v21-bg"> + <script id="v21-js">
+   ลบ style#v21-polish ทั้งบล็อก + div.v21-bg + script#v21-js
    = กลับเป็นหน้าเดิมทันที
    ความแรงคุมด้วยตัวแปร --v21-* : โหมดมืด = แรง · โหมดสว่าง = นุ่ม
    ══════════════════════════════════════════════════════════════════════ */
@@ -839,7 +839,7 @@ body::-webkit-scrollbar-thumb{background:var(--v21-ring);border-radius:11px;
   border:3px solid transparent;background-clip:content-box}
 
 /* ตอนสลับโหมดสว่าง/มืด — ปิด transition ชั่วขณะ ไม่ให้การ์ด 120+ ใบ
-   วิ่งเงา/ขอบพร้อมกันจนกระตุก (คลาสนี้ใส่/ถอดโดย <script id="v21-js">) */
+   วิ่งเงา/ขอบพร้อมกันจนกระตุก (คลาสนี้ใส่/ถอดโดย script#v21-js) */
 html.v21-nofx .card,html.v21-nofx .kpi,html.v21-nofx .side,
 html.v21-nofx .snav,html.v21-nofx .ng-sub,html.v21-nofx .nav-glow,
 html.v21-nofx .site-nav,html.v21-nofx .owid-tab,html.v21-nofx .bkkm-pill,
