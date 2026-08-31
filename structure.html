@@ -41,7 +41,7 @@
   --center-txt: #0d1117;
   --sidebar-w:  268px;
   --header-h:   56px;
-  --panel-w:    310px;
+  --panel-w:    345px;
   --radius:     8px;
   --radius-lg:  13px;
   /* แสงวิ่งช่องค้นหา (conic) — โทนทองให้เข้าหน้านี้ · มุม --sb-a ขับด้วย rAF ท้ายไฟล์ (เหมือน election/glow.js) */
@@ -815,25 +815,34 @@ canvas:active { cursor: grabbing; }
 
 /* ═══ แถบแท็บในแผงรายละเอียด ═══ */
 .ip-tabs {
-  display: flex; gap: 0; padding: 0 6px;
+  display: flex; gap: 2px; padding: 0 4px;
   background: var(--bg3); border-bottom: 1px solid var(--border);
-  overflow-x: auto; scrollbar-width: none;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  cursor: grab;
+  user-select: none;
 }
-.ip-tabs::-webkit-scrollbar { display: none; }
+.ip-tabs::-webkit-scrollbar { height: 3px; }
+.ip-tabs::-webkit-scrollbar-track { background: transparent; }
+.ip-tabs::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+.ip-tabs::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 .ip-tab {
   flex: 0 0 auto; position: relative;
-  padding: 9px 6px 8px; border: none; background: none;
+  padding: 8px 6px; border: none; background: none;
   color: var(--text-dim); cursor: pointer; white-space: nowrap;
-  font-family: 'Sarabun', sans-serif; font-size: 12px; font-weight: 600;
+  font-family: 'Sarabun', sans-serif; font-size: 11.5px; font-weight: 600;
   border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
 }
 .ip-tab:hover { color: var(--text); }
 .ip-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 .ip-tab[hidden] { display: none; }
 .ip-tab-badge {
-  display: inline-block; margin-left: 3px; padding: 0 4px;
+  display: inline-block; margin-left: 2px; padding: 0 3px;
   border-radius: 9px; background: var(--border); color: var(--text-dim);
-  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600;
 }
 .ip-tab-badge:empty { display: none; }
 .ip-tab.active .ip-tab-badge { background: var(--gold-glow); color: var(--gold); }
@@ -903,6 +912,139 @@ canvas:active { cursor: grabbing; }
 .ip-power-note {
   margin-top: 7px; padding: 6px 8px; border-radius: 6px;
   background: var(--border); font-size: 11px; color: var(--text-dim); line-height: 1.5;
+}
+
+/* ── แผงกราฟสถิติแบบเข้าใจง่าย (Visual Charts Pane) ── */
+.ip-chart-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  margin-bottom: 10px;
+}
+.ip-chart-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.ip-chart-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--gold-glow);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+}
+.ip-visual-dual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ip-gauge-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+.ip-gauge-circle {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 6px;
+}
+.ip-gauge-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+.ip-gauge-bg {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 6;
+}
+.ip-gauge-bar {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+.ip-gauge-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+.ip-gauge-val small { font-size: 9px; opacity: 0.8; }
+.ip-gauge-lbl {
+  font-size: 10.5px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+.ip-gauge-sub {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+/* Multi-year budget bar chart */
+.ip-trend-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 8px;
+  height: 95px;
+  padding: 8px 4px 2px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.ip-trend-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+.ip-trend-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.ip-trend-bar-wrap {
+  width: 100%;
+  max-width: 32px;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(255,255,255,0.03);
+  border-radius: 4px 4px 0 0;
+}
+.ip-trend-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+}
+.ip-trend-yr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-dim);
+  margin-top: 4px;
 }
 
 /* ── สถานะว่าง (ยังไม่มีข้อมูล) ── */
@@ -2790,12 +2932,13 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <div id="info-abbr"></div>
     <button id="info-audio" type="button" hidden aria-label="ฟังเสียงบรรยายกระทรวงนี้"><svg class="mdico"><use href="#i-volume-2"></use></svg> ฟังเสียง</button>
   </div>
-  <!-- แถบแท็บ — ถอดโครงจาก machineryofgovernment.uk (Info / Powers / Budget / Staff) -->
+  <!-- แถบแท็บ — ถอดโครงจาก machineryofgovernment.uk (Info / Powers / Budget / Staff / Visual Charts) -->
   <div class="ip-tabs" id="ip-tabs" role="tablist">
     <button class="ip-tab active" data-tab="info"   role="tab">ข้อมูล</button>
     <button class="ip-tab"        data-tab="law"    role="tab">อำนาจหน้าที่<span class="ip-tab-badge" id="tabb-law"></span></button>
     <button class="ip-tab"        data-tab="budget" role="tab">งบประมาณ<span class="ip-tab-badge" id="tabb-budget"></span></button>
     <button class="ip-tab"        data-tab="staff"  role="tab">บุคลากร<span class="ip-tab-badge" id="tabb-staff"></span></button>
+    <button class="ip-tab"        data-tab="chart"  role="tab">กราฟสถิติ<span class="ip-tab-badge" id="tabb-chart">📊</span></button>
   </div>
 
   <div class="ip-body">
@@ -2816,6 +2959,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <div class="ip-pane" id="pane-law"    hidden></div>
     <div class="ip-pane" id="pane-budget" hidden></div>
     <div class="ip-pane" id="pane-staff"  hidden></div>
+    <div class="ip-pane" id="pane-chart"  hidden></div>
 
     <!-- ข้อความเตือนความสดของข้อมูล — จุดที่ 1: ท้ายแผงทุกโหนด -->
     <div class="ip-asof" id="ip-asof"></div>
@@ -5867,7 +6011,7 @@ document.getElementById('info-close').onclick=closeInfoPanel;
 //  แผงรายละเอียด 4 แท็บ — ข้อมูล / อำนาจหน้าที่ / งบประมาณ / บุคลากร
 //  ถอดโครงจาก machineryofgovernment.uk · ข้อมูลอยู่ใน structure-detail.js
 // ═══════════════════════════════════════════════════════════════════
-const IP_TABS = ['info','law','budget','staff'];
+const IP_TABS = ['info','law','budget','staff','chart'];
 let ipTab = 'info', ipBudgetSub = 'self';
 
 const fmtMB = n => n.toLocaleString('th-TH', {maximumFractionDigits:1});
@@ -5900,27 +6044,61 @@ function ipTabPlan(node){
   const hasBudget = mid && BUDGET_2569.min[mid] != null;
   const hasLaw    = mid && MIN_LAW[mid];
   if(node.type === 'center')
-    return { show:{info:1, budget:1}, badge:{budget:'2569'} };
+    return { show:{info:1, budget:1, chart:1}, badge:{budget:'2569', chart:'📊'} };
   if(node.type === 'minister')
-    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget},
-             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':''} };
+    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, chart:!!hasBudget},
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'📊'} };
   if(node.isMinistry)
-    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, staff:1},
-             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':''} };
+    return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, staff:1, chart:1},
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'📊'} };
   // กรม / รัฐวิสาหกิจ / องค์การมหาชน / มหาวิทยาลัย
-  return { show:{info:1, budget:!!hasBudget, staff:1},
-           badge:{budget: hasBudget?'2569':''} };
+  return { show:{info:1, budget:!!hasBudget, staff:1, chart:1},
+           badge:{budget: hasBudget?'2569':'', chart:'📊'} };
 }
 
 function ipSwitchTab(t){
   ipTab = t;
-  document.querySelectorAll('.ip-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.ip-tab').forEach(b => {
+    const isAct = b.dataset.tab === t;
+    b.classList.toggle('active', isAct);
+    if(isAct) {
+      try { b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }); } catch(e){}
+    }
+  });
   IP_TABS.forEach(k => { const p = document.getElementById('pane-'+k); if(p) p.hidden = (k !== t); });
   const body = document.querySelector('.ip-body'); if(body) body.scrollTop = 0;
 }
 document.querySelectorAll('.ip-tab').forEach(b => {
   b.onclick = () => ipSwitchTab(b.dataset.tab);
 });
+
+// เปิดให้เลื่อนแถบแท็บด้วยลูกกลิ้งเมาส์หรือการลาก
+(function(){
+  const tabs = document.getElementById('ip-tabs');
+  if(!tabs) return;
+  tabs.addEventListener('wheel', function(e) {
+    if(e.deltaY !== 0) {
+      e.preventDefault();
+      tabs.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+  let isDown = false, startX, scrollLeft;
+  tabs.addEventListener('mousedown', function(e) {
+    isDown = true;
+    tabs.style.cursor = 'grabbing';
+    startX = e.pageX - tabs.offsetLeft;
+    scrollLeft = tabs.scrollLeft;
+  });
+  tabs.addEventListener('mouseleave', function() { isDown = false; tabs.style.cursor = 'grab'; });
+  tabs.addEventListener('mouseup', function() { isDown = false; tabs.style.cursor = 'grab'; });
+  tabs.addEventListener('mousemove', function(e) {
+    if(!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - tabs.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    tabs.scrollLeft = scrollLeft - walk;
+  });
+})();
 
 // ── เรียกทุกครั้งที่เปิดแผง (ห่อ showPanel เดิมไว้ท้ายไฟล์) ──
 function renderDetailTabs(node){
@@ -5934,6 +6112,7 @@ function renderDetailTabs(node){
   renderLawPane(node, mid);
   renderBudgetPane(node, mid);
   renderStaffPane(node, mid);
+  if(typeof renderChartPane === 'function') renderChartPane(node, mid);
   ipSwitchTab(plan.show[ipTab] ? ipTab : 'info');   // คงแท็บเดิมไว้ถ้าโหนดใหม่มีแท็บนั้น
 }
 
@@ -8174,9 +8353,12 @@ applyHashFromURL();   // มากับลิงก์ #… → เปิดแ
 <script src="js/structure-budget-agency.js"></script>
 <script src="js/structure-law-org.js"></script>
 <script src="js/structure-staff-exec.js"></script>
+<script src="js/structure-charts.js"></script>
 <script src="js/cursor-glow.js"></script>
 <script src="js/theme-toggle-drag.js"></script>
 <script src="js/structure-toolkit.js"></script>
 <script src="js/ai-chat.js"></script>
+<script src="js/cyber-sfx.js"></script>
+<script src="js/cyber-audio.js"></script>
 </body>
 </html>
