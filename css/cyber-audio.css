@@ -259,31 +259,27 @@ html[data-theme="light"] #cyber-bgm-root {
 
 /* ── 3. EXPANDED HI-FI DASHBOARD MODAL ── */
 .cyber-bgm-card {
-  position: absolute;
-  bottom: 56px;
-  top: auto;
-  left: 0;
-  right: auto;
+  position: fixed;
+  z-index: 99995;
   width: 740px;
   max-width: calc(100vw - 32px);
-  max-height: calc(100vh - 80px);
+  max-height: min(520px, calc(100vh - 32px));
   overflow-y: auto;
   background: var(--bgm-card-bg);
   border: 1px solid var(--bgm-border);
   border-radius: 24px;
-  padding: 22px;
+  padding: 20px;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: var(--bgm-shadow), 0 0 35px rgba(0, 0, 0, 0.65);
+  box-shadow: var(--bgm-shadow), 0 0 45px rgba(0, 0, 0, 0.75);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(14px) scale(0.97);
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15);
+  transform: translateY(12px) scale(0.98);
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0.25s;
   pointer-events: none;
-  z-index: 99991;
   display: grid;
   grid-template-columns: 1.25fr 1fr;
-  gap: 20px;
+  gap: 18px;
 }
 
 .drawer-open .cyber-bgm-card {
@@ -291,22 +287,6 @@ html[data-theme="light"] #cyber-bgm-root {
   visibility: visible;
   transform: translateY(0) scale(1);
   pointer-events: auto;
-}
-
-/* Card Directional Adaptations when dragged to top or right */
-#cyber-bgm-slot.card-open-down .cyber-bgm-card {
-  bottom: auto !important;
-  top: 56px !important;
-  transform: translateY(-14px) scale(0.97);
-}
-
-#cyber-bgm-slot.card-open-down.drawer-open .cyber-bgm-card {
-  transform: translateY(0) scale(1);
-}
-
-#cyber-bgm-slot.card-align-right .cyber-bgm-card {
-  left: auto !important;
-  right: 0 !important;
 }
 
 /* ── LEFT PANEL (MAIN PLAYER) ── */

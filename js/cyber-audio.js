@@ -462,24 +462,29 @@
     var initLeft = 0, initTop = 0;
 
     updateCardOrientation = function () {
-      if (!dom.slot) return;
+      if (!dom.slot || !dom.card) return;
       var rect = dom.slot.getBoundingClientRect();
       var winW = window.innerWidth;
       var winH = window.innerHeight;
 
-      var spaceAbove = rect.top;
-      var spaceBelow = winH - rect.bottom;
-      var spaceRight = winW - rect.left;
+      var cardW = Math.min(740, winW - 32);
+      var cardH = Math.min(dom.card.offsetHeight || 440, winH - 32);
 
-      // กางลงด้านล่างเฉพาะเมื่อพื้นที่ด้านล่างพอ (> 480px) และพื้นที่ด้านบนน้อยเกินไป (< 450px)
-      // มิฉะนั้นให้กางขึ้นด้านบนเสมอ เพื่อไม่ให้ล้นตกขอบจอด้านล่าง
-      var openDown = (spaceBelow >= 480 && spaceAbove < 450);
-      dom.slot.classList.toggle('card-open-down', openDown);
+      // คำนวณแกน X (ซ้าย-ขวา): พยายามให้ตรงกับปุ่ม pill และ clamp ให้อยู่ในขอบจอ
+      var idealLeft = (rect.left > winW / 2) ? (rect.right - cardW) : rect.left;
+      var clampLeft = Math.max(16, Math.min(winW - cardW - 16, idealLeft));
 
-      // ปรับชิดขวาถ้าพื้นที่ฝั่งขวาเหลือน้อยกว่าขนาด Dashboard (760px) หรืออยู่ครึ่งขวาของจอ
-      var alignRight = (spaceRight < 760 || rect.left > winW / 2);
-      dom.slot.classList.toggle('card-align-right', alignRight);
-    }
+      // คำนวณแกน Y (บน-ล่าง): 
+      // ถ้าปุ่มอยู่ครึ่งล่างของจอ -> วาง card เหนือปุ่ม (rect.top - cardH - 12)
+      // ถ้าปุ่มอยู่ครึ่งบนของจอ -> วาง card ใต้ปุ่ม (rect.bottom + 12)
+      var idealTop = (rect.top > winH / 2) ? (rect.top - cardH - 12) : (rect.bottom + 12);
+      var clampTop = Math.max(16, Math.min(winH - cardH - 16, idealTop));
+
+      dom.card.style.left = clampLeft + 'px';
+      dom.card.style.top = clampTop + 'px';
+      dom.card.style.bottom = 'auto';
+      dom.card.style.right = 'auto';
+    };
 
     function snapToEdge(left, top, animate) {
       if (!dom.slot) return;
