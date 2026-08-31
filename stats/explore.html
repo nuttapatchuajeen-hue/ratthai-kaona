@@ -1076,8 +1076,341 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
         <div id="groupHero"></div>
 
+    <!-- ============ 01. ระบบสุริยะ · แบบจำลอง 3 มิติ (3D Orrery & Comet Halley) ============ -->
+    <section class="tabpane" id="pane-solar-orrery" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sparkles"></use></svg> แบบจำลองระบบสุริยะ 3 มิติ (3D Solar System Orrery &amp; Comet Halley)</h2></div>
+      
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-sparkles"></use></svg> สำรวจระบบสุริยะแบบจำลอง 3 มิติ สมจริงระดับท้องฟ้าจำลอง</h2>
+          <span class="tag">WebGL · Three.js 3D · อินเทอร์แอกทีฟ</span>
+        </div>
+        <p class="sub">แบบจำลองกลศาสตร์ท้องฟ้า 3 มิติ (Orrery) ระดับความละเอียดสูง พร้อมดวงอาทิตย์สังเคราะห์ด้วย Procedural Canvas, ดาวเคราะห์ 8 ดวง + เมฆหมุนวนบนโลก Blue Marble, ดวงจันทร์บริวาร (โลก, พฤหัสบดี, เสาร์), แถบดาวเคราะห์น้อยนับหมื่นดวง และ <b>ดาวหางฮัลเลย์ 3D แท้</b> ที่หางไอออนทอดยาวหนีดวงอาทิตย์ตามหลักฟิสิกส์ลมสุริยะ</p>
+        
+        <a class="bkkcity-go" href="orrery.html" target="_blank" rel="noopener" style="margin-bottom:14px;">
+          <span class="ico">🪐</span>
+          <span class="tx">
+            <b>เปิดแบบจำลองระบบสุริยะ 3 มิติ เต็มหน้าจอ (Fullscreen Edition)</b>
+            <small>คลิกดวงดาวเพื่อเปิดการ์ดข้อมูลดาราศาสตร์ภาษาไทย · หมุน/ซูม 360° · แถบปรับสปีดเวลา Time Warp (1x–100x) · ปรับแสงสว่าง Flare และ Corona สด</small>
+          </span>
+          <span class="arw">เปิดเต็มจอ ↗</span>
+        </a>
+
+        <div style="position:relative; width:100%; height:620px; border-radius:14px; overflow:hidden; border:1px solid var(--rule-strong); background:#000003; box-shadow:0 14px 40px rgba(0,0,0,0.65);">
+          <iframe src="orrery.html" style="width:100%; height:100%; border:none; display:block;" title="3D Solar System Orrery Interactive" loading="lazy"></iframe>
+        </div>
+
+        <div class="src">เทคโนโลยี: Three.js r128 + WebGL ACES Filmic Tone Mapping · ข้อมูลพิกัดและโมเดลพื้นผิวดาวเคราะห์จาก NASA 3D Resources · จัดทำโดยทีมงานรัฐไทยก้าวหน้า</div>
+      </div>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-sun"></use></svg> ดวงอาทิตย์ &amp; Corona Glow</h2><span class="tag">Multi-layer Sprite</span></div>
+          <p class="sub">พื้นผิวแมกมาสังเคราะห์ความละเอียดสูง พร้อมเลเยอร์ Corona เต้นเป็นจังหวะ (Breathing Pulse) และแฉกแสง Sunburst 96 ทิศทาง</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-globe"></use></svg> โลก Blue Marble &amp; เมฆหมุน</h2><span class="tag">NASA Textures</span></div>
+          <p class="sub">แมตทีเรียลหลายชั้น: Specular Map สะท้อนผิวน้ำทะเล, Normal Map ผิวขรุขระของทวีป, บรรยากาศเมฆหมุนวน และดวงจันทร์ The Moon</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-rocket"></use></svg> ดาวหางฮัลเลย์ 3D</h2><span class="tag">Physics Tail Vector</span></div>
+          <p class="sub">แกนน้ำแข็ง Nucleus + หมอก Coma เรืองแสง พร้อมหางไอออนสีน้ำเงินครามที่หันหนีออกจากดวงอาทิตย์ตามเวกเตอร์ลมสุริยะตลอดวงโคจร</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 02. ระบบสุริยะ · ดวงอาทิตย์ (The Sun) ============ -->
+    <section class="tabpane" id="pane-solar-sun" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sun"></use></svg> ดวงอาทิตย์ (The Sun · ดาวฤกษ์ศูนย์กลาง)</h2></div>
+      
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-ruler"></use></svg> เส้นผ่านศูนย์กลาง</div>
+          <div class="k-num">1,392,700<span class="u">กม.</span></div>
+          <div class="k-sub">ใหญ่กว่าโลก ~109 เท่า (ใส่โลกได้ 1.3 ล้านใบ)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> อุณหภูมิแกนกลาง</div>
+          <div class="k-num">15,000,000<span class="u">°C</span></div>
+          <div class="k-sub">พื้นผิว (โฟโตสเฟียร์) เฉลี่ย 5,500 °C</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-scale"></use></svg> สัดส่วนมวลรวม</div>
+          <div class="k-num">99.86<span class="u">%</span></div>
+          <div class="k-sub">ของมวลสสารทั้งหมดในระบบสุริยะ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> ปฏิกิริยาฟิวชัน/วินาที</div>
+          <div class="k-num">600<span class="u">ล้านตัน H</span></div>
+          <div class="k-sub">เปลี่ยนไฮโดรเจนเป็นฮีเลียม ปลดปล่อยพลังงานมหาศาล</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> โครงสร้างชั้นบรรยากาศและภายในดวงอาทิตย์</h2><span class="tag">Astronomy Deep Dive</span></div>
+          <p class="sub" style="line-height:1.75">
+            <b>1. แกนกลาง (Core):</b> แหล่งกำเนิดพลังงานนิวเคลียร์ฟิวชัน โปรตอนหลอมเป็นฮีเลียมที่ความดันและอุณหภูมิ 15 ล้านองศา<br>
+            <b>2. เขตแผ่รังสี (Radiative Zone):</b> โฟตอนพลังงานสูงเดินทางแบบสุ่ม (Random Walk) ใช้เวลานับแสนปีเพื่อหลุดขึ้นสู่ชั้นบน<br>
+            <b>3. เขตพาความร้อน (Convection Zone):</b> พลาสมาหมุนวนพาความร้อนขึ้นสู่ผิวหน้า ก่อให้เกิดเซลล์การเดือด (Granulation)<br>
+            <b>4. ชั้นโฟโตสเฟียร์ (Photosphere):</b> ผิวหน้าที่เปล่งแสงสว่างมองเห็นได้ หนาประมาณ 500 กม.<br>
+            <b>5. บรรยากาศโคโรนา (Corona):</b> ชั้นบรรยากาศแก๊สร้อนจัดเจือจาง อุณหภูมิสูงทะลุ 1–3 ล้านองศาเซลเซียส
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-zap"></use></svg> ปรากฏการณ์สุริยะ &amp; อิทธิพลต่อโลก</h2><span class="tag">Space Weather</span></div>
+          <p class="sub" style="line-height:1.75">
+            <b>จุดดับบนดวงอาทิตย์ (Sunspots):</b> บริเวณสนามแม่เหล็กเข้มข้นที่อุณหภูมิต่ำกว่าผิวรอบข้าง มีวัฏจักรเฉลี่ยทุก 11 ปี (Solar Cycle)<br>
+            <b>การพ่นมวลโคโรนา (Coronal Mass Ejection - CME):</b> กลุ่มก้อนพลาสมาพลังงานสูงที่พุ่งสู่อวกาศ หากพุ่งชนสนามแม่เหล็กโลกจะทำให้เกิด <i>พายุแม่เหล็กโลก (Geomagnetic Storm)</i><br>
+            <b>แสงออโรรา (Aurora):</b> แสงเหนือ-แสงใต้ เกิดจากอนุภาคมีประจุจากลมสุริยะชนกับแก๊สออกซิเจนและไนโตรเจนในชั้นบรรยากาศโลก
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03. ระบบสุริยะ · ดาวเคราะห์ 8 ดวง (Planets) ============ -->
+    <section class="tabpane" id="pane-solar-planets" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-globe"></use></svg> ดาวเคราะห์ทั้ง 8 ดวง (The 8 Planets)</h2></div>
+      
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-circle"></use></svg> ดาวเคราะห์หินชั้นใน</div>
+          <div class="k-num">4<span class="u">ดวง</span></div>
+          <div class="k-sub">พุธ, ศุกร์, โลก, อังคาร (Terrestrial)</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-circle"></use></svg> ดาวเคราะห์ยักษ์ชั้นนอก</div>
+          <div class="k-num">4<span class="u">ดวง</span></div>
+          <div class="k-sub">แก๊สยักษ์ (พฤหัส, เสาร์) + น้ำแข็งยักษ์ (ยูเรนัส, เนปจูน)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-trophy"></use></svg> ราชาดาวเคราะห์</div>
+          <div class="k-num">139,820<span class="u">กม.</span></div>
+          <div class="k-sub">ดาวพฤหัสบดี (มวล 2.5 เท่าของดาวดวงอื่นรวมกัน)</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-moon"></use></svg> ดวงจันทร์บริวารรวม</div>
+          <div class="k-num">&gt; 290<span class="u">ดวง</span></div>
+          <div class="k-sub">เสาร์ (146 ดวง) &amp; พฤหัสบดี (95 ดวง) มากสุด</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-table"></use></svg> ตารางเปรียบเทียบข้อมูลดาวเคราะห์ทางดาราศาสตร์</h2><span class="tag">NASA Planetary Fact Sheet</span></div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left; color:var(--ink);">
+            <thead>
+              <tr style="border-bottom:1px solid var(--rule-strong); background:var(--paper-3); color:var(--ink-soft);">
+                <th style="padding:10px 14px;">ดาวเคราะห์</th>
+                <th style="padding:10px 14px;">ประเภท</th>
+                <th style="padding:10px 14px;">ระยะห่างเฉลี่ย (AU)</th>
+                <th style="padding:10px 14px;">เส้นผ่านศูนย์กลาง</th>
+                <th style="padding:10px 14px;">คาบโคจร (1 ปี)</th>
+                <th style="padding:10px 14px;">อุณหภูมิเฉลี่ย</th>
+                <th style="padding:10px 14px;">ดวงจันทร์บริวาร</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#5bc0be;">☿ ดาวพุธ (Mercury)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์หิน</td>
+                <td style="padding:10px 14px;">0.39 AU (57.9 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">4,879 กม.</td>
+                <td style="padding:10px 14px;">88 วันโลก</td>
+                <td style="padding:10px 14px;">167 °C (-180 ถึง 430)</td>
+                <td style="padding:10px 14px;">0</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#f59e0b;">♀ ดาวศุกร์ (Venus)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์หิน</td>
+                <td style="padding:10px 14px;">0.72 AU (108.2 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">12,104 กม.</td>
+                <td style="padding:10px 14px;">224.7 วันโลก</td>
+                <td style="padding:10px 14px; color:#ff5c1a; font-weight:700;">465 °C (ร้อนสุด)</td>
+                <td style="padding:10px 14px;">0</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule); background:rgba(0,229,255,0.04);">
+                <td style="padding:10px 14px; font-weight:700; color:#38bdf8;">🌍 โลก (The Earth)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์หินแห่งชีวิต</td>
+                <td style="padding:10px 14px;">1.00 AU (149.6 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">12,742 กม.</td>
+                <td style="padding:10px 14px;">365.25 วันโลก</td>
+                <td style="padding:10px 14px; color:#38bdf8; font-weight:700;">15 °C</td>
+                <td style="padding:10px 14px;">1 ดวง (The Moon)</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#ef4444;">♂ ดาวอังคาร (Mars)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์หินสีแดง</td>
+                <td style="padding:10px 14px;">1.52 AU (227.9 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">6,779 กม.</td>
+                <td style="padding:10px 14px;">687 วัน (1.88 ปี)</td>
+                <td style="padding:10px 14px;">-65 °C</td>
+                <td style="padding:10px 14px;">2 ดวง (Phobos, Deimos)</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#f97316;">♃ ดาวพฤหัสบดี (Jupiter)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์แก๊สยักษ์</td>
+                <td style="padding:10px 14px;">5.20 AU (778.5 ล้าน กม.)</td>
+                <td style="padding:10px 14px; font-weight:700; color:#fbbf24;">139,820 กม. (ใหญ่สุด)</td>
+                <td style="padding:10px 14px;">11.86 ปีโลก</td>
+                <td style="padding:10px 14px;">-110 °C</td>
+                <td style="padding:10px 14px;">95 ดวง (Galilean 4)</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#eab308;">♄ ดาวเสาร์ (Saturn)</td>
+                <td style="padding:10px 14px;">แก๊สยักษ์ + วงแหวนสง่างาม</td>
+                <td style="padding:10px 14px;">9.58 AU (1,434 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">116,460 กม.</td>
+                <td style="padding:10px 14px;">29.45 ปีโลก</td>
+                <td style="padding:10px 14px;">-140 °C</td>
+                <td style="padding:10px 14px; font-weight:700; color:#eab308;">146 ดวง (มากที่สุด)</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--rule);">
+                <td style="padding:10px 14px; font-weight:700; color:#06b6d4;">♅ ดาวยูเรนัส (Uranus)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์น้ำแข็งยักษ์</td>
+                <td style="padding:10px 14px;">19.22 AU (2,871 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">50,724 กม.</td>
+                <td style="padding:10px 14px;">84.01 ปีโลก</td>
+                <td style="padding:10px 14px; color:#06b6d4; font-weight:700;">-195 °C (หนาวจัด)</td>
+                <td style="padding:10px 14px;">28 ดวง</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 14px; font-weight:700; color:#3b82f6;">♆ ดาวเนปจูน (Neptune)</td>
+                <td style="padding:10px 14px;">ดาวเคราะห์น้ำแข็งยักษ์</td>
+                <td style="padding:10px 14px;">30.05 AU (4,495 ล้าน กม.)</td>
+                <td style="padding:10px 14px;">49,244 กม.</td>
+                <td style="padding:10px 14px;">164.8 ปีโลก</td>
+                <td style="padding:10px 14px;">-200 °C</td>
+                <td style="padding:10px 14px;">16 ดวง (Triton)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="src">ที่มา: NASA Planetary Fact Sheet · สถาบันวิจัยดาราศาสตร์แห่งชาติ (องค์การมหาชน) - NARIT</div>
+      </div>
+    </section>
+
+    <!-- ============ 04. ระบบสุริยะ · ดาวหางฮัลเลย์ (Comet Halley) ============ -->
+    <section class="tabpane" id="pane-solar-halley" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-rocket"></use></svg> ดาวหางฮัลเลย์ (1P/Halley · ผู้มาเยือนขอบฟ้า)</h2></div>
+      
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-clock"></use></svg> คาบการโคจร</div>
+          <div class="k-num">~76<span class="u">ปี</span></div>
+          <div class="k-sub">เฉลี่ย 75–76 ปี (สังเกตได้ด้วยตาเปล่า)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-sun"></use></svg> จุดใกล้สุด Perihelion</div>
+          <div class="k-num">0.59<span class="u">AU</span></div>
+          <div class="k-sub">ใกล้กว่าวงโคจรโลก (อยู่ระหว่างพุธกับศุกร์)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-compass"></use></svg> จุดไกลสุด Aphelion</div>
+          <div class="k-num">35.1<span class="u">AU</span></div>
+          <div class="k-sub">ไกลเกินวงโคจรดาวเนปจูนและพลูโต</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-sparkles"></use></svg> ปรากฏครั้งถัดไป</div>
+          <div class="k-num">2061<span class="u">(พ.ศ. 2604)</span></div>
+          <div class="k-sub">ครั้งล่าสุด 9 กุมภาพันธ์ พ.ศ. 2529 (1986)</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-sparkles"></use></svg> กายวิภาคของดาวหาง (Comet Anatomy)</h2><span class="tag">Ion &amp; Dust Tails</span></div>
+          <p class="sub" style="line-height:1.75">
+            <b>1. แกนนิวเคลียส (Nucleus):</b> ก้อนน้ำแข็งสกปรก (Dirty Snowball) ขนาดประมาณ 15 × 8 กม. ประกอบด้วยน้ำแข็งแห้ง มีเทน แอมโมเนีย และฝุ่นซิลิเกต<br>
+            <b>2. หัวโคม่า (Coma):</b> เมฆหมุนวนของไอแก๊สและฝุ่นที่ระเหิดขึ้นเมื่อเข้าใกล้ความร้อนจากดวงอาทิตย์ สว่างเจิดจ้าเรืองแสง<br>
+            <b>3. หางไอออน (Ion Tail):</b> แก๊สแตกตัวเป็นประจุสีน้ำเงินคราม ถูกลมสุริยะพัดตรง <i>ชี้หนีออกจากดวงอาทิตย์ 180° เสมอ</i><br>
+            <b>4. หางฝุ่น (Dust Tail):</b> อนุภาคฝุ่นสีขาวนวล โค้งตามเส้นทางวงโคจรเนื่องจากแรงดันรังสีแสงอาทิตย์
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-scroll"></use></svg> ประวัติศาสตร์ &amp; การไขความลับจักรวาล</h2><span class="tag">Edmond Halley</span></div>
+          <p class="sub" style="line-height:1.75">
+            ในปี ค.ศ. 1705 <b>เอ็ดมันด์ ฮัลเลย์ (Edmond Halley)</b> นักดาราศาสตร์ชาวอังกฤษ ได้ใช้กฎแรงโน้มถ่วงสากลของเซอร์ไอแซก นิวตัน คำนวณพบว่าดาวหางที่ปรากฏในปี 1531, 1607 และ 1682 แท้จริงคือดาวหางดวงเดียวกัน และทำนายว่ามันจะกลับมาอีกครั้งในปี 1758 แม้เขาจะเสียชีวิตก่อน แต่การกลับมาตามนัดทำให้กฎฟิสิกส์ของนิวตันได้รับการยอมรับทั่วโลก
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05. ระบบสุริยะ · แถบดาวเคราะห์น้อย & ไคเปอร์ ============ -->
+    <section class="tabpane" id="pane-solar-belts" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-compass"></use></svg> แถบดาวเคราะห์น้อย &amp; วัตถุขอบระบบสุริยะ</h2></div>
+      
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-layers"></use></svg> แถบดาวเคราะห์น้อยหลัก</div>
+          <div class="k-num">2.2–3.2<span class="u">AU</span></div>
+          <div class="k-sub">ระหว่างวงโคจรดาวอังคารและดาวพฤหัสบดี</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-circle"></use></svg> ดาวเคราะห์แคระ ซีรีส</div>
+          <div class="k-num">940<span class="u">กม.</span></div>
+          <div class="k-sub">วัตถุที่ใหญ่ที่สุดในแถบดาวเคราะห์น้อยหลัก</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> แถบไคเปอร์ (Kuiper Belt)</div>
+          <div class="k-num">30–50<span class="u">AU</span></div>
+          <div class="k-sub">ดินแดนน้ำแข็งของดาวพลูโต และวัตถุ TNOs</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-cloud"></use></svg> เมฆออร์ต (Oort Cloud)</div>
+          <div class="k-num">100,000<span class="u">AU</span></div>
+          <div class="k-sub">ทรงกลมน้ำแข็งขอบนอกสุด แหล่งกำเนิดดาวหางคาบยาว</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-compass"></use></svg> แถบดาวเคราะห์น้อยหลัก (Main Asteroid Belt)</h2><span class="tag">เศษซากการกำเนิดดาวเคราะห์</span></div>
+          <p class="sub" style="line-height:1.75">
+            เศษหินและโลหะที่หลงเหลือจากการก่อตัวของระบบสุริยะเมื่อ 4.6 พันล้านปีก่อน แรงโน้มถ่วงรบกวนอันมหาศาลของดาวพฤหัสบดีทำให้เศษหินเหล่านี้ไม่สามารถรวมตัวกันกลายเป็นดาวเคราะห์ได้ วัตถุที่สำคัญได้แก่ <b>ดาวเคราะห์แคระซีรีส (Ceres)</b>, เวสตา (Vesta), พัลลัส (Pallas) และไฮเจีย (Hygiea)
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-snowflake"></use></svg> แถบไคเปอร์ &amp; เมฆออร์ต (Kuiper Belt &amp; Oort Cloud)</h2><span class="tag">แดนน้ำแข็งขอบจักรวาล</span></div>
+          <p class="sub" style="line-height:1.75">
+            <b>แถบไคเปอร์ (30–50 AU):</b> วงแหวนน้ำแข็งและก๊าซเยือกแข็งนอกวงโคจรดาวเนปจูน เป็นที่อยู่ของดาวเคราะห์แคระพลูโต (Pluto), อีริส (Eris), มาเคมาเค (Makemake) และเฮาเมอา (Haumea)<br>
+            <b>เมฆออร์ต (2,000–100,000 AU):</b> รังไข่ขนาดยักษ์รูปทรงกลมห่อหุ้มระบบสุริยะ มีก้อนน้ำแข็งและฝุ่นนับล้านล้านชิ้น แหล่งกำเนิดดาวหางคาบยาวนับหมื่นปี
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06. ระบบสุริยะ · มาตราส่วน & ระยะทาง AU ============ -->
+    <section class="tabpane" id="pane-solar-scale" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-chart-column"></use></svg> มาตราส่วน &amp; ระยะทางดาราศาสตร์ (Astronomical Unit)</h2></div>
+      
+      <div class="math-formula-hero">
+        <div class="math-eq-wrap">
+          <div class="math-eq-main">1 AU = 149,597,870.7 กม. &nbsp;|&nbsp; c = 299,792.458 km/s</div>
+          <span class="math-eq-tag">Astronomical Constants</span>
+        </div>
+        <p class="math-explain"><b>หน่วยดาราศาสตร์ (AU):</b> นิยามจากระยะทางเฉลี่ยระหว่างโลกกับดวงอาทิตย์ เพื่อความสะดวกในการคำนวณระยะห่างระดับมหาศาลในอวกาศ แสงจากดวงอาทิตย์ใช้เวลาเดินทางถึงโลกประมาณ <b>8 นาที 20 วินาที</b> (499 วินาที) และใช้เวลากว่า <b>4.2 ชั่วโมง</b> เพื่อเดินทางถึงดาวเนปจูน</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-compass"></use></svg> ระยะทางเฉลี่ยจากดวงอาทิตย์ (หน่วย AU)</h2><span class="tag">มาตราส่วนระยะทาง</span></div>
+          <p class="sub">เปรียบเทียบระยะห่างในระบบสุริยะ (1 AU = 149.6 ล้านกิโลเมตร) — สังเกตว่าระบบสุริยะชั้นนอกมีระยะห่างกว้างใหญ่กว่าชั้นในอย่างมหาศาล</p>
+          <div class="plot" id="solarDistBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA Planetary Fact Sheet</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-ruler"></use></svg> เปรียบเทียบขนาดเส้นผ่านศูนย์กลาง (กิโลเมตร)</h2><span class="tag">ขนาดดาวเคราะห์</span></div>
+          <p class="sub">เส้นผ่านศูนย์กลางของดาวเคราะห์ 8 ดวง เรียงจากดาวพุธขนาดเล็กสุด ไปจนถึงดาวพฤหัสบดีและดาวเสาร์ที่เป็นแก๊สยักษ์</p>
+          <div class="plot" id="solarDiamBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA JPL Solar System Dynamics</div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ศูนย์ข้อมูลโลก · ภาพรวม โลกร้อน & ภัยพิบัติ ============ -->
-    <section class="tabpane active" id="pane-disaster" role="tabpanel">
+    <section class="tabpane" id="pane-disaster" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-thermometer"></use></svg> ภาพรวม โลกร้อน &amp; ภัยพิบัติ</h2></div>
       <div class="kpis">
         <div class="kpi accent">
@@ -9103,7 +9436,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }).catch(function(){ setQuakeKpis(); });   // เชื่อมต่อไม่ได้ → คงค่าสำรอง
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); afterPaint(zoomifyMaps); }
+    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -17355,6 +17688,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       if(document.getElementById("pane-edu-diff_eq")){
         renderEduDiffEq();
         initDiffEqSim();
+      }
+    }
+
+    function renderSolarAll(){
+      if(document.getElementById("solarDistBar")){
+        hbarChart("#solarDistBar", (SOLAR_DIST_BARS||[]), {full:true, h:320, ml:170, mr:70, xlab:"ระยะห่างเฉลี่ยจากดวงอาทิตย์ (AU · 1 AU = 149.6 ล้าน กม.)", nameLabel:"วัตถุในระบบสุริยะ", fmt:function(v){ return (v!=null?v.toFixed(2)+" AU":""); }});
+      }
+      if(document.getElementById("solarDiamBar")){
+        hbarChart("#solarDiamBar", (SOLAR_DIAM_BARS||[]), {full:true, h:270, ml:140, mr:70, xlab:"เส้นผ่านศูนย์กลาง (กิโลเมตร)", nameLabel:"ดาวเคราะห์", fmt:function(v){ return (v!=null?Number(v).toLocaleString()+" กม.":""); }});
       }
     }
 

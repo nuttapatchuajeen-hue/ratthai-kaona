@@ -1243,7 +1243,52 @@ var MATH_WAVE_SPEEDS = [
       {k:"แสง/คลื่นแม่เหล็กไฟฟ้า (c/1000 กม./วิ)", v:299792, hl:true}
     ];
 
+var SOLAR_PLANETS_DATA = [
+      { name: "ดวงอาทิตย์ (The Sun)", eng: "Sun", type: "ดาวฤกษ์ (Yellow Dwarf)", diam: 1392700, distAU: 0, periodDays: 0, tempC: 5500, moons: 0, color: "#fbbf24", hl: true },
+      { name: "ดาวพุธ (Mercury)", eng: "Mercury", type: "ดาวเคราะห์หิน", diam: 4879, distAU: 0.39, periodDays: 88, tempC: 167, moons: 0, color: "#5bc0be" },
+      { name: "ดาวศุกร์ (Venus)", eng: "Venus", type: "ดาวเคราะห์หิน", diam: 12104, distAU: 0.72, periodDays: 224.7, tempC: 464, moons: 0, color: "#f59e0b" },
+      { name: "โลก (The Earth)", eng: "Earth", type: "ดาวเคราะห์หิน", diam: 12742, distAU: 1.00, periodDays: 365.25, tempC: 15, moons: 1, color: "#38bdf8", hl: true },
+      { name: "ดาวอังคาร (Mars)", eng: "Mars", type: "ดาวเคราะห์หิน", diam: 6779, distAU: 1.52, periodDays: 687, tempC: -65, moons: 2, color: "#ef4444" },
+      { name: "ดาวพฤหัสบดี (Jupiter)", eng: "Jupiter", type: "ดาวเคราะห์แก๊สยักษ์", diam: 139820, distAU: 5.20, periodDays: 4333, tempC: -110, moons: 95, color: "#f97316", hl: true },
+      { name: "ดาวเสาร์ (Saturn)", eng: "Saturn", type: "ดาวเคราะห์แก๊สยักษ์", diam: 116460, distAU: 9.58, periodDays: 10759, tempC: -140, moons: 146, color: "#eab308" },
+      { name: "ดาวยูเรนัส (Uranus)", eng: "Uranus", type: "ดาวเคราะห์น้ำแข็งยักษ์", diam: 50724, distAU: 19.22, periodDays: 30687, tempC: -195, moons: 28, color: "#06b6d4" },
+      { name: "ดาวเนปจูน (Neptune)", eng: "Neptune", type: "ดาวเคราะห์น้ำแข็งยักษ์", diam: 49244, distAU: 30.05, periodDays: 60190, tempC: -200, moons: 16, color: "#3b82f6" }
+    ];
+
+var SOLAR_DIST_BARS = [
+      { k: "ดาวพุธ", v: 0.39 },
+      { k: "ดาวศุกร์", v: 0.72 },
+      { k: "โลก", v: 1.00, hl: true },
+      { k: "ดาวอังคาร", v: 1.52 },
+      { k: "แถบดาวเคราะห์น้อย", v: 2.77 },
+      { k: "ดาวพฤหัสบดี", v: 5.20 },
+      { k: "ดาวเสาร์", v: 9.58 },
+      { k: "ดาวยูเรนัส", v: 19.22 },
+      { k: "ดาวเนปจูน", v: 30.05 },
+      { k: "ดาวหางฮัลเลย์ (ไกลสุด)", v: 35.10, hl: true },
+      { k: "แถบไคเปอร์", v: 45.00 }
+    ];
+
+var SOLAR_DIAM_BARS = [
+      { k: "ดาวพุธ", v: 4879 },
+      { k: "ดาวอังคาร", v: 6779 },
+      { k: "ดาวศุกร์", v: 12104 },
+      { k: "โลก", v: 12742, hl: true },
+      { k: "ดาวเนปจูน", v: 49244 },
+      { k: "ดาวยูเรนัส", v: 50724 },
+      { k: "ดาวเสาร์", v: 116460 },
+      { k: "ดาวพฤหัสบดี", v: 139820, hl: true }
+    ];
+
 var NAV = [
+      { id:"solar", ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ระบบสุริยะ", subs:[
+          { pane:"solar-orrery",   ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"แบบจำลอง 3 มิติ (3D Orrery)", existing:true },
+          { pane:"solar-sun",      ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ดวงอาทิตย์ (The Sun)", existing:true },
+          { pane:"solar-planets",  ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ดาวเคราะห์ 8 ดวง (Planets)", existing:true },
+          { pane:"solar-halley",   ico:"<svg class='mdico'><use href='#i-rocket'></use></svg>", label:"ดาวหางฮัลเลย์ (Comet Halley)", existing:true },
+          { pane:"solar-belts",    ico:"<svg class='mdico'><use href='#i-compass'></use></svg>", label:"แถบดาวเคราะห์น้อย & ไคเปอร์", existing:true },
+          { pane:"solar-scale",    ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"มาตราส่วน & ระยะทาง (AU)", existing:true }
+      ]},
       { id:"world", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ศูนย์ข้อมูลโลก", subs:[
           { pane:"disaster", ico:"<svg class='mdico'><use href='#i-thermometer'></use></svg>", label:"ภาพรวม โลกร้อน & ภัยพิบัติ", existing:true },
           { pane:"ice",      ico:"<svg class='mdico'><use href='#i-snowflake'></use></svg>", label:"% การละลายน้ำแข็งโลก", existing:true },
