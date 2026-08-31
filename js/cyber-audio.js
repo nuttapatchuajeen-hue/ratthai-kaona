@@ -141,6 +141,7 @@
   var sourceNode = null;
   var freqData = null;
   var animFrameId = null;
+  var updateCardOrientation = null;
 
   function setupAudioContext() {
     if (audioCtx) return;
@@ -453,12 +454,32 @@
       toggleDrawer();
     });
 
-    // ── DRAGGABLE FLOATING CONTROLLER WITH EDGE SNAPPING ──
+    // ── DRAGGABLE FLOATING CONTROLLER WITH EDGE SNAPPING & DYNAMIC ORIENTATION ──
     var isDragging = false;
     var hasMoved = false;
     var justDragged = false;
     var startX = 0, startY = 0;
     var initLeft = 0, initTop = 0;
+
+    updateCardOrientation = function () {
+      if (!dom.slot) return;
+      var rect = dom.slot.getBoundingClientRect();
+      var winW = window.innerWidth;
+      var winH = window.innerHeight;
+
+      var spaceAbove = rect.top;
+      var spaceBelow = winH - rect.bottom;
+      var spaceRight = winW - rect.left;
+
+      // กางลงด้านล่างเฉพาะเมื่อพื้นที่ด้านล่างพอ (> 480px) และพื้นที่ด้านบนน้อยเกินไป (< 450px)
+      // มิฉะนั้นให้กางขึ้นด้านบนเสมอ เพื่อไม่ให้ล้นตกขอบจอด้านล่าง
+      var openDown = (spaceBelow >= 480 && spaceAbove < 450);
+      dom.slot.classList.toggle('card-open-down', openDown);
+
+      // ปรับชิดขวาถ้าพื้นที่ฝั่งขวาเหลือน้อยกว่าขนาด Dashboard (760px) หรืออยู่ครึ่งขวาของจอ
+      var alignRight = (spaceRight < 760 || rect.left > winW / 2);
+      dom.slot.classList.toggle('card-align-right', alignRight);
+    }
 
     function snapToEdge(left, top, animate) {
       if (!dom.slot) return;
@@ -482,8 +503,7 @@
       dom.slot.style.bottom = 'auto';
       dom.slot.style.right = 'auto';
 
-      dom.slot.classList.toggle('card-open-down', clampedT < 460);
-      dom.slot.classList.toggle('card-align-right', snapLeft > window.innerWidth / 2);
+      updateCardOrientation();
 
       if (animate) {
         setTimeout(function () {
@@ -509,8 +529,7 @@
       dom.slot.style.bottom = 'auto';
       dom.slot.style.right = 'auto';
 
-      dom.slot.classList.toggle('card-open-down', clampedT < 460);
-      dom.slot.classList.toggle('card-align-right', clampedL > window.innerWidth / 2);
+      updateCardOrientation();
     }
 
     // Restore saved position or snap to edge
@@ -672,9 +691,7 @@
     drawerOpen = open;
     if (dom.slot) {
       dom.slot.classList.toggle('drawer-open', drawerOpen);
-      var rect = dom.slot.getBoundingClientRect();
-      dom.slot.classList.toggle('card-open-down', rect.top < 460);
-      dom.slot.classList.toggle('card-align-right', rect.left > window.innerWidth / 2);
+      if (typeof updateCardOrientation === 'function') updateCardOrientation();
     }
     if (drawerOpen) {
       startVisualizer();

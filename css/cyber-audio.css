@@ -261,9 +261,13 @@ html[data-theme="light"] #cyber-bgm-root {
 .cyber-bgm-card {
   position: absolute;
   bottom: 56px;
+  top: auto;
   left: 0;
+  right: auto;
   width: 740px;
-  max-width: calc(100vw - 36px);
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
   background: var(--bgm-card-bg);
   border: 1px solid var(--bgm-border);
   border-radius: 24px;
@@ -291,8 +295,8 @@ html[data-theme="light"] #cyber-bgm-root {
 
 /* Card Directional Adaptations when dragged to top or right */
 #cyber-bgm-slot.card-open-down .cyber-bgm-card {
-  bottom: auto;
-  top: 56px;
+  bottom: auto !important;
+  top: 56px !important;
   transform: translateY(-14px) scale(0.97);
 }
 
@@ -301,8 +305,8 @@ html[data-theme="light"] #cyber-bgm-root {
 }
 
 #cyber-bgm-slot.card-align-right .cyber-bgm-card {
-  left: auto;
-  right: 0;
+  left: auto !important;
+  right: 0 !important;
 }
 
 /* ── LEFT PANEL (MAIN PLAYER) ── */
