@@ -1,4 +1,4 @@
-﻿/* ===========================================================================
+/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (7 Tracks)
    =========================================================================== */
@@ -50,6 +50,10 @@ html[data-theme="light"] #cyber-bgm-root {
   touch-action: none;
 }
 
+#cyber-bgm-slot.is-dragging {
+  transition: none !important;
+}
+
 /* แถวบรรจุ Pill + ปุ่มย่อ */
 .cyber-bgm-row {
   position: relative;
@@ -72,12 +76,18 @@ html[data-theme="light"] #cyber-bgm-root {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--bgm-shadow);
-  cursor: pointer;
+  cursor: grab;
   pointer-events: auto;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
   color: var(--bgm-text);
   overflow: hidden;
   box-sizing: border-box;
+}
+
+#cyber-bgm-slot.is-dragging .cyber-bgm-pill {
+  cursor: grabbing !important;
+  transform: scale(1.04);
+  box-shadow: 0 16px 45px -6px rgba(0, 0, 0, 0.85), 0 0 28px var(--bgm-cyan-glow);
 }
 
 .cyber-bgm-pill:hover {
@@ -277,6 +287,22 @@ html[data-theme="light"] #cyber-bgm-root {
   visibility: visible;
   transform: translateY(0) scale(1);
   pointer-events: auto;
+}
+
+/* Card Directional Adaptations when dragged to top or right */
+#cyber-bgm-slot.card-open-down .cyber-bgm-card {
+  bottom: auto;
+  top: 56px;
+  transform: translateY(-14px) scale(0.97);
+}
+
+#cyber-bgm-slot.card-open-down.drawer-open .cyber-bgm-card {
+  transform: translateY(0) scale(1);
+}
+
+#cyber-bgm-slot.card-align-right .cyber-bgm-card {
+  left: auto;
+  right: 0;
 }
 
 /* ── LEFT PANEL (MAIN PLAYER) ── */

@@ -1,4 +1,4 @@
-﻿/* ===========================================================================
+/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (7 Tracks)
    =========================================================================== */
@@ -453,7 +453,91 @@
       toggleDrawer();
     });
 
+    // ── DRAGGABLE FLOATING CONTROLLER ──
+    var isDragging = false;
+    var hasMoved = false;
+    var justDragged = false;
+    var startX = 0, startY = 0;
+    var initLeft = 0, initTop = 0;
+
+    function applyPosition(left, top) {
+      if (isNaN(left) || isNaN(top) || !dom.slot) return;
+      var slotW = dom.slot.offsetWidth || 180;
+      var slotH = dom.slot.offsetHeight || 46;
+      var maxL = Math.max(8, window.innerWidth - slotW - 8);
+      var maxT = Math.max(8, window.innerHeight - slotH - 8);
+
+      var clampedL = Math.max(8, Math.min(maxL, left));
+      var clampedT = Math.max(8, Math.min(maxT, top));
+
+      dom.slot.style.left = clampedL + 'px';
+      dom.slot.style.top = clampedT + 'px';
+      dom.slot.style.bottom = 'auto';
+      dom.slot.style.right = 'auto';
+
+      dom.slot.classList.toggle('card-open-down', clampedT < 460);
+      dom.slot.classList.toggle('card-align-right', clampedL > window.innerWidth / 2);
+    }
+
+    // Restore saved position
+    try {
+      var savedPosXY = JSON.parse(localStorage.getItem('cyber-bgm-pos-xy') || 'null');
+      if (savedPosXY && typeof savedPosXY.left === 'number' && typeof savedPosXY.top === 'number') {
+        applyPosition(savedPosXY.left, savedPosXY.top);
+      }
+    } catch(e) {}
+
+    window.addEventListener('resize', function () {
+      if (!dom.slot) return;
+      var rect = dom.slot.getBoundingClientRect();
+      applyPosition(rect.left, rect.top);
+    });
+
+    dom.pill.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('#bgmBtnPlayPill') || e.target.closest('#bgmBtnDrawer')) {
+        return;
+      }
+      isDragging = true;
+      hasMoved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      var rect = dom.slot.getBoundingClientRect();
+      initLeft = rect.left;
+      initTop = rect.top;
+      try { dom.pill.setPointerCapture(e.pointerId); } catch(err) {}
+    });
+
+    dom.pill.addEventListener('pointermove', function (e) {
+      if (!isDragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (!hasMoved && Math.hypot(dx, dy) > 4) {
+        hasMoved = true;
+        dom.slot.classList.add('is-dragging');
+      }
+      if (hasMoved) {
+        applyPosition(initLeft + dx, initTop + dy);
+      }
+    });
+
+    function finishDrag(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      dom.slot.classList.remove('is-dragging');
+      try { dom.pill.releasePointerCapture(e.pointerId); } catch(err) {}
+      if (hasMoved) {
+        justDragged = true;
+        setTimeout(function () { justDragged = false; }, 200);
+        var rect = dom.slot.getBoundingClientRect();
+        localStorage.setItem('cyber-bgm-pos-xy', JSON.stringify({ left: rect.left, top: rect.top }));
+      }
+    }
+
+    dom.pill.addEventListener('pointerup', finishDrag);
+    dom.pill.addEventListener('pointercancel', finishDrag);
+
     dom.pill.addEventListener('click', function (e) {
+      if (justDragged) return;
       if (isTucked) { setTucked(false); return; }
       if (e.target === dom.btnPlayPill || e.target.closest('#bgmBtnPlayPill') ||
           e.target === dom.btnDrawer || e.target.closest('#bgmBtnDrawer')) {
@@ -553,6 +637,9 @@
     drawerOpen = open;
     if (dom.slot) {
       dom.slot.classList.toggle('drawer-open', drawerOpen);
+      var rect = dom.slot.getBoundingClientRect();
+      dom.slot.classList.toggle('card-open-down', rect.top < 460);
+      dom.slot.classList.toggle('card-align-right', rect.left > window.innerWidth / 2);
     }
     if (drawerOpen) {
       startVisualizer();
