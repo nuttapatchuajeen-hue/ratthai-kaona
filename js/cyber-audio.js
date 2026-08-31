@@ -453,12 +453,46 @@
       toggleDrawer();
     });
 
-    // ── DRAGGABLE FLOATING CONTROLLER ──
+    // ── DRAGGABLE FLOATING CONTROLLER WITH EDGE SNAPPING ──
     var isDragging = false;
     var hasMoved = false;
     var justDragged = false;
     var startX = 0, startY = 0;
     var initLeft = 0, initTop = 0;
+
+    function snapToEdge(left, top, animate) {
+      if (!dom.slot) return;
+      var slotW = dom.slot.offsetWidth || 180;
+      var slotH = dom.slot.offsetHeight || 46;
+      var margin = 20;
+
+      // ดูดติดขอบจอซ้าย หรือ ขวา ที่ใกล้ที่สุด (ไม่ลอยทับตัวหนังสือกลางจอ)
+      var snapLeft = (left < window.innerWidth / 2) ? margin : (window.innerWidth - slotW - margin);
+      var maxT = Math.max(margin, window.innerHeight - slotH - margin);
+      var clampedT = Math.max(margin, Math.min(maxT, top));
+
+      if (animate) {
+        dom.slot.style.transition = 'left 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), top 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15)';
+      } else {
+        dom.slot.style.transition = '';
+      }
+
+      dom.slot.style.left = snapLeft + 'px';
+      dom.slot.style.top = clampedT + 'px';
+      dom.slot.style.bottom = 'auto';
+      dom.slot.style.right = 'auto';
+
+      dom.slot.classList.toggle('card-open-down', clampedT < 460);
+      dom.slot.classList.toggle('card-align-right', snapLeft > window.innerWidth / 2);
+
+      if (animate) {
+        setTimeout(function () {
+          if (dom.slot) dom.slot.style.transition = '';
+        }, 320);
+      }
+
+      return { left: snapLeft, top: clampedT };
+    }
 
     function applyPosition(left, top) {
       if (isNaN(left) || isNaN(top) || !dom.slot) return;
@@ -479,18 +513,18 @@
       dom.slot.classList.toggle('card-align-right', clampedL > window.innerWidth / 2);
     }
 
-    // Restore saved position
+    // Restore saved position or snap to edge
     try {
       var savedPosXY = JSON.parse(localStorage.getItem('cyber-bgm-pos-xy') || 'null');
       if (savedPosXY && typeof savedPosXY.left === 'number' && typeof savedPosXY.top === 'number') {
-        applyPosition(savedPosXY.left, savedPosXY.top);
+        snapToEdge(savedPosXY.left, savedPosXY.top, false);
       }
     } catch(e) {}
 
     window.addEventListener('resize', function () {
       if (!dom.slot) return;
       var rect = dom.slot.getBoundingClientRect();
-      applyPosition(rect.left, rect.top);
+      snapToEdge(rect.left, rect.top, false);
     });
 
     dom.pill.addEventListener('pointerdown', function (e) {
@@ -511,7 +545,7 @@
       if (!isDragging) return;
       var dx = e.clientX - startX;
       var dy = e.clientY - startY;
-      if (!hasMoved && Math.hypot(dx, dy) > 4) {
+      if (!hasMoved && Math.hypot(dx, dy) > 5) {
         hasMoved = true;
         dom.slot.classList.add('is-dragging');
       }
@@ -527,9 +561,10 @@
       try { dom.pill.releasePointerCapture(e.pointerId); } catch(err) {}
       if (hasMoved) {
         justDragged = true;
-        setTimeout(function () { justDragged = false; }, 200);
+        setTimeout(function () { justDragged = false; }, 220);
         var rect = dom.slot.getBoundingClientRect();
-        localStorage.setItem('cyber-bgm-pos-xy', JSON.stringify({ left: rect.left, top: rect.top }));
+        var snapped = snapToEdge(rect.left, rect.top, true);
+        localStorage.setItem('cyber-bgm-pos-xy', JSON.stringify(snapped));
       }
     }
 
