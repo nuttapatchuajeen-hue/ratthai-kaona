@@ -1039,6 +1039,210 @@ var EDU_DROP_PROV = [ // เด็กนอกระบบวัยบังค�
 var BKK_RAIN=[ {m:"ม.ค.",v:12},{m:"ก.พ.",v:20},{m:"มี.ค.",v:42},{m:"เม.ย.",v:86},{m:"พ.ค.",v:248},{m:"มิ.ย.",v:160},
                    {m:"ก.ค.",v:172},{m:"ส.ค.",v:198},{m:"ก.ย.",v:344},{m:"ต.ค.",v:292},{m:"พ.ย.",v:56},{m:"ธ.ค.",v:10} ];
 
+var MATH_MIL_LANCHESTER = [
+      {t:0, a:1000, b:650}, {t:1, a:870, b:600}, {t:2, a:750, b:556}, {t:3, a:639, b:518},
+      {t:4, a:535, b:486}, {t:5, a:438, b:459}, {t:6, a:346, b:437}, {t:7, a:259, b:419},
+      {t:8, a:175, b:406}, {t:9, a:94, b:397}, {t:10, a:15, b:392}, {t:11, a:0, b:391}
+    ];
+
+var MATH_MIL_CEP = [
+      {k:"ลูกระเบิดทิ้งดิ่ง WW2 (1945)", v:1000, hl:true},
+      {k:"ขีปนาวุธสงครามเย็น (1965)", v:450},
+      {k:"นำวิถีเลเซอร์ อ่าวเปอร์เซีย (1991)", v:25},
+      {k:"GPS-Guided JDAM (2003)", v:9.0},
+      {k:"Hypersonic Glide ยุคใหม่ (2025)", v:3.0, hl:true}
+    ];
+
+var MATH_SPACE_ORBIT = [
+      {k:"LEO (วงโคจรต่ำ / ISS 400 กม.)", v:7.67, alt:400, period:92.6, hl:true},
+      {k:"SSO (สำรวจโลก 800 กม.)", v:7.45, alt:800, period:101.0},
+      {k:"MEO (โครงข่าย GPS 20,200 กม.)", v:3.87, alt:20200, period:718.0},
+      {k:"GEO (ดาวเทียมค้างฟ้า 35,786 กม.)", v:3.07, alt:35786, period:1436.0, hl:true}
+    ];
+
+var MATH_SPACE_DELTAV = [
+      {k:"ขึ้นสู่วงโคจรต่ำ (LEO)", v:9.4, hl:true},
+      {k:"วงโคจรค้างฟ้า (GEO Transfer)", v:13.3},
+      {k:"โคจรรอบดวงจันทร์ (Lunar Orbit)", v:13.8},
+      {k:"ลงจอดบนผิวดวงจันทร์ (Moon Landing)", v:15.5},
+      {k:"เดินทางสู่ดาวอังคาร (Mars Transfer)", v:13.7},
+      {k:"หลุดพ้นระบบสุริยะ (Solar Escape)", v:16.5, hl:true}
+    ];
+
+var MATH_AI_SCALING = [
+      {k:"1B Params (20B Tokens)", v:3.42},
+      {k:"7B Params (140B Tokens)", v:2.65},
+      {k:"13B Params (260B Tokens)", v:2.38},
+      {k:"70B Params (1.4T Tokens)", v:1.98},
+      {k:"405B Params (8.1T Tokens)", v:1.72, hl:true},
+      {k:"1.8T MoE Params (15T Tokens)", v:1.54, hl:true}
+    ];
+
+var MATH_AI_FLOPS = [
+      {year:2012, v:17.0}, {year:2015, v:18.8}, {year:2018, v:21.5},
+      {year:2020, v:23.5}, {year:2022, v:24.4}, {year:2023, v:25.3},
+      {year:2024, v:25.6}, {year:2025, v:26.1}
+    ];
+
+var MATH_CRYPTO_SPEED = [
+      {k:"RSA 2048 (Sign)", v:1850},
+      {k:"RSA 4096 (Sign)", v:320},
+      {k:"ECDSA P-256 (Sign)", v:28500, hl:true},
+      {k:"Ed25519 (Sign)", v:74000, hl:true},
+      {k:"ML-DSA (Post-Quantum Dilithium)", v:42000, hl:true}
+    ];
+
+var MATH_CRYPTO_BITS = [
+      {k:"Symmetric (AES-128)", v:128},
+      {k:"ECC 256-bit (เทียบเท่า 128)", v:256, hl:true},
+      {k:"RSA 3072-bit (เทียบเท่า 128)", v:3072},
+      {k:"ECC 512-bit (เทียบเท่า 256)", v:512, hl:true},
+      {k:"RSA 15360-bit (เทียบเท่า 256)", v:15360}
+    ];
+
+var MATH_FIN_FRONTIER = [
+      {year:6, v:4.5}, {year:9, v:6.8}, {year:12, v:9.4},
+      {year:15, v:12.1}, {year:19, v:13.8}, {year:24, v:15.2}, {year:32, v:16.5}
+    ];
+
+var MATH_FIN_BAR = [
+      {k:"พันธบัตรรัฐบาล (Sharpe 0.45)", v:4.5},
+      {k:"หุ้นกู้เอกชน A+ (Sharpe 0.58)", v:6.8},
+      {k:"พอร์ตสมดุล 60/40 (Sharpe 0.72)", v:9.4},
+      {k:"Max Sharpe Optimal (Sharpe 0.88)", v:12.1, hl:true},
+      {k:"หุ้นโลก Global Equity (Sharpe 0.65)", v:13.8},
+      {k:"หุ้นเทคโนโลยี Tech ETF (Sharpe 0.55)", v:15.2}
+    ];
+
+var MATH_EPI_R0 = [
+      {k:"ไข้หวัดใหญ่ประจำฤดูกาล", v:1.3},
+      {k:"อีโบลา (Ebola)", v:1.8},
+      {k:"ไข้หวัดใหญ่สเปน 1918", v:2.5},
+      {k:"COVID-19 สายพันธุ์ดั้งเดิม", v:2.8},
+      {k:"โปลิโอ (Polio)", v:6.0},
+      {k:"โรคคอตีบ (Diphtheria)", v:7.0},
+      {k:"COVID-19 Omicron", v:9.5, hl:true},
+      {k:"โรคหัด (Measles - ติดง่ายสุด)", v:15.0, hl:true}
+    ];
+
+var MATH_EPI_HERD = [
+      {k:"ไข้หวัดใหญ่ประจำฤดูกาล", v:23.1},
+      {k:"อีโบลา (Ebola)", v:44.4},
+      {k:"ไข้หวัดใหญ่สเปน 1918", v:60.0},
+      {k:"COVID-19 ดั้งเดิม", v:64.3},
+      {k:"โปลิโอ (Polio)", v:83.3},
+      {k:"โรคคอตีบ", v:85.7},
+      {k:"COVID-19 Omicron", v:89.5, hl:true},
+      {k:"โรคหัด (Measles)", v:93.3, hl:true}
+    ];
+
+var MATH_GRAPH_TSP = [
+      {k:"5 เมือง (12 เส้นทาง)", v:1.08},
+      {k:"8 เมือง (2,520 เส้นทาง)", v:3.40},
+      {k:"10 เมือง (1.8 แสนเส้นทาง)", v:5.26},
+      {k:"12 เมือง (20 ล้านเส้นทาง)", v:7.30},
+      {k:"15 เมือง (4.3 หมื่นล้าน)", v:10.64},
+      {k:"20 เมือง (6 หมื่นล้านล้าน)", v:16.78, hl:true},
+      {k:"30 เมือง (4.4x10^30 เส้นทาง)", v:30.65, hl:true}
+    ];
+
+var MATH_GRAPH_SAVINGS = [
+      {k:"ส่งพัสดุ Last-Mile (Fleet Routing)", v:22.4, hl:true},
+      {k:"รถเมล์ & ขนส่งมวลชน", v:16.8},
+      {k:"กระจายสินค้าซูเปอร์มาร์เก็ต", v:19.5},
+      {k:"สายการบิน & หมุนเวียนลูกเรือ", v:14.2},
+      {k:"ส่งข้อมูลอินเทอร์เน็ต BGP", v:28.0, hl:true}
+    ];
+
+var MATH_CHAOS_DIVERGE = [
+      {year:1, v:0.0001}, {year:2, v:0.0004}, {year:3, v:0.0018}, {year:4, v:0.0075},
+      {year:5, v:0.031}, {year:6, v:0.125}, {year:7, v:0.48}, {year:8, v:1.75},
+      {year:9, v:5.8}, {year:10, v:18.4}, {year:12, v:64.0}, {year:14, v:100.0}
+    ];
+
+var MATH_CHAOS_ACCURACY = [
+      {k:"พยากรณ์ล่วงหน้า 1 วัน", v:98.6, hl:true},
+      {k:"พยากรณ์ล่วงหน้า 2 วัน", v:96.8},
+      {k:"พยากรณ์ล่วงหน้า 3 วัน", v:93.4},
+      {k:"พยากรณ์ล่วงหน้า 5 วัน", v:84.2},
+      {k:"พยากรณ์ล่วงหน้า 7 วัน (เริ่มคลาดเคลื่อน)", v:68.5},
+      {k:"พยากรณ์ล่วงหน้า 10 วัน", v:44.0},
+      {k:"พยากรณ์ล่วงหน้า 14 วัน (ขีดจำกัดความอลวน)", v:12.0, hl:true}
+    ];
+
+var MATH_FFT_SPEEDUP = [
+      {k:"64 จุด", v:10.7},
+      {k:"256 จุด", v:32.0},
+      {k:"1,024 จุด (เสียงสั้น)", v:102.4},
+      {k:"4,096 จุด", v:341.3},
+      {k:"65,536 จุด (เสียง 1.5 วินาที)", v:4096.0, hl:true},
+      {k:"1,048,576 จุด (ภาพ 1MP)", v:52428.8, hl:true}
+    ];
+
+var MATH_FFT_SPECTRUM = [
+      {k:"Sub-bass (20–60 Hz)", v:42},
+      {k:"Bass (60–250 Hz)", v:78},
+      {k:"Low Mid (250–500 Hz)", v:88},
+      {k:"Mid (500–2k Hz เสียงพูดหลัก)", v:95, hl:true},
+      {k:"High Mid (2k–4k Hz ความคมชัด)", v:84, hl:true},
+      {k:"Presence (4k–6k Hz)", v:68},
+      {k:"Brilliance (6k–20k Hz)", v:45}
+    ];
+
+var MATH_ACT_MALE = [
+      {k:"0–1 ปี", v:5.8}, {k:"10–14 ปี", v:0.4}, {k:"20–24 ปี", v:1.8},
+      {k:"30–34 ปี", v:2.4}, {k:"40–44 ปี", v:4.5}, {k:"50–54 ปี", v:9.8},
+      {k:"60–64 ปี", v:20.5}, {k:"70–74 ปี", v:45.8, hl:true}, {k:"80–84 ปี", v:104.2, hl:true}
+    ];
+
+var MATH_ACT_FEMALE = [
+      {k:"0–1 ปี", v:4.6}, {k:"10–14 ปี", v:0.3}, {k:"20–24 ปี", v:0.7},
+      {k:"30–34 ปี", v:1.2}, {k:"40–44 ปี", v:2.3}, {k:"50–54 ปี", v:5.1},
+      {k:"60–64 ปี", v:11.2}, {k:"70–74 ปี", v:27.4, hl:true}, {k:"80–84 ปี", v:71.8, hl:true}
+    ];
+
+var MATH_PYTHAGORAS_TRIPLES = [
+      {k:"(3, 4, 5)", v:6},
+      {k:"(5, 12, 13)", v:30},
+      {k:"(8, 15, 17)", v:60},
+      {k:"(7, 24, 25)", v:84},
+      {k:"(9, 40, 41)", v:180, hl:true},
+      {k:"(12, 35, 37)", v:210, hl:true},
+      {k:"(11, 60, 61)", v:330, hl:true}
+    ];
+
+var MATH_EULER_POINTS = [
+      {k:"0° (e^0 = 1)", v:1.0},
+      {k:"45° (e^iπ/4)", v:0.707},
+      {k:"90° (e^iπ/2 = i)", v:1.0, hl:true},
+      {k:"135° (e^i3π/4)", v:0.707},
+      {k:"180° (e^iπ = -1)", v:-1.0, hl:true},
+      {k:"270° (e^i3π/2 = -i)", v:-1.0, hl:true}
+    ];
+
+var MATH_CALCULUS_SLOPE = [
+      {year:-2, v:9.0}, {year:-1, v:0.0}, {year:0, v:-3.0},
+      {year:1, v:0.0}, {year:2, v:9.0}
+    ];
+
+var MATH_NORMAL_BARS = [
+      {k:"-3σ (0.13%)", v:0.44},
+      {k:"-2σ (2.28%)", v:5.40},
+      {k:"-1σ (15.87%)", v:24.20, hl:true},
+      {k:"0 Mean (50.0%)", v:39.89, hl:true},
+      {k:"+1σ (84.13%)", v:24.20, hl:true},
+      {k:"+2σ (97.72%)", v:5.40},
+      {k:"+3σ (99.87%)", v:0.44}
+    ];
+
+var MATH_WAVE_SPEEDS = [
+      {k:"เสียงในอากาศ (20°C)", v:343},
+      {k:"เสียงในน้ำทะเล", v:1530},
+      {k:"คลื่นไหวสะเทือน P-Wave", v:6000},
+      {k:"เสียงในเพชร", v:12000},
+      {k:"แสง/คลื่นแม่เหล็กไฟฟ้า (c/1000 กม./วิ)", v:299792, hl:true}
+    ];
+
 var NAV = [
       { id:"world", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ศูนย์ข้อมูลโลก", subs:[
           { pane:"disaster", ico:"<svg class='mdico'><use href='#i-thermometer'></use></svg>", label:"ภาพรวม โลกร้อน & ภัยพิบัติ", existing:true },
@@ -1050,6 +1254,38 @@ var NAV = [
           { pane:"world-flood", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
           { pane:"world-ocean", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true },
           { pane:"world-quake", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"แผ่นดินไหว (ไล่เวลา)", existing:true }
+      ]},
+      { id:"math", ico:"<svg class='mdico'><use href='#i-calculator'></use></svg>", label:"คณิตศาสตร์ & โมเดลจำลอง", subs:[
+          { pane:"math-lab",        ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"ห้องทดลอง 2D/3D & โจทย์คณิต", existing:true },
+          { pane:"math-military",   ico:"<svg class='mdico'><use href='#i-medal'></use></svg>", label:"การทหาร & ยุทธการ", existing:true },
+          { pane:"math-space",      ico:"<svg class='mdico'><use href='#i-rocket'></use></svg>", label:"อวกาศ & กลศาสตร์วงโคจร", existing:true },
+          { pane:"math-ai",         ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"ปัญญาประดิษฐ์ & แมชชีนเลิร์นนิง", existing:true },
+          { pane:"math-crypto",     ico:"<svg class='mdico'><use href='#i-shield'></use></svg>", label:"วิทยาการรหัสลับ & ไซเบอร์", existing:true },
+          { pane:"math-fin",        ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"การเงินเชิงปริมาณ & ความเสี่ยง", existing:true },
+          { pane:"math-epi",        ico:"<svg class='mdico'><use href='#i-stethoscope'></use></svg>", label:"แบบจำลองระบาดวิทยา & ชีวสถิติ", existing:true },
+          { pane:"math-graph",      ico:"<svg class='mdico'><use href='#i-network'></use></svg>", label:"ทฤษฎีกราฟ & เครือข่ายโลจิสติกส์", existing:true },
+          { pane:"math-chaos",      ico:"<svg class='mdico'><use href='#i-cloud-rain'></use></svg>", label:"ทฤษฎีความอลวน & พยากรณ์อากาศ", existing:true },
+          { pane:"math-fourier",    ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ประมวลผลสัญญาณ & คลื่นเสียง", existing:true },
+          { pane:"math-actuary",    ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"คณิตศาสตร์ประกันภัย & ตารางชีวิต", existing:true },
+          { pane:"math-pythagoras", ico:"<svg class='mdico'><use href='#i-ruler'></use></svg>", label:"สูตรพีทาโกรัส & ตรีโกณมิติ", existing:true },
+          { pane:"math-euler",      ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"เอกลักษณ์ออยเลอร์ & เชิงซ้อน", existing:true },
+          { pane:"math-calculus",   ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"แคลคูลัส & อัตราการเปลี่ยนแปลง", existing:true },
+          { pane:"math-normal",     ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"การแจกแจงปกติ & ความน่าจะเป็น", existing:true },
+          { pane:"math-wave",       ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"สมการคลื่น & สัมพัทธภาพ", existing:true }
+      ]},
+      { id:"mathedu", ico:"<svg class='mdico'><use href='#i-graduation-cap'></use></svg>", label:"คณิตศาสตร์ ม.ต้น-ปลาย-มหาลัย", subs:[
+          { pane:"edu-linear",     ico:"<svg class='mdico'><use href='#i-ruler'></use></svg>", label:"[ม.ต้น] ระบบพิกัด 2D & y = mx+c", existing:true },
+          { pane:"edu-pythagoras", ico:"<svg class='mdico'><use href='#i-triangle'></use></svg>", label:"[ม.ต้น] พีทาโกรัส & ตรีโกณเบื้องต้น", existing:true },
+          { pane:"edu-parabola",   ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"[ม.ต้น] พาราโบลา & สมการกำลังสอง", existing:true },
+          { pane:"edu-stats",      ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"[ม.ต้น] สถิติ & ความน่าจะเป็น", existing:true },
+          { pane:"edu-unitcircle", ico:"<svg class='mdico'><use href='#i-circle'></use></svg>", label:"[ม.ปลาย] วงกลมหนึ่งหน่วย & เรเดียน", existing:true },
+          { pane:"edu-conic",      ico:"<svg class='mdico'><use href='#i-compass'></use></svg>", label:"[ม.ปลาย] ภาคตัดกรวย 4 รูปแบบ", existing:true },
+          { pane:"edu-vector",     ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"[ม.ปลาย] เวกเตอร์ ดอท & ครอส 3D", existing:true },
+          { pane:"edu-calculus",   ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"[ม.ปลาย] แคลคูลัส dy/dx & ปริพันธ์", existing:true },
+          { pane:"edu-vecfield",   ico:"<svg class='mdico'><use href='#i-target'></use></svg>", label:"[มหาลัย] สนามเวกเตอร์ 3D Div & Curl", existing:true },
+          { pane:"edu-multivar",   ico:"<svg class='mdico'><use href='#i-mountain'></use></svg>", label:"[มหาลัย] แคลคูลัสหลายตัวแปร ∇f", existing:true },
+          { pane:"edu-linalg",     ico:"<svg class='mdico'><use href='#i-puzzle'></use></svg>", label:"[มหาลัย] พีชคณิตเชิงเส้น & ไอเกน", existing:true },
+          { pane:"edu-diff_eq",    ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"[มหาลัย] สมการเชิงอนุพันธ์ & การสั่น", existing:true }
       ]},
       { id:"asean", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"อาเซียน", subs:[
           { pane:"asean",          ico:"<svg class='mdico'><use href='#i-wallet'></use></svg>", label:"เศรษฐกิจ", existing:true },
@@ -1245,3 +1481,106 @@ var POP_GRID=[
     [3187633,3757384,4125870,4432366,4766787,5159236,5088054,5141609,5395837,5363546,5508386,5167215,4529025,3579688,2634781,1708894,1150036,673781,278617,74800,11776],
     [3102328,3634902,4082441,4351329,4672075,5142461,5103865,5062713,5365861,5307407,5470986,5214233,4638489,3726273,2760789,1804791,1170288,700276,297103,81312,12514]
     ];
+
+/* ===== 🎓 ชุดข้อมูลหลักสูตรคณิตศาสตร์ ม.ต้น · ม.ปลาย · มหาวิทยาลัย ===== */
+var MATH_EDU_LINEAR = [
+  { k: "เส้นแนวนอน (m = 0)", v: 0.0, desc: "ไม่มีความชัน y = 3" },
+  { k: "ชันน้อย (m = 0.5)", v: 0.5, desc: "มุม 26.6° ค่อยๆ ไต่ระดับ" },
+  { k: "ชันมาตรฐาน 45° (m = 1.0)", v: 1.0, desc: "y = x เพิ่มขึ้น 1 ต่อ 1", hl: true },
+  { k: "ชันมาก (m = 2.5)", v: 2.5, desc: "มุม 68.2° สูงชันรวดเร็ว" },
+  { k: "ชันลบลาดลง (m = -1.5)", v: -1.5, desc: "มุม 123.7° ลดลงตาม x" }
+];
+
+var MATH_EDU_PYTHAGORAS = [
+  { k: "sin 30° (ข้าม/ฉาก)", v: 0.500 },
+  { k: "cos 30° (ชิด/ฉาก)", v: 0.866, hl: true },
+  { k: "tan 30° (ข้าม/ชิด)", v: 0.577 },
+  { k: "sin 45°", v: 0.707 },
+  { k: "cos 45°", v: 0.707 },
+  { k: "tan 45°", v: 1.000, hl: true },
+  { k: "sin 60°", v: 0.866 },
+  { k: "cos 60°", v: 0.500 },
+  { k: "tan 60°", v: 1.732, hl: true }
+];
+
+var MATH_EDU_PARABOLA = [
+  { x: -3, y: 9 }, { x: -2, y: 4 }, { x: -1, y: 1 },
+  { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 4 }, { x: 3, y: 9 }
+];
+
+var MATH_EDU_STATS = [
+  { k: "ต่ำสุด (Min)", v: 32 },
+  { k: "ควอร์ไทล์ที่ 1 (Q1)", v: 54 },
+  { k: "มัธยฐาน (Median Q2)", v: 68, hl: true },
+  { k: "ค่าเฉลี่ย (Mean)", v: 66.5 },
+  { k: "ควอร์ไทล์ที่ 3 (Q3)", v: 82 },
+  { k: "สูงสุด (Max)", v: 98, hl: true }
+];
+
+var MATH_EDU_UNITCIRCLE = [
+  { angle: "0° (0 rad)", cos: 1.00, sin: 0.00 },
+  { angle: "30° (π/6)", cos: 0.87, sin: 0.50 },
+  { angle: "45° (π/4)", cos: 0.71, sin: 0.71, hl: true },
+  { angle: "60° (π/3)", cos: 0.50, sin: 0.87 },
+  { angle: "90° (π/2)", cos: 0.00, sin: 1.00, hl: true },
+  { angle: "180° (π)", cos: -1.00, sin: 0.00 },
+  { angle: "270° (3π/2)", cos: 0.00, sin: -1.00 },
+  { angle: "360° (2π)", cos: 1.00, sin: 0.00 }
+];
+
+var MATH_EDU_CONIC = [
+  { k: "วงกลม Circle (e = 0)", v: 0.0, desc: "สมมาตรสมบูรณ์ รัศมีคงที่ r", hl: true },
+  { k: "วงรี Ellipse (0 < e < 1)", v: 0.6, desc: "วงโคจรดาวเคราะห์ตามกฎเคปเลอร์" },
+  { k: "พาราโบลา Parabola (e = 1)", v: 1.0, desc: "วิถีการสะท้อนจานดาวเทียมและไฟหน้ารถ", hl: true },
+  { k: "ไฮเพอร์โบลา Hyperbola (e > 1)", v: 1.8, desc: "วิถีหลุดพ้นระบบสุริยะและการนำทาง LORAN" }
+];
+
+var MATH_EDU_VECTORS = [
+  { k: "ขนานทิศเดียวกัน (θ = 0°)", dot: 1.0, cross: 0.0, hl: true },
+  { k: "มุมแหลม (θ = 45°)", dot: 0.707, cross: 0.707 },
+  { k: "ตั้งฉากกัน (θ = 90°)", dot: 0.0, cross: 1.0, hl: true },
+  { k: "มุมป้าน (θ = 135°)", dot: -0.707, cross: 0.707 },
+  { k: "ทิศตรงข้าม (θ = 180°)", dot: -1.0, cross: 0.0 }
+];
+
+var MATH_EDU_CALCULUS = [
+  { x: 0, f: 0, df: 0, int: 0 },
+  { x: 1, f: 1, df: 2, int: 0.33 },
+  { x: 2, f: 4, df: 4, int: 2.67 },
+  { x: 3, f: 9, df: 6, int: 9.00 },
+  { x: 4, f: 16, df: 8, int: 21.33 }
+];
+
+var MATH_EDU_VECFIELD = [
+  { k: "Sink จุดดูดเข้า ⟨-x, -y, -z⟩", div: -3, curl: 0, hl: true },
+  { k: "Source จุดกระจายออก ⟨x, y, z⟩", div: 3, curl: 0 },
+  { k: "Vortex กระแสน้ำวน ⟨-y, x, 0⟩", div: 0, curl: 2, hl: true },
+  { k: "Saddle อานม้า ⟨x, -y, 0⟩", div: 0, curl: 0 },
+  { k: "Spiral เกลียวหมุนดูด", div: -3, curl: 2 }
+];
+
+var MATH_EDU_MULTIVAR = [
+  { k: "จุดต่ำสุด (0, 0)", v: 0.0, desc: "เกรเดียนต์เป็นศูนย์ จุดวิกฤติ", hl: true },
+  { k: "พิกัด (1, 0)", v: 2.0, desc: "ความชันเพิ่มขึ้นทิศ x" },
+  { k: "พิกัด (1, 1)", v: 2.83, desc: "ความชันเฉียง 45°" },
+  { k: "พิกัด (2, 2)", v: 5.66, desc: "ความชันเพิ่มทวีคูณ", hl: true }
+];
+
+var MATH_EDU_LINALG = [
+  { k: "Identity คงเดิม", det: 1.0, trace: 2.0 },
+  { k: "Scaling ขยาย 2 เท่า", det: 4.0, trace: 4.0, hl: true },
+  { k: "Rotation หมุน 90°", det: 1.0, trace: 0.0 },
+  { k: "Shear เฉือนแนวนอน", det: 1.0, trace: 2.0 },
+  { k: "Reflection สะท้อนแกน X", det: -1.0, trace: 0.0, hl: true }
+];
+
+var MATH_EDU_HARMONIC = [
+  { t: 0.0, under: 1.00, crit: 1.00, over: 1.00 },
+  { t: 1.0, under: 0.54, crit: 0.74, over: 0.82 },
+  { t: 2.0, under: -0.22, crit: 0.41, over: 0.55 },
+  { t: 3.0, under: -0.42, crit: 0.20, over: 0.34 },
+  { t: 4.0, under: -0.15, crit: 0.09, over: 0.20 },
+  { t: 5.0, under: 0.12, crit: 0.04, over: 0.12 },
+  { t: 6.0, under: 0.14, crit: 0.02, over: 0.07 }
+];
+
