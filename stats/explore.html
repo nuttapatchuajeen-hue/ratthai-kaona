@@ -1119,7 +1119,190 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
-    <!-- ============ 02. ระบบสุริยะ · ดวงอาทิตย์ (The Sun) ============ -->
+    <!-- ============ 02. ระบบสุริยะ · กาลอวกาศ & หลุมแรงโน้มถ่วง (Spacetime & Gravity) ============ -->
+    <section class="tabpane" id="pane-solar-spacetime" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-waves"></use></svg> กาลอวกาศ &amp; หลุมแรงโน้มถ่วง 3 มิติ (Spacetime Curvature &amp; Gravity Well)</h2></div>
+      
+      <div class="math-formula-hero">
+        <div class="math-eq-wrap">
+          <div class="math-eq-main">G_{μν} + Λg_{μν} = \frac{8πG}{c^4} T_{μν} &nbsp;|&nbsp; g = \frac{GM}{R^2} &nbsp;|&nbsp; v_e = \sqrt{\frac{2GM}{R}}</div>
+          <span class="math-eq-tag">Einstein Field Equations &amp; Gravitational Potential</span>
+        </div>
+        <p class="math-explain"><b>มวลสารบอกให้กาลอวกาศโค้งงอ และกาลอวกาศบอกให้มวลสารเคลื่อนที่ (John Wheeler):</b> ในทฤษฎีสัมพัทธภาพทั่วไปของไอน์สไตน์ แรงโน้มถ่วงไม่ใช่แรงดึงดูดล่องหนตามกลศาสตร์ดั้งเดิม แต่เป็นผลจากการที่มวลมหาศาล (ดวงอาทิตย์ และดาวเคราะห์) กดทับโครงข่าย 4 มิติของกาลอวกาศ (Spacetime Fabric) ให้ยุบตัวเป็นหลุมลึก วัตถุบริวารจึงโคจรตามเส้นทางที่สั้นที่สุด (Geodesic) บนระนาบที่โค้งงอนั้น</p>
+        <div class="math-params">
+          <div class="math-p-item"><code>G_{μν}</code> <span>ไอน์สไตน์เทนเซอร์ (ความโค้งงอของกาลอวกาศ)</span></div>
+          <div class="math-p-item"><code>T_{μν}</code> <span>เทนเซอร์พลังงาน-ความเค้น (การกระจายตัวของมวล/พลังงาน)</span></div>
+          <div class="math-p-item"><code>g, v_e</code> <span>ความเร่งโน้มถ่วงที่พื้นผิว และความเร็วหลุดพ้นจากหลุมแรงโน้มถ่วง</span></div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> ความเร่งโน้มถ่วงดวงอาทิตย์</div>
+          <div class="k-num">274.0<span class="u">m/s²</span></div>
+          <div class="k-sub">27.9 เท่าของแรงโน้มถ่วงโลก (สร้างหลุมลึกสุด)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-rocket"></use></svg> ความเร็วหลุดพ้นดวงอาทิตย์</div>
+          <div class="k-num">617.5<span class="u">km/s</span></div>
+          <div class="k-sub">ความเร็วขั้นต่ำเพื่อหลุดจากผิวดวงอาทิตย์สู่อวกาศ</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> ราชาหลุมโน้มถ่วงดาวเคราะห์</div>
+          <div class="k-num">24.79<span class="u">m/s²</span></div>
+          <div class="k-sub">ดาวพฤหัสบดี (หลุมแรงโน้มถ่วงลึกที่สุดในบรรดาดาวเคราะห์)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-compass"></use></svg> รัศมีชวาร์ซชิลด์ดวงอาทิตย์</div>
+          <div class="k-num">2.95<span class="u">กม.</span></div>
+          <div class="k-sub">ขนาดขอบฟ้าเหตุการณ์ หากดวงอาทิตย์ยุบตัวเป็นหลุมดำ</div>
+        </div>
+      </div>
+
+      <!-- Interactive 3D Spacetime Fabric Simulator (ตรงตามรูปภาพอ้างอิง) -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-sparkles"></use></svg> แบบจำลองพลวัตแผ่นกาลอวกาศ 3 มิติ (Interactive Spacetime Fabric Grid)</h2>
+          <span class="tag">Physics Simulation · 3D Canvas</span>
+        </div>
+        <p class="sub">จำลองตารางกริิด 3D ที่บิดเบี้ยวตามมวลของดวงอาทิตย์และดาวเคราะห์ในระบบสุริยะ — ลากเมาส์เพื่อหมุนมุมมอง 3 มิติ หรือหยุดหมุนชั่วคราวได้สด</p>
+        
+        <div style="position:relative; width:100%; height:460px; border-radius:12px; overflow:hidden; background:#000003; border:1px solid var(--rule-strong); box-shadow:inset 0 0 40px rgba(0,0,0,0.8);">
+          <canvas id="spacetimeSimCanvas" style="width:100%; height:100%; display:block; cursor:grab;"></canvas>
+          <div style="position:absolute; top:12px; left:14px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); font-size:11.5px; display:flex; gap:10px; align-items:center; z-index:5;">
+            <button id="btnSpacetimePlay" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#fff; padding:4px 10px; border-radius:6px; font-weight:600; cursor:pointer;">⏸️ หยุดหมุนชั่วคราว</button>
+            <button id="btnSpacetimeReset" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#cbd5e1; padding:4px 10px; border-radius:6px; font-weight:600; cursor:pointer;">🔄 รีเซ็ตมุมมอง</button>
+            <span style="color:#94a3b8;">🖱️ ลากเมาส์เพื่อหมุนมุมมอง 3D | ล้อเมาส์เพื่อซูม</span>
+          </div>
+        </div>
+        <div class="src">สูตรจำลอง: Gravitational Potential Well $\Phi(r) = -GM/\sqrt{r^2 + \epsilon^2}$ คำนวณแบบ Real-time บน Canvas</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-scale"></use></svg> ความเร่งโน้มถ่วงที่พื้นผิว (Surface Gravity, g)</h2><span class="tag">m/s²</span></div>
+          <p class="sub">เปรียบเทียบแรงโน้มถ่วงที่พื้นผิวดวงดาวในระบบสุริยะ — ดวงอาทิตย์มีค่าสูงสุด 274 m/s² ตามด้วยดาวพฤหัสบดี 24.79 m/s² และโลก 9.81 m/s²</p>
+          <div class="plot" id="solarGravityBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA Planetary Fact Sheet &amp; Astrophysical Constants</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-rocket"></use></svg> ความเร็วหลุดพ้นจากหลุมแรงโน้มถ่วง (Escape Velocity)</h2><span class="tag">km/s</span></div>
+          <p class="sub">ความเร็วขั้นต่ำที่วัตถุต้องใช้เพื่อเอาชนะแรงดึงดูดของหลุมกาลอวกาศและหลุดพ้นสู่อวกาศอันไพศาล ($v_e = \sqrt{2GM/R}$)</p>
+          <div class="plot" id="solarEscapeBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA JPL Celestial Mechanics Guide</div>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-waves"></use></svg> เส้นทางจีโอเดสิก (Geodesics)</h2><span class="tag">General Relativity</span></div>
+          <p class="sub">ในกาลอวกาศ 4 มิติ ดาวเคราะห์ไม่ได้ถูกดึงดูดด้วยแรงที่มองไม่เห็น แต่กำลังเดินทางเป็น <b>"เส้นทางตรงที่สุด"</b> บนผืนผ้ากาลอวกาศที่ถูกดวงอาทิตย์กดให้โค้งงอ</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-clock"></use></svg> เวลาชะลอตัวจากความโน้มถ่วง</h2><span class="tag">Gravitational Time Dilation</span></div>
+          <p class="sub">เวลาไม่ได้เดินเร็วเท่ากันทุกที่ในจักรวาล ยิ่งอยู่ใกล้ก้นหลุมแรงโน้มถ่วง (สนามโน้มถ่วงเข้ม) เวลายิ่งเดินช้าลงเมื่อเทียบกับผู้สังเกตการณ์ที่อยู่ห่างไกล</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-eye"></use></svg> ปรากฏการณ์เลนส์โน้มถ่วง</h2><span class="tag">Gravitational Lensing</span></div>
+          <p class="sub">แสงเดินทางเป็นเส้นตรง แต่เมื่อผ่านผืนกาลอวกาศที่โค้งงอรอบมวลมหาศาล ลำแสงจะหักเหเบี่ยงเบน พิสูจน์โดย เอ็ดดิงตัน ในปี 1919 ยืนยันความถูกต้องของไอน์สไตน์</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03. ระบบสุริยะ · สนามแม่เหล็ก & เกราะลมสุริยะ (Magnetosphere) ============ -->
+    <section class="tabpane" id="pane-solar-magneto" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-shield"></use></svg> สนามแม่เหล็ก &amp; เกราะลมสุริยะ (Earth's Magnetosphere &amp; Solar Wind)</h2></div>
+      
+      <div class="math-formula-hero">
+        <div class="math-eq-wrap">
+          <div class="math-eq-main">\mathbf{F} = q(\mathbf{E} + \mathbf{v} \times \mathbf{B}) &nbsp;|&nbsp; \frac{\partial \mathbf{B}}{\partial t} = \nabla \times (\mathbf{v} \times \mathbf{B}) + \eta \nabla^2 \mathbf{B}</div>
+          <span class="math-eq-tag">Lorentz Force &amp; Geodynamo Induction</span>
+        </div>
+        <p class="math-explain"><b>เกราะสนามแม่เหล็ก &amp; แรงลอเรนซ์ (Lorentz Force Shield):</b> สนามแม่เหล็กโลกกำเนิดจากการหมุนเวียนพาความร้อนของเหล็กและนิกเกิลหลอมเหลวในแกนนอก (Geodynamo) แผ่เส้นสนามแม่เหล็กคู่ขั้ว (Dipole Lines) ออกสู่อวกาศ อนุภาคมีประจุพลังงานสูงจากลมสุริยะ (โปรตอนและอิเล็กตรอน) เมื่อพุ่งเข้าชนจะถูกแรง $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ เบี่ยงเบนทิศทางให้ไหลอ้อมรอบโลก เกิดเป็นโครงสร้างเกราะกัมมันตรังสี <b>แมกนีโตสเฟียร์ (Magnetosphere)</b> ปกป้องสิ่งมีชีวิตและชั้นบรรยากาศไม่ให้ถูกลมสุริยะพัดสูญสิ้นไปเหมือนดาวอังคาร</p>
+        <div class="math-params">
+          <div class="math-p-item"><code>\mathbf{B}</code> <span>สนามแม่เหล็ก (Magnetic Field Vector, Tesla)</span></div>
+          <div class="math-p-item"><code>q, \mathbf{v}</code> <span>ประจุไฟฟ้าและความเร็วของอนุภาคลมสุริยะ</span></div>
+          <div class="math-p-item"><code>\mathbf{F}</code> <span>แรงลอเรนซ์ที่ผลักเบี่ยงเบนอนุภาคพลาสมาสุริยะ</span></div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-shield"></use></svg> สนามแม่เหล็กโลกที่พื้นผิว</div>
+          <div class="k-num">31.2<span class="u">µT</span></div>
+          <div class="k-sub">ขั้วโลกเข้มสูงสุด ~60 µT (เส้นศูนย์สูตร ~30 µT)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> ความเร็วลมสุริยะเฉลี่ย</div>
+          <div class="k-num">450<span class="u">km/s</span></div>
+          <div class="k-sub">1.6 ล้าน กม./ชม. (พายุสุริยะรุนแรง &gt; 800 km/s)</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-waves"></use></svg> หัวปะทะคลื่นกระแทก Bow Shock</div>
+          <div class="k-num">10–12<span class="u">R_E</span></div>
+          <div class="k-sub">~65,000–75,000 กม. ด้านสว่างที่หันหาดวงอาทิตย์</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-rocket"></use></svg> หางแม่เหล็ก Magnetotail</div>
+          <div class="k-num">&gt; 6,000,000<span class="u">กม.</span></div>
+          <div class="k-sub">ทอดยาวในด้านมืดเลยวงโคจรของดวงจันทร์</div>
+        </div>
+      </div>
+
+      <!-- Interactive 3D Magnetosphere & Solar Wind Simulation -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-sparkles"></use></svg> แบบจำลอง 3D สนามแม่เหล็กโลก &amp; การเบี่ยงเบนลมสุริยะ (Interactive Magnetosphere &amp; Bow Shock)</h2>
+          <span class="tag">Physics Simulation · 3D Particle System</span>
+        </div>
+        <p class="sub">จำลองเส้นสนามแม่เหล็กคู่ขั้ว (Dipole Lines) รอบโลก, หัวคลื่นกระแทก Bow Shock, แถบรังสี Van Allen และอนุภาคลมสุริยะพลาสมาที่ถูกเบี่ยงเบน — กดปุ่ม <b>"💥 ยิงพายุสุริยะ CME"</b> เพื่อดูการบีบอัดของเกราะแม่เหล็ก</p>
+        
+        <div style="position:relative; width:100%; height:480px; border-radius:12px; overflow:hidden; background:#000004; border:1px solid var(--rule-strong); box-shadow:inset 0 0 45px rgba(0,0,0,0.85);">
+          <canvas id="magnetoSimCanvas" style="width:100%; height:100%; display:block; cursor:grab;"></canvas>
+          <div style="position:absolute; top:12px; left:14px; background:rgba(10,16,32,0.88); backdrop-filter:blur(10px); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); font-size:11.5px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; z-index:5;">
+            <button id="btnMagnetoPlay" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#fff; padding:4px 10px; border-radius:6px; font-weight:600; cursor:pointer;">⏸️ หยุดอนุภาคชั่วคราว</button>
+            <button id="btnMagnetoCME" style="background:rgba(239,68,68,0.25); border:1px solid #ef4444; color:#fca5a5; padding:4px 10px; border-radius:6px; font-weight:600; cursor:pointer;">💥 ยิงพายุสุริยะ CME Burst</button>
+            <button id="btnMagnetoReset" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#cbd5e1; padding:4px 10px; border-radius:6px; font-weight:600; cursor:pointer;">🔄 รีเซ็ตมุมมอง</button>
+            <span style="color:#94a3b8; font-size:11px;">☀️ ลมสุริยะพุ่งจากซ้าย ➔ ขวา | ลากเมาส์เพื่อหมุน 3D</span>
+          </div>
+        </div>
+        <div class="src">เทคโนโลยี: 3D Dipole Field Equations &amp; Streamline Deflection Algorithms · ข้อมูลฟิสิกส์อวกาศจาก NASA Magnetospheric Multiscale (MMS) Mission</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-shield"></use></svg> ความเข้มสนามแม่เหล็กที่พื้นผิวดาวเคราะห์ (Surface Field Strength, µT)</h2><span class="tag">µT (Microtesla)</span></div>
+          <p class="sub">เปรียบเทียบความแรงสนามแม่เหล็ก — ดาวพฤหัสบดีมีสนามแม่เหล็กเข้มข้นที่สุดในระบบสุริยะ (428 µT) จากไฮโดรเจนสถานะโลหะเหลว ขณะที่ดาวศุกร์และดาวอังคารแทบไม่มีสนามแม่เหล็กปกป้อง</p>
+          <div class="plot" id="solarMagnetoBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA Planetary Magnetic Field Guide &amp; JUNO / Voyager Data</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-zap"></use></svg> ความเร็วลมสุริยะตามระยะห่าง (Solar Wind Velocity)</h2><span class="tag">km/s</span></div>
+          <p class="sub">ลมสุริยะเร่งความเร็วตั้งแต่ชั้นโคโรนาของดวงอาทิตย์ จนกระทั่งมีความเร็วคงที่ระดับเหนือเสียง (Supersonic ~400–500 km/s) ตลอดพื้นที่ระบบสุริยะ</p>
+          <div class="plot" id="solarWindBar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: NASA Parker Solar Probe &amp; SOHO Spacecraft</div>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> ไดนาโมในแกนโลก (Geodynamo)</h2><span class="tag">Liquid Iron Outer Core</span></div>
+          <p class="sub">การหมุนรอบตัวเองของโลกบวกกับการพาความร้อนในแกนนอกที่เป็นเหล็กเหลว ก่อให้เกิดกระแสไฟฟ้าและสนามแม่เหล็กเหนี่ยวนำขนาดยักษ์คอยคุ้มกันโลกตลอด 4 พันล้านปี</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-circle"></use></svg> แถบรังสีแวนอัลเลน (Van Allen Belts)</h2><span class="tag">Radiation Belts</span></div>
+          <p class="sub">วงแหวนโดนัท 2 ชั้นรอบโลกที่ดักจับโปรตอนและอิเล็กตรอนพลังงานสูงไม่ให้ตกลงสู่ผิวโลก ชั้นใน (1,000–6,000 กม.) และชั้นนอก (13,000–60,000 กม.)</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-sparkles"></use></svg> แสงเหนือ-แสงใต้ (Auroras)</h2><span class="tag">Space Weather Impact</span></div>
+          <p class="sub">อนุภาคสุริยะที่เล็ดลอดตามเส้นสนามแม่เหล็กบริเวณขั้วโลก จะชนกับอะตอมออกซิเจน (เปล่งแสงสีเขียว 557.7 nm / แดง 630 nm) และไนโตรเจน (แสงสีม่วงและฟ้า)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04. ระบบสุริยะ · ดวงอาทิตย์ (The Sun) ============ -->
     <section class="tabpane" id="pane-solar-sun" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sun"></use></svg> ดวงอาทิตย์ (The Sun · ดาวฤกษ์ศูนย์กลาง)</h2></div>
       
@@ -17691,12 +17874,648 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }
     }
 
+    /* ================= จำลองแผ่นกาลอวกาศ 3 มิติ (Spacetime Canvas Simulator) ================= */
+    var SPACETIME_SIM = {
+      isInit: false,
+      isPlaying: true,
+      reqId: null,
+      rotX: 0.55,
+      rotY: -0.45,
+      zoom: 1.0,
+      isDragging: false,
+      lastMouseX: 0,
+      lastMouseY: 0,
+      time: 0
+    };
+
+    function initSpacetimeSim(){
+      var canvas = document.getElementById("spacetimeSimCanvas");
+      if(!canvas) return;
+      if(SPACETIME_SIM.isInit){
+        if(!SPACETIME_SIM.reqId) SPACETIME_SIM.reqId = requestAnimationFrame(spacetimeSimLoop);
+        return;
+      }
+      SPACETIME_SIM.isInit = true;
+
+      var btnPlay = document.getElementById("btnSpacetimePlay");
+      if(btnPlay) btnPlay.addEventListener("click", function(){
+        SPACETIME_SIM.isPlaying = !SPACETIME_SIM.isPlaying;
+        btnPlay.textContent = SPACETIME_SIM.isPlaying ? "⏸️ หยุดหมุนชั่วคราว" : "▶ เล่นต่อ";
+      });
+
+      var btnReset = document.getElementById("btnSpacetimeReset");
+      if(btnReset) btnReset.addEventListener("click", function(){
+        SPACETIME_SIM.rotX = 0.55;
+        SPACETIME_SIM.rotY = -0.45;
+        SPACETIME_SIM.zoom = 1.0;
+      });
+
+      canvas.addEventListener("pointerdown", function(e){
+        SPACETIME_SIM.isDragging = true;
+        SPACETIME_SIM.lastMouseX = e.clientX;
+        SPACETIME_SIM.lastMouseY = e.clientY;
+        canvas.style.cursor = "grabbing";
+      });
+
+      window.addEventListener("pointermove", function(e){
+        if(!SPACETIME_SIM.isDragging) return;
+        var dx = e.clientX - SPACETIME_SIM.lastMouseX;
+        var dy = e.clientY - SPACETIME_SIM.lastMouseY;
+        SPACETIME_SIM.rotY += dx * 0.008;
+        SPACETIME_SIM.rotX += dy * 0.008;
+        SPACETIME_SIM.rotX = Math.max(0.1, Math.min(1.4, SPACETIME_SIM.rotX));
+        SPACETIME_SIM.lastMouseX = e.clientX;
+        SPACETIME_SIM.lastMouseY = e.clientY;
+      });
+
+      window.addEventListener("pointerup", function(){
+        SPACETIME_SIM.isDragging = false;
+        if(canvas) canvas.style.cursor = "grab";
+      });
+
+      canvas.addEventListener("wheel", function(e){
+        e.preventDefault();
+        SPACETIME_SIM.zoom += (e.deltaY > 0 ? -0.08 : 0.08);
+        SPACETIME_SIM.zoom = Math.max(0.5, Math.min(2.0, SPACETIME_SIM.zoom));
+      }, { passive: false });
+
+      if(!SPACETIME_SIM.reqId) SPACETIME_SIM.reqId = requestAnimationFrame(spacetimeSimLoop);
+    }
+
+    function spacetimeSimLoop(){
+      var canvas = document.getElementById("spacetimeSimCanvas");
+      if(!canvas || canvas.offsetParent === null){
+        SPACETIME_SIM.reqId = null;
+        return;
+      }
+
+      var rect = canvas.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      var w = Math.floor(rect.width * dpr);
+      var h = Math.floor(rect.height * dpr);
+      if(w < 10 || h < 10) return;
+      if(canvas.width !== w || canvas.height !== h){
+        canvas.width = w;
+        canvas.height = h;
+      }
+
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, w, h);
+
+      if(SPACETIME_SIM.isPlaying){
+        SPACETIME_SIM.time += 0.018;
+      }
+
+      var cx = w / 2;
+      var cy = h / 2 + 30 * dpr;
+      var scale = 140 * dpr * SPACETIME_SIM.zoom;
+
+      var rx = SPACETIME_SIM.rotX;
+      var ry = SPACETIME_SIM.rotY;
+
+      // Projection function 3D -> 2D
+      function project(x, y, z){
+        // Rotate around Y
+        var cosY = Math.cos(ry), sinY = Math.sin(ry);
+        var x1 = x * cosY + z * sinY;
+        var z1 = -x * sinY + z * cosY;
+
+        // Rotate around X
+        var cosX = Math.cos(rx), sinX = Math.sin(rx);
+        var y2 = y * cosX - z1 * sinX;
+        var z2 = y * sinX + z1 * cosX;
+
+        // Perspective
+        var fov = 6.0;
+        var pz = fov / (fov + z2);
+        return {
+          x: cx + x1 * scale * pz,
+          y: cy + y2 * scale * pz,
+          z: z2,
+          scale: pz
+        };
+      }
+
+      // Planet orbits & positions
+      var t = SPACETIME_SIM.time;
+      var planets = [
+        { name: "Mercury", r: 0.6, spd: 4.0,  mass: 0.08, col: "#5bc0be", sz: 3 },
+        { name: "Venus",   r: 0.9, spd: 2.8,  mass: 0.14, col: "#f59e0b", sz: 4 },
+        { name: "Earth",   r: 1.3, spd: 2.0,  mass: 0.16, col: "#38bdf8", sz: 5, hasMoon: true },
+        { name: "Mars",    r: 1.7, spd: 1.5,  mass: 0.10, col: "#ef4444", sz: 4 },
+        { name: "Jupiter", r: 2.3, spd: 0.9,  mass: 0.38, col: "#f97316", sz: 8 },
+        { name: "Saturn",  r: 2.9, spd: 0.65, mass: 0.28, col: "#eab308", sz: 7, hasRing: true }
+      ];
+
+      planets.forEach(function(p){
+        var ang = t * p.spd;
+        p.px = Math.cos(ang) * p.r;
+        p.pz = Math.sin(ang) * p.r;
+      });
+
+      // Gravity deformation field calculation
+      function getDepression(x, z){
+        // Sun well
+        var dSunSq = x*x + z*z;
+        var dep = -0.75 / (1.0 + Math.pow(Math.sqrt(dSunSq) / 0.45, 1.4));
+        
+        // Planet wells
+        for(var i=0; i<planets.length; i++){
+          var p = planets[i];
+          var dx = x - p.px;
+          var dz = z - p.pz;
+          var distSq = dx*dx + dz*dz;
+          dep -= p.mass / (1.0 + distSq / 0.035);
+        }
+        return dep;
+      }
+
+      // Draw Grid Mesh (Spacetime Fabric)
+      var gridSize = 3.6;
+      var steps = 28;
+      var step = (gridSize * 2) / steps;
+
+      ctx.lineWidth = 1 * dpr;
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
+
+      // Draw lines along X
+      for(var i = 0; i <= steps; i++){
+        var gx = -gridSize + i * step;
+        ctx.beginPath();
+        var first = true;
+        for(var j = 0; j <= steps; j++){
+          var gz = -gridSize + j * step;
+          var gy = getDepression(gx, gz);
+          var pt = project(gx, gy, gz);
+          if(first){ ctx.moveTo(pt.x, pt.y); first = false; }
+          else { ctx.lineTo(pt.x, pt.y); }
+        }
+        ctx.stroke();
+      }
+
+      // Draw lines along Z
+      for(var j = 0; j <= steps; j++){
+        var gz = -gridSize + j * step;
+        ctx.beginPath();
+        var first = true;
+        for(var i = 0; i <= steps; i++){
+          var gx = -gridSize + i * step;
+          var gy = getDepression(gx, gz);
+          var pt = project(gx, gy, gz);
+          if(first){ ctx.moveTo(pt.x, pt.y); first = false; }
+          else { ctx.lineTo(pt.x, pt.y); }
+        }
+        ctx.stroke();
+      }
+
+      // Sort objects by depth for correct 3D rendering
+      var drawQueue = [];
+
+      // Sun
+      var sunY = getDepression(0, 0);
+      var sunPt = project(0, sunY, 0);
+      drawQueue.push({
+        type: "sun",
+        z: sunPt.z,
+        pt: sunPt
+      });
+
+      // Planets
+      planets.forEach(function(p){
+        var py = getDepression(p.px, p.pz);
+        var pt = project(p.px, py, p.pz);
+        drawQueue.push({
+          type: "planet",
+          z: pt.z,
+          pt: pt,
+          data: p
+        });
+      });
+
+      drawQueue.sort(function(a, b){ return b.z - a.z; });
+
+      drawQueue.forEach(function(item){
+        if(item.type === "sun"){
+          var spt = item.pt;
+          var grad = ctx.createRadialGradient(spt.x, spt.y, 2, spt.x, spt.y, 24 * dpr * spt.scale);
+          grad.addColorStop(0, "#ffffff");
+          grad.addColorStop(0.2, "#ffea75");
+          grad.addColorStop(0.5, "#ff9500");
+          grad.addColorStop(1, "rgba(255, 100, 0, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(spt.x, spt.y, 24 * dpr * spt.scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#ffb703";
+          ctx.beginPath();
+          ctx.arc(spt.x, spt.y, 11 * dpr * spt.scale, 0, Math.PI * 2);
+          ctx.fill();
+        } else if(item.type === "planet"){
+          var p = item.data;
+          var pt = item.pt;
+
+          if(p.hasRing){
+            ctx.strokeStyle = "rgba(234, 179, 8, 0.7)";
+            ctx.lineWidth = 2.5 * dpr * pt.scale;
+            ctx.beginPath();
+            ctx.ellipse(pt.x, pt.y, (p.sz + 6) * dpr * pt.scale, (p.sz + 2) * dpr * pt.scale, 0.4, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = p.col;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, p.sz * dpr * pt.scale, 0, Math.PI * 2);
+          ctx.fill();
+
+          if(p.hasMoon){
+            var moonAng = t * 12.0;
+            var mx = pt.x + Math.cos(moonAng) * 10 * dpr * pt.scale;
+            var my = pt.y + Math.sin(moonAng) * 6 * dpr * pt.scale;
+            ctx.fillStyle = "#e2e8f0";
+            ctx.beginPath();
+            ctx.arc(mx, my, 2 * dpr * pt.scale, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      });
+
+      SPACETIME_SIM.reqId = requestAnimationFrame(spacetimeSimLoop);
+    }
+
+    /* ================= จำลองสนามแม่เหล็กโลก & ลมสุริยะ (Magnetosphere Canvas Simulator) ================= */
+    var MAGNETO_SIM = {
+      isInit: false,
+      isPlaying: true,
+      reqId: null,
+      rotX: 0.15,
+      rotY: 0.35,
+      zoom: 1.0,
+      isDragging: false,
+      lastMouseX: 0,
+      lastMouseY: 0,
+      time: 0,
+      cmeTimer: 0,
+      cmeActive: false,
+      particles: []
+    };
+
+    function initMagnetoSim(){
+      var canvas = document.getElementById("magnetoSimCanvas");
+      if(!canvas) return;
+      if(MAGNETO_SIM.isInit){
+        if(!MAGNETO_SIM.reqId) MAGNETO_SIM.reqId = requestAnimationFrame(magnetoSimLoop);
+        return;
+      }
+      MAGNETO_SIM.isInit = true;
+
+      // Initialize solar wind particles
+      MAGNETO_SIM.particles = [];
+      for(var i=0; i<160; i++){
+        MAGNETO_SIM.particles.push({
+          x: -3.5 - Math.random() * 2.0,
+          y: (Math.random() - 0.5) * 3.6,
+          z: (Math.random() - 0.5) * 2.0,
+          vx: 0.045 + Math.random() * 0.025,
+          sz: 1.2 + Math.random() * 1.5,
+          alpha: 0.4 + Math.random() * 0.5,
+          isCME: false
+        });
+      }
+
+      var btnPlay = document.getElementById("btnMagnetoPlay");
+      if(btnPlay) btnPlay.addEventListener("click", function(){
+        MAGNETO_SIM.isPlaying = !MAGNETO_SIM.isPlaying;
+        btnPlay.textContent = MAGNETO_SIM.isPlaying ? "⏸️ หยุดอนุภาคชั่วคราว" : "▶ เล่นต่อ";
+      });
+
+      var btnCME = document.getElementById("btnMagnetoCME");
+      if(btnCME) btnCME.addEventListener("click", function(){
+        MAGNETO_SIM.cmeActive = true;
+        MAGNETO_SIM.cmeTimer = 1.0;
+        // Spawn dense CME blast
+        for(var k=0; k<120; k++){
+          MAGNETO_SIM.particles.push({
+            x: -3.8 - Math.random() * 1.2,
+            y: (Math.random() - 0.5) * 3.2,
+            z: (Math.random() - 0.5) * 1.8,
+            vx: 0.085 + Math.random() * 0.04,
+            sz: 2.2 + Math.random() * 2.0,
+            alpha: 0.9,
+            isCME: true
+          });
+        }
+      });
+
+      var btnReset = document.getElementById("btnMagnetoReset");
+      if(btnReset) btnReset.addEventListener("click", function(){
+        MAGNETO_SIM.rotX = 0.15;
+        MAGNETO_SIM.rotY = 0.35;
+        MAGNETO_SIM.zoom = 1.0;
+      });
+
+      canvas.addEventListener("pointerdown", function(e){
+        MAGNETO_SIM.isDragging = true;
+        MAGNETO_SIM.lastMouseX = e.clientX;
+        MAGNETO_SIM.lastMouseY = e.clientY;
+        canvas.style.cursor = "grabbing";
+      });
+
+      window.addEventListener("pointermove", function(e){
+        if(!MAGNETO_SIM.isDragging) return;
+        var dx = e.clientX - MAGNETO_SIM.lastMouseX;
+        var dy = e.clientY - MAGNETO_SIM.lastMouseY;
+        MAGNETO_SIM.rotY += dx * 0.008;
+        MAGNETO_SIM.rotX += dy * 0.008;
+        MAGNETO_SIM.rotX = Math.max(-0.8, Math.min(0.8, MAGNETO_SIM.rotX));
+        MAGNETO_SIM.lastMouseX = e.clientX;
+        MAGNETO_SIM.lastMouseY = e.clientY;
+      });
+
+      window.addEventListener("pointerup", function(){
+        MAGNETO_SIM.isDragging = false;
+        if(canvas) canvas.style.cursor = "grab";
+      });
+
+      canvas.addEventListener("wheel", function(e){
+        e.preventDefault();
+        MAGNETO_SIM.zoom += (e.deltaY > 0 ? -0.08 : 0.08);
+        MAGNETO_SIM.zoom = Math.max(0.6, Math.min(2.2, MAGNETO_SIM.zoom));
+      }, { passive: false });
+
+      if(!MAGNETO_SIM.reqId) MAGNETO_SIM.reqId = requestAnimationFrame(magnetoSimLoop);
+    }
+
+    function magnetoSimLoop(){
+      var canvas = document.getElementById("magnetoSimCanvas");
+      if(!canvas || canvas.offsetParent === null){
+        MAGNETO_SIM.reqId = null;
+        return;
+      }
+
+      var rect = canvas.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      var w = Math.floor(rect.width * dpr);
+      var h = Math.floor(rect.height * dpr);
+      if(w < 10 || h < 10) return;
+      if(canvas.width !== w || canvas.height !== h){
+        canvas.width = w;
+        canvas.height = h;
+      }
+
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, w, h);
+
+      if(MAGNETO_SIM.isPlaying){
+        MAGNETO_SIM.time += 0.02;
+        if(MAGNETO_SIM.cmeTimer > 0){
+          MAGNETO_SIM.cmeTimer -= 0.006;
+          if(MAGNETO_SIM.cmeTimer <= 0) MAGNETO_SIM.cmeActive = false;
+        }
+      }
+
+      var cx = w / 2 - 20 * dpr;
+      var cy = h / 2;
+      var scale = 110 * dpr * MAGNETO_SIM.zoom;
+
+      var rx = MAGNETO_SIM.rotX;
+      var ry = MAGNETO_SIM.rotY;
+
+      // 3D -> 2D Projection
+      function project(x, y, z){
+        var cosY = Math.cos(ry), sinY = Math.sin(ry);
+        var x1 = x * cosY + z * sinY;
+        var z1 = -x * sinY + z * cosY;
+
+        var cosX = Math.cos(rx), sinX = Math.sin(rx);
+        var y2 = y * cosX - z1 * sinX;
+        var z2 = y * sinX + z1 * cosX;
+
+        var fov = 5.5;
+        var pz = fov / (fov + z2);
+        return {
+          x: cx + x1 * scale * pz,
+          y: cy + y2 * scale * pz,
+          z: z2,
+          scale: pz
+        };
+      }
+
+      // 1. Draw Starfield background
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      for(var s=0; s<40; s++){
+        var sx = (Math.sin(s * 19.3) * 0.5 + 0.5) * w;
+        var sy = (Math.cos(s * 31.7) * 0.5 + 0.5) * h;
+        ctx.fillRect(sx, sy, 1 * dpr, 1 * dpr);
+      }
+
+      // Compression factor when CME hits
+      var comp = MAGNETO_SIM.cmeActive ? (1.0 - MAGNETO_SIM.cmeTimer * 0.35) : 1.0;
+      var bowShockX = -1.65 * comp;
+
+      // 2. Draw Magnetopause & Magnetotail Shadow Zone (Blue glow sheath)
+      ctx.beginPath();
+      var pTop = project(3.8, 1.9, 0);
+      var pBow = project(bowShockX - 0.2, 0, 0);
+      var pBot = project(3.8, -1.9, 0);
+      ctx.moveTo(pTop.x, pTop.y);
+      var cp1 = project(bowShockX, 1.4, 0);
+      var cp2 = project(bowShockX, -1.4, 0);
+      ctx.bezierCurveTo(cp1.x, cp1.y, pBow.x, pBow.y, pBow.x, pBow.y);
+      ctx.bezierCurveTo(pBow.x, pBow.y, cp2.x, cp2.y, pBot.x, pBot.y);
+      ctx.lineTo(pTop.x, pTop.y);
+
+      var sheathGrad = ctx.createLinearGradient(pBow.x, pBow.y, pTop.x, pTop.y);
+      sheathGrad.addColorStop(0, "rgba(56, 189, 248, 0.12)");
+      sheathGrad.addColorStop(0.5, "rgba(14, 165, 233, 0.06)");
+      sheathGrad.addColorStop(1, "rgba(2, 132, 199, 0.01)");
+      ctx.fillStyle = sheathGrad;
+      ctx.fill();
+
+      // 3. Draw Bow Shock Luminous Arc
+      ctx.beginPath();
+      var bsTop = project(0.4, 2.3, 0);
+      var bsApex = project(bowShockX - 0.45, 0, 0);
+      var bsBot = project(0.4, -2.3, 0);
+      var bsCp1 = project(bowShockX - 0.4, 1.7, 0);
+      var bsCp2 = project(bowShockX - 0.4, -1.7, 0);
+      ctx.moveTo(bsTop.x, bsTop.y);
+      ctx.bezierCurveTo(bsCp1.x, bsCp1.y, bsApex.x, bsApex.y, bsApex.x, bsApex.y);
+      ctx.bezierCurveTo(bsApex.x, bsApex.y, bsCp2.x, bsCp2.y, bsBot.x, bsBot.y);
+
+      ctx.strokeStyle = MAGNETO_SIM.cmeActive ? "rgba(248, 113, 113, 0.85)" : "rgba(56, 189, 248, 0.75)";
+      ctx.lineWidth = (MAGNETO_SIM.cmeActive ? 3.5 : 2.0) * dpr;
+      ctx.shadowColor = MAGNETO_SIM.cmeActive ? "#ef4444" : "#38bdf8";
+      ctx.shadowBlur = 12 * dpr;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // 4. Draw Dipole Magnetic Field Loops
+      var numLoops = 7;
+      var loopRadii = [0.65, 0.95, 1.35, 1.85, 2.45, 3.15, 3.95];
+
+      ctx.lineWidth = 1.4 * dpr;
+      for(var l=0; l<numLoops; l++){
+        var L = loopRadii[l];
+
+        // Draw multiple azimuth planes around Earth
+        var azimuths = [-Math.PI/3, 0, Math.PI/3];
+        azimuths.forEach(function(az){
+          ctx.beginPath();
+          var first = true;
+          var steps = 36;
+          for(var st=0; st<=steps; st++){
+            var th = (st / steps) * Math.PI; // 0 to PI (North to South)
+            var sinTh = Math.sin(th);
+            var cosTh = Math.cos(th);
+            var r = L * sinTh * sinTh; // Dipole r = L * sin^2(theta)
+
+            var fx = r * sinTh * Math.cos(az);
+            var fy = r * cosTh;
+            var fz = r * sinTh * Math.sin(az);
+
+            // Compress on dayside (x < 0) and elongate on nightside (x > 0)
+            if(fx < 0){
+              fx *= (0.55 * comp);
+            } else {
+              fx *= (1.0 + fx * 0.45);
+            }
+
+            var pt = project(fx, fy, fz);
+            if(first){ ctx.moveTo(pt.x, pt.y); first = false; }
+            else { ctx.lineTo(pt.x, pt.y); }
+          }
+
+          var pulse = Math.sin(MAGNETO_SIM.time * 3.0 + l * 0.8) * 0.15 + 0.55;
+          ctx.strokeStyle = "rgba(56, 189, 248, " + (pulse * (1.1 - l * 0.12)) + ")";
+          ctx.stroke();
+        });
+      }
+
+      // 5. Draw Van Allen Belts (Inner & Outer Torus Glow)
+      var torusPt = project(0, 0, 0);
+      var innerRad = 45 * dpr * torusPt.scale * MAGNETO_SIM.zoom;
+      var outerRad = 85 * dpr * torusPt.scale * MAGNETO_SIM.zoom;
+
+      var vGrad = ctx.createRadialGradient(torusPt.x, torusPt.y, innerRad * 0.4, torusPt.x, torusPt.y, outerRad);
+      vGrad.addColorStop(0, "rgba(56, 189, 248, 0)");
+      vGrad.addColorStop(0.35, "rgba(168, 85, 247, 0.18)");
+      vGrad.addColorStop(0.7, "rgba(56, 189, 248, 0.12)");
+      vGrad.addColorStop(1, "rgba(56, 189, 248, 0)");
+      ctx.fillStyle = vGrad;
+      ctx.beginPath();
+      ctx.ellipse(torusPt.x, torusPt.y, outerRad * 1.3, outerRad * 0.85, rx * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 6. Draw Earth Sphere in Center
+      var earthPt = project(0, 0, 0);
+      var earthR = 18 * dpr * earthPt.scale;
+
+      // Earth Body Gradient (Day / Night Shading from Left Sun)
+      var eGrad = ctx.createLinearGradient(earthPt.x - earthR, earthPt.y, earthPt.x + earthR, earthPt.y);
+      eGrad.addColorStop(0.0, "#38bdf8");
+      eGrad.addColorStop(0.35, "#0284c7");
+      eGrad.addColorStop(0.65, "#0f172a");
+      eGrad.addColorStop(1.0, "#020617");
+
+      ctx.fillStyle = eGrad;
+      ctx.beginPath();
+      ctx.arc(earthPt.x, earthPt.y, earthR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Continents representation
+      var tRot = MAGNETO_SIM.time * 0.6;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(earthPt.x, earthPt.y, earthR, 0, Math.PI * 2);
+      ctx.clip();
+
+      ctx.fillStyle = "rgba(34, 197, 94, 0.8)";
+      for(var c=0; c<4; c++){
+        var cAng = tRot + (c * Math.PI / 2);
+        var cxPos = earthPt.x + Math.cos(cAng) * (earthR * 0.8);
+        var cyPos = earthPt.y + Math.sin(c * 2.3) * (earthR * 0.4);
+        if(Math.sin(cAng) > -0.2){
+          ctx.beginPath();
+          ctx.arc(cxPos, cyPos, earthR * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Aurora Ovals at North and South Poles
+      var aurNorth = project(0, 0.22, 0);
+      var aurSouth = project(0, -0.22, 0);
+      ctx.fillStyle = "rgba(52, 211, 153, 0.75)";
+      ctx.shadowColor = "#34d399";
+      ctx.shadowBlur = 8 * dpr;
+      ctx.beginPath();
+      ctx.ellipse(aurNorth.x, aurNorth.y, 7 * dpr * earthPt.scale, 2.5 * dpr * earthPt.scale, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(aurSouth.x, aurSouth.y, 7 * dpr * earthPt.scale, 2.5 * dpr * earthPt.scale, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 7. Update & Draw Solar Wind Particles
+      MAGNETO_SIM.particles.forEach(function(p){
+        if(MAGNETO_SIM.isPlaying){
+          p.x += p.vx * (MAGNETO_SIM.cmeActive ? 1.6 : 1.0);
+
+          // Lorentz force deflection around magnetosphere
+          var distToEarth = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+          var bLimit = 1.5 * comp;
+          if(p.x > -2.6 && p.x < 1.0 && Math.abs(p.y) < bLimit){
+            var signY = p.y >= 0 ? 1 : -1;
+            p.y += signY * 0.038 * (1.8 - Math.abs(p.y));
+          }
+
+          // Reset particle if past screen right
+          if(p.x > 3.8){
+            p.x = -3.5 - Math.random() * 1.0;
+            p.y = (Math.random() - 0.5) * 3.4;
+            p.z = (Math.random() - 0.5) * 2.0;
+            p.isCME = false;
+          }
+        }
+
+        var pt = project(p.x, p.y, p.z);
+        if(pt.z > -4.0){
+          var pCol = p.isCME ? "rgba(248, 113, 113, " + p.alpha + ")" : "rgba(251, 191, 36, " + p.alpha + ")";
+          ctx.fillStyle = pCol;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, p.sz * dpr * pt.scale, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      MAGNETO_SIM.reqId = requestAnimationFrame(magnetoSimLoop);
+    }
+
     function renderSolarAll(){
       if(document.getElementById("solarDistBar")){
         hbarChart("#solarDistBar", (SOLAR_DIST_BARS||[]), {full:true, h:320, ml:170, mr:70, xlab:"ระยะห่างเฉลี่ยจากดวงอาทิตย์ (AU · 1 AU = 149.6 ล้าน กม.)", nameLabel:"วัตถุในระบบสุริยะ", fmt:function(v){ return (v!=null?v.toFixed(2)+" AU":""); }});
       }
       if(document.getElementById("solarDiamBar")){
         hbarChart("#solarDiamBar", (SOLAR_DIAM_BARS||[]), {full:true, h:270, ml:140, mr:70, xlab:"เส้นผ่านศูนย์กลาง (กิโลเมตร)", nameLabel:"ดาวเคราะห์", fmt:function(v){ return (v!=null?Number(v).toLocaleString()+" กม.":""); }});
+      }
+      if(document.getElementById("solarGravityBar")){
+        hbarChart("#solarGravityBar", (SOLAR_GRAVITY_BARS||[]), {full:true, h:320, ml:140, mr:70, xlab:"ความเร่งโน้มถ่วงที่พื้นผิว g (m/s²)", nameLabel:"วัตถุในระบบสุริยะ", fmt:function(v){ return (v!=null?v.toFixed(2)+" m/s²":""); }});
+      }
+      if(document.getElementById("solarEscapeBar")){
+        hbarChart("#solarEscapeBar", (SOLAR_ESCAPE_BARS||[]), {full:true, h:320, ml:140, mr:70, xlab:"ความเร็วหลุดพ้น Escape Velocity (km/s)", nameLabel:"วัตถุในระบบสุริยะ", fmt:function(v){ return (v!=null?v.toFixed(2)+" km/s":""); }});
+      }
+      if(document.getElementById("solarMagnetoBar")){
+        hbarChart("#solarMagnetoBar", (SOLAR_MAGNETO_BARS||[]), {full:true, h:300, ml:140, mr:70, xlab:"ความเข้มสนามแม่เหล็กพื้นผิว (µT)", nameLabel:"ดาวเคราะห์ / ดวงอาทิตย์", fmt:function(v){ return (v!=null?v.toFixed(3)+" µT":""); }});
+      }
+      if(document.getElementById("solarWindBar")){
+        hbarChart("#solarWindBar", (SOLAR_WIND_BARS||[]), {full:true, h:300, ml:160, mr:70, xlab:"ความเร็วลมสุริยะ (km/s)", nameLabel:"ระยะห่างจากดวงอาทิตย์", fmt:function(v){ return (v!=null?Number(v).toLocaleString()+" km/s":""); }});
+      }
+      if(document.getElementById("pane-solar-spacetime")){
+        initSpacetimeSim();
+      }
+      if(document.getElementById("pane-solar-magneto")){
+        initMagnetoSim();
       }
     }
 

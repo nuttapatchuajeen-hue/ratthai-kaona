@@ -1280,9 +1280,61 @@ var SOLAR_DIAM_BARS = [
       { k: "ดาวพฤหัสบดี", v: 139820, hl: true }
     ];
 
+var SOLAR_GRAVITY_BARS = [
+      { k: "ดวงจันทร์", v: 1.62 },
+      { k: "ดาวพุธ", v: 3.70 },
+      { k: "ดาวอังคาร", v: 3.72 },
+      { k: "ดาวยูเรนัส", v: 8.69 },
+      { k: "ดาวศุกร์", v: 8.87 },
+      { k: "โลก", v: 9.81, hl: true },
+      { k: "ดาวเสาร์", v: 10.44 },
+      { k: "ดาวเนปจูน", v: 11.15 },
+      { k: "ดาวพฤหัสบดี", v: 24.79, hl: true },
+      { k: "ดวงอาทิตย์", v: 274.00, hl: true }
+    ];
+
+var SOLAR_ESCAPE_BARS = [
+      { k: "ดวงจันทร์", v: 2.38 },
+      { k: "ดาวพุธ", v: 4.25 },
+      { k: "ดาวอังคาร", v: 5.03 },
+      { k: "ดาวศุกร์", v: 10.36 },
+      { k: "โลก", v: 11.19, hl: true },
+      { k: "ดาวยูเรนัส", v: 21.30 },
+      { k: "ดาวเนปจูน", v: 23.50 },
+      { k: "ดาวเสาร์", v: 35.50 },
+      { k: "ดาวพฤหัสบดี", v: 59.50, hl: true },
+      { k: "ดวงอาทิตย์", v: 617.50, hl: true }
+    ];
+
+var SOLAR_MAGNETO_BARS = [
+      { k: "ดาวศุกร์", v: 0.002 },
+      { k: "ดาวอังคาร", v: 0.005 },
+      { k: "ดาวพุธ", v: 0.30 },
+      { k: "ดาวเนปจูน", v: 14.20 },
+      { k: "ดาวเสาร์", v: 21.00 },
+      { k: "ดาวยูเรนัส", v: 23.00 },
+      { k: "โลก", v: 31.20, hl: true },
+      { k: "ดวงอาทิตย์ (เฉลี่ย)", v: 100.00 },
+      { k: "ดาวพฤหัสบดี", v: 428.00, hl: true }
+    ];
+
+var SOLAR_WIND_BARS = [
+      { k: "ดวงอาทิตย์ (Corona)", v: 150 },
+      { k: "ดาวพุธ (0.39 AU)", v: 380 },
+      { k: "ดาวศุกร์ (0.72 AU)", v: 420 },
+      { k: "โลก (1.00 AU)", v: 450, hl: true },
+      { k: "ดาวอังคาร (1.52 AU)", v: 455 },
+      { k: "ดาวพฤหัสบดี (5.20 AU)", v: 460 },
+      { k: "ดาวเสาร์ (9.58 AU)", v: 450 },
+      { k: "ดาวเนปจูน (30.05 AU)", v: 430 },
+      { k: "เฮลิโอพอส (120 AU)", v: 350, hl: true }
+    ];
+
 var NAV = [
       { id:"solar", ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ระบบสุริยะ", subs:[
           { pane:"solar-orrery",   ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"แบบจำลอง 3 มิติ (3D Orrery)", existing:true },
+          { pane:"solar-spacetime",ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"กาลอวกาศ & หลุมแรงโน้มถ่วง (Spacetime)", existing:true },
+          { pane:"solar-magneto",  ico:"<svg class='mdico'><use href='#i-shield'></use></svg>", label:"สนามแม่เหล็ก & เกราะลมสุริยะ (Magnetosphere)", existing:true },
           { pane:"solar-sun",      ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ดวงอาทิตย์ (The Sun)", existing:true },
           { pane:"solar-planets",  ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ดาวเคราะห์ 8 ดวง (Planets)", existing:true },
           { pane:"solar-halley",   ico:"<svg class='mdico'><use href='#i-rocket'></use></svg>", label:"ดาวหางฮัลเลย์ (Comet Halley)", existing:true },

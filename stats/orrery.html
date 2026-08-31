@@ -202,18 +202,51 @@
             padding: 8px 10px;
             border-radius: 8px;
         }
+        .card-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fbbf24;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            margin-bottom: -2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 3px;
+        }
 
-        /* Bottom Planet Navigation */
+        /* Bottom Planet Navigation with Subheadings */
         #planet-nav {
             bottom: 20px; 
             left: 50%; 
             transform: translateX(-50%);
-            padding: 8px 12px; 
+            padding: 8px 14px; 
             display: flex; 
-            gap: 6px; 
+            gap: 8px; 
             flex-wrap: wrap;
+            align-items: center;
             justify-content: center;
             max-width: 95vw;
+        }
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-group-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+            white-space: nowrap;
+        }
+        .nav-divider {
+            width: 1px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 0 3px;
         }
         .nav-btn {
             background: rgba(255, 255, 255, 0.07); 
@@ -259,6 +292,7 @@
     <!-- Top Left HUD -->
     <div id="hud" class="glass-panel">
         <h1>☀️ SOLAR SYSTEM ORRERY 3D</h1>
+        <div style="font-size:11px; font-weight:600; color:#38bdf8; margin-bottom:4px;">แบบจำลองกลศาสตร์ท้องฟ้า &amp; กริิดกาลอวกาศ 3 มิติ (Spacetime Edition)</div>
         <p>🖱️ คลิกดาวดวงใดก็ได้เพื่อเปิดการ์ดข้อมูลดาราศาสตร์ | ซูมส่องพื้นผิวโลกและดาวเคราะห์ระดับ NASA</p>
     </div>
 
@@ -275,7 +309,7 @@
 
     <!-- Top Right Light Controls -->
     <div id="light-controls" class="glass-panel">
-        <div class="ctrl-title">🔆 แสงสุริยะ & เอฟเฟกต์ (Controls)</div>
+        <div class="ctrl-title">🔆 แสงสุริยะ (Lighting Controls)</div>
         <div class="ctrl-row">
             <span>ความสว่างแสง</span>
             <input type="range" id="sun-intensity" min="1" max="6" step="0.2" value="2.8" oninput="updateLighting()">
@@ -291,14 +325,17 @@
             <input type="range" id="ambient-intensity" min="0.1" max="0.8" step="0.05" value="0.35" oninput="updateLighting()">
             <span class="val" id="val-ambient">0.35</span>
         </div>
-        <div class="ctrl-row" style="margin-top: 4px;">
+        <div class="ctrl-title" style="margin-top: 6px;">🌌 เลเยอร์การแสดงผล (Visual Layers)</div>
+        <div class="ctrl-row" style="flex-wrap: wrap; gap: 4px;">
+            <button id="btn-spacetime" class="toggle-btn active" onclick="toggleSpacetime()">🌌 กริิดกาลอวกาศ</button>
+            <button id="btn-magneto" class="toggle-btn active" onclick="toggleMagneto()">🛡️ เกราะแม่เหล็ก</button>
             <button id="btn-sunburst" class="toggle-btn active" onclick="toggleSunburst()">✨ แฉกแสง</button>
             <button id="btn-orbits" class="toggle-btn active" onclick="toggleOrbits()">💫 เส้นวงโคจร</button>
             <button id="btn-comet" class="toggle-btn active" onclick="toggleComet()">☄️ ดาวหาง</button>
         </div>
     </div>
 
-    <!-- Planet Info Card HUD -->
+    <!-- Planet Info Card HUD with Subheadings (หัวข้อรอง) -->
     <div id="planet-card" class="glass-panel">
         <div class="card-header">
             <div>
@@ -307,6 +344,8 @@
             </div>
             <button class="close-card" onclick="closeCard()">✖</button>
         </div>
+
+        <div class="card-section-title">📌 ข้อมูลกายภาพ &amp; วงโคจร (Physical &amp; Orbital)</div>
         <div class="stat-grid">
             <div class="stat-box">
                 <div class="stat-lbl">เส้นผ่านศูนย์กลาง</div>
@@ -325,7 +364,7 @@
                 <div id="card-temp" class="stat-val">15 °C</div>
             </div>
             <div class="stat-box">
-                <div class="stat-lbl">เวลาหมุนรอบตัวเอง (1 วัน)</div>
+                <div class="stat-lbl">เวลาหมุนรอบตัวเอง</div>
                 <div id="card-rotation" class="stat-val">24 ชั่วโมง</div>
             </div>
             <div class="stat-box">
@@ -333,24 +372,59 @@
                 <div id="card-moons" class="stat-val">1 ดวง (The Moon)</div>
             </div>
         </div>
+
+        <div class="card-section-title">🌌 แรงโน้มถ่วง &amp; กาลอวกาศ (Gravity Well)</div>
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="stat-lbl">ความเร่งโน้มถ่วง (g)</div>
+                <div id="card-gravity" class="stat-val">9.81 m/s² (1.00 g)</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-lbl">ความเร็วหลุดพ้น (v_e)</div>
+                <div id="card-escape" class="stat-val">11.19 km/s</div>
+            </div>
+        </div>
+
+        <div class="card-section-title">📖 ข้อมูลดาราศาสตร์สังเขป (Overview)</div>
         <div id="card-desc" class="card-desc">
             โลกเป็นดาวเคราะห์เพียงดวงเดียวในระบบสุริยะที่พบสิ่งมีชีวิต มีน้ำในสถานะของเหลวปกคลุมพื้นผิวกว่า 71% และมีชั้นบรรยากาศที่อุดมด้วยออกซิเจนและไนโตรเจน
         </div>
-        <button class="speed-btn active" style="width:100%; text-align:center; padding:6px;" onclick="resetCamera()">🔄 กลับสู่มุมมองรวมระบบสุริยะ</button>
+        <button class="speed-btn active" style="width:100%; text-align:center; padding:6px; margin-top:2px;" onclick="resetCamera()">🔄 กลับสู่มุมมองรวมระบบสุริยะ</button>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Planet Navigation with Categorized Subheadings (หัวข้อรอง) -->
     <div id="planet-nav" class="glass-panel">
-        <button class="nav-btn sun-btn" onclick="focusTarget('Sun')"><span class="dot" style="background:#fbbf24; box-shadow:0 0 6px #f59e0b;"></span>The Sun</button>
-        <button class="nav-btn" onclick="focusTarget('Mercury')"><span class="dot" style="background:#5bc0be;"></span>Mercury</button>
-        <button class="nav-btn" onclick="focusTarget('Venus')"><span class="dot" style="background:#f59e0b;"></span>Venus</button>
-        <button class="nav-btn" onclick="focusTarget('Earth')"><span class="dot" style="background:#38bdf8;"></span>The Earth</button>
-        <button class="nav-btn" onclick="focusTarget('Mars')"><span class="dot" style="background:#ef4444;"></span>Mars</button>
-        <button class="nav-btn" onclick="focusTarget('Jupiter')"><span class="dot" style="background:#f97316;"></span>Jupiter</button>
-        <button class="nav-btn" onclick="focusTarget('Saturn')"><span class="dot" style="background:#eab308;"></span>Saturn</button>
-        <button class="nav-btn" onclick="focusTarget('Uranus')"><span class="dot" style="background:#06b6d4;"></span>Uranus</button>
-        <button class="nav-btn" onclick="focusTarget('Neptune')"><span class="dot" style="background:#3b82f6;"></span>Neptune</button>
-        <button class="nav-btn" onclick="focusTarget('Comet')"><span class="dot" style="background:#a78bfa; box-shadow:0 0 6px #8b5cf6;"></span>☄️ Halley</button>
+        <div class="nav-group">
+            <span class="nav-group-title">☀️ ศูนย์กลาง:</span>
+            <button class="nav-btn sun-btn" onclick="focusTarget('Sun')"><span class="dot" style="background:#fbbf24; box-shadow:0 0 6px #f59e0b;"></span>The Sun</button>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <div class="nav-group">
+            <span class="nav-group-title">🪨 ดาวเคราะห์หินชั้นใน:</span>
+            <button class="nav-btn" onclick="focusTarget('Mercury')"><span class="dot" style="background:#5bc0be;"></span>Mercury</button>
+            <button class="nav-btn" onclick="focusTarget('Venus')"><span class="dot" style="background:#f59e0b;"></span>Venus</button>
+            <button class="nav-btn" onclick="focusTarget('Earth')"><span class="dot" style="background:#38bdf8;"></span>The Earth</button>
+            <button class="nav-btn" onclick="focusTarget('Mars')"><span class="dot" style="background:#ef4444;"></span>Mars</button>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <div class="nav-group">
+            <span class="nav-group-title">🪐 ดาวเคราะห์ยักษ์ชั้นนอก:</span>
+            <button class="nav-btn" onclick="focusTarget('Jupiter')"><span class="dot" style="background:#f97316;"></span>Jupiter</button>
+            <button class="nav-btn" onclick="focusTarget('Saturn')"><span class="dot" style="background:#eab308;"></span>Saturn</button>
+            <button class="nav-btn" onclick="focusTarget('Uranus')"><span class="dot" style="background:#06b6d4;"></span>Uranus</button>
+            <button class="nav-btn" onclick="focusTarget('Neptune')"><span class="dot" style="background:#3b82f6;"></span>Neptune</button>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <div class="nav-group">
+            <span class="nav-group-title">☄️ วัตถุขอบฟ้า:</span>
+            <button class="nav-btn" onclick="focusTarget('Comet')"><span class="dot" style="background:#a78bfa; box-shadow:0 0 6px #8b5cf6;"></span>Halley</button>
+        </div>
     </div>
 
     <div id="canvas-container"></div>
@@ -635,6 +709,32 @@
             return new THREE.LineLoop(geo, mat);
         }
 
+        // 7.5. Dynamic 3D Spacetime Curvature Grid (กริิดกาลอวกาศ 3D ตามทฤษฎีสัมพัทธภาพทั่วไป)
+        const spacetimeSize = 650;
+        const spacetimeSegments = 110;
+        const spacetimeGeo = new THREE.PlaneGeometry(spacetimeSize, spacetimeSize, spacetimeSegments, spacetimeSegments);
+        spacetimeGeo.rotateX(-Math.PI / 2);
+        const originalSpacetimePos = spacetimeGeo.attributes.position.array.slice();
+
+        const spacetimeMat = new THREE.MeshBasicMaterial({
+            color: 0x0284c7,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.35,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        const spacetimeMesh = new THREE.Mesh(spacetimeGeo, spacetimeMat);
+        spacetimeMesh.position.y = -1.2;
+        scene.add(spacetimeMesh);
+
+        let spacetimeVisible = true;
+        window.toggleSpacetime = function() {
+            spacetimeVisible = !spacetimeVisible;
+            spacetimeMesh.visible = spacetimeVisible;
+            document.getElementById('btn-spacetime').classList.toggle('active', spacetimeVisible);
+        };
+
         // 8. Planet Scientific Database (Thai Astronomy Encyclopedia)
         const planetDataDB = {
             "Sun": {
@@ -646,7 +746,9 @@
                 temp: "5,500 °C (แกนกลาง 15 ล้าน °C)",
                 rotation: "25 - 35 วัน",
                 moons: "ดาวเคราะห์ 8 ดวง + บริวารนับล้าน",
-                desc: "ดวงอาทิตย์เป็นดาวฤกษ์ชนิด G2V ที่มีมวลคิดเป็น 99.86% ของมวลรวมทั้งระบบสุริยะ แหล่งกำเนิดพลังงานจากปฏิกิริยานิวเคลียร์ฟิวชันเปลี่ยนไฮโดรเจนเป็นฮีเลียม"
+                gravity: "274.0 m/s² (27.9 g)",
+                escape: "617.5 km/s",
+                desc: "ดวงอาทิตย์เป็นดาวฤกษ์ชนิด G2V ที่มีมวลคิดเป็น 99.86% ของมวลรวมทั้งระบบสุริยะ แหล่งกำเนิดพลังงานจากปฏิกิริยานิวเคลียร์ฟิวชันเปลี่ยนไฮโดรเจนเป็นฮีเลียม สร้างหลุมกาลอวกาศที่ลึกที่สุดในระบบสุริยะ"
             },
             "Mercury": {
                 name: "☿ ดาวพุธ (Mercury)",
@@ -657,6 +759,8 @@
                 temp: "-180 °C ถึง 430 °C",
                 rotation: "58.6 วันโลก",
                 moons: "ไม่มี",
+                gravity: "3.70 m/s² (0.38 g)",
+                escape: "4.25 km/s",
                 desc: "ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์ที่สุด ไม่มีชั้นบรรยากาศคอยกักเก็บความร้อน ทำให้ด้านกลางวันร้อนจัดและด้านกลางคืนเย็นยะเยือก เต็มไปด้วยหลุมอุกกาบาต"
             },
             "Venus": {
@@ -668,6 +772,8 @@
                 temp: "465 °C (ร้อนที่สุดในระบบสุริยะ)",
                 rotation: "243 วันโลก (หมุนตามเข็มนาฬิกา)",
                 moons: "ไม่มี",
+                gravity: "8.87 m/s² (0.90 g)",
+                escape: "10.36 km/s",
                 desc: "ฝาแฝดของโลกในแง่ขนาด แต่มีบรรยากาศคาร์บอนไดออกไซด์หนาแน่น ก่อให้เกิดปรากฏการณ์เรือนกระจกขั้นรุนแรง มีฝนกรดกำมะถัน และหมุนรอบตัวเองกลับทิศกับดาวดวงอื่น"
             },
             "Earth": {
@@ -679,6 +785,8 @@
                 temp: "15 °C (-89 °C ถึง 58 °C)",
                 rotation: "23 ชั่วโมง 56 นาที",
                 moons: "1 ดวง (The Moon)",
+                gravity: "9.81 m/s² (1.00 g)",
+                escape: "11.19 km/s",
                 desc: "ดาวเคราะห์แห่งชีวิตดวงเดียวในจักรวาลที่ได้รับการยืนยัน พื้นผิว 71% ปกคลุมด้วยน้ำ มีสนามแม่เหล็กป้องกันลมสุริยะ และชั้นบรรยากาศที่เหมาะสมต่อสิ่งมีชีวิต"
             },
             "Mars": {
@@ -690,6 +798,8 @@
                 temp: "-63 °C (-140 °C ถึง 20 °C)",
                 rotation: "24 ชั่วโมง 37 นาที",
                 moons: "2 ดวง (Phobos & Deimos)",
+                gravity: "3.72 m/s² (0.38 g)",
+                escape: "5.03 km/s",
                 desc: "ดาวเคราะห์สีแดงจากสนิมเหล็ก (Iron Oxide) บนพื้นผิว มีภูเขาไฟโอลิมปัส (Olympus Mons) ที่สูงที่สุดในระบบสุริยะ และมีขั้วน้ำแข็งแห้งที่ขั้วเหนือ-ใต้"
             },
             "Jupiter": {
@@ -701,7 +811,9 @@
                 temp: "-110 °C",
                 rotation: "9 ชั่วโมง 56 นาที (หมุนเร็วที่สุด)",
                 moons: "95 ดวง (เด่น: Io, Europa, Ganymede, Callisto)",
-                desc: "ราชาแห่งดาวเคราะห์ที่มีมวลมากกว่าดาวเคราะห์ดวงอื่นในระบบสุริยะรวมกันกว่า 2.5 เท่า มีจุดแดงใหญ่ (Great Red Spot) ซึ่งเป็นพายุหมุนขนาดยักษ์อายุกว่า 300 ปี"
+                gravity: "24.79 m/s² (2.53 g)",
+                escape: "59.50 km/s",
+                desc: "ราชาแห่งดาวเคราะห์ที่มีมวลมากกว่าดาวเคราะห์ดวงอื่นในระบบสุริยะรวมกันกว่า 2.5 เท่า สร้างหลุมกาลอวกาศขนาดใหญ่ มีจุดแดงใหญ่ (Great Red Spot) พายุหมุนอายุกว่า 300 ปี"
             },
             "Saturn": {
                 name: "♄ ดาวเสาร์ (Saturn)",
@@ -712,6 +824,8 @@
                 temp: "-140 °C",
                 rotation: "10 ชั่วโมง 33 นาที",
                 moons: "146 ดวง (เด่น: Titan, Enceladus)",
+                gravity: "10.44 m/s² (1.06 g)",
+                escape: "35.50 km/s",
                 desc: "อัญมณีแห่งระบบสุริยะที่มีระบบวงแหวนน้ำแข็งและฝุ่นหินที่กว้างและสง่างามที่สุด มีความหนาแน่นเฉลี่ยต่ำกว่าน้ำ (ถ้ามีอ่างน้ำยักษ์ดาวเสาร์จะลอยน้ำได้)"
             },
             "Uranus": {
@@ -723,6 +837,8 @@
                 temp: "-195 °C (หนาวเย็นที่สุด)",
                 rotation: "17 ชั่วโมง 14 นาที (แกนเอียง 98°)",
                 moons: "28 ดวง (Titania, Oberon)",
+                gravity: "8.69 m/s² (0.89 g)",
+                escape: "21.30 km/s",
                 desc: "ดาวเคราะห์น้ำแข็งสีฟ้าอมเขียวจากแก๊สมีเทน มีความพิเศษคือแกนหมุนเอียงเกือบ 98 องศา ทำให้เหมือนกลิ้งไปบนระนาบวงโคจรรอบดวงอาทิตย์"
             },
             "Neptune": {
@@ -734,6 +850,8 @@
                 temp: "-200 °C",
                 rotation: "16 ชั่วโมง 6 นาที",
                 moons: "16 ดวง (เด่น: Triton)",
+                gravity: "11.15 m/s² (1.14 g)",
+                escape: "23.50 km/s",
                 desc: "ดาวเคราะห์ดวงนอกสุดของระบบสุริยะ มีสีน้ำเงินเข้มจัดและมีลมพายุรวดเร็วรุนแรงที่สุดในระบบสุริยะ ความเร็วลมสูงถึง 2,100 กม./ชม."
             },
             "Comet": {
@@ -745,6 +863,8 @@
                 temp: "-200 °C ถึง 100 °C",
                 rotation: "2.2 วัน",
                 moons: "ไม่มี",
+                gravity: "~0.001 m/s² (~0.0001 g)",
+                escape: "0.003 km/s (3 m/s)",
                 desc: "ดาวหางชื่อดังที่สุดที่มนุษย์สามารถมองเห็นได้ด้วยตาเปล่าจากโลกทุกๆ ~76 ปี เมื่อเข้าใกล้ดวงอาทิตย์ ความร้อนจะระเหิดน้ำแข็งกลายเป็นหางฝุ่นแก๊สเรืองแสงทอดยาวหลายล้านกิโลเมตร"
             }
         };
@@ -799,7 +919,7 @@
 
         const planets = {};
         const raycastMeshes = [sun];
-        let earthClouds, moonOrbit;
+        let earthClouds, moonOrbit, earthMagnetoGroup;
         const jupiterMoonPivots = [];
         let saturnTitanPivot;
 
@@ -843,7 +963,7 @@
             label.position.set(0, data.size + 2.8, 0);
             mesh.add(label);
 
-            // Earth Atmosphere & Moon
+            // Earth Atmosphere, Moon & 3D Magnetosphere
             if (data.hasClouds) {
                 const cloudTex = textureLoader.load(data.cloudsUrl);
                 const cloudGeo = new THREE.SphereGeometry(data.size + 0.06, 64, 64);
@@ -855,6 +975,46 @@
                 });
                 earthClouds = new THREE.Mesh(cloudGeo, cloudMat);
                 mesh.add(earthClouds);
+            }
+
+            if (data.isEarth) {
+                earthMagnetoGroup = new THREE.Group();
+                mesh.add(earthMagnetoGroup);
+
+                // Dipole Field Lines in 3D
+                const magMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+                const numMagLoops = 5;
+                const magRadii = [3.8, 5.4, 7.2, 9.4, 12.0];
+
+                magRadii.forEach(L => {
+                    const azimuths = [-Math.PI / 3, 0, Math.PI / 3];
+                    azimuths.forEach(az => {
+                        const pts = [];
+                        const stCount = 36;
+                        for (let st = 0; st <= stCount; st++) {
+                            const th = (st / stCount) * Math.PI;
+                            const r = L * Math.sin(th) * Math.sin(th);
+                            let fx = r * Math.sin(th) * Math.cos(az);
+                            let fy = r * Math.cos(th);
+                            let fz = r * Math.sin(th) * Math.sin(az);
+                            if (fx < 0) fx *= 0.6; else fx *= 1.35;
+                            pts.push(new THREE.Vector3(fx, fy, fz));
+                        }
+                        const g = new THREE.BufferGeometry().setFromPoints(pts);
+                        earthMagnetoGroup.add(new THREE.Line(g, magMat));
+                    });
+                });
+
+                // Bow Shock Luminous Arc on dayside
+                const bsPts = [];
+                for (let a = -Math.PI / 2.2; a <= Math.PI / 2.2; a += 0.08) {
+                    const bx = -7.5 * Math.cos(a * 0.7);
+                    const by = 8.5 * Math.sin(a);
+                    bsPts.push(new THREE.Vector3(bx, by, 0));
+                }
+                const bsGeo = new THREE.BufferGeometry().setFromPoints(bsPts);
+                const bsMat = new THREE.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+                earthMagnetoGroup.add(new THREE.Line(bsGeo, bsMat));
             }
 
             if (data.hasMoon) {
@@ -1178,6 +1338,8 @@
             document.getElementById('card-temp').innerText = data.temp;
             document.getElementById('card-rotation').innerText = data.rotation;
             document.getElementById('card-moons').innerText = data.moons;
+            document.getElementById('card-gravity').innerText = data.gravity || "-";
+            document.getElementById('card-escape').innerText = data.escape || "-";
             document.getElementById('card-desc').innerText = data.desc;
             document.getElementById('planet-card').style.display = 'flex';
         }
@@ -1273,6 +1435,13 @@
             document.getElementById('btn-sunburst').classList.toggle('active', sunburstVisible);
         };
 
+        let magnetoVisible = true;
+        window.toggleMagneto = function() {
+            magnetoVisible = !magnetoVisible;
+            if (earthMagnetoGroup) earthMagnetoGroup.visible = magnetoVisible;
+            document.getElementById('btn-magneto').classList.toggle('active', magnetoVisible);
+        };
+
         let orbitsVisible = true;
         window.toggleOrbits = function() {
             orbitsVisible = !orbitsVisible;
@@ -1316,9 +1485,12 @@
                 mainAsteroidBelt.rotation.y += 0.0003 * timeSpeed;
                 kuiperBelt.rotation.y += 0.00015 * timeSpeed;
 
-                // Earth Clouds & Moon
+                // Earth Clouds, Moon & Magnetosphere
                 if (earthClouds) earthClouds.rotation.y += 0.004 * timeSpeed;
                 if (moonOrbit) moonOrbit.rotation.y += 0.025 * timeSpeed;
+                if (earthMagnetoGroup && planets['Earth']) {
+                    earthMagnetoGroup.rotation.y = -planets['Earth'].pivot.rotation.y;
+                }
                 jupiterMoonPivots.forEach(m => m.pivot.rotation.y += m.speed * timeSpeed);
                 if (saturnTitanPivot) saturnTitanPivot.rotation.y += 0.018 * timeSpeed;
 
@@ -1345,6 +1517,48 @@
                 const distToSun = cometGroup.position.length();
                 const tailScale = Math.max(0.65, Math.min(1.3, 110 / (distToSun + 20)));
                 tailVolumetricGroup.scale.set(tailScale, tailScale, tailScale);
+
+                // Dynamic Spacetime Curvature Grid updates (กริิดกาลอวกาศ 3D)
+                if (spacetimeVisible) {
+                    const pos = spacetimeGeo.attributes.position;
+                    const bodies = [];
+                    for (let key in planets) {
+                        const p = planets[key];
+                        const wp = new THREE.Vector3();
+                        p.mesh.getWorldPosition(wp);
+                        let depth = 3.5, rSq = 40;
+                        if (key === 'Jupiter') { depth = 13.0; rSq = 130; }
+                        else if (key === 'Saturn') { depth = 9.5; rSq = 100; }
+                        else if (key === 'Uranus' || key === 'Neptune') { depth = 6.0; rSq = 65; }
+                        else if (key === 'Earth') { depth = 4.2; rSq = 45; }
+                        else if (key === 'Venus') { depth = 3.8; rSq = 40; }
+                        else if (key === 'Mars') { depth = 2.4; rSq = 28; }
+                        else if (key === 'Mercury') { depth = 1.6; rSq = 18; }
+                        bodies.push({ x: wp.x, z: wp.z, depth: depth, rSq: rSq });
+                    }
+
+                    for (let i = 0; i < pos.count; i++) {
+                        const x = originalSpacetimePos[i * 3];
+                        const z = originalSpacetimePos[i * 3 + 2];
+
+                        // Sun deep gravitational well in center
+                        const dSunSq = x * x + z * z;
+                        let y = -36.0 / (1.0 + Math.pow(Math.sqrt(dSunSq) / 18.0, 1.4));
+
+                        // Planet local gravitational wells
+                        for (let b of bodies) {
+                            const dx = x - b.x;
+                            const dz = z - b.z;
+                            const dSq = dx * dx + dz * dz;
+                            if (dSq < 900) {
+                                y -= b.depth / (1.0 + dSq / b.rSq);
+                            }
+                        }
+
+                        pos.setY(i, y);
+                    }
+                    pos.needsUpdate = true;
+                }
             }
 
             // Corona subtle breathing
