@@ -1,860 +1,1585 @@
 <!DOCTYPE html>
-<html lang="th" data-theme="dark">
+<html lang="th" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>กรุงเทพฯ รายเขต บนแผนที่เมือง — สถิติข้อมูลรัฐ</title>
-<meta name="description" content="ตัวชี้วัดรายเขต 50 เขตกรุงเทพฯ ระบายบนแผนที่ถนนจริง พร้อมหมุดค่าประจำเขต — ฐานแผนที่ OpenFreeMap">
+<title>กรุงเทพฯ 3D Urban Intelligence — โครงการ แลนด์มาร์ก และรถไฟฟ้า 10 สาย</title>
+<meta name="description" content="แผนที่ 3 มิติกรุงเทพฯ โมเดลอาคารระฟ้า ข้อมูลโครงการเจาะลึก และโครงข่ายรถไฟฟ้า 10 สาย">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
 <style>
-  /* พาเลตต์ชุดเดียวกับโหมดมืดของ explore.html */
-  :root{
-    --paper:#020508; --paper-2:#070D14; --paper-3:#0D1822;
-    --ink:#DCE8F0; --ink-2:#A9BFCD; --ink-soft:#7993A4;
-    --rule:#122230; --rule-strong:#1C3344;
-    --green:#00E5FF; --red:#FF5C1A; --gold:#FFB454;
-    --shadow:18px 22px 40px -28px rgba(0,0,0,.85), 0 0 24px rgba(0,229,255,.05);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--paper);color:var(--ink);
-       font-family:"Noto Sans Thai","Archivo",system-ui,-apple-system,sans-serif;
-       display:flex;flex-direction:column;overflow:hidden}
-  a{color:var(--green)}
-
-  /* ---------- แถบบน ---------- */
-  .top{flex:0 0 auto;padding:11px 18px 0;background:var(--paper);border-bottom:1px solid var(--rule)}
-  .row1{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:9px}
-  .back{font-size:13px;font-weight:600;text-decoration:none;color:var(--ink-soft);white-space:nowrap}
-  .back:hover{color:var(--green)}
-  h1{margin:0;font-family:"Noto Serif Thai",serif;font-weight:800;font-size:19px;letter-spacing:-.01em}
-  .lede{font-size:12.5px;color:var(--ink-soft);margin:0}
-
-  .pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
-  .pill{display:inline-flex;align-items:center;gap:7px;cursor:pointer;
-        background:var(--paper-3);border:1px solid var(--rule);color:var(--ink-2);
-        border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:600;
-        transition:border-color .15s,color .15s,background .15s}
-  .pill:hover{border-color:var(--rule-strong);color:var(--ink)}
-  .pill.on{background:rgba(0,229,255,.10);border-color:var(--green);color:var(--green);box-shadow:0 6px 20px -6px rgba(0,229,255,.5)}
-  .pill .kd{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;opacity:.75}
-
-  /* แถบตัวเลขบรรทัดเดียว — กินความสูงน้อย เหลือพื้นที่ให้แผนที่ */
-  .kpis{display:flex;flex-wrap:wrap;gap:5px 24px;padding-bottom:10px;align-items:baseline}
-  .kpi{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
-  .kpi .n{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;line-height:1.15;
-          letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-  .kpi .n .u{font-size:12px;color:var(--ink-2);font-weight:700;margin-left:2px}
-  .kpi.hi .n{color:var(--red)}
-  .kpi .t{font-size:12px;color:var(--ink-2);font-weight:600}
-  .kpi .s{font-size:11.5px;color:var(--ink-soft)}
-  .kpi .s::before{content:"· "}
-
-  /* ---------- แผนที่ ---------- */
-  .stage{flex:1 1 auto;position:relative;min-height:0}
-  #map{position:absolute;inset:0}
-  .maplibregl-ctrl-group{background:var(--paper-2)!important;border:1px solid var(--rule)}
-  .maplibregl-ctrl-group button+button{border-top-color:var(--rule)}
-  .maplibregl-ctrl-group button span{filter:invert(1) hue-rotate(180deg)}
-  .maplibregl-ctrl-attrib{background:rgba(2,5,8,.8)!important;font-size:10.5px}
-  .maplibregl-ctrl-attrib a{color:var(--ink-soft)!important}
-
-  .float{position:absolute;background:rgba(7,13,20,.92);border:1px solid var(--rule);
-         border-radius:13px;backdrop-filter:blur(12px);box-shadow:var(--shadow)}
-
-  .tools{left:12px;top:12px;padding:8px;display:flex;gap:6px;align-items:center}
-  .tbtn{cursor:pointer;background:var(--paper-3);border:1px solid var(--rule);color:var(--ink-2);
-        border-radius:9px;padding:6px 11px;font:inherit;font-size:12px;font-weight:600}
-  .tbtn:hover{border-color:var(--rule-strong);color:var(--ink)}
-  .tbtn.on{background:rgba(0,229,255,.12);border-color:var(--green);color:var(--green)}
-  .tzoom{font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums;padding-left:4px;white-space:nowrap}
-  .pgo{display:block;width:100%;margin-top:11px;cursor:pointer;background:rgba(0,229,255,.10);
-       border:1px solid var(--green);color:var(--green);border-radius:10px;padding:8px 10px;
-       font:inherit;font-size:12.5px;font-weight:700}
-  .pgo:hover{background:rgba(0,229,255,.18)}
-
-  .legend{left:12px;bottom:34px;padding:11px 13px;width:238px}
-  .legend .lh{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-bottom:8px}
-  .legend .sws{display:flex;gap:3px}
-  .legend .sw{flex:1;min-width:0}
-  .legend .sw i{display:block;height:11px;border-radius:3px}
-  .legend .sw span{display:block;margin-top:4px;font-size:9.5px;color:var(--ink-soft);
-                   font-variant-numeric:tabular-nums;text-align:center;overflow:hidden;text-overflow:ellipsis}
-  .legend .sc{font-size:10.5px;color:var(--ink-soft);margin-top:7px;line-height:1.5}
-
-  .panel{right:12px;top:12px;width:272px;max-height:calc(100% - 24px);overflow:auto;padding:14px 16px}
-  .panel .ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
-             border-bottom:1px dashed var(--rule);padding-bottom:9px;margin-bottom:9px}
-  .panel .pn{font-family:"Noto Serif Thai",serif;font-weight:800;font-size:17px}
-  .panel .pm{font-size:11.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap}
-  .panel .px{position:absolute;right:11px;top:9px;cursor:pointer;background:none;border:0;
-             color:var(--ink-soft);font-size:17px;line-height:1;padding:3px 5px}
-  .panel .px:hover{color:var(--ink)}
-  .prow{display:grid;grid-template-columns:76px 1fr auto;gap:8px;align-items:center;margin:9px 0}
-  .prow .l{font-size:12px;color:var(--ink-2);font-weight:600;white-space:nowrap}
-  .prow .b{height:7px;border-radius:4px;background:var(--rule);overflow:hidden}
-  .prow .b>i{display:block;height:100%;border-radius:4px}
-  .prow .v{font-family:"Archivo",sans-serif;font-weight:800;font-size:12px;text-align:right;
-           font-variant-numeric:tabular-nums;white-space:nowrap}
-  .prow .v .rk{font-size:11px;color:var(--ink-soft);margin-left:4px}
-  .prow.act .l{color:var(--green)}
-  .psrc{margin-top:11px;padding-top:9px;border-top:1px dashed var(--rule);font-size:11px;color:var(--ink-soft);line-height:1.6}
-
-  /* ---------- การ์ดข้อมูลรายอาคาร (แตะตึกในโหมด 3 มิติ) ---------- */
-  .bpanel{right:12px;top:12px;width:292px;max-height:calc(100% - 24px);overflow:auto;padding:14px 16px}
-  .bpanel .px{position:absolute;right:11px;top:9px;cursor:pointer;background:none;border:0;
-              color:var(--ink-soft);font-size:17px;line-height:1;padding:3px 5px}
-  .bpanel .px:hover{color:var(--ink)}
-  .bpanel .bn{font-family:"Noto Serif Thai",serif;font-weight:800;font-size:16px;line-height:1.4;
-              padding-right:18px;display:block}
-  .bpanel .bn.un{color:var(--ink-2);font-weight:700;font-size:14.5px}
-  .bpanel .bsub{font-size:11.5px;color:var(--ink-soft);margin-top:3px;font-variant-numeric:tabular-nums}
-  .bpanel .bhero{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;
-                 border-top:1px dashed var(--rule);border-bottom:1px dashed var(--rule);
-                 padding:9px 0;margin:10px 0 4px}
-  .bpanel .bnum{font-family:"Archivo",sans-serif;font-weight:800;font-size:27px;line-height:1;
-                letter-spacing:-.02em;color:var(--green);font-variant-numeric:tabular-nums}
-  .bpanel .bnum .u{font-size:13px;color:var(--ink-2);font-weight:700;margin-left:3px}
-  .bpanel .bfl{font-size:12.5px;color:var(--ink-2);font-weight:600}
-  .bpanel .bnum.na{color:var(--ink-soft);font-size:17px}
-  .brow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:8px 0}
-  .brow .l{font-size:12px;color:var(--ink-2);font-weight:600;white-space:nowrap}
-  .brow .v{font-family:"Archivo","Noto Sans Thai",sans-serif;font-weight:700;font-size:12px;
-           text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
-  .brow .v small{color:var(--ink-soft);font-weight:600;margin-left:3px}
-  .bgo{display:block;width:100%;margin-top:11px;text-align:center;text-decoration:none;
-       background:rgba(0,229,255,.10);border:1px solid var(--green);color:var(--green);
-       border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:700}
-  .bgo:hover{background:rgba(0,229,255,.18)}
-  .bsrc{margin-top:10px;padding-top:9px;border-top:1px dashed var(--rule);
-        font-size:10.5px;color:var(--ink-soft);line-height:1.6}
-
-  .note{flex:0 0 auto;padding:8px 18px;font-size:11.5px;color:var(--ink-soft);
-        background:var(--paper);border-top:1px solid var(--rule);line-height:1.6}
-  .err{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;
-       font-size:14px;color:var(--ink-2);line-height:1.8}
-  .loading{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;
-           text-align:center;font-size:13px;color:var(--ink-soft);line-height:1.7;
-           background:var(--paper);pointer-events:none}
-  .loading small{color:var(--rule-strong);font-size:11.5px}
-  .loading .sp{width:22px;height:22px;border-radius:50%;border:2px solid var(--rule);
-               border-top-color:var(--green);animation:spin 900ms linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* โหมดฝัง (?embed=1) — ซ่อนหัวหน้าเว็บ เพราะการ์ดที่ฝังมีหัวข้อของตัวเองอยู่แล้ว */
-  body.embed .row1{display:none}
-  body.embed .top{padding:10px 12px 0;border-bottom:0}
-  body.embed .note{padding:7px 12px}
-
-  /* กรอบแคบ (ฝังในการ์ด/จอมือถือ) — ปุ่มเหลือแค่ไอคอน ไม่งั้นแถบล้นไปทับแผงข้อมูล */
-  @media(max-width:720px){ .tzoom{display:none} }
-  @media(max-width:560px){
-    .tools{padding:6px;gap:4px}
-    .tbtn{padding:6px 9px}
-    .tbtn .lb{display:none}
+  :root {
+    --bg-page: #F8F9FA;
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --card-border: #E2E8F0;
+    --text-main: #1A202C;
+    --text-muted: #64748B;
+    --text-sub: #94A3B8;
+    --copper: #B86B43;
+    --copper-hover: #A05832;
+    --copper-light: rgba(184, 107, 67, 0.10);
+    --bts-green: #008000;
+    --mrt-blue: #194F9E;
+    --shadow-soft: 0 10px 30px -8px rgba(0, 0, 0, 0.12), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
+    --radius-pill: 999px;
+    --radius-card: 14px;
   }
 
-  @media(max-width:660px){
-    .top{padding:9px 12px 0}
-    h1{font-size:16px}
-    .lede{display:none}
-    .kpis{gap:4px 16px}
-    .kpi .n{font-size:19px}
-    .kpi .s{display:none}
-    .panel,.bpanel{right:8px;left:8px;top:auto;bottom:34px;width:auto;max-height:46%}
-    .legend{display:none}
+  [data-theme="dark"] {
+    --bg-page: #0B1118;
+    --card-bg: rgba(15, 23, 34, 0.95);
+    --card-border: #1E2D3D;
+    --text-main: #E2E8F0;
+    --text-muted: #94A3B8;
+    --text-sub: #64748B;
+    --copper: #D48344;
+    --copper-hover: #E09458;
+    --copper-light: rgba(212, 131, 68, 0.18);
+    --bts-green: #3DDC84;
+    --mrt-blue: #38BDF8;
+    --shadow-soft: 0 12px 36px -10px rgba(0, 0, 0, 0.7);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    font-family: "Jost", "Noto Sans Thai", sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--copper); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------- แถบบน Luxury Header (เหมือน PHATTRA) ---------- */
+  .header {
+    flex: 0 0 auto;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 24px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 30;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+  .brand-sub {
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--copper);
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Filter Chips */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  [data-theme="dark"] .chip { background: #131E2B; }
+  .chip:hover { border-color: var(--copper); color: var(--text-main); }
+  .chip.active {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+  }
+  [data-theme="dark"] .chip.active {
+    background: var(--copper);
+    border-color: var(--copper);
+    color: #FFFFFF;
+  }
+  .chip-count {
+    font-family: "Archivo", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    opacity: 0.85;
+  }
+
+  /* Search Input */
+  .search-wrapper {
+    position: relative;
+    min-width: 240px;
+  }
+  .search-input {
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px 6px 34px;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  [data-theme="dark"] .search-input { background: #131E2B; }
+  .search-input:focus {
+    border-color: var(--copper);
+    box-shadow: 0 0 0 3px var(--copper-light);
+  }
+  .search-ico {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  /* Search Dropdown */
+  .search-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+  }
+  .search-row {
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .search-row:last-child { border-bottom: none; }
+  .search-row:hover { background: var(--copper-light); color: var(--copper); }
+  .search-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--card-border); color: var(--text-muted); }
+
+  /* KPI Row */
+  .kpi-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-top: 2px;
+  }
+  .kpi-item { display: flex; align-items: baseline; gap: 5px; }
+  .kpi-num {
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text-main);
+  }
+  .kpi-copper { color: var(--copper); }
+
+  /* ---------- Map Stage ---------- */
+  .stage { flex: 1 1 auto; position: relative; min-height: 0; }
+  #map { position: absolute; inset: 0; cursor: grab; }
+  #map:active { cursor: grabbing; }
+
+  /* Left Side Zoom Controls */
+  .map-zoom-controls {
+    position: absolute;
+    left: 20px;
+    top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 22;
+  }
+  .zoom-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-soft);
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    user-select: none;
+  }
+  .zoom-btn:hover {
+    border-color: var(--copper);
+    color: var(--copper);
+    transform: scale(1.05);
+  }
+  .zoom-btn:active { transform: scale(0.96); }
+  .zoom-btn.compass-btn { font-size: 14px; font-weight: 800; }
+
+  /* 3D Projected DOM Pins Container */
+  #pinContainer, #poiContainer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 12;
+    overflow: hidden;
+  }
+
+  .landmark-pin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: bottom center;
+    user-select: none;
+    will-change: transform;
+  }
+
+  /* Circular Badge [C], [S], [1] */
+  .pin-circle-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2.5px solid #FFFFFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    color: #FFFFFF;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: 16.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #C59B27;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .pin-circle-badge:hover { transform: scale(1.18); }
+
+  /* Card Image Badge (ROMM CONVENT) */
+  .pin-card-badge {
+    width: 44px;
+    height: 34px;
+    border-radius: 8px;
+    border: 2.5px solid #FFFFFF;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+    overflow: hidden;
+    background: #1E293B;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .pin-card-badge img { width: 100%; height: 100%; object-fit: cover; }
+  .pin-card-badge:hover { transform: scale(1.15); }
+
+  /* Pin Stem */
+  .pin-stem {
+    width: 1.5px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+
+  /* Pin Title */
+  .pin-label {
+    font-family: "Jost", "Noto Sans Thai", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1E293B;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 2px 7px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+    margin-top: 2px;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  [data-theme="dark"] .pin-label {
+    background: rgba(15, 23, 42, 0.94);
+    color: #F8FAFC;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* POI Amenity Pins (BNH Hospital, St. Andrews, Eat Me Restaurant...) */
+  .poi-pin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -100%);
+    animation: fadeInScale 0.25s ease-out;
+  }
+  @keyframes fadeInScale { from { opacity: 0; transform: translate(-50%, -80%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -100%) scale(1); } }
+
+  .poi-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+  .poi-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #1E293B;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    margin-top: 3px;
+    white-space: nowrap;
+  }
+  [data-theme="dark"] .poi-label {
+    background: rgba(15, 23, 42, 0.94);
+    color: #F8FAFC;
+  }
+
+  /* Floating Left Menu */
+  .glass-card {
+    position: absolute;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 20;
+  }
+
+  .left-menu {
+    left: 20px;
+    top: 20px;
+    padding: 6px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: calc(100% - 40px);
+  }
+  .menu-btn {
+    cursor: pointer;
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    border-radius: 8px;
+    padding: 6px 11px;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  [data-theme="dark"] .menu-btn { background: #131E2B; }
+  .menu-btn:hover { border-color: var(--copper); color: var(--text-main); }
+  .menu-btn.active {
+    background: var(--copper);
+    border-color: var(--copper);
+    color: #FFFFFF;
+  }
+
+  /* Bottom Left "Getting around 10 lines" Floating Pill */
+  .getting-around-pill {
+    left: 20px;
+    bottom: 24px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .getting-around-pill:hover { border-color: var(--copper); transform: translateY(-1px); }
+  .toggle-switch-icon {
+    width: 28px;
+    height: 16px;
+    border-radius: 999px;
+    background: #000000;
+    position: relative;
+    display: inline-block;
+  }
+  [data-theme="dark"] .toggle-switch-icon { background: var(--copper); }
+  .toggle-switch-icon::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    transition: transform 0.2s ease;
+  }
+  .getting-around-pill.active .toggle-switch-icon::after { transform: translateX(12px); }
+
+  /* Transit Drawer */
+  .transit-drawer {
+    left: 20px;
+    bottom: 70px;
+    width: 290px;
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: none;
+  }
+  .transit-drawer.open { display: block; animation: slideUp 0.2s ease-out; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .drawer-title {
+    font-weight: 700;
+    font-size: 13px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .transit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  }
+  .transit-row:last-child { border-bottom: none; }
+  .transit-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 7px; }
+
+  /* ---------- Luxury Right Project Intelligence Drawer (ตรงตามรูป) ---------- */
+  .project-drawer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 420px;
+    background: var(--card-bg);
+    border-left: 1px solid var(--card-border);
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.15);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .project-drawer.open { transform: translateX(0); }
+
+  .drawer-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .category-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: var(--copper);
+    margin-bottom: 6px;
+  }
+  .project-name {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-main);
+    line-height: 1.1;
+    margin: 0;
+  }
+  .project-location {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .drawer-close {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    font-size: 22px;
+    color: var(--text-sub);
+    padding: 2px 6px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .drawer-close:hover { color: var(--text-main); }
+
+  .drawer-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Full Hero Photo */
+  .hero-photo-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    aspect-ratio: 16 / 10;
+    background: #000000;
+  }
+  .hero-photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Developer Section */
+  .developer-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--copper-light);
+    border: 1px solid rgba(184, 107, 67, 0.2);
+    border-radius: 10px;
+  }
+  .dev-info span { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--copper); text-transform: uppercase; }
+  .dev-info strong { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+  .dev-link-btn { font-size: 12px; font-weight: 600; color: var(--copper); }
+
+  /* Key Metrics Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .metric-tile {
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  [data-theme="dark"] .metric-tile { background: #131E2B; }
+  .metric-label { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+  .metric-val { font-family: "Archivo", sans-serif; font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
+  .metric-val small { font-size: 10.5px; font-weight: 600; color: var(--text-muted); }
+
+  /* Section Titles */
+  .section-heading {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* Unit Types Pills */
+  .units-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .unit-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  [data-theme="dark"] .unit-item { background: #131E2B; }
+  .unit-type-name { font-weight: 600; color: var(--text-main); }
+  .unit-size { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--copper); }
+
+  /* Transport & Nearby List */
+  .transport-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .transport-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 7px 10px;
+    background: rgba(148, 163, 184, 0.08);
+    border-radius: 6px;
+  }
+  .transport-name { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+  .transport-dist { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--text-main); }
+
+  .fly-3d-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--copper);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s;
+  }
+  .fly-3d-btn:hover { background: var(--copper-hover); }
+
+  /* Loading Screen */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--bg-page);
+    z-index: 100;
+    transition: opacity 0.3s ease;
+  }
+  .spinner {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--copper);
+    animation: spin 800ms linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media(max-width: 768px) {
+    .header { padding: 8px 12px; }
+    .kpi-row { display: none; }
+    .search-wrapper { min-width: 140px; }
+    .left-menu { max-width: 100%; gap: 4px; }
+    .menu-btn span.label-text { display: none; }
+    .project-drawer { width: 100%; }
+    .map-zoom-controls { top: 75px; left: 12px; }
   }
 </style>
-  <script src="../js/icons.js"></script>
 </head>
 <body>
 
-<div class="top">
-  <div class="row1">
-    <a class="back" href="explore.html">← ศูนย์ข้อมูล</a>
-    <h1><svg class="mdico"><use href="#i-building-2"></use></svg> กรุงเทพฯ รายเขต บนแผนที่เมือง</h1>
-    <p class="lede">ระบายสีรายเขตทับแผนที่ถนนจริง + หมุดค่าประจำเขต — แตะหมุดหรือพื้นที่เขตเพื่อดูค่าครบทุกด้าน · ซูมถึงระดับอาคารแล้ว <b>แตะตึกได้ทีละหลัง</b> เพื่อดูความสูง จำนวนชั้น และพื้นที่</p>
+<!-- Luxury Header -->
+<div class="header">
+  <div class="header-top">
+    <div class="brand">
+      <span class="brand-title">BANGKOK 3D</span>
+      <span class="brand-sub">URBAN & REAL ESTATE INTELLIGENCE</span>
+    </div>
+
+    <div class="header-actions">
+      <!-- Search -->
+      <div class="search-wrapper">
+        <span class="search-ico">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search project, station, or district..." autocomplete="off">
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+
+      <!-- Filter Chips -->
+      <div class="filter-bar">
+        <button type="button" class="chip active" id="chipLandmarks">
+          <span>Iconic Landmarks</span>
+          <span class="chip-count">10</span>
+        </button>
+        <button type="button" class="chip" id="chipTransit">
+          <span>10 Transit Lines</span>
+          <span class="chip-count">181</span>
+        </button>
+        <button type="button" class="chip" id="chipDistricts">
+          <span>50 Districts</span>
+        </button>
+        <button type="button" class="chip" id="btnThemeToggle" title="Toggle Light / Dark Mode">
+          <span id="themeIco">☀️ Light</span>
+        </button>
+      </div>
+    </div>
   </div>
-  <div class="pills" id="pills"></div>
-  <div class="kpis" id="kpis"></div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-item">
+      <span class="kpi-num kpi-copper">10</span>
+      <span>Iconic 3D Megaprojects</span>
+    </div>
+    <span>·</span>
+    <div class="kpi-item">
+      <span class="kpi-num">181</span>
+      <span>Stations across 10 Mass Transit Lines</span>
+    </div>
+    <span>·</span>
+    <div class="kpi-item">
+      <span class="kpi-num">50</span>
+      <span>BMA Districts</span>
+    </div>
+    <span>·</span>
+    <div class="kpi-item" style="margin-left: auto;">
+      <span id="coordTag" style="font-size: 11px; font-variant-numeric: tabular-nums;">Silom - Sathorn - Rama IV Corridor</span>
+    </div>
+  </div>
 </div>
 
 <div class="stage">
   <div id="map"></div>
-  <div class="float tools" id="tools">
-    <button type="button" class="tbtn" id="btnFit" title="จัดกรอบให้เห็นครบ 50 เขต">⤢<span class="lb"> เต็มเมือง</span></button>
-    <button type="button" class="tbtn on" id="btnTilt" title="ซูมเข้าใกล้แล้วกล้องเอียงลงเองอัตโนมัติ"><svg class="mdico"><use href="#i-ruler"></use></svg><span class="lb"> เอียงอัตโนมัติ</span></button>
-    <button type="button" class="tbtn on" id="btnBldg" title="อาคารจริงรายหลังจาก OpenStreetMap (โผล่เมื่อซูมระดับถนน)"><svg class="mdico"><use href="#i-building-2"></use></svg><span class="lb"> อาคาร</span></button>
-    <button type="button" class="tbtn on" id="btnRail" title="แนวรถไฟฟ้าและทางรถไฟ"><svg class="mdico"><use href="#i-train-front-tunnel"></use></svg><span class="lb"> รถไฟฟ้า</span></button>
-    <span class="tzoom" id="tzoom"></span>
-  </div>
-  <div class="float legend" id="legend"></div>
-  <div class="loading" id="loading"><span class="sp"></span>กำลังโหลดแผนที่เมืองจาก OpenFreeMap…<br><small>ครั้งแรกอาจใช้เวลาสักครู่</small></div>
-</div>
 
-<div class="note" id="note"></div>
+  <!-- Left Side Custom Zoom Controls -->
+  <div class="map-zoom-controls">
+    <button type="button" class="zoom-btn" id="btnZoomIn" title="ซูมเข้า">+</button>
+    <button type="button" class="zoom-btn" id="btnZoomOut" title="ซูมออก">−</button>
+    <button type="button" class="zoom-btn compass-btn" id="btnResetCompass" title="หันมุมมองทิศเหนือ / รีเซ็ต 3D">▲</button>
+  </div>
+
+  <!-- 3D Projected DOM Pins Container -->
+  <div id="pinContainer"></div>
+
+  <!-- Surrounding POI Pins Container (BNH Hospital, St. Andrews, Eat Me...) -->
+  <div id="poiContainer"></div>
+
+  <!-- Left Floating Menu -->
+  <div class="glass-card left-menu" id="leftMenu">
+    <button type="button" class="menu-btn active" id="btn3DBuildings" title="Toggle 3D City Buildings">
+      <span>🏢</span><span class="label-text"> 3D Buildings</span>
+    </button>
+    <button type="button" class="menu-btn active" id="btnLandmarksToggle" title="Toggle Copper Landmark Models">
+      <span>✨</span><span class="label-text"> Landmarks 3D</span>
+    </button>
+    <button type="button" class="menu-btn active" id="btnTransitToggle" title="Toggle Transit Lines">
+      <span>🚆</span><span class="label-text"> Transit Lines</span>
+    </button>
+    <button type="button" class="menu-btn" id="btnFlyCBD" title="Fly to Silom - Sathorn CBD">
+      <span>🏙️</span><span class="label-text"> CBD View</span>
+    </button>
+    <button type="button" class="menu-btn" id="btnFlyRiver" title="Fly to Chao Phraya Riverfront">
+      <span>🌊</span><span class="label-text"> Riverfront</span>
+    </button>
+    <button type="button" class="menu-btn" id="btnFitAll" title="Fit Entire Bangkok">
+      <span>⤢</span><span class="label-text"> All Bangkok</span>
+    </button>
+  </div>
+
+  <!-- Bottom-Left "Getting around 10 lines" Floating Pill -->
+  <div class="glass-card getting-around-pill active" id="btnGettingAround">
+    <span class="toggle-switch-icon"></span>
+    <span>Getting around</span>
+    <span style="font-size:11px;color:var(--text-muted);font-weight:400;">10 lines ⌃</span>
+  </div>
+
+  <!-- Transit Lines Drawer -->
+  <div class="glass-card transit-drawer" id="transitDrawer">
+    <div class="drawer-title">
+      <span>🚆 BANGKOK MASS TRANSIT</span>
+      <button type="button" class="drawer-close" id="closeDrawer" style="font-size:16px;">×</button>
+    </div>
+    <div id="transitList"></div>
+  </div>
+
+  <!-- Luxury Right Project Intelligence Drawer (เหมือน PHATTRA ในรูป) -->
+  <div class="project-drawer" id="projectDrawer">
+    <div class="drawer-header">
+      <div>
+        <span class="category-badge" id="drawerCategory">Condominium</span>
+        <h2 class="project-name" id="drawerTitle">ROMM CONVENT</h2>
+        <div class="project-location" id="drawerLocation">Bangkok</div>
+      </div>
+      <button type="button" class="drawer-close" id="closeProjectDrawer">×</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Hero Photo -->
+      <div class="hero-photo-wrapper">
+        <img id="drawerHeroImg" src="" alt="Project Render">
+      </div>
+
+      <!-- Developer Info -->
+      <div class="developer-box">
+        <div class="dev-info">
+          <span>DEVELOPER</span>
+          <strong id="drawerDeveloper">PROUD REAL ESTATE</strong>
+        </div>
+        <a class="dev-link-btn" id="drawerDevSite" href="#" target="_blank" rel="noopener">Official Site ↗</a>
+      </div>
+
+      <!-- Key Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-tile">
+          <div class="metric-label">FLOORS</div>
+          <div class="metric-val" id="drawerFloors">32 <small>fl</small></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">UNITS</div>
+          <div class="metric-val" id="drawerUnits">175 <small>u</small></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">PARKING</div>
+          <div class="metric-val" id="drawerParking">198 <small>lots</small></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">LAND AREA</div>
+          <div class="metric-val" id="drawerLand">1.60 <small>rai</small></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">HEIGHT</div>
+          <div class="metric-val" id="drawerHeight">135 <small>m</small></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">RATIO / FL</div>
+          <div class="metric-val" id="drawerUnitsPerFloor">8 <small>u/fl</small></div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <div class="section-heading">PROJECT OVERVIEW</div>
+        <div style="font-size:12.5px;line-height:1.65;color:var(--text-muted);" id="drawerDesc"></div>
+      </div>
+
+      <!-- Unit Types -->
+      <div id="unitTypesSection">
+        <div class="section-heading">UNIT TYPES & SIZES</div>
+        <div class="units-list" id="drawerUnitsList"></div>
+      </div>
+
+      <!-- Transport & Connectivity -->
+      <div>
+        <div class="section-heading">CONNECTIVITY & TRANSIT</div>
+        <div class="transport-list" id="drawerTransportList"></div>
+      </div>
+
+      <!-- 3D Perspective Orbit Action -->
+      <button type="button" class="fly-3d-btn" id="btnDrawerFly3D">
+        <span>📐 View in 3D Perspective</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Screen -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <span>Rendering 3D City & Mass Transit Architecture…</span>
+  </div>
+</div>
 
 <script src="explore-data.js"></script>
 <script src="bkk-districts-geo.js"></script>
+<script src="bkk-transit-data.js"></script>
+<script src="bkk-landmarks-data.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
-(function(){
+(function() {
   "use strict";
-  var $ = function(s){ return document.querySelector(s); };
 
-  /* ตัวชี้วัดใช้ชุดเดียวกับ explore.html (BKK_METRIC_CFG ใน explore-data.js) */
-  var CFG = window.BKK_METRIC_CFG || [];
-  /* ไล่สี 5 ขั้น — คงตระกูลสีเดิม แต่กลับทิศเป็น "มืด→สว่าง" ให้อ่านออกบนฐานแผนที่ดาร์ก */
-  var RAMP = {
-    interpolatePuRd:  ["#2b1033","#5e1f5c","#99277f","#d43f8d","#ff8ac0"],
-    interpolateBlues: ["#0b1e3d","#14427a","#1f6fb5","#3fa0e0","#8fd3ff"],
-    interpolateYlOrBr:["#2e1c05","#6b3d07","#a8690c","#dc9a1a","#ffd24a"],
-    interpolateGnBu:  ["#04202b","#0a4257","#0f6e85","#21a0aa","#62dcd0"],
-    interpolateOrRd:  ["#33110a","#6e2210","#a83a17","#dc5f24","#ff9a4a"],
-    interpolateGreens:["#0b2413","#144a24","#1f7a37","#33ad4e","#6fe37f"]
+  var $ = function(s) { return document.querySelector(s); };
+
+  var STYLES = {
+    light: "https://tiles.openfreemap.org/styles/positron",
+    dark: "https://tiles.openfreemap.org/styles/dark"
   };
-  var STYLES = ["https://tiles.openfreemap.org/styles/dark",
-                "https://tiles.openfreemap.org/styles/positron"];
-  var FILL_OP = 0.20;                    // จางไว้ ให้ถนนและป้ายชื่อเมืองเป็นพระเอก — ข้อมูลอยู่ที่หมุด
 
-  var S = { metric:"dens", map:null, fc:null, ext:{}, rank:{}, pin:null, ready:false,
-            tilt:true, bldg:true, rail:true, pitching:false, moved:false, vsrc:null };
-  window.BKKCITY = S;                    // เปิดไว้ debug จาก console (S.map คือตัวแผนที่)
+  var STATE = {
+    theme: "light",
+    map: null,
+    ready: false,
+    bldg3d: true,
+    landmarks: true,
+    transit: true,
+    districts: false,
+    selectedProject: null,
+    activeLines: {},
+    pinElements: [],
+    poiElements: []
+  };
 
-  function comma(v){ return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,","); }
-  function cfg(k){ for(var i=0;i<CFG.length;i++) if(CFG[i].k===k) return CFG[i]; return CFG[0]; }
-  function fmt(c,v){ return (c.k==="dens"||c.k==="pop") ? comma(v) : String(v); }
-  function ramp(c){ return RAMP[c.ramp] || RAMP.interpolatePuRd; }
-  function props(){ return S.fc.features.map(function(f){ return f.properties; }); }
-  /* ตัวเลขบนหมุดต้องสั้น ไม่งั้นบังแผนที่ */
-  function short(c,v){
-    if(c.k==="pop")  return (v/1000).toFixed(0)+"k";
-    if(c.k==="dens") return (v/1000).toFixed(1)+"k";
-    return String(v);
+  if (window.BKK_TRANSIT && window.BKK_TRANSIT.rawLines) {
+    window.BKK_TRANSIT.rawLines.forEach(function(l) { STATE.activeLines[l.id] = true; });
   }
 
-  /* กรอบของแต่ละเขต — ใช้ตอน "คลิกแล้วบินเข้าไป" */
-  function prepBounds(){
-    S.bbox = {};
-    S.fc.features.forEach(function(f){
-      var w=180,s=90,e=-180,n=-90;
-      f.geometry.coordinates.forEach(function(poly){
-        poly[0].forEach(function(pt){
-          if(pt[0]<w)w=pt[0]; if(pt[0]>e)e=pt[0];
-          if(pt[1]<s)s=pt[1]; if(pt[1]>n)n=pt[1];
+  function initMap() {
+    STATE.map = new maplibregl.Map({
+      container: "map",
+      style: STYLES.light,
+      center: [100.5365, 13.7275],
+      zoom: 14.8,
+      pitch: 58,
+      bearing: 28,
+      maxPitch: 72,
+      dragPan: true,
+      dragRotate: true,
+      scrollZoom: true,
+      touchZoomRotate: true,
+      doubleClickZoom: true,
+      keyboard: true,
+      attributionControl: { compact: true }
+    });
+
+    STATE.map.on("style.load", onStyleLoaded);
+    STATE.map.on("move", updateCameraInfo);
+    STATE.map.on("render", function() {
+      updatePins();
+      updatePOIs();
+    });
+  }
+
+  function updateCameraInfo() {
+    var z = STATE.map.getZoom().toFixed(1);
+    var p = Math.round(STATE.map.getPitch());
+    var b = Math.round(STATE.map.getBearing());
+    $("#coordTag").textContent = "z" + z + " · " + p + "° pitch · " + b + "° bearing";
+    
+    var compass = $("#btnResetCompass");
+    if (compass) compass.style.transform = "rotate(" + (-b) + "deg)";
+    
+    updatePins();
+    updatePOIs();
+  }
+
+  function onStyleLoaded() {
+    addMapLayers();
+    createDOMPins();
+    setupInteractions();
+    var ld = $("#loadingOverlay");
+    if (ld) ld.style.opacity = "0";
+    setTimeout(function() { if (ld) ld.remove(); }, 350);
+  }
+
+  function addMapLayers() {
+    var map = STATE.map;
+    var vsrc = null;
+    var srcs = map.getStyle().sources;
+    for (var id in srcs) {
+      if (srcs[id].type === "vector") { vsrc = id; break; }
+    }
+
+    // 1. 3D Architectural Buildings (Clean Light Gray)
+    if (vsrc && !map.getLayer("city-buildings-3d")) {
+      try {
+        map.addLayer({
+          id: "city-buildings-3d",
+          type: "fill-extrusion",
+          source: vsrc,
+          "source-layer": "building",
+          minzoom: 13.5,
+          paint: {
+            "fill-extrusion-color": STATE.theme === "dark"
+              ? ["interpolate", ["linear"], ["get", "render_height"], 0, "#141d27", 50, "#1e293b", 150, "#334155"]
+              : ["interpolate", ["linear"], ["get", "render_height"], 0, "#E2E8F0", 50, "#CBD5E1", 150, "#94A3B8"],
+            "fill-extrusion-height": ["coalesce", ["get", "render_height"], 5],
+            "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
+            "fill-extrusion-opacity": 0.88,
+            "fill-extrusion-vertical-gradient": true
+          }
         });
-      });
-      S.bbox[f.properties.name] = [[w,s],[e,n]];
-    });
-  }
-  function flyToDistrict(name){
-    var b = S.bbox && S.bbox[name]; if(!b) return;
-    S.moved = true;                                  // ตั้งใจไปเอง อย่าให้ตัวจัดกรอบดึงกลับ
-    var el = S.map.getContainer();
-    var pad = Math.max(10, Math.min(50, Math.round(Math.min(el.clientWidth, el.clientHeight) * 0.10)));
-    var cam = S.map.cameraForBounds(b, { padding:pad });
-    if(!cam) return;
-    var z = Math.min(cam.zoom, 14.4);                // อย่าให้เขตเล็ก ๆ พุ่งเข้าไปใกล้เกิน
-    S.map.flyTo({ center:cam.center, zoom:z, pitch:S.tilt?pitchFor(z):S.map.getPitch(),
-                  duration:1400, curve:1.4 });
-  }
-
-  function prep(){
-    var ps = props();
-    prepBounds();
-    CFG.forEach(function(c){
-      var vals = ps.map(function(p){ return p[c.k]; });
-      S.ext[c.k] = [Math.min.apply(null,vals), Math.max.apply(null,vals)];
-      var sorted = ps.slice().sort(function(a,b){ return b[c.k]-a[c.k]; });
-      var r = {}; sorted.forEach(function(p,i){ r[p.name] = i+1; });
-      S.rank[c.k] = r;
-    });
-  }
-  function stats(k){
-    var vals = props().map(function(p){ return p[k]; });
-    var srt = vals.slice().sort(function(a,b){ return a-b; });
-    var sum = vals.reduce(function(a,b){ return a+b; },0);
-    var ord = props().slice().sort(function(a,b){ return b[k]-a[k]; });
-    var mx = srt[srt.length-1], mn = srt[0];
-    return { sum:sum, mean:sum/vals.length, med:srt[Math.floor(srt.length/2)],
-             min:mn, max:mx, ratio: mn ? mx/mn : 0,
-             top:ord[0].name, low:ord[ord.length-1].name,
-             over:function(t){ return vals.filter(function(v){ return v>=t; }).length; },
-             under:function(t){ return vals.filter(function(v){ return v<=t; }).length; } };
-  }
-
-  var KPI = {
-    dens:function(s){ return [
-      ["<svg class='mdico'><use href='#i-users'></use></svg> เขตแน่นที่สุด", comma(s.max), "คน/ตร.กม.", "เขต"+s.top+" — แน่นกว่าเขตโล่งสุด "+Math.round(s.ratio)+" เท่า", 1],
-      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่ากลาง 50 เขต", comma(s.med), "คน/ตร.กม.", "ครึ่งหนึ่งของเขตแน่นกว่านี้", 0],
-      ["<svg class='mdico'><use href='#i-leaf'></use></svg> เขตโล่งที่สุด", comma(s.min), "คน/ตร.กม.", "เขต"+s.low, 0],
-      ["<svg class='mdico'><use href='#i-building-2'></use></svg> แน่นเกิน 10,000", s.over(10000), "เขต", "กระจุกในเขตชั้นใน", 0]
-    ]; },
-    pop:function(s){ return [
-      ["<svg class='mdico'><use href='#i-user'></use></svg> ประชากรรวม กทม.", (s.sum/1e6).toFixed(2), "ล้านคน", "ทะเบียนราษฎร รวม 50 เขต", 1],
-      ["<svg class='mdico'><use href='#i-medal'></use></svg> เขตคนมากที่สุด", comma(s.max), "คน", "เขต"+s.top, 0],
-      ["<svg class='mdico'><use href='#i-medal'></use></svg> เขตคนน้อยที่สุด", comma(s.min), "คน", "เขต"+s.low, 0],
-      ["<svg class='mdico'><use href='#i-trending-up'></use></svg> มีคนเกินแสน", s.over(100000), "เขต", "จากทั้งหมด 50 เขต", 0]
-    ]; },
-    pm:function(s){ return [
-      ["<svg class='mdico'><use href='#i-cloud-fog'></use></svg> เฉลี่ยทั้งเมือง", s.mean.toFixed(1), "µg/m³", "มาตรฐาน WHO ปี 2564 = 5 µg/m³", 1],
-      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตฝุ่นหนาที่สุด", s.max, "µg/m³", "เขต"+s.top, 0],
-      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตฝุ่นบางที่สุด", s.min, "µg/m³", "เขต"+s.low, 0],
-      ["<svg class='mdico'><use href='#i-triangle-alert'></use></svg> เกินมาตรฐาน WHO", s.over(5), "เขต", "ทุกเขตเกินเกณฑ์", 0]
-    ]; },
-    flood:function(s){ return [
-      ["<svg class='mdico'><use href='#i-waves'></use></svg> จุดเฝ้าระวังรวม", s.sum, "จุด", "บัญชีสำนักการระบายน้ำ กทม.", 1],
-      ["<svg class='mdico'><use href='#i-triangle'></use></svg> เขตมีจุดมากที่สุด", s.max, "จุด", "เขต"+s.top, 0],
-      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> เฉลี่ยต่อเขต", s.mean.toFixed(1), "จุด", "ทุกเขตมีอย่างน้อย 1 จุด", 0],
-      ["<svg class='mdico'><use href='#i-circle-check'></use></svg> มี 2 จุดหรือน้อยกว่า", s.under(2), "เขต", "กลุ่มเสี่ยงน้อยที่สุด", 0]
-    ]; },
-    traf:function(s){ return [
-      ["<svg class='mdico'><use href='#i-car'></use></svg> เขตติดหนักที่สุด", s.max, "/100", "เขต"+s.top, 1],
-      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่าเฉลี่ย 50 เขต", s.mean.toFixed(0), "/100", "ดัชนีประมาณการ", 0],
-      ["<svg class='mdico'><use href='#i-triangle'></use></svg> ดัชนีเกิน 80", s.over(80), "เขต", "เกือบทั้งหมดในวงแหวนชั้นใน", 0],
-      ["🟢 เขตโล่งที่สุด", s.min, "/100", "เขต"+s.low, 0]
-    ]; },
-    cost:function(s){ return [
-      ["<svg class='mdico'><use href='#i-hand-coins'></use></svg> เขตแพงที่สุด", s.max, "ดัชนี", "เขต"+s.top+" — ตั้งเป็นฐาน 100", 1],
-      ["<svg class='mdico'><use href='#i-coins'></use></svg> เขตถูกที่สุด", s.min, "ดัชนี", "เขต"+s.low+" — ต่างกัน "+s.ratio.toFixed(1)+" เท่า", 0],
-      ["<svg class='mdico'><use href='#i-chart-column'></use></svg> ค่ากลาง 50 เขต", s.med, "ดัชนี", "ครึ่งหนึ่งของเขตแพงกว่านี้", 0],
-      ["<svg class='mdico'><use href='#i-triangle'></use></svg> ดัชนีเกิน 80", s.over(80), "เขต", "ใจกลางเมือง + แนวรถไฟฟ้า", 0]
-    ]; }
-  };
-  function drawKpis(){
-    var f = KPI[S.metric]; if(!f) return;
-    $("#kpis").innerHTML = f(stats(S.metric)).map(function(c){
-      return '<div class="kpi'+(c[4]?' hi':'')+'">'+
-             '<span class="n">'+c[1]+'<span class="u">'+c[2]+'</span></span>'+
-             '<span class="t">'+c[0]+'</span>'+
-             '<span class="s">'+c[3]+'</span></div>';
-    }).join("");
-  }
-  function drawPills(){
-    $("#pills").innerHTML = CFG.map(function(c){
-      return '<button type="button" class="pill'+(c.k===S.metric?' on':'')+'" data-k="'+c.k+'">'+
-             '<span>'+c.ico+'</span><span>'+c.lab+'</span><span class="kd">'+c.kind+'</span></button>';
-    }).join("");
-    Array.prototype.forEach.call(document.querySelectorAll("#pills .pill"), function(b){
-      b.addEventListener("click", function(){ S.metric = b.getAttribute("data-k"); apply(); });
-    });
-  }
-
-  /* สี = ไล่ตามควอนไทล์ เพราะข้อมูลรายเขตเบ้แรง (ความหนาแน่น 671 → 20,402 แต่ค่ากลางแค่ 6,156)
-     ถ้าไล่เชิงเส้น 45 เขตจะจมอยู่โทนเดียวกันหมด */
-  function quantiles(k, n){
-    var vals = props().map(function(p){ return p[k]; }).sort(function(a,b){ return a-b; });
-    var out = [];
-    for(var i=0;i<n;i++){
-      var pos = (i/(n-1)) * (vals.length-1), lo = Math.floor(pos), hi = Math.ceil(pos);
-      out.push(vals[lo] + (vals[hi]-vals[lo]) * (pos-lo));
+      } catch(e) { console.warn("Building vector layer:", e.message); }
     }
-    return out;
-  }
-  function colorExpr(c, field){
-    var cols = ramp(c), qs = quantiles(c.k, cols.length);
-    var out = ["interpolate", ["linear"], ["get", field || c.k]], prev = -Infinity;
-    for(var i=0;i<cols.length;i++){
-      var v = qs[i];
-      if(v <= prev) v = prev + 1e-6;      // MapLibre บังคับว่า stop ต้องเรียงจากน้อยไปมาก
-      out.push(v, cols[i]); prev = v;
-    }
-    return out;
-  }
 
-  function drawLegend(){
-    var c = cfg(S.metric), cols = ramp(c), qs = quantiles(c.k, cols.length);
-    var sw = cols.map(function(col,i){
-      return '<div class="sw"><i style="background:'+col+'"></i><span>'+fmt(c, Math.round(qs[i]))+'</span></div>';
-    }).join("");
-    $("#legend").innerHTML = '<div class="lh">'+c.ico+' '+c.lab+' <span style="opacity:.7">('+c.u+')</span></div>'+
-      '<div class="sws">'+sw+'</div>'+
-      '<div class="sc">สีและขนาดหมุด = ลำดับของเขต (ควอนไทล์) · ตัวเลขบนหมุด = ค่าจริง</div>';
-  }
-  function drawNote(){
-    var c = cfg(S.metric);
-    var link = c.url ? '<a href="'+c.url+'" target="_blank" rel="noopener">'+c.src+' ↗</a>' : c.src;
-    $("#note").innerHTML = '<b>'+c.ico+' '+c.lab+'</b> · '+c.kind+' — '+link+' · ปีข้อมูล '+c.year+' · '+c.how+
-      ' <span style="opacity:.75">| ขอบเขตเขตจาก ADM3 OpenGISData Thailand · ฐานแผนที่ OpenFreeMap (OpenMapTiles / OpenStreetMap) — ฟรี ไม่ต้องใช้คีย์</span>';
-  }
-
-  /* หมุดค่าประจำเขต — สร้างใหม่ทุกครั้งที่เปลี่ยนตัวชี้วัด (มีแค่ 50 จุด) */
-  function dotData(){
-    var c = cfg(S.metric), n = S.fc.features.length;
-    return { type:"FeatureCollection", features: S.fc.features.map(function(f){
-      var p = f.properties, rk = S.rank[c.k][p.name];
-      return { type:"Feature",
-        properties:{ name:p.name, v:p[c.k], txt:short(c, p[c.k]), r:(n-rk)/(n-1) },
-        geometry:{ type:"Point", coordinates:[p.lon, p.lat] } };
-    })};
-  }
-
-  function showPanel(name){
-    var old = $("#panel"); if(old) old.remove();
-    if(!name) return;
-    var p = null, ps = props();
-    for(var i=0;i<ps.length;i++) if(ps[i].name === name) p = ps[i];
-    if(!p) return;
-    var rows = CFG.map(function(c){
-      var e = S.ext[c.k], t = (p[c.k]-e[0])/((e[1]-e[0])||1), cols = ramp(c);
-      var col = cols[Math.min(cols.length-1, Math.round(t*(cols.length-1)))];
-      return '<div class="prow'+(c.k===S.metric?' act':'')+'">'+
-        '<span class="l">'+c.ico+' '+c.short+'</span>'+
-        '<span class="b"><i style="width:'+Math.round(6+t*94)+'%;background:'+col+'"></i></span>'+
-        '<span class="v">'+fmt(c,p[c.k])+'<span class="rk">#'+S.rank[c.k][name]+'</span></span></div>';
-    }).join("");
-    var ac = cfg(S.metric);
-    var el = document.createElement("div");
-    el.className = "float panel"; el.id = "panel";
-    el.innerHTML = '<button type="button" class="px" aria-label="ปิด">×</button>'+
-      '<div class="ph"><span class="pn">เขต'+name+'</span>'+
-      '<span class="pm">'+p.area.toFixed(1)+' ตร.กม.</span></div>'+
-      '<div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:4px">อันดับจาก 50 เขต · #1 = สูงสุด</div>'+
-      rows +
-      '<button type="button" class="pgo"><svg class="mdico"><use href="#i-building-2"></use></svg> บินลงไปดูตึกในเขตนี้</button>'+
-      '<div class="psrc"><b>'+ac.ico+' '+ac.short+'</b> — '+ac.src+' · ปีข้อมูล '+ac.year+'</div>';
-    el.querySelector(".px").addEventListener("click", function(){ S.pin = null; showPanel(null); });
-    el.querySelector(".pgo").addEventListener("click", function(){
-      S.moved = true;                       // ตั้งใจไปเอง อย่าให้ตัวจัดกรอบดึงกลับ
-      if(!S.tilt) setTilt(true);
-      S.map.flyTo({ center:[p.lon, p.lat], zoom:15.6, pitch:pitchFor(15.6), duration:2200, curve:1.5 });
-    });
-    document.querySelector(".stage").appendChild(el);
-  }
-
-  function apply(){
-    var c = cfg(S.metric);
-    Array.prototype.forEach.call(document.querySelectorAll("#pills .pill"), function(b){
-      b.classList.toggle("on", b.getAttribute("data-k") === S.metric);
-    });
-    drawKpis(); drawLegend(); drawNote();
-    if(S.ready){
-      S.map.setPaintProperty("dist-fill", "fill-color", colorExpr(c));
-      S.map.getSource("bkk-dot").setData(dotData());
-      S.map.setPaintProperty("dist-dot", "circle-color", colorExpr(c, "v"));
-    }
-    showPanel(S.pin);
-  }
-
-  /* ---------- ระบบการเอียง ----------
-     ซูมออก = มองจากบน อ่านข้อมูลรายเขตได้ทั้งเมือง · ซูมเข้า = กล้างเอียงลงเองจนเห็นอาคารเป็นทรง
-     เอียงตามซูมแบบต่อเนื่อง ไม่ใช่ปุ่มสลับ 2D/3D — และหยุดคุมทันทีที่ผู้ใช้เอียงเอง */
-  var TILT = [[12.6, 0], [14.2, 30], [15.6, 55], [17, 62]];
-  function pitchFor(z){
-    if(z <= TILT[0][0]) return TILT[0][1];
-    for(var i=1;i<TILT.length;i++){
-      if(z <= TILT[i][0]){
-        var a=TILT[i-1], b=TILT[i], t=(z-a[0])/(b[0]-a[0]);
-        return a[1] + (b[1]-a[1])*t;
+    // 2. 50 Districts Boundary (Subtle & Clean)
+    if (window.BKK_GEOJSON) {
+      if (!map.getSource("bkk-districts")) {
+        map.addSource("bkk-districts", { type: "geojson", data: window.BKK_GEOJSON });
+      }
+      if (!map.getLayer("districts-line")) {
+        map.addLayer({
+          id: "districts-line",
+          type: "line",
+          source: "bkk-districts",
+          paint: {
+            "line-color": STATE.theme === "dark" ? "#38BDF8" : "#94A3B8",
+            "line-width": 1.2,
+            "line-opacity": 0.3,
+            "line-dasharray": [3, 2]
+          }
+        });
       }
     }
-    return TILT[TILT.length-1][1];
-  }
-  function autoTilt(){
-    if(!S.tilt || !S.ready || S.pitching) return;
-    // ระหว่างกล้องกำลังบินหรือไถลอยู่ ห้ามแตะมุมกล้อง — setPitch ของ MapLibre คือ jumpTo
-    // ซึ่งสั่ง stop() ทุกครั้ง การบินเลยถูกตัดทิ้งกลางทาง (เหตุที่กดแล้วบินไปหยุดกลางคัน)
-    // flyTo ส่ง pitch ไปกับการบินอยู่แล้ว และมี moveend คอยปรับซ้ำตอนจบให้อีกชั้น
-    if(S.map.isEasing && S.map.isEasing()) return;
-    var want = pitchFor(S.map.getZoom());
-    if(Math.abs(S.map.getPitch() - want) > 0.6) S.map.setPitch(want);
-  }
-  function setTilt(on){
-    S.tilt = on;
-    $("#btnTilt").classList.toggle("on", on);
-    if(!S.ready) return;
-    // ปิดแล้วแบนทันที ไม่ใช้ easeTo เพราะถ้าผู้ใช้ซูมต่อทันทีอนิเมชันจะถูกตัดกลางคัน แล้วค้างเอียงอยู่
-    if(on) autoTilt(); else S.map.setPitch(0);
-  }
-  function setBldg(on){
-    S.bldg = on;
-    $("#btnBldg").classList.toggle("on", on);
-    if(S.ready && S.map.getLayer("bldg-3d"))
-      S.map.setLayoutProperty("bldg-3d", "visibility", on ? "visible" : "none");
-  }
-  function setRail(on){
-    S.rail = on;
-    $("#btnRail").classList.toggle("on", on);
-    if(!S.ready) return;
-    ["rail-hi","transit-hi"].forEach(function(id){
-      if(S.map.getLayer(id)) S.map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
-    });
-  }
-  function drawZoomTag(){
-    var el = $("#tzoom"); if(!el || !S.ready) return;
-    var z = S.map.getZoom();
-    var what = z < 12.6 ? "ทั้งเมือง · ข้อมูลรายเขต"
-             : z < 14.2 ? "ระดับย่าน"
-             : z < 15.6 ? "ระดับถนน · อาคารเริ่มขึ้นทรง"
-             : "ระดับอาคาร · แตะตึกดูข้อมูล";
-    el.textContent = "z" + z.toFixed(1) + " · " + Math.round(S.map.getPitch()) + "° — " + what;
-  }
 
-  /* ---------- ข้อมูลรายอาคาร ----------
-     ไทล์อาคารของ OpenMapTiles ส่งมาแค่ความสูง (render_height / render_min_height)
-     ที่เหลือคำนวณเองจากรูปอาคารจริง + จุด poi ในไทล์ที่โหลดอยู่ (ชื่ออาคารอยู่คนละชั้นกับรูปอาคาร) */
-  var M_LAT = 110574;                                   // เมตรต่อองศาละติจูด
-  function mLon(lat){ return 111320 * Math.cos(lat*Math.PI/180); }
-
-  function ringsOf(g){                                  // Polygon/MultiPolygon → เฉพาะวงนอก
-    if(!g) return [];
-    if(g.type === "MultiPolygon") return g.coordinates.map(function(p){ return p[0]; });
-    if(g.type === "Polygon") return [g.coordinates[0]];
-    return [];
-  }
-  function ringArea(ring, lat){                         // ตร.ม. — แปลงองศาเป็นเมตรก่อนใช้สูตรรองเท้า
-    var kx = mLon(lat), s = 0;
-    for(var i=0,n=ring.length;i<n;i++){
-      var a = ring[i], b = ring[(i+1)%n];
-      s += (a[0]*kx)*(b[1]*M_LAT) - (b[0]*kx)*(a[1]*M_LAT);
-    }
-    return Math.abs(s)/2;
-  }
-  function centroidOf(rings){
-    var sx=0, sy=0, n=0;
-    rings.forEach(function(r){ r.forEach(function(p){ sx+=p[0]; sy+=p[1]; n++; }); });
-    return n ? [sx/n, sy/n] : null;
-  }
-  function inRing(pt, ring){                            // ray casting
-    var x=pt[0], y=pt[1], hit=false;
-    for(var i=0,j=ring.length-1;i<ring.length;j=i++){
-      var xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
-      if(((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/((yj-yi)||1e-12) + xi)) hit = !hit;
-    }
-    return hit;
-  }
-  function inRings(pt, rings){
-    for(var i=0;i<rings.length;i++) if(inRing(pt, rings[i])) return true;
-    return false;
-  }
-  function distM(a, b){
-    var dx = (a[0]-b[0]) * mLon(b[1]), dy = (a[1]-b[1]) * M_LAT;
-    return Math.sqrt(dx*dx + dy*dy);
-  }
-  function districtAt(pt){
-    if(!S.fc) return null;
-    for(var i=0;i<S.fc.features.length;i++){
-      var f = S.fc.features[i];
-      if(inRings(pt, ringsOf(f.geometry))) return f.properties;
-    }
-    return null;
-  }
-  function poiName(p){ return p.name || p["name:th"] || p.name_en || p["name:latin"] || ""; }
-  function pois(){
-    if(!S.vsrc) return [];
-    try{ return S.map.querySourceFeatures(S.vsrc, { sourceLayer:"poi" }); }
-    catch(e){ return []; }
-  }
-  function metres(m){ return m < 1000 ? Math.round(m/10)*10 + " ม." : (m/1000).toFixed(1) + " กม."; }
-
-  function closeBldg(){
-    var el = $("#bpanel"); if(el) el.remove();
-    if(S.ready && S.map.getSource("bldg-sel"))
-      S.map.getSource("bldg-sel").setData({ type:"FeatureCollection", features:[] });
-  }
-  function bldgAt(pt){                                  // มีตึกอยู่ใต้จุดที่คลิกไหม (ใช้กันไม่ให้แผงเขตแย่งคลิก)
-    if(!S.ready || !S.bldg || !S.map.getLayer("bldg-3d")) return null;
-    try{
-      var fs = S.map.queryRenderedFeatures(pt, { layers:["bldg-3d"] });
-      return fs && fs.length ? fs[0] : null;
-    }catch(e){ return null; }
-  }
-
-  function showBldg(f){
-    var p = f.properties || {};
-    var rings = ringsOf(f.geometry); if(!rings.length) return;
-    var c = centroidOf(rings); if(!c) return;
-
-    var area  = rings.reduce(function(s,r){ return s + ringArea(r, c[1]); }, 0);
-    var h     = +(p.render_height || 0) || 0;
-    var base  = +(p.render_min_height || 0) || 0;
-    var body  = Math.max(0, h - base);
-    var floors= body > 0 ? Math.max(1, Math.round(body/3.2)) : 0;   // ชั้นละ ~3.2 ม. เป็นค่ากลางของอาคารในเมือง
-
-    /* ชื่ออาคาร = จุด poi ที่ตกอยู่ในรูปตึกหลังนี้ · สถานีใกล้สุด = poi ชั้นราง/สถานีที่ใกล้จุดกึ่งกลางที่สุด */
-    var name = "", st = null, stD = Infinity, near = null, nearD = Infinity;
-    pois().forEach(function(q){
-      var g = q.geometry, pr = q.properties || {};
-      if(!g || g.type !== "Point") return;
-      var nm = poiName(pr); if(!nm) return;
-      var d = distM(g.coordinates, c);
-      if(!name && inRings(g.coordinates, rings)) name = nm;
-      if(d < nearD){ nearD = d; near = nm; }
-      var cl = pr["class"], sc = pr.subclass;
-      if((cl === "railway" || sc === "station" || sc === "subway" || sc === "halt" || sc === "tram_stop")
-         && d < stD){ stD = d; st = nm; }
-    });
-
-    /* สูงเป็นอันดับที่เท่าไหร่ในบรรดาตึกที่มองเห็นอยู่ตอนนี้ */
-    var taller = 0, counted = 0;
-    if(h > 0){
-      try{
-        S.map.queryRenderedFeatures({ layers:["bldg-3d"] }).forEach(function(q){
-          var v = +(q.properties.render_height || 0);
-          if(v > 0){ counted++; if(v > h) taller++; }
-        });
-      }catch(e){ counted = 0; }
-    }
-
-    var dis = districtAt(c);
-    var rows = [];
-    rows.push(["<svg class='mdico'><use href='#i-ruler'></use></svg> พื้นที่ฐานอาคาร", comma(area) + ' <small>ตร.ม.</small>' +
-               (area >= 1600 ? ' <small>(' + (area/1600).toFixed(2) + ' ไร่)</small>' : "")]);
-    if(floors > 0)
-      rows.push(["<svg class='mdico'><use href='#i-hard-hat'></use></svg> พื้นที่ใช้สอย <small>โดยประมาณ</small>", comma(area*floors) + ' <small>ตร.ม.</small>']);
-    if(base > 0)
-      rows.push(["<svg class='mdico'><use href='#i-ruler'></use></svg> ฐานอาคารเริ่มที่", base.toFixed(0) + ' <small>ม. (ส่วนต่อจากตัวล่าง)</small>']);
-    if(counted > 1 && h > 0)
-      rows.push(["<svg class='mdico'><use href='#i-medal'></use></svg> อันดับความสูง", "#" + (taller+1) + ' <small>จาก ~' + comma(counted) + ' หลังในจอนี้</small>']);
-    if(st)
-      rows.push(["<svg class='mdico'><use href='#i-train-front'></use></svg> สถานีใกล้สุด", st + ' <small>' + metres(stD) + '</small>']);
-    if(near && near !== name && nearD < 220)
-      rows.push(["<svg class='mdico'><use href='#i-map-pin'></use></svg> สถานที่ใกล้เคียง", near + ' <small>' + metres(nearD) + '</small>']);
-    if(dis){
-      var dc = cfg("dens");
-      rows.push(["<svg class='mdico'><use href='#i-users'></use></svg> ความหนาแน่นของเขต", comma(dis.dens) + ' <small>คน/ตร.กม. · #' + S.rank[dc.k][dis.name] + '</small>']);
-    }
-
-    closeBldg();
-    S.pin = null; showPanel(null);                       // การ์ดตึกกับแผงเขตอยู่ตำแหน่งเดียวกัน — เปิดทีละอัน
-    if(S.map.getSource("bldg-sel"))
-      S.map.getSource("bldg-sel").setData({ type:"FeatureCollection", features:[
-        { type:"Feature", properties:{ h: h > 0 ? h + 0.4 : 4, b: base }, geometry:f.geometry } ] });
-
-    var el = document.createElement("div");
-    el.className = "float bpanel"; el.id = "bpanel";
-    el.innerHTML = '<button type="button" class="px" aria-label="ปิด">×</button>' +
-      '<span class="bn' + (name ? '' : ' un') + '"><svg class="mdico"><use href="#i-building-2"></use></svg> ' + (name || "อาคารไม่ระบุชื่อ") + '</span>' +
-      '<div class="bsub">' + (dis ? "เขต" + dis.name + " · " : "") +
-        c[1].toFixed(5) + ", " + c[0].toFixed(5) + '</div>' +
-      '<div class="bhero">' +
-        (h > 0 ? '<span class="bnum">' + (h % 1 ? h.toFixed(1) : h.toFixed(0)) + '<span class="u">ม.</span></span>' +
-                 '<span class="bfl" title="ประมาณจากความสูง ÷ 3.2 ม. ต่อชั้น — ตึกที่มียอดแหลมหรือหลังคาสูงจะได้ตัวเลขเกินจริง">≈ ' + floors + ' ชั้น</span>'
-               : '<span class="bnum na">ไม่ระบุความสูง</span>' +
-                 '<span class="bfl">OSM ยังไม่มีแท็ก height</span>') +
-      '</div>' +
-      rows.map(function(r){
-        return '<div class="brow"><span class="l">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
-      }).join("") +
-      '<a class="bgo" href="https://www.openstreetmap.org/#map=19/' + c[1].toFixed(5) + '/' + c[0].toFixed(5) +
-        '" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-map"></use></svg> เปิดจุดนี้ใน OpenStreetMap ↗</a>' +
-      '<div class="bsrc">ความสูงและรูปอาคารจาก <b>OpenStreetMap</b> (แท็ก height / building:levels) ผ่านไทล์ OpenFreeMap · ' +
-        'จำนวนชั้น พื้นที่ฐาน และพื้นที่ใช้สอย <b>คำนวณจากรูปอาคาร</b> จึงเป็นค่าประมาณ · ' +
-        'ชื่ออาคารมีเฉพาะหลังที่อาสาสมัครใส่ไว้</div>';
-    el.querySelector(".px").addEventListener("click", closeBldg);
-    document.querySelector(".stage").appendChild(el);
-  }
-
-  function addLayers(){
-    var c = cfg(S.metric);
-    S.map.addSource("bkk", { type:"geojson", data:S.fc });
-
-    // 1) ระบายสีรายเขต — เข้มตอนดูทั้งเมือง แล้วจางหายตอนซูมลงระดับถนน
-    //    เพราะพอเห็นตึกจริงแล้ว แผ่นสีทับเมืองจะกลายเป็นตัวกวน
-    S.map.addLayer({ id:"dist-fill", type:"fill", source:"bkk",
-      paint:{ "fill-color":colorExpr(c),
-        "fill-opacity":["interpolate",["linear"],["zoom"], 11,FILL_OP, 13.5,FILL_OP, 15.2,0.05] } });
-    // 2) เส้นขอบเขต
-    S.map.addLayer({ id:"dist-line", type:"line", source:"bkk",
-      paint:{ "line-color":"#00E5FF", "line-width":0.9,
-        "line-opacity":["interpolate",["linear"],["zoom"], 11,0.38, 15,0.5, 17,0.22] } });
-
-    // 3) แนวราง — แยกสีรถไฟฟ้าในเมือง (BTS/MRT) ออกจากรถไฟทางไกล
-    if(S.vsrc){
-      try{
-        S.map.addLayer({ id:"rail-hi", type:"line", source:S.vsrc, "source-layer":"transportation",
-          filter:["==",["get","class"],"rail"],
-          paint:{ "line-color":"#FFB454", "line-width":["interpolate",["linear"],["zoom"],9,0.8,14,2.6],
-                  "line-opacity":0.7 } });
-        S.map.addLayer({ id:"transit-hi", type:"line", source:S.vsrc, "source-layer":"transportation",
-          filter:["==",["get","class"],"transit"],
-          paint:{ "line-color":"#3DDC84", "line-width":["interpolate",["linear"],["zoom"],9,1,14,3.4],
-                  "line-opacity":0.85 } });
-      }catch(e){ console.warn("ไม่มีชั้น transportation ในสไตล์นี้:", e.message); }
-    }
-
-    // 4) อาคารจริงรายหลังจาก OpenStreetMap — ไทล์ของ OpenFreeMap แนบ render_height มาให้
-    //    ค่อย ๆ โผล่ตั้งแต่ z14 แล้วชัดเต็มที่ z15.4 · ตึกยิ่งสูงยิ่งสว่าง จะได้อ่านเส้นขอบฟ้าออก
-    if(S.vsrc){
-      try{
-        S.map.addLayer({ id:"bldg-3d", type:"fill-extrusion", source:S.vsrc, "source-layer":"building",
-          minzoom:13.6,
-          paint:{
-            "fill-extrusion-color":["interpolate",["linear"],["get","render_height"],
-              0,"#0e151d", 15,"#141d27", 45,"#1c2836", 100,"#26364a", 200,"#33475f"],
-            "fill-extrusion-height":["interpolate",["linear"],["zoom"],
-              13.6,0, 14.6,["coalesce",["get","render_height"],5]],
-            "fill-extrusion-base":["coalesce",["get","render_min_height"],0],
-            "fill-extrusion-opacity":["interpolate",["linear"],["zoom"], 13.6,0, 15.4,0.92],
-            "fill-extrusion-vertical-gradient":true
-          } });
-      }catch(e){ console.warn("ไม่มีชั้น building ในสไตล์นี้:", e.message); }
-    }
-
-    // 4.5) ตึกที่ถูกเลือก — วาดทับหลังเดิมด้วยสีเน้น (สูงกว่าเดิม 0.4 ม. กันภาพซ้อนกะพริบ)
-    S.map.addSource("bldg-sel", { type:"geojson", data:{ type:"FeatureCollection", features:[] } });
-    S.map.addLayer({ id:"bldg-sel", type:"fill-extrusion", source:"bldg-sel",
-      paint:{ "fill-extrusion-color":"#00E5FF",
-              "fill-extrusion-height":["get","h"], "fill-extrusion-base":["get","b"],
-              "fill-extrusion-opacity":0.62, "fill-extrusion-vertical-gradient":true } });
-
-    // 5) หมุดค่าประจำเขต + ตัวเลข + ชื่อเขต
-    S.map.addSource("bkk-dot", { type:"geojson", data:dotData() });
-    // หมุดเล็กลงตอนซูมออก ไม่งั้น 50 หมุดทับกันจนอ่านไม่ออก
-    S.map.addLayer({ id:"dist-dot", type:"circle", source:"bkk-dot", maxzoom:15.4,
-      paint:{
-        "circle-radius":["interpolate",["linear"],["zoom"],
-          9.5, ["interpolate",["linear"],["get","r"], 0,3.5, 1,8],
-          12.5,["interpolate",["linear"],["get","r"], 0,11,  1,22]],
-        "circle-color":colorExpr(c, "v"),
-        "circle-stroke-color":"#DCE8F0", "circle-stroke-width":1.1, "circle-opacity":0.93
-      } });
-    // ตัวเลขโผล่เมื่อซูมพอให้หมุดใหญ่พอใส่ตัวเลข · หมุดค่าสูงได้สิทธิ์แสดงก่อนเมื่อชนกัน
-    S.map.addLayer({ id:"dist-val", type:"symbol", source:"bkk-dot", minzoom:9.3, maxzoom:15.4,
-      layout:{ "text-field":["get","txt"], "text-size":11.5, "text-font":["Noto Sans Bold"],
-               "text-allow-overlap":false, "text-padding":1, "symbol-sort-key":["-",1,["get","r"]] },
-      paint:{ "text-color":"#FFFFFF", "text-halo-color":"#020508", "text-halo-width":1.1 } });
-    S.map.addLayer({ id:"dist-lbl", type:"symbol", source:"bkk-dot", minzoom:11.2, maxzoom:15.4,
-      layout:{ "text-field":["get","name"], "text-size":11, "text-font":["Noto Sans Regular"],
-               "text-offset":[0,1.9], "text-anchor":"top", "symbol-sort-key":["-",1,["get","r"]] },
-      paint:{ "text-color":"#DCE8F0", "text-halo-color":"#020508", "text-halo-width":1.4 } });
-
-    // คลิกที่เขต = เปิดแผงข้อมูล + บินเข้ากรอบเขตนั้นให้เลย (คลิกซ้ำที่เขตเดิม = ปิดแผง ไม่บิน)
-    function pick(e){
-      // ซูมถึงระดับอาคารแล้วและคลิกโดนตึก = ยกให้การ์ดตึก ไม่ต้องเปิดแผงเขตซ้อน
-      if(S.map.getZoom() >= 15 && bldgAt(e.point)) return;
-      var n = e.features[0].properties.name;
-      if(S.pin === n){ S.pin = null; showPanel(null); return; }
-      closeBldg();
-      S.pin = n; showPanel(n); flyToDistrict(n);
-    }
-    ["dist-dot","dist-fill"].forEach(function(id){
-      S.map.on("click", id, pick);
-      S.map.on("mouseenter", id, function(){ S.map.getCanvas().style.cursor = "pointer"; });
-      S.map.on("mouseleave", id, function(){ S.map.getCanvas().style.cursor = ""; });
-    });
-
-    // คลิกตึก = การ์ดข้อมูลรายอาคาร (เฉพาะตอนซูมถึงระดับอาคาร ตอนที่ตึกทึบพอให้เล็งถูกหลัง)
-    if(S.map.getLayer("bldg-3d")){
-      S.map.on("click", "bldg-3d", function(e){
-        if(S.map.getZoom() < 15 || !e.features || !e.features.length) return;
-        showBldg(e.features[0]);
-      });
-      S.map.on("mouseenter", "bldg-3d", function(){
-        if(S.map.getZoom() >= 15) S.map.getCanvas().style.cursor = "pointer";
-      });
-      S.map.on("mouseleave", "bldg-3d", function(){ S.map.getCanvas().style.cursor = ""; });
-    }
-    // คลิกที่ว่าง = ปิดการ์ดตึก
-    S.map.on("click", function(e){ if(!bldgAt(e.point)) closeBldg(); });
-
-    // แสงดีฟอลต์ของ MapLibre (intensity .5 สีขาว) ฟอกหน้าตึกจนเกือบขาว — หรี่ลงและเอนไปทางฟ้าอมเทา
-    try{ S.map.setLight({ anchor:"viewport", color:"#a8bed2", intensity:0.2, position:[1.5, 215, 40] }); }
-    catch(e){ /* ข้ามได้ถ้ารุ่นไม่รองรับ */ }
-
-    // พอเอียงกล้องลงมาก ๆ จะเห็นเส้นขอบฟ้า — ถ้าไม่ใส่ท้องฟ้าจะเป็นแถบว่างสีพื้น
-    try{ S.map.setSky({ "sky-color":"#050B14", "horizon-color":"#0D1822",
-                        "fog-color":"#070D14", "sky-horizon-blend":0.6, "horizon-fog-blend":0.7 }); }
-    catch(e){ /* MapLibre รุ่นเก่ายังไม่มี setSky — ข้ามได้ ไม่กระทบอย่างอื่น */ }
-
-    S.ready = true;
-  }
-
-  function fail(msg){ $("#map").innerHTML = '<div class="err">'+msg+'</div>'; }
-
-  /* กรอบครอบ "จุดศูนย์กลางของ 50 เขต" ไม่ใช่ขอบเขตดิบ —
-     เพราะบางขุนเทียนมีหางแคบ ๆ ยื่นลงอ่าวไทยไกลมาก ถ้าครอบทั้ง bbox จะซูมออกจนตัวเมืองเล็กจิ๋ว */
-  function bboxOf(fc){
-    var w=180, s=90, e=-180, n=-90;
-    fc.features.forEach(function(f){
-      var p = f.properties;
-      if(p.lon<w)w=p.lon; if(p.lon>e)e=p.lon;
-      if(p.lat<s)s=p.lat; if(p.lat>n)n=p.lat;
-    });
-    return [[w,s],[e,n]];
-  }
-  function fit(){
-    if(!S.map || !S.fc) return;
-    var el = S.map.getContainer();
-    // ขอบยืดตามขนาดกรอบ — จอเตี้ย ๆ ถ้าเว้นขอบตายตัวจะถูกบีบจนซูมออกไกลเกิน
-    var pv = Math.max(6, Math.min(40, Math.round(el.clientHeight * 0.06)));
-    var ph = Math.max(6, Math.min(40, Math.round(el.clientWidth  * 0.05)));
-    S.map.fitBounds(bboxOf(S.fc), { padding:{ top:pv, bottom:pv+16, left:ph, right:ph }, duration:0 });
-  }
-
-  function pickStyle(){
-    var i = 0;
-    function tryNext(resolve){
-      if(i >= STYLES.length) return resolve(null);
-      var url = STYLES[i++];
-      fetch(url).then(function(r){ r.ok ? resolve(url) : tryNext(resolve); })
-                .catch(function(){ tryNext(resolve); });
-    }
-    return new Promise(tryNext);
-  }
-
-  function boot(){
-    if(!CFG.length) return fail("โหลด explore-data.js ไม่สำเร็จ — ไม่มีรายการตัวชี้วัด");
-    if(!window.maplibregl) return fail("โหลด MapLibre GL JS จาก CDN ไม่สำเร็จ<br>หน้านี้ต้องต่ออินเทอร์เน็ต");
-
-    if(/[?&]embed=1/.test(location.search)) document.body.classList.add("embed");
-    drawPills();
-    $("#btnTilt").addEventListener("click", function(){ setTilt(!S.tilt); });
-    $("#btnBldg").addEventListener("click", function(){ setBldg(!S.bldg); });
-    $("#btnRail").addEventListener("click", function(){ setRail(!S.rail); });
-    $("#btnFit").addEventListener("click", function(){ S.moved=false; fit(); autoTilt(); });
-
-    if(!window.BKK_GEOJSON) return fail("โหลด bkk-districts-geo.js ไม่สำเร็จ — ไม่มีรูปร่าง 50 เขต");
-    Promise.all([ Promise.resolve(window.BKK_GEOJSON), pickStyle() ]).then(function(res){
-      S.fc = res[0];
-      var style = res[1];
-      if(!style) return fail("ต่อ OpenFreeMap ไม่ได้ — ลองใหม่อีกครั้ง");
-      prep(); apply();
-
-      S.map = new maplibregl.Map({
-        container:"map", style:style,
-        center:[100.532, 13.752], zoom:10.15, pitch:0, bearing:0,
-        maxPitch:70, attributionControl:{ compact:true }
-      });
-      S.map.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), "top-right");
-      // เลิกจัดกรอบอัตโนมัติทันทีที่ผู้ใช้ขยับแผนที่เอง
-      S.map.on("movestart", function(e){ if(e.originalEvent) S.moved = true; });
-      // ถ้าผู้ใช้เอียงกล้องเอง (ลากเข็มทิศ) ให้หยุดคุมมุมทันที — คนสั่งชนะเครื่องเสมอ
-      S.map.on("pitchstart", function(e){ if(e.originalEvent){ S.pitching = true; setTilt(false); } });
-      S.map.on("pitchend",   function(){ S.pitching = false; });
-      S.map.on("zoom", function(){ autoTilt(); drawZoomTag(); });
-      // พอบิน/ไถลจบค่อยปรับมุมให้ตรงระดับซูมอีกที (ระหว่างบิน autoTilt ถูกกันไว้ ดูหมายเหตุในนั้น)
-      S.map.on("moveend", autoTilt);
-      S.map.on("move", drawZoomTag);
-      // วาดชั้นข้อมูลทันทีที่ "สไตล์" พร้อม ไม่รอ event load ที่รอไทล์ครบทั้งจอ
-      // (ไทล์จาก OpenFreeMap ครั้งแรกช้าได้เป็นสิบวินาที ถ้ารอ load ผู้ใช้จะเห็นจอเปล่านาน)
-      // addLayers กัน S.ready ไว้แล้ว เรียกซ้ำไม่พัง
-      function initLayers(){
-        if(S.ready) return;
-        var srcs = S.map.getStyle().sources;
-        for(var id in srcs) if(srcs[id].type === "vector"){ S.vsrc = id; break; }
-        addLayers(); apply(); setRail(S.rail); setBldg(S.bldg);
-        fit(); autoTilt(); drawZoomTag();
-        var ld = $("#loading"); if(ld) ld.remove();
-        setTimeout(function(){ if(!S.moved){ fit(); autoTilt(); } }, 900);   // ฟอนต์โหลดเสร็จ ความสูงเปลี่ยน จัดกรอบซ้ำ
+    // 3. 10 Mass Transit Lines & Station Badges
+    if (window.BKK_TRANSIT) {
+      if (!map.getSource("transit-lines")) {
+        map.addSource("transit-lines", { type: "geojson", data: window.BKK_TRANSIT.lines });
       }
-      S.map.on("style.load", initLayers);
-      S.map.on("load", initLayers);
-      S.map.on("error", function(ev){
-        if(ev && ev.error) console.warn("maplibre:", ev.error.message);
-      });
-    }).catch(function(err){
-      fail("โหลดข้อมูลไม่สำเร็จ<br><span style='font-size:12px;opacity:.7'>"+err.message+"</span>");
+      if (!map.getSource("transit-stations")) {
+        map.addSource("transit-stations", { type: "geojson", data: window.BKK_TRANSIT.stations });
+      }
+
+      if (!map.getLayer("transit-casing")) {
+        map.addLayer({
+          id: "transit-casing",
+          type: "line",
+          source: "transit-lines",
+          paint: {
+            "line-color": "#FFFFFF",
+            "line-width": ["interpolate", ["linear"], ["zoom"], 10, 3, 15, 6.5],
+            "line-opacity": 0.75
+          }
+        });
+      }
+
+      if (!map.getLayer("transit-line")) {
+        map.addLayer({
+          id: "transit-line",
+          type: "line",
+          source: "transit-lines",
+          paint: {
+            "line-color": ["get", "color"],
+            "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.8, 15, 4.2],
+            "line-opacity": 0.95
+          }
+        });
+      }
+
+      if (!map.getLayer("station-dot")) {
+        map.addLayer({
+          id: "station-dot",
+          type: "circle",
+          source: "transit-stations",
+          minzoom: 12,
+          paint: {
+            "circle-radius": ["interpolate", ["linear"], ["zoom"], 12, 3, 15, 5.5, 17, 7.5],
+            "circle-color": ["get", "primaryColor"],
+            "circle-stroke-color": "#FFFFFF",
+            "circle-stroke-width": 1.5
+          }
+        });
+      }
+
+      if (!map.getLayer("station-badge")) {
+        map.addLayer({
+          id: "station-badge",
+          type: "symbol",
+          source: "transit-stations",
+          minzoom: 13,
+          layout: {
+            "text-field": ["get", "code"],
+            "text-size": 10,
+            "text-font": ["Noto Sans Bold"],
+            "text-offset": [0, -1.1],
+            "text-anchor": "bottom",
+            "text-optional": true
+          },
+          paint: {
+            "text-color": "#FFFFFF",
+            "text-halo-color": ["get", "primaryColor"],
+            "text-halo-width": 2.2
+          }
+        });
+      }
+
+      if (!map.getLayer("station-label")) {
+        map.addLayer({
+          id: "station-label",
+          type: "symbol",
+          source: "transit-stations",
+          minzoom: 14,
+          layout: {
+            "text-field": ["get", "name"],
+            "text-size": 11,
+            "text-font": ["Noto Sans Regular"],
+            "text-offset": [0, 1.2],
+            "text-anchor": "top",
+            "text-optional": true
+          },
+          paint: {
+            "text-color": STATE.theme === "dark" ? "#F1F5F9" : "#334155",
+            "text-halo-color": STATE.theme === "dark" ? "#0F172A" : "#FFFFFF",
+            "text-halo-width": 1.8
+          }
+        });
+      }
+    }
+
+    // 4. Iconic Landmark 3D Architectural Scale Buildings
+    if (window.BKK_LANDMARKS) {
+      if (!map.getSource("landmarks-3d")) {
+        map.addSource("landmarks-3d", { type: "geojson", data: window.BKK_LANDMARKS.polygons });
+      }
+
+      if (!map.getLayer("landmarks-model")) {
+        map.addLayer({
+          id: "landmarks-model",
+          type: "fill-extrusion",
+          source: "landmarks-3d",
+          paint: {
+            "fill-extrusion-color": ["get", "color"],
+            "fill-extrusion-height": ["get", "height"],
+            "fill-extrusion-base": 0,
+            "fill-extrusion-opacity": 0.96,
+            "fill-extrusion-vertical-gradient": true
+          }
+        });
+
+        map.on("click", "landmarks-model", function(e) {
+          if (!e.features || !e.features.length) return;
+          var pid = e.features[0].properties.id;
+          openProjectDrawer(pid);
+        });
+      }
+    }
+
+    try { map.setLight({ anchor: "viewport", color: "#F8FAFC", intensity: 0.35, position: [1.5, 210, 45] }); } catch(e) {}
+
+    STATE.ready = true;
+  }
+
+  /* 3D Projected DOM Pins (Circular Badge [C] & Photo Card like ROMM CONVENT) */
+  function createDOMPins() {
+    var container = $("#pinContainer");
+    container.innerHTML = "";
+    STATE.pinElements = [];
+
+    if (!window.BKK_LANDMARKS || !window.BKK_LANDMARKS.rawList) return;
+
+    window.BKK_LANDMARKS.rawList.forEach(function(lm) {
+      var el = document.createElement("div");
+      el.className = "landmark-pin";
+      el.setAttribute("data-id", lm.id);
+
+      var badgeHTML = "";
+      if (lm.badgeType === "circle") {
+        badgeHTML = '<div class="pin-circle-badge" style="background:' + (lm.badgeBg || "var(--copper)") + '">' + (lm.badgeLetter || "★") + '</div>';
+      } else if (lm.badgeType === "card") {
+        badgeHTML = '<div class="pin-card-badge"><img src="' + lm.badgeImage + '" alt="' + lm.name + '"></div>';
+      }
+
+      el.innerHTML = badgeHTML +
+        '<div class="pin-stem"></div>' +
+        '<div class="pin-label">' + lm.name + '</div>';
+
+      var badgeEl = el.querySelector(".pin-circle-badge, .pin-card-badge");
+      var labelEl = el.querySelector(".pin-label");
+
+      function handleClick(e) {
+        e.stopPropagation();
+        openProjectDrawer(lm.id);
+      }
+
+      if (badgeEl) badgeEl.addEventListener("click", handleClick);
+      if (labelEl) labelEl.addEventListener("click", handleClick);
+
+      container.appendChild(el);
+      STATE.pinElements.push({ data: lm, el: el });
+    });
+
+    updatePins();
+  }
+
+  function updatePins() {
+    if (!STATE.map || !STATE.ready || !STATE.pinElements.length) return;
+
+    var zoom = STATE.map.getZoom();
+    var pitch = STATE.map.getPitch();
+    var container = $("#pinContainer");
+
+    if (zoom < 12.5 || !STATE.landmarks) {
+      container.style.display = "none";
+      return;
+    }
+    container.style.display = "block";
+
+    STATE.pinElements.forEach(function(item) {
+      var lm = item.data;
+      var pos = STATE.map.project([lm.lon, lm.lat]);
+
+      var metersPerPixel = (156543.03392 * Math.cos(lm.lat * Math.PI / 180)) / Math.pow(2, zoom);
+      var heightPx = (lm.height / (metersPerPixel || 1)) * Math.sin(pitch * Math.PI / 180) * 0.76;
+
+      var x = pos.x;
+      var y = pos.y - heightPx;
+
+      item.el.style.transform = "translate3d(" + Math.round(x) + "px, " + Math.round(y) + "px, 0) translate(-50%, -100%)";
     });
   }
 
-  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
+  /* Render Surrounding POI Pins on the Map when a project is open */
+  function renderProjectPOIs(project) {
+    var container = $("#poiContainer");
+    container.innerHTML = "";
+    STATE.poiElements = [];
+
+    if (!project || !project.nearbyPOIs || !project.nearbyPOIs.length) return;
+
+    project.nearbyPOIs.forEach(function(poi) {
+      var el = document.createElement("div");
+      el.className = "poi-pin";
+      el.innerHTML = '<div class="poi-dot" style="background:' + poi.color + ';"><span style="color:#fff;">📍</span></div>' +
+        '<div class="poi-label">' + poi.name + '</div>';
+
+      container.appendChild(el);
+      STATE.poiElements.push({ data: poi, el: el });
+    });
+
+    updatePOIs();
+  }
+
+  function updatePOIs() {
+    if (!STATE.map || !STATE.ready || !STATE.poiElements.length) return;
+
+    STATE.poiElements.forEach(function(item) {
+      var poi = item.data;
+      var pos = STATE.map.project([poi.lon, poi.lat]);
+      item.el.style.left = Math.round(pos.x) + "px";
+      item.el.style.top = Math.round(pos.y) + "px";
+    });
+  }
+
+  /* Open Project Drawer with Full Rich Specs */
+  function openProjectDrawer(projectId) {
+    if (!window.BKK_LANDMARKS || !window.BKK_LANDMARKS.rawList) return;
+    var project = window.BKK_LANDMARKS.rawList.find(function(p) { return p.id === projectId; });
+    if (!project) return;
+
+    STATE.selectedProject = project;
+
+    $("#drawerCategory").textContent = project.category || "Development";
+    $("#drawerCategory").style.background = project.categoryColor || "var(--copper)";
+    $("#drawerTitle").textContent = project.name;
+    $("#drawerLocation").textContent = project.location || "Bangkok";
+    $("#drawerHeroImg").src = project.image || project.badgeImage || "";
+    $("#drawerDeveloper").textContent = project.developer || "Verified Developer";
+    $("#drawerDevSite").href = project.developerSite || "#";
+
+    $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>fl</small>';
+    $("#drawerUnits").innerHTML = (project.units || "-") + ' <small>u</small>';
+    $("#drawerParking").innerHTML = (project.parking || "-") + ' <small>lots (' + (project.parkingRatio || "100%") + ')</small>';
+    $("#drawerLand").innerHTML = (project.landRai ? project.landRai.toFixed(2) : "-") + ' <small>rai</small>';
+    $("#drawerHeight").innerHTML = (project.height || "-") + ' <small>m</small>';
+    $("#drawerUnitsPerFloor").innerHTML = (project.unitsPerFloor || "-") + ' <small>u/fl</small>';
+
+    $("#drawerDesc").textContent = project.desc || "";
+
+    // Unit Types
+    if (project.unitTypes && project.unitTypes.length) {
+      $("#unitTypesSection").style.display = "block";
+      $("#drawerUnitsList").innerHTML = project.unitTypes.map(function(u) {
+        return '<div class="unit-item"><span class="unit-type-name">' + u.label + '</span><span class="unit-size">' + u.size + '</span></div>';
+      }).join("");
+    } else {
+      $("#unitTypesSection").style.display = "none";
+    }
+
+    // Transport
+    if (project.transport && project.transport.length) {
+      $("#drawerTransportList").innerHTML = project.transport.map(function(t) {
+        var ico = t.type === "bts" ? "🚆" : t.type === "mrt" ? "🚇" : t.type === "boat" ? "⛴️" : "🚗";
+        return '<div class="transport-item"><span class="transport-name">' + ico + ' ' + t.name + '</span><span class="transport-dist">' + t.dist + '</span></div>';
+      }).join("");
+    } else {
+      $("#drawerTransportList").innerHTML = '<div style="font-size:12px;color:var(--text-sub);">Central Bangkok CBD Location</div>';
+    }
+
+    $("#btnDrawerFly3D").onclick = function() {
+      STATE.map.flyTo({
+        center: [project.lon, project.lat],
+        zoom: 16.8,
+        pitch: 65,
+        bearing: 35,
+        duration: 2000
+      });
+    };
+
+    // Smoothly fly camera to project with offset so drawer doesn't cover it
+    var isMobile = window.innerWidth <= 768;
+    var targetOffset = isMobile ? [0, 0] : [100, 0];
+    STATE.map.flyTo({
+      center: [project.lon, project.lat],
+      zoom: 16.2,
+      pitch: 62,
+      bearing: 30,
+      offset: targetOffset,
+      duration: 1800,
+      curve: 1.4
+    });
+
+    // Render Nearby POIs
+    renderProjectPOIs(project);
+
+    $("#projectDrawer").classList.add("open");
+  }
+
+  function closeProjectDrawer() {
+    $("#projectDrawer").classList.remove("open");
+    $("#poiContainer").innerHTML = "";
+    STATE.poiElements = [];
+    STATE.selectedProject = null;
+  }
+
+  function setupInteractions() {
+    var map = STATE.map;
+
+    // Zoom In (+)
+    $("#btnZoomIn").addEventListener("click", function() {
+      map.zoomIn({ duration: 350 });
+    });
+
+    // Zoom Out (−)
+    $("#btnZoomOut").addEventListener("click", function() {
+      map.zoomOut({ duration: 350 });
+    });
+
+    // Reset Compass
+    $("#btnResetCompass").addEventListener("click", function() {
+      map.easeTo({ bearing: 0, pitch: 58, duration: 600 });
+    });
+
+    // Drawer Close Buttons
+    $("#closeProjectDrawer").addEventListener("click", closeProjectDrawer);
+
+    // Getting Around Drawer Toggle
+    $("#btnGettingAround").addEventListener("click", function() {
+      var dr = $("#transitDrawer");
+      var isOpen = dr.classList.toggle("open");
+      $("#btnGettingAround").classList.toggle("active", isOpen);
+    });
+    $("#closeDrawer").addEventListener("click", function() {
+      $("#transitDrawer").classList.remove("open");
+      $("#btnGettingAround").classList.remove("active");
+    });
+
+    // Left Menu Buttons
+    $("#btn3DBuildings").addEventListener("click", function() {
+      STATE.bldg3d = !STATE.bldg3d;
+      this.classList.toggle("active", STATE.bldg3d);
+      if (map.getLayer("city-buildings-3d")) {
+        map.setLayoutProperty("city-buildings-3d", "visibility", STATE.bldg3d ? "visible" : "none");
+      }
+    });
+
+    $("#btnLandmarksToggle").addEventListener("click", function() {
+      STATE.landmarks = !STATE.landmarks;
+      this.classList.toggle("active", STATE.landmarks);
+      if (map.getLayer("landmarks-model")) {
+        map.setLayoutProperty("landmarks-model", "visibility", STATE.landmarks ? "visible" : "none");
+      }
+      updatePins();
+    });
+
+    $("#btnTransitToggle").addEventListener("click", function() {
+      STATE.transit = !STATE.transit;
+      this.classList.toggle("active", STATE.transit);
+      ["transit-casing", "transit-line", "station-dot", "station-badge", "station-label"].forEach(function(id) {
+        if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", STATE.transit ? "visible" : "none");
+      });
+    });
+
+    $("#btnFlyCBD").addEventListener("click", function() {
+      closeProjectDrawer();
+      map.flyTo({ center: [100.5365, 13.7275], zoom: 15.2, pitch: 62, bearing: 30, duration: 2200, curve: 1.4 });
+    });
+
+    $("#btnFlyRiver").addEventListener("click", function() {
+      closeProjectDrawer();
+      map.flyTo({ center: [100.5105, 13.7265], zoom: 15.6, pitch: 64, bearing: 115, duration: 2200, curve: 1.4 });
+    });
+
+    $("#btnFitAll").addEventListener("click", function() {
+      closeProjectDrawer();
+      map.flyTo({ center: [100.532, 13.752], zoom: 11.2, pitch: 0, bearing: 0, duration: 1800 });
+    });
+
+    // Theme Toggle
+    $("#btnThemeToggle").addEventListener("click", function() {
+      STATE.theme = STATE.theme === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", STATE.theme);
+      $("#themeIco").textContent = STATE.theme === "light" ? "☀️ Light" : "🌙 Dark";
+      map.setStyle(STATE.theme === "light" ? STYLES.light : STYLES.dark);
+      map.once("style.load", function() {
+        addMapLayers();
+        createDOMPins();
+      });
+    });
+
+    renderTransitDrawer();
+    setupSearch();
+  }
+
+  function renderTransitDrawer() {
+    if (!window.BKK_TRANSIT || !window.BKK_TRANSIT.rawLines) return;
+    var html = window.BKK_TRANSIT.rawLines.map(function(l) {
+      return '<div class="transit-row">' +
+        '<div style="display:flex;align-items:center;">' +
+          '<span class="transit-dot" style="background:' + l.color + '"></span>' +
+          '<span>' + l.name + ' <small style="color:var(--text-sub);">(' + l.stations.length + ')</small></span>' +
+        '</div>' +
+        '<input type="checkbox" class="transit-check" data-line="' + l.id + '" checked style="accent-color:var(--copper);cursor:pointer;">' +
+      '</div>';
+    }).join("");
+    $("#transitList").innerHTML = html;
+
+    Array.prototype.forEach.call(document.querySelectorAll(".transit-check"), function(chk) {
+      chk.addEventListener("change", function() {
+        var lid = chk.getAttribute("data-line");
+        STATE.activeLines[lid] = chk.checked;
+        filterTransit();
+      });
+    });
+  }
+
+  function filterTransit() {
+    if (!STATE.ready || !window.BKK_TRANSIT) return;
+    var activeIds = Object.keys(STATE.activeLines).filter(function(k) { return STATE.activeLines[k]; });
+    var filteredLines = {
+      type: "FeatureCollection",
+      features: window.BKK_TRANSIT.lines.features.filter(function(f) { return activeIds.indexOf(f.properties.id) !== -1; })
+    };
+    var filteredStations = {
+      type: "FeatureCollection",
+      features: window.BKK_TRANSIT.stations.features.filter(function(f) {
+        var larr = f.properties.lines.split(",");
+        for (var i = 0; i < larr.length; i++) if (activeIds.indexOf(larr[i]) !== -1) return true;
+        return false;
+      })
+    };
+    if (STATE.map.getSource("transit-lines")) STATE.map.getSource("transit-lines").setData(filteredLines);
+    if (STATE.map.getSource("transit-stations")) STATE.map.getSource("transit-stations").setData(filteredStations);
+  }
+
+  function setupSearch() {
+    var input = $("#searchInput");
+    var dropdown = $("#searchDropdown");
+    if (!input || !dropdown) return;
+
+    var items = [];
+    if (window.BKK_LANDMARKS && window.BKK_LANDMARKS.rawList) {
+      window.BKK_LANDMARKS.rawList.forEach(function(lm) {
+        items.push({ type: "Project", name: lm.name, en: lm.name, data: lm, coords: [lm.lon, lm.lat] });
+      });
+    }
+    if (window.BKK_TRANSIT && window.BKK_TRANSIT.stations) {
+      window.BKK_TRANSIT.stations.features.forEach(function(st) {
+        items.push({ type: "Station", name: st.properties.name + " (" + st.properties.code + ")", en: st.properties.nameEn, data: st.properties, coords: st.geometry.coordinates });
+      });
+    }
+    if (window.BKK_GEOJSON && window.BKK_GEOJSON.features) {
+      window.BKK_GEOJSON.features.forEach(function(f) {
+        items.push({ type: "District", name: "เขต" + f.properties.name, en: f.properties.name, coords: [f.properties.lon, f.properties.lat] });
+      });
+    }
+
+    input.addEventListener("input", function() {
+      var q = input.value.trim().toLowerCase();
+      if (!q) { dropdown.style.display = "none"; return; }
+
+      var matched = items.filter(function(it) {
+        return it.name.toLowerCase().indexOf(q) !== -1 || (it.en && it.en.toLowerCase().indexOf(q) !== -1);
+      }).slice(0, 8);
+
+      if (!matched.length) {
+        dropdown.innerHTML = '<div class="search-row" style="color:var(--text-sub);">No results found</div>';
+        dropdown.style.display = "block";
+        return;
+      }
+
+      dropdown.innerHTML = matched.map(function(m, idx) {
+        return '<div class="search-row" data-idx="' + idx + '">' +
+          '<span>' + m.name + '</span>' +
+          '<span class="search-tag">' + m.type + '</span>' +
+        '</div>';
+      }).join("");
+      dropdown.style.display = "block";
+
+      Array.prototype.forEach.call(dropdown.querySelectorAll(".search-row"), function(el, idx) {
+        el.addEventListener("click", function() {
+          var sel = matched[idx];
+          dropdown.style.display = "none";
+          input.value = sel.name;
+          if (sel.type === "Project") {
+            openProjectDrawer(sel.data.id);
+          } else {
+            STATE.map.flyTo({ center: sel.coords, zoom: 16, pitch: 58, duration: 1800 });
+          }
+        });
+      });
+    });
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".search-wrapper")) dropdown.style.display = "none";
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initMap);
+  else initMap();
 })();
 </script>
-<script src="../js/disclaimer.js"></script>
 </body>
 </html>
