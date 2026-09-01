@@ -1,6 +1,6 @@
 /* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
-   UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (7 Tracks)
+   UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (Scalable Categories)
    =========================================================================== */
 (function () {
   "use strict";
@@ -8,12 +8,23 @@
   if (window.__cyberBgmLoaded) return;
   window.__cyberBgmLoaded = true;
 
-  // ── รายการเพลง BGM ทั้งหมด 7 แทร็ก ──
+  // ── รายชื่อหมวดหมู่เพลง (Categories) ──
+  var CATEGORIES = [
+    { id: 'all', label: 'ทั้งหมด', icon: '🌌', desc: 'เพลงทั้งหมดทุกแนว' },
+    { id: 'cyber', label: 'Cyber Synth', icon: '⚡', desc: 'ไซเบอร์พังก์ & ไฮเทค' },
+    { id: 'ambient', label: 'Ambient Lo-Fi', icon: '🌙', desc: 'ผ่อนคลาย & สบายๆ' },
+    { id: 'cinematic', label: 'Cinematic', icon: '🏛️', desc: 'ซิมโฟนี & อลังการ' },
+    { id: 'upbeat', label: 'Cyber Funk', icon: '🔥', desc: 'คึกคัก & มีพลัง' }
+  ];
+
+  // ── รายการเพลง BGM ทั้งหมด 17 แทร็ก ──
   var TRACKS = [
     {
       id: '01',
       name: 'Cyber Pulse',
       composer: 'Thai GovTech AI · Cyber Synthwave',
+      category: 'cyber',
+      categoryLabel: 'Cyber Synth',
       year: '2026',
       file: 'bgm-1.mp3',
       color: '#00E5FF',
@@ -23,6 +34,8 @@
       id: '02',
       name: 'Digital Flow',
       composer: 'Future Civic Hub · Tech Ambient',
+      category: 'ambient',
+      categoryLabel: 'Ambient Lo-Fi',
       year: '2026',
       file: 'bgm-2.mp3',
       color: '#3B82F6',
@@ -32,6 +45,8 @@
       id: '03',
       name: 'Future Horizon',
       composer: 'Nation Progress · Sci-Fi Vision',
+      category: 'cinematic',
+      categoryLabel: 'Cinematic',
       year: '2026',
       file: 'bgm-3.mp3',
       color: '#A855F7',
@@ -41,6 +56,8 @@
       id: '04',
       name: 'Neon Metropolis',
       composer: 'GovTech Audio · Cyber Lo-Fi Chill',
+      category: 'cyber',
+      categoryLabel: 'Cyber Synth',
       year: '2026',
       file: 'bgm-4.mp3',
       color: '#00E5FF',
@@ -50,6 +67,8 @@
       id: '05',
       name: 'State of Progress',
       composer: 'Civic Symphony · Modern Cinematic',
+      category: 'cinematic',
+      categoryLabel: 'Cinematic',
       year: '2026',
       file: 'bgm-5.mp3',
       color: '#FFB454',
@@ -59,6 +78,8 @@
       id: '06',
       name: 'Quantum Orbit',
       composer: 'Data Exploration · Space Ambient',
+      category: 'ambient',
+      categoryLabel: 'Ambient Lo-Fi',
       year: '2026',
       file: 'bgm-6.mp3',
       color: '#60A5FA',
@@ -68,10 +89,122 @@
       id: '07',
       name: 'Civic Groove',
       composer: 'Future Rhythm · Upbeat Cyber Funk',
+      category: 'upbeat',
+      categoryLabel: 'Cyber Funk',
       year: '2026',
       file: 'bgm-7.mp3',
       color: '#34D399',
       vinylBg: '#10B981'
+    },
+    {
+      id: '08',
+      name: 'Solaris Stream',
+      composer: 'Orbit Synthesis · Deep Cyber Tech',
+      category: 'cyber',
+      categoryLabel: 'Cyber Synth',
+      year: '2026',
+      file: 'bgm-8.mp3',
+      color: '#38BDF8',
+      vinylBg: '#0284C7'
+    },
+    {
+      id: '09',
+      name: 'Aurora Matrix',
+      composer: 'Synthetic Pulse · Electro Ambient',
+      category: 'ambient',
+      categoryLabel: 'Ambient Lo-Fi',
+      year: '2026',
+      file: 'bgm-9.mp3',
+      color: '#818CF8',
+      vinylBg: '#4F46E5'
+    },
+    {
+      id: '10',
+      name: 'Starlight Odyssey',
+      composer: 'Cosmic Voyage · Cinematic Vision',
+      category: 'cinematic',
+      categoryLabel: 'Cinematic',
+      year: '2026',
+      file: 'bgm-10.mp3',
+      color: '#C084FC',
+      vinylBg: '#9333EA'
+    },
+    {
+      id: '11',
+      name: 'Hyperloop Drive',
+      composer: 'Speed Velocity · Cyber Funk Beat',
+      category: 'upbeat',
+      categoryLabel: 'Cyber Funk',
+      year: '2026',
+      file: 'bgm-11.mp3',
+      color: '#FB7185',
+      vinylBg: '#E11D48'
+    },
+    {
+      id: '12',
+      name: 'Elysium Echoes',
+      composer: 'Zenith Realm · Chill Lo-Fi Focus',
+      category: 'ambient',
+      categoryLabel: 'Ambient Lo-Fi',
+      year: '2026',
+      file: 'bgm-12.mp3',
+      color: '#2DD4BF',
+      vinylBg: '#0D9488'
+    },
+    {
+      id: '13',
+      name: 'Cybernetic Dawn',
+      composer: 'AI Renaissance · Future Synthwave',
+      category: 'cyber',
+      categoryLabel: 'Cyber Synth',
+      year: '2026',
+      file: 'bgm-13.mp3',
+      color: '#22D3EE',
+      vinylBg: '#0891B2'
+    },
+    {
+      id: '14',
+      name: 'Titanium March',
+      composer: 'Sovereign Force · Modern Symphony',
+      category: 'cinematic',
+      categoryLabel: 'Cinematic',
+      year: '2026',
+      file: 'bgm-14.mp3',
+      color: '#FBBF24',
+      vinylBg: '#D97706'
+    },
+    {
+      id: '15',
+      name: 'Neural Nexus',
+      composer: 'Brainwave Tech · Deep Flow Ambient',
+      category: 'ambient',
+      categoryLabel: 'Ambient Lo-Fi',
+      year: '2026',
+      file: 'bgm-15.mp3',
+      color: '#A78BFA',
+      vinylBg: '#7C3AED'
+    },
+    {
+      id: '16',
+      name: 'Velocity Pulse',
+      composer: 'Cyber Sprint · Dynamic Groove Funk',
+      category: 'upbeat',
+      categoryLabel: 'Cyber Funk',
+      year: '2026',
+      file: 'bgm-16.mp3',
+      color: '#4ADE80',
+      vinylBg: '#16A34A'
+    },
+    {
+      id: '17',
+      name: 'Chronicles of Siam',
+      composer: 'Heritage Symphony · Grand Epic Vision',
+      category: 'cinematic',
+      categoryLabel: 'Cinematic',
+      year: '2026',
+      file: 'bgm-17.mp3',
+      color: '#F472B6',
+      vinylBg: '#DB2777'
     }
   ];
 
@@ -108,6 +241,27 @@
     return isSub ? '../css/cyber-audio.css' : 'css/cyber-audio.css';
   }
 
+  // ── Helper คำนวณจำนวนเพลงในหมวด ──
+  function getCategoryCount(catId) {
+    if (!catId || catId === 'all') return TRACKS.length;
+    var count = 0;
+    for (var i = 0; i < TRACKS.length; i++) {
+      if (TRACKS[i].category === catId) count++;
+    }
+    return count;
+  }
+
+  function getFilteredTrackIndices(catId) {
+    if (!catId || catId === 'all') {
+      return TRACKS.map(function (_, i) { return i; });
+    }
+    var list = [];
+    for (var i = 0; i < TRACKS.length; i++) {
+      if (TRACKS[i].category === catId) list.push(i);
+    }
+    return list.length > 0 ? list : TRACKS.map(function (_, i) { return i; });
+  }
+
   // ── Storage State ──
   var savedTrackIdx = parseInt(localStorage.getItem('cyber-bgm-track') || '0', 10);
   if (isNaN(savedTrackIdx) || savedTrackIdx < 0 || savedTrackIdx >= TRACKS.length) savedTrackIdx = 0;
@@ -120,9 +274,11 @@
   var savedPos = parseFloat(sessionStorage.getItem('cyber-bgm-pos') || '0');
   if (isNaN(savedPos) || savedPos < 0) savedPos = 0;
   var savedTucked = localStorage.getItem('cyber-bgm-tucked') === 'true';
+  var savedCat = localStorage.getItem('cyber-bgm-cat') || 'all';
 
   var currentTrackIdx = savedTrackIdx;
   var currentVolume = savedVol;
+  var selectedCategory = savedCat;
   var isPlaying = false;
   var isMuted = false;
   var prevVolume = currentVolume;
@@ -209,13 +365,19 @@
 
   function nextTrack() {
     var wasPlaying = !audio.paused || isPlaying;
-    loadTrack((currentTrackIdx + 1) % TRACKS.length, 0);
+    var filtered = getFilteredTrackIndices(selectedCategory);
+    var pos = filtered.indexOf(currentTrackIdx);
+    var nextIdx = (pos !== -1) ? filtered[(pos + 1) % filtered.length] : filtered[0];
+    loadTrack(nextIdx, 0);
     if (wasPlaying) playAudio();
   }
 
   function prevTrack() {
     var wasPlaying = !audio.paused || isPlaying;
-    loadTrack((currentTrackIdx - 1 + TRACKS.length) % TRACKS.length, 0);
+    var filtered = getFilteredTrackIndices(selectedCategory);
+    var pos = filtered.indexOf(currentTrackIdx);
+    var prevIdx = (pos !== -1) ? filtered[(pos - 1 + filtered.length) % filtered.length] : filtered[filtered.length - 1];
+    loadTrack(prevIdx, 0);
     if (wasPlaying) playAudio();
   }
 
@@ -295,6 +457,39 @@
   // ── BUILD DOM ──
   var dom = {};
 
+  function filterCategory(catId) {
+    selectedCategory = catId || 'all';
+    localStorage.setItem('cyber-bgm-cat', selectedCategory);
+
+    // Update tab buttons
+    if (dom.catTabs) {
+      var tabs = dom.catTabs.querySelectorAll('.bgm-cat-tab');
+      tabs.forEach(function (tab) {
+        tab.classList.toggle('active', tab.getAttribute('data-cat') === selectedCategory);
+      });
+    }
+
+    // Update queue items
+    if (dom.queueItems) {
+      dom.queueItems.forEach(function (item) {
+        var idx = parseInt(item.getAttribute('data-idx') || '0', 10);
+        var t = TRACKS[idx];
+        var match = (selectedCategory === 'all' || (t && t.category === selectedCategory));
+        item.classList.toggle('is-filtered-out', !match);
+      });
+    }
+
+    // Update play all button text
+    if (dom.btnPlayFromStart) {
+      var catObj = CATEGORIES.find(function (c) { return c.id === selectedCategory; }) || CATEGORIES[0];
+      if (selectedCategory === 'all') {
+        dom.btnPlayFromStart.innerHTML = ICO_PLUS + ' เล่นเพลงทั้งหมดจากจุดเริ่มต้น';
+      } else {
+        dom.btnPlayFromStart.innerHTML = ICO_PLUS + ' เล่นหมวด "' + catObj.label + '" ทั้งหมด';
+      }
+    }
+  }
+
   function buildDOM() {
     var cssHref = getCssPath();
     if (!document.querySelector('link[href*="cyber-audio.css"]')) {
@@ -304,15 +499,32 @@
       document.head.appendChild(link);
     }
 
+    // Category Tabs HTML
+    var catTabsHtml = CATEGORIES.map(function (c) {
+      var count = getCategoryCount(c.id);
+      var isActive = (c.id === selectedCategory);
+      return [
+        '<button type="button" class="bgm-cat-tab ' + (isActive ? 'active' : '') + '" data-cat="' + c.id + '" title="' + c.desc + '">',
+        '  <span class="bgm-cat-icon">' + c.icon + '</span>',
+        '  <span>' + c.label + '</span>',
+        '  <span class="bgm-cat-count">' + count + '</span>',
+        '</button>'
+      ].join('');
+    }).join('');
+
+    // Queue Items HTML
     var queueItemsHtml = TRACKS.map(function (t, i) {
       return [
-        '<div class="bgm-queue-item" data-idx="' + i + '">',
+        '<div class="bgm-queue-item" data-idx="' + i + '" data-cat="' + t.category + '">',
         '  <span class="bgm-q-num">' + t.id + '</span>',
         '  <div class="bgm-q-vinyl">',
         '    <div class="bgm-q-vinyl-center" style="background:' + t.vinylBg + '"></div>',
         '  </div>',
         '  <div class="bgm-q-info">',
-        '    <div class="bgm-q-name">' + t.name + '</div>',
+        '    <div class="bgm-q-name">',
+        '      <span>' + t.name + '</span>',
+        '      <span class="bgm-q-cat-tag" style="border-color:' + t.color + '40;color:' + t.color + '">' + t.categoryLabel + '</span>',
+        '    </div>',
         '    <div class="bgm-q-sub">' + ICO_MUSIC + ' ' + t.composer.split('·')[0].trim() + '</div>',
         '  </div>',
         '  <div class="bgm-q-status">',
@@ -360,6 +572,7 @@
       '        <div class="bgm-track-name" id="bgmCardTrackName">Cyber Pulse</div>',
       '        <div class="bgm-badges">',
       '          <span class="bgm-badge-hq">HQ</span>',
+      '          <span class="bgm-badge-cat" id="bgmCardCat">Cyber Synth</span>',
       '          <span class="bgm-badge-year" id="bgmCardYear">2026</span>',
       '        </div>',
       '      </div>',
@@ -377,7 +590,7 @@
       '        </div>',
       '      </div>',
       '    </div>',
-      '    <!-- RIGHT PANEL: PLAY QUEUE -->',
+      '    <!-- RIGHT PANEL: PLAY QUEUE & CATEGORIES -->',
       '    <div class="bgm-right-panel">',
       '      <div class="bgm-queue-header">',
       '        <div class="bgm-queue-title">Play queue</div>',
@@ -385,7 +598,9 @@
       '          <button type="button" class="bgm-tool-btn" id="bgmBtnClose" title="ย่อหน้าต่าง">' + ICO_CLOSE + '</button>',
       '        </div>',
       '      </div>',
-      '      <button type="button" class="bgm-queue-playall" id="bgmBtnPlayFromStart">' + ICO_PLUS + ' Play queue from start</button>',
+      '      <!-- CATEGORY TABS -->',
+      '      <div class="bgm-category-tabs" id="bgmCatTabs">' + catTabsHtml + '</div>',
+      '      <button type="button" class="bgm-queue-playall" id="bgmBtnPlayFromStart">' + ICO_PLUS + ' เล่นเพลงทั้งหมดจากจุดเริ่มต้น</button>',
       '      <div class="bgm-queue-list" id="bgmQueueList">' + queueItemsHtml + '</div>',
       '    </div>',
       '  </div>',
@@ -424,6 +639,7 @@
     dom.btnClose = document.getElementById('bgmBtnClose');
     dom.cardTrackName = document.getElementById('bgmCardTrackName');
     dom.cardTrackGenre = document.getElementById('bgmCardTrackGenre');
+    dom.cardTrackCat = document.getElementById('bgmCardCat');
     dom.cardYear = document.getElementById('bgmCardYear');
     dom.btnPlayCard = document.getElementById('bgmBtnPlayCard');
     dom.btnPrev = document.getElementById('bgmBtnPrev');
@@ -435,6 +651,8 @@
     dom.timeDur = document.getElementById('bgmTimeDur');
     dom.btnMute = document.getElementById('bgmBtnMute');
     dom.volSlider = document.getElementById('bgmVolSlider');
+    dom.catTabs = document.getElementById('bgmCatTabs');
+    dom.queueList = document.getElementById('bgmQueueList');
     dom.queueItems = document.querySelectorAll('.bgm-queue-item');
     dom.canvas = document.getElementById('bgmSpectrumCanvas');
 
@@ -453,6 +671,17 @@
       e.stopPropagation();
       toggleDrawer();
     });
+
+    // Category Tabs Click
+    if (dom.catTabs) {
+      dom.catTabs.addEventListener('click', function (e) {
+        var tabBtn = e.target.closest('.bgm-cat-tab');
+        if (!tabBtn) return;
+        e.stopPropagation();
+        var cat = tabBtn.getAttribute('data-cat') || 'all';
+        filterCategory(cat);
+      });
+    }
 
     // ── DRAGGABLE FLOATING CONTROLLER WITH EDGE SNAPPING & DYNAMIC ORIENTATION ──
     var isDragging = false;
@@ -627,7 +856,9 @@
 
     dom.btnPlayFromStart.addEventListener('click', function (e) {
       e.stopPropagation();
-      loadTrack(0, 0);
+      var filtered = getFilteredTrackIndices(selectedCategory);
+      var targetIdx = (filtered.length > 0) ? filtered[0] : 0;
+      loadTrack(targetIdx, 0);
       playAudio();
     });
 
@@ -690,6 +921,9 @@
       isPlaying = false;
       updateUI();
     });
+
+    // Apply initial category filter
+    filterCategory(selectedCategory);
   }
 
   function setDrawer(open) {
@@ -792,6 +1026,12 @@
     dom.cardTrackName.textContent = track.name;
     dom.cardTrackGenre.textContent = track.composer;
     dom.cardYear.textContent = track.year;
+
+    if (dom.cardTrackCat) {
+      dom.cardTrackCat.textContent = track.categoryLabel;
+      dom.cardTrackCat.style.borderColor = track.color + '60';
+      dom.cardTrackCat.style.color = track.color;
+    }
 
     dom.queueItems.forEach(function (item, i) {
       item.classList.toggle('active', i === currentTrackIdx);

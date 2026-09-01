@@ -264,6 +264,7 @@ html[data-theme="light"] #cyber-bgm-root {
   width: 740px;
   max-width: calc(100vw - 32px);
   max-height: min(520px, calc(100vh - 32px));
+  overflow-x: hidden !important;
   overflow-y: auto;
   background: var(--bgm-card-bg);
   border: 1px solid var(--bgm-border);
@@ -278,8 +279,25 @@ html[data-theme="light"] #cyber-bgm-root {
   transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0.25s;
   pointer-events: none;
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
   gap: 18px;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 229, 255, 0.35) rgba(255, 255, 255, 0.02);
+}
+
+.cyber-bgm-card::-webkit-scrollbar {
+  width: 5px;
+}
+
+.cyber-bgm-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 99px;
+}
+
+.cyber-bgm-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--bgm-cyan), var(--bgm-blue));
+  border-radius: 99px;
 }
 
 .drawer-open .cyber-bgm-card {
@@ -293,6 +311,8 @@ html[data-theme="light"] #cyber-bgm-root {
 .bgm-left-panel {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
   background: var(--bgm-card-inner);
   border: 1px solid var(--bgm-border-subtle);
   border-radius: 18px;
@@ -463,6 +483,18 @@ html[data-theme="light"] #cyber-bgm-root {
   color: var(--bgm-cyan);
 }
 
+.bgm-badge-cat {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  color: var(--bgm-cyan);
+  transition: all 0.2s ease;
+}
+
 .bgm-badge-year {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.62rem;
@@ -591,17 +623,21 @@ html[data-theme="light"] #cyber-bgm-root {
 .bgm-right-panel {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .bgm-queue-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .bgm-queue-title {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 700;
   color: var(--bgm-text);
   letter-spacing: -0.01em;
@@ -632,6 +668,93 @@ html[data-theme="light"] #cyber-bgm-root {
   border-color: var(--bgm-cyan);
 }
 
+/* Category Filter Tabs Bar */
+.bgm-category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 229, 255, 0.35) transparent;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.bgm-category-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.bgm-category-tabs::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 99px;
+}
+
+.bgm-category-tabs::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.35);
+  border-radius: 99px;
+}
+
+.bgm-category-tabs::-webkit-scrollbar-thumb:hover {
+  background: var(--bgm-cyan);
+}
+
+.bgm-cat-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  font-size: 0.70rem;
+  font-weight: 600;
+  color: var(--bgm-dim);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.bgm-cat-tab:hover {
+  background: rgba(0, 229, 255, 0.1);
+  color: var(--bgm-text);
+  border-color: rgba(0, 229, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.bgm-cat-tab.active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(59, 130, 246, 0.18));
+  border-color: var(--bgm-cyan);
+  color: var(--bgm-cyan);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+}
+
+.bgm-cat-icon {
+  font-size: 0.76rem;
+  line-height: 1;
+}
+
+.bgm-cat-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.60rem;
+  padding: 1px 5px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--bgm-dim);
+}
+
+.bgm-cat-tab.active .bgm-cat-count {
+  background: rgba(0, 229, 255, 0.25);
+  color: #FFFFFF;
+}
+
 /* Play queue from start button */
 .bgm-queue-playall {
   display: inline-flex;
@@ -639,16 +762,17 @@ html[data-theme="light"] #cyber-bgm-root {
   justify-content: center;
   gap: 6px;
   width: 100%;
-  padding: 9px 12px;
+  padding: 7px 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   color: var(--bgm-text);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .bgm-queue-playall:hover {
@@ -663,11 +787,15 @@ html[data-theme="light"] #cyber-bgm-root {
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  max-height: 290px;
-  padding-right: 6px;
+  overflow-x: hidden !important;
+  max-height: 250px;
+  min-width: 0;
+  width: 100%;
+  padding-right: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 229, 255, 0.4) rgba(255, 255, 255, 0.03);
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 .bgm-queue-list::-webkit-scrollbar {
@@ -693,13 +821,20 @@ html[data-theme="light"] #cyber-bgm-root {
 .bgm-queue-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 10px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid transparent;
   border-radius: 14px;
   cursor: pointer;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   transition: all 0.22s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.bgm-queue-item.is-filtered-out {
+  display: none !important;
 }
 
 .bgm-queue-item:hover {
@@ -716,7 +851,7 @@ html[data-theme="light"] #cyber-bgm-root {
 
 .bgm-q-num {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--bgm-dim);
   flex: 0 0 18px;
@@ -726,35 +861,99 @@ html[data-theme="light"] #cyber-bgm-root {
   color: var(--bgm-cyan);
 }
 
-/* Vinyl Disc Thumbnail */
+/* ── HI-FI VINYL DISC (Rich Grooves & Visible Rotating Sheen) ── */
 .bgm-q-vinyl {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: radial-gradient(circle, #2A3644 20%, #101720 22%, #2A3644 40%, #080D14 90%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  /* Grooved Vinyl Surface with Realistic Multi-ring Grooves */
+  background: 
+    repeating-radial-gradient(
+      circle at center,
+      #0d141e 0px,
+      #0d141e 2px,
+      #1c2836 2.5px,
+      #090e14 3px,
+      #182330 4.5px,
+      #070b10 5px
+    );
+  border: 1px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 38px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65), inset 0 0 4px rgba(0, 0, 0, 0.8);
   position: relative;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 
+/* Vinyl Anisotropic Light Reflection (เงาสะท้อนแสงแฉกสองด้านที่ทำให้เห็นการหมุนชัดเจน) */
+.bgm-q-vinyl::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 35deg,
+    rgba(255, 255, 255, 0.26) 0deg,
+    rgba(255, 255, 255, 0.05) 25deg,
+    transparent 50deg,
+    transparent 130deg,
+    rgba(255, 255, 255, 0.24) 170deg,
+    rgba(255, 255, 255, 0.05) 205deg,
+    transparent 230deg,
+    transparent 310deg,
+    rgba(255, 255, 255, 0.26) 350deg,
+    rgba(255, 255, 255, 0.26) 360deg
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Vinyl Center Label (ฉลากใจกลางแผ่นเสียง) */
 .bgm-q-vinyl-center {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #C43826;
-  border: 2px solid #000;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.9), inset 0 0 3px rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* แผ่นเสียงหมุนเมื่อกำลังเล่น (Smooth continuous spin) */
+/* Spindle Center Hole (รูกลางแผ่น) */
+.bgm-q-vinyl-center::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #05080e;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Center Label Micro-Marker (มาร์กเกอร์จุดหมุน) */
+.bgm-q-vinyl-center::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+/* แผ่นเสียงหมุนเมื่อกำลังเล่น (Smooth continuous spin with rotating light reflection) */
 .bgm-queue-item.active .bgm-q-vinyl {
   border-color: var(--bgm-cyan);
-  box-shadow: 0 0 12px var(--bgm-cyan-glow);
-  animation: bgmVinylSpin 4.5s linear infinite;
+  box-shadow: 0 0 14px var(--bgm-cyan-glow), 0 4px 12px rgba(0, 0, 0, 0.7);
+  animation: bgmVinylSpin 3s linear infinite;
   animation-play-state: paused;
 }
 
@@ -763,25 +962,50 @@ html[data-theme="light"] #cyber-bgm-root {
 }
 
 @keyframes bgmVinylSpin {
+  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
 .bgm-q-info {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
 }
 
 .bgm-q-name {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--bgm-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.bgm-q-name span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bgm-q-cat-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--bgm-cyan);
+  flex: 0 0 auto;
+  line-height: 1.2;
 }
 
 .bgm-q-sub {
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   color: var(--bgm-dim);
   white-space: nowrap;
   overflow: hidden;
@@ -825,6 +1049,28 @@ html[data-theme="light"] #cyber-bgm-root {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.72rem;
   color: var(--bgm-dim);
+}
+
+/* Light Mode Overrides for Category System */
+html[data-theme="light"] .bgm-cat-tab {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .bgm-cat-tab:hover {
+  background: rgba(0, 137, 169, 0.08);
+  border-color: rgba(0, 137, 169, 0.25);
+}
+
+html[data-theme="light"] .bgm-cat-tab.active {
+  background: linear-gradient(135deg, rgba(0, 137, 169, 0.15), rgba(37, 99, 235, 0.12));
+  border-color: var(--bgm-cyan);
+  color: var(--bgm-cyan);
+}
+
+html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
+  background: rgba(0, 137, 169, 0.2);
+  color: #0A1822;
 }
 
 /* ── 4. RESPONSIVE MOBILE & TABLET ── */
