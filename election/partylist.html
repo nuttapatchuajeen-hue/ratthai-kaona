@@ -231,7 +231,7 @@ mdSyncToggle();
   </footer>
 </div>
 
-<script>window.PHOTOS={"นายวรวงศ์ วรปัญญา":"นายวรวงศ์__วรปัญญา.jpg"};</script>
+<script src="index-photos.js"></script>
 <!-- ข้อมูลแยกตามปีเลือกตั้ง — year-switch.js ฉีด partylist-25xx.js (ห้ามใส่ defer/async) -->
 <script>window.EYEARSET='partylist';</script>
 <script src="year-switch.js"></script>
@@ -260,9 +260,30 @@ mdSyncToggle();
   const shortOf=c=>(PM[c]&&PM[c].short)||c, thOf=c=>(PM[c]&&PM[c].th)||c, colorOf=c=>(PM[c]&&PM[c].color)||'#B9AFA4';
   const LEAD_VOWELS=/[เแโใไ]/;
   const firstLetter=s=>(LEAD_VOWELS.test(s.charAt(0))&&s.length>1)?s.charAt(1):s.charAt(0);
-  const initialOf=name=>{const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return firstLetter(t)||firstLetter(name.replace(/\s/g,''))||'•';};
+  const PREFIX_REGEX = /^(นางสาว|นาง|นาย|คุณหญิง|หม่อมหลวง|หม่อมราชวงศ์|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่ร้อยโท|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พลตำรวจเอก|พลตำรวจโท|พลตำรวจตรี|พันตำรวจเอก|พันตำรวจโท|พันตำรวจตรี|ร้อยตำรวจเอก|ร้อยตำรวจโท|ร้อยตำรวจตรี|พลเอก|พลโท|พลตรี|พันเอก|พันโท|พันตรี|ร้อยเอก|ร้อยโท|ร้อยตรี|นาวาเอก|นาวาโท|นาวาตรี|เรือเอก|เรือโท|เรือตรี|นาวาอากาศเอก|นาวาอากาศโท|นาวาอากาศตรี|รองศาสตราจารย์|ผู้ช่วยศาสตราจารย์|ศาสตราจารย์|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/;
+  const cleanName = s => (s || '').replace(PREFIX_REGEX, '').trim();
+  const initialOf=name=>{const t=cleanName(name);return firstLetter(t)||firstLetter(name.replace(/\s/g,''))||'•';};
   const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   
+  // Smart profile mapping (supports names with or without titles/prefixes)
+  const profCleanMap = {};
+  for (const k in PROF) {
+    const c = cleanName(k);
+    if (!profCleanMap[c]) profCleanMap[c] = PROF[k];
+  }
+  const getProf = name => PROF[name] || profCleanMap[cleanName(name)] || null;
+
+  // Smart photo mapping
+  const getPhoto = name => {
+    if (!window.PHOTOS) return null;
+    if (window.PHOTOS[name]) return window.PHOTOS[name];
+    const c = cleanName(name);
+    for (const k in window.PHOTOS) {
+      if (cleanName(k) === c) return window.PHOTOS[k];
+    }
+    return null;
+  };
+
   const lParty=document.getElementById('l-party'),lSearch=document.getElementById('l-search'),lGrid=document.getElementById('l-grid');
   const plTbody=document.getElementById('plTbody'), plCount=document.getElementById('plCount');
   const gridEl=document.getElementById('l-grid'), tableWrapEl=document.getElementById('plTableWrap');
@@ -280,13 +301,16 @@ mdSyncToggle();
   function renderGrid(q, fc){
     const cards=order.filter(c=>!fc||c===fc).map(code=>{
       const items=byParty[code];
-      const matchItems = q ? items.filter(r=>r.name.toLowerCase().includes(q) || (PROF[r.name] && PROF[r.name].r && PROF[r.name].r.toLowerCase().includes(q))) : items;
+      const matchItems = q ? items.filter(r=>{
+        const p = getProf(r.name);
+        return r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)) || (p && p.x && p.x.toLowerCase().includes(q));
+      }) : items;
       if(q && !matchItems.length) return '';
       const col=colorOf(code), lis=items.map(r=>{
-        const ph=window.PHOTOS&&window.PHOTOS[r.name];
+        const ph=getPhoto(r.name);
         const av=ph?`<span class="plav"><img src="photos/${encodeURIComponent(ph)}" alt="" loading="lazy"></span>`:`<span class="plav" style="background:${col}">${initialOf(r.name)}</span>`;
-        const p=PROF[r.name], role=p&&p.r?`<span class="pl-role-mini">${esc(p.r)}</span>`:'';
-        const isMatch = q && (r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)));
+        const p=getProf(r.name), role=p&&p.r?`<span class="pl-role-mini">${esc(p.r)}</span>`:'';
+        const isMatch = q && (r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)) || (p && p.x && p.x.toLowerCase().includes(q)));
         const cls=['pl-row'];if(isMatch)cls.push('hl');if(p)cls.push('has-bio');
         return `<li class="${cls.join(' ')}" data-name="${esc(r.name)}" tabindex="${p?'0':'-1'}"><span class="o">${r.no}</span>${av}<span class="pl-nmwrap"><span class="pl-nm">${r.name}</span>${role}</span>${p?chev:''}</li>`;
       }).join('');
@@ -301,8 +325,8 @@ mdSyncToggle();
     order.forEach(code=>{
       if(fc && code !== fc) return;
       byParty[code].forEach(r=>{
-        const p = PROF[r.name];
-        const match = !q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q));
+        const p = getProf(r.name);
+        const match = !q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)) || (p && p.x && p.x.toLowerCase().includes(q));
         if(match){
           allFiltered.push({ ...r, overallIdx: overallIdx++, p, col: colorOf(code), partyTh: thOf(code), partyShort: shortOf(code) });
         }
@@ -315,7 +339,7 @@ mdSyncToggle();
     }
 
     plTbody.innerHTML = allFiltered.map(r=>{
-      const ph=window.PHOTOS&&window.PHOTOS[r.name];
+      const ph=getPhoto(r.name);
       const av=ph?`<span class="plav"><img src="photos/${encodeURIComponent(ph)}" alt="" loading="lazy"></span>`:`<span class="plav" style="background:${r.col}">${initialOf(r.name)}</span>`;
       const desc = r.p && r.p.r ? esc(r.p.r) : (r.p && r.p.x ? esc(r.p.x) : '—');
       return `<tr class="pl-table-row" data-name="${esc(r.name)}" tabindex="0" role="button" aria-label="ดูประวัติ ${esc(r.name)}">
@@ -348,8 +372,8 @@ mdSyncToggle();
     // Count matches
     let count = 0;
     listRecs.forEach(r=>{
-      const p = PROF[r.name];
-      if((!fc || r.code===fc) && (!q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)))) count++;
+      const p = getProf(r.name);
+      if((!fc || r.code===fc) && (!q || r.name.toLowerCase().includes(q) || (p && p.r && p.r.toLowerCase().includes(q)) || (p && p.x && p.x.toLowerCase().includes(q)))) count++;
     });
     plCount.innerHTML = count === listRecs.length ? `แสดงทั้งหมด <b>${count}</b> รายชื่อ` : `พบ <b>${count}</b> รายชื่อ จากทั้งหมด ${listRecs.length} คน`;
 
@@ -374,15 +398,15 @@ mdSyncToggle();
   /* ---- แผงรายละเอียด (คลิกการ์ดหรือแถวตาราง) ---- */
   const modal=document.getElementById('pl-modal');
   function openProfile(name){
-    const r=recByName[name], p=PROF[name]||{};
+    const r=recByName[name], p=getProf(name)||{};
     if(!r)return;
-    const col=colorOf(r.code), ph=window.PHOTOS&&window.PHOTOS[name];
+    const col=colorOf(r.code), ph=getPhoto(name);
     document.getElementById('plm-av').innerHTML=ph?`<img src="photos/${encodeURIComponent(ph)}" alt="">`:`<span class="plm-ini" style="background:${col}">${initialOf(name)}</span>`;
     const pt=document.getElementById('plm-party');
-    pt.innerHTML=`<span class="sw" style="background:${col}"></span>${esc(thOf(r.code))} · บัญชีรายชื่ออันดับ ${r.no}`;
+    pt.innerHTML=`<span class="sw" style="background:${col}"></span>${esc(thOf(r.code))} · ${(window.EYLIST||'บัญชีรายชื่อ')}อันดับ ${r.no}`;
     pt.style.background=col;
     document.getElementById('plm-name').textContent=name;
-    document.getElementById('plm-role').textContent=p.r||'ว่าที่สมาชิกสภาผู้แทนราษฎร แบบบัญชีรายชื่อ';
+    document.getElementById('plm-role').textContent=p.r||((window.EYMP||'ส.ส.')+' '+(window.EYLIST||'แบบบัญชีรายชื่อ'));
     const rows=[];
     if(p.b)rows.push(['เกิด','พ.ศ. '+esc(p.b)]);
     if(p.e)rows.push(['การศึกษา',esc(p.e)]);
