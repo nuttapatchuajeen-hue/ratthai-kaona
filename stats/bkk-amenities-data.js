@@ -85,7 +85,7 @@ window.BKK_INTELLIGENCE = {
   petFriendly: {
     vet: [
       { id: "pet-v1", name: "โรงพยาบาลสัตว์ทองหล่อ (Thonglor Pet Hospital 24h)", cat: "vet", catLabel: "Vet & Emergency", ico: "🩺", coords: [100.5820, 13.7420], height: 0, phone: "02-079-9999", hours: "24 Hours Emergency" },
-      { id: "pet-v2", name: "โรงพยาบาลสัตว์เล็ก จุฬาลงกรณ์มหาวิทยาลัย (Chula Small Animal)", cat: "vet", catLabel: "Vet & Emergency", ico: "🩺", coords: [100.5315, 13.7425], height: 0, phone: "02-218-9715", hours: "Specialist & 24h Trauma" },
+      { id: "pet-v2", name: "โรงพยาบาลสัตว์เล็ก จุฬาลงกรณ์มหาวิทยาลัย (Chula Small Animal)", cat: "vet", catLabel: "Vet & Emergency", ico: "🩺", coords: [100.5342, 13.7408], height: 0, phone: "02-218-9715", hours: "Specialist & 24h Trauma" },
       { id: "pet-v3", name: "โรงพยาบาลสัตว์พระราม 9 (Praram 9 Pet Hospital)", cat: "vet", catLabel: "Vet & Emergency", ico: "🩺", coords: [100.5750, 13.7540], height: 0, phone: "02-719-7555", hours: "24 Hours Care" },
       { id: "pet-v4", name: "โรงพยาบาลสัตว์ มหาวิทยาลัยเกษตรศาสตร์ บางเขน", cat: "vet", catLabel: "Vet & Emergency", ico: "🩺", coords: [100.5720, 13.8480], height: 0, phone: "02-797-1900", hours: "Tertiary Referral Care" }
     ],

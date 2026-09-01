@@ -1173,15 +1173,8 @@
     border-radius: 6px;
   }
 
-  /* POI Floating Map Markers */
+  /* POI Floating Map Markers (maplibregl.Marker synchronized) */
   .poi-intel-marker {
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: auto;
-    user-select: none;
-    will-change: transform;
-    transform-origin: bottom center;
     cursor: pointer;
     padding: 4px 10px;
     border-radius: 20px;
@@ -1195,10 +1188,12 @@
     color: #FFFFFF;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     white-space: nowrap;
-    z-index: 15;
-    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+    user-select: none;
+    pointer-events: auto;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   }
   .poi-intel-marker:hover {
+    transform: scale(1.08);
     z-index: 120;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   }
@@ -2874,52 +2869,64 @@
     });
   }
 
-  /* 💎 Create & Manage Lifestyle & Intelligence POI Markers */
+  /* 💎 Create & Manage Lifestyle & Intelligence POI Markers (GPU-locked maplibregl.Marker) */
   function createIntelPOIMarkers() {
-    var container = $("#poiContainer");
-    if (!container || !window.BKK_INTELLIGENCE) return;
+    if (!STATE.map || !window.BKK_INTELLIGENCE) return;
 
     if (STATE.intelMarkers && STATE.intelMarkers.length) {
       STATE.intelMarkers.forEach(function(m) {
-        if (m.el && m.el.parentNode) m.el.parentNode.removeChild(m.el);
+        if (m.marker) m.marker.remove();
       });
     }
     STATE.intelMarkers = [];
 
     var I = window.BKK_INTELLIGENCE;
 
+    function addIntelMarker(data, coords, layer, sub) {
+      var el = document.createElement("div");
+      var cls = "poi-intel-marker marker-" + (layer === "embassies" ? "embassy" : layer === "corporate" ? "corp" : layer === "flooding" ? "flood" : (sub === "education" ? "edu" : sub === "parks" ? "park" : (sub || layer)));
+      el.className = cls;
+
+      var icon = data.countryIco || data.brandIco || data.ico || (layer === "flooding" ? "🌊" : "📍");
+      var badge = (data.roles ? ' <span class="chip-badge" style="background:#0284C7;color:#fff;">' + (data.roles.split(" ")[0]) + ' jobs</span>' : "");
+      var label = (data.company || data.name || "").split("(")[0].trim();
+
+      el.innerHTML = '<span>' + icon + '</span><span>' + label + '</span>' + badge;
+
+      el.addEventListener("click", function(e) {
+        e.stopPropagation();
+        STATE.map.flyTo({ center: coords, zoom: 16.5, pitch: 50, duration: 1500 });
+      });
+
+      var marker = new maplibregl.Marker({
+        element: el,
+        anchor: "bottom"
+      })
+      .setLngLat(coords)
+      .addTo(STATE.map);
+
+      STATE.intelMarkers.push({
+        data: data,
+        coords: coords,
+        layer: layer,
+        sub: sub,
+        marker: marker,
+        el: el
+      });
+    }
+
     // 1. Embassies
     if (I.embassies) {
       I.embassies.forEach(function(emb) {
-        var el = document.createElement("div");
-        el.className = "poi-intel-marker marker-embassy";
-        el.setAttribute("data-layer", "embassies");
-        el.innerHTML = '<span>' + emb.countryIco + '</span><span>' + emb.name.split("(")[0].trim() + '</span>';
-        el.addEventListener("click", function(e) {
-          e.stopPropagation();
-          STATE.map.flyTo({ center: emb.coords, zoom: 16.5, pitch: 50, duration: 1500 });
-        });
-        container.appendChild(el);
-        STATE.intelMarkers.push({ data: emb, coords: emb.coords, layer: "embassies", el: el });
+        addIntelMarker(emb, emb.coords, "embassies");
       });
     }
 
     // 2. Amenities (7 Categories)
     if (I.amenities) {
       for (var cat in I.amenities) {
-        var list = I.amenities[cat];
-        list.forEach(function(item) {
-          var el = document.createElement("div");
-          el.className = "poi-intel-marker marker-" + (cat === "education" ? "edu" : cat === "parks" ? "park" : cat);
-          el.setAttribute("data-layer", "amenities");
-          el.setAttribute("data-sub", cat);
-          el.innerHTML = '<span>' + (item.ico || "📍") + '</span><span>' + item.name.split("(")[0].trim() + '</span>';
-          el.addEventListener("click", function(e) {
-            e.stopPropagation();
-            STATE.map.flyTo({ center: item.coords, zoom: 16.5, pitch: 50, duration: 1500 });
-          });
-          container.appendChild(el);
-          STATE.intelMarkers.push({ data: item, coords: item.coords, layer: "amenities", sub: cat, el: el });
+        I.amenities[cat].forEach(function(item) {
+          addIntelMarker(item, item.coords, "amenities", cat);
         });
       }
     }
@@ -2927,19 +2934,8 @@
     // 3. Pet-Friendly (4 Categories)
     if (I.petFriendly) {
       for (var pcat in I.petFriendly) {
-        var plist = I.petFriendly[pcat];
-        plist.forEach(function(item) {
-          var el = document.createElement("div");
-          el.className = "poi-intel-marker marker-pet";
-          el.setAttribute("data-layer", "petFriendly");
-          el.setAttribute("data-petsub", pcat);
-          el.innerHTML = '<span>' + (item.ico || "🐾") + '</span><span>' + item.name.split("(")[0].trim() + '</span>';
-          el.addEventListener("click", function(e) {
-            e.stopPropagation();
-            STATE.map.flyTo({ center: item.coords, zoom: 16.5, pitch: 50, duration: 1500 });
-          });
-          container.appendChild(el);
-          STATE.intelMarkers.push({ data: item, coords: item.coords, layer: "petFriendly", sub: pcat, el: el });
+        I.petFriendly[pcat].forEach(function(item) {
+          addIntelMarker(item, item.coords, "petFriendly", pcat);
         });
       }
     }
@@ -2947,32 +2943,14 @@
     // 4. Corporate & Tech Hubs
     if (I.corporate) {
       I.corporate.forEach(function(corp) {
-        var el = document.createElement("div");
-        el.className = "poi-intel-marker marker-corp";
-        el.setAttribute("data-layer", "corporate");
-        el.innerHTML = '<span>' + (corp.brandIco || "💼") + '</span><span>' + corp.company + '</span> <span class="chip-badge" style="background:#0284C7;color:#fff;">' + (corp.roles.split(" ")[0]) + ' jobs</span>';
-        el.addEventListener("click", function(e) {
-          e.stopPropagation();
-          STATE.map.flyTo({ center: corp.coords, zoom: 16.5, pitch: 50, duration: 1500 });
-        });
-        container.appendChild(el);
-        STATE.intelMarkers.push({ data: corp, coords: corp.coords, layer: "corporate", el: el });
+        addIntelMarker(corp, corp.coords, "corporate");
       });
     }
 
     // 5. Flood Surveillance Points
     if (I.floodZones) {
       I.floodZones.forEach(function(fz) {
-        var el = document.createElement("div");
-        el.className = "poi-intel-marker marker-flood";
-        el.setAttribute("data-layer", "flooding");
-        el.innerHTML = '<span>🌊</span><span>' + fz.name.split("(")[0].trim() + '</span>';
-        el.addEventListener("click", function(e) {
-          e.stopPropagation();
-          STATE.map.flyTo({ center: fz.coords, zoom: 15.5, pitch: 45, duration: 1500 });
-        });
-        container.appendChild(el);
-        STATE.intelMarkers.push({ data: fz, coords: fz.coords, layer: "flooding", el: el });
+        addIntelMarker(fz, fz.coords, "flooding");
       });
     }
 
@@ -2983,7 +2961,6 @@
     if (!STATE.map || !STATE.ready || !STATE.intelMarkers || !STATE.intelMarkers.length) return;
 
     var zoom = STATE.map.getZoom();
-    var pitch = STATE.map.getPitch();
 
     STATE.intelMarkers.forEach(function(m) {
       var isVisible = true;
@@ -3001,22 +2978,7 @@
 
       if (zoom < 12.0) isVisible = false;
 
-      if (!isVisible) {
-        m.el.style.display = "none";
-        return;
-      }
-
-      m.el.style.display = "inline-flex";
-      var pos = STATE.map.project(m.coords);
-
-      var metersPerPixel = (156543.03392 * Math.cos(m.coords[1] * Math.PI / 180)) / Math.pow(2, zoom);
-      var bldgH = (m.data && m.data.height) ? m.data.height : 0;
-      var heightPx = (bldgH / (metersPerPixel || 1)) * Math.sin(pitch * Math.PI / 180) * 0.76;
-
-      var x = pos.x;
-      var y = pos.y - heightPx;
-
-      m.el.style.transform = "translate3d(" + Math.round(x) + "px, " + Math.round(y) + "px, 0) translate(-50%, -100%)";
+      m.el.style.display = isVisible ? "inline-flex" : "none";
     });
   }
 
