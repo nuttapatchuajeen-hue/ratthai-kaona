@@ -1175,25 +1175,32 @@
 
   /* POI Floating Map Markers */
   .poi-intel-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: auto;
+    user-select: none;
+    will-change: transform;
+    transform-origin: bottom center;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    background: rgba(15, 23, 42, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.94);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
     color: #FFFFFF;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     white-space: nowrap;
+    z-index: 15;
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
   }
   .poi-intel-marker:hover {
-    transform: scale(1.12) translateY(-2px);
-    z-index: 100;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    z-index: 120;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   }
   .marker-embassy { border-color: #38BDF8; color: #E0F2FE; }
   .marker-park { border-color: #22C55E; color: #DCFCE7; }
@@ -2976,6 +2983,7 @@
     if (!STATE.map || !STATE.ready || !STATE.intelMarkers || !STATE.intelMarkers.length) return;
 
     var zoom = STATE.map.getZoom();
+    var pitch = STATE.map.getPitch();
 
     STATE.intelMarkers.forEach(function(m) {
       var isVisible = true;
@@ -3000,7 +3008,15 @@
 
       m.el.style.display = "inline-flex";
       var pos = STATE.map.project(m.coords);
-      m.el.style.transform = "translate3d(" + Math.round(pos.x) + "px, " + Math.round(pos.y) + "px, 0) translate(-50%, -50%)";
+
+      var metersPerPixel = (156543.03392 * Math.cos(m.coords[1] * Math.PI / 180)) / Math.pow(2, zoom);
+      var bldgH = (m.data && m.data.height) ? m.data.height : 0;
+      var heightPx = (bldgH / (metersPerPixel || 1)) * Math.sin(pitch * Math.PI / 180) * 0.76;
+
+      var x = pos.x;
+      var y = pos.y - heightPx;
+
+      m.el.style.transform = "translate3d(" + Math.round(x) + "px, " + Math.round(y) + "px, 0) translate(-50%, -100%)";
     });
   }
 
