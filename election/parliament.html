@@ -186,8 +186,88 @@ html[data-theme="dark"] .rcard.note .rno{color:#8FA8FF}
 
 .pfoot{margin-top:22px;font-size:.72rem;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
 .pfoot a{color:var(--orange-deep);text-decoration:underline}
+
+/* ===== โหมดจำลองจัดตั้งรัฐบาล (ผู้ใช้จับขั้วเอง → ผังจัดที่นั่งใหม่ตามข้อ ๗) ===== */
+:root{--sim-ok:#1D9A6C;--sim-ok-soft:rgba(29,154,108,.11);--sim-gold:#C9A84C;--sim-gold-ink:#8a6d22}
+html[data-theme="dark"]{--sim-ok:#31D8A0;--sim-ok-soft:rgba(49,216,160,.13);--sim-gold-ink:#E0C77A}
+.simcard{grid-column:1;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:15px 17px 16px}
+@media(max-width:980px){.chamber{order:1}.simcard{order:2}.pside{order:3}}
+.sim-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sim-head .st{font-family:'Kanit';font-weight:600;font-size:1.02rem;display:flex;align-items:center;gap:8px}
+.sim-head .st svg{color:var(--sim-gold);flex:0 0 auto}
+.simbtn{margin-left:auto;font-family:'Kanit';font-weight:500;font-size:.82rem;border:1px solid var(--line-2);
+  background:var(--paper);color:var(--ink-2);border-radius:999px;padding:7px 16px;cursor:pointer;transition:.14s;white-space:nowrap}
+.simbtn:hover{border-color:var(--orange);color:var(--orange-deep);background:var(--orange-soft)}
+.simbtn.on{background:var(--sim-gold);border-color:#A8842E;color:#3A2C08;font-weight:600}
+.sim-sub{font-size:.78rem;color:var(--muted);line-height:1.65;margin:4px 0 0}
+.sim-body{margin-top:14px}
+.sim-body.off{opacity:.55}
+
+/* มาตรวัดเสียงในสภา */
+.gauge{position:relative;margin:2px 0 46px}
+.gbar{display:flex;height:28px;border-radius:10px;overflow:hidden;background:var(--wash);border:1px solid var(--line-2)}
+.gseg{height:100%;min-width:0;transition:width .3s ease}
+.gseg+.gseg{box-shadow:inset 1px 0 0 rgba(255,255,255,.45)}
+.gmark{position:absolute;top:-6px;height:40px;width:0;border-left:2px dashed var(--line-2)}
+.gmark.lo{height:58px}                                   /* เหลื่อมบรรทัด กันป้ายชนกันบนจอแคบ */
+.gmark b{position:absolute;top:100%;left:0;transform:translateX(-50%);font-family:'Kanit';font-weight:500;font-size:.66rem;
+  color:var(--muted);white-space:nowrap;background:var(--card);padding:0 5px}
+.gmark.key{border-left:2px solid var(--sim-gold)}
+.gmark.key b{color:var(--sim-gold-ink);font-weight:600}
+
+/* แถบสรุปเสียง */
+.simstat{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:0 0 13px}
+.spill{display:inline-flex;align-items:center;gap:8px;font-family:'Kanit';font-weight:500;font-size:.84rem;
+  border-radius:999px;padding:6px 15px;border:1px solid var(--line);background:var(--wash);color:var(--ink-2)}
+.spill .n{font-family:'Kanit';font-weight:700;font-size:1.12rem;color:var(--ink)}
+.spill.ok{border-color:var(--sim-ok);background:var(--sim-ok-soft);color:var(--sim-ok)}
+.spill.ok .n{color:var(--sim-ok)}
+.spill.warn{border-color:var(--orange-line);background:var(--orange-soft);color:var(--orange-deep)}
+.spill.warn .n{color:var(--orange-deep)}
+
+/* การ์ดแกนนำ / ฝ่ายค้าน */
+.simppl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}
+@media(max-width:620px){.simppl{grid-template-columns:1fr}}
+.pcx{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:14px;padding:9px 12px;background:var(--paper);min-width:0}
+.pcx img,.pcx .av{width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:top;flex:0 0 auto;background:var(--wash)}
+.pcx .av{display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:1.15rem}
+.pcx .tx{min-width:0}
+.pcx .r{font-size:.67rem;color:var(--muted);line-height:1.3}
+.pcx .n{font-family:'Kanit';font-weight:600;font-size:.92rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcx .p{font-size:.71rem;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:1px}
+.pcx .p .sw{width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.pcx.gold{border-color:var(--sim-gold);background:rgba(201,168,76,.08)}
+.pcx.gold img,.pcx.gold .av{box-shadow:0 0 0 2px var(--paper),0 0 0 3.5px var(--sim-gold)}
+
+/* ชิปพรรค — กดสลับเข้า/ออกขั้วรัฐบาล */
+.simlab{font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--muted);margin:0 0 7px;display:flex;align-items:center;gap:7px}
+.simparties{display:flex;flex-wrap:wrap;gap:7px}
+.pchip{display:inline-flex;align-items:center;gap:8px;font-family:'Kanit';font-weight:500;font-size:.82rem;color:var(--ink-2);
+  background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;transition:.13s;-webkit-tap-highlight-color:transparent}
+.pchip .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto;transition:.13s}
+.pchip b{font-family:'Kanit';font-weight:700;color:var(--ink)}
+.pchip:hover{border-color:var(--orange-line);background:var(--orange-soft);transform:translateY(-1px)}
+.pchip.on{border-color:var(--sim-gold);background:rgba(201,168,76,.13);color:var(--ink)}
+.pchip.on .sw{box-shadow:0 0 0 3px rgba(201,168,76,.3)}
+.pchip .tk{width:0;overflow:hidden;color:var(--sim-gold-ink);transition:.13s;display:grid;place-items:center}
+.pchip.on .tk{width:14px}
+
+/* ปุ่มลัด + หมายเหตุ */
+.simact{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.simact button{font-family:'Kanit';font-weight:500;font-size:.8rem;border:1px solid var(--line-2);background:var(--paper);
+  color:var(--ink-2);border-radius:10px;padding:7px 14px;cursor:pointer;transition:.13s}
+.simact button:hover{border-color:var(--orange);color:var(--orange-deep);background:var(--orange-soft)}
+.simnote{font-size:.71rem;color:var(--muted);line-height:1.7;margin-top:11px}
+.simnote b{color:var(--ink-2)}
+
+/* เส้นโยงขั้วรัฐบาลกลางห้อง (edge bundling) */
+#bundleG path{fill:none;stroke-linecap:round}
+#bundleG circle.bn{stroke:var(--card);stroke-width:1.1}   /* จุดพรรค — ไม่รวมดุมกลาง (ดุมกำหนดสีเองใน JS) */
+#bundleG text{font-family:'Kanit';font-weight:600;font-size:10px;text-anchor:middle;pointer-events:none}
 </style>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
+<script src="../js/disclaimer.js"></script>
 </head>
 <body>
 <!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
@@ -276,6 +356,7 @@ mdSyncToggle();
           </radialGradient>
         </defs>
         <g id="bgG"></g>
+        <g id="bundleG"></g>
         <g id="seatsG"></g>
         <g id="daisG"></g>
       </svg>
@@ -304,6 +385,43 @@ mdSyncToggle();
         <div id="detailBody"><div class="mempty">แตะ/คลิกที่นั่งในผัง เพื่อดูข้อมูลสมาชิกรายคน หรือกดที่ <b>บัลลังก์ประธาน · ที่นั่งนายกฯ · ครม.</b> ด้านล่างของผังเพื่อดูหน้าที่ของแต่ละตำแหน่ง</div></div>
       </div>
     </aside>
+
+    <!-- โหมดจำลองจัดตั้งรัฐบาล (เฉพาะมุมมอง ส.ส. 500) -->
+    <section class="simcard" id="simCard">
+      <div class="sim-head">
+        <div class="st">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5"/></svg>
+          ลองจัดตั้งรัฐบาลเอง
+        </div>
+        <button class="simbtn" id="simBtn" type="button">เปิดโหมดจำลอง</button>
+      </div>
+      <div class="sim-sub">แตะชื่อพรรคเพื่อดึงเข้า/ออก <b>ขั้วรัฐบาล</b> — ผังที่นั่งด้านบนจะจัดใหม่ทันทีตาม<b>ข้อ ๗</b> (พรรคร่วมรัฐบาลนั่งขวามือประธาน · ฝ่ายค้านนั่งซ้ายมือ) พร้อมเส้นโยงขั้วกลางห้องประชุม</div>
+
+      <div class="sim-body off" id="simBody">
+        <div class="gauge">
+          <div class="gbar" id="gBar"></div>
+          <div class="gmark lo" style="left:20%"><b>100 · ยื่นซักฟอก (๑/๕)</b></div>
+          <div class="gmark key" style="left:50.2%"><b>251 · เสียงข้างมาก</b></div>
+        </div>
+        <div class="simstat" id="simStat"></div>
+        <div class="simppl" id="simPpl"></div>
+        <div class="simlab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          เลือกพรรคร่วมรัฐบาล (22 พรรค · เรียงตามจำนวน ส.ส.)
+        </div>
+        <div class="simparties" id="simParties"></div>
+        <div class="simact">
+          <button type="button" id="simAuto"><svg class="mdico"><use href="#i-zap"></use></svg> ไล่จากพรรคใหญ่สุดจนครบ 251</button>
+          <button type="button" id="simInvert">⇄ สลับขั้ว</button>
+          <button type="button" id="simClear">✕ ล้างทั้งหมด</button>
+        </div>
+        <div class="simnote">
+          <b>หมายเหตุ:</b> นี่คือแบบจำลองเพื่อการเรียนรู้จากผลเลือกตั้ง 2569 — ยังไม่ใช่การจัดตั้งรัฐบาลจริง ·
+          การโหวตเลือกนายกรัฐมนตรีใช้เสียง <b>ส.ส. เท่านั้น</b> (สว. ชุด 2567 ไม่มีสิทธิร่วมโหวตนายกฯ แล้ว) จึงต้องได้เกินกึ่งหนึ่งของ 500 คือ <b>251 เสียงขึ้นไป</b> ·
+          ชื่อที่แสดงเป็น<b>ผู้มีรายชื่อลำดับที่ ๑ ในบัญชีรายชื่อ</b>ของพรรค ซึ่งอาจไม่ใช่แคนดิเดตนายกฯ ของพรรคเสมอไป
+        </div>
+      </div>
+    </section>
   </div>
 
   <!-- รายละเอียดการจัดที่นั่ง (อิงผังจริง · อัปเดตตามมุมมองที่เลือก) -->
@@ -352,15 +470,13 @@ mdSyncToggle();
       <div class="rcard"><div class="rno">๓</div><p><b>คณะกรรมาธิการร่วมกันของรัฐสภา</b> (Joint Committee) — ตั้งขึ้นเมื่อร่างพระราชบัญญัติผ่านสภาผู้แทนราษฎรแล้ว แต่วุฒิสภามีการแก้ไขเพิ่มเติม ประกอบด้วยสมาชิกจาก<b>ทั้งสองสภาจำนวนเท่ากัน</b> เพื่อเจรจาหาข้อตกลงร่วมกัน</p></div>
       <div class="rcard"><div class="rno">๔</div><p><b>คณะกรรมาธิการของรัฐสภา</b> (Parliamentary Committee) — การรวมตัวของสมาชิกทั้งสองสภา เพื่อพิจารณาเรื่องที่มีผลกระทบต่อรัฐสภาโดยรวม เช่น การพิจารณากฎหมายประกอบรัฐธรรมนูญ</p></div>
       <div class="rcard"><div class="rno">๕</div><p><b>คณะกรรมาธิการเต็มสภา</b> (Committee of the Whole) — การประชุมสภาในวาระที่สอง โดยให้<b>สมาชิกทุกคนในสภา</b>เปลี่ยนสถานะเป็นกรรมาธิการ เพื่อพิจารณาร่างกฎหมายไปพร้อมกันทีละมาตรา</p></div>
-      <div class="rcard note"><div class="rno">🔗</div><p>ดูรายชื่อและผลงานแต่ละคณะได้ที่เว็บไซต์คณะกรรมาธิการ <a href="https://www.parliament.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">สภาผู้แทนราษฎร</a> และ <a href="https://www.senate.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">วุฒิสภา</a></p></div>
+      <div class="rcard note"><div class="rno"><svg class="mdico"><use href="#i-link"></use></svg></div><p>ดูรายชื่อและผลงานแต่ละคณะได้ที่เว็บไซต์คณะกรรมาธิการ <a href="https://www.parliament.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">สภาผู้แทนราษฎร</a> และ <a href="https://www.senate.go.th" target="_blank" rel="noopener" style="color:var(--orange-deep);text-decoration:underline">วุฒิสภา</a></p></div>
     </div>
   </section>
 
   <div class="pfoot">
-    ภาพถ่าย ส.ส.: สำนักงานเลขาธิการสภาผู้แทนราษฎร · <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a>
-    &nbsp;·&nbsp; ภาพถ่าย สว.: สำนักงานเลขาธิการวุฒิสภา · <a href="https://www.senate.go.th" target="_blank" rel="noopener">senate.go.th</a><br>
     ผังที่นั่งเป็นแผนภาพอย่างง่ายเพื่อการเรียนรู้ — จำนวนแถว/ตำแหน่งที่นั่งจริงในห้องประชุมสุริยันอาจแตกต่างจากแผนภาพนี้ ·
-    ส.ส. ชุดนี้เป็น <b>ว่าที่ ส.ส.</b> จากผลการเลือกตั้ง 2569 (ยังไม่จัดตั้งรัฐบาล จึงเรียงที่นั่งตามขนาดพรรคแทนการแบ่งฝ่ายรัฐบาล/ฝ่ายค้าน)
+    <span data-year-only="2569">ส.ส. ชุดนี้เป็น <b>ว่าที่ ส.ส.</b> จากผลการเลือกตั้ง 2569 (ยังไม่จัดตั้งรัฐบาล จึงเรียงที่นั่งตามขนาดพรรคแทนการแบ่งฝ่ายรัฐบาล/ฝ่ายค้าน)</span>
   </div>
 </div>
 
@@ -368,10 +484,24 @@ mdSyncToggle();
 
 <div class="ptip" id="ptip"></div>
 
-<script src="parliament-data.js"></script>
+<!-- ข้อมูลแยกตามปีเลือกตั้ง — year-switch.js ฉีด parliament-25xx.js (ห้ามใส่ defer/async) -->
+<script>window.EYEARSET='parliament';</script>
+<script src="year-switch.js"></script>
 <script>
 'use strict';
 const D = window.PDATA, PM = D.partyMeta;
+// ปีย้อนหลังมีเฉพาะ ส.ส. — ยังไม่มีรายชื่อ สว. ของสมัยนั้น จึงเปิดเฉพาะมุมมอง ส.ส. 500
+const EY = window.EYEAR || 2569, HAS_SENATE = !!(D.senators && D.senators.length);
+if(!HAS_SENATE) ['tab-sv','tab-joint','tab-cmt'].forEach(id => {
+  const b = document.getElementById(id); if(b) b.style.display = 'none';
+});
+// ปีเก่า (ก่อน 2539): มีรายชื่อ ส.ส. + แผนที่แล้ว แต่ยังเป็นระบบแบ่งเขตล้วน ไม่มี สว./บัญชีรายชื่อ/จำลอง ครม.
+const OLD = EY < 2539;
+// NONAMES = เผื่อปีที่ยังไม่มีรายชื่อรายบุคคล (ปัจจุบันทุกปีมีชื่อแล้ว → ปกติ false)
+const NONAMES = !!(D.zone && D.zone.length && D.zone.every(r => !r.name));
+if(NONAMES){
+  const _ps = document.querySelector('.psearchbox'); if(_ps) _ps.style.display = 'none';   // ค้นหาชื่อไม่ได้
+}
 const colorOf = c => (PM[c] && PM[c].color) || '#B9AFA4';
 const shortOf = c => (PM[c] && PM[c].short) || c;
 const SV_COLOR_LIGHT = '#9AA3AE', SV_COLOR_DARK = '#6B7480';
@@ -383,11 +513,18 @@ const pad3 = n => String(n).padStart(3, '0');
 /* ── สมาชิก ── */
 // strip คำนำหน้า เพื่อหาอักษรย่อ avatar
 const TITLES = ['ว่าที่ร้อยตรีหญิง','ว่าที่ร้อยตรี','ว่าที่ร้อยโท','ว่าที่ร้อยเอก','ว่าที่พันตรี','พลตำรวจเอก','พลตำรวจโท','พลตำรวจตรี','พันตำรวจเอก','พันตำรวจโท','พันตำรวจตรี','ร้อยตำรวจเอก','ร้อยตำรวจโท','พลอากาศเอก','พลอากาศโท','พลอากาศตรี','พลเรือเอก','พลเรือโท','พลเรือตรี','พลเอก','พลโท','พลตรี','พันเอก','พันโท','พันตรี','ร้อยเอก','ร้อยโท','ร้อยตรี','เรืออากาศเอก','เรืออากาศโท','นาวาอากาศเอก','นาวาอากาศโท','นาวาเอก','นาวาโท','นาวาตรี','เรือเอก','เรือโท','เรือตรี','จ่าสิบเอก','จ่าสิบโท','จ่าเอก','จ่าโท','สิบเอก','สิบโท','สิบตรี','รองศาสตราจารย์','ผู้ช่วยศาสตราจารย์','ศาสตราจารย์','นายแพทย์','แพทย์หญิง','ทันตแพทย์หญิง','ทันตแพทย์','เภสัชกรหญิง','เภสัชกร','หม่อมราชวงศ์','หม่อมหลวง','คุณหญิง','ท่านผู้หญิง','นางสาว','นาง','นาย','ดร.'];
+/* สระนำหน้า (เ แ โ ใ ไ) เขียนก่อนพยัญชนะต้น — ถ้าหยิบตัวแรกดื้อ ๆ จะได้สระไม่ใช่ชื่อ
+   เช่น "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
+const LEAD_VOWELS = /[เแโใไ]/;
+function firstLetter(s){
+  const c = s.charAt(0);
+  return (LEAD_VOWELS.test(c) && s.length > 1) ? s.charAt(1) : c;
+}
 function initialOf(name){
   let s = name.trim();
   for(const t of TITLES){ if(s.startsWith(t)){ s = s.slice(t.length); break; } }
   s = s.trim();
-  return s.charAt(0) || 'ส';
+  return firstLetter(s) || 'ส';
 }
 
 // ส.ส. 500: จัดพรรคแบบ "ลิ่ม" จากริมสองข้างเข้าหากลาง (พรรคใหญ่สุดขวาสุด · ใหญ่อันดับสองซ้ายสุด — แบบเดียวกับแผนภาพผลเลือกตั้ง)
@@ -441,9 +578,171 @@ const OFFICERS = {
     { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', note:'หัวหน้าพรรคประชาชน — ได้รับการโปรดเกล้าฯ แต่งตั้งอย่างเป็นทางการให้ทำหน้าที่ผู้นำฝ่ายค้าน นำการตรวจสอบการทำงานของรัฐบาลในสภา', ref:findMP('ณัฐพงษ์ เรืองปัญญาวุฒิ') }
   ]
 };
+/* ผู้ดำรงตำแหน่งของสภาชุดปีย้อนหลัง — เอา "คนแรกของสภาชุดนั้น"
+   (ที่มา: วิกิพีเดีย สภาผู้แทนราษฎรไทย ชุดที่ 26 / 25 หัวข้อผู้ดำรงตำแหน่ง)
+   ไม่ใส่ผู้นำฝ่ายค้าน เพราะเปลี่ยนตัวหลายรอบระหว่างสมัย */
+const OFFICERS_PAST = {
+  2566: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'วันมูหะมัดนอร์ มะทา', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'ปดิพัทธ์ สันติภาดา' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'พิเชษฐ์ เชื้อเมืองพาน' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'พรเพชร วิชิตชลชัย', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'สิงห์ศึก สิงห์ไพร' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'ศุภชัย สมเจริญ' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'วันมูหะมัดนอร์ มะทา', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'พรเพชร วิชิตชลชัย', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' }
+    ]
+  },
+  2562: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'ชวน หลีกภัย', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'สุชาติ ตันเจริญ' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'ศุภชัย โพธิ์สุ' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'สมพงษ์ อมรวิวัฒน์', note:'หัวหน้าพรรคเพื่อไทย' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'พรเพชร วิชิตชลชัย', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'สิงห์ศึก สิงห์ไพร' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'ศุภชัย สมเจริญ' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'ชวน หลีกภัย', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'พรเพชร วิชิตชลชัย', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'สมพงษ์ อมรวิวัฒน์', note:'หัวหน้าพรรคเพื่อไทย' }
+    ]
+  },
+  2554: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'สมศักดิ์ เกียรติสุรนนท์', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'เจริญ จรรย์โกมล' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'วิสุทธิ์ ไชยณรุณ' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'ธีรเดช มีเพียร', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'นิคม ไวยรัชพานิช' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'พรทิพย์ โล่ห์วีระ' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'สมศักดิ์ เกียรติสุรนนท์', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'ธีรเดช มีเพียร', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ]
+  },
+  2550: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'ยงยุทธ ติยะไพรัช', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'สมศักดิ์ เกียรติสุรนนท์' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'อภิวันท์ วิริยะชัย' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'ประสพสุข บุญเดช', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'นิคม ไวยรัชพานิช' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'ทัศนา บุญทอง' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'ยงยุทธ ติยะไพรัช', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'ประสพสุข บุญเดช', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ]
+  },
+  2548: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'โภคิน พลกุล', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'สุชาติ ตันเจริญ' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'ลลิตา ฤกษ์สำราญ' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'สุชน ชาลีเครือ', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'นิพนธ์ วิสิษฐประเสริฐ' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'พิเชฐ พัฒนโชติ' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'โภคิน พลกุล', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'สุชน ชาลีเครือ', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'อภิสิทธิ์ เวชชาชีวะ', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ]
+  },
+  2544: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'อุทัย พิมพ์ใจชน', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'สมศักดิ์ ปริศนานันทกุล' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'บุญชง วีสมหมาย' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'ชวน หลีกภัย', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ],
+    sv: [
+      { dais:'president', role:'ประธานวุฒิสภา', name:'สนิท วรปัญญา', note:'ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานวุฒิสภา คนที่หนึ่ง', name:'ชนะศักดิ์ ยุวบูรณ์' },
+      { dais:'vice2', role:'รองประธานวุฒิสภา คนที่สอง', name:'พิเชฐ พัฒนโชติ' }
+    ],
+    joint: [
+      { dais:'president', role:'ประธานรัฐสภา', name:'อุทัย พิมพ์ใจชน', note:'ประธานสภาผู้แทนราษฎร ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'vice1', role:'รองประธานรัฐสภา', name:'สนิท วรปัญญา', note:'ประธานวุฒิสภา ดำรงตำแหน่งรองประธานรัฐสภาโดยตำแหน่ง' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'ชวน หลีกภัย', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ]
+  },
+  2539: {
+    mp: [
+      { dais:'president', role:'ประธานสภาผู้แทนราษฎร', name:'วันมูหะมัดนอร์ มะทา', note:'ดำรงตำแหน่งประธานรัฐสภาโดยตำแหน่ง (ตามรัฐธรรมนูญ)' },
+      { dais:'vice1', role:'รองประธานสภาผู้แทนราษฎร คนที่หนึ่ง', name:'โสภณ เพชรสว่าง' },
+      { dais:'vice2', role:'รองประธานสภาผู้แทนราษฎร คนที่สอง', name:'สมศักดิ์ เกียรติสุรนนท์' },
+      { dais:'opp', role:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', name:'ชวน หลีกภัย', note:'หัวหน้าพรรคประชาธิปัตย์' }
+    ]
+  }
+};
+// ⚠ ปีย้อนหลังต้องล้าง OFFICERS ของปี 2569 ทิ้งเสมอ — ไม่งั้นชื่อประธานสภาปีปัจจุบัน
+//   ที่บังเอิญเป็น ส.ส. ในปีนั้นด้วย จะถูกหยิบมาแสดงผิดยุค
+if(EY !== 2569){
+  const past = OFFICERS_PAST[EY];
+  if(past){
+    ['mp','sv','joint'].forEach(v => {
+      OFFICERS[v] = (past[v] || [])
+        .map(o => ({
+          dais: o.dais,
+          role: o.role,
+          note: o.note || 'ผู้ดำรงตำแหน่งของสภาชุดนี้',
+          ref: v === 'sv' ? findSV(o.name) : (v === 'joint' && o.dais === 'vice1' ? findSV(o.name) : findMP(o.name))
+        }))
+        .filter(o => o.ref);
+    });
+  } else {
+    OFFICERS.mp = []; OFFICERS.sv = []; OFFICERS.joint = [];
+  }
+}
 const officerFor = (v, daisId) => (OFFICERS[v] || []).find(o => o.dais === daisId && o.ref);
-// index ของสมาชิกในผังของ view ปัจจุบัน (ประชุมร่วม: สว. ต่อท้าย 500)
-const officerSeatIdx = (v, o) => (v === 'joint' && o.ref.view === 'sv') ? 500 + o.ref.idx : o.ref.idx;
+// index ของสมาชิกในผังของ view ปัจจุบัน (ประชุมร่วม: สว. ต่อท้าย ส.ส.)
+const officerSeatIdx = (v, o) => (v === 'joint' && o.ref.view === 'sv') ? MEMBERS.mp.length + o.ref.idx : o.ref.idx;
+
+// อัปเดตตัวเลขและข้อความบนปุ่มแท็บสภาแบบ dynamic
+const bMp = document.getElementById('tab-mp');
+if(bMp) bMp.innerHTML = `ส.ส. <b>${MEMBERS.mp.length}</b>`;
+
+const bSv = document.getElementById('tab-sv');
+if(bSv && HAS_SENATE) bSv.innerHTML = `สว. <b>${MEMBERS.sv.length}</b>`;
+
+const bJoint = document.getElementById('tab-joint');
+if(bJoint && HAS_SENATE) bJoint.innerHTML = `ประชุมร่วม <b>${MEMBERS.joint.length}</b>`;
+
+const headSmall = document.querySelector('.phead .bt small');
+if(headSmall){
+  if(EY === 2569) headSmall.textContent = `สภาผู้แทนราษฎร (ว่าที่ ส.ส. เลือกตั้ง 2569) · วุฒิสภา (ชุด 2567) · ประชุมร่วม`;
+  else if(HAS_SENATE) headSmall.textContent = `สภาผู้แทนราษฎร (ส.ส. เลือกตั้ง ${EY}) · วุฒิสภา (${MEMBERS.sv.length} คน) · ประชุมร่วม (${MEMBERS.joint.length} ที่นั่ง)`;
+  else headSmall.textContent = `สภาผู้แทนราษฎร (ส.ส. เลือกตั้ง ${EY}) · ระบบแบ่งเขต`;
+}
+
+const ps = document.getElementById('psearch');
+if(ps){
+  ps.placeholder = HAS_SENATE
+    ? `ค้นหา ส.ส. / สว. ทั้ง ${MEMBERS.joint.length} คน`
+    : `ค้นหา ส.ส. ทั้ง ${MEMBERS.mp.length} คน`;
+}
 
 /* ── สำนักงานเลขาธิการ (ข้าราชการประจำ — ไม่ใช่สมาชิกในผัง จึงแสดงเป็นทำเนียบในบล็อก ๖) ── */
 const SECRETARIAT = {
@@ -527,12 +826,14 @@ const DAIS_INFO = {
        : 'ที่นั่งตรงกลางของบัลลังก์ เป็นที่นั่งของประธานในที่ประชุม — การประชุมสภาผู้แทนราษฎร ประธานคือ <b>ประธานสภาผู้แทนราษฎร</b>' },
   vice1: { num:'๒', title:'รองประธาน คนที่หนึ่ง', body: () => 'ที่นั่งด้าน<b>ขวามือของประธาน</b> เป็นที่นั่งของรองประธานคนที่หนึ่ง' },
   vice2: { num:'๒', title:'รองประธาน คนที่สอง', body: () => 'ที่นั่งด้าน<b>ซ้ายมือของประธาน</b> เป็นที่นั่งของรองประธานคนที่สอง' },
-  pm: { num:'๓', title:'นายกรัฐมนตรี', body: () => 'ที่นั่งแถวบนทางด้านขวามือของประธาน <b>ที่นั่งแรก</b> เป็นที่นั่งของนายกรัฐมนตรี', link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
+  pm: { num:'๓', title:'นายกรัฐมนตรี', body: () => 'ที่นั่งแถวบนทางด้านขวามือของประธาน <b>ที่นั่งแรก</b> เป็นที่นั่งของนายกรัฐมนตรี'
+    + ((simOn && simLead()) ? `<br><br><svg class="mdico"><use href="#i-landmark"></use></svg> <b>โหมดจำลอง:</b> ขั้วที่คุณจับมี <b>${shortOf(simLead().code)}</b> เป็นพรรคแกนนำ (${seatsOf(simLead().code)} เสียง) รวมทั้งขั้ว <b>${govSeats()}</b> เสียง — ${govSeats() >= MAJORITY ? 'พอโหวตนายกฯ ได้' : `ยังขาดอีก ${MAJORITY - govSeats()} เสียง`}` : ''),
+    link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
   cabinet: { num:'๔', title:'คณะรัฐมนตรี', body: () => 'ที่นั่งถัดจากนายกรัฐมนตรี<b>ทั้งสองแถว</b> เป็นที่นั่งของคณะรัฐมนตรี (รัฐมนตรีไม่จำเป็นต้องเป็น ส.ส. จึงมีที่นั่งแยกจากผัง 500 ที่นั่ง)', link:{ href:'../cabinet/index.html', label:'ดูคณะรัฐมนตรี ชุดที่ 66 →' } },
   committee: { num:'๕', title:'คณะกรรมาธิการ', body: () => 'ที่นั่ง <b>๒ แถวด้านซ้ายมือของประธาน</b> เป็นที่นั่งของคณะกรรมาธิการ ที่ต้องขึ้นไปชี้แจงเรื่องต่าง ๆ ให้ที่ประชุมรับทราบ — คณะกรรมาธิการมี <b>๕ ประเภท</b> (สามัญ · วิสามัญ · ร่วมกันของรัฐสภา · ของรัฐสภา · เต็มสภา) ดูรายละเอียดในส่วน "คณะกรรมาธิการ" ท้ายหน้า' },
   secretary: { num:'๖', title:'เลขาธิการ · รองเลขาธิการ', body: () => 'ที่นั่งถัดจากบัลลังก์ลงมา <b>ด้านซ้ายมือ</b>ของประธานเป็นที่นั่งของเลขาธิการ ส่วน<b>ด้านขวามือ</b>เป็นที่นั่งของรองเลขาธิการ ซึ่งทำหน้าที่เป็นเลขานุการของที่ประชุม' },
   // ผู้นำฝ่ายค้าน — ไม่มีที่นั่งบนบัลลังก์ (นั่งรวมกับ ส.ส. ในพรรค) จึงแสดงเป็นชิปในแถบผู้ดำรงตำแหน่งของมุมมอง ส.ส./ประชุมร่วม เท่านั้น
-  opp: { num:'⚖', title:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', body: () => 'ผู้นำฝ่ายค้านฯ คือหัวหน้าพรรคฝ่ายค้านที่มีจำนวน ส.ส. มากที่สุด และสมาชิกพรรคมิได้ดำรงตำแหน่งรัฐมนตรี — แต่งตั้งโดย<b>พระบรมราชโองการ</b> ทำหน้าที่นำฝ่ายค้านในการตรวจสอบการทำงานของรัฐบาลในสภา (ไม่มีที่นั่งบนบัลลังก์ — นั่งรวมกับสมาชิกในพรรค)' }
+  opp: { num:'<svg class="mdico"><use href="#i-scale"></use></svg>', title:'ผู้นำฝ่ายค้านในสภาผู้แทนราษฎร', body: () => 'ผู้นำฝ่ายค้านฯ คือหัวหน้าพรรคฝ่ายค้านที่มีจำนวน ส.ส. มากที่สุด และสมาชิกพรรคมิได้ดำรงตำแหน่งรัฐมนตรี — แต่งตั้งโดย<b>พระบรมราชโองการ</b> ทำหน้าที่นำฝ่ายค้านในการตรวจสอบการทำงานของรัฐบาลในสภา (ไม่มีที่นั่งบนบัลลังก์ — นั่งรวมกับสมาชิกในพรรค)' }
 };
 // rect ตำแหน่ง (ในพิกัด viewBox) — มุมมองแปลน: ประธานหันหน้าเข้าหาที่นั่งสมาชิก → ขวามือประธาน = ขวาของจอ
 // ประชุมร่วม: รัฐธรรมนูญกำหนด "รองประธานรัฐสภา" คนเดียว (ประธานวุฒิสภา) → ซ่อน vice2 ใน joint
@@ -551,9 +852,38 @@ let view = 'mp';
 let filterParty = null;          // กรองพรรคจาก legend
 let selected = -1;               // index สมาชิกที่เลือก
 let seatEls = [];                // circle elements ตาม index สมาชิก
+let simOn = false;               // โหมดจำลองจัดตั้งรัฐบาล
+const COALITION = new Set();     // รหัสพรรคที่ผู้ใช้ดึงเข้าขั้วรัฐบาล
 
 const $ = id => document.getElementById(id);
-const seatsG = $('seatsG'), daisG = $('daisG'), bgG = $('bgG'), tip = $('ptip');
+const seatsG = $('seatsG'), daisG = $('daisG'), bgG = $('bgG'), bundleG = $('bundleG'), tip = $('ptip');
+
+/* ── บล็อกพรรคใน MEMBERS.mp (สมาชิกของแต่ละพรรคเรียงติดกันอยู่แล้วจาก mpMembers) ── */
+const MP_BLOCKS = (() => {
+  const out = []; let cur = null;
+  MEMBERS.mp.forEach((m, i) => {
+    if(!cur || cur.code !== m.code){ cur = { code:m.code, idxs:[] }; out.push(cur); }
+    cur.idxs.push(i);
+  });
+  return out;
+})();
+const MP_BY_SIZE = MP_BLOCKS.slice().sort((a,b) => b.idxs.length - a.idxs.length ||
+  shortOf(a.code).localeCompare(shortOf(b.code), 'th'));
+const seatsOf = code => (MP_BLOCKS.find(b => b.code === code) || { idxs:[] }).idxs.length;
+const govSeats = () => MP_BLOCKS.reduce((s,b) => s + (COALITION.has(b.code) ? b.idxs.length : 0), 0);
+const MAJORITY = Math.floor(MEMBERS.mp.length / 2) + 1;
+
+/* ลำดับ "ช่องที่นั่ง ซ้าย→ขวา" → index สมาชิก (null = ใช้ลำดับเดิมของผัง)
+   ฝ่ายค้านใหญ่สุดริมซ้ายสุด · ไล่เล็กลงเข้าหากลาง | ขั้วรัฐบาลเล็กสุดใกล้กลาง · ใหญ่สุดริมขวาสุด */
+function slotOrder(){
+  if(view !== 'mp' || !simOn || !COALITION.size) return null;
+  const gov = [], opp = [];
+  MP_BY_SIZE.forEach(b => (COALITION.has(b.code) ? gov : opp).push(b));
+  const seq = opp.concat(gov.slice().reverse());   // opp: ใหญ่→เล็ก | gov: เล็ก→ใหญ่
+  const out = [];
+  seq.forEach(b => out.push(...b.idxs));
+  return out;
+}
 
 /* ── ฉากหลังห้องประชุม (กำแพงโค้ง · แนวแถว · พื้นกลาง — เลียนแบบแปลนห้องสุริยัน) ── */
 function arcPath(r, stroke, w, dash, op){
@@ -624,8 +954,12 @@ function render(){
   drawBackdrop(CFG[view]);
   seatsG.innerHTML = '';
   seatEls = [];
+  // แผนที่ "สมาชิก → ช่องที่นั่ง" (โหมดจำลองสลับช่อง แต่ index สมาชิกคงเดิม ค้นหา/ชิปตำแหน่งจึงไม่พัง)
+  const ord = slotOrder();
+  const slotOf = members.map((_, i) => i);
+  if(ord) ord.forEach((mi, slot) => slotOf[mi] = slot);
   members.forEach((m, i) => {
-    const s = seats[i];
+    const s = seats[slotOf[i]];
     const c = document.createElementNS(NS, 'circle');
     c.setAttribute('cx', s.x.toFixed(1));
     c.setAttribute('cy', s.y.toFixed(1));
@@ -639,33 +973,46 @@ function render(){
     seatsG.appendChild(c);
     seatEls.push(c);
   });
+  drawBundle(seats, slotOf);
   drawDais();
   drawOfficerBar();
   drawLegend();
+  renderSim();
   applyFilter();
   // หัวการ์ด
   const names = { mp:'สภาผู้แทนราษฎร', sv:'วุฒิสภา', joint:'ประชุมร่วมกันของรัฐสภา' };
   const metas = {
-    mp:`500 ที่นั่ง · ${Object.keys(PM).filter(c=>MEMBERS.mp.some(m=>m.code===c)).length} พรรค (เขต 400 + บัญชีรายชื่อ 100)`,
-    sv:'200 ที่นั่ง · อิสระ ไม่สังกัดพรรค · เรียงตามอักษร ก–ฮ',
-    joint:'700 ที่นั่ง = ส.ส. 500 (ซ้ายมือประธาน) + สว. 200 (ขวามือประธาน)'
+    mp: OLD
+      ? `${MEMBERS.mp.length} ที่นั่ง · ${Object.keys(PM).filter(c=>MEMBERS.mp.some(m=>m.code===c)).length} พรรค/กลุ่ม · แบ่งเขตทั้งหมด (ยังไม่มีบัญชีรายชื่อ)`
+      : `${MEMBERS.mp.length} ที่นั่ง · ${Object.keys(PM).filter(c=>MEMBERS.mp.some(m=>m.code===c)).length} พรรค (${D.zone ? 'เขต ' + D.zone.length : ''}${D.list && D.list.length ? ' + บัญชีรายชื่อ ' + D.list.length : ''})`,
+    sv: `${MEMBERS.sv.length} ที่นั่ง · อิสระ ไม่สังกัดพรรค · เรียงตามอักษร ก–ฮ`,
+    joint: `${MEMBERS.joint.length} ที่นั่ง = ส.ส. ${MEMBERS.mp.length} (ซ้ายมือประธาน) + สว. ${MEMBERS.sv.length} (ขวามือประธาน)`
   };
   const notes = {
-    mp:'ยังไม่มีการจัดตั้งรัฐบาลจากผลเลือกตั้ง 2569 — ผังนี้จึงเรียง "ลิ่มพรรค" ตามขนาด (ใหญ่สุดขวาสุด) เมื่อเปิดสภาจริง พรรคร่วมรัฐบาลจะนั่งขวามือประธาน และฝ่ายค้านนั่งซ้ายมือ (ข้อ ๗)',
-    sv:'สมาชิกวุฒิสภา 200 คน มาจากการเลือกกันเองของกลุ่มอาชีพ ไม่สังกัดพรรคการเมือง ที่นั่งจึงเป็นสีเทาทั้งหมด และเรียงตามลำดับตัวอักษรชื่อ ก–ฮ เริ่มจากซ้ายมือประธาน',
-    joint:'การประชุมร่วมกันของรัฐสภาใช้ห้องประชุมสภาผู้แทนราษฎร (ห้องสุริยัน) — สว. ทั้ง 200 คน นั่งฝั่งขวามือของประธานรัฐสภา'
+    mp: OLD
+      ? `ผังเรียง "ลิ่มพรรค" ตามขนาด (ใหญ่สุดขวาสุด) แสดงสัดส่วนที่นั่ง ส.ส. แบ่งเขตของสภาชุดนี้ · กดที่นั่งเพื่อดูชื่อ ส.ส. รายคน (ยุคก่อน พ.ศ. 2539 เป็นระบบแบ่งเขตล้วน ไม่มีบัญชีรายชื่อ/วุฒิสภาเลือกตั้ง)`
+      : (EY === 2569
+        ? 'ยังไม่มีการจัดตั้งรัฐบาลจากผลเลือกตั้ง 2569 — ผังนี้จึงเรียง "ลิ่มพรรค" ตามขนาด (ใหญ่สุดขวาสุด) เมื่อเปิดสภาจริง พรรคร่วมรัฐบาลจะนั่งขวามือประธาน และฝ่ายค้านนั่งซ้ายมือ (ข้อ ๗)'
+        : `ผังที่นั่ง ส.ส. ชุดเลือกตั้ง ${EY} รวม ${MEMBERS.mp.length} ที่นั่ง จัดวางตามสัดส่วนพรรคการเมือง`),
+    sv: `สมาชิกวุฒิสภา ${MEMBERS.sv.length} คน ไม่สังกัดพรรคการเมือง ที่นั่งจึงเป็นสีเทาทั้งหมด และเรียงตามลำดับตัวอักษรชื่อ ก–ฮ เริ่มจากซ้ายมือประธาน`,
+    joint: `การประชุมร่วมกันของรัฐสภา — ส.ส. ${MEMBERS.mp.length} คน นั่งฝั่งซ้ายมือประธาน และ สว. ${MEMBERS.sv.length} คน นั่งฝั่งขวามือประธาน`
   };
   $('chName').textContent = names[view];
   $('chMeta').textContent = metas[view];
-  $('chNote').textContent = notes[view];
+  const g = govSeats();
+  $('chNote').textContent = (view === 'mp' && simOn && COALITION.size)
+    ? `<svg class="mdico"><use href="#i-landmark"></use></svg> โหมดจำลอง — ผังนี้จัดที่นั่งตามขั้วที่คุณเลือก: ขั้วรัฐบาล ${g} เสียง (ขวามือประธาน) · ฝ่ายค้าน ${500 - g} เสียง (ซ้ายมือประธาน) ${g >= MAJORITY ? '· เสียงพอจัดตั้งรัฐบาลแล้ว' : `· ยังขาดอีก ${MAJORITY - g} เสียงจึงจะถึง 251`}`
+    : notes[view];
   renderSeatDetail();
 }
 
 /* ── รายละเอียดการจัดที่นั่ง (คำนวณจากผังจริง) ── */
 function partyZones(v){
   const M = MEMBERS[v], N = M.length, groups = [];
+  const ord = (v === view) ? slotOrder() : null;          // โหมดจำลอง → เรียงตามช่องที่นั่งจริง
+  const seq = ord ? ord.map(i => M[i]) : M;
   let cur = null;
-  M.forEach((m,i) => {
+  seq.forEach((m,i) => {
     const key = m.kind === 'sv' ? '_sv' : m.code;
     if(!cur || cur.key !== key){ cur = { key, count:0, start:i, end:i }; groups.push(cur); }
     cur.count++; cur.end = i;
@@ -675,13 +1022,14 @@ function partyZones(v){
     let side;
     if(v === 'sv') side = 'เรียง ก–ฮ';
     else if(v === 'joint') side = g.key === '_sv' ? 'สว. · ขวามือ' : 'ส.ส. · ซ้ายมือ';
+    else if(ord) side = COALITION.has(g.key) ? 'ขวามือ · รัฐบาล' : 'ซ้ายมือ · ฝ่ายค้าน';
     else side = mid < 0.34 ? 'ซ้ายมือประธาน' : mid > 0.66 ? 'ขวามือประธาน' : 'กลางสภา';
     return { name: g.key === '_sv' ? 'วุฒิสภา (อิสระ)' : ((PM[g.key] && PM[g.key].th) || g.key),
              color: g.key === '_sv' ? svColor() : colorOf(g.key), count: g.count, side };
   });
 }
 const SD_HALL = { mp:'ห้องประชุมสุริยัน · สภาผู้แทนราษฎร', sv:'ห้องประชุมจันทรา · วุฒิสภา', joint:'ห้องประชุมสุริยัน · สัปปายะสภาสถาน' };
-const SD_FACTS = {
+const getSdFacts = () => ({
   mp:[
     'ที่นั่งจัดเป็นแถวโค้งครึ่งวงกลม หันหน้าเข้าหา<b>บัลลังก์ประธาน</b>',
     '<b>ขวามือประธาน</b> = ฝ่ายรัฐบาล · <b>ซ้ายมือ</b> = ฝ่ายค้าน (เมื่อจัดตั้งรัฐบาลแล้ว)',
@@ -689,23 +1037,27 @@ const SD_FACTS = {
     'กลางห้องด้านหน้าบัลลังก์เป็น<b>โต๊ะเจ้าหน้าที่/ผู้จดรายงานการประชุม</b>'
   ],
   sv:[
-    'สมาชิกวุฒิสภา 200 คน <b>ไม่สังกัดพรรค</b> ที่นั่งเรียงตามอักษรชื่อ ก–ฮ',
+    `สมาชิกวุฒิสภา ${MEMBERS.sv.length} คน <b>ไม่สังกัดพรรค</b> ที่นั่งเรียงตามอักษรชื่อ ก–ฮ`,
     'ที่นั่งจัดเป็นแถวโค้งหันหน้าเข้าหา<b>บัลลังก์ประธานวุฒิสภา</b>',
     'แถวหน้าสุดติดบัลลังก์ มีโต๊ะเจ้าหน้าที่อยู่กลางห้อง'
   ],
   joint:[
     'การประชุมร่วมกันของรัฐสภาใช้<b>ห้องประชุมสุริยัน</b>',
-    '<b>ส.ส. 500</b> นั่งฝั่งซ้ายมือประธาน · <b>สว. 200</b> นั่งฝั่งขวามือประธาน',
+    `<b>ส.ส. ${MEMBERS.mp.length} คน</b> นั่งฝั่งซ้ายมือประธาน · <b>สว. ${MEMBERS.sv.length} คน</b> นั่งฝั่งขวามือประธาน`,
     '<b>ประธานรัฐสภา</b> (ประธานสภาผู้แทนราษฎรโดยตำแหน่ง) นั่งบัลลังก์ มีรองประธาน 2 คนขนาบ',
     'กลางห้องด้านหน้าบัลลังก์เป็น<b>โต๊ะเจ้าหน้าที่/ผู้จดรายงานการประชุม</b>'
   ]
-};
+});
 function renderSeatDetail(){
-  $('sdView').textContent = { mp:'ส.ส. 500 ที่นั่ง', sv:'สว. 200 ที่นั่ง', joint:'ประชุมร่วม 700 ที่นั่ง' }[view];
+  $('sdView').textContent = {
+    mp: `ส.ส. ${MEMBERS.mp.length} ที่นั่ง`,
+    sv: `สว. ${MEMBERS.sv.length} ที่นั่ง`,
+    joint: `ประชุมร่วม ${MEMBERS.joint.length} ที่นั่ง`
+  }[view];
   $('sdZones').innerHTML = partyZones(view).map(z =>
     `<div class="sdzone"><span class="sw" style="background:${z.color}"></span><span class="zn">${z.name}</span><span class="zc">${z.count}</span><span class="zs">${z.side}</span></div>`).join('');
   $('sdHall').textContent = SD_HALL[view];
-  $('sdFacts').innerHTML = SD_FACTS[view].map(f =>
+  $('sdFacts').innerHTML = getSdFacts()[view].map(f =>
     `<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4.5 4.5L19 8"/></svg><span>${f}</span></li>`).join('');
 }
 
@@ -730,12 +1082,26 @@ function drawDais(){
     t.textContent = txt;
     daisG.appendChild(t);
   };
-  if(view === 'mp'){ mkLabel(108, 545, '← ซ้ายมือประธาน (ฝ่ายค้าน เมื่อเปิดสภา)', 'start'); mkLabel(892, 545, 'ขวามือประธาน (รัฐบาล เมื่อเปิดสภา) →', 'end'); }
-  if(view === 'joint'){ mkLabel(108, 545, '← ส.ส. 500 คน (ซ้ายมือประธาน)', 'start'); mkLabel(892, 545, 'สว. 200 คน (ขวามือประธาน) →', 'end'); }
+  const simLive = view === 'mp' && simOn && COALITION.size;
+  if(view === 'mp' && !simLive){ mkLabel(108, 545, '← ซ้ายมือประธาน (ฝ่ายค้าน เมื่อเปิดสภา)', 'start'); mkLabel(892, 545, 'ขวามือประธาน (รัฐบาล เมื่อเปิดสภา) →', 'end'); }
+  if(simLive){ mkLabel(108, 545, `← ฝ่ายค้าน ${MEMBERS.mp.length - govSeats()} เสียง`, 'start'); mkLabel(892, 545, `ขั้วรัฐบาล ${govSeats()} เสียง →`, 'end'); }
+  if(view === 'joint'){ mkLabel(108, 545, `← ส.ส. ${MEMBERS.mp.length} คน (ซ้ายมือประธาน)`, 'start'); mkLabel(892, 545, `สว. ${MEMBERS.sv.length} คน (ขวามือประธาน) →`, 'end'); }
   if(view === 'sv'){ mkLabel(108, 545, '← เริ่ม ก', 'start'); mkLabel(892, 545, 'จบ ฮ →', 'end'); }
-  // เส้นแบ่งเขต ส.ส. | สว. ในผังประชุมร่วม (แนวรัศมีที่สัดส่วน 500/700)
+  // เส้นแบ่งฝ่ายค้าน | รัฐบาล ในโหมดจำลอง (แนวรัศมีที่สัดส่วนจำนวนเสียง)
+  if(simLive){
+    const thB = A0 - ((MEMBERS.mp.length - govSeats()) / MEMBERS.mp.length) * (A0 - A1);
+    const cfg = CFG.mp;
+    const dv = document.createElementNS(NS, 'path');
+    const xi = CX + (cfg.r0 - 22) * Math.cos(thB), yi = CY - (cfg.r0 - 22) * Math.sin(thB);
+    const xo = CX + (cfg.r1 + 24) * Math.cos(thB), yo = CY - (cfg.r1 + 24) * Math.sin(thB);
+    dv.setAttribute('d', `M ${xi.toFixed(1)} ${yi.toFixed(1)} L ${xo.toFixed(1)} ${yo.toFixed(1)}`);
+    dv.setAttribute('stroke', '#C9A84C'); dv.setAttribute('stroke-width', '1.8');
+    dv.setAttribute('stroke-dasharray', '6 5'); dv.setAttribute('opacity', '.8');
+    daisG.appendChild(dv);
+  }
+  // เส้นแบ่งเขต ส.ส. | สว. ในผังประชุมร่วม (แนวรัศมีตามสัดส่วน ส.ส. / ที่นั่งร่วมจริง)
   if(view === 'joint'){
-    const thB = A0 - (500 / 700) * (A0 - A1);
+    const thB = A0 - (MEMBERS.mp.length / MEMBERS.joint.length) * (A0 - A1);
     const cfg = CFG.joint;
     const dv = document.createElementNS(NS, 'path');
     const xi = CX + (cfg.r0 - 22) * Math.cos(thB), yi = CY - (cfg.r0 - 22) * Math.sin(thB);
@@ -774,6 +1140,19 @@ function drawDais(){
       nm.textContent = off.ref.m.name;
       g.appendChild(nm);
     }
+    // โหมดจำลอง → เขียนชื่อพรรคแกนนำใต้บล็อก "นายกฯ"
+    if(simLive && d.id === 'pm'){
+      const lead = simLead();
+      if(lead){
+        const nm = document.createElementNS(NS,'text');
+        nm.setAttribute('x', d.x + d.w/2);
+        nm.setAttribute('y', d.y + d.h + 13);
+        nm.setAttribute('class', 'dais-name');
+        nm.setAttribute('fill', colorOf(lead.code));
+        nm.textContent = shortOf(lead.code);
+        g.appendChild(nm);
+      }
+    }
     g.addEventListener('click', ev => { ev.stopPropagation(); selectDais(d.id); });
     daisG.appendChild(g);
   });
@@ -807,13 +1186,155 @@ function applyFilter(){
   });
 }
 
+/* ══════════ โหมดจำลองจัดตั้งรัฐบาล ══════════ */
+/* ผู้อยู่ลำดับ ๑ ของบัญชีรายชื่อแต่ละพรรค (ใช้แทน "หน้าพรรค" ในการ์ดแกนนำ/ฝ่ายค้าน) */
+const LIST_HEAD = {};
+D.list.forEach(r => { if(+r.no === 1) LIST_HEAD[r.code] = r.name; });
+function headOf(code){
+  if(LIST_HEAD[code]) return { name:LIST_HEAD[code], sub:'บัญชีรายชื่อ ลำดับ ๑' };
+  const b = MP_BLOCKS.find(x => x.code === code);
+  const m = b && MEMBERS.mp[b.idxs[0]];
+  if(!m) return null;
+  return { name:m.name, sub: m.kind === 'zone' ? `${m.prov} เขต ${m.no}` : 'บัญชีรายชื่อ' };
+}
+const simLead = () => MP_BY_SIZE.find(b => COALITION.has(b.code)) || null;
+const simOpp  = () => MP_BY_SIZE.find(b => !COALITION.has(b.code)) || null;
+
+/* เส้นโยงขั้วรัฐบาล — มัดรวมผ่านศูนย์กลางห้อง (edge bundling) */
+function drawBundle(seats, slotOf){
+  bundleG.innerHTML = '';
+  if(view !== 'mp' || !simOn || !COALITION.size) return;
+  const cfg = CFG.mp, R = cfg.r0 - 34, HUB = { x:CX, y:CY - 4 };
+  const anchors = MP_BLOCKS.filter(b => COALITION.has(b.code)).map(b => {
+    let lo = Infinity, hi = -Infinity;
+    b.idxs.forEach(i => { const th = seats[slotOf[i]].th; if(th < lo) lo = th; if(th > hi) hi = th; });
+    const th = (lo + hi) / 2;
+    return { code:b.code, n:b.idxs.length, th, x:CX + R*Math.cos(th), y:CY - R*Math.sin(th) };
+  }).sort((a,b) => b.n - a.n);
+  const lead = anchors[0], g = govSeats(), pass = g >= MAJORITY;
+  const el = t => document.createElementNS(NS, t);
+  anchors.slice(1).forEach(a => {
+    const p = el('path');
+    p.setAttribute('d', `M ${lead.x.toFixed(1)} ${lead.y.toFixed(1)} C ${HUB.x} ${HUB.y} ${HUB.x} ${HUB.y} ${a.x.toFixed(1)} ${a.y.toFixed(1)}`);
+    p.setAttribute('stroke', colorOf(a.code));
+    p.setAttribute('stroke-width', Math.max(1.1, Math.sqrt(a.n) * .5).toFixed(2));
+    p.setAttribute('opacity', '.5');
+    bundleG.appendChild(p);
+  });
+  anchors.forEach(a => {
+    const c = el('circle');
+    c.setAttribute('cx', a.x.toFixed(1)); c.setAttribute('cy', a.y.toFixed(1));
+    c.setAttribute('r', (3 + Math.sqrt(a.n) * .42).toFixed(1));
+    c.setAttribute('fill', colorOf(a.code));
+    c.setAttribute('class', 'bn');
+    c.setAttribute('opacity', '.92');
+    bundleG.appendChild(c);
+  });
+  // ดุมกลางวง — ทับเส้นที่มัดรวมเข้ามา เพื่อให้ตัวเลขอ่านออก
+  const hub = el('circle');
+  hub.setAttribute('cx', HUB.x); hub.setAttribute('cy', HUB.y);
+  hub.setAttribute('r', 34);
+  hub.setAttribute('fill', 'var(--card)');
+  hub.setAttribute('stroke', pass ? 'var(--sim-ok)' : 'var(--line-2)');
+  hub.setAttribute('stroke-width', pass ? '1.8' : '1.3');
+  bundleG.appendChild(hub);
+  const t1 = el('text');
+  t1.setAttribute('x', HUB.x); t1.setAttribute('y', HUB.y + 2);
+  t1.setAttribute('font-size', '23'); t1.setAttribute('font-weight', '700');
+  t1.setAttribute('fill', pass ? 'var(--sim-ok)' : 'var(--ink-2)');
+  t1.textContent = g;
+  const t2 = el('text');
+  t2.setAttribute('x', HUB.x); t2.setAttribute('y', HUB.y + 17);
+  t2.setAttribute('font-size', '9.5');
+  t2.setAttribute('fill', 'var(--muted)');
+  t2.textContent = pass ? 'เสียง ✓' : `ขาด ${MAJORITY - g}`;
+  bundleG.appendChild(t1); bundleG.appendChild(t2);
+}
+
+/* แผงควบคุมด้านล่างผัง */
+function renderSim(){
+  const card = $('simCard');
+  if(!card) return;
+  if(OLD){ card.style.display = 'none'; return; }   // ปีเก่า: ไม่มีจำลองจัดตั้งรัฐบาล (เกณฑ์เสียง/จำนวนที่นั่งต่างยุค)
+  card.style.display = (view === 'mp') ? '' : 'none';
+  if(view !== 'mp') return;
+  const btn = $('simBtn');
+  $('simBody').classList.toggle('off', !simOn);
+  btn.classList.toggle('on', simOn);
+  btn.textContent = simOn ? '● กำลังจำลอง — กดเพื่อปิด' : 'เปิดโหมดจำลอง';
+
+  const g = govSeats(), need = MAJORITY - g;
+  // มาตรวัดเสียง (เต็มแถบ = 500 ที่นั่ง)
+  $('gBar').innerHTML = MP_BY_SIZE.filter(b => COALITION.has(b.code)).map(b =>
+    `<span class="gseg" style="width:${(b.idxs.length / 500 * 100).toFixed(2)}%;background:${colorOf(b.code)}" title="${shortOf(b.code)} ${b.idxs.length} เสียง"></span>`).join('');
+  // สรุปเสียง
+  const thin = g >= MAJORITY && g <= 260;
+  $('simStat').innerHTML =
+    `<span class="spill ${g >= MAJORITY ? 'ok' : (g ? 'warn' : '')}"><span class="n">${g}</span>เสียง · ขั้วรัฐบาล</span>` +
+    `<span class="spill"><span class="n">${500 - g}</span>เสียง · ฝ่ายค้าน</span>` +
+    (g >= MAJORITY
+      ? `<span class="spill ok">✓ ตั้งรัฐบาลได้ (เกินกึ่งหนึ่ง ${g - 250} เสียง)${thin ? ' — แต่เป็น "รัฐบาลเสียงปริ่มน้ำ"' : ''}</span>`
+      : `<span class="spill warn">ยังขาดอีก ${need} เสียง</span>`) +
+    `<span class="spill">${COALITION.size} พรรคร่วม</span>`;
+  // แกนนำ / ฝ่ายค้านอันดับ 1
+  const mkCard = (blk, role, gold) => {
+    if(!blk) return `<div class="pcx"><div class="av" style="background:var(--line-2)">–</div><div class="tx"><div class="r">${role}</div><div class="n" style="color:var(--muted)">ยังไม่ได้เลือก</div></div></div>`;
+    const h = headOf(blk.code), col = colorOf(blk.code);
+    const ph = h && D.photos[h.name] ? 'photos/' + D.photos[h.name] : null;
+    return `<div class="pcx${gold ? ' gold' : ''}">
+      ${ph ? `<img src="${ph}" alt="" loading="lazy" data-col="${col}" data-ini="${h ? initialOf(h.name) : '?'}">`
+           : `<div class="av" style="background:${col}">${h ? initialOf(h.name) : '?'}</div>`}
+      <div class="tx"><div class="r">${role}</div><div class="n">${h ? h.name : '—'}</div>
+        <div class="p"><span class="sw" style="background:${col}"></span>${shortOf(blk.code)} · ${blk.idxs.length} เสียง${h ? ' · ' + h.sub : ''}</div></div></div>`;
+  };
+  // ยังไม่จับขั้ว = ยังไม่มีทั้งแกนนำและฝ่ายค้าน (อย่าเดาว่าพรรคใหญ่สุดเป็นฝ่ายค้าน)
+  const lead = simLead(), opp = COALITION.size ? simOpp() : null;
+  $('simPpl').innerHTML = mkCard(lead, '<svg class="mdico"><use href="#i-crown"></use></svg> พรรคแกนนำจัดตั้งรัฐบาล (เสนอชื่อนายกฯ)', true)
+                        + mkCard(opp,  '<svg class="mdico"><use href="#i-scale"></use></svg> พรรคฝ่ายค้านอันดับ ๑ (ผู้นำฝ่ายค้าน)', false);
+  $('simPpl').querySelectorAll('img').forEach(img => img.addEventListener('error', () => {
+    const fb = document.createElement('div');
+    fb.className = 'av'; fb.style.background = img.dataset.col; fb.textContent = img.dataset.ini;
+    img.replaceWith(fb);
+  }));
+  // ชิปพรรค
+  $('simParties').innerHTML = MP_BY_SIZE.map(b =>
+    `<button type="button" class="pchip${COALITION.has(b.code) ? ' on' : ''}" data-code="${b.code}" title="${(PM[b.code] && PM[b.code].th) || b.code}">
+      <span class="tk">✓</span><span class="sw" style="background:${colorOf(b.code)}"></span>${shortOf(b.code)} <b>${b.idxs.length}</b></button>`).join('');
+}
+
+/* ปุ่ม/การโต้ตอบของโหมดจำลอง */
+function simRefresh(){ render(); }
+$('simParties').addEventListener('click', ev => {
+  const b = ev.target.closest('.pchip');
+  if(!b) return;
+  const code = b.dataset.code;
+  COALITION.has(code) ? COALITION.delete(code) : COALITION.add(code);
+  simOn = true;
+  simRefresh();
+});
+$('simBtn').onclick = () => { simOn = !simOn; simRefresh(); };
+$('simClear').onclick = () => { COALITION.clear(); simRefresh(); };
+$('simInvert').onclick = () => {
+  const inv = MP_BLOCKS.filter(b => !COALITION.has(b.code)).map(b => b.code);
+  COALITION.clear(); inv.forEach(c => COALITION.add(c));
+  simOn = true; simRefresh();
+};
+$('simAuto').onclick = () => {
+  COALITION.clear();
+  let s = 0;
+  for(const b of MP_BY_SIZE){ if(s >= MAJORITY) break; COALITION.add(b.code); s += b.idxs.length; }
+  simOn = true; simRefresh();
+};
+
 /* ── tooltip ── */
 function showTip(ev, m){
   const col = memberColor(m);
   const sub = m.kind === 'sv' ? `สว. ลำดับที่ ${m.no}` :
               m.kind === 'list' ? `${shortOf(m.code)} · บัญชีรายชื่อ #${m.no}` :
               `${shortOf(m.code)} · ${m.prov} เขต ${m.no}`;
-  tip.innerHTML = `<div class="tn">${m.name}</div><div class="tp"><span class="sw" style="background:${col}"></span>${sub}</div>`;
+  tip.innerHTML = NONAMES
+    ? `<div class="tn">${shortOf(m.code)}</div><div class="tp"><span class="sw" style="background:${col}"></span>${window.EYMP||'ส.ส.'} แบบแบ่งเขต</div>`
+    : `<div class="tn">${m.name}</div><div class="tp"><span class="sw" style="background:${col}"></span>${sub}</div>`;
   tip.classList.add('on');
   const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
   let x = ev.clientX + pad, y = ev.clientY - h - 6;
@@ -828,6 +1349,17 @@ function select(i, flash){
   selected = i;
   applyFilter();
   const m = MEMBERS[view][i];
+  if(NONAMES && m.kind === 'zone'){   // ปีเก่า: คลิกที่นั่ง → การ์ดพรรค (ไม่มีชื่อรายบุคคล)
+    const c = colorOf(m.code);
+    $('detailBody').innerHTML =
+      `<div class="mview"><div class="avt" style="background:${c}"></div>`
+      + `<div class="mi"><div class="mn">${(PM[m.code]&&PM[m.code].th)||m.code}</div>`
+      + `<span class="chip"><span class="sw" style="background:${c}"></span>${window.EYMP||'ส.ส.'} · แบบแบ่งเขต</span></div></div>`
+      + `<div class="mrows"><div class="mrow"><span>ปีนี้ยังไม่มีข้อมูลรายชื่อ ส.ส. รายบุคคลรวมศูนย์ — ผังแสดง<b>สัดส่วนที่นั่งรายพรรค</b></span></div>`
+      + `<div class="mrow"><span>ดูจำนวนที่นั่งรายพรรคแบบเต็มได้ที่หน้า <a class="mlink" style="display:inline" href="standings.html?y=${window.EYID||''}">คะแนนพรรค</a></span></div></div>`;
+    if(flash){ const el = seatEls[i]; if(el){ el.classList.remove('flash'); void el.getBoundingClientRect(); el.classList.add('flash'); el.scrollIntoView({block:'nearest',behavior:'smooth'}); } }
+    return;
+  }
   const col = memberColor(m);
   const photo = memberPhoto(m);
   const avatar = photo
@@ -842,11 +1374,11 @@ function select(i, flash){
   const icoBox  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 4v8m0-8 3 3m-3-3-3 3"/></svg>';
   const icoHash = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>';
   if(m.kind === 'zone'){
-    rows.push(`<div class="mrow">${icoUser}<span>ว่าที่ ส.ส. <b>แบบแบ่งเขต</b></span></div>`);
+    rows.push(`<div class="mrow">${icoUser}<span>${window.EYMP||'ว่าที่ ส.ส.'} <b>แบบแบ่งเขต</b></span></div>`);
     rows.push(`<div class="mrow">${icoPin}<span>จังหวัด<b>${m.prov}</b> เขตเลือกตั้งที่ <b>${m.no}</b></span></div>`);
     if(m.votes != null) rows.push(`<div class="mrow">${icoBox}<span>คะแนน <b>${fmtN(m.votes)}</b> เสียง</span></div>`);
   } else if(m.kind === 'list'){
-    rows.push(`<div class="mrow">${icoUser}<span>ว่าที่ ส.ส. <b>แบบบัญชีรายชื่อ</b></span></div>`);
+    rows.push(`<div class="mrow">${icoUser}<span>${window.EYMP||'ว่าที่ ส.ส.'} <b>${window.EYLIST||'แบบบัญชีรายชื่อ'}</b></span></div>`);
     rows.push(`<div class="mrow">${icoHash}<span>ลำดับที่ <b>${m.no}</b> ของพรรค${shortOf(m.code)}</span></div>`);
   } else {
     rows.push(`<div class="mrow">${icoUser}<span>สมาชิกวุฒิสภา (สว. ชุด 2567)</span></div>`);
@@ -890,7 +1422,7 @@ function selectDais(id){
         <span class="chip"><span class="sw" style="background:${col}"></span>${m.kind === 'sv' ? 'วุฒิสภา · อิสระ' : ((PM[m.code] && PM[m.code].th) || m.code)}</span>
       </div></div>
       <div class="mrows">
-        ${off.note ? `<div class="mrow"><span>📜 ${off.note}</span></div>` : ''}
+        ${off.note ? `<div class="mrow"><span><svg class="mdico"><use href="#i-scroll"></use></svg> ${off.note}</span></div>` : ''}
         <div class="mrow"><span>ที่นั่งสมาชิก: <b>${memberMeta(m)}</b></span></div>
         <div class="mrow"><span>${inf.body(view)}</span></div>
       </div>
@@ -905,8 +1437,10 @@ function selectDais(id){
   }
   if(id === 'secretary'){
     // เลขาธิการ/รองเลขาธิการ = ข้าราชการประจำ ไม่มีที่นั่งในผัง → แสดงทำเนียบตามมุมมอง
-    const groups = view === 'sv' ? [SECRETARIAT.sv] : view === 'joint' ? [SECRETARIAT.mp, SECRETARIAT.sv] : [SECRETARIAT.mp];
-    const jointNote = view === 'joint' ? `<div class="mrow"><span>📜 ในการประชุมร่วมกันของรัฐสภา <b>เลขาธิการสภาผู้แทนราษฎร</b> ทำหน้าที่เป็นเลขาธิการรัฐสภา</span></div>` : '';
+    // ทำเนียบเลขาธิการที่มีในเว็บเป็นชุดปัจจุบัน → ปีย้อนหลังไม่แสดง (จะกลายเป็นข้อมูลผิดยุค)
+    const groups = !HAS_SENATE ? [] :
+      view === 'sv' ? [SECRETARIAT.sv] : view === 'joint' ? [SECRETARIAT.mp, SECRETARIAT.sv] : [SECRETARIAT.mp];
+    const jointNote = view === 'joint' ? `<div class="mrow"><span><svg class="mdico"><use href="#i-scroll"></use></svg> ในการประชุมร่วมกันของรัฐสภา <b>เลขาธิการสภาผู้แทนราษฎร</b> ทำหน้าที่เป็นเลขาธิการรัฐสภา</span></div>` : '';
     $('detailBody').innerHTML = `
       <div class="mview"><div class="avt" style="background:linear-gradient(135deg,#C9A84C,#8a6d22);font-size:2rem">${inf.num}</div>
       <div class="mi"><div class="mn">${inf.title}</div><span class="chip">ตำแหน่งบนบัลลังก์ / แท่นประชุม</span></div></div>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>แหล่งที่มาและสัญญาอนุญาตของภาพ · รัฐไทยก้าวหน้า</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/bb8-toggle.css">
+<style>
+/* ===== CREDITS PAGE ===== */
+.cr-wrap{max-width:1100px;margin:0 auto;padding:84px 20px 96px}
+@media(max-width:860px){.cr-wrap{padding:16px 12px 110px}}
+
+.cr-head .bt{font-family:'Kanit';font-weight:600;font-size:1.35rem;line-height:1.12}
+.cr-head .bt small{display:block;font-family:'Sarabun';font-weight:400;font-size:.78rem;color:var(--muted);margin-top:5px;line-height:1.5}
+@media(max-width:860px){.cr-head .bt{font-size:1.08rem}}
+
+.cr-stats{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 16px}
+.cr-stat{flex:1 1 150px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 15px}
+.cr-stat .n{font-family:'Kanit';font-weight:700;font-size:1.6rem;line-height:1;color:var(--ink)}
+.cr-stat .l{font-size:.76rem;color:var(--muted);margin-top:4px}
+.cr-stat.ok .n{color:#1a9c5b}
+.cr-stat.warn .n{color:#c9761b}
+
+/* กล่องอธิบาย */
+.cr-note{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--orange);
+  border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:22px;
+  font-size:.85rem;line-height:1.65;color:var(--muted)}
+.cr-note b{color:var(--ink)}
+
+/* หมวด */
+.cr-sec{margin-bottom:30px}
+.cr-sec>h2{font-family:'Kanit';font-weight:600;font-size:1.05rem;color:var(--ink);
+  margin:0 0 4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cr-sec>h2 .cnt{font-family:'Sarabun';font-weight:400;font-size:.75rem;color:var(--muted);
+  background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+html[data-theme="dark"] .cr-sec>h2 .cnt{background:var(--card)}
+.cr-sec>p.sub{font-size:.79rem;color:var(--muted);margin:0 0 12px;line-height:1.55}
+
+/* ตารางเครดิต */
+.cr-list{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden}
+.cr-row{display:grid;grid-template-columns:52px 1fr auto;gap:13px;align-items:center;
+  padding:10px 14px;border-top:1px solid var(--line)}
+.cr-row:first-child{border-top:0}
+.cr-thumb{width:52px;height:52px;border-radius:11px;object-fit:cover;background:var(--paper);
+  border:1px solid var(--line)}
+.cr-thumb.logo{object-fit:contain;padding:5px;background:#fff}
+.cr-meta{min-width:0}
+.cr-meta .nm{font-family:'Kanit';font-weight:500;font-size:.92rem;color:var(--ink);
+  line-height:1.25;overflow-wrap:anywhere}
+.cr-meta .by{font-size:.75rem;color:var(--muted);margin-top:3px;line-height:1.45;overflow-wrap:anywhere}
+.cr-meta .by a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+.cr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:0 0 auto}
+.lic{font-family:'Sarabun';font-size:.71rem;font-weight:600;white-space:nowrap;
+  padding:3px 9px;border-radius:999px;text-decoration:none;
+  background:rgba(26,156,91,.12);color:#158a4f;border:1px solid rgba(26,156,91,.3)}
+html[data-theme="dark"] .lic{background:rgba(45,200,120,.14);color:#5fd99b;border-color:rgba(45,200,120,.3)}
+.lic.unk{background:rgba(201,118,27,.13);color:#b3660f;border-color:rgba(201,118,27,.34)}
+html[data-theme="dark"] .lic.unk{background:rgba(240,160,60,.15);color:#f0a03c;border-color:rgba(240,160,60,.34)}
+/* ป้าย "ถอดออกแล้ว" — รูปถูกนำออกจากเว็บ ไม่ใช่รายการที่รอตรวจ */
+.lic.out{background:rgba(120,130,145,.14);color:#5d6b7a;border-color:rgba(120,130,145,.32)}
+html[data-theme="dark"] .lic.out{background:rgba(150,165,180,.13);color:#93a3b3;border-color:rgba(150,165,180,.26)}
+/* แถวที่ไม่มีรูปย่อ (ไฟล์ถูกถอดออกแล้ว) */
+.cr-row.norm{grid-template-columns:1fr auto}
+@media(max-width:640px){.cr-row.norm{grid-template-columns:1fr}.cr-row.norm .cr-right{grid-column:1}}
+.cr-src{font-size:.7rem;color:var(--muted);text-decoration:none;opacity:.85}
+.cr-src:hover{text-decoration:underline}
+@media(max-width:640px){
+  .cr-row{grid-template-columns:44px 1fr;gap:11px;padding:10px 12px}
+  .cr-thumb{width:44px;height:44px}
+  .cr-right{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start;gap:9px;flex-wrap:wrap}
+}
+
+/* หมวดที่ยังไม่มีข้อมูล */
+.cr-todo{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  padding:12px 14px;border-top:1px solid var(--line)}
+.cr-todo:first-child{border-top:0}
+.cr-todo .tn{font-family:'Kanit';font-weight:500;font-size:.92rem;color:var(--ink)}
+.cr-todo .td{font-size:.75rem;color:var(--muted);margin-top:3px;line-height:1.5}
+.cr-loading{padding:22px 16px;text-align:center;color:var(--muted);font-size:.85rem}
+
+/* ปุ่มกางรายการยาว */
+.cr-more{display:block;width:100%;margin-top:10px;padding:11px 14px;cursor:pointer;
+  font-family:'Sarabun';font-size:.82rem;font-weight:600;color:var(--muted);
+  background:var(--card);border:1px dashed var(--line-2);border-radius:var(--radius);
+  transition:color .15s,border-color .15s}
+.cr-more:hover{color:var(--ink);border-color:var(--orange)}
+.cr-hidden{display:none}
+.cr-list + .cr-more{border-top-left-radius:0;border-top-right-radius:0}
+</style>
+  <script src="../js/icons.js"></script>
+  <script src="../js/preloader.js"></script>
+<script src="../js/disclaimer.js"></script>
+</head>
+<body>
+
+<!-- theme toggle (shared across all md sites · จำค่าไว้ที่ localStorage 'md-theme') -->
+<label class="bb8-toggle" title="สลับโหมดสว่าง/มืด">
+  <input class="bb8-toggle__checkbox" type="checkbox" aria-label="สลับโหมดสว่าง/มืด" onchange="mdApplyTheme(this.checked ? 'dark' : 'light')" />
+  <div class="bb8-toggle__container">
+    <div class="bb8-toggle__scenery">
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div><div class="bb8-toggle__star"></div>
+      <div class="bb8-toggle__star"></div>
+      <div class="tatto-1"></div><div class="tatto-2"></div>
+      <div class="gomrassen"></div><div class="gomrassen-2"></div>
+      <div class="cloud"></div><div class="cloud-2"></div>
+    </div>
+  </div>
+</label>
+
+<div class="cr-wrap">
+
+  <div class="cr-head">
+    <div class="bt">แหล่งที่มาและสัญญาอนุญาตของภาพ
+      <small>ภาพในเว็บนี้ส่วนใหญ่มาจากวิกิมีเดียคอมมอนส์ ซึ่งใช้สัญญาอนุญาตแบบครีเอทีฟคอมมอนส์ —
+      เงื่อนไขหลักคือ<b>ต้องแสดงชื่อผู้สร้างสรรค์และสัญญาอนุญาตให้ผู้ชมเห็นได้</b> หน้านี้จึงมีไว้เพื่อการนั้น</small>
+    </div>
+  </div>
+
+  <div class="cr-stats" id="crStats"></div>
+
+  <div class="cr-note">
+    <b>หมายเหตุ</b> — รายการที่ขึ้นว่า <span class="lic unk" style="display:inline-block;vertical-align:middle">ยังไม่ยืนยัน</span>
+    คือภาพที่ยังสืบที่มาไม่ครบ ถือเป็นรายการที่ต้องตรวจสอบก่อนเผยแพร่ต่อ ไม่ใช่การอ้างว่าใช้ได้
+    · เว็บนี้จัดทำเพื่อการศึกษา ไม่ใช่เอกสารราชการ และไม่มีความเกี่ยวข้องกับพรรคการเมืองหรือหน่วยงานใด
+  </div>
+
+  <div id="crBody"><div class="cr-loading">กำลังโหลดข้อมูลเครดิต…</div></div>
+
+</div>
+
+<script src="nav.js" defer></script>
+<script>
+(function(){
+  const body = document.getElementById('crBody');
+  const statsEl = document.getElementById('crStats');
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const UNVERIFIED = /ยังไม่ยืนยัน|ไม่ทราบ|อ้างอิงเงื่อนไข/;
+
+  /* ---------- ตัวช่วยวาด ---------- */
+  function licBadge(c){
+    const unk = UNVERIFIED.test(c.license||'');
+    const cls = 'lic' + (unk ? ' unk' : '');
+    const txt = esc(c.license || 'ไม่ระบุ');
+    return c.licenseUrl
+      ? `<a class="${cls}" href="${esc(c.licenseUrl)}" target="_blank" rel="noopener">${txt}</a>`
+      : `<span class="${cls}">${txt}</span>`;
+  }
+
+  function row(imgSrc, c, isLogo){
+    const thumb = imgSrc
+      ? `<img class="cr-thumb${isLogo?' logo':''}" src="${esc(imgSrc)}" alt="" loading="lazy" decoding="async" onerror="this.style.visibility='hidden'">`
+      : `<div class="cr-thumb"></div>`;
+    const src = c.source
+      ? `<a class="cr-src" href="${esc(c.source)}" target="_blank" rel="noopener">ดูหน้าต้นทาง ↗</a>` : '';
+    return `<div class="cr-row">${thumb}
+      <div class="cr-meta">
+        <div class="nm">${esc(c.name)}</div>
+        <div class="by">ผู้สร้างสรรค์: ${esc(c.artist || 'ไม่ระบุ')}</div>
+      </div>
+      <div class="cr-right">${licBadge(c)}${src}</div>
+    </div>`;
+  }
+
+  function section(title, sub, rowsHtml, count){
+    return `<div class="cr-sec">
+      <h2>${esc(title)}<span class="cnt">${count} ภาพ</span></h2>
+      ${sub?`<p class="sub">${sub}</p>`:''}
+      <div class="cr-list">${rowsHtml}</div>
+    </div>`;
+  }
+
+  /* ---------- ตัวอ่านไฟล์เครดิต ---------- */
+  const getJSON = u => fetch(u).then(r => r.ok ? r.json() : Promise.reject(u)).catch(()=>null);
+  const getText = u => fetch(u).then(r => r.ok ? r.text() : Promise.reject(u)).catch(()=>null);
+
+  // แปลง logos/CREDITS.txt (รูปแบบข้อความ) เป็นโครงเดียวกับ credits.json
+  function parseLogoCredits(txt){
+    const out = [];
+    // แต่ละบล็อก: "<CODE>  <ชื่อพรรค>\n ไฟล์: x\n ที่มา: url\n license: L · โดย: A"
+    txt.split(/\n(?=\S)/).forEach(block => {
+      const name = (block.match(/^\S+\s+(.+)$/m) || [])[1];
+      const file = (block.match(/ไฟล์:\s*(.+)/) || [])[1];
+      const src  = (block.match(/ที่มา:\s*(\S+)/) || [])[1];
+      const lic  = (block.match(/license:\s*(.+?)\s*·/) || [])[1];
+      const by   = (block.match(/โดย:\s*(.+)/) || [])[1];
+      if (!file || !name) return;
+      out.push({ file: file.trim(), name: name.trim(), artist: (by||'').trim(),
+                 license: (lic||'').trim(), licenseUrl:'', source: (src||'').trim() });
+    });
+    return out;
+  }
+
+  Promise.all([
+    getJSON('leaders/credits.json'),
+    getJSON('../cabinet/photos/credits.json'),
+    getText('logos/CREDITS.txt'),
+    getJSON('photos/credits.json')
+  ]).then(([leaders, cabinet, logosTxt, mps]) => {
+    let html = '', total = 0, verified = 0;
+    let removedInTally = 0;   // รายการที่นับไว้ใน total แต่ถอดรูปออกจากเว็บไปแล้ว
+
+    const tally = c => { total++; if(!UNVERIFIED.test(c.license||'')) verified++; };
+
+    if (leaders) {
+      const keys = Object.keys(leaders).sort((a,b)=>a.localeCompare(b,'th'));
+      let rows = '';
+      keys.forEach(k => { const c = leaders[k]; tally(c); rows += row('leaders/'+k, c, false); });
+      html += section('หัวหน้าพรรคการเมือง',
+        'ใช้ในฉากเปิดของหน้าผลเลือกตั้งรายเขต · ที่มาสืบย้อนจากชื่อไฟล์ต้นฉบับบนวิกิมีเดียคอมมอนส์ที่บันทึกไว้ตอนดาวน์โหลด',
+        rows, keys.length);
+    }
+
+    if (cabinet) {
+      const keys = Object.keys(cabinet).sort();
+      let rows = '';
+      keys.forEach(k => { const c = cabinet[k]; tally(c); rows += row('../cabinet/photos/'+k, c, false); });
+      html += section('คณะรัฐมนตรี (คณะที่ 66)',
+        'ใช้ในหน้าทำเนียบคณะรัฐมนตรี · ภาพที่ระบุว่า “อ้างอิงเงื่อนไขแหล่งที่มา” คือภาพทางการที่ยังต้องตรวจเงื่อนไขของหน่วยงานต้นทางเป็นราย ๆ',
+        rows, keys.length);
+    }
+
+    if (logosTxt) {
+      const list = parseLogoCredits(logosTxt);
+      let rows = '';
+      list.forEach(c => { tally(c); rows += row('logos/'+c.file, c, true); });
+      html += section('โลโก้พรรคการเมือง',
+        'โลโก้เป็นทั้งงานอันมีลิขสิทธิ์และเครื่องหมายประจำพรรค — ใช้ที่นี่เพื่อระบุตัวพรรคในการนำเสนอข้อมูลเท่านั้น ไม่ได้แสดงว่าพรรคใดรับรองเว็บนี้',
+        rows, list.length);
+    }
+
+    /* ส.ส. 501 ภาพ — รายการยาว จึงยุบไว้ก่อน แล้วกางดูได้ */
+    if (mps) {
+      const keys = Object.keys(mps).sort((a,b)=>a.localeCompare(b,'th'));
+      const good = keys.filter(k => !UNVERIFIED.test(mps[k].license||''));
+      const bad  = keys.filter(k =>  UNVERIFIED.test(mps[k].license||''));
+      keys.forEach(k => tally(mps[k]));
+      removedInTally += bad.length;
+
+      const rowsGood = good.map(k => row('photos/'+k, mps[k], false)).join('');
+      // ภาพที่พิสูจน์ที่มาไม่ได้ถูกถอดออกจากเว็บแล้ว จึงไม่แสดงรูปย่อ (ไฟล์ไม่อยู่แล้ว)
+      const rowsBad = bad.map(k => {
+        const c = mps[k];
+        return `<div class="cr-row norm">
+          <div class="cr-meta"><div class="nm">${esc(c.name)}</div>
+            <div class="by">${esc(c.evidence || 'ยังไม่มีข้อมูลที่มา')}</div></div>
+          <div class="cr-right"><span class="lic out">ถอดออกแล้ว</span></div></div>`;
+      }).join('');
+
+      html += `<div class="cr-sec">
+        <h2>ภาพสมาชิกสภาผู้แทนราษฎร<span class="cnt">${good.length} ภาพที่ยังใช้อยู่</span></h2>
+        <p class="sub">ตรวจสอบโดยเทียบไฟล์ในเครื่องกับต้นฉบับบนวิกิมีเดียคอมมอนส์ด้วยค่า sha1 และขนาดภาพ —
+        ยืนยันได้เพียง <b>${good.length} ภาพ</b> จาก ${keys.length} ภาพ แปลว่าภาพชุดนี้ไม่ได้มาจากวิกิพีเดีย
+        และสืบแหล่งที่มาที่แท้จริงไม่ได้ · <b>ภาพที่พิสูจน์ไม่ได้ทั้ง ${bad.length} ภาพจึงถูกถอดออกจากเว็บแล้ว
+        และแสดงเป็นอักษรย่อแทน</b></p>
+        <div class="cr-list">${rowsGood}</div>
+        ${bad.length ? `<button class="cr-more" type="button" data-open="0">แสดงรายชื่อที่ถอดรูปออก ${bad.length} รายการ</button>
+        <div class="cr-list cr-hidden" id="mpBad">${rowsBad}</div>` : ''}
+      </div>`;
+    }
+
+    /* หมวดที่ยังไม่มีข้อมูลที่มา — แสดงตามจริง ไม่กลบ */
+    const PENDING = [
+      { n:'ภาพสมาชิกวุฒิสภา',          d:'election/senators/ · 200 ภาพ — ชื่อไฟล์เป็นเลขลำดับ สืบที่มาย้อนหลังจากไฟล์ไม่ได้' },
+      { n:'ภาพผู้สมัครผู้ว่าฯ กทม.',    d:'election/bkk-photos/gov-*.jpg · 18 ภาพ — ยังไม่มีบันทึกที่มารายภาพ' },
+      { n:'ภาพประธานคณะกรรมาธิการ',    d:'election/committee-photos/ · 35 ภาพ — ชื่อไฟล์เป็นเลขลำดับ สืบที่มาย้อนหลังจากไฟล์ไม่ได้' }
+    ];
+
+    /* ภาพที่ถอดออกจากเว็บแล้ว — บันทึกไว้ให้ตรวจสอบย้อนหลังได้ว่าจัดการอะไรไปบ้าง */
+    const REMOVED = [
+      { n:'ภาพสมาชิกสภาผู้แทนราษฎร',   c:500, d:'พิสูจน์ที่มาไม่ได้ (sha1 และขนาดภาพไม่ตรงกับต้นฉบับใด) → แสดงเป็นอักษรย่อแทน' },
+      { n:'ภาพสมาชิกสภากรุงเทพมหานคร', c:50,  d:'ต้นฉบับเป็นภาพขนาดย่อจากหน้าค้นหารูปภาพ สืบที่มาไม่ได้ → แสดงเป็นอักษรย่อแทน' }
+    ];
+    const removedCount = REMOVED.reduce((s, r) => s + r.c, 0);
+    html += `<div class="cr-sec">
+      <h2>ยังไม่มีข้อมูลแหล่งที่มา<span class="cnt">${PENDING.reduce((s,p)=>s+ (+(p.d.match(/·\s*(\d+)/)||[0,0])[1]),0)} ภาพ</span></h2>
+      <p class="sub">รายการด้านล่างคือภาพที่ยังไม่ได้บันทึกแหล่งที่มา อยู่ระหว่างตรวจสอบ — ไม่ถือว่าได้รับอนุญาตให้ใช้แล้ว</p>
+      <div class="cr-list">${PENDING.map(p=>`<div class="cr-todo">
+        <div><div class="tn">${esc(p.n)}</div><div class="td">${esc(p.d)}</div></div>
+        <span class="lic unk">รอตรวจสอบ</span></div>`).join('')}</div>
+    </div>`;
+
+    html += `<div class="cr-sec">
+      <h2>ภาพที่ถอดออกจากเว็บแล้ว<span class="cnt">${removedCount} ภาพ</span></h2>
+      <p class="sub">ภาพที่พิสูจน์แหล่งที่มาไม่ได้ถูกนำออกจากเว็บ และแสดงเป็นอักษรย่อของชื่อแทน
+      — ไฟล์ต้นฉบับเก็บไว้นอกเว็บ ไม่ได้ลบทิ้ง</p>
+      <div class="cr-list">${REMOVED.map(r=>`<div class="cr-todo">
+        <div><div class="tn">${esc(r.n)} · ${r.c} ภาพ</div><div class="td">${esc(r.d)}</div></div>
+        <span class="lic out">ถอดออกแล้ว</span></div>`).join('')}</div>
+    </div>`;
+
+    body.innerHTML = html || '<div class="cr-loading">ไม่พบไฟล์ข้อมูลเครดิต</div>';
+
+    // ปุ่มกาง/ยุบรายการที่ยังไม่ยืนยัน
+    body.addEventListener('click', e => {
+      const btn = e.target.closest('.cr-more');
+      if (!btn) return;
+      const list = btn.nextElementSibling;
+      const open = btn.dataset.open === '1';
+      btn.dataset.open = open ? '0' : '1';
+      list.classList.toggle('cr-hidden', open);
+      btn.textContent = (open ? 'แสดง' : 'ซ่อน') + btn.textContent.replace(/^(แสดง|ซ่อน)/, '');
+    });
+
+    const pendingCount = PENDING.reduce((s,p)=>s+ (+(p.d.match(/·\s*(\d+)/)||[0,0])[1]),0);
+    const onSite = total - removedInTally + pendingCount;   // ภาพที่ยังแสดงอยู่บนเว็บจริง
+    statsEl.innerHTML = `
+      <div class="cr-stat"><div class="n">${onSite}</div><div class="l">ภาพที่ยังใช้อยู่บนเว็บ</div></div>
+      <div class="cr-stat ok"><div class="n">${verified}</div><div class="l">ยืนยันที่มาและสัญญาอนุญาตแล้ว</div></div>
+      <div class="cr-stat warn"><div class="n">${onSite - verified}</div><div class="l">ยังต้องตรวจสอบ</div></div>
+      <div class="cr-stat"><div class="n">${removedCount}</div><div class="l">ถอดออกจากเว็บแล้ว</div></div>`;
+  });
+})();
+</script>
+
+<script src="../js/theme-toggle-drag.js"></script>
+<script src="../js/ai-chat.js"></script>
+</body>
+</html>

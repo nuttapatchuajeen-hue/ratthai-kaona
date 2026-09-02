@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/cursor-glow.css" />
 
   <style>
   :root {
@@ -18,7 +19,7 @@
     --accent-orange: #FF5C1A;
     --text-primary:  #DCE8F0;
     --text-body:     #A7BDCC;
-    --text-muted:    #4A6070;
+    --text-muted:    #7E97A8;   /* was #4A6070 — 3.11:1 ไม่ผ่าน WCAG AA · ตอนนี้ 6.69:1 */
     --line:          rgba(0,229,255,0.12);
     --font-display:  'Bebas Neue', 'Prompt', sans-serif;
     --font-thai:     'Prompt', 'Sarabun', sans-serif;
@@ -71,6 +72,8 @@
   .nav-logo { display: flex; align-items: center; flex-shrink: 0; }
   .nav-logo-img { height: 2.6rem; width: auto; display: block; }
   .nav-links { list-style: none; display: flex; gap: 0; align-items: stretch; }
+  /* <li> ต้องเป็น flex ด้วย ไม่งั้น <a> ข้างในสูงแค่ ~21px (พื้นที่กดเล็กกว่าที่ตาเห็น) */
+  .nav-links li { display: flex; }
   .nav-tab {
     display: flex; align-items: center; padding: 0 1.0rem;
     font-family: var(--font-sub); font-size: 0.82rem; font-weight: 600;
@@ -83,7 +86,7 @@
 
   .section-label {
     display: inline-block; font-family: var(--font-mono);
-    font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--accent-cyan); margin-bottom: 1.3rem;
   }
 
@@ -102,7 +105,7 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .hero-tagline {
-    font-family: var(--font-mono); font-size: clamp(0.72rem, 1.2vw, 0.92rem);
+    font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 0.92rem);
     letter-spacing: 0.1em; color: var(--text-body); margin-top: 1.6rem;
     max-width: 62ch; line-height: 1.9;
   }
@@ -128,7 +131,7 @@
     padding: 1.8rem 1.7rem; margin-bottom: 1.6rem; position: relative; overflow: hidden;
   }
   .panel-num {
-    font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.2em;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--accent-cyan); display: block; margin-bottom: 0.4rem;
   }
   .panel h2 { font-family: var(--font-thai); font-weight: 700; font-size: 1.3rem; margin-bottom: 0.3rem; }
@@ -141,7 +144,7 @@
   .notice-list li::before { content: '▸'; color: var(--accent-cyan); }
   .scale-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
   .scale-chips span {
-    font-family: var(--font-mono); font-size: 0.72rem; padding: 0.3rem 0.7rem;
+    font-family: var(--font-mono); font-size: 0.78rem; padding: 0.3rem 0.7rem;
     border: 1px solid var(--line); border-radius: 999px; color: var(--text-body);
   }
   .scale-chips b { color: var(--accent-cyan); font-weight: 500; }
@@ -172,7 +175,7 @@
   }
   .likert-head { padding: 0.4rem 0 0.7rem; border-bottom: 1px solid var(--line); }
   .likert-head .col {
-    text-align: center; font-family: var(--font-mono); font-size: 0.6rem;
+    text-align: center; font-family: var(--font-mono); font-size: 0.75rem;
     letter-spacing: 0.04em; color: var(--text-muted); line-height: 1.4;
   }
   .likert-head .col b { display: block; font-size: 0.95rem; color: var(--accent-cyan); font-weight: 500; }
@@ -180,14 +183,14 @@
   .likert-row:last-child { border-bottom: none; }
   .likert-row.missing { background: rgba(255,92,26,0.07); border-radius: 8px; }
   .likert-row .item-text { font-size: 0.95rem; color: var(--text-body); padding-right: 0.8rem; }
-  .likert-row .item-text .no { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-right: 0.5rem; }
+  .likert-row .item-text .no { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-right: 0.5rem; }
   .likert-cell { display: flex; justify-content: center; }
   .likert-cell label { cursor: pointer; position: relative; display: block; }
   .likert-cell input { position: absolute; opacity: 0; pointer-events: none; }
   .likert-cell .dot {
     display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
     border: 1px solid rgba(0,229,255,0.28); color: var(--text-muted);
-    font-family: var(--font-mono); font-size: 0.72rem; transition: all 0.18s; user-select: none;
+    font-family: var(--font-mono); font-size: 0.78rem; transition: all 0.18s; user-select: none;
   }
   .likert-cell label:hover .dot { border-color: var(--accent-cyan); color: var(--text-primary); }
   .likert-cell input:checked + .dot {
@@ -240,7 +243,7 @@
   }
   .stat-card .v { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1; }
   .stat-card .v small { font-size: 45%; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.06em; }
-  .stat-card .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.55rem; }
+  .stat-card .k { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.55rem; }
   .stat-card .interp { color: var(--accent-cyan); font-family: var(--font-thai); font-weight: 700; font-size: 1rem; margin-top: 0.2rem; }
 
   .bar-row { display: grid; grid-template-columns: minmax(150px, 1fr) 2fr 110px; gap: 0.9rem; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.045); }
@@ -253,7 +256,7 @@
 
   table.items { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   table.items th, table.items td { padding: 0.55rem 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
-  table.items th { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  table.items th { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
   table.items td.t { text-align: left; color: var(--text-body); }
   table.items td.num { font-family: var(--font-mono); font-size: 0.8rem; }
   table.items td.interp { color: var(--accent-cyan); font-size: 0.85rem; white-space: nowrap; }
@@ -264,12 +267,12 @@
 
   .comment-item { border-top: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 0; }
   .comment-item:first-of-type { border-top: none; }
-  .comment-item .when { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+  .comment-item .when { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.2rem; }
   .comment-item .txt { color: var(--text-body); font-size: 0.94rem; white-space: pre-wrap; }
 
   .results-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2rem; }
   .btn-ghost {
-    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em;
     padding: 0.55rem 1.2rem; border-radius: 999px; cursor: pointer; text-decoration: none;
     border: 1px solid var(--line); background: transparent; color: var(--text-body); transition: all 0.2s;
   }
@@ -289,19 +292,24 @@
   @media (max-width: 1024px) {
     .nav-links { overflow-x: auto; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-tab { font-size: 0.74rem; padding: 0 0.72rem; }
+    .nav-tab { font-size: 0.78rem; padding: 0 0.72rem; }
   }
   @media (max-width: 760px) {
     .demo-grid { grid-template-columns: 1fr; }
     .likert-head, .likert-row { grid-template-columns: 1fr repeat(5, 38px); gap: 0 3px; }
-    .likert-head .col { font-size: 0.5rem; }
-    .likert-cell .dot { width: 26px; height: 26px; font-size: 0.66rem; }
+    .likert-head .col { font-size: 0.75rem; }
+    .likert-cell .dot { width: 26px; height: 26px; font-size: 0.75rem; }
     .stat-band { grid-template-columns: 1fr; }
     .bar-row { grid-template-columns: 1fr; gap: 0.3rem; }
     .bar-row .val { text-align: left; }
   }
   </style>
+  <!-- เมนูมือถือ (แฮมเบอร์เกอร์) — ต้องอยู่หลัง <style> ของหน้าเพื่อทับกฎ overflow-x เดิม -->
+  <link rel="stylesheet" href="../css/hub-nav.css" />
+  <script src="../js/hub-nav.js" defer></script>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
+<script src="../js/disclaimer.js"></script>
 </head>
 <body>
 
@@ -331,8 +339,9 @@
       <p class="hero-tagline">แบบประเมินความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์ "รัฐไทยก้าวหน้า" — ข้อมูลจะถูกนำไปวิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) เพื่อพัฒนาเว็บไซต์ให้ดียิ่งขึ้น</p>
 
       <div class="tabs" role="tablist">
-        <button class="tab-btn active" id="tab-form" type="button">📝 ทำแบบประเมิน</button>
-        <button class="tab-btn" id="tab-results" type="button">📊 ผลการประเมิน (สด)</button>
+        <button class="tab-btn active" id="tab-form" type="button"><svg class="mdico"><use href="#i-pencil"></use></svg> ทำแบบประเมิน</button>
+        <button class="tab-btn" id="tab-report" type="button"><svg class="mdico"><use href="#i-clipboard-list"></use></svg> ผลการประเมิน (รายงาน)</button>
+        <button class="tab-btn" id="tab-results" type="button"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลการประเมิน (สด)</button>
       </div>
     </section>
 
@@ -379,7 +388,7 @@
           <span class="panel-num">ตอนที่ 3</span>
           <h2>ข้อเสนอแนะเพิ่มเติม</h2>
           <p class="hint">ความคิดเห็นปลายเปิด (ไม่บังคับ)</p>
-          <textarea id="comment" maxlength="2000" placeholder="ข้อเสนอแนะเพื่อปรับปรุงเว็บไซต์…"></textarea>
+          <textarea id="comment" maxlength="2000" aria-label="ข้อเสนอแนะเพิ่มเติม (ไม่บังคับ)" placeholder="ข้อเสนอแนะเพื่อปรับปรุงเว็บไซต์…"></textarea>
           <!-- honeypot: คนจริงมองไม่เห็น บอทชอบกรอก -->
           <div class="hp-field" aria-hidden="true">
             <label>เว็บไซต์ของคุณ <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off" /></label>
@@ -388,15 +397,15 @@
 
         <div class="submit-bar">
           <button type="submit" class="btn-submit" id="btn-submit">ส่งแบบประเมิน</button>
-          <span class="form-msg" id="form-msg"></span>
+          <span class="form-msg" id="form-msg" role="status" aria-live="polite"></span>
         </div>
       </form>
 
       <div class="thanks" id="thanks" hidden>
-        <div class="big">🙏</div>
+        <div class="big"><svg class="mdico"><use href="#i-heart-handshake"></use></svg></div>
         <h2>ขอบคุณสำหรับการประเมิน</h2>
         <p>ระบบบันทึกคำตอบของท่านเรียบร้อยแล้ว ความคิดเห็นของท่านจะถูกนำไปวิเคราะห์ทางสถิติเพื่อพัฒนาเว็บไซต์ต่อไป</p>
-        <button class="tab-btn active" type="button" id="btn-see-results">📊 ดูผลการประเมินรวม</button>
+        <button class="tab-btn active" type="button" id="btn-see-results"><svg class="mdico"><use href="#i-chart-column"></use></svg> ดูผลการประเมินรวม</button>
         <button class="btn-ghost" type="button" id="btn-again" style="margin-left:0.6rem">ทำแบบประเมินอีกชุด (สำหรับผู้ตอบคนถัดไป)</button>
       </div>
     </section>
@@ -461,6 +470,129 @@
       </div>
       <div class="empty" id="res-empty" hidden>ยังไม่มีผู้ตอบแบบประเมิน — เป็นคนแรกได้เลย!</div>
     </section>
+    <!-- ════ VIEW 3: REPORT (ผลจริงจากรายงานโครงการ บทที่ 4 · n = 30) ════ -->
+    <section class="wrap" id="view-report" hidden>
+
+      <div class="panel">
+        <span class="panel-num">ที่มาของข้อมูล</span>
+        <h2>ผลการประเมินความพึงพอใจ (n = 30)</h2>
+        <p class="hint">ผลการเก็บข้อมูลจริงที่รายงานไว้ใน <strong>บทที่ 4 ผลการวิจัย</strong> ของโครงการ “รัฐไทยก้าวหน้า” — กลุ่มตัวอย่างคือนักเรียนระดับประกาศนียบัตรวิชาชีพ (ปวช.) และผู้ที่สนใจ จำนวน 30 คน วิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ตัวเลขในหน้านี้เป็นชุดข้อมูลคงที่ตามเล่มรายงาน แยกจากแท็บ “ผลการประเมิน (สด)” ที่ดึงคำตอบล่าสุดจากระบบ</p>
+      </div>
+
+      <div class="stat-band">
+        <div class="stat-card">
+          <div class="v">30</div>
+          <div class="k">ผู้ตอบแบบประเมิน (คน)</div>
+        </div>
+        <div class="stat-card">
+          <div class="v">4.54 <small>/ 5.00</small></div>
+          <div class="k">ค่าเฉลี่ยรวม (x̄)</div>
+          <div class="interp">มากที่สุด</div>
+        </div>
+        <div class="stat-card">
+          <div class="v">0.60</div>
+          <div class="k">ส่วนเบี่ยงเบนมาตรฐานรวม (S.D.)</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">สรุปรายด้าน</span>
+        <h2>ค่าเฉลี่ยความพึงพอใจรายด้าน</h2>
+        <div class="bar-row"><div class="lbl">ด้านประโยชน์และการนำไปใช้</div><div class="bar-track"><div class="bar-fill" style="width:91.6%"></div></div><div class="val">4.58 <small>· S.D. 0.58 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านการออกแบบและการจัดรูปแบบเว็บไซต์</div><div class="bar-track"><div class="bar-fill" style="width:91.4%"></div></div><div class="val">4.57 <small>· S.D. 0.58 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านการใช้งาน</div><div class="bar-track"><div class="bar-fill" style="width:90.4%"></div></div><div class="val">4.52 <small>· S.D. 0.61 · มากที่สุด</small></div></div>
+        <div class="bar-row"><div class="lbl">ด้านเนื้อหา</div><div class="bar-track"><div class="bar-fill" style="width:89.8%"></div></div><div class="val">4.49 <small>· S.D. 0.61 · มาก</small></div></div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">รายข้อ</span>
+        <h2>ค่าเฉลี่ย (x̄) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) รายข้อ</h2>
+        <p class="hint">ตารางที่ 4.6 ในเล่มรายงาน · 16 ข้อ แบ่งเป็น 4 ด้าน</p>
+        <div style="overflow-x:auto">
+          <table class="items">
+            <thead>
+              <tr><th style="text-align:left">รายการประเมิน</th><th>x̄</th><th>S.D.</th><th>แปลผล</th></tr>
+            </thead>
+            <tbody>
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านเนื้อหา</td></tr>
+              <tr><td class="t">1. เนื้อหามีความถูกต้อง ครบถ้วน และเป็นปัจจุบัน</td><td class="num">4.50</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">2. การจัดหมวดหมู่ข้อมูลเป็นระบบ ค้นหาง่าย</td><td class="num">4.47</td><td class="num">0.63</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">3. ปริมาณเนื้อหาในแต่ละหน้ามีความเหมาะสม</td><td class="num">4.43</td><td class="num">0.68</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">4. ภาษาที่ใช้อ่านเข้าใจง่าย เหมาะกับผู้ใช้ทั่วไป</td><td class="num">4.57</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านเนื้อหา</td><td class="num" style="font-weight:700">4.49</td><td class="num" style="font-weight:700">0.61</td><td class="interp" style="font-weight:700">มาก</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านการออกแบบและการจัดรูปแบบเว็บไซต์</td></tr>
+              <tr><td class="t">5. การออกแบบหน้าเว็บสวยงาม ทันสมัย</td><td class="num">4.67</td><td class="num">0.55</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">6. สี ขนาดตัวอักษร และความคมชัดเหมาะสม อ่านง่าย</td><td class="num">4.53</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">7. รูปภาพ กราฟิก และแผนภาพประกอบสื่อความหมายชัดเจน</td><td class="num">4.60</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">8. แสดงผลได้เหมาะสมทั้งบนคอมพิวเตอร์และโทรศัพท์มือถือ</td><td class="num">4.50</td><td class="num">0.63</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านการออกแบบและการจัดรูปแบบเว็บไซต์</td><td class="num" style="font-weight:700">4.57</td><td class="num" style="font-weight:700">0.58</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านการใช้งาน</td></tr>
+              <tr><td class="t">9. เว็บไซต์ใช้งานง่าย ไม่ซับซ้อน</td><td class="num">4.53</td><td class="num">0.57</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">10. เมนูและลิงก์เชื่อมโยงไปยังหน้าต่าง ๆ ชัดเจน</td><td class="num">4.50</td><td class="num">0.60</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">11. ความเร็วในการโหลดและแสดงผลเหมาะสม</td><td class="num">4.43</td><td class="num">0.67</td><td class="interp">มาก</td></tr>
+              <tr><td class="t">12. ผู้ช่วย AI ช่วยให้ค้นหาข้อมูลที่ต้องการได้สะดวกขึ้น</td><td class="num">4.60</td><td class="num">0.61</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านการใช้งาน</td><td class="num" style="font-weight:700">4.52</td><td class="num" style="font-weight:700">0.61</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(255,255,255,0.045)"><td class="t" colspan="4" style="font-weight:700">ด้านประโยชน์และการนำไปใช้</td></tr>
+              <tr><td class="t">13. ได้รับความรู้ความเข้าใจเกี่ยวกับโครงสร้างภาครัฐไทยเพิ่มขึ้น</td><td class="num">4.63</td><td class="num">0.55</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">14. สามารถนำข้อมูลไปใช้อ้างอิงหรือประกอบการเรียน / การทำงานได้</td><td class="num">4.57</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">15. เว็บไซต์ช่วยส่งเสริมการเข้าถึงข้อมูลภาครัฐที่โปร่งใส</td><td class="num">4.53</td><td class="num">0.62</td><td class="interp">มากที่สุด</td></tr>
+              <tr><td class="t">16. โดยภาพรวมท่านพึงพอใจต่อเว็บไซต์ “รัฐไทยก้าวหน้า”</td><td class="num">4.60</td><td class="num">0.56</td><td class="interp">มากที่สุด</td></tr>
+              <tr style="background:rgba(0,229,255,0.06)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมด้านประโยชน์และการนำไปใช้</td><td class="num" style="font-weight:700">4.58</td><td class="num" style="font-weight:700">0.58</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+
+              <tr style="background:rgba(0,229,255,0.12)"><td class="t" style="font-weight:700">ค่าเฉลี่ยรวมทั้งฉบับ</td><td class="num" style="font-weight:700">4.54</td><td class="num" style="font-weight:700">0.60</td><td class="interp" style="font-weight:700">มากที่สุด</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint" style="margin-top:0.9rem">เกณฑ์แปลผล: 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด</p>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">ข้อมูลทั่วไป</span>
+        <h2>ข้อมูลทั่วไปของผู้ตอบแบบสอบถาม</h2>
+        <p class="hint">ตารางที่ 4.5 ในเล่มรายงาน · จำนวน (คน) และร้อยละ</p>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.2rem 0 0.4rem">1. เพศ</h3>
+        <div class="bar-row"><div class="lbl">ชาย</div><div class="bar-track"><div class="bar-fill" style="width:53.33%"></div></div><div class="val">16 คน <small>· 53.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">หญิง</div><div class="bar-track"><div class="bar-fill" style="width:43.33%"></div></div><div class="val">13 คน <small>· 43.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">ไม่ระบุ</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">2. อายุ</h3>
+        <div class="bar-row"><div class="lbl">ต่ำกว่า 18 ปี</div><div class="bar-track"><div class="bar-fill" style="width:13.33%"></div></div><div class="val">4 คน <small>· 13.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">18 – 25 ปี</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="val">18 คน <small>· 60.00%</small></div></div>
+        <div class="bar-row"><div class="lbl">26 – 35 ปี</div><div class="bar-track"><div class="bar-fill" style="width:16.67%"></div></div><div class="val">5 คน <small>· 16.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">36 – 45 ปี</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">46 ปีขึ้นไป</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">3. สถานภาพ</h3>
+        <div class="bar-row"><div class="lbl">นักเรียน / นักศึกษา</div><div class="bar-track"><div class="bar-fill" style="width:73.33%"></div></div><div class="val">22 คน <small>· 73.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">ข้าราชการ / พนักงานของรัฐ</div><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><div class="val">3 คน <small>· 10.00%</small></div></div>
+        <div class="bar-row"><div class="lbl">พนักงานบริษัทเอกชน</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">ประกอบอาชีพอิสระ / ค้าขาย</div><div class="bar-track"><div class="bar-fill" style="width:6.67%"></div></div><div class="val">2 คน <small>· 6.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">อื่น ๆ</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+
+        <h3 style="font-family:var(--font-thai);font-size:1rem;margin:1.5rem 0 0.4rem">4. ความถี่ในการใช้งานเว็บไซต์</h3>
+        <div class="bar-row"><div class="lbl">ใช้งานครั้งแรก</div><div class="bar-track"><div class="bar-fill" style="width:56.67%"></div></div><div class="val">17 คน <small>· 56.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">เดือนละ 1 – 2 ครั้ง</div><div class="bar-track"><div class="bar-fill" style="width:26.67%"></div></div><div class="val">8 คน <small>· 26.67%</small></div></div>
+        <div class="bar-row"><div class="lbl">สัปดาห์ละ 1 – 2 ครั้ง</div><div class="bar-track"><div class="bar-fill" style="width:13.33%"></div></div><div class="val">4 คน <small>· 13.33%</small></div></div>
+        <div class="bar-row"><div class="lbl">เกือบทุกวัน</div><div class="bar-track"><div class="bar-fill" style="width:3.33%"></div></div><div class="val">1 คน <small>· 3.33%</small></div></div>
+      </div>
+
+      <div class="panel">
+        <span class="panel-num">ข้อเสนอแนะ</span>
+        <h2>ข้อเสนอแนะเพิ่มเติมจากคำถามปลายเปิด</h2>
+        <p class="hint">สรุปได้ 3 ประเด็นสำคัญ</p>
+        <ol style="padding-left:1.2rem;line-height:1.85">
+          <li><strong>ความเป็นปัจจุบันและการจัดหมวดหมู่ของข้อมูล</strong> — ควรปรับปรุงข้อมูลให้เป็นปัจจุบันอย่างต่อเนื่อง และจัดหมวดหมู่เนื้อหาในแต่ละหน้าให้ค้นหาได้ง่ายขึ้น สอดคล้องกับด้านเนื้อหาที่มีค่าเฉลี่ยรวมต่ำสุด 4.49 และข้อ “การจัดหมวดหมู่ข้อมูลเป็นระบบ ค้นหาง่าย” ที่ได้ 4.47</li>
+          <li><strong>ความเร็วในการโหลดและแสดงผล</strong> — ควรปรับปรุงความเร็วในการโหลดหน้าเว็บที่มีแผนภาพและแผนภูมิจำนวนมาก โดยเฉพาะเมื่อใช้งานผ่านโทรศัพท์มือถือ สอดคล้องกับข้อที่มีค่าเฉลี่ยต่ำสุดของทั้งฉบับเท่ากับ 4.43</li>
+          <li><strong>ผู้ช่วยปัญญาประดิษฐ์ (AI)</strong> — ควรพัฒนาผู้ช่วย AI ให้ตอบคำถามได้ครอบคลุมและหลากหลายยิ่งขึ้น แม้ข้อนี้จะมีค่าเฉลี่ยสูงถึง 4.60 สะท้อนว่าผู้ใช้เห็นประโยชน์และคาดหวังให้พัฒนาต่อยอด</li>
+        </ol>
+      </div>
+
+    </section>
+
   </main>
 
   <footer>
@@ -526,14 +658,20 @@
     div.id = 'q-' + q.id;
     const p = document.createElement('p');
     p.className = 'q-text';
-    p.innerHTML = q.text + ' <span class="req">*</span>';
+    p.id = 'lbl-' + q.id;                       // ผูกเป็นชื่อของกลุ่มตัวเลือก
+    p.innerHTML = q.text + ' <span class="req" aria-hidden="true">*</span>';
     div.appendChild(p);
     const chips = document.createElement('div');
     chips.className = 'chips';
+    // กลุ่มตัวเลือกแบบเลือกอย่างเดียว → screen reader อ่าน "คำถาม, กลุ่มตัวเลือก, จำเป็น"
+    chips.setAttribute('role', 'radiogroup');
+    chips.setAttribute('aria-labelledby', p.id);
+    chips.setAttribute('aria-required', 'true');
     for (const c of q.choices) {
       const label = document.createElement('label');
       const input = document.createElement('input');
       input.type = 'radio'; input.name = q.id; input.value = c;
+      input.setAttribute('aria-label', c);      // input ถูกซ่อนด้วย opacity → ต้องมีชื่อของตัวเอง
       const span = document.createElement('span');
       span.className = 'chip'; span.textContent = c;
       label.append(input, span);
@@ -554,27 +692,35 @@
 
     const head = document.createElement('div');
     head.className = 'likert-head';
+    head.setAttribute('aria-hidden', 'true');   // แถวหัวเป็นภาพช่วยจำ — ตัวเลือกแต่ละอันมีชื่อครบในตัวเองแล้ว
     head.innerHTML = '<div></div>' + SCALE.map(([n, t]) => `<div class="col"><b>${n}</b>${t}</div>`).join('');
     likertArea.appendChild(head);
 
     sec.items.forEach((text) => {
       const i = qNo++;
+      // row = กลุ่มตัวเลือกของ 1 คำถาม → screen reader อ่าน "ข้อ N ..., กลุ่มตัวเลือก, จำเป็น"
       const row = document.createElement('div');
       row.className = 'likert-row';
       row.id = 'row-q' + i;
+      row.setAttribute('role', 'radiogroup');
+      row.setAttribute('aria-required', 'true');
       const t = document.createElement('div');
       t.className = 'item-text';
+      t.id = 'lbl-q' + i;
       t.innerHTML = `<span class="no">${i + 1}.</span>${text}`;
+      row.setAttribute('aria-labelledby', t.id);
       row.appendChild(t);
-      for (const [n] of SCALE) {
+      for (const [n, scaleText] of SCALE) {
         const cell = document.createElement('div');
         cell.className = 'likert-cell';
         const label = document.createElement('label');
-        label.title = `${n} คะแนน`;
+        label.title = `${n} ${scaleText}`;
         const input = document.createElement('input');
         input.type = 'radio'; input.name = 'q' + i; input.value = n;
+        // input ถูกซ่อนด้วย opacity:0 → ต้องมีชื่อเต็ม ไม่งั้น SR อ่านแค่ "5" ไม่รู้ว่าคืออะไร
+        input.setAttribute('aria-label', `${n} ${scaleText}`);
         const dot = document.createElement('span');
-        dot.className = 'dot'; dot.textContent = n;
+        dot.className = 'dot'; dot.textContent = n; dot.setAttribute('aria-hidden', 'true');
         label.append(input, dot);
         cell.appendChild(label);
         row.appendChild(cell);
@@ -590,15 +736,20 @@
   const viewResults = document.getElementById('view-results');
   let resultsLoadedOnce = false;
 
+  const tabReport = document.getElementById('tab-report');
+  const viewReport = document.getElementById('view-report');
+
   function showView(which) {
-    const isForm = which === 'form';
-    viewForm.hidden = !isForm;
-    viewResults.hidden = isForm;
-    tabForm.classList.toggle('active', isForm);
-    tabResults.classList.toggle('active', !isForm);
-    if (!isForm && !resultsLoadedOnce) loadResults();
+    viewForm.hidden    = which !== 'form';
+    viewReport.hidden  = which !== 'report';
+    viewResults.hidden = which !== 'results';
+    tabForm.classList.toggle('active', which === 'form');
+    tabReport.classList.toggle('active', which === 'report');
+    tabResults.classList.toggle('active', which === 'results');
+    if (which === 'results' && !resultsLoadedOnce) loadResults();
   }
   tabForm.addEventListener('click', () => showView('form'));
+  tabReport.addEventListener('click', () => showView('report'));
   tabResults.addEventListener('click', () => showView('results'));
 
   // ── submit ──
@@ -613,19 +764,33 @@
 
     const data = { ratings: [], comment: document.getElementById('comment').value, website: document.getElementById('hp-website').value };
 
+    // ── ตรวจให้ครบก่อน แล้วค่อยแจ้งทีเดียว (เดิมแจ้งทีละข้อ ต้องกดส่งซ้ำหลายรอบ) ──
+    let firstMissing = null;                 // element แรกที่ต้องพาผู้ใช้ไปหา
+    const demoMissing = [];
     for (const q of DEMO_QUESTIONS) {
       const sel = form.querySelector(`input[name="${q.id}"]:checked`);
-      if (!sel) return showError(`กรุณาตอบตอนที่ 1 ${q.text}`, document.getElementById('q-' + q.id));
-      data[q.id] = sel.value;
+      if (!sel) { demoMissing.push(q); if (!firstMissing) firstMissing = document.getElementById('q-' + q.id); }
+      else data[q.id] = sel.value;
     }
+    const likertMissing = [];
     for (let i = 0; i < ALL_ITEMS.length; i++) {
       const sel = form.querySelector(`input[name="q${i}"]:checked`);
       if (!sel) {
         const row = document.getElementById('row-q' + i);
         row.classList.add('missing');
-        return showError(`กรุณาให้คะแนนตอนที่ 2 ข้อ ${i + 1}`, row);
+        likertMissing.push(i + 1);
+        if (!firstMissing) firstMissing = row;
       }
-      data.ratings.push(Number(sel.value));
+    }
+    if (demoMissing.length || likertMissing.length) {
+      const parts = [];
+      if (demoMissing.length) parts.push(`ตอนที่ 1 อีก ${demoMissing.length} ข้อ`);
+      if (likertMissing.length) parts.push(`ตอนที่ 2 ข้อ ${likertMissing.join(', ')}`);
+      return showError('ยังตอบไม่ครบ — ' + parts.join(' และ '), firstMissing);
+    }
+    // ผ่านครบ → เก็บคะแนนตามลำดับข้อ
+    for (let i = 0; i < ALL_ITEMS.length; i++) {
+      data.ratings.push(Number(form.querySelector(`input[name="q${i}"]:checked`).value));
     }
 
     btnSubmit.disabled = true;
@@ -654,7 +819,13 @@
   function showError(text, scrollTarget) {
     msg.className = 'form-msg err';
     msg.textContent = text;
-    if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // ย้ายโฟกัสไปที่ข้อที่ขาด ไม่ใช่แค่เลื่อนจอ — คนใช้คีย์บอร์ด/SR จะได้ไปต่อจากตรงนั้น
+      const firstInput = scrollTarget.querySelector('input');
+      if (firstInput) firstInput.focus({ preventScroll: true });
+      else { scrollTarget.setAttribute('tabindex', '-1'); scrollTarget.focus({ preventScroll: true }); }
+    }
     return false;
   }
 
@@ -783,6 +954,9 @@
     }
   }
   </script>
+  <script src="../js/cursor-glow.js"></script>
   <script src="../js/ai-chat.js"></script>
+  <script src="../js/cyber-sfx.js"></script>
+  <script src="../js/cyber-audio.js"></script>
 </body>
 </html>

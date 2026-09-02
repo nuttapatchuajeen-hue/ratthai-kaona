@@ -1,0 +1,119 @@
+/* ═══════════════════════════════════════════════════════════════
+   CURSOR GLOW — แสงวิ่งตามเคอร์เซอร์ (ใช้ร่วมกันทุกหน้าใน hub/)
+   พอร์ตจากสปอตไลต์ทองใน cabinet/index.html แล้วรีคัลเลอร์เป็นฟ้าแบรนด์
+
+   พิกัดเมาส์ --xp/--yp (0–1 เทียบวิวพอร์ต) ตั้งค่าบน :root
+   โดย js/cursor-glow.js — ไฟล์นี้แค่เอาไปวาด
+
+   ใช้ % ไม่ใช้ px เพราะทุกชั้นเป็น fixed เต็มวิวพอร์ต (การ์ดใช้
+   background-attachment:fixed) → กล่องอ้างอิงคือวิวพอร์ตเหมือนกันหมด
+   ข้อดี: ค่าเริ่มต้น .5 = กึ่งกลางจอ ถูกต้องตั้งแต่เฟรมแรกก่อน JS ทำงาน
+   จึงไม่ต้องมี class/transition มาเปิดแสงทีหลัง (แสงไม่มีวันค้างดับ)
+
+   3 ชั้น:  A = สปอตไลต์พื้นหลังทั้งหน้า (body::after)
+            B = กริดสว่างเฉพาะรอบเคอร์เซอร์ (html::after)
+            C = ขอบการ์ดเรืองแสงตามเมาส์ (การ์ด::after)
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --cg-hue-base:   174;    /* ฟ้าอมเขียว (ซ้ายจอ) */
+  --cg-hue-spread: 24;     /* เลื่อนถึง 198 = ฟ้าอมน้ำเงิน (ขวาจอ) — สูตรเดียวกับทอง 44→60 ที่หน้า ครม. */
+  --cg-hue:        calc(var(--cg-hue-base) + (var(--xp, .5) * var(--cg-hue-spread)));
+  --cg-x:          calc(var(--xp, .5) * 100%);
+  --cg-y:          calc(var(--yp, .5) * 100%);
+  --cg-spot:       460px;  /* A · เส้นผ่านศูนย์กลางสปอตไลต์พื้นหลัง */
+  --cg-grid:       180px;  /* B · รัศมีวงที่เปิดกริดให้สว่าง */
+  --cg-card:       190px;  /* C · เส้นผ่านศูนย์กลางแสงที่ขอบการ์ด */
+  --cg-border:     2px;    /* C · ความหนาขอบเรืองแสง */
+}
+
+/* ── A · สปอตไลต์พื้นหลังทั้งหน้า ──────────────────────────────
+   mix-blend-mode:screen = เติมแสงบนพื้นเข้ม แต่ไม่ไปทับตัวหนังสือ
+   สว่างให้อ่านยาก (ค่าที่สว่างอยู่แล้วแทบไม่ขยับ) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: radial-gradient(var(--cg-spot) var(--cg-spot) at var(--cg-x) var(--cg-y),
+    hsl(var(--cg-hue) 100% 55% / .11), transparent 66%);
+}
+
+/* ── B · กริดสว่างตามเมาส์ ─────────────────────────────────────
+   กริดฟ้า 64px ชุดเดียวกับ .hero-grid-overlay / .bg-field::before
+   (ซึ่งตั้งไว้จางมาก .022–.025) แต่สว่างขึ้น แล้ว mask ให้เห็น
+   เฉพาะวงกลมรอบเคอร์เซอร์ → เหมือนส่องไฟดูโครงตารางที่ซ่อนอยู่ */
+html::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 399;
+  pointer-events: none;
+  background-image:
+    linear-gradient(hsl(var(--cg-hue) 100% 60% / .26) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--cg-hue) 100% 60% / .26) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(circle var(--cg-grid) at var(--cg-x) var(--cg-y),
+    #000 5%, transparent 72%);
+          mask-image: radial-gradient(circle var(--cg-grid) at var(--cg-x) var(--cg-y),
+    #000 5%, transparent 72%);
+}
+
+/* ── C · ขอบการ์ดเรืองแสง ──────────────────────────────────────
+   เทคนิค mask-composite:exclude เผยเฉพาะวงขอบ (โค้ดเดิมจากหน้า ครม.)
+   background-attachment:fixed ทำให้การ์ดทุกใบอ้างอิงวิวพอร์ตเดียวกัน
+   → แสงไหลข้ามการ์ดต่อเนื่องเป็นผืนเดียว ไม่ใช่ต่างคนต่างเรือง */
+.news-card,
+.card,
+.contact-card,
+.panel,
+.stat-card { position: relative; }
+
+.news-card::after,
+.card::after,
+.contact-card::after,
+.panel::after,
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: var(--cg-border) solid transparent;
+  border-radius: inherit;
+  filter: brightness(1.35);
+  background:
+    radial-gradient(calc(var(--cg-card) * .5) calc(var(--cg-card) * .5) at var(--cg-x) var(--cg-y),
+      hsl(0 0% 100% / .85), transparent 100%) center / 100% 100% fixed no-repeat,
+    radial-gradient(var(--cg-card) var(--cg-card) at var(--cg-x) var(--cg-y),
+      hsl(var(--cg-hue) 96% 60% / 1), transparent 100%) center / 100% 100% fixed no-repeat;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+
+/* ── จอสัมผัส: ปิด B และ C ─────────────────────────────────────
+   ไม่มีเคอร์เซอร์ให้ตาม → วงกริดกับขอบการ์ดจะค้างกลางจอเหมือนบั๊ก
+   (คง A ไว้ เพราะค้างกลางจอแล้วยังอ่านเป็นแสงนวลพื้นหลังได้ปกติ) */
+@media (hover: none), (pointer: coarse) {
+  html::after,
+  .news-card::after,
+  .card::after,
+  .contact-card::after,
+  .panel::after,
+  .stat-card::after { display: none; }
+}
+
+/* ── เคารพการตั้งค่าลดการเคลื่อนไหว ── */
+@media (prefers-reduced-motion: reduce) {
+  html::after,
+  body::after,
+  .news-card::after,
+  .card::after,
+  .contact-card::after,
+  .panel::after,
+  .stat-card::after { display: none; }
+}

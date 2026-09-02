@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../css/bb8-toggle.css">
 <style>
-/* ===== COMMITTEES PAGE ===== */
-.cmt-wrap{max-width:1180px;margin:0 auto;padding:84px 20px 96px}
+/* ===== COMMITTEES PAGE (WIDESCREEN + BENTO & GETDESIGN.MD LIST) ===== */
+.cmt-wrap{max-width:1680px;margin:0 auto;padding:84px 32px 96px}
 @media(max-width:860px){.cmt-wrap{padding:16px 12px 110px}}
 
 .cmt-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -49,14 +49,21 @@ html[data-theme="dark"] .cmt-searchbox input{background:var(--card)}
 .chip.on .ct{background:rgba(255,255,255,.25);color:#fff}
 .chip.on .sw{box-shadow:0 0 0 2px rgba(255,255,255,.6)}
 html[data-theme="dark"] .chip{background:var(--card)}
-/* fix: ธีมมืด chip ที่ active ต้องคืนพื้นหลัง — เดิม .chip{background:var(--card)}
-   (specificity สูงกว่า .chip.on) ทับพื้นหลัง active ทำให้มืดบนมืด อ่านไม่ออก
-   และสีพรรคก็ไม่ขึ้นตอนเลือก */
+/* fix: ธีมมืด chip ที่ active ต้องคืนพื้นหลัง */
 html[data-theme="dark"] .chip.on{background:var(--chip-col,var(--ink));color:#06101a}
 html[data-theme="dark"] .chip.on .ct{background:rgba(0,0,0,.16);color:#06101a}
-/* chip ที่ถูกเติมด้วย "สีพรรค" (ไม่ใช่ "ทุกพรรค") → ตัวอักษรขาว ให้ตัดกับสีพรรคที่เข้ม */
 html[data-theme="dark"] .chip.on[data-party]:not([data-party="all"]){color:#fff}
 html[data-theme="dark"] .chip.on[data-party]:not([data-party="all"]) .ct{background:rgba(255,255,255,.25);color:#fff}
+
+/* View Mode Switcher Bar */
+.cmt-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 14px;flex-wrap:wrap}
+.cmt-view-toggle{display:inline-flex;align-items:center;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;padding:3px;gap:2px}
+html[data-theme="dark"] .cmt-view-toggle{background:var(--card)}
+.vbtn{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';font-size:.82rem;font-weight:500;color:var(--muted);background:transparent;border:0;border-radius:7px;padding:5px 12px;cursor:pointer;transition:all .15s ease}
+.vbtn:hover{color:var(--ink)}
+.vbtn.active{color:var(--paper);background:var(--orange);font-weight:600;box-shadow:0 2px 8px -2px rgba(255,106,19,.4)}
+html[data-theme="dark"] .vbtn.active{color:#06101a}
+.vbtn svg{width:14px;height:14px;flex:none}
 
 /* grid */
 .cmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(335px,1fr));gap:14px}
@@ -83,7 +90,53 @@ html[data-theme="dark"] .cmt-card .tbadge.wisaman{color:#e7c977}
 .cmt-card .pbadge{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:.7rem;color:var(--ink-2)}
 .cmt-card .pbadge .sw{width:9px;height:9px;border-radius:50%;background:var(--pc)}
 
-.cmt-count{font-size:.8rem;color:var(--muted);margin:0 2px 12px}
+/* ===== DATA TABLE LIST (สไตล์ getdesign.md ตามรูปภาพ) ===== */
+.cmt-table-wrap{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  overflow-x:auto;overflow-y:hidden;margin-bottom:18px;
+}
+.cmt-table{width:100%;border-collapse:collapse;text-align:left;min-width:820px}
+.cmt-table thead{background:var(--wash);border-bottom:1px solid var(--line)}
+.cmt-table th{
+  font-family:'Kanit';font-size:.76rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:13px 18px;white-space:nowrap;
+}
+.cmt-table th.th-num{width:60px;text-align:center}
+.cmt-table th.th-type{width:95px}
+.cmt-table th.th-chair{width:260px}
+.cmt-table th.th-party{width:145px}
+.cmt-table th.th-members{width:110px;text-align:right}
+.cmt-table th.th-act{width:60px;text-align:center}
+
+.cmt-table tbody tr{
+  border-bottom:1px solid var(--line);cursor:pointer;
+  transition:background .15s ease,box-shadow .15s ease;
+}
+.cmt-table tbody tr:last-child{border-bottom:none}
+.cmt-table tbody tr:hover{background:var(--wash)}
+html[data-theme="dark"] .cmt-table tbody tr:hover{background:rgba(255,255,255,.04)}
+
+.cmt-table td{padding:13px 18px;vertical-align:middle;font-size:.9rem}
+.td-num{font-family:'Kanit',monospace;font-weight:700;font-size:.84rem;color:var(--muted);text-align:center}
+.td-name{font-family:'Kanit';font-weight:600;font-size:.96rem;color:var(--ink);line-height:1.35}
+.td-name small{display:block;font-family:'Sarabun';font-weight:400;font-size:.76rem;color:var(--muted);margin-top:2px}
+.td-chair{display:flex;align-items:center;gap:10px}
+.td-chair .av{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-family:'Kanit';font-weight:600;font-size:.9rem;background:var(--pc,var(--orange));box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--line-2);position:relative;overflow:hidden}
+.td-chair .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
+.td-chair-info{min-width:0}
+.td-chair-name{font-family:'Kanit';font-weight:600;font-size:.92rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-chair-role{font-size:.7rem;color:var(--muted)}
+.td-party-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.75rem;font-family:'Kanit';font-weight:500;color:var(--ink-2);background:var(--paper);border:1px solid var(--line-2);white-space:nowrap}
+.td-party-badge .sw{width:8px;height:8px;border-radius:50%;background:var(--pc)}
+html[data-theme="dark"] .td-party-badge{background:var(--card)}
+.td-members{font-family:'Kanit',monospace;font-weight:700;font-size:.88rem;color:var(--ink);text-align:right;white-space:nowrap}
+.td-members small{font-size:.72rem;color:var(--muted);font-weight:400;margin-left:3px}
+.td-act{text-align:center}
+.td-act-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--muted);background:var(--paper);border:1px solid var(--line-2);transition:all .15s ease}
+.cmt-table tbody tr:hover .td-act-btn{background:var(--orange);color:#fff;border-color:transparent;transform:translateX(2px)}
+html[data-theme="dark"] .td-act-btn{background:var(--card)}
+
+.cmt-count{font-size:.8rem;color:var(--muted);margin:0}
 .cmt-count b{font-family:'Kanit';color:var(--ink)}
 .cmt-empty{text-align:center;color:var(--muted);padding:48px 16px;font-size:.95rem}
 
@@ -100,7 +153,7 @@ html[data-theme="dark"] .cmt-card .tbadge.wisaman{color:#e7c977}
   border:1px solid var(--orange-line);border-radius:999px;padding:4px 9px;white-space:nowrap;transition:.13s}
 .cmt-card:hover .seebio{background:var(--orange);color:#fff;border-color:transparent}
 html[data-theme="dark"] .cmt-card .seebio{background:var(--card)}
-/* รูปประธาน ในวงอวาตาร์ (อ้างอิงชุดรูป ส.ส. ที่หน้า index.html ใช้ · โฟลเดอร์ photos/) */
+/* รูปประธาน ในวงอวาตาร์ */
 .cmt-card .av{position:relative;overflow:hidden}
 .pf-av{position:relative;overflow:hidden}
 .cmt-card .av img,.pf-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
@@ -143,7 +196,9 @@ html[data-theme="dark"] .pf-close{background:var(--card)}
   .pf-pill{margin-left:auto;margin-right:auto}
 }
 </style>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
+<script src="../js/disclaimer.js"></script>
 </head>
 <body>
 
@@ -218,8 +273,41 @@ mdSyncToggle();
     <div class="cmt-filters" id="cmtPartyFilters" style="margin-top:10px"></div>
   </div>
 
-  <div class="cmt-count" id="cmtCount"></div>
+  <!-- View Switcher & Result Count -->
+  <div class="cmt-bar">
+    <div class="cmt-count" id="cmtCount"></div>
+    <div class="cmt-view-toggle" id="cmtViewToggle" role="group" aria-label="สลับมุมมอง">
+      <button type="button" class="vbtn active" id="vbtnGrid" data-view="grid" title="มุมมองการ์ด (Grid View)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>การ์ด</span>
+      </button>
+      <button type="button" class="vbtn" id="vbtnTable" data-view="table" title="มุมมองตาราง (getdesign.md Style)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <span>ตาราง</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 1. Grid Container -->
   <div class="cmt-grid" id="cmtGrid"></div>
+
+  <!-- 2. Table Container (สไตล์ getdesign.md) -->
+  <div class="cmt-table-wrap" id="cmtTableWrap" hidden>
+    <table class="cmt-table">
+      <thead>
+        <tr>
+          <th class="th-num">#</th>
+          <th>คณะกรรมาธิการ</th>
+          <th class="th-type">ประเภท</th>
+          <th class="th-chair">ประธานคณะ</th>
+          <th class="th-party">สังกัดพรรค</th>
+          <th class="th-members">สมาชิก</th>
+          <th class="th-act">ประวัติ</th>
+        </tr>
+      </thead>
+      <tbody id="cmtTbody"></tbody>
+    </table>
+  </div>
 
   <div class="cmt-foot">
     <b>คณะกรรมาธิการสามัญประจำสภามี 35 คณะ</b> (คณะละ 15 คน) ตั้งเป็นการถาวรตาม<b>ข้อบังคับการประชุมสภาผู้แทนราษฎร พ.ศ. 2562 ข้อ 90</b>
@@ -231,9 +319,6 @@ mdSyncToggle();
   </div>
 </div>
 
-<!-- mobile nav -->
-
-
 <script>
 /* ===== ข้อมูลคณะกรรมาธิการ สภาผู้แทนราษฎร ชุดที่ 27 (สามัญ 35 + วิสามัญ 3) ===== */
 const PARTY_COL = {
@@ -242,53 +327,52 @@ const PARTY_COL = {
   'คณะรัฐมนตรี':'#C9A84C'
 };
 const COMMITTEES = [
-  {t:'สามัญ', n:'คณะกรรมาธิการการกฎหมาย การยุติธรรมและสิทธิมนุษยชน', c:'รังสิมันต์ โรม', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการกิจการสภาผู้แทนราษฎร', c:'บุญยิ่ง นิติกาญจนา', p:'กล้าธรรม'},
-  {t:'สามัญ', n:'คณะกรรมาธิการกิจการศาล องค์กรอิสระ องค์กรอัยการ รัฐวิสาหกิจ องค์การมหาชน และกองทุน', c:'วาโย อัศวรุ่งเรือง', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการกีฬา', c:'จักพันธ์ ปิยพรไพบูลย์', p:'กล้าธรรม'},
-  {t:'สามัญ', n:'คณะกรรมาธิการกิจการเด็ก เยาวชน สตรี ผู้สูงอายุ ผู้พิการ กลุ่มชาติพันธุ์ และผู้มีความหลากหลายทางเพศ', c:'โอชิษฐ์ เกียรติก้องชูชัย', p:'เพื่อไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการแก้ไขปัญหาหนี้สินแห่งชาติ ความยากจนและลดความเหลื่อมล้ำ', c:'สฤษดิ์ บุตรเนียร', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการเกษตรและสหกรณ์', c:'นพพล เหลืองทองนารา', p:'เพื่อไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการคมนาคม', c:'ศุภณัฐ มีนชัยนันท์', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการความมั่นคงแห่งรัฐ กิจการชายแดนไทย ยุทธศาสตร์ชาติและการปฏิรูปประเทศ', c:'มณเฑียร สงฆ์ประชา', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการคุ้มครองผู้บริโภค', c:'อรรถพล ไตรศรี', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการเงิน การคลัง การธนาคาร สถาบันการเงินและตลาดการเงิน', c:'จุติ ไกรฤกษ์', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการต่างประเทศ', c:'จิตรวรรณ หวังศุภกิจโกศล', p:'ไทรวมพลัง'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการการตำรวจ', c:'วัชรพงศ์ คูวิจิตรสุวรรณ', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการศึกษาการจัดทำและติดตามการบริหารงบประมาณ', c:'รักชนก ศรีนอก', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการทหาร', c:'เอกราช อุดมอำนวย', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการท่องเที่ยว', c:'พันโท สินธพ แก้วพิจิตร', p:'กล้าธรรม'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการที่ดิน ทรัพยากรธรรมชาติและสิ่งแวดล้อม', c:'กุลวลี นพอมรบดี', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการปกครอง', c:'ธนยศ ทิมสุวรรณ', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการกระจายอำนาจ การปกครองส่วนท้องถิ่น และการบริหารราชการรูปแบบพิเศษ', c:'คงกฤษ ฉัตรมาลีรัตน์', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันปราบปรามการฟอกเงินและยาเสพติด', c:'พิทักษ์เดช เดชเดโช', p:'ประชาธิปัตย์'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและบรรเทาผลกระทบจากภัยธรรมชาติและสาธารณภัย', c:'ภัทรพงษ์ ลีลาภัทร์', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและปราบปรามการทุจริตประพฤติมิชอบ', c:'อาสพลธ์ สรรณ์ไตรภพ', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการพลังงาน', c:'สุพล จุลใส', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาการเมือง การสื่อสารมวลชน และการมีส่วนร่วมของประชาชน', c:'ภคมน หนุนอนันต์', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาเศรษฐกิจ', c:'วีระยุทธ กาญจน์ชูฉัตร', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการพาณิชย์และทรัพย์สินทางปัญญา', c:'สัมฤทธิ์ แทนทรัพย์', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการแรงงาน', c:'วีระพล จิตสัมฤทธิ์', p:'เพื่อไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการอุดมศึกษา วิทยาศาสตร์ เทคโนโลยี วิจัยและนวัตกรรม', c:'ฐิติมา ฉายแสง', p:'เพื่อไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการบริหารจัดการทรัพยากรน้ำ', c:'ภาคภูมิ บูลย์ประมุข', p:'กล้าธรรม'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการศาสนา ศิลปะและวัฒนธรรม', c:'ธิวัลรัตน์ อังกินันทน์', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการศึกษา', c:'จิรวัฒน์ ศิริพานิชย์', p:'เพื่อไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการสวัสดิการสังคม', c:'รัชนก สุขประเสริฐ', p:'ประชาชน'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการสาธารณสุข', c:'สกลธี ภัททิยกุล', p:'ประชาธิปัตย์'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการสื่อสาร โทรคมนาคม และดิจิทัลเพื่อเศรษฐกิจและสังคม', c:'อลงกต มณีกาศ', p:'ภูมิใจไทย'},
-  {t:'สามัญ', n:'คณะกรรมาธิการการอุตสาหกรรม', c:'ศุภโชค ศรีสุขจร', p:'ภูมิใจไทย'},
-  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษามาตรการและแนวทางการบริหารจัดการแก้ไขปัญหาไฟป่า และติดตามปัญหาวิกฤตฝุ่นละอองขนาดเล็ก (PM 2.5)', c:'พิมพ์ภัทรา วิชัยกุล', p:'ภูมิใจไทย'},
-  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษาและติดตามการปฏิรูปกฎหมายและการยกเลิกกฎระเบียบที่ล้าสมัย', c:'สมคิด เลิศไพฑูรย์', p:'คณะรัฐมนตรี'},
-  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญติดตามและตรวจสอบการใช้จ่ายเงินกู้ตามพระราชกำหนดให้อำนาจกระทรวงการคลังกู้เงินเพื่อแก้ไขปัญหาผลกระทบจากสถานการณ์วิกฤตด้านพลังงานและสร้างการเปลี่ยนผ่านด้านพลังงานของประเทศ พ.ศ. 2569', c:'ศุภชัย ใจสมุทร', p:'คณะรัฐมนตรี'}
+  {t:'สามัญ', n:'คณะกรรมาธิการการกฎหมาย การยุติธรรมและสิทธิมนุษยชน', c:'รังสิมันต์ โรม', p:'ประชาชน', desc:'พิจารณากฎหมาย กระบวนการยุติธรรม และการคุ้มครองสิทธิเสรีภาพประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการสภาผู้แทนราษฎร', c:'บุญยิ่ง นิติกาญจนา', p:'กล้าธรรม', desc:'พิจารณากิจการ กฎระเบียบ อาคารสถานที่ และการบริหารงานภายในรัฐสภา'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการศาล องค์กรอิสระ องค์กรอัยการ รัฐวิสาหกิจ องค์การมหาชน และกองทุน', c:'วาโย อัศวรุ่งเรือง', p:'ประชาชน', desc:'ติดตามตรวจสอบการดำเนินงานขององค์กรอิสระ รัฐวิสาหกิจ และกองทุนรัฐ'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกีฬา', c:'จักพันธ์ ปิยพรไพบูลย์', p:'กล้าธรรม', desc:'ส่งเสริม พัฒนาการกีฬาของชาติ และโครงสร้างพื้นฐานด้านการกีฬา'},
+  {t:'สามัญ', n:'คณะกรรมาธิการกิจการเด็ก เยาวชน สตรี ผู้สูงอายุ ผู้พิการ กลุ่มชาติพันธุ์ และผู้มีความหลากหลายทางเพศ', c:'โอชิษฐ์ เกียรติก้องชูชัย', p:'เพื่อไทย', desc:'คุ้มครองสิทธิ ส่งเสริมความเท่าเทียม และสวัสดิการของกลุ่มเปราะบาง'},
+  {t:'สามัญ', n:'คณะกรรมาธิการแก้ไขปัญหาหนี้สินแห่งชาติ ความยากจนและลดความเหลื่อมล้ำ', c:'สฤษดิ์ บุตรเนียร', p:'ภูมิใจไทย', desc:'ศึกษาแนวทางแก้ไขปัญหาหนี้ครัวเรือน หนี้เกษตรกร และความยากจน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการเกษตรและสหกรณ์', c:'นพพล เหลืองทองนารา', p:'เพื่อไทย', desc:'พิจารณานโยบายเกษตรกรรม ราคาสินค้าเกษตร ระบบสหกรณ์ และแหล่งน้ำ'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการคมนาคม', c:'ศุภณัฐ มีนชัยนันท์', p:'ประชาชน', desc:'ติดตามโครงสร้างพื้นฐาน รถไฟฟ้า รถไฟความเร็วสูง ถนน และโลจิสติกส์'},
+  {t:'สามัญ', n:'คณะกรรมาธิการความมั่นคงแห่งรัฐ กิจการชายแดนไทย ยุทธศาสตร์ชาติและการปฏิรูปประเทศ', c:'มณเฑียร สงฆ์ประชา', p:'ภูมิใจไทย', desc:'ศึกษาความมั่นคงแห่งรัฐ การค้าและการพัฒนาพื้นที่ชายแดนไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการคุ้มครองผู้บริโภค', c:'อรรถพล ไตรศรี', p:'ภูมิใจไทย', desc:'คุ้มครองสิทธิผู้บริโภค ตรวจสอบสินค้า บริการ และการค้าออนไลน์'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการเงิน การคลัง การธนาคาร สถาบันการเงินและตลาดการเงิน', c:'จุติ ไกรฤกษ์', p:'ภูมิใจไทย', desc:'พิจารณานโยบายการเงิน การคลัง หนี้สาธารณะ และระบบสถาบันการเงิน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการต่างประเทศ', c:'จิตรวรรณ หวังศุภกิจโกศล', p:'ไทรวมพลัง', desc:'ศึกษาความสัมพันธ์ระหว่างประเทศ สนธิสัญญา และบทบาทไทยในเวทีโลก'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการการตำรวจ', c:'วัชรพงศ์ คูวิจิตรสุวรรณ', p:'ภูมิใจไทย', desc:'ติดตามการปฏิบัติหน้าที่ของตำรวจ การปฏิรูปตำรวจ และความปลอดภัยประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการศึกษาการจัดทำและติดตามการบริหารงบประมาณ', c:'รักชนก ศรีนอก', p:'ประชาชน', desc:'ตรวจสอบการจัดทำ ติดตามการใช้จ่ายงบประมาณแผ่นดินให้โปร่งใส'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการทหาร', c:'เอกราช อุดมอำนวย', p:'ประชาชน', desc:'พิจารณากิจการทหาร กองทัพ นโยบายการป้องกันประเทศ และการเกณฑ์ทหาร'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการท่องเที่ยว', c:'พันโท สินธพ แก้วพิจิตร', p:'กล้าธรรม', desc:'ส่งเสริมอุตสาหกรรมท่องเที่ยว การบริการ และมาตรฐานความปลอดภัย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการที่ดิน ทรัพยากรธรรมชาติและสิ่งแวดล้อม', c:'กุลวลี นพอมรบดี', p:'ภูมิใจไทย', desc:'พิจารณาการจัดสรรที่ดินทำกิน ปัญหาที่ดิน ป่าไม้ และสิ่งแวดล้อม'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการปกครอง', c:'ธนยศ ทิมสุวรรณ', p:'ภูมิใจไทย', desc:'พิจารณางานฝ่ายปกครอง ทะเบียนราษฎร กำนัน ผู้ใหญ่บ้าน และความสงบเรียบร้อย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการกระจายอำนาจ การปกครองส่วนท้องถิ่น และการบริหารราชการรูปแบบพิเศษ', c:'คงกฤษ ฉัตรมาลีรัตน์', p:'ภูมิใจไทย', desc:'ผลักดันการกระจายอำนาจสู่ อบจ. เทศบาล อบต. และพื้นที่ปกครองพิเศษ'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันปราบปรามการฟอกเงินและยาเสพติด', c:'พิทักษ์เดช เดชเดโช', p:'ประชาธิปัตย์', desc:'ติดตามปราบปรามขบวนการค้ายาเสพติด การฟอกเงิน และบัญชีม้า'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและบรรเทาผลกระทบจากภัยธรรมชาติและสาธารณภัย', c:'ภัทรพงษ์ ลีลาภัทร์', p:'ประชาชน', desc:'ศึกษามาตรการรับมือน้ำท่วม ดินถล่ม ภัยแล้ง และการเตือนภัยพิบัติล่วงหน้า'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการป้องกันและปราบปรามการทุจริตประพฤติมิชอบ', c:'อาสพลธ์ สรรณ์ไตรภพ', p:'ภูมิใจไทย', desc:'ตรวจสอบการทุจริต การใช้อำนาจมิชอบ และความโปร่งใสในหน่วยงานรัฐ'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพลังงาน', c:'สุพล จุลใส', p:'ภูมิใจไทย', desc:'พิจารณาโครงสร้างราคาพลังงาน น้ำมัน ไฟฟ้า และพลังงานหมุนเวียนสะอาด'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาการเมือง การสื่อสารมวลชน และการมีส่วนร่วมของประชาชน', c:'ภคมน หนุนอนันต์', p:'ประชาชน', desc:'ส่งเสริมประชาธิปไตย เสรีภาพสื่อมวลชน และการมีส่วนร่วมของพลเมือง'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพัฒนาเศรษฐกิจ', c:'วีระยุทธ กาญจน์ชูฉัตร', p:'ประชาชน', desc:'ศึกษานโยบายเศรษฐกิจภาพรวม อุตสาหกรรมแห่งอนาคต และความสามารถการแข่งขัน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการพาณิชย์และทรัพย์สินทางปัญญา', c:'สัมฤทธิ์ แทนทรัพย์', p:'ภูมิใจไทย', desc:'ส่งเสริมการค้า การส่งออก การแข่งขันทางการค้า และการคุ้มครองสิทธิบัตร'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการแรงงาน', c:'วีระพล จิตสัมฤทธิ์', p:'เพื่อไทย', desc:'คุ้มครองสิทธิแรงงาน ค่าจ้างขั้นต่ำ ประกันสังคม และการพัฒนาฝีมือแรงงาน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการอุดมศึกษา วิทยาศาสตร์ เทคโนโลยี วิจัยและนวัตกรรม', c:'ฐิติมา ฉายแสง', p:'เพื่อไทย', desc:'ส่งเสริมมหาวิทยาลัย การวิจัยทางวิทยาศาสตร์ เทคโนโลยี และสตาร์ตอัป'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการบริหารจัดการทรัพยากรน้ำ', c:'ภาคภูมิ บูลย์ประมุข', p:'กล้าธรรม', desc:'วางแผนบริหารจัดการน้ำทั้งระบบ ผังน้ำ เขื่อน และการป้องกันอุทกภัย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการศาสนา ศิลปะและวัฒนธรรม', c:'ธิวัลรัตน์ อังกินันทน์', p:'ภูมิใจไทย', desc:'ส่งเสริมทำนุบำรุงศาสนา อนุรักษ์ศิลปวัฒนธรรม และมรดกภูมิปัญญาไทย'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการศึกษา', c:'จิรวัฒน์ ศิริพานิชย์', p:'เพื่อไทย', desc:'ยกระดับคุณภาพการศึกษาขั้นพื้นฐาน อาชีวะ และการปฏิรูปหลักสูตร'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสวัสดิการสังคม', c:'รัชนก สุขประเสริฐ', p:'ประชาชน', desc:'พัฒนาระบบสวัสดิการถ้วนหน้า เบี้ยยังชีพ และหลักประกันชีวิตประชาชน'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสาธารณสุข', c:'สกลธี ภัททิยกุล', p:'ประชาธิปัตย์', desc:'พัฒนาระบบหลักประกันสุขภาพ บัตรทอง 30 บาท และบริการทางการแพทย์'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการสื่อสาร โทรคมนาคม และดิจิทัลเพื่อเศรษฐกิจและสังคม', c:'อลงกต มณีกาศ', p:'ภูมิใจไทย', desc:'ติดตามระบบ 5G โครงข่ายอินเทอร์เน็ต ความมั่นคงไซเบอร์ และ AI'},
+  {t:'สามัญ', n:'คณะกรรมาธิการการอุตสาหกรรม', c:'ศุภโชค ศรีสุขจร', p:'ภูมิใจไทย', desc:'ส่งเสริมภาคอุตสาหกรรม นิคมอุตสาหกรรม รถยนต์ไฟฟ้า EV และ SME'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษามาตรการและแนวทางการบริหารจัดการแก้ไขปัญหาไฟป่า และติดตามปัญหาวิกฤตฝุ่นละอองขนาดเล็ก (PM 2.5)', c:'พิมพ์ภัทรา วิชัยกุล', p:'ภูมิใจไทย', desc:'ศึกษาแนวทางแก้ปัญหาฝุ่นพิษ PM 2.5 ไฟป่า และหมอกควันข้ามพรมแดน'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญพิจารณาศึกษาและติดตามการปฏิรูปกฎหมายและการยกเลิกกฎระเบียบที่ล้าสมัย', c:'สมคิด เลิศไพฑูรย์', p:'คณะรัฐมนตรี', desc:'ศึกษาทบทวนยกเลิกกฎหมายล้าสมัย (Guillotine) เพื่อความคล่องตัวของประเทศ'},
+  {t:'วิสามัญ', n:'คณะกรรมาธิการวิสามัญติดตามและตรวจสอบการใช้จ่ายเงินกู้ตามพระราชกำหนดให้อำนาจกระทรวงการคลังกู้เงินเพื่อแก้ไขปัญหาผลกระทบจากสถานการณ์วิกฤตด้านพลังงานและสร้างการเปลี่ยนผ่านด้านพลังงานของประเทศ พ.ศ. 2569', c:'ศุภชัย ใจสมุทร', p:'คณะรัฐมนตรี', desc:'ติดตามตรวจสอบความโปร่งใสในการใช้จ่ายเงินกู้เพื่อความมั่นคงทางพลังงาน'}
 ];
 
 const colOf = p => PARTY_COL[p] || '#5E7488';
-const initialOf = name => { const parts = name.trim().split(/\s+/); const first = parts.length>1 ? parts[1] : parts[0]; return (first||'?').charAt(0); };
+const LEAD_VOWELS = /[เแโใไ]/;
+const initialOf = name => { const parts = name.trim().split(/\s+/); const first = (parts.length>1 ? parts[1] : parts[0]) || '?';
+  return (LEAD_VOWELS.test(first.charAt(0)) && first.length>1) ? first.charAt(1) : first.charAt(0); };
 const cleanName = n => n.replace(/^คณะกรรมาธิการ/, '').trim();
 
-/* รูปประธาน — คณะกรรมาธิการสามัญ 35 คณะ ใช้รูปชุด committee-photos/01..35.jpg
-   (เลขลำดับไฟล์ตรงกับลำดับคณะในอาร์เรย์ COMMITTEES พอดี) · คณะวิสามัญที่เหลือ
-   ดึงรูปจากชุดรูป ส.ส. ที่หน้า index.html ใช้ (photos/) เท่าที่มี */
 const VISAMAN_PHOTOS = {
   'พิมพ์ภัทรา วิชัยกุล':'นางสาวพิมพ์ภัทรา__วิชัยกุล.png',
   'สมคิด เลิศไพฑูรย์':'สมคิด__เลิศไพฑูรย์.jpg',
@@ -301,14 +385,18 @@ function photoSrc(c){
   const ph = VISAMAN_PHOTOS[c.c];
   return ph ? `photos/${encodeURIComponent(ph)}` : null;
 }
-/* อวาตาร์: มีรูป → ใส่ <img> ทับ (โหลดพลาด → onerror ลบรูป เหลืออักษรย่อ); ไม่มีรูป → อักษรย่อ */
 function avatarHTML(name, cls, c){
   const s = photoSrc(c);
   const img = s ? `<img src="${s}" alt="" loading="lazy" onerror="this.remove()">` : '';
   return `<span class="${cls}">${initialOf(name)}${img}</span>`;
 }
 
-let state = { q:'', type:'all', party:'all' };
+let state = {
+  q:'',
+  type:'all',
+  party:'all',
+  view: localStorage.getItem('cmt-view-mode') || 'grid'
+};
 
 /* ---- stat strip ---- */
 function renderStats(){
@@ -329,7 +417,6 @@ function renderStats(){
 
 /* ---- filter chips ---- */
 function renderFilters(){
-  // type
   const types = [['all','ทั้งหมด'],['สามัญ','สามัญ'],['วิสามัญ','วิสามัญ']];
   document.getElementById('cmtTypeFilters').innerHTML =
     `<span class="grp-label">ประเภท</span>` +
@@ -338,7 +425,6 @@ function renderFilters(){
       return `<button class="chip${state.type===v?' on':''}" data-type="${v}">${label}<span class="ct">${cnt}</span></button>`;
     }).join('');
 
-  // party — เรียงตามจำนวนคณะมาก→น้อย
   const counts = {};
   COMMITTEES.forEach(c=> counts[c.p]=(counts[c.p]||0)+1);
   const parties = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
@@ -353,25 +439,12 @@ function renderFilters(){
              `<span class="sw" style="background:${col}"></span>${p}<span class="ct">${counts[p]}</span></button>`;
     }).join('');
 
-  document.querySelectorAll('[data-type]').forEach(b=> b.onclick=()=>{ state.type=b.dataset.type; renderFilters(); renderGrid(); });
-  document.querySelectorAll('[data-party]').forEach(b=> b.onclick=()=>{ state.party=b.dataset.party; renderFilters(); renderGrid(); });
+  document.querySelectorAll('[data-type]').forEach(b=> b.onclick=()=>{ state.type=b.dataset.type; renderFilters(); renderContent(); });
+  document.querySelectorAll('[data-party]').forEach(b=> b.onclick=()=>{ state.party=b.dataset.party; renderFilters(); renderContent(); });
 }
 
-/* ---- card grid ---- */
-function renderGrid(){
-  const q = state.q.trim().toLowerCase();
-  const list = COMMITTEES.filter(c=>{
-    if(state.type!=='all' && c.t!==state.type) return false;
-    if(state.party!=='all' && c.p!==state.party) return false;
-    if(q && !(c.n.toLowerCase().includes(q) || c.c.toLowerCase().includes(q) || c.p.toLowerCase().includes(q))) return false;
-    return true;
-  });
-
-  document.getElementById('cmtCount').innerHTML =
-    list.length===COMMITTEES.length
-      ? `แสดงทั้งหมด <b>${list.length}</b> คณะ`
-      : `พบ <b>${list.length}</b> คณะ จากทั้งหมด ${COMMITTEES.length} คณะ`;
-
+/* ---- Card Grid View ---- */
+function renderGridHTML(list){
   const grid = document.getElementById('cmtGrid');
   if(!list.length){ grid.innerHTML = `<div class="cmt-empty">ไม่พบคณะกรรมาธิการที่ตรงกับการค้นหา</div>`; return; }
 
@@ -398,9 +471,92 @@ function renderGrid(){
   }).join('');
 }
 
-document.getElementById('cmtSearch').addEventListener('input', e=>{ state.q=e.target.value; renderGrid(); });
+/* ---- Data Table List View (สไตล์ getdesign.md ตามรูปภาพ) ---- */
+function renderTableHTML(list){
+  const tbody = document.getElementById('cmtTbody');
+  if(!list.length){
+    tbody.innerHTML = `<tr><td colspan="7" class="cmt-empty">ไม่พบคณะกรรมาธิการที่ตรงกับการค้นหา</td></tr>`;
+    return;
+  }
 
-/* ===== ประวัติประธานคณะกรรมาธิการรายบุคคล (จากวิกิพีเดียไทย/ฐานข้อมูลรัฐสภา/สื่อสาธารณะ · อายุ ณ พ.ศ. 2569) ===== */
+  tbody.innerHTML = list.map(c=>{
+    const col = colOf(c.p);
+    const isW = c.t==='วิสามัญ';
+    const idx = COMMITTEES.indexOf(c)+1;
+    const desc = c.desc || 'พิจารณาศึกษาและติดตามงานตามอำนาจหน้าที่';
+    return `<tr class="cmt-row" style="--pc:${col}" data-nm="${c.c}" tabindex="0" role="button" aria-label="ดูประวัติ ${c.c}">
+      <td class="td-num">${String(idx).padStart(2,'0')}</td>
+      <td class="td-name">
+        <div title="${c.n}">${cleanName(c.n)}</div>
+        <small>${desc}</small>
+      </td>
+      <td><span class="tbadge${isW?' wisaman':''}">${c.t}</span></td>
+      <td>
+        <div class="td-chair">
+          ${avatarHTML(c.c, 'av', c)}
+          <div class="td-chair-info">
+            <div class="td-chair-name">${c.c}</div>
+            <div class="td-chair-role">ประธานคณะ</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="td-party-badge" style="--pc:${col}">
+          <span class="sw"></span>${c.p}
+        </span>
+      </td>
+      <td class="td-members">15<small>คน</small></td>
+      <td class="td-act">
+        <span class="td-act-btn" title="ดูประวัติ">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ---- Unified Render Content ---- */
+function renderContent(){
+  const q = state.q.trim().toLowerCase();
+  const list = COMMITTEES.filter(c=>{
+    if(state.type!=='all' && c.t!==state.type) return false;
+    if(state.party!=='all' && c.p!==state.party) return false;
+    if(q && !(c.n.toLowerCase().includes(q) || c.c.toLowerCase().includes(q) || c.p.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  document.getElementById('cmtCount').innerHTML =
+    list.length===COMMITTEES.length
+      ? `แสดงทั้งหมด <b>${list.length}</b> คณะ`
+      : `พบ <b>${list.length}</b> คณะ จากทั้งหมด ${COMMITTEES.length} คณะ`;
+
+  const gridEl = document.getElementById('cmtGrid');
+  const tableWrapEl = document.getElementById('cmtTableWrap');
+  const vbtnGrid = document.getElementById('vbtnGrid');
+  const vbtnTable = document.getElementById('vbtnTable');
+
+  if(state.view === 'table'){
+    gridEl.hidden = true;
+    tableWrapEl.hidden = false;
+    vbtnGrid.classList.remove('active');
+    vbtnTable.classList.add('active');
+    renderTableHTML(list);
+  } else {
+    gridEl.hidden = false;
+    tableWrapEl.hidden = true;
+    vbtnGrid.classList.add('active');
+    vbtnTable.classList.remove('active');
+    renderGridHTML(list);
+  }
+}
+
+/* View Mode Toggles */
+document.getElementById('vbtnGrid').onclick = ()=>{ state.view='grid'; localStorage.setItem('cmt-view-mode','grid'); renderContent(); };
+document.getElementById('vbtnTable').onclick = ()=>{ state.view='table'; localStorage.setItem('cmt-view-mode','table'); renderContent(); };
+
+document.getElementById('cmtSearch').addEventListener('input', e=>{ state.q=e.target.value; renderContent(); });
+
+/* ===== ประวัติประธานคณะกรรมาธิการรายบุคคล (อายุ ณ พ.ศ. 2569) ===== */
 const BIO = {
   'รังสิมันต์ โรม':{party:'ประชาชน (รองหัวหน้าพรรค)',birth:'31 พฤษภาคม 2535',age:'34',province:'ภูเก็ต (เติบโตที่นครศรีธรรมราช)',edu:'นิติศาสตรบัณฑิต ม.ธรรมศาสตร์ (กำลังศึกษาต่อปริญญาโท)',exp:'ส.ส.บัญชีรายชื่อ (2562–ปัจจุบัน); รองหัวหน้าพรรคประชาชน; อดีตโฆษกพรรคก้าวไกล; นักเคลื่อนไหวด้านสิทธิมนุษยชน',src:'https://th.wikipedia.org/wiki/รังสิมันต์_โรม'},
   'บุญยิ่ง นิติกาญจนา':{party:'กล้าธรรม (รองหัวหน้าพรรค)',birth:'25 กันยายน 2502',age:'66',province:'ราชบุรี',edu:'ศิลปศาสตรบัณฑิต (การพัฒนาชุมชน) ม.ราชภัฏสวนดุสิต',exp:'ส.ส.ราชบุรี (2554–ปัจจุบัน); รองหัวหน้าพรรคกล้าธรรม; อดีตเหรัญญิกพรรค',src:'https://th.wikipedia.org/wiki/บุญยิ่ง_นิติกาญจนา'},
@@ -442,7 +598,7 @@ const BIO = {
   'ศุภชัย ใจสมุทร':{party:'ภูมิใจไทย',birth:'27 กันยายน 2501',age:'67',province:'ตรัง',edu:'นิติศาสตรบัณฑิต ม.รามคำแหง; โท ศิลปศาสตร์ (กฎหมายเศรษฐกิจ) จุฬาฯ',exp:'ส.ส.บัญชีรายชื่อ (2569); เลขานุการ รมว.ยุติธรรม; อดีตรองโฆษกประจำสำนักนายกรัฐมนตรี',src:'https://th.wikipedia.org/wiki/ศุภชัย_ใจสมุทร'}
 };
 
-/* ===== profile modal (กดการ์ดประธาน → เด้งประวัติ) ===== */
+/* ===== profile modal (กดการ์ด หรือ แถวในตาราง → เด้งประวัติ) ===== */
 (function(){
   const ov = document.createElement('div');
   ov.className = 'pf-overlay'; ov.hidden = true;
@@ -485,7 +641,7 @@ const BIO = {
     bodyEl.innerHTML = html;
     lastFocus = document.activeElement;
     ov.hidden = false; document.body.style.overflow = 'hidden';
-    void ov.offsetWidth;            /* บังคับ reflow ให้ transition เล่นได้ */
+    void ov.offsetWidth;
     ov.classList.add('show');
     ov.querySelector('.pf-close').focus();
   }
@@ -500,9 +656,13 @@ const BIO = {
   const grid = document.getElementById('cmtGrid');
   grid.addEventListener('click', e=>{ const card=e.target.closest('.cmt-card'); if(card && card.dataset.nm) open(card.dataset.nm); });
   grid.addEventListener('keydown', e=>{ const card=e.target.closest('.cmt-card'); if(card && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); if(card.dataset.nm) open(card.dataset.nm); } });
+
+  const tableWrap = document.getElementById('cmtTableWrap');
+  tableWrap.addEventListener('click', e=>{ const row=e.target.closest('.cmt-row'); if(row && row.dataset.nm) open(row.dataset.nm); });
+  tableWrap.addEventListener('keydown', e=>{ const row=e.target.closest('.cmt-row'); if(row && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); if(row.dataset.nm) open(row.dataset.nm); } });
 })();
 
-renderStats(); renderFilters(); renderGrid();
+renderStats(); renderFilters(); renderContent();
 </script>
 
 <script src="../js/theme-toggle-drag.js"></script>

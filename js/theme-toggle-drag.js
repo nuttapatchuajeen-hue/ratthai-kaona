@@ -28,6 +28,91 @@
 
     var drag = { active: false, moved: false, touch: false, px: 0, py: 0, bx: 0, by: 0 };
 
+    // ---------- ปุ่มย่อ: หุบไปซ่อนนอกขอบจอ เหลือแถบเล็ก ๆ ให้กดเรียกกลับ ----------
+    // ปุ่มย่ออยู่ "นอก" <label> (ไม่ใช่ลูกใน) เพราะคลิกอะไรในลาเบลก็สลับธีมหมด
+    var TKEY = "md-toggle-tuck-v1";        // คีย์จำสถานะย่อ (แยกจากคีย์ตำแหน่ง)
+    var PEEK = 30;                         // ส่วนที่ยังโผล่พ้นขอบจอให้กดเรียกกลับ
+    var tucked = false, curTx = 0, baseLeft = 0, skipClick = false;
+
+    var style = document.createElement("style");
+    style.textContent = [
+      ".md-tgl-min{position:fixed;z-index:1001;width:22px;height:22px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;",
+      "cursor:pointer;background:rgba(13,23,34,.92);color:#9FB4C7;-webkit-tap-highlight-color:transparent;",
+      "box-shadow:0 4px 12px -4px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.14);transition:color .15s,background .15s}",
+      ".md-tgl-min:hover{color:#CFE9F5;background:rgba(22,36,52,.98)}",
+      ".md-tgl-min svg{width:13px;height:13px;display:block}",
+      ".md-tgl-min.md-hide{display:none}",
+      // ⚠️ ห้ามใส่ :hover ที่ขยับตำแหน่งตอนย่อ — เมาส์แตะแล้วแถบเลื่อนหนี = hover หลุด → เด้งวนไม่จบ (เคยพลาดกับ FAB ผู้ช่วย AI)
+      ".bb8-toggle.md-tgl-tuck{opacity:.92}",
+      ".bb8-toggle.md-tgl-anim{transition:transform .26s cubic-bezier(.2,.8,.3,1.15)}",
+    ].join("");
+    document.head.appendChild(style);
+
+    var minBtn = document.createElement("button");
+    minBtn.type = "button";
+    minBtn.className = "md-tgl-min";
+    minBtn.setAttribute("aria-label", "ย่อปุ่มสลับธีมไปขอบจอ");
+    minBtn.title = "ย่อไปขอบจอ";
+    minBtn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+    document.body.appendChild(minBtn);
+
+    // วางปุ่มย่อคาบขอบด้าน "ในจอ" ของ BB-8 (ขวา→ซ้ายของปุ่ม / ซ้าย→ขวาของปุ่ม)
+    // finalLeft: ตอนเด้งติดขอบ ตัวปุ่มยังวิ่ง transition อยู่ → rect ที่อ่านได้เป็นค่ากลางทาง
+    // ต้องส่งตำแหน่งปลายทางมาเอง ไม่งั้นปุ่มย่อไปจอดผิดที่
+    function placeMin(finalLeft) {
+      if (tucked) return;
+      var r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+      var left = typeof finalLeft === "number" ? finalLeft : r.left;
+      var isL = left + r.width / 2 < vw / 2;
+      minBtn.style.top = Math.round(r.top + r.height / 2 - 11) + "px";
+      minBtn.style.left = Math.round(isL ? left + r.width - 11 : left - 11) + "px";
+      minBtn.firstChild.style.transform = isL ? "rotate(180deg)" : "";
+    }
+    function tuck() {
+      if (tucked) return;
+      var r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+      var isL = r.left + r.width / 2 < vw / 2;
+      curTx = isL ? PEEK - r.right : vw - PEEK - r.left;
+      baseLeft = r.left;                   // จำตำแหน่งตอนยังไม่ย่อ ไว้วางปุ่มย่อตอนกางกลับ
+      tucked = true;
+      el.classList.add("md-tgl-tuck");
+      el.style.transform = "translateX(" + curTx + "px)";
+      minBtn.classList.add("md-hide");
+      try { localStorage.setItem(TKEY, "1"); } catch (err) {}
+    }
+    function untuck() {
+      if (!tucked) return;
+      tucked = false;
+      curTx = 0;
+      el.style.transform = "";
+      el.classList.remove("md-tgl-tuck");
+      minBtn.classList.remove("md-hide");
+      placeMin(baseLeft);                  // rect ตอนนี้ยังวิ่ง transition อยู่ → ใช้ตำแหน่งที่จำไว้
+      try { localStorage.setItem(TKEY, "0"); } catch (err) {}
+    }
+    // ตอนย่อ ตัวปุ่มถูก transform ไว้ → วัด rect เพี้ยน จึงคลายชั่วคราวแบบไม่มีอนิเมชันก่อนคำนวณ
+    function withUntucked(fn) {
+      if (!tucked) return fn();
+      el.classList.remove("md-tgl-anim");
+      el.style.transform = "";
+      void el.offsetWidth;
+      fn();
+      var r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+      var isL = r.left + r.width / 2 < vw / 2;
+      curTx = isL ? PEEK - r.right : vw - PEEK - r.left;
+      baseLeft = r.left;
+      el.style.transform = "translateX(" + curTx + "px)";
+      void el.offsetWidth;
+      el.classList.add("md-tgl-anim");
+    }
+    minBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      tuck();
+    });
+
     function setPos(l, t) {
       var r = el.getBoundingClientRect();
       l = Math.min(Math.max(EDGE, l), window.innerWidth - r.width - EDGE);
@@ -36,6 +121,7 @@
       el.style.top = t + "px";
       el.style.right = "auto";
       el.style.bottom = "auto";
+      placeMin();                          // ปุ่มย่อเกาะติดขอบปุ่มตลอดการลาก
     }
 
     // ปล่อยแล้วเด้งไปติดขอบซ้าย/ขวาที่ใกล้สุด (วางกลางจอแล้วบังเนื้อหา)
@@ -43,15 +129,26 @@
       var r = el.getBoundingClientRect(), W = window.innerWidth;
       var l = r.left + r.width / 2 < W / 2 ? GAP : W - r.width - GAP;
       if (animate) {
-        var prev = el.style.transition;
-        el.style.transition = "left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease";
-        setTimeout(function () { el.style.transition = prev || ""; }, 320);
+        var prev = el.style.transition, glide = "left .28s cubic-bezier(.2,.8,.3,1.15), top .28s ease";
+        el.style.transition = glide;
+        minBtn.style.transition = glide;   // ปุ่มย่อเลื่อนตามไปพร้อมกัน ไม่กระโดดไปรอ
+        setTimeout(function () {
+          el.style.transition = prev || "";
+          minBtn.style.transition = "";
+        }, 320);
       }
       el.style.left = l + "px";
       el.style.right = "auto";
+      placeMin(l);
     }
 
     el.addEventListener("pointerdown", function (e) {
+      // ตอนย่ออยู่: แตะแถบที่โผล่ = กางกลับอย่างเดียว (ไม่สลับธีม ไม่เริ่มลาก)
+      if (tucked) {
+        skipClick = true;
+        untuck();
+        return;
+      }
       drag.active = true;
       drag.moved = false;
       drag.touch = e.pointerType === "touch"; // นิ้วสั่นง่ายกว่าเมาส์ → ระยะกันพลาดมากกว่า
@@ -86,10 +183,12 @@
     el.addEventListener("pointercancel", end);
 
     // ลากแล้วอย่าสลับธีม — กัน <label> สั่ง toggle checkbox ตอนปล่อยมือ (capture ดักก่อน onchange)
+    // เพิ่งกางกลับจากสถานะย่อก็เช่นกัน — ครั้งแรกคือ "เรียกปุ่มกลับมา" ไม่ใช่สลับธีม
     el.addEventListener("click", function (e) {
-      if (drag.moved) {
+      if (skipClick || drag.moved) {
         e.preventDefault();
         e.stopPropagation();
+        skipClick = false;
         drag.moved = false;
       }
     }, true);
@@ -103,11 +202,22 @@
       }
     } catch (err) {}
 
+    placeMin();
+    // เคยย่อไว้ครั้งก่อน → ย่อกลับทันที (ยังไม่ใส่ .md-tgl-anim จะได้ไม่มีอนิเมชันวิ่งตอนโหลด)
+    try {
+      if (localStorage.getItem(TKEY) === "1") tuck();
+    } catch (err) {}
+    // เปิดอนิเมชันหลังโหลดเสร็จ (setTimeout ไม่ใช่ rAF — rAF ไม่ยิงถ้าแท็บถูกซ่อน/ไม่ได้เรนเดอร์)
+    setTimeout(function () { el.classList.add("md-tgl-anim"); }, 60);
+
     window.addEventListener("resize", function () {
-      if (el.style.left) {
-        setPos(parseFloat(el.style.left), parseFloat(el.style.top));
-        snap(false);
-      }
+      withUntucked(function () {
+        if (el.style.left) {
+          setPos(parseFloat(el.style.left), parseFloat(el.style.top));
+          snap(false);
+        }
+        placeMin();
+      });
     });
   }
 

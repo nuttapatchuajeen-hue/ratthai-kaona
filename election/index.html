@@ -10,6 +10,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../css/bb8-toggle.css">
+<style>
+/* ปุ่มเข้าหน้า "ไล่เผยผล" (reveal.html) — วางในการ์ดค้นหา ใต้ช่องค้นหา
+   href เติม ?y= ให้ตอนโหลด (ท้ายไฟล์) — พึ่ง localStorage อย่างเดียวไม่พอ
+   เพราะถ้าเปิด index.html?y=2544 ตรง ๆ บนเครื่องที่ไม่เคยเลือกปี จะหลุดไปปีเริ่มต้น */
+.revealbtn{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:9px;
+  font-family:'Kanit';font-weight:500;font-size:.84rem;color:var(--orange-deep);
+  background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:12px;
+  padding:8px 12px;text-decoration:none;transition:.14s}
+.revealbtn:hover{background:var(--orange);border-color:var(--orange);color:var(--paper)}
+.revealbtn svg{width:14px;height:14px;flex:0 0 auto}
+/* มือถือ: การ์ดค้นหาสูงขึ้นจากปุ่มนี้ → ขยับปุ่มเลือกปีของ year-switch.js ลงตาม (เฉพาะหน้านี้) */
+@media(max-width:860px){ body .yearbtn{top:188px} }
+</style>
+  <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
 </head>
 <body>
@@ -69,13 +83,17 @@ mdSyncToggle();
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="search" placeholder="ค้นหา ชื่อ ว่าที่ ส.ส. จังหวัด หรืออำเภอ/เขตพื้นที่">
     </div>
+    <a class="revealbtn" id="revealBtn" href="reveal.html" title="ไล่เผยผล ส.ส. รายเขตทีละชุด พร้อมเพลงประจำพรรค">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
+      ไล่เผยผลทีละชุด
+    </a>
   </div>
 
   <aside class="panel" id="panel">
     <div class="grabber" id="grabber"></div>
     <div class="legendbar" id="legendbar"></div>
     <div class="panel-scroll" id="panelScroll"></div>
-    <div class="panel-foot">ภาพถ่าย ส.ส.: สำนักงานเลขาธิการสภาผู้แทนราษฎร · <a href="https://www.parliament.go.th" target="_blank" rel="noopener">parliament.go.th</a> · พื้นที่เขตเลือกตั้ง: ประกาศ กกต. / <a href="https://th.wikipedia.org/wiki/การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a></div>
+    <div class="panel-foot">พื้นที่เขตเลือกตั้งและรายชื่อ ส.ส.: ประกาศ กกต. / <a href="https://th.wikipedia.org/wiki/การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป_พ.ศ._2569" target="_blank" rel="noopener">วิกิพีเดีย</a></div>
   </aside>
 
   <div class="zoomctl">
@@ -88,6 +106,7 @@ mdSyncToggle();
     </button>
     <button id="zin" aria-label="ขยาย">+</button>
     <button id="zout" aria-label="ย่อ">−</button>
+    <button id="zreset" aria-label="กลับทั้งแผนที่" title="กลับทั้งแผนที่">⤢</button>
   </div>
 </div>
 
@@ -96,12 +115,33 @@ mdSyncToggle();
 
 <div class="maptip" id="maptip"></div>
 
-<script src="zone-areas.js"></script>
+<!-- ข้อมูลแยกตามปีเลือกตั้ง: index-geo.js = รูปแผนที่ใช้ร่วมทุกปี
+     year-switch.js = ปุ่มเลือกปี + ฉีด year-25xx.js (มี DATA + ZONE_AREAS ของปีนั้น)
+     ⚠ ห้ามใส่ defer/async ให้ 2 ไฟล์นี้ ลำดับการโหลดต้องคงเดิม -->
+<script src="index-geo.js"></script>
+<script src="year-switch.js"></script>
 <script src="district-shapes/index.js"></script>
+<!-- ปี 2566 ต่างจาก 2569 แค่ 4 จังหวัด (ที่เหลือใช้ไฟล์เดียวกัน) · ปี 2562 แบ่งเขต 350 ต่างทั้งประเทศ จึงมีครบ 77 -->
+<script src="district-shapes/index-2566.js"></script>
+<script src="district-shapes/index-2562.js"></script>
+<script src="district-shapes/index-2554.js"></script>
+<script src="district-shapes/index-2550.js"></script>
+<script src="district-shapes/index-2548.js"></script>
+<script src="district-shapes/index-2544.js"></script>
+<script src="district-shapes/index-2539.js"></script>
 <script src="index-photos.js"></script>
-<script src="index-data.js"></script>
+<!-- ปีเก่า (ก่อน 2539) ไม่มีข้อมูลรายเขต → วาดผังที่นั่งครึ่งวงกลมแทนแผนที่ (ตั้ง window.EYOLD จาก year-switch.js) -->
+<script src="index-oldyear.js"></script>
+<script>
+// ส่งปีที่กำลังดูอยู่ไปหน้าไล่เผยผลด้วย (year-switch.js ไม่ได้จำปีที่มาจาก ?y= ลง localStorage)
+(function () {
+  var b = document.getElementById('revealBtn');
+  if (b && window.EYID) b.href = 'reveal.html?y=' + window.EYID;
+})();
+</script>
 <script>
 (function(){
+  if(window.EYOLD) return;              // โหมดปีเก่า: index-oldyear.js จัดการหน้านี้ทั้งหมดแล้ว
   const D=window.DATA, PM=D.partyMeta, M=D.map;
   const fmtN=n=>(n==null?'':n.toLocaleString('en-US'));
   const colorOf=c=>(PM[c]&&PM[c].color)||'#B9AFA4';
@@ -110,6 +150,15 @@ mdSyncToggle();
   const zoneRecs=D.zone, provStats=D.provStats, en2th=D.provEn2Th, th2en=D.provTh2En;
   const provNames=Object.keys(provStats).sort((a,b)=>a.localeCompare(b,'th'));
   const isMobile=()=>matchMedia('(max-width:860px)').matches;
+  /* ปีเก่าบางยุค (เช่น 2512) แหล่งข้อมูลไม่ได้แยก "เขตเลือกตั้ง" ไว้ มีแค่ว่าใครเป็น ส.ส. จังหวัดไหน
+     → ไม่ต้องวาดวงหมายเลขเขต และการ์ดไม่ต้องขึ้น "เขต N" (จะกลายเป็นข้อมูลที่ไม่มีจริง) */
+  const NOZONE=!!(window.EYEARINFO&&window.EYEARINFO.noZone);
+  /* ยุคก่อนมีพรรคการเมือง (2476–2495) ลงสีตามพรรคไม่ได้ → ลงสี "ความเข้มตามจำนวน ส.ส. ต่อจังหวัด" แทน */
+  const HEAT=!!(window.EYEARINFO&&window.EYEARINFO.heat);
+  const HEAT_BINS=[[1,'#DCE9F2','1 คน'],[2,'#A8CBE0','2 คน'],[4,'#6FA8C8','3–4 คน'],
+                   [7,'#3D7FA6','5–7 คน'],[Infinity,'#1F5478','8 คนขึ้นไป']];
+  const heatColor=n=>{for(const b of HEAT_BINS)if(n<=b[0])return b[1];return HEAT_BINS[HEAT_BINS.length-1][1];};
+  const fillOf=st=>HEAT?heatColor(st.seats):colorOf(st.winner);
 
   /* ---- build SVG ---- */
   const svg=document.createElementNS(NS,'svg');
@@ -127,7 +176,7 @@ mdSyncToggle();
     const th=en2th[en], st=th?provStats[th]:null;
     const p=document.createElementNS(NS,'path');
     p.setAttribute('d',d); p.setAttribute('class','pv');
-    p.setAttribute('fill', st?colorOf(st.winner):'#D9E5EC'); p.dataset.en=en;
+    p.setAttribute('fill', st?fillOf(st):'#D9E5EC'); p.dataset.en=en;
     pg.appendChild(p); pathEls[en]=p;
   });
   const areas=[]; Object.entries(pathEls).forEach(([en,p])=>{const bb=p.getBBox();areas.push({en,a:bb.width*bb.height});});
@@ -147,19 +196,83 @@ mdSyncToggle();
   /* ---- legend ---- */
   const winCounts={}; Object.values(provStats).forEach(p=>winCounts[p.winner]=(winCounts[p.winner]||0)+1);
   document.getElementById('legendbar').innerHTML=
-    Object.entries(winCounts).sort((a,b)=>b[1]-a[1]).map(([c,n])=>
-      `<span class="li"><span class="sw" style="background:${colorOf(c)}"></span>${shortOf(c)}<b>${n}</b></span>`).join('');
+    (HEAT
+      /* โหมดความเข้ม: แถบสัญลักษณ์เป็นช่วงจำนวน ส.ส. พร้อมจำนวนจังหวัดในแต่ละช่วง */
+      ? (()=>{const cnt=HEAT_BINS.map(()=>0);
+          Object.values(provStats).forEach(p=>{for(let i=0;i<HEAT_BINS.length;i++)if(p.seats<=HEAT_BINS[i][0]){cnt[i]++;break;}});
+          return HEAT_BINS.map((b,i)=>cnt[i]
+            ? `<span class="li"><span class="sw" style="background:${b[1]}"></span>${b[2]}<b>${cnt[i]} จว.</b></span>` : '').join('');})()
+      : Object.entries(winCounts).sort((a,b)=>b[1]-a[1]).map(([c,n])=>
+      `<span class="li"><span class="sw" style="background:${colorOf(c)}"></span>${shortOf(c)}<b>${n}</b></span>`).join(''))
+    /* ปีเขตละหลายคน: อธิบายกติกาลงสีไว้ท้ายแถบสัญลักษณ์ ให้คนอ่านแผนที่ไม่เข้าใจผิด */
+    +((window.EYEARINFO&&window.EYEARINFO.multi)
+      ? `<span class="li linote" title="ปีนี้ 1 เขตเลือก ส.ส. ได้ 1–3 คน จึงอาจมีหลายพรรคในเขตเดียวกัน แผนที่ลงสีตามพรรคที่ได้ที่นั่งมากที่สุดในเขตนั้น (แตะเขตเพื่อดูส่วนผสม)">ℹ︎ เขตละหลายคน — สีตามพรรคที่ได้ที่นั่งมากสุดในเขต</span>`
+      : '');
 
   /* ---- zoom & pan ---- */
   let scale=1,tx=0,ty=0,lastLabelScale=-1;
+  const MAXZ=40;                                // เพดานซูม — ต้องสูงพอให้จังหวัดเล็ก (สมุทรสงคราม/ภูเก็ต) เต็มกรอบได้
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  function apply(){
+  function apply(light){
     if(scale<1)scale=1;
     // clamp ให้แผนที่เต็มกรอบเสมอ ไม่หลุดไปเจอพื้นหลังเทา — แพนตอนซูมเข้าได้ลื่น ไม่เด้งกลับ
     tx=clamp(tx, M.width*(1-scale), 0);
     ty=clamp(ty, M.height*(1-scale), 0);
     zg.setAttribute('transform',`translate(${tx} ${ty}) scale(${scale})`);
-    updateLabels(false);
+    scaleMarkers();                       // วงหมายเลขเขตคงขนาดบนจอเสมอ ไม่พองตามซูม
+    if(light)scaleLabels(); else updateLabels(false);
+  }
+
+  /* ---- บินเข้ากรอบแบบมีแอนิเมชัน (ไอเดียจาก elect.in.th: transition 750ms แล้วค่อยจัดป้าย) ----
+     ระหว่างบินปรับแค่ขนาดตัวอักษร ไม่คำนวณการชนกันของป้าย (getBBox 77 ครั้ง/เฟรม = หนัก)
+     พอบินจบค่อยจัดป้ายเต็มรูปแบบทีเดียว */
+  let flyRaf=0;
+  const easeOut=t=>1-Math.pow(1-t,3);
+  function cancelFly(){ if(flyRaf){cancelAnimationFrame(flyRaf);flyRaf=0;} }
+  function flyTo(ns,ntx,nty,dur){
+    cancelFly();
+    if(dur==null)dur=750;
+    // แท็บที่ถูกซ่อนอยู่ rAF จะหยุดเดิน → ถ้าเริ่มบินตอนนั้นแผนที่จะค้าง ข้ามไปผลลัพธ์สุดท้ายเลย
+    // (เดิมมี reduceMotion() ร่วมเงื่อนไขด้วย — เครื่องที่ปิด "Show animations in Windows"
+    //  เลยกดเลือกจังหวัดแล้วภาพ "ตัด" ไปเลย ไม่ค่อย ๆ ซูมเข้า · เอาออกให้บินเสมอ)
+    if(dur<=0||document.hidden){scale=ns;tx=ntx;ty=nty;apply();updateLabels(true);return;}
+    const s0=scale,x0=tx,y0=ty,t0=performance.now();
+    const step=now=>{
+      const u=Math.min(1,(now-t0)/dur),e=easeOut(u);
+      scale=s0+(ns-s0)*e; tx=x0+(ntx-x0)*e; ty=y0+(nty-y0)*e;
+      apply(u<1);
+      if(u<1)flyRaf=requestAnimationFrame(step); else {flyRaf=0;updateLabels(true);}
+    };
+    flyRaf=requestAnimationFrame(step);
+  }
+  /* ---- ขนาดวงหมายเลขเขต: วัดเป็น "พิกเซลบนจอ" ไม่ใช่หน่วยแผนที่ ----
+     เดิมคิดรัศมีจากขนาดกรอบจังหวัด → พอเปิดเพดานซูมเป็น 40 เท่า จังหวัดเล็กที่เขตเยอะ (กทม. 33 เขต)
+     วงจะพองตามจนกลืนทั้งจังหวัด · เว็บอ้างอิงใช้ 20/16/12 พิกเซลตามจำนวนเขต แล้วหารด้วยสเกลปัจจุบัน
+     (r = R_px / scale) วงจึงเท่าเดิมเสมอไม่ว่าซูมลึกแค่ไหน */
+  let VBPP=1;          // หน่วย viewBox ต่อ 1 พิกเซลจอ — แคชไว้ อ่าน rect ทุกเฟรมทำให้เบราว์เซอร์คำนวณ layout ใหม่
+  function refreshVBPP(){const r=svg.getBoundingClientRect();
+    VBPP=(r.width&&r.height)?1/(Math.min(r.width/M.width,r.height/M.height)||1):1;}
+  let fitScale=1;      // สเกลปลายทางของการบินเข้าจังหวัด — ใช้จัดวางวงตั้งแต่ก่อนบินถึงที่
+  function mkRpx(N){const m=isMobile();return N<10?(m?15:19):N<16?(m?11:15):(m?8:11);}
+  function mkR(N,s){return mkRpx(N)*VBPP/Math.max(s,1);}
+  function scaleMarkers(){
+    const N=+mkG.dataset.n||0; if(!N)return;
+    // rcap = เพดานจากพื้นที่ว่างจริงในจังหวัด (จังหวัดที่โปรยจุดเอง) — ซูมออกแล้ววงต้องไม่โตจนทับกัน
+    const r=Math.min(mkR(N,scale), +mkG.dataset.rcap||Infinity);
+    mkG.querySelectorAll('.mk').forEach(g=>{
+      const c=g.firstChild, t=g.lastChild;
+      c.setAttribute('r',r);
+      t.setAttribute('font-size',r*1.05);   // halo คุมที่ CSS (non-scaling-stroke) ไม่ต้องตั้งที่นี่
+    });
+  }
+  refreshVBPP();
+  addEventListener('resize',()=>{refreshVBPP();scaleMarkers();});
+  function scaleLabels(){
+    for(const l of labelEls){
+      if(l.el.style.display==='none')continue;
+      const fs=clamp(l.base/scale,2.4,60);
+      l.el.setAttribute('font-size',fs); l.el.setAttribute('stroke-width',fs*0.2);
+    }
   }
   function updateLabels(force){
     if(!force && lastLabelScale>0 && Math.abs(scale/lastLabelScale-1)<0.06) return;
@@ -178,20 +291,24 @@ mdSyncToggle();
     }
   }
   function vbPoint(cx,cy){const pt=svg.createSVGPoint();pt.x=cx;pt.y=cy;return pt.matrixTransform(svg.getScreenCTM().inverse());}
-  function zoomAt(vx,vy,f){const ns=clamp(scale*f,1,6),k=ns/scale;tx=vx-(vx-tx)*k;ty=vy-(vy-ty)*k;scale=ns;apply();}
+  function zoomAt(vx,vy,f){cancelFly();const ns=clamp(scale*f,1,MAXZ),k=ns/scale;tx=vx-(vx-tx)*k;ty=vy-(vy-ty)*k;scale=ns;apply();}
   function centerPt(){const r=svg.getBoundingClientRect();return vbPoint(r.left+r.width/2,r.top+r.height/2);}
   // ปุ่มสลับ ซ่อน/แสดง วงหมายเลขเขต (จำสถานะข้ามจังหวัด — set display ที่กลุ่ม mkG ทีเดียว)
   const mkToggleBtn=document.getElementById('mktoggle'); let markersHidden=false;
+  if(NOZONE)mkToggleBtn.style.display='none';    // ไม่มีวงหมายเลขเขตให้ซ่อน/แสดง
   mkToggleBtn.onclick=()=>{markersHidden=!markersHidden;mkG.style.display=markersHidden?'none':'';
     mkToggleBtn.classList.toggle('off',markersHidden);mkToggleBtn.setAttribute('aria-pressed',String(!markersHidden));};
   document.getElementById('zin').onclick=()=>{const p=centerPt();zoomAt(p.x,p.y,1.45);};
   // ซูมออกจนสุดขณะกำลังดูจังหวัด → เด้งกลับไปหน้าเลือกจังหวัด (เหมือนเว็บอ้างอิง)
   function maybeExitProvince(){if(curProvince&&scale<=1.1){backToAll();return true;}return false;}
   document.getElementById('zout').onclick=()=>{const p=centerPt();zoomAt(p.x,p.y,1/1.45);if(!maybeExitProvince()&&scale<=1.001){tx=0;ty=0;apply();}};
+  // ปุ่มกลับทั้งแผนที่: ทางออกทางเดียวจบจากสภาพซูมค้าง ไม่ต้องกดย่อทีละขั้น
+  document.getElementById('zreset').onclick=()=>{if(curProvince)backToAll();else flyTo(1,0,0);};
   svg.addEventListener('wheel',e=>{e.preventDefault();const p=vbPoint(e.clientX,e.clientY);zoomAt(p.x,p.y,e.deltaY<0?1.12:1/1.12);if(e.deltaY>0)maybeExitProvince();},{passive:false});
   const pointers=new Map(); let panState=null, pinchPrev=null, moved=false, captured=false, lastTapTime=0, pinching=false;
   svg.addEventListener('pointerdown',e=>{
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    cancelFly();                                  // แตะ/ลากระหว่างกำลังบิน → หยุดบินทันที ให้มือคนคุมแทน
     if(pointers.size===1){panState={x:e.clientX,y:e.clientY,tx,ty,id:e.pointerId,downEl:e.target};moved=false;pinching=false;}
     else{panState=null;pinchPrev=null;}
   });
@@ -202,7 +319,7 @@ mdSyncToggle();
       const a=[...pointers.values()],p1=a[0],p2=a[1];
       const dist=Math.hypot(p1.x-p2.x,p1.y-p2.y),mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
       if(pinchPrev&&pinchPrev.dist>0){
-        const f=dist/pinchPrev.dist,vb=vbPoint(mx,my),ns=clamp(scale*f,1,6),k=ns/scale;
+        const f=dist/pinchPrev.dist,vb=vbPoint(mx,my),ns=clamp(scale*f,1,MAXZ),k=ns/scale;
         tx=vb.x-(vb.x-tx)*k;ty=vb.y-(vb.y-ty)*k;scale=ns;
         tx+=(mx-pinchPrev.mx)*sx;ty+=(my-pinchPrev.my)*sy;apply();
       }
@@ -229,7 +346,9 @@ mdSyncToggle();
       const mk=downEl.closest&&downEl.closest('.mk');
       if(mk){flashCard(mk.dataset.no);}
       else if(downEl.classList&&downEl.classList.contains('tam')){flashCard(downEl.dataset.z);}
-      else if(downEl.classList&&downEl.classList.contains('pv')){const th=en2th[downEl.dataset.en];if(th&&provStats[th])selectProvince(th);}
+      // แตะจังหวัดเดิมซ้ำ = ถอยกลับไปมุมมองทั้งประเทศ (ทางออกจากสภาพซูมค้าง — เหมือนเว็บอ้างอิง)
+      else if(downEl.classList&&downEl.classList.contains('pv')){const th=en2th[downEl.dataset.en];
+        if(th&&provStats[th]){ if(curProvince===th) backToAll(); else selectProvince(th); }}
     }
     if(pointers.size===0&&pinching){pinching=false;maybeExitProvince();}
   }
@@ -237,9 +356,14 @@ mdSyncToggle();
 
   /* ---- tooltip ---- */
   const tip=document.getElementById('maptip');
+  // จังหวัดที่ยังไม่ตั้งในปีนั้น (เช่น บึงกาฬ ก่อนปี 2554) — บอกว่าตอนนั้นเป็นส่วนหนึ่งของจังหวัดใด
+  const exProv=(window.EYEARINFO&&window.EYEARINFO.exProv)||{};
   function showTip(en,evt){const th=en2th[en],st=th?provStats[th]:null;
-    tip.innerHTML=st?`<div class="tt-prov">${th}</div><div class="tt-win"><span class="sw" style="background:${colorOf(st.winner)}"></span>${shortOf(st.winner)} · ${st.seats} เขต</div>`
-      :`<div class="tt-prov">${th||en}</div><div style="font-size:.78rem;opacity:.8">ไม่มี ส.ส. แบบแบ่งเขต</div>`;
+    tip.innerHTML=st?`<div class="tt-prov">${th}</div><div class="tt-win"><span class="sw" style="background:${fillOf(st)}"></span>${
+        HEAT?`ส.ส. ${st.seats} คน`:`${shortOf(st.winner)} · ${st.seats} ${NOZONE?'คน':'เขต'}`}</div>`
+        /* ปีเก่าไม่มีคะแนนรายคน จังหวัดที่ที่นั่งเท่ากันจึงบอกไว้ว่าเสมอ (สีเลือกจากพรรคที่ใหญ่กว่าทั้งประเทศ) */
+        +(st.tie?`<div class="tt-mix">เสมอกัน ${st.tie.map(c=>shortOf(c)).join(' · ')} — ลงสีตามพรรคที่ใหญ่กว่าระดับประเทศ</div>`:'')
+      :`<div class="tt-prov">${th||en}</div><div style="font-size:.78rem;opacity:.8">${exProv[th]?`ปี ${window.EYEAR} ยังเป็นส่วนหนึ่งของ ${exProv[th]}`:'ไม่มี ส.ส. แบบแบ่งเขต'}</div>`;
     tip.classList.add('on');moveTip(evt);}
   function moveTip(evt){const pad=14;let x=evt.clientX+pad,y=evt.clientY+pad;const r=tip.getBoundingClientRect();
     if(x+r.width>innerWidth-8)x=evt.clientX-r.width-pad;if(y+r.height>innerHeight-8)y=evt.clientY-r.height-pad;tip.style.left=x+'px';tip.style.top=y+'px';}
@@ -254,9 +378,23 @@ mdSyncToggle();
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}
   // กลับไปหน้าเลือกจังหวัด: บนมือถือต้องพับ bottom sheet ลงด้วย ไม่งั้นแผ่นจะค้างบานเต็มจอบังแผนที่จนแพน/ซูมไม่ได้
-  function backToAll(){curProvince=null;clearMarkers();highlight(null);scale=1;tx=0;ty=0;apply();renderList();expandSheet(false);}
-  function zoomToProvince(th){const en=th2en[th],p=pathEls[en];if(!p)return;const bb=p.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2,fill=.30;
-    const s=clamp(Math.min(M.width*fill/bb.width,M.height*fill/bb.height),1,3.4);scale=s;tx=M.width/2-cx*s;ty=M.height/2-cy*s;apply();}
+  function backToAll(){curProvince=null;fitScale=1;clearMarkers();highlight(null);flyTo(1,0,0);renderList();expandSheet(false);}
+  /* สูตรกรอบแบบ elect.in.th: scale = FILL / max(กว้างจังหวัด/กว้างกรอบ, สูงจังหวัด/สูงกรอบ)
+     → จังหวัดกินพื้นที่ FILL ของกรอบเสมอ ไม่ว่าจะเล็กอย่างสมุทรสงครามหรือใหญ่อย่างนครราชสีมา
+     (ของเดิม FILL=.30 + เพดาน 3.4 ทำให้จังหวัดเล็กซูมไม่เข้า เหลือจุดนิดเดียวกลางจอ)
+     "กรอบ" ต้องเป็นพื้นที่ที่คนเห็นจริง ไม่ใช่ 760×1377 ของ viewBox — preserveAspectRatio=meet
+     ทำให้มีขอบว่างด้านกว้าง กรอบจริงจึงกว้างกว่า viewBox (เว็บอ้างอิงก็ส่งขนาด viewport เข้าสูตร)
+     FILL มือถือต่ำกว่าเพราะแถบค้นหาด้านบนกับแผ่นข้อมูลด้านล่างทับแผนที่ไปส่วนหนึ่ง */
+  function zoomToProvince(th){const en=th2en[th],p=pathEls[en];if(!p)return;
+    const bb=p.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+    const r=svg.getBoundingClientRect();
+    // กรอบยังไม่มีขนาด (ยังไม่จัด layout) → ใช้ขนาด viewBox ไปก่อน ไม่งั้นหารศูนย์ได้ Infinity แล้วซูมไม่ทำงาน
+    const rs=(r.width&&r.height)?(Math.min(r.width/M.width,r.height/M.height)||1):1;
+    const visW=(r.width&&r.height)?r.width/rs:M.width, visH=(r.width&&r.height)?r.height/rs:M.height;
+    const FILL=isMobile()?.52:.72;
+    const s=clamp(FILL/Math.max(bb.width/visW,bb.height/visH),1,MAXZ);
+    refreshVBPP(); fitScale=s;          // วงหมายเลขเขตต้องรู้สเกลปลายทางตั้งแต่ตอนจัดวาง (ยังบินไม่ถึง)
+    flyTo(s, M.width/2-cx*s, M.height/2-cy*s);}
 
   /* ---- district markers ---- */
   let hiddenLabel=null;
@@ -265,8 +403,17 @@ mdSyncToggle();
   const distLoading={};
   // โหลดข้อมูลตำบลของจังหวัดแบบ lazy: แตะจังหวัดไหนค่อยโหลดไฟล์นั้น → หน้าเริ่มต้นเบา สเกลถึง 77 จังหวัดได้
   function ensureDistrict(th,cb){
+    // โมเสกตำบลต้องตรงกับการแบ่งเขตของปีที่เลือก ไม่งั้นสีจะไปลงเขตผิด
+    // ปีที่ยังไม่มีรูปร่างเขต (districts:false) ข้ามไปใช้วงหมายเลขเขตแทน
+    if(window.EYEARINFO&&window.EYEARINFO.districts===false)return cb(false);
     if(getDist(th))return cb(true);
-    const sl=DIDX[th]; if(!sl)return cb(false);
+    /* จังหวัดที่แบ่งเขตปีนี้ต่างจากปี 2569 มีไฟล์เฉพาะปี
+       - ปี 2566 ต่างแค่ 4 จังหวัด ที่เหลือใช้ไฟล์เดียวกันได้ → ตกไปใช้ DIDX ได้
+       - ปีเก่ากว่านั้นแบ่งเขตคนละแบบทั้งประเทศ (districtsOwn) → ห้ามตกไปใช้ไฟล์ปี 2569
+         จังหวัดที่ยังไม่มีไฟล์ของปีนั้น ให้ไปใช้วงหมายเลขเขตแทน */
+    const ov=(window.DISTRICT_OVERRIDE||{})[window.EYEAR]||{};
+    const own=window.EYEARINFO&&window.EYEARINFO.districtsOwn;
+    const sl=ov[th]||(own?null:DIDX[th]); if(!sl)return cb(false);
     if(distLoading[th]){distLoading[th].push(cb);return;}
     distLoading[th]=[cb];
     const s=document.createElement('script'); s.src='district-shapes/'+sl+'.js';
@@ -281,7 +428,9 @@ mdSyncToggle();
     clearDistricts();
     const D2=getDist(th); if(!D2) return false;
     const recs=zoneRecs.filter(r=>r.prov===th);
-    const zc={}; recs.forEach(r=>{zc[+r.no]=colorOf(r.code);});
+    // ปีเขตละหลายคน: ลงสีตามพรรคที่ได้ที่นั่งมากสุดในเขต (zoneLead) ไม่ใช่ ส.ส. คนสุดท้ายของเขต
+    const zc={}, zi={};
+    zoneLead(th).forEach(r=>{zc[+r.no]=colorOf(r.code);zi[+r.no]=r;});
     const pe=pathEls[th2en[th]]; if(pe){pe.style.fill='#e9eff3';distProv=th;}  // ฐานจังหวัดเป็นกลาง กันสีโผล่ขอบ
     const frag=document.createDocumentFragment();
     D2.tambons.forEach(t=>{
@@ -290,7 +439,10 @@ mdSyncToggle();
       p.setAttribute('fill', zc[t.z]||'#c2b8ac');
       p.dataset.z=t.z; p.dataset.tam=t.tam; p.dataset.amp=t.amp;
       if(canHover){
-        p.addEventListener('mouseenter',e=>{tip.innerHTML=`<div class="tt-prov">ต.${t.tam}</div><div class="tt-win"><span class="sw" style="background:${zc[t.z]||'#999'}"></span>อ.${t.amp} · เขต ${t.z}</div>`;tip.classList.add('on');moveTip(e);});
+        p.addEventListener('mouseenter',e=>{const mx=mixText(zi[t.z]);
+          tip.innerHTML=`<div class="tt-prov">ต.${t.tam}</div><div class="tt-win"><span class="sw" style="background:${zc[t.z]||'#999'}"></span>อ.${t.amp} · เขต ${t.z}</div>`
+            +(mx?`<div class="tt-mix">เขตนี้มี ส.ส. ${zi[t.z].seats} คน · ${mx}</div>`:'');
+          tip.classList.add('on');moveTip(e);});
         p.addEventListener('mousemove',moveTip);
         p.addEventListener('mouseleave',()=>tip.classList.remove('on'));
       }
@@ -300,22 +452,45 @@ mdSyncToggle();
     dg.appendChild(frag);
     return true;
   }
-  function clearMarkers(){mkG.textContent='';clearDistricts();if(hiddenLabel){hiddenLabel.style.display='';hiddenLabel=null;}updateLabels(true);}
+  /* ── ปีที่เป็น "เขตละหลายคน" (2550, 2539: 1 เขตมี ส.ส. ได้ 1–3 คน) ──
+     เขตเดียวอาจมี ส.ส. ต่างพรรคกัน แต่แผนที่ 1 เขตลงสีได้สีเดียว
+     กติกาที่ใช้: ลงสี "พรรคที่ได้ที่นั่งมากที่สุดในเขตนั้น" (เสมอกัน → ดูคะแนนรวมของพรรคในเขต)
+     แล้วบอกส่วนผสมจริงไว้ในทูลทิป เช่น "ปชป. 2 · ความหวังใหม่ 1"           */
+  function zoneLead(th){
+    const recs=zoneRecs.filter(r=>r.prov===th).sort((a,b)=>(+a.no)-(+b.no));
+    if(!(window.EYEARINFO&&window.EYEARINFO.multi))return recs;
+    const by={};recs.forEach(r=>{(by[r.no]=by[r.no]||[]).push(r);});
+    return Object.keys(by).sort((a,b)=>(+a)-(+b)).map(no=>{
+      const g=by[no],cnt={},vote={};
+      g.forEach(r=>{cnt[r.code]=(cnt[r.code]||0)+1;vote[r.code]=(vote[r.code]||0)+(r.votes||0);});
+      const mix=Object.entries(cnt).sort((a,b)=>b[1]-a[1]||vote[b[0]]-vote[a[0]]);
+      return {prov:g[0].prov,no:no,code:mix[0][0],seats:g.length,
+              mix:mix.map(([code,n])=>({code,n})),split:mix.length>1};
+    });
+  }
+  const markerRecs=zoneLead;
+  // ข้อความบอกส่วนผสมของเขต (ใช้ในทูลทิปโมเสก/วงหมายเลข)
+  function mixText(r){
+    if(!r||!r.mix||r.mix.length<2)return '';
+    return r.mix.map(m=>shortOf(m.code)+' '+m.n).join(' · ');
+  }
+  function clearMarkers(){mkG.textContent='';delete mkG.dataset.n;delete mkG.dataset.rcap;clearDistricts();if(hiddenLabel){hiddenLabel.style.display='';hiddenLabel=null;}updateLabels(true);}
   function spread(points,N){if(points.length<=N)return points.slice();const chosen=[points[Math.floor(points.length/2)]];
     while(chosen.length<N){let best=null,bd=-1;for(const p of points){let d=Infinity;for(const c of chosen){const dd=(c[0]-p[0])**2+(c[1]-p[1])**2;if(dd<d)d=dd;}if(d>bd){bd=d;best=p;}}chosen.push(best);}return chosen;}
   function renderMarkers(th){
     clearMarkers();const en=th2en[th],pe=pathEls[en];if(!pe)return;
+    if(NOZONE)return;                            // ไม่มีข้อมูลเขต → ไม่วาดวงหมายเลข (ลงสีจังหวัดอย่างเดียว)
     ensureDistrict(th,function(hasData){
       if(curProvince!==th)return;                 // เปลี่ยนจังหวัดระหว่างโหลดไฟล์ → ทิ้งผลเก่า
       const hasDist=hasData&&renderDistricts(th);
-      const recs=zoneRecs.filter(r=>r.prov===th).sort((a,b)=>(+a.no)-(+b.no));const N=recs.length,bb=pe.getBBox();
+      const recs=markerRecs(th);const N=recs.length,bb=pe.getBBox();
       const cx=bb.x+bb.width/2, cy=bb.y+bb.height/2;
-      let pts, r;
+      let pts, r, rcap=Infinity;
       const D2=hasDist?getDist(th):null;
       if(D2&&D2.labels&&D2.labels.length){
         // วงหมายเลขเขตวางที่ "ศูนย์ถ่วงพื้นที่จริง" ของแต่ละเขต (ไม่ใช่โปรยมั่ว)
         const byNo={};D2.labels.forEach(l=>{byNo[+l.no]=[l.x,l.y];});
-        r=Math.max(3.4, 0.34*Math.min(bb.width,bb.height)/Math.sqrt(N));
+        r=mkR(N,fitScale);
         pts=recs.map(rec=>{const q=byNo[+rec.no];return q?[q[0],q[1]]:[cx,cy];});
         // คลายเฉพาะวงที่ทับกัน (จังหวัดเขตถี่อย่างขอนแก่น/โคราช) — ดันออกเบาๆ ไม่ดึงออกจากเขต
         const minSep=2*r*1.02;
@@ -328,9 +503,10 @@ mdSyncToggle();
         const inside=[],g=Math.max(8,Math.ceil(Math.sqrt(N)*3.4));
         for(let i=0;i<g;i++)for(let j=0;j<g;j++){const x=bb.x+bb.width*(i+.5)/g,y=bb.y+bb.height*(j+.5)/g;if(inFill(x,y))inside.push([x,y]);}
         if(!inside.length)inside.push([cx,cy]);
-        // รัศมีวงกลม: อิงพื้นที่จริงในจังหวัด ÷ จำนวนเขต (ไม่ตั้งพื้นขั้นต่ำใหญ่เกินไป) → จังหวัดเขตเยอะอย่าง กทม. 33 เขต จะไม่ทับกัน
+        // รัศมีวงกลมวัดเป็นพิกเซลบนจอ (mkR) แต่ห้ามใหญ่เกินพื้นที่ว่างจริงในจังหวัด ไม่งั้นจังหวัดเขตถี่จะทับกัน
         const fillFrac=Math.max(inside.length/(g*g),0.3), fillArea=fillFrac*bb.width*bb.height;
-        r=Math.max(2.6,Math.min(Math.min(bb.width,bb.height)/(Math.sqrt(N)+2.6), 0.46*Math.sqrt(fillArea/N)));
+        rcap=0.46*Math.sqrt(fillArea/N);
+        r=Math.min(mkR(N,fitScale), rcap);
         // กระจายจุดให้ห่างกันมากสุดเป็นจุดเริ่ม แล้ว “ผลัก” จุดที่ใกล้กันออกจากกันจนไม่ทับ (de-cluster) พร้อมดึงให้อยู่ในเขตจังหวัด
         const minSep=2*r*1.06;
         pts=spread(inside,N).map(p=>[p[0],p[1]]);
@@ -351,8 +527,11 @@ mdSyncToggle();
         const grp=document.createElementNS(NS,'g');grp.setAttribute('class','mk');grp.dataset.no=rec.no;
         grp.style.setProperty('--c', colorOf(rec.code));   // สีวงกลม = สีพรรคที่ชนะเขตนี้
         const c=document.createElementNS(NS,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',r);
-        const t=document.createElementNS(NS,'text');t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);t.setAttribute('font-size',r*1.05);t.textContent=rec.no;
+        const t=document.createElementNS(NS,'text');t.setAttribute('x',p[0]);t.setAttribute('y',p[1]);
+        t.setAttribute('font-size',r*1.05);t.textContent=rec.no;
         grp.appendChild(c);grp.appendChild(t);mkG.appendChild(grp);});
+      mkG.dataset.n=N; if(rcap<Infinity)mkG.dataset.rcap=rcap; else delete mkG.dataset.rcap;
+      scaleMarkers();                     // ถ้ายังบินไม่ถึง สเกลจริงต่างจาก fitScale → ปรับให้ตรงทันที
       const lab=labelEls.find(l=>l.en===en);if(lab){lab.el.style.display='none';hiddenLabel=lab.el;}
       updateLabels(true);
     });
@@ -363,30 +542,77 @@ mdSyncToggle();
   /* ---- panel content ---- */
   const panelScroll=document.getElementById('panelScroll'), search=document.getElementById('search');
   let curProvince=null;
-  function initialOf(name){const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return t[0]||name.replace(/\s/g,'')[0]||'•';}
+  /* สระนำหน้า (เ แ โ ใ ไ) เขียนก่อนพยัญชนะต้น — "เอกนัฏ" ต้องได้ "อ" ไม่ใช่ "เ" */
+  const LEAD_VOWELS=/[เแโใไ]/;
+  const firstLetter=s=>(LEAD_VOWELS.test(s.charAt(0))&&s.length>1)?s.charAt(1):s.charAt(0);
+  function initialOf(name){const t=name.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').trim();return firstLetter(t)||firstLetter(name.replace(/\s/g,''))||'•';}
   function areaOf(r){return (window.ZONE_AREAS&&window.ZONE_AREAS[r.prov+'|'+(+r.no)])||'';}
+  /* คลังรูปเก็บชื่อพร้อมคำนำหน้า ("นายกิตติ กิตติธรกุล") แต่ข้อมูลปีย้อนหลังจากวิกิพีเดียไม่มีคำนำหน้า
+     → เทียบซ้ำอีกชั้นด้วยชื่อที่ตัดคำนำหน้าออก คนที่เคยมีรูปอยู่แล้วจะยังขึ้นรูปในปีเก่า */
+  const bareName=s=>s.replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/,'').replace(/\s+/g,' ').trim();
+  let photoBare=null;
+  function photoOf(name){
+    const P=window.PHOTOS||{}; if(P[name])return P[name];
+    if(!photoBare){photoBare={};Object.keys(P).forEach(k=>{const b=bareName(k);if(!(b in photoBare))photoBare[b]=P[k];});}
+    return photoBare[bareName(name)]||null;
+  }
   function candidateCard(r,showProv){
-    const col=colorOf(r.code), ph=window.PHOTOS&&window.PHOTOS[r.name], area=areaOf(r);
+    const col=colorOf(r.code), ph=photoOf(r.name), area=areaOf(r);
     const inner = ph ? `<img class="cphoto" src="photos/${encodeURIComponent(ph)}" alt="" loading="lazy">` : initialOf(r.name);
     return `<div class="ccard" data-no="${r.no}" data-prov="${r.prov}">
-      <div class="cav" style="background:${col};box-shadow:0 0 0 3px #fff,0 0 0 4px ${col}">${inner}<span class="cavno">${r.no}</span></div>
-      <div class="cinfo"><div class="ctop"><span class="cname">${r.name}</span><span class="cdist">${showProv?r.prov+' ':''}เขต ${r.no}</span></div>
-      <div class="cbot"><span class="cpt"><span class="sw" style="background:${col}"></span>${shortOf(r.code)}</span>${r.votes!=null?`<span class="cvt">${fmtN(r.votes)} คะแนน</span>`:''}</div>
-      ${area?`<div class="carea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="ctxt">${area}</span></div>`:''}</div></div>`;}
+      <div class="cav" style="background:${col};box-shadow:0 0 0 3px #fff,0 0 0 4px ${col}">${inner}${NOZONE?'':`<span class="cavno">${r.no}</span>`}</div>
+      <div class="cinfo"><div class="ctop"><span class="cname">${r.name}</span><span class="cdist">${NOZONE?(showProv?r.prov:'ส.ส. '+r.prov):(showProv?r.prov+' ':'')+'เขต '+r.no}</span></div>
+      <div class="cbot">${r.ballot!=null?`<span class="cno" title="เบอร์ผู้สมัคร">เบอร์ ${r.ballot}</span>`:''}<span class="cpt"><span class="sw" style="background:${col}"></span>${shortOf(r.code)}</span>${r.votes!=null?`<span class="cvt">${fmtN(r.votes)} คะแนน${r.pct!=null?` · ${r.pct}%`:''}${r.vsrc==='en'?`<span class="vsrc" title="คะแนนนี้มาจากวิกิพีเดียอังกฤษ (2001 Thai general election) เพราะวิกิพีเดียไทยยังไม่มีหน้ารายจังหวัดของปีนี้">†</span>`:''}</span>`:''}</div>
+      ${r.note?`<div class="cnote">${r.note}</div>`:''}
+      ${area?`<div class="carea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span class="ctxt">${area}</span></div>`:''}
+      ${hasDetail(r)?`<div class="cmore" data-key="${r.prov}|${+r.no}">ดูผู้สมัครทุกคน &amp; สถิติเขต<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg></div>`:''}</div></div>`;}
+
+  /* ---- รายละเอียดรายเขต: ผู้สมัครทุกคน + สถิติผู้มาใช้สิทธิ ----
+     อยู่ในไฟล์แยก detail-<ปี>.js (ไฟล์ละ ~300–400KB) โหลดตอนกดกางครั้งแรกเท่านั้น
+     เพิ่มปีใหม่ = สร้าง detail-<ปี>.js แล้วเติมเลขปีในลิสต์นี้ */
+  const DETAIL_YEARS=[2569,2566,2562,2554,2550,2548,2544,2539];
+  function hasDetail(r){return !NOZONE && DETAIL_YEARS.includes(+window.EYEAR) && r.prov && r.no!=null;}
+  let detailReq=null;
+  function ensureDetail(){
+    if(window.EDETAIL) return Promise.resolve(window.EDETAIL);
+    if(!DETAIL_YEARS.includes(+window.EYEAR)) return Promise.resolve(null);
+    if(!detailReq) detailReq=new Promise(res=>{const s=document.createElement('script');s.src='detail-'+window.EYEAR+'.js';s.onload=()=>res(window.EDETAIL);s.onerror=()=>res(null);document.head.appendChild(s);});
+    return detailReq;
+  }
+  /* loaded = โหลดไฟล์ของปีนั้นได้แล้วหรือยัง — แยก "โหลดไม่สำเร็จ" ออกจาก "ปีนั้นไม่มีข้อมูลเขตนี้"
+     (เช่น 2544 วิกิพีเดียไทยมีหน้ารายจังหวัดแค่ 58 จังหวัด อีก 18 จังหวัดจึงไม่มีรายชื่อผู้สมัคร) */
+  function detailHTML(d,loaded){
+    if(!d) return `<div class="cdmiss">${loaded?'ยังไม่มีรายชื่อผู้สมัครรายคนของเขตนี้ในแหล่งข้อมูล':'โหลดรายละเอียดเขตไม่สำเร็จ'}</div>`;
+    /* ปีย้อนหลังบางเขตแหล่งข้อมูลไม่มีสถิติ (หรือตัวเลขขัดกันเองจนตัดทิ้ง) → ไม่ต้องขึ้นแถบสถิติ */
+    const s=d.stats;
+    const cell=(k,v)=>v==null||v===''?'':`<div class="cdst"><span>${k}</span><b>${v}</b></div>`;
+    const stat=!s?'':[['ผู้มีสิทธิเลือกตั้ง',fmtN(s.reg)],['ผู้มาใช้สิทธิ',s.turnout==null?'':fmtN(s.turnout)+(s.tpct?` (${s.tpct}%)`:'')],
+      ['บัตรดี',fmtN(s.valid)],['บัตรเสีย',fmtN(s.invalid)],['ไม่ประสงค์ลงคะแนน',fmtN(s.blank)],['หน่วยเลือกตั้ง',fmtN(s.units)]]
+      .map(([k,v])=>cell(k,v)).join('');
+    const rows=(d.cands||[]).map((c,i)=>`<tr${i===0?' class="win"':''}>
+        <td class="n">${c.b==null?'–':c.b}</td><td class="nm">${c.name}</td>
+        <td class="pt"><span class="sw" style="background:${colorOf(c.code)}"></span>${shortOf(c.code)}</td>
+        <td class="v">${fmtN(c.votes)}</td><td class="p">${c.pct==null?'':c.pct+'%'}</td></tr>`).join('');
+    return (stat?`<div class="cdstats">${stat}</div>`:'')+
+      `<table class="cdtab"><thead><tr><th>เบอร์</th><th>ผู้สมัคร</th><th>พรรค</th><th>คะแนน</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
   function provinceRow(th){const st=provStats[th];return `<div class="prow" data-prov="${th}">
-      <span class="dot" style="background:${colorOf(st.winner)}"></span><span class="pn">${th}</span>
-      <span class="zc"><b>${st.seats}</b> เขต</span>
+      <span class="dot" style="background:${fillOf(st)}"></span><span class="pn">${th}</span>
+      <span class="zc"><b>${st.seats}</b> ${NOZONE?'คน':'เขต'}</span>
       <svg class="arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>`;}
   function renderList(){
-    panelScroll.innerHTML=`<div class="list-head">เลือกจังหวัด <span class="cnt">77 จังหวัด</span></div>`+provNames.map(provinceRow).join('');
+    // ปีเก่าจังหวัดยังไม่ครบ 77 (บึงกาฬ ตั้งปี 2554 · สระแก้ว/หนองบัวลำภู/อำนาจเจริญ ปี 2536 ฯลฯ)
+    panelScroll.innerHTML=`<div class="list-head">เลือกจังหวัด <span class="cnt">${provNames.length} จังหวัด</span></div>`+provNames.map(provinceRow).join('');
     bindRows();
   }
   function renderDetail(th){
     const st=provStats[th], recs=zoneRecs.filter(r=>r.prov===th).sort((a,b)=>(+a.no)-(+b.no));
     panelScroll.innerHTML=`<div class="dback" id="dback">‹ กลับไปทุกจังหวัด</div>
-      <div class="dhead"><div class="dn">${th}</div><div class="dmeta"><span>${st.seats} เขตเลือกตั้ง</span>
-        <span class="dwin"><span class="sw" style="background:${colorOf(st.winner)}"></span>ชนะ <b>${shortOf(st.winner)}</b></span></div></div>
-      <div class="dnote">แตะวงกลมหมายเลขเขตบนแผนที่เพื่อไฮไลต์ผู้สมัคร · ผู้ที่ยังไม่มีรูปจะแสดงเป็นอักษรย่อตามสีพรรค</div>`+
+      <div class="dhead"><div class="dn">${th}</div><div class="dmeta"><span>${NOZONE?`ส.ส. ${st.seats} คน`:`${st.seats} เขตเลือกตั้ง`}</span>
+        ${HEAT?'':`<span class="dwin"><span class="sw" style="background:${colorOf(st.winner)}"></span>ชนะ <b>${shortOf(st.winner)}</b></span>`}</div></div>
+      <div class="dnote">${NOZONE
+        ?`ปี ${window.EYEAR} แหล่งข้อมูลบันทึกไว้เป็นรายจังหวัด ยังไม่มีการแยกเขตเลือกตั้งในรูปดิจิทัล · ผู้ที่ยังไม่มีรูปจะแสดงเป็นอักษรย่อตามสีพรรค`
+        :'แตะวงกลมหมายเลขเขตบนแผนที่เพื่อไฮไลต์ผู้สมัคร · ผู้ที่ยังไม่มีรูปจะแสดงเป็นอักษรย่อตามสีพรรค'}</div>`+
       recs.map(r=>candidateCard(r,false)).join('');
     renderMarkers(th);
     panelScroll.querySelectorAll('.ccard').forEach(c=>c.onclick=()=>flashMarker(c.dataset.no));
@@ -409,6 +635,17 @@ mdSyncToggle();
   }
   // แตะบรรทัดพื้นที่เขตเพื่อกาง/พับข้อความเต็ม โดยไม่ไปกระตุ้น onclick ของการ์ด
   panelScroll.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('.carea');if(a){e.stopPropagation();a.classList.toggle('open');}},true);
+  // แตะ "ดูผู้สมัครทุกคน" เพื่อกาง/พับตารางผู้สมัคร + สถิติเขต (โหลด detail-2569.js ครั้งแรกที่กด)
+  panelScroll.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('.cmore'); if(!b) return;
+    e.stopPropagation();
+    const box=b.nextElementSibling;
+    if(box&&box.classList.contains('cdet')){box.remove();b.classList.remove('open');return;}
+    b.classList.add('open');
+    const el=document.createElement('div'); el.className='cdet'; el.innerHTML='<div class="cdmiss">กำลังโหลด…</div>';
+    b.after(el);
+    ensureDetail().then(D=>{ if(el.isConnected) el.innerHTML=detailHTML(D&&D[b.dataset.key],!!D); });
+  },true);
   search.addEventListener('input',e=>renderSearch(e.target.value));
   search.addEventListener('focus',()=>{if(isMobile())expandSheet(true);});
   renderList();
@@ -465,8 +702,16 @@ mdSyncToggle();
   apply();
 })();
 </script>
+<!-- ฉากเปิด: แผงพรรคอันดับ 1/2 เลื่อนเข้าซ้าย-ขวา ค้างไว้แล้วเลื่อนออกเผยแผนที่ -->
+<script src="intro-data.js"></script>
+<script src="intro-seats.js"></script>
+<script src="intro-music.js"></script>
+<script src="intro-youtube.js"></script>
+<script src="intro.js"></script>
 <script src="glow.js"></script>
 <script src="../js/theme-toggle-drag.js"></script>
 <script src="../js/ai-chat.js"></script>
+<script src="../js/cyber-sfx.js"></script>
+<script src="../js/cyber-audio.js"></script>
 </body>
 </html>
