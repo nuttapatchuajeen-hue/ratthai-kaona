@@ -14,20 +14,27 @@
     var nav = document.querySelector(".site-header nav");
     if (!nav) return;
     var links = nav.querySelector(".nav-links");
-    if (!links || nav.querySelector(".nav-burger")) return;
+    if (!links) return;
     // เมนูรายการเดียว (เช่น video.html) ไม่ต้องมีแฮมเบอร์เกอร์
     if (links.querySelectorAll("a").length < 2) return;
 
     if (!links.id) links.id = "hubNavLinks";
 
-    var btn = document.createElement("button");
+    // หน้าไหนเขียนปุ่มไว้ใน HTML เองแล้ว (hub/index.html) ให้ "ยืมปุ่มนั้นมาต่อสาย"
+    // ไม่ใช่ถอยออกไปเฉย ๆ ไม่อย่างนั้นปุ่มจะโผล่มาแต่กดไม่ติด เพราะไม่มีใครผูก listener ให้
+    var btn = nav.querySelector(".nav-burger");
+    if (btn && btn.getAttribute("data-hub-nav-ready") === "1") return;  // ต่อสายไปแล้ว กันผูกซ้ำ
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.className = "nav-burger";
+      btn.innerHTML = ICON_OPEN + ICON_CLOSE;      // ปุ่มที่หน้าเขียนเองมีไอคอนของตัวเองอยู่แล้ว ไม่ต้องทับ
+      nav.insertBefore(btn, links);
+    }
     btn.type = "button";
-    btn.className = "nav-burger";
     btn.setAttribute("aria-label", "เปิดเมนู");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("aria-controls", links.id);
-    btn.innerHTML = ICON_OPEN + ICON_CLOSE;
-    nav.insertBefore(btn, links);
+    btn.setAttribute("data-hub-nav-ready", "1");
 
     function setOpen(open) {
       links.classList.toggle("is-open", open);
