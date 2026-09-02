@@ -42,6 +42,17 @@
     for (var i = 0; i < els.length; i++) {
       var speed = parseFloat(els[i].getAttribute('data-scroll-speed'));
       if (!speed) continue;             // 0 หรืออ่านค่าไม่ออก = ไม่ต้องขยับ
+      /* position: fixed อยู่นิ่งกับจอ ไม่ได้ไหลไปกับหน้าเว็บ
+         getBoundingClientRect().top ของมันจึงคงที่ทุกเฟรม ฐานที่วัดได้เลยเป็นค่า
+         ณ วินาทีที่ measure() ทำงานเท่านั้น พอสกรอลล์ต่อไปสูตรจะคำนวณจากฐานผิด
+         ผลคือดัน element หลุดขอบจอแล้วไปค้างแช่อยู่อย่างนั้น (ตัวกรอง "ไกลเกิน"
+         ด้านล่างจะหยุดอัปเดตให้พอดี) — กันไว้ตรงนี้ดีกว่าปล่อยให้พังเงียบ ๆ */
+      if (getComputedStyle(els[i]).position === 'fixed') {
+        if (window.console && console.warn) {
+          console.warn('[parallax] ข้าม', els[i], '— ใช้กับ position:fixed ไม่ได้ ต้องเป็นชั้นที่เลื่อนไปกับหน้า');
+        }
+        continue;
+      }
       els[i].style.willChange = 'transform';
       items.push({ el: els[i], speed: speed / 100, base: 0, half: 0 });
     }
