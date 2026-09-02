@@ -1205,6 +1205,42 @@
     color: var(--on-accent);
   }
 
+  /* แถบความสูงแท่งเขต — แกนที่สองของแผนที่เขต */
+  .dheight-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--card-border);
+  }
+  .dheight-label {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-right: 2px;
+  }
+  .dheight-chip {
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .dheight-chip:hover { border-color: var(--accent); color: var(--text-main); }
+  .dheight-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+
   /* Transit Proximity Grid */
   .transit-dist-grid {
     display: grid;
@@ -1833,6 +1869,10 @@
         <button type="button" class="chip" id="chipDistricts">
           <span>50 Districts</span>
         </button>
+        <button type="button" class="chip" id="chipNearStation" title="แลนด์มาร์กที่อยู่ในรัศมี 500 ม. จากสถานีรถไฟฟ้า — กดเพื่อกรอง">
+          <span>ใกล้สถานี 500 ม.</span>
+          <span class="chip-count" id="nearStationCount">–</span>
+        </button>
         <button type="button" class="chip" id="btnThemeToggle" title="Toggle Light / Sunset / Dark Mode">
           <span id="themeIco"><svg class="mdico"><use href="#i-moon"></use></svg> Dark</span>
         </button>
@@ -1993,6 +2033,16 @@
         <span><svg class="mdico"><use href="#i-coins"></use></svg> ค่าครองชีพ / ราคาที่ดิน</span>
         <span class="thematic-tag tag-est">ประมาณการ</span>
       </button>
+    </div>
+    <div class="dheight-row" id="districtHeightRow">
+      <span class="dheight-label">ความสูงแท่ง</span>
+      <button type="button" class="dheight-chip active" data-dheight="flat">แบน</button>
+      <button type="button" class="dheight-chip" data-dheight="dens">ความหนาแน่น</button>
+      <button type="button" class="dheight-chip" data-dheight="pop">ประชากร</button>
+      <button type="button" class="dheight-chip" data-dheight="pm">PM2.5</button>
+      <button type="button" class="dheight-chip" data-dheight="flood">น้ำท่วม</button>
+      <button type="button" class="dheight-chip" data-dheight="traf">รถติด</button>
+      <button type="button" class="dheight-chip" data-dheight="cost">ค่าครองชีพ</button>
     </div>
   </div>
 
@@ -2338,6 +2388,9 @@
   var STATE = {
     theme: "dark", // dark, light, sunset
     appMode: "3d", // "3d" or "2d-districts"
+    autoTilt: true, // ปรับ pitch อัตโนมัติเมื่อซูมข้ามเส้น CAM.tiltZoom
+    districtHeight: null, // ตัวชี้วัดที่ดันความสูงแท่งเขต (null = แบน)
+    forceTilt: false, // ล็อกมุมเอียงไว้แม้ซูมต่ำกว่า CAM.tiltZoom
     currentMetric: "dens", // "dens", "pop", "pm", "flood", "traf", "cost"
     intelSidebarOpen: false,
     heightMode: "projects", // "flat", "projects", "value", "roles"
@@ -2481,12 +2534,239 @@
     window.BKK_TRANSIT.rawLines.forEach(function(l) { STATE.activeLines[l.id] = true; });
   }
 
+  /* ── ระยะจากอาคารถึงสถานีที่ใกล้ที่สุด ──────────────────────────────────
+     ตัวกรอง TRANSIT อ่าน properties.distanceToStationMeters ซึ่งไม่เคยมีอยู่จริง
+     ในข้อมูล coalesce จึงตกไปที่ค่า default ทุกครั้ง ปุ่ม 500 ม./1 กม. เลยไม่เคย
+     กรองอะไรออกเลย — คำนวณจากจุดสถานี 181 แห่งตอนโหลด แล้วเขียนกลับเข้า properties */
+  var STATION_DISTANCE_READY = false;
+
+  function haversineM(lng1, lat1, lng2, lat2) {
+    var R = 6371000, rad = Math.PI / 180;
+    var dLat = (lat2 - lat1) * rad, dLng = (lng2 - lng1) * rad;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  }
+
+  function computeStationDistances() {
+    if (STATION_DISTANCE_READY) return;
+    if (!window.BKK_LANDMARKS || !window.BKK_TRANSIT) return;
+
+    var stations = window.BKK_TRANSIT.stations.features;
+    var nearest = {};
+
+    (window.BKK_LANDMARKS.rawList || []).forEach(function(lm) {
+      if (typeof lm.lon !== "number" || typeof lm.lat !== "number") return;
+      var best = Infinity, bestName = null;
+      for (var i = 0; i < stations.length; i++) {
+        var c = stations[i].geometry.coordinates;
+        var d = haversineM(lm.lon, lm.lat, c[0], c[1]);
+        if (d < best) { best = d; bestName = stations[i].properties.name; }
+      }
+      if (best === Infinity) return;
+      lm.distanceToStationMeters = Math.round(best);
+      lm.nearestStation = bestName;
+      nearest[lm.id] = { m: Math.round(best), name: bestName };
+    });
+
+    // แลนด์มาร์กหนึ่งหลังมีได้หลาย polygon (ส่วนอาคาร) ทุกส่วนใช้ค่าของหลังนั้น
+    window.BKK_LANDMARKS.polygons.features.forEach(function(f) {
+      var n = nearest[f.properties.id];
+      if (!n) return;
+      f.properties.distanceToStationMeters = n.m;
+      f.properties.nearestStation = n.name;
+    });
+
+    STATION_DISTANCE_READY = true;
+  }
+
+  function countWithinStation(maxM) {
+    var n = 0;
+    ((window.BKK_LANDMARKS && window.BKK_LANDMARKS.rawList) || []).forEach(function(lm) {
+      if (typeof lm.distanceToStationMeters === "number" && lm.distanceToStationMeters <= maxM) n++;
+    });
+    return n;
+  }
+
+  /* ── แท่งความสูงรายเขต ──────────────────────────────────────────────────
+     แกนที่สองของแผนที่เขต: สีบอกตัวชี้วัดหนึ่ง ความสูงแท่งบอกอีกตัวหนึ่ง
+     อ่านสองมิติพร้อมกันได้ในภาพเดียว แทนที่จะสลับดูทีละตัว */
+  var DISTRICT_COLUMN_MIN_M = 300;
+  var DISTRICT_COLUMN_MAX_M = 9000;
+
+  function districtHeightExpr(metric) {
+    if (!metric || !window.BKK_GEOJSON) return 0;
+    var lo = Infinity, hi = -Infinity;
+    window.BKK_GEOJSON.features.forEach(function(f) {
+      var v = f.properties[metric];
+      if (typeof v === "number") { if (v < lo) lo = v; if (v > hi) hi = v; }
+    });
+    if (lo === Infinity) return 0;
+    if (hi === lo) return DISTRICT_COLUMN_MIN_M;
+    // สเกลเป็นเมตรจากค่าต่ำสุด-สูงสุดจริงของตัวชี้วัดนั้น ไม่ต้องฮาร์ดโค้ดช่วง
+    return ["interpolate", ["linear"], ["coalesce", ["get", metric], lo],
+            lo, DISTRICT_COLUMN_MIN_M, hi, DISTRICT_COLUMN_MAX_M];
+  }
+
+  /* ── กล่องมวลสถานี 3D ────────────────────────────────────────────────────
+     พอร์ตจาก phattra-ashton: ผนัง + ฝาหลังคา เป็น fill-extrusion คนละชั้น
+     ที่นั่นใช้ outline อาคารจริงจาก OSM 256 หลัง แล้ว fallback เป็นสี่เหลี่ยม
+     ที่สร้างเอง 51 หลัง — ข้อมูลเรามีแค่พิกัดจุด จึงใช้เส้นทาง fallback ทั้งหมด
+     แต่หาทิศวางกล่องจากแนวรางจริง ไม่ใช่วางตรงตามแกนเหนือ-ใต้ */
+  var MASSING = {
+    hallHeight: 17,      // สถานีเปลี่ยนสาย = โถงจำหน่ายตั๋ว
+    platformHeight: 10,  // สถานีปกติ = ชานชาลา
+    roofThickness: 2.5,
+    lengthM: 140,
+    hallWidthM: 34,
+    platformWidthM: 22,
+    roofLighten: 0.42,
+    minzoom: 14
+  };
+  var STATION_MASSING = null;
+
+  /* ผสมสีกับขาวตามสัดส่วน t — ใช้ให้หลังคาสว่างกว่าผนัง จะได้อ่านเป็นฝา ไม่ใช่ยอดกล่อง */
+  function lightenHex(hex, t) {
+    var m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(String(hex).trim());
+    if (!m) return hex;
+    function up(v) { return Math.round(v + (255 - v) * t); }
+    return "rgb(" + up(parseInt(m[1], 16)) + ", " + up(parseInt(m[2], 16)) + ", " + up(parseInt(m[3], 16)) + ")";
+  }
+
+  /* สี่เหลี่ยมกว้าง widthM ยาว lengthM เมตร หมุนตาม bearing รอบจุด [lng, lat] */
+  function orientedRect(lng, lat, bearing, lengthM, widthM) {
+    var mPerLat = 111320;
+    var mPerLng = 111320 * Math.cos(lat * Math.PI / 180);
+    var cos = Math.cos(bearing), sin = Math.sin(bearing);
+    var hl = lengthM / 2, hw = widthM / 2;
+    var corners = [[-hl, -hw], [hl, -hw], [hl, hw], [-hl, hw], [-hl, -hw]];
+    var ring = [];
+    for (var i = 0; i < corners.length; i++) {
+      var x = corners[i][0] * cos - corners[i][1] * sin;
+      var y = corners[i][0] * sin + corners[i][1] * cos;
+      ring.push([lng + x / mPerLng, lat + y / mPerLat]);
+    }
+    return ring;
+  }
+
+  function buildStationMassing() {
+    if (STATION_MASSING) return STATION_MASSING;
+    if (!window.BKK_TRANSIT) return { type: "FeatureCollection", features: [] };
+
+    var byName = {};
+    window.BKK_TRANSIT.rawLines.forEach(function(line) {
+      line.stations.forEach(function(s, i) {
+        var rec = byName[s.name];
+        if (rec) { rec.lines.push(line.id); return; } // สถานีร่วม: จดสายเพิ่ม ไม่วางกล่องซ้อนกัน
+
+        // ทิศของรางตรงสถานีนี้: สถานีก่อนหน้า → ถัดไป ปลายสายใช้เพื่อนบ้านตัวเดียว
+        var a = line.stations[i - 1] || s;
+        var b = line.stations[i + 1] || s;
+        if (a === b) return; // สายมีสถานีเดียว ไม่มีทิศให้วาง
+        var latRad = s.coords[1] * Math.PI / 180;
+        var dx = (b.coords[0] - a.coords[0]) * Math.cos(latRad);
+        var dy = b.coords[1] - a.coords[1];
+
+        byName[s.name] = {
+          st: s,
+          bearing: Math.atan2(dy, dx),
+          color: line.color,
+          lines: [line.id]
+        };
+      });
+    });
+
+    var features = [];
+    for (var k in byName) {
+      var r = byName[k];
+      var isHall = r.lines.length > 1;
+      var h = isHall ? MASSING.hallHeight : MASSING.platformHeight;
+      features.push({
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [orientedRect(
+            r.st.coords[0], r.st.coords[1], r.bearing,
+            MASSING.lengthM, isHall ? MASSING.hallWidthM : MASSING.platformWidthM
+          )]
+        },
+        properties: {
+          name: r.st.name,
+          code: r.st.code,
+          lines: r.lines.join(","),
+          color: r.color,
+          roofColor: lightenHex(r.color, MASSING.roofLighten),
+          height: h,
+          roofBase: h,                            // ฝาเริ่มตรงยอดผนังพอดี
+          roofTop: h + MASSING.roofThickness,
+          source: "generated"                     // เติม "osm" ได้ทีหลังโดยไม่ต้องแตะเลเยอร์
+        }
+      });
+    }
+    STATION_MASSING = { type: "FeatureCollection", features: features };
+    return STATION_MASSING;
+  }
+
+  /* ── ระบบกล้อง: safeEase + auto-tilt + zoom clamp ─────────────────────────
+     พอร์ตมาจากโมเดลซูมของ phattra-ashton แล้วปรับให้เข้ากับกล้อง 3D ของหน้านี้ */
+  var CAM = {
+    tiltZoom: 13,      // เส้นแบ่ง: ต่ำกว่านี้ = แผนที่แบน, สูงกว่านี้ = มุมเมือง 3D
+    cityPitch: 58,     // pitch เดียวกับกล้องตั้งต้น
+    flatPitch: 0,
+    flatThreshold: 8,  // pitch ต่ำกว่านี้ถือว่ายัง "แบน" อยู่
+    tiltDuration: 400,
+    drawerWidth: 420   // ต้องตรงกับ .project-drawer { width: 420px } ใน CSS
+  };
+
+  function camBusy(map) {
+    return !!map && (map.isMoving() || map.isZooming() || map.isRotating());
+  }
+
+  /* หยุด animation ที่ค้างอยู่ก่อนสั่งกล้องใหม่เสมอ
+     กัน flyTo/easeTo สองคำสั่งแย่งกล้องกันแล้วภาพกระตุก */
+  function safeEase(map, opts) { if (camBusy(map)) map.stop(); map.easeTo(opts); }
+  function safeFly(map, opts)  { if (camBusy(map)) map.stop(); map.flyTo(opts); }
+
+  /* ซูมเข้าอย่างเดียว ไม่เด้งถอยออกถ้าผู้ใช้ซูมลึกกว่าเป้าหมายอยู่แล้ว */
+  function zoomAtLeast(z) {
+    return STATE.map ? Math.max(STATE.map.getZoom(), z) : z;
+  }
+
+  /* เลื่อนเป้าหมายไปอยู่กลางพื้นที่ที่ยังมองเห็นจริง
+     ไม่ใช่กลาง viewport ที่ถูก project drawer กว้าง 420px ทับอยู่ */
+  function drawerOffset() {
+    return window.innerWidth <= 768 ? [0, 0] : [-CAM.drawerWidth / 2, 0];
+  }
+
+  /* ผูกกับ zoomend (ไม่ใช่ zoom ที่ยิงทุกเฟรม) แล้วแก้ pitch เฉพาะตอน "ข้ามเส้น"
+     เท่านั้น มุมกล้องที่ปุ่ม cinematic หรือผู้ใช้ตั้งไว้เองในโหมด 3D จึงไม่ถูกลบทิ้ง */
+  function applyAutoTilt() {
+    var map = STATE.map;
+    if (!map || !STATE.autoTilt) return;
+    if (STATE.appMode !== "3d" && !STATE.forceTilt) return;
+    if (STATE.droneTourActive || map.isMoving()) return;
+
+    // forceTilt = กำลังดูแท่งความสูงเขตอยู่ ต้องคาเอียงไว้ไม่ว่าซูมเท่าไหร่
+    var want3D = STATE.forceTilt || map.getZoom() >= CAM.tiltZoom;
+    var is3D   = map.getPitch() > CAM.flatThreshold;
+    if (want3D === is3D) return;
+
+    safeEase(map, {
+      pitch: want3D ? CAM.cityPitch : CAM.flatPitch,
+      duration: CAM.tiltDuration
+    });
+  }
+
   function initMap() {
     // Dynamic KPI Count
     if (window.BKK_LANDMARKS && window.BKK_LANDMARKS.rawList) {
       var count = window.BKK_LANDMARKS.rawList.length;
       if ($("#landmarkCountChip")) $("#landmarkCountChip").textContent = count;
     }
+
+    computeStationDistances();
+    if ($("#nearStationCount")) $("#nearStationCount").textContent = countWithinStation(500);
 
     STATE.map = new maplibregl.Map({
       container: "map",
@@ -2508,6 +2788,7 @@
     STATE.map.on("style.load", onStyleLoaded);
     STATE.map.on("load", onStyleLoaded);
     STATE.map.on("move", updateCameraInfo);
+    STATE.map.on("zoomend", applyAutoTilt);
     STATE.map.on("render", function() {
       updatePins();
       updatePOIs();
@@ -2635,6 +2916,48 @@
           }
         });
       }
+
+      // แท่งความสูงรายเขต — สีมาจากตัวชี้วัดที่ระบายพื้น ความสูงมาจากอีกตัวที่เลือกแยก
+      if (!map.getLayer("districts-column")) {
+        map.addLayer({
+          id: "districts-column",
+          type: "fill-extrusion",
+          source: "bkk-districts",
+          layout: { visibility: "none" },
+          paint: {
+            "fill-extrusion-color": (METRIC_CONFIGS[STATE.currentMetric] || METRIC_CONFIGS.dens).colorExpr,
+            "fill-extrusion-height": districtHeightExpr(STATE.districtHeight),
+            "fill-extrusion-base": 0,
+            "fill-extrusion-opacity": 0.55,
+            "fill-extrusion-vertical-gradient": true
+          }
+        });
+      }
+
+      // ป้ายชื่อเขต — หายเมื่อ z เกิน 14 คืนพื้นที่ให้ป้ายระดับถนน
+      if (!map.getLayer("districts-label")) {
+        map.addLayer({
+          id: "districts-label",
+          type: "symbol",
+          source: "bkk-districts",
+          maxzoom: 14,
+          layout: {
+            visibility: STATE.districts ? "visible" : "none",
+            "text-field": ["get", "name"],
+            "text-font": ["Noto Sans Bold"],
+            "text-size": ["interpolate", ["linear"], ["zoom"], 9, 10, 12, 12.5, 14, 14],
+            // ในมุมมองภาพรวมเขต ชื่อเขตคือตัวเรื่อง ปล่อยให้แสดงครบแม้ทับกัน
+            // พอ z เกิน 12 เริ่มเห็นป้ายระดับถนน ค่อยให้ชนกันได้ตามปกติ
+            "text-allow-overlap": ["step", ["zoom"], true, 12, false],
+            "text-optional": true
+          },
+          paint: {
+            "text-color": STATE.theme === "dark" ? "#E2E8F0" : "#334155",
+            "text-halo-color": STATE.theme === "dark" ? "#0F172A" : "#FFFFFF",
+            "text-halo-width": 1.6
+          }
+        });
+      }
     }
 
     // 3. 500m Walkability Catchment GeoJSON Layer
@@ -2662,7 +2985,7 @@
         source: "walkability-buffer",
         paint: {
           "line-color": "#0284C7",
-          "line-width": 2,
+          "line-width": ["interpolate", ["linear"], ["zoom"], 12, 1.2, 16, 2.8],
           "line-dasharray": [4, 3],
           "line-opacity": 0.8
         }
@@ -2736,6 +3059,47 @@
         });
       }
 
+      // กล่องมวลสถานี — วางก่อน station-dot/badge/label เพื่อให้หมุดและป้ายอยู่บนสุด
+      if (!map.getSource("station-massing")) {
+        map.addSource("station-massing", { type: "geojson", data: buildStationMassing() });
+      }
+      // ความทึบต่างกันตามที่มาของรูปทรง: outline จริงทึบกว่า กล่องที่เดาเองจางกว่า
+      [["osm", 0.72, 0.85], ["generated", 0.42, 0.55]].forEach(function(cfg) {
+        var kind = cfg[0], wallOpacity = cfg[1], roofOpacity = cfg[2];
+        if (!map.getLayer("station-wall-" + kind)) {
+          map.addLayer({
+            id: "station-wall-" + kind,
+            type: "fill-extrusion",
+            source: "station-massing",
+            minzoom: MASSING.minzoom,
+            filter: ["==", ["get", "source"], kind],
+            paint: {
+              "fill-extrusion-color": ["get", "color"],
+              "fill-extrusion-height": ["get", "height"],
+              "fill-extrusion-base": 0,
+              "fill-extrusion-opacity": wallOpacity,
+              "fill-extrusion-vertical-gradient": true
+            }
+          });
+        }
+        if (!map.getLayer("station-roof-" + kind)) {
+          map.addLayer({
+            id: "station-roof-" + kind,
+            type: "fill-extrusion",
+            source: "station-massing",
+            minzoom: MASSING.minzoom,
+            filter: ["==", ["get", "source"], kind],
+            paint: {
+              "fill-extrusion-color": ["get", "roofColor"],
+              "fill-extrusion-base": ["get", "roofBase"],
+              "fill-extrusion-height": ["get", "roofTop"],
+              "fill-extrusion-opacity": roofOpacity,
+              "fill-extrusion-vertical-gradient": false
+            }
+          });
+        }
+      });
+
       if (!map.getLayer("station-dot")) {
         map.addLayer({
           id: "station-dot",
@@ -2785,6 +3149,8 @@
             "text-font": ["Noto Sans Regular"],
             "text-offset": [0, 1.2],
             "text-anchor": "top",
+            // ซูมไกลให้ป้ายที่ชนกันหายไป พอถึง z15.5 ปล่อยให้แสดงครบทุกป้าย
+            "text-allow-overlap": ["step", ["zoom"], false, 15.5, true],
             "text-optional": true
           },
           paint: {
@@ -2807,11 +3173,13 @@
           id: "landmarks-model",
           type: "fill-extrusion",
           source: "landmarks-3d",
+          minzoom: 13,
           paint: {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
-            "fill-extrusion-opacity": 0.96,
+            // เฟดเข้าแทนที่จะเด้งโผล่ตอนข้าม minzoom
+            "fill-extrusion-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 14, 0.96],
             "fill-extrusion-vertical-gradient": true
           }
         });
@@ -2821,6 +3189,51 @@
           var pid = e.features[0].properties.id;
           openProjectDrawer(pid);
         });
+      }
+    }
+
+    // 7. ป้ายหมายเลขทางหลวง (3901, 3902 …)
+    //    ค่า ref มีอยู่ใน vector tile แล้ว และ sprite ofm_f384 ก็มีไอคอนกล่อง
+    //    road_1..road_6 ครบทั้งสองธีม — แต่ style dark ตัดเลเยอร์นี้ทิ้ง เลยเห็นเลข
+    //    เฉพาะบนทางด่วน ส่วน positron มี highway-shield-non-us ให้อยู่แล้ว
+    //    จึงเพิ่มของเราเองเฉพาะตอนที่ basemap ไม่มีให้ กันวาดซ้อนกันสองชั้น
+    if (vsrc && !map.getLayer("road-shield") && !map.getLayer("highway-shield-non-us")) {
+      map.addLayer({
+        id: "road-shield",
+        type: "symbol",
+        source: vsrc,
+        "source-layer": "transportation_name",
+        minzoom: 11,
+        filter: [
+          "all",
+          ["<=", ["get", "ref_length"], 6],
+          ["match", ["geometry-type"], ["LineString", "MultiLineString"], true, false],
+          // ไทยไม่มีเครือข่ายทางหลวงสหรัฐฯ กันไว้เผื่อข้อมูลปนมาในไทล์
+          ["match", ["get", "network"], ["us-highway", "us-interstate", "us-state"], false, true]
+        ],
+        layout: {
+          // ซูมไกลปักจุดเดียวต่อเส้น พอถึง z11 ค่อยวางซ้ำไปตามแนวถนน
+          "symbol-placement": ["step", ["zoom"], "point", 11, "line"],
+          "symbol-spacing": 200,
+          // ไอคอนกล่องมีหลายความกว้าง เลือกตามจำนวนหลักของเลขทางหลวง
+          "icon-image": ["concat", "road_", ["get", "ref_length"]],
+          "icon-size": 1,
+          "icon-rotation-alignment": "viewport",
+          "text-field": ["to-string", ["get", "ref"]],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 10,
+          "text-rotation-alignment": "viewport"
+        },
+        paint: {
+          // กล่องในสไปรท์เป็นสีขาวทั้งสองธีม ตัวเลขจึงต้องเข้มเสมอ ไม่ผูกกับ theme
+          "text-color": "#1F2937"
+        }
+      });
+
+      // ธีม dark มี highway_name_motorway ที่พ่น ref เป็นข้อความเปล่าบนทางด่วน
+      // ซ้ำกับป้ายกล่องที่เพิ่งเพิ่ม ปิดตัวเก่าให้เหลือรูปแบบเดียวทั้งแผนที่
+      if (map.getLayer("highway_name_motorway")) {
+        map.setLayoutProperty("highway_name_motorway", "visibility", "none");
       }
     }
 
@@ -2930,8 +3343,21 @@
     }
     container.style.display = "block";
 
+    // หมุดต้องหายไปพร้อมตัวอาคารเมื่อกรองระยะจากสถานี ไม่งั้นป้ายจะค้างเหนือที่ว่าง
+    var maxDist = STATE.transitDistFilter === "500" ? 500
+                : STATE.transitDistFilter === "1000" ? 1000 : Infinity;
+
     STATE.pinElements.forEach(function(item) {
       var lm = item.data;
+
+      var brandOk = (STATE.selectedBrand === "all" || lm.brandId === STATE.selectedBrand);
+      var distOk = maxDist === Infinity ||
+                   (typeof lm.distanceToStationMeters === "number" && lm.distanceToStationMeters <= maxDist);
+      var want = (brandOk && distOk) ? "" : "none";
+      // เขียนเฉพาะตอนค่าเปลี่ยน — ฟังก์ชันนี้ถูกเรียกทุกเฟรมที่ render
+      if (item.el.style.display !== want) item.el.style.display = want;
+      if (want === "none") return;
+
       var pos = STATE.map.project([lm.lon, lm.lat]);
 
       var metersPerPixel = (156543.03392 * Math.cos(lm.lat * Math.PI / 180)) / Math.pow(2, zoom);
@@ -3002,7 +3428,7 @@
 
       el.addEventListener("click", function(e) {
         e.stopPropagation();
-        STATE.map.flyTo({ center: coords, zoom: 16.5, pitch: 50, duration: 1500 });
+        safeFly(STATE.map, { center: coords, zoom: zoomAtLeast(16.5), pitch: 50, duration: 1500 });
       });
 
       var marker = new maplibregl.Marker({
@@ -3175,6 +3601,42 @@
     }
   }
 
+  /* 🏙 เลือกตัวชี้วัดที่จะดันความสูงแท่งเขต — "flat" = ปิดแท่ง */
+  function setDistrictHeight(metric) {
+    var m = (metric && metric !== "flat" && METRIC_CONFIGS[metric]) ? metric : null;
+    STATE.districtHeight = m;
+
+    $$("#districtHeightRow .dheight-chip").forEach(function(b) {
+      b.classList.toggle("active", b.getAttribute("data-dheight") === (m || "flat"));
+    });
+
+    var map = STATE.map;
+    if (!map || !map.getLayer("districts-column")) return;
+
+    var districtsShown = STATE.districts || STATE.appMode === "2d-districts";
+    map.setLayoutProperty("districts-column", "visibility", (m && districtsShown) ? "visible" : "none");
+
+    if (m) {
+      map.setPaintProperty("districts-column", "fill-extrusion-height", districtHeightExpr(m));
+      var cfg = METRIC_CONFIGS[STATE.currentMetric];
+      if (cfg) map.setPaintProperty("districts-column", "fill-extrusion-color", cfg.colorExpr);
+    }
+
+    // แท่งมองไม่เห็นเลยถ้ากล้องมองตรงลงมา — ล็อกมุมเอียงไว้ตราบที่ยังเลือกความสูงอยู่
+    STATE.forceTilt = !!m;
+
+    function applyColumnPitch() {
+      var want = STATE.districtHeight ? CAM.cityPitch
+               : (STATE.appMode === "2d-districts" ? CAM.flatPitch : map.getPitch());
+      if (Math.abs(map.getPitch() - want) > 1) safeEase(map, { pitch: want, duration: 600 });
+    }
+
+    // ถ้ากล้องกำลังบินเปลี่ยนโหมดอยู่ ห้าม stop() ทับ ไม่งั้นการบินจะค้างกลางทาง
+    // แล้วแผนที่ไปจอดผิดที่ — รอให้นิ่งก่อนค่อยปรับมุม
+    if (camBusy(map)) map.once("moveend", applyColumnPitch);
+    else applyColumnPitch();
+  }
+
   /* 🚆 Transit Proximity Filter */
   function setTransitDistFilter(dist) {
     STATE.transitDistFilter = dist;
@@ -3188,14 +3650,15 @@
       if (STATE.selectedBrand === "all") STATE.map.setFilter("landmarks-model", null);
       else STATE.map.setFilter("landmarks-model", ["==", ["get", "brandId"], STATE.selectedBrand]);
     } else if (dist === "500") {
-      var filter500 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 400], 500];
+      // ไม่มีค่าระยะ = ตัดออก ไม่ใช่ปล่อยผ่าน (ของเดิม default 400 ทำให้ผ่านหมดทุกหลัง)
+      var filter500 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], 500];
       if (STATE.selectedBrand !== "all") {
         STATE.map.setFilter("landmarks-model", ["all", ["==", ["get", "brandId"], STATE.selectedBrand], filter500]);
       } else {
         STATE.map.setFilter("landmarks-model", filter500);
       }
     } else if (dist === "1000") {
-      var filter1000 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 800], 1000];
+      var filter1000 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], 1000];
       if (STATE.selectedBrand !== "all") {
         STATE.map.setFilter("landmarks-model", ["all", ["==", ["get", "brandId"], STATE.selectedBrand], filter1000]);
       } else {
@@ -3280,23 +3743,22 @@
     }
 
     $("#btnDrawerFly3D").onclick = function() {
-      STATE.map.flyTo({
+      safeFly(STATE.map, {
         center: [project.lon, project.lat],
         zoom: 16.8,
         pitch: 65,
         bearing: 35,
+        offset: drawerOffset(),
         duration: 2000
       });
     };
 
-    var isMobile = window.innerWidth <= 768;
-    var targetOffset = isMobile ? [0, 0] : [100, 0];
-    STATE.map.flyTo({
+    safeFly(STATE.map, {
       center: [project.lon, project.lat],
-      zoom: 16.2,
+      zoom: zoomAtLeast(16.2),
       pitch: 62,
       bearing: 30,
-      offset: targetOffset,
+      offset: drawerOffset(),
       duration: 1800,
       curve: 1.4
     });
@@ -3351,7 +3813,7 @@
       $("#btnReturn3D").style.display = "inline-flex";
 
       // Camera: Smooth Top-down 2D
-      STATE.map.flyTo({
+      safeFly(STATE.map, {
         center: [100.54, 13.75],
         zoom: 10.6,
         pitch: 0,
@@ -3376,6 +3838,12 @@
         STATE.map.setPaintProperty("districts-line", "line-width", 1.8);
         STATE.map.setPaintProperty("districts-line", "line-color", "#FFFFFF");
         STATE.map.setPaintProperty("districts-line", "line-opacity", 0.85);
+      }
+      if (STATE.map.getLayer("districts-label")) {
+        STATE.map.setLayoutProperty("districts-label", "visibility", "visible");
+      }
+      if (STATE.map.getLayer("districts-column")) {
+        STATE.map.setLayoutProperty("districts-column", "visibility", STATE.districtHeight ? "visible" : "none");
       }
 
       applyThematicMetric(STATE.currentMetric || "dens");
@@ -3415,12 +3883,19 @@
         STATE.map.setPaintProperty("districts-line", "line-color", STATE.theme === "dark" ? "#38BDF8" : "#B86B43");
         STATE.map.setPaintProperty("districts-line", "line-width", 1.4);
       }
+      if (STATE.map.getLayer("districts-label")) {
+        STATE.map.setLayoutProperty("districts-label", "visibility", STATE.districts ? "visible" : "none");
+      }
+      if (STATE.map.getLayer("districts-column")) {
+        STATE.map.setLayoutProperty("districts-column", "visibility",
+          (STATE.districts && STATE.districtHeight) ? "visible" : "none");
+      }
 
       // Camera: Smooth fly back to 3D perspective
-      STATE.map.flyTo({
+      safeFly(STATE.map, {
         center: [100.5365, 13.7275],
         zoom: 14.8,
-        pitch: 58,
+        pitch: CAM.cityPitch,
         bearing: 28,
         duration: 2000,
         curve: 1.4,
@@ -3444,6 +3919,10 @@
     // Update Map Layer Paint
     if (STATE.map && STATE.map.getLayer("districts-fill")) {
       STATE.map.setPaintProperty("districts-fill", "fill-color", cfg.colorExpr);
+    }
+    // แท่งใช้สีเดียวกับพื้น ความสูงยังคงมาจากตัวชี้วัดที่เลือกไว้ในแถบความสูงแท่ง
+    if (STATE.map && STATE.map.getLayer("districts-column")) {
+      STATE.map.setPaintProperty("districts-column", "fill-extrusion-color", cfg.colorExpr);
     }
 
     // Update Legend
@@ -3518,7 +3997,7 @@
     if (!e.features || !e.features.length) return;
     var p = e.features[0].properties;
     if (p.lon && p.lat) {
-      STATE.map.flyTo({
+      safeFly(STATE.map, {
         center: [p.lon, p.lat],
         zoom: STATE.appMode === "2d-districts" ? 12.0 : 13.8,
         pitch: STATE.appMode === "2d-districts" ? 0 : 48,
@@ -3556,7 +4035,7 @@
 
     clearTimeout(STATE.droneTourTimer);
 
-    STATE.map.flyTo({
+    safeFly(STATE.map, {
       center: stop.coords,
       zoom: stop.zoom,
       pitch: stop.pitch,
@@ -3569,7 +4048,7 @@
     // Orbit during stop
     STATE.droneTourTimer = setTimeout(function() {
       if (!STATE.droneTourActive || STATE.droneTourPaused) return;
-      STATE.map.easeTo({
+      safeEase(STATE.map, {
         bearing: stop.bearing + 60,
         pitch: stop.pitch + 4,
         duration: stop.orbitDuration,
@@ -3682,6 +4161,8 @@
     var bounds = new maplibregl.LngLatBounds();
     bounds.extend(coordA);
     bounds.extend(coordB);
+    if (camBusy(STATE.map)) STATE.map.stop();
+    STATE.map.resize();
     STATE.map.fitBounds(bounds, { padding: 90, maxZoom: 15, duration: 1800 });
   }
 
@@ -3689,9 +4170,10 @@
     var map = STATE.map;
 
     // Zoom Controls
-    $("#btnZoomIn").addEventListener("click", function() { map.zoomIn({ duration: 350 }); });
-    $("#btnZoomOut").addEventListener("click", function() { map.zoomOut({ duration: 350 }); });
-    $("#btnResetCompass").addEventListener("click", function() { map.easeTo({ bearing: 0, pitch: 58, duration: 600 }); });
+    // stop() ก่อนเสมอ กันกดรัวๆ ระหว่าง animation แล้วคลิกถัดไปถูกกลืนหาย
+    $("#btnZoomIn").addEventListener("click", function() { if (camBusy(map)) map.stop(); map.zoomIn({ duration: 350 }); });
+    $("#btnZoomOut").addEventListener("click", function() { if (camBusy(map)) map.stop(); map.zoomOut({ duration: 350 }); });
+    $("#btnResetCompass").addEventListener("click", function() { safeEase(map, { bearing: 0, pitch: CAM.cityPitch, duration: 600 }); });
 
     // Drawer Close Buttons
     $("#closeProjectDrawer").addEventListener("click", closeProjectDrawer);
@@ -3735,7 +4217,9 @@
       STATE.transit = !STATE.transit;
       $("#chipTransit").classList.toggle("active", STATE.transit);
       $("#btnTransitToggle").classList.toggle("active", STATE.transit);
-      ["transit-casing", "transit-line", "station-dot", "station-badge", "station-label"].forEach(function(id) {
+      ["transit-casing", "transit-line", "station-dot", "station-badge", "station-label",
+       "station-wall-osm", "station-roof-osm",
+       "station-wall-generated", "station-roof-generated"].forEach(function(id) {
         if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", STATE.transit ? "visible" : "none");
       });
     }
@@ -3783,43 +4267,43 @@
     $("#btnFlyCBD").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.5365, 13.7275], zoom: 15.4, pitch: 62, bearing: 35, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.5365, 13.7275], zoom: 15.4, pitch: 62, bearing: 35, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFlySukhumvit").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.5580, 13.7380], zoom: 14.8, pitch: 60, bearing: 110, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.5580, 13.7380], zoom: 14.8, pitch: 60, bearing: 110, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFlyRiver").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.5105, 13.7265], zoom: 15.6, pitch: 64, bearing: 115, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.5105, 13.7265], zoom: 15.6, pitch: 64, bearing: 115, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFlyGov").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.5186, 13.7963], zoom: 16.0, pitch: 62, bearing: 310, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.5186, 13.7963], zoom: 16.0, pitch: 62, bearing: 310, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFlyBangSue").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.5398, 13.8035], zoom: 15.6, pitch: 60, bearing: 40, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.5398, 13.8035], zoom: 15.6, pitch: 60, bearing: 40, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFlyBangNa").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.6720, 13.6582], zoom: 15.2, pitch: 60, bearing: 290, duration: 2200, curve: 1.4 });
+      safeFly(map, { center: [100.6720, 13.6582], zoom: 15.2, pitch: 60, bearing: 290, duration: 2200, curve: 1.4 });
     });
 
     $("#btnFitAll").addEventListener("click", function() {
       stopDroneTour();
       closeProjectDrawer();
-      map.flyTo({ center: [100.532, 13.752], zoom: 11.2, pitch: 0, bearing: 0, duration: 1800 });
+      safeFly(map, { center: [100.532, 13.752], zoom: 11.2, pitch: 0, bearing: 0, duration: 1800 });
     });
 
     // 3 Atmosphere Modes (Dark -> Light -> Sunset -> Dark)
@@ -4043,8 +4527,30 @@
       btn.addEventListener("click", function() {
         var d = btn.getAttribute("data-dist");
         setTransitDistFilter(d);
+        var nc = $("#chipNearStation");
+        if (nc) nc.classList.toggle("active", d === "500");
       });
     });
+
+    // แถบความสูงแท่งเขต
+    $$("#districtHeightRow .dheight-chip").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        setDistrictHeight(btn.getAttribute("data-dheight"));
+      });
+    });
+
+    // ชิป "ใกล้สถานี 500 ม." — กดเพื่อสลับตัวกรองระยะ
+    var nearChip = $("#chipNearStation");
+    if (nearChip) {
+      nearChip.addEventListener("click", function() {
+        var on = STATE.transitDistFilter === "500";
+        setTransitDistFilter(on ? "any" : "500");
+        nearChip.classList.toggle("active", !on);
+        $$("#transitDistFilterContainer .transit-dist-btn").forEach(function(b) {
+          b.classList.toggle("active", b.getAttribute("data-dist") === (on ? "any" : "500"));
+        });
+      });
+    }
 
     renderTransitDrawer();
     setupSearch();
@@ -4089,6 +4595,16 @@
     };
     if (STATE.map.getSource("transit-lines")) STATE.map.getSource("transit-lines").setData(filteredLines);
     if (STATE.map.getSource("transit-stations")) STATE.map.getSource("transit-stations").setData(filteredStations);
+    if (STATE.map.getSource("station-massing")) {
+      STATE.map.getSource("station-massing").setData({
+        type: "FeatureCollection",
+        features: buildStationMassing().features.filter(function(f) {
+          var larr = f.properties.lines.split(",");
+          for (var i = 0; i < larr.length; i++) if (activeIds.indexOf(larr[i]) !== -1) return true;
+          return false;
+        })
+      });
+    }
   }
 
   function setupSearch() {
@@ -4143,7 +4659,7 @@
           if (sel.type === "Project") {
             openProjectDrawer(sel.data.id);
           } else {
-            STATE.map.flyTo({ center: sel.coords, zoom: 16, pitch: 58, duration: 1800 });
+            safeFly(STATE.map, { center: sel.coords, zoom: zoomAtLeast(16), pitch: CAM.cityPitch, duration: 1800 });
           }
         });
       });
