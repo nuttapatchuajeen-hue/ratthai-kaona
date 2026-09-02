@@ -2472,57 +2472,57 @@
           <!-- Tree Hierarchy sub-pills -->
           <div class="tree-branch-wrap branch-edu">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">International 17</button>
-              <button type="button" class="tree-sub-btn">Private 3</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/international">International 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/private">Private 3</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn">University 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/university">University 17</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-health">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">Private 143</button>
-              <button type="button" class="tree-sub-btn">Public 7</button>
+              <button type="button" class="tree-sub-btn active" data-asub="health/private">Private 143</button>
+              <button type="button" class="tree-sub-btn active" data-asub="health/public">Public 7</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-sport">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">Golf 44</button>
-              <button type="button" class="tree-sub-btn">Tennis 55</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/golf">Golf 44</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/tennis">Tennis 55</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn">Polo & riding 17</button>
-              <button type="button" class="tree-sub-btn">Pilates 59</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/polo">Polo & riding 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/pilates">Pilates 59</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn">Yoga 23</button>
-              <button type="button" class="tree-sub-btn">Gym 54</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/yoga">Yoga 23</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/gym">Gym 54</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-dining">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">Fine dining 67</button>
-              <button type="button" class="tree-sub-btn">Rooftop 30</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/fine">Fine dining 67</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/rooftop">Rooftop 30</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn">Coffee 60</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/cafe">Coffee 60</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-spa">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">Spa 82</button>
-              <button type="button" class="tree-sub-btn">Wellness 39</button>
+              <button type="button" class="tree-sub-btn active" data-asub="spa/spa">Spa 82</button>
+              <button type="button" class="tree-sub-btn active" data-asub="spa/wellness">Wellness 39</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-culture">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active">Gallery 23</button>
-              <button type="button" class="tree-sub-btn">Museum 31</button>
+              <button type="button" class="tree-sub-btn active" data-asub="culture/gallery">Gallery 23</button>
+              <button type="button" class="tree-sub-btn active" data-asub="culture/museum">Museum 31</button>
             </div>
           </div>
         </div>
@@ -2896,8 +2896,13 @@
       sport: false,
       residences: false
     },
-    activeAmenities: { parks: true, education: true, health: true, sport: true, dining: true, spa: true, culture: true },
-    activePets: { vet: true, malls: true, parks: true, boarding: true },
+    /* ชิปย่อยแต่ละกลุ่มในแผง Ashton — คีย์ตรงกับ data-* ของปุ่ม และกับ sub ของหมุด
+       ค่าเริ่มต้นอ่านจากคลาส .active ใน HTML ตอน setupAshtonChips() จึงไม่ต้องกำหนดซ้ำที่นี่ */
+    activeAmenities: {},      // data-kind:  parks / education / health / sport / dining / spa / culture
+    activeAmenitySubs: {},    // data-asub:  "education/international" …  (หมุดที่ไม่มี asub ไม่ถูกกรองชั้นนี้)
+    activePets: {},           // data-petsub: vet / venue / park / boarding / groom / shop / stay
+    activeRecognised: {},     // data-rec:   dining / hotel / bar / vineyard / hospital
+    activeBrands: {},         // data-bcat:  stay / beauty / jewel / fashion / craft
     intelMarkers: [],
     map: null,
     ready: false,
@@ -3316,10 +3321,17 @@
   }
 
   var interactionsInitialized = false;
+  var ashtonChipsInitialized = false;
   function onStyleLoaded() {
     try {
       addMapLayers();
       createDOMPins();
+      /* ต้องมาก่อนสร้างหมุด เพราะ createIntelPOIMarkers() เรียก updateIntelMarkers() ปิดท้าย
+         ซึ่งอ่านสถานะชิปจาก STATE */
+      if (!ashtonChipsInitialized) {
+        setupAshtonChips();
+        ashtonChipsInitialized = true;
+      }
       createIntelPOIMarkers();
       if (!interactionsInitialized) {
         setupInteractions();
@@ -3997,10 +4009,17 @@
 
     var I = window.BKK_INTELLIGENCE;
 
-    function addIntelMarker(data, coords, layer, sub) {
+    /* asub = คีย์ชั้นย่อยของ Amenities ("<kind>/<sub>") — หมุดที่ไม่ส่งค่านี้จะไม่ถูกกรองด้วยชิปในผัง */
+    function addIntelMarker(data, coords, layer, sub, asub) {
       var el = document.createElement("div");
-      var cls = "poi-intel-marker marker-" + (layer === "embassies" ? "embassy" : layer === "corporate" ? "corp" : layer === "flooding" ? "flood" : (sub === "education" ? "edu" : sub === "parks" ? "park" : (sub || layer)));
-      el.className = cls;
+      /* สีหมุดผูกกับ "ชั้น" ไม่ใช่ชิปย่อย เพื่อให้ทั้งชั้นดูเป็นชุดเดียวกันแม้ชิปจะแยกกรองได้ */
+      var tone = layer === "embassies" ? "embassy"
+               : layer === "corporate" ? "corp"
+               : layer === "flooding" ? "flood"
+               : layer === "petFriendly" ? "pet"
+               : layer === "amenities" ? (sub === "education" ? "edu" : sub === "parks" ? "park" : (sub || layer))
+               : layer;
+      el.className = "poi-intel-marker marker-" + tone;
 
       var icon = data.countryIco || data.brandIco || data.ico || (layer === "flooding" ? MDICO("waves") : MDICO("map-pin"));
       var badge = (data.roles ? ' <span class="chip-badge" style="background:#0284C7;color:#fff;">' + (data.roles.split(" ")[0]) + ' jobs</span>' : "");
@@ -4013,19 +4032,15 @@
         safeFly(STATE.map, { center: coords, zoom: zoomAtLeast(16.5), pitch: 50, duration: 1500 });
       });
 
-      var marker = new maplibregl.Marker({
-        element: el,
-        anchor: "bottom"
-      })
-      .setLngLat(coords)
-      .addTo(STATE.map);
-
+      /* ชุดข้อมูลจริงมีหลายพันจุด และ maplibregl.Marker คำนวณตำแหน่งใหม่ทุกเฟรม
+         จึงยังไม่ผูกหมุดเข้าแผนที่จนกว่าชั้น/ชิปของมันจะถูกเปิดครั้งแรก (ดู ensureIntelMarker) */
       STATE.intelMarkers.push({
         data: data,
         coords: coords,
         layer: layer,
         sub: sub,
-        marker: marker,
+        asub: asub || null,
+        marker: null,
         el: el
       });
     }
@@ -4046,11 +4061,12 @@
       }
     }
 
-    // 3. Pet-Friendly (4 Categories)
+    // 3. Pet-Friendly — จุดคัดมือ (คีย์เก่า malls/parks ตรงกับชิป venue/park)
     if (I.petFriendly) {
+      var PET_LEGACY_SUB = { malls: "venue", parks: "park" };
       for (var pcat in I.petFriendly) {
         I.petFriendly[pcat].forEach(function(item) {
-          addIntelMarker(item, item.coords, "petFriendly", pcat);
+          addIntelMarker(item, item.coords, "petFriendly", PET_LEGACY_SUB[pcat] || pcat);
         });
       }
     }
@@ -4120,14 +4136,30 @@
 
     // 6. Ashton Luxury & Trophy POIs from bkk-ashton-data.js
     if (typeof ASHTON_DATA !== "undefined") {
+      /* Amenities ชุดเต็ม — มี kind + sub จึงกรองได้ทั้งปุ่มหมวดและชิปย่อยในผัง
+         (retreat ในข้อมูล = ปุ่ม "Spa" บนแผง · จุดคัดมือของ BKK_INTELLIGENCE ไม่มี sub จึงโชว์เสมอเมื่อเปิดหมวด) */
+      if (ASHTON_DATA.amenities) {
+        var AM_KIND = { retreat: "spa" };
+        ASHTON_DATA.amenities.forEach(function(a) {
+          var kind = AM_KIND[a.kind] || a.kind;
+          addIntelMarker({ name: a.name }, [a.lng, a.lat], "amenities", kind, kind + "/" + a.sub);
+        });
+      }
+      /* Pet-friendly ชุดเต็ม 645 จุด — sub ตรงกับชิปทั้ง 7 ตัว (vet/venue/park/boarding/groom/shop/stay) */
+      if (ASHTON_DATA.pets) {
+        ASHTON_DATA.pets.forEach(function(p) {
+          addIntelMarker({ name: p.name }, [p.lng, p.lat], "petFriendly", p.sub);
+        });
+      }
       if (ASHTON_DATA.recognised) {
         ASHTON_DATA.recognised.forEach(function(r) {
-          addIntelMarker({ name: r.name, sub: r.type }, [r.lng, r.lat], "recognised", r.type);
+          addIntelMarker({ name: r.name }, [r.lng, r.lat], "recognised", r.sub);
         });
       }
       if (ASHTON_DATA.brands) {
+        /* ชิปบนแผงกรองด้วย "หมวด" (cat) ไม่ใช่ชื่อแบรนด์ — brand เก็บไว้ในข้อมูลหมุดตามเดิม */
         ASHTON_DATA.brands.forEach(function(b) {
-          addIntelMarker({ name: b.name, sub: b.brand }, [b.lng, b.lat], "brands", b.brand);
+          addIntelMarker({ name: b.name, brand: b.brand }, [b.lng, b.lat], "brands", b.cat);
         });
       }
       if (ASHTON_DATA.centres) {
@@ -4155,6 +4187,16 @@
   var _intelCompact = null;
   var _intelCullAt = 0;
 
+  /* ผูกหมุดเข้าแผนที่ครั้งแรกที่มันได้แสดงจริง — ชั้นที่ผู้ใช้ไม่เปิดจะไม่กินแรงคำนวณต่อเฟรมเลย */
+  function ensureIntelMarker(m) {
+    if (m.marker || !STATE.map) return;
+    m.marker = new maplibregl.Marker({ element: m.el, anchor: "bottom" })
+      .setLngLat(m.coords)
+      .addTo(STATE.map);
+    if (_intelCompact) m.el.classList.add("is-compact");
+    m.w = 0;
+  }
+
   function updateIntelMarkers(force) {
     if (!STATE.map || !STATE.ready || !STATE.intelMarkers || !STATE.intelMarkers.length) return;
 
@@ -4179,12 +4221,17 @@
       else if (m.layer === "corporate" && !STATE.layers.corporate) allowed = false;
       else if (m.layer === "amenities") {
         if (!STATE.layers.amenities || !STATE.activeAmenities[m.sub]) allowed = false;
+        else if (m.asub && !STATE.activeAmenitySubs[m.asub]) allowed = false;
       }
       else if (m.layer === "petFriendly") {
         if (!STATE.layers.petFriendly || !STATE.activePets[m.sub]) allowed = false;
       }
-      else if (m.layer === "recognised" && !STATE.layers.recognised) allowed = false;
-      else if (m.layer === "brands" && !STATE.layers.brands) allowed = false;
+      else if (m.layer === "recognised") {
+        if (!STATE.layers.recognised || !STATE.activeRecognised[m.sub]) allowed = false;
+      }
+      else if (m.layer === "brands") {
+        if (!STATE.layers.brands || !STATE.activeBrands[m.sub]) allowed = false;
+      }
       else if (m.layer === "centres" && !STATE.layers.centres) allowed = false;
       else if (m.layer === "sport" && !STATE.layers.sport) allowed = false;
       else if (m.layer === "residences" && !STATE.layers.residences) allowed = false;
@@ -4192,7 +4239,8 @@
       if (zoom < 12.0) allowed = false;
 
       m.allowed = allowed;
-      if (!allowed) m.el.style.display = "none";
+      if (allowed) ensureIntelMarker(m);
+      else m.el.style.display = "none";
     });
 
     // This runs on every render frame, so only re-solve the overlaps a few times a second
@@ -4873,6 +4921,75 @@
     STATE.map.fitBounds(bounds, { padding: 90, maxZoom: 15, duration: 1800 });
   }
 
+  /* 🎛 ชิปย่อยในแผง Ashton
+     ชิปทุกตัวกดได้และกรองเฉพาะหมวดของตัวเอง โดยคีย์ data-* ผูกตรงกับ sub ของหมุด
+     จำนวนบนชิปนับใหม่จากข้อมูลจริงทุกครั้ง ป้ายจึงไม่หลุดจากข้อมูล และหมวดที่ยังไม่มีข้อมูลจะถูกปิดไว้ */
+  function ashtonChipCounts() {
+    var A = (typeof ASHTON_DATA !== "undefined") ? ASHTON_DATA : {};
+    var I = window.BKK_INTELLIGENCE || {};
+    var AM_KIND = { retreat: "spa" };
+    var PET_LEGACY_SUB = { malls: "venue", parks: "park" };
+    var kind = {}, asub = {}, pet = {}, rec = {}, brand = {};
+
+    function bump(map, key) { if (key) map[key] = (map[key] || 0) + 1; }
+
+    for (var k in (I.amenities || {})) (I.amenities[k] || []).forEach(function() { bump(kind, k); });
+    (A.amenities || []).forEach(function(a) {
+      var c = AM_KIND[a.kind] || a.kind;
+      bump(kind, c);
+      bump(asub, c + "/" + a.sub);
+    });
+    for (var p in (I.petFriendly || {})) (I.petFriendly[p] || []).forEach(function() { bump(pet, PET_LEGACY_SUB[p] || p); });
+    (A.pets || []).forEach(function(x) { bump(pet, x.sub); });
+    (A.recognised || []).forEach(function(x) { bump(rec, x.sub); });
+    (A.brands || []).forEach(function(x) { bump(brand, x.cat); });
+
+    return { "data-kind": kind, "data-asub": asub, "data-petsub": pet, "data-rec": rec, "data-bcat": brand };
+  }
+
+  function setupAshtonChips() {
+    var counts = ashtonChipCounts();
+    var groups = [
+      { sel: ".amenity-grid-btn", attr: "data-kind",   store: "activeAmenities" },
+      { sel: ".tree-sub-btn[data-asub]", attr: "data-asub", store: "activeAmenitySubs" },
+      { sel: ".pet-pill-btn",     attr: "data-petsub", store: "activePets" },
+      { sel: ".rec-pill-btn",     attr: "data-rec",    store: "activeRecognised" },
+      { sel: ".tree-sub-btn[data-bcat]", attr: "data-bcat", store: "activeBrands" }
+    ];
+
+    groups.forEach(function(g) {
+      $$(g.sel).forEach(function(btn) {
+        var key = btn.getAttribute(g.attr);
+        if (!key) return;
+        var n = counts[g.attr][key] || 0;
+
+        /* ป้ายจำนวน: ปุ่มหมวดเก็บไว้ใน .pill-num ส่วนชิปข้อความล้วนต่อท้ายชื่อ
+           (ปุ่มที่มีโครงสร้างลูกแต่ไม่มี .pill-num เช่น Parks ปล่อยไว้ ไม่งั้นจุดสีจะหาย) */
+        var num = btn.querySelector(".pill-num");
+        if (num) num.textContent = String(n);
+        else if (!btn.children.length) btn.textContent = btn.textContent.replace(/\s*\d*\s*$/, "") + " " + n;
+
+        if (n === 0) {
+          btn.classList.remove("active");
+          btn.disabled = true;
+          btn.style.opacity = "0.4";
+          btn.style.cursor = "not-allowed";
+          btn.title = "ยังไม่มีข้อมูลหมวดนี้";
+        }
+
+        STATE[g.store][key] = btn.classList.contains("active");
+
+        btn.addEventListener("click", function() {
+          if (btn.disabled) return;
+          var on = !btn.classList.contains("active");
+          btn.classList.toggle("active", on);
+          STATE[g.store][key] = on;
+          updateIntelMarkers(true);
+        });
+      });
+    });
+  }
+
   function setupInteractions() {
     var map = STATE.map;
 
@@ -5273,35 +5390,6 @@
       });
     }
 
-    // Sub-pills click handlers
-    $(".amenity-grid-btn, .tree-sub-btn, .pet-pill-btn, .rec-pill-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        btn.classList.toggle("active");
-        updateIntelMarkers();
-      });
-    });
-
-    // Amenities Subchips
-    $$("#amenitiesChipsWrap .amenity-subchip").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var sub = btn.getAttribute("data-sub");
-        var active = !btn.classList.contains("active");
-        btn.classList.toggle("active", active);
-        STATE.activeAmenities[sub] = active;
-        updateIntelMarkers();
-      });
-    });
-
-    // Pet Subchips
-    $$("#petChipsWrap .pet-subchip").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var sub = btn.getAttribute("data-petsub");
-        var active = !btn.classList.contains("active");
-        btn.classList.toggle("active", active);
-        STATE.activePets[sub] = active;
-        updateIntelMarkers();
-      });
-    });
 
     // Height Driver Chips
     $$("#heightChipsContainer .height-chip").forEach(function(btn) {
