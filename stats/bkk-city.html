@@ -3790,6 +3790,37 @@
     return null;
   }
 
+  // แท็บ 3D/2D ซ่อน-โชว์ของหลายชิ้นที่ "ระบบย่อแถบ" ก็คุมอยู่ด้วย (คลาส .collapsed บน #toolbarStack)
+  // ถ้าเขียน style.display ทับตรง ๆ inline จะชนะ class selector เสมอ สองระบบจึงตีกัน:
+  // ย่อแถบไว้ -> สลับไป 2D -> กลับ 3D แล้วแถบจะโผล่ทั้งที่ .collapsed ยังติดอยู่
+  // และปุ่ม "ย่อแถบ" จะกดไม่ลงอีกเลยเพราะ inline flex ค้าง
+  // จึงจำค่า inline เดิมไว้ตอนซ่อน แล้วคืนค่าเดิมเป๊ะ ๆ ตอนกลับมา
+  // (ค่าว่าง = คืนอำนาจให้สไตล์ชีต .collapsed จึงกลับมาทำงานตามปกติ)
+  var MODE_HIDDEN_ELS = ["#leftMenu", "#brandFilterBar", "#btnExpandBars", "#pinContainer", "#poiContainer"];
+
+  function hideForMode2D() {
+    MODE_HIDDEN_ELS.forEach(function (sel) {
+      var el = $(sel);
+      if (!el) return;
+      // เก็บครั้งแรกครั้งเดียว กันการเรียกซ้ำมาทับค่าเดิมด้วย "none"
+      if (el.getAttribute("data-prev-display") === null) {
+        el.setAttribute("data-prev-display", el.style.display);
+      }
+      el.style.display = "none";
+    });
+  }
+
+  function restoreAfterMode2D() {
+    MODE_HIDDEN_ELS.forEach(function (sel) {
+      var el = $(sel);
+      if (!el) return;
+      var prev = el.getAttribute("data-prev-display");
+      if (prev === null) return;          // ไม่เคยถูกซ่อน ไม่ต้องยุ่ง
+      el.style.display = prev;
+      el.removeAttribute("data-prev-display");
+    });
+  }
+
   function setAppMode(mode) {
     STATE.appMode = mode;
     var is2D = (mode === "2d-districts");
@@ -3802,11 +3833,7 @@
       $("#btnMode3D").classList.remove("active");
       $("#btnMode2D").classList.add("active-2d");
 
-      $("#leftMenu").style.display = "none";
-      $("#brandFilterBar").style.display = "none";
-      if ($("#btnExpandBars")) $("#btnExpandBars").style.display = "none";
-      $("#pinContainer").style.display = "none";
-      $("#poiContainer").style.display = "none";
+      hideForMode2D();
 
       $("#thematicMetricBar").style.display = "flex";
       $("#districtIntelCard").style.display = "flex";
@@ -3857,9 +3884,7 @@
       $("#districtIntelCard").style.display = "none";
       $("#btnReturn3D").style.display = "none";
 
-      $("#leftMenu").style.display = "flex";
-      $("#brandFilterBar").style.display = "flex";
-      $("#pinContainer").style.display = "block";
+      restoreAfterMode2D();
 
       // Restore 3D Layers
       if (STATE.map.getLayer("city-buildings-3d")) {
