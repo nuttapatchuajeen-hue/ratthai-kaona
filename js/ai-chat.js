@@ -207,7 +207,7 @@
 
     var hint = el(
       '<div id="mdai-fab-hint" role="button" tabindex="0" title="กดเพื่อคุยกับผู้ช่วย AI">' +
-        '<span class="mdai-hint-badge">💡 ลองถาม:</span>' +
+        '<span class="mdai-hint-badge"><svg class="mdico"><use href="#i-lightbulb"></use></svg> ลองถาม:</span>' +
         '<span class="mdai-hint-text"></span>' +
         '<span class="mdai-hint-cursor" aria-hidden="true"></span>' +
       '</div>'
@@ -515,11 +515,11 @@
     var msgsContainer = panel.querySelector("#mdai-msgs");
     var sug = el(
       '<div class="mdai-suggestions" id="mdai-sug">' +
-        '<button type="button" class="mdai-chip" data-q="ครม. และรัฐมนตรีปัจจุบันมีใครบ้าง?">🏛️ ครม. ปัจจุบัน</button>' +
-        '<button type="button" class="mdai-chip" data-q="ค้นหา ส.ส. รายเขต และพรรคการเมือง">👥 ค้นหา ส.ส.</button>' +
-        '<button type="button" class="mdai-chip" data-q="โครงสร้างหน่วยงาน 20 กระทรวง 147 กรม">📂 20 กระทรวง</button>' +
-        '<button type="button" class="mdai-chip" data-q="สถิติงบประมาณรายจ่ายประจำปี 2568 เป็นอย่างไร?">📊 งบประมาณ 68</button>' +
-        '<button type="button" class="mdai-chip" data-q="กระทรวง อว. มีหน้าที่อะไรบ้าง?">🔬 หน้าที่กระทรวง อว.</button>' +
+        '<button type="button" class="mdai-chip" data-q="ครม. และรัฐมนตรีปัจจุบันมีใครบ้าง?"><svg class="mdico"><use href="#i-landmark"></use></svg> ครม. ปัจจุบัน</button>' +
+        '<button type="button" class="mdai-chip" data-q="ค้นหา ส.ส. รายเขต และพรรคการเมือง"><svg class="mdico"><use href="#i-users"></use></svg> ค้นหา ส.ส.</button>' +
+        '<button type="button" class="mdai-chip" data-q="โครงสร้างหน่วยงาน 20 กระทรวง 147 กรม"><svg class="mdico"><use href="#i-folder-open"></use></svg> 20 กระทรวง</button>' +
+        '<button type="button" class="mdai-chip" data-q="สถิติงบประมาณรายจ่ายประจำปี 2568 เป็นอย่างไร?"><svg class="mdico"><use href="#i-chart-column"></use></svg> งบประมาณ 68</button>' +
+        '<button type="button" class="mdai-chip" data-q="กระทรวง อว. มีหน้าที่อะไรบ้าง?"><svg class="mdico"><use href="#i-microscope"></use></svg> หน้าที่กระทรวง อว.</button>' +
       '</div>'
     );
     msgsContainer.appendChild(sug);

@@ -2487,7 +2487,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
       </svg>
     </button>
     <div class="search-wrap">
-        <span class="search-icon">⌕</span>
+        <span class="search-icon"><svg class="mdico"><use href="#i-search"></use></svg></span>
         <input id="search" type="text" placeholder="ค้นหาหน่วยงาน, กรม, ตัวย่อ...">
         <div id="search-results"></div>
       </div>
@@ -2715,19 +2715,19 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <!-- 5 Sub-tabs Navigation -->
         <div class="c-subtabs-nav" role="tablist">
           <button class="c-subtab-btn active" id="c-tab-btn-rankings" role="tab" onclick="switchCorruptSubtab('rankings')">
-            <svg class="mdico"><use href="#i-chart-column"></use></svg> 📊 สถิติ &amp; หน่วยงาน ป.ป.ช.
+            <svg class="mdico"><use href="#i-chart-column"></use></svg> สถิติ &amp; หน่วยงาน ป.ป.ช.
           </button>
           <button class="c-subtab-btn" id="c-tab-btn-cases" role="tab" onclick="switchCorruptSubtab('cases')">
-            <svg class="mdico"><use href="#i-folder-open"></use></svg> 📂 คลังบทเรียนคดีดัง (6 คดี)
+            <svg class="mdico"><use href="#i-folder-open"></use></svg> คลังบทเรียนคดีดัง (6 คดี)
           </button>
           <button class="c-subtab-btn" id="c-tab-btn-redflags" role="tab" onclick="switchCorruptSubtab('redflags')">
-            <svg class="mdico"><use href="#i-triangle-alert"></use></svg> 🚨 คู่มือจับโกง (8 Red Flags)
+            <svg class="mdico"><use href="#i-triangle-alert"></use></svg> คู่มือจับโกง (8 Red Flags)
           </button>
           <button class="c-subtab-btn" id="c-tab-btn-quiz" role="tab" onclick="switchCorruptSubtab('quiz')">
-            <svg class="mdico"><use href="#i-award"></use></svg> 🎯 แบบทดสอบพลเมือง
+            <svg class="mdico"><use href="#i-trophy"></use></svg> แบบทดสอบพลเมือง
           </button>
           <button class="c-subtab-btn" id="c-tab-btn-glossary" role="tab" onclick="switchCorruptSubtab('glossary')">
-            <svg class="mdico"><use href="#i-book-open"></use></svg> 📖 คำศัพท์ &amp; แจ้งเบาะแส
+            <svg class="mdico"><use href="#i-book-open"></use></svg> คำศัพท์ &amp; แจ้งเบาะแส
           </button>
         </div>
 
@@ -2759,7 +2759,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <!-- ── TAB 2: HISTORIC CASE STUDIES ── -->
         <div class="c-subtab-pane" id="c-pane-cases">
           <div class="rf-intro">
-            <b>📂 คลังบทเรียนคดีประวัติศาสตร์:</b> รวบรวม 6 กรณีศึกษาคดีทุจริตโครงการภาครัฐขนาดใหญ่ที่ศาลมีคำพิพากษาหรือ ป.ป.ช. ชี้มูลแล้ว เพื่อถอดบทเรียนช่องโหว่ พฤติการณ์ และแนวทางป้องกัน
+            <b><svg class="mdico"><use href="#i-folder-open"></use></svg> คลังบทเรียนคดีประวัติศาสตร์:</b> รวบรวม 6 กรณีศึกษาคดีทุจริตโครงการภาครัฐขนาดใหญ่ที่ศาลมีคำพิพากษาหรือ ป.ป.ช. ชี้มูลแล้ว เพื่อถอดบทเรียนช่องโหว่ พฤติการณ์ และแนวทางป้องกัน
           </div>
           <div class="cases-grid" id="cases-list"></div>
         </div>
@@ -2767,7 +2767,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <!-- ── TAB 3: RED FLAGS (คู่มือจับโกง) ── -->
         <div class="c-subtab-pane" id="c-pane-redflags">
           <div class="rf-intro">
-            <b>🚨 8 สัญญาณเตือนภัยจัดซื้อจัดจ้าง (Citizen Inspector Guide):</b> คู่มือสำหรับประชาชนในการสังเกตความผิดปกติของโครงการภาครัฐ ตั้งแต่ขั้นตอนร่าง TOR, การเสนอราคา, ไปจนถึงการตรวจรับงาน
+            <b><svg class="mdico"><use href="#i-triangle-alert"></use></svg> 8 สัญญาณเตือนภัยจัดซื้อจัดจ้าง (Citizen Inspector Guide):</b> คู่มือสำหรับประชาชนในการสังเกตความผิดปกติของโครงการภาครัฐ ตั้งแต่ขั้นตอนร่าง TOR, การเสนอราคา, ไปจนถึงการตรวจรับงาน
           </div>
           <div class="redflags-grid" id="redflags-list"></div>
         </div>
@@ -2780,13 +2780,13 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
         <!-- ── TAB 5: GLOSSARY & HOTLINES ── -->
         <div class="c-subtab-pane" id="c-pane-glossary">
           <div class="rf-intro">
-            <b>📖 สารานุกรมธรรมาภิบาล:</b> คำศัพท์ กฎหมาย และองค์กรสำคัญที่ควรรู้เกี่ยวกับความโปร่งใสและระบบการเงินการคลังภาครัฐ
+            <b><svg class="mdico"><use href="#i-book-open"></use></svg> สารานุกรมธรรมาภิบาล:</b> คำศัพท์ กฎหมาย และองค์กรสำคัญที่ควรรู้เกี่ยวกับความโปร่งใสและระบบการเงินการคลังภาครัฐ
           </div>
           <div class="glossary-search-wrap">
             <input id="glossary-search-input" type="text" placeholder="ค้นหาคำศัพท์ หรือ กฎหมาย (เช่น ม.157, ฮั้ว, ITA, TOR)..." style="width:100%;padding:8px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'Sarabun',sans-serif;" oninput="filterGlossary(this.value)">
           </div>
           <div class="glossary-grid" id="glossary-list"></div>
-          <div class="corrupt-sec-hd" style="margin-top:24px"><svg class="mdico"><use href="#i-phone-call"></use></svg> ศูนย์ประสานงาน &amp; ช่องทางแจ้งเบาะแสการทุจริตภาครัฐ</div>
+          <div class="corrupt-sec-hd" style="margin-top:24px"><svg class="mdico"><use href="#i-smartphone"></use></svg> ศูนย์ประสานงาน &amp; ช่องทางแจ้งเบาะแสการทุจริตภาครัฐ</div>
           <div class="hotline-grid" id="hotlines-list"></div>
         </div>
       </div>
@@ -2938,7 +2938,7 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
     <button class="ip-tab"        data-tab="law"    role="tab">อำนาจหน้าที่<span class="ip-tab-badge" id="tabb-law"></span></button>
     <button class="ip-tab"        data-tab="budget" role="tab">งบประมาณ<span class="ip-tab-badge" id="tabb-budget"></span></button>
     <button class="ip-tab"        data-tab="staff"  role="tab">บุคลากร<span class="ip-tab-badge" id="tabb-staff"></span></button>
-    <button class="ip-tab"        data-tab="chart"  role="tab">กราฟสถิติ<span class="ip-tab-badge" id="tabb-chart">📊</span></button>
+    <button class="ip-tab"        data-tab="chart"  role="tab">กราฟสถิติ<span class="ip-tab-badge" id="tabb-chart"><svg class="mdico"><use href="#i-chart-column"></use></svg></span></button>
   </div>
 
   <div class="ip-body">
@@ -6044,16 +6044,16 @@ function ipTabPlan(node){
   const hasBudget = mid && BUDGET_2569.min[mid] != null;
   const hasLaw    = mid && MIN_LAW[mid];
   if(node.type === 'center')
-    return { show:{info:1, budget:1, chart:1}, badge:{budget:'2569', chart:'📊'} };
+    return { show:{info:1, budget:1, chart:1}, badge:{budget:'2569', chart:'<svg class="mdico"><use href="#i-chart-column"></use></svg>'} };
   if(node.type === 'minister')
     return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, chart:!!hasBudget},
-             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'📊'} };
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'<svg class="mdico"><use href="#i-chart-column"></use></svg>'} };
   if(node.isMinistry)
     return { show:{info:1, law:!!hasLaw, budget:!!hasBudget, staff:1, chart:1},
-             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'📊'} };
+             badge:{law: hasLaw?'1':'', budget: hasBudget?'2569':'', chart:'<svg class="mdico"><use href="#i-chart-column"></use></svg>'} };
   // กรม / รัฐวิสาหกิจ / องค์การมหาชน / มหาวิทยาลัย
   return { show:{info:1, budget:!!hasBudget, staff:1, chart:1},
-           badge:{budget: hasBudget?'2569':'', chart:'📊'} };
+           badge:{budget: hasBudget?'2569':'', chart:'<svg class="mdico"><use href="#i-chart-column"></use></svg>'} };
 }
 
 function ipSwitchTab(t){
@@ -6107,7 +6107,7 @@ function renderDetailTabs(node){
     const k = b.dataset.tab;
     b.hidden = !plan.show[k];
     const badge = document.getElementById('tabb-'+k);
-    if(badge) badge.textContent = (plan.badge && plan.badge[k]) || '';
+    if(badge) badge.innerHTML = (plan.badge && plan.badge[k]) || '';   // ป้ายบางอันเป็น <svg> ไอคอน
   });
   renderLawPane(node, mid);
   renderBudgetPane(node, mid);
@@ -7703,7 +7703,7 @@ function renderCaseStudies() {
         <div class="case-block-txt">${c.outcome}</div>
       </div>
       <div class="case-lesson">
-        <b>💡 บทเรียนเชิงนโยบาย:</b> ${c.lesson}
+        <b><svg class="mdico"><use href="#i-lightbulb"></use></svg> บทเรียนเชิงนโยบาย:</b> ${c.lesson}
       </div>
       ${c.src ? `<a class="case-link-btn" href="${c.src}" target="_blank" rel="noopener">อ่านรายงาน/คำพิพากษาฉบับเต็ม ↗</a>` : ''}
     </div>
