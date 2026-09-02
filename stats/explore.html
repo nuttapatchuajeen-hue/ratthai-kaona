@@ -682,7 +682,8 @@
 
   /* --- 🪸 ลูกโลก 3D ปะการังฟอกขาวโลก (NOAA Coral Reef Watch) --- */
   .coral-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#030712;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
-  .coral-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+  .coral-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none;cursor:grab}
+  .coral-stage canvas:active{cursor:grabbing}
   .coral-panel{position:absolute;top:16px;left:16px;width:min(320px,calc(100% - 32px));background:rgba(15,23,42,.88);padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;z-index:10}
   .coral-panel h3{margin:0 0 6px;font-size:15px;font-weight:700;color:#f43f5e;display:flex;align-items:center;gap:6px}
   .coral-panel p{margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.45}
@@ -693,7 +694,8 @@
 
   /* --- 🛰️ ติดตามดาวเทียมสด 3D (Starlink Live Tracker) --- */
   .satlive-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#020208;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
-  .satlive-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+  .satlive-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none;cursor:grab}
+  .satlive-stage canvas:active{cursor:grabbing}
   .satlive-hud{position:absolute;top:16px;left:16px;color:#fff;background:rgba(10,15,30,.86);border:1px solid rgba(0,255,204,.25);padding:14px 18px;border-radius:12px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:10;max-width:320px}
   .satlive-hud h3{margin:0 0 6px;font-size:15px;font-weight:700;color:#00e5ff;display:flex;align-items:center;gap:6px}
   .satlive-hud p{margin:4px 0;font-size:12.5px;color:#cbd5e1;line-height:1.4}
@@ -19471,7 +19473,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     function setupEnso(){
       var stage = document.getElementById("ensoStage");
       if(!stage) return;
-      var started = false, running = false, visible = false, raf = 0;
+      var started = false, ready = false, running = false, visible = false, raf = 0;
 
       function loadScript(src){
         return new Promise(function(res,rej){
@@ -19482,24 +19484,40 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }
       function loadThree(){ return loadThreeShared(); }
 
+      var loop, scene, camera, renderer, controls;
+
+      function startLoop(){
+        if(running || !ready || !visible) return;
+        running = true;
+        if(raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(loop);
+      }
+      function stopLoop(){
+        running = false;
+        if(raf){ cancelAnimationFrame(raf); raf = 0; }
+      }
+
       function init(){
         loadThree().then(function(){
           var THREE = window.THREE;
           var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
-          var scene = new THREE.Scene();
-          var camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
+          scene = new THREE.Scene();
+          camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
           camera.position.set(0, 3, 22);
 
-          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
           renderer.setSize(w, h);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
           stage.appendChild(renderer.domElement);
 
-          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
           controls.enableDamping = true;
-          controls.dampingFactor = 0.05;
+          controls.dampingFactor = 0.08;
           controls.minDistance = 10;
           controls.maxDistance = 50;
+          controls.addEventListener("change", function(){
+            if(renderer && scene && camera) renderer.render(scene, camera);
+          });
 
           var months = [
             "มกราคม (เริ่มสะสม)", "กุมภาพันธ์ (ก่อตัว)", "มีนาคม (ก่อตัว)", "เมษายน (ขยายตัว)",
@@ -19844,7 +19862,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
             controls.update();
             renderer.render(scene, camera);
-          }
+          };
 
           function onResize(){
             if(!stage || !renderer || !camera) return;
@@ -19853,11 +19871,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               camera.aspect = nw / nh;
               camera.updateProjectionMatrix();
               renderer.setSize(nw, nh);
+              renderer.render(scene, camera);
             }
           }
           window.addEventListener("resize", onResize);
 
-          running = true; loop();
+          ready = true;
+          startLoop();
         }).catch(function(err){
           console.warn("ENSO Three.js init error:", err);
           var ld = document.getElementById("ensoLoading");
@@ -19865,20 +19885,26 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
 
-      var io = new IntersectionObserver(function(entries){
-        var vis = entries.some(function(e){ return e.isIntersecting; });
-        visible = vis;
-        if(vis && !started){ started=true; init(); }
-        else if(vis && !running){ running=true; }
-      },{threshold:0.01});
-      io.observe(stage);
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          visible = e.isIntersecting;
+          if(visible && !started){
+            started = true;
+            init();
+          } else if(visible && !running){
+            startLoop();
+          } else if(!visible && running){
+            stopLoop();
+          }
+        });
+      }, {rootMargin:"200px"}).observe(stage);
     }
 
     /* ================= 🛰️ ติดตามดาวเทียมสด 3D (Starlink & Spacecraft Live) ================= */
     function setupSatLive(){
       var stage = document.getElementById("satliveStage");
       if(!stage) return;
-      var started = false, running = false, visible = false, raf = 0;
+      var started = false, ready = false, running = false, visible = false, raf = 0;
 
       function loadScript(src){
         return new Promise(function(res,rej){
@@ -19894,24 +19920,40 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
 
+      var loop, scene, camera, renderer, controls;
+
+      function startLoop(){
+        if(running || !ready || !visible) return;
+        running = true;
+        if(raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(loop);
+      }
+      function stopLoop(){
+        running = false;
+        if(raf){ cancelAnimationFrame(raf); raf = 0; }
+      }
+
       function init(){
         loadLibs().then(function(){
           var THREE = window.THREE, satellite = window.satellite;
           var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
-          var scene = new THREE.Scene();
-          var camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 1000);
+          scene = new THREE.Scene();
+          camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 1000);
           camera.position.set(0, 5, 8);
 
-          var renderer = new THREE.WebGLRenderer({ antialias: true });
+          renderer = new THREE.WebGLRenderer({ antialias: true });
           renderer.setSize(w, h);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
           stage.appendChild(renderer.domElement);
 
-          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
           controls.enableDamping = true;
           controls.dampingFactor = 0.08;
           controls.minDistance = 0.08;
           controls.maxDistance = 25;
+          controls.addEventListener("change", function(){
+            if(renderer && scene && camera) renderer.render(scene, camera);
+          });
 
           scene.add(new THREE.AmbientLight(0x666677));
           var sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -20517,7 +20559,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
             controls.update();
             renderer.render(scene, camera);
-          }
+          };
 
           function onResize(){
             if(!stage || !renderer || !camera) return;
@@ -20526,11 +20568,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               camera.aspect = nw / nh;
               camera.updateProjectionMatrix();
               renderer.setSize(nw, nh);
+              renderer.render(scene, camera);
             }
           }
           window.addEventListener("resize", onResize);
 
-          running = true; loop();
+          ready = true;
+          startLoop();
         }).catch(function(err){
           console.warn("SatLive Three.js/satellite.js init error:", err);
           var ld = document.getElementById("satliveLoading");
@@ -20538,20 +20582,26 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
 
-      var io = new IntersectionObserver(function(entries){
-        var vis = entries.some(function(e){ return e.isIntersecting; });
-        visible = vis;
-        if(vis && !started){ started=true; init(); }
-        else if(vis && !running){ running=true; }
-      },{threshold:0.01});
-      io.observe(stage);
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          visible = e.isIntersecting;
+          if(visible && !started){
+            started = true;
+            init();
+          } else if(visible && !running){
+            startLoop();
+          } else if(!visible && running){
+            stopLoop();
+          }
+        });
+      }, {rootMargin:"200px"}).observe(stage);
     }
 
     /* ================= 🪸 ลูกโลก 3D ปะการังฟอกขาวโลก (NOAA Coral Reef Watch) ================= */
     function setupCoralGlobe(){
       var stage = document.getElementById("coralStage");
       if(!stage) return;
-      var started = false, running = false, visible = false, raf = 0;
+      var started = false, ready = false, running = false, visible = false, raf = 0;
 
       function loadScript(src){
         return new Promise(function(res,rej){
@@ -20562,24 +20612,40 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }
       function loadThree(){ return loadThreeShared(); }
 
+      var loop, scene, camera, renderer, controls, globe;
+
+      function startLoop(){
+        if(running || !ready || !visible) return;
+        running = true;
+        if(raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(loop);
+      }
+      function stopLoop(){
+        running = false;
+        if(raf){ cancelAnimationFrame(raf); raf = 0; }
+      }
+
       function init(){
         loadThree().then(function(){
           var THREE = window.THREE;
           var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
-          var scene = new THREE.Scene();
-          var camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
+          scene = new THREE.Scene();
+          camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
           camera.position.set(0, 3, 22);
 
-          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
           renderer.setSize(w, h);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
           stage.appendChild(renderer.domElement);
 
-          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
           controls.enableDamping = true;
-          controls.dampingFactor = 0.05;
-          controls.minDistance = 11;
+          controls.dampingFactor = 0.08;
+          controls.minDistance = 9;
           controls.maxDistance = 45;
+          controls.addEventListener("change", function(){
+            if(renderer && scene && camera) renderer.render(scene, camera);
+          });
 
           scene.add(new THREE.AmbientLight(0x666666));
           var dirLight = new THREE.DirectionalLight(0xffffff, 1.3);
@@ -20598,7 +20664,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             specular: new THREE.Color(0x222222),
             shininess: 8
           });
-          var globe = new THREE.Mesh(globeGeo, earthMat);
+          globe = new THREE.Mesh(globeGeo, earthMat);
           globe.rotation.y = -Math.PI * 0.75;
           scene.add(globe);
 
@@ -20679,13 +20745,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           }
           renderer.domElement.addEventListener("pointermove", onPointerMove);
 
-          function loop(){
-            if(!visible){ running=false; return; }
+          loop = function(){
+            if(!visible || !running){ running = false; raf = 0; return; }
             raf = requestAnimationFrame(loop);
             globe.rotation.y += 0.001;
             controls.update();
             renderer.render(scene, camera);
-          }
+          };
 
           function onResize(){
             if(!stage || !renderer || !camera) return;
@@ -20694,11 +20760,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               camera.aspect = nw / nh;
               camera.updateProjectionMatrix();
               renderer.setSize(nw, nh);
+              renderer.render(scene, camera);
             }
           }
           window.addEventListener("resize", onResize);
 
-          running = true; loop();
+          ready = true;
+          startLoop();
         }).catch(function(err){
           console.warn("Coral globe init error:", err);
           var ld = document.getElementById("coralLoading");
@@ -20706,13 +20774,19 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
 
-      var io = new IntersectionObserver(function(entries){
-        var vis = entries.some(function(e){ return e.isIntersecting; });
-        visible = vis;
-        if(vis && !started){ started=true; init(); }
-        else if(vis && !running){ running=true; }
-      },{threshold:0.01});
-      io.observe(stage);
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          visible = e.isIntersecting;
+          if(visible && !started){
+            started = true;
+            init();
+          } else if(visible && !running){
+            startLoop();
+          } else if(!visible && running){
+            stopLoop();
+          }
+        });
+      }, {rootMargin:"200px"}).observe(stage);
     }
 
     /* ---------- BOOT ---------- */
