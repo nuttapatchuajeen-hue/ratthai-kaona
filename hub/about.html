@@ -286,7 +286,7 @@
   /* Pinned 4 Pillars Stage */
   .pinned-pillars-wrap {
     position: relative;
-    height: 380vh; /* scroll distance for 4 cards */
+    height: 500vh; /* scroll distance for 4 cards */
   }
   .pinned-pillars-sticky {
     position: sticky; top: 0; left: 0; width: 100%; height: 100vh;
@@ -353,6 +353,29 @@
     content: ''; position: absolute; inset: 0;
     background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.12), transparent 60%);
     pointer-events: none;
+  }
+
+  /* Ambient background clip inside each pillar card */
+  .card-bg-video {
+    position: absolute; inset: 0; z-index: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; pointer-events: none;
+    filter: saturate(1.15) contrast(1.05);
+    transition: opacity 0.9s ease;
+  }
+  .pillar-3d-card.is-live .card-bg-video { opacity: 0.34; }
+  .card-bg-scrim {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(3, 9, 15, 0.55) 0%, rgba(3, 9, 15, 0.8) 55%, rgba(3, 9, 15, 0.93) 100%),
+      linear-gradient(90deg, rgba(3, 9, 15, 0.7) 0%, rgba(3, 9, 15, 0.15) 60%);
+  }
+  .pillar-3d-card::before { z-index: 2; }
+  .pillar-3d-card > .card-chip-top,
+  .pillar-3d-card > .card-sys-main,
+  .pillar-3d-card > .card-sys-telemetry { position: relative; z-index: 3; }
+  @media (prefers-reduced-motion: reduce) {
+    .pillar-3d-card.is-live .card-bg-video { opacity: 0.22; }
   }
   .card-chip-top {
     display: flex; justify-content: space-between; align-items: center;
@@ -982,6 +1005,8 @@
             
             <!-- Card 1 -->
             <div class="pillar-3d-card" id="pCard1">
+              <video class="card-bg-video" src="../video/v-02.mp4" poster="../video/v-02.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+              <div class="card-bg-scrim"></div>
               <div class="card-chip-top">
                 <span class="card-sys-num">SYS.01 // INFRASTRUCTURE</span>
                 <div class="card-sys-icon">
@@ -1000,6 +1025,8 @@
 
             <!-- Card 2 -->
             <div class="pillar-3d-card" id="pCard2">
+              <video class="card-bg-video" src="../video/v-03.mp4" poster="../video/v-03.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+              <div class="card-bg-scrim"></div>
               <div class="card-chip-top">
                 <span class="card-sys-num">SYS.02 // PARLIAMENT</span>
                 <div class="card-sys-icon">
@@ -1018,6 +1045,8 @@
 
             <!-- Card 3 -->
             <div class="pillar-3d-card" id="pCard3">
+              <video class="card-bg-video" src="../video/v-07.mp4" poster="../video/v-07.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+              <div class="card-bg-scrim"></div>
               <div class="card-chip-top">
                 <span class="card-sys-num">SYS.03 // CABINET</span>
                 <div class="card-sys-icon">
@@ -1036,6 +1065,8 @@
 
             <!-- Card 4 -->
             <div class="pillar-3d-card" id="pCard4">
+              <video class="card-bg-video" src="../video/v-04.mp4" poster="../video/v-04.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+              <div class="card-bg-scrim"></div>
               <div class="card-chip-top">
                 <span class="card-sys-num">SYS.04 // ANALYTICS</span>
                 <div class="card-sys-icon">
@@ -1462,6 +1493,71 @@
         .to(pCards[2], { autoAlpha: 0, yPercent: -45, rotateX: 18, scale: 1.08, ease: 'power2.inOut', duration: 1.1 }, 3.5)
         .to(pCards[3], { autoAlpha: 1, rotateX: 0, rotateY: 0, yPercent: 0, scale: 1, ease: 'power2.inOut', duration: 1.1 }, 3.5);
     }
+
+    // 4b. Ambient background clips inside the 4 pillar cards
+    (function pillarAmbientClips() {
+      const cards = ['pCard1', 'pCard2', 'pCard3', 'pCard4'].map(id => document.getElementById(id));
+      if (cards.some(c => !c)) return;
+      const vids = cards.map(c => c.querySelector('.card-bg-video'));
+      const canPlay = !prefersReducedMotion;
+      let live = -1;
+
+      const idxAt = p => (p < 0.217 ? 0 : p < 0.543 ? 1 : p < 0.87 ? 2 : 3);
+
+      function setLive(i) {
+        if (i === live) return;
+        live = i;
+        cards.forEach((card, n) => {
+          card.classList.toggle('is-live', n === i);
+          const v = vids[n];
+          if (!v) return;
+          if (n === i) {
+            if (canPlay) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+          } else {
+            v.pause();
+          }
+        });
+      }
+
+      function pauseAll() {
+        live = -1;
+        cards.forEach(c => c.classList.remove('is-live'));
+        vids.forEach(v => v && v.pause());
+      }
+
+      // Browsers pause background video when the tab is hidden — resume the focused one on return
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden || live < 0 || !canPlay) return;
+        const v = vids[live];
+        if (v && v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+      });
+
+      const staged = !prefersReducedMotion && window.innerWidth > 980;
+      if (staged && window.ScrollTrigger) {
+        ScrollTrigger.create({
+          trigger: '#pillars',
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: self => setLive(idxAt(self.progress)),
+          onToggle: self => { self.isActive ? setLive(idxAt(self.progress)) : pauseAll(); }
+        });
+      } else {
+        // Mobile / reduced-motion: cards are stacked, so light each one as it scrolls into view
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            const v = vids[cards.indexOf(e.target)];
+            e.target.classList.toggle('is-live', e.isIntersecting);
+            if (!v) return;
+            if (e.isIntersecting) {
+              if (canPlay) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+            } else {
+              v.pause();
+            }
+          });
+        }, { threshold: 0.35 });
+        cards.forEach(c => io.observe(c));
+      }
+    })();
 
     // 5. Live Count-up for Stats Telemetry
     const statElements = document.querySelectorAll('.stat-tele-num');
