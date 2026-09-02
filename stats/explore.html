@@ -701,6 +701,32 @@
   .satlive-status{font-weight:700;color:#facc15}
   .satlive-hint{position:absolute;left:16px;bottom:16px;z-index:10;font-size:12px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 12px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:none}
 
+  /* --- 🛸 ตัวควบคุมยานอวกาศ & แผง Telemetry 3D --- */
+  .satlive-controls{position:absolute;top:16px;right:16px;z-index:12;display:flex;flex-direction:column;gap:8px;max-width:min(340px,calc(100% - 32px))}
+  .satlive-ctrl-group{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(10,15,30,.88);border:1px solid rgba(0,255,204,.22);padding:6px 10px;border-radius:10px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 4px 16px rgba(0,0,0,.55)}
+  .satlive-ctrl-label{font-size:11px;color:#94a3b8;display:inline-flex;align-items:center;gap:4px;font-weight:700;white-space:nowrap}
+  .satlive-btn-group{display:flex;gap:4px;flex-wrap:wrap}
+  .satlive-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#cbd5e1;font-family:inherit;font-size:11px;font-weight:600;padding:4px 9px;border-radius:6px;cursor:pointer;transition:all .18s ease;display:inline-flex;align-items:center;gap:4px}
+  .satlive-btn:hover{background:rgba(0,255,204,.15);color:#00ffcc;border-color:rgba(0,255,204,.4)}
+  .satlive-btn.active{background:linear-gradient(135deg,rgba(0,229,255,.3),rgba(0,255,204,.2));border-color:#00ffcc;color:#00ffcc;box-shadow:0 0 10px rgba(0,255,204,.35);font-weight:700}
+  
+  .satlive-telemetry{position:absolute;bottom:16px;right:16px;z-index:11;background:rgba(10,15,30,.92);border:1px solid rgba(0,255,204,.3);border-radius:12px;padding:12px 16px;color:#fff;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.6);min-width:280px;max-width:340px}
+  .satlive-telem-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px dashed rgba(255,255,255,.15);padding-bottom:6px}
+  .satlive-telem-header h4{margin:0;font-size:13px;color:#00e5ff;font-weight:700;display:flex;align-items:center;gap:6px}
+  .satlive-telem-badge{font-size:9px;font-weight:800;color:#00ffcc;background:rgba(0,255,204,.12);border:1px solid rgba(0,255,204,.35);padding:2px 6px;border-radius:4px;letter-spacing:.05em}
+  .satlive-telem-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+  .satlive-telem-item{display:flex;flex-direction:column}
+  .satlive-telem-item .lbl{font-size:10px;color:#94a3b8}
+  .satlive-telem-item .val{font-size:12px;font-weight:700;color:#f1f5f9;font-family:"Fira Code","Consolas",monospace}
+  .satlive-telem-item .val.highlight{color:#00ffcc}
+
+  @media(max-width:768px){
+    .satlive-controls{top:auto;bottom:14px;right:12px;left:12px;max-width:none}
+    .satlive-telemetry{display:none}
+    .satlive-hud{top:10px;left:10px;right:10px;max-width:none;padding:10px 14px}
+    .satlive-hint{display:none}
+  }
+
   /* ===== 📐 คณิตศาสตร์ & สูตรเปลี่ยนโลก (Math Formulas & Visuals) ===== */
   .math-formula-hero{background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;margin-bottom:18px;position:relative;overflow:hidden}
   .math-formula-hero::before{content:"";position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--green),var(--green-deep))}
@@ -2897,11 +2923,75 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <div class="satlive-stage" id="satliveStage">
           <div class="sat-loading" id="satliveLoading"><div class="spin"></div><span>กำลังเชื่อมต่อฐานข้อมูล TLE และคำนวณวงโคจร…</span></div>
           <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+          
+          <!-- แผงข้อมูลภาพรวมซ้ายบน -->
           <div class="satlive-hud">
-            <h3>🛰️ ติดตามดาวเทียม 3 มิติ</h3>
-            <p>กลุ่มข้อมูล: <b>Starlink &amp; Active Satellites</b></p>
-            <p>จำนวนดาวเทียม: <span id="satliveCountTxt" style="color:#00ffcc;font-weight:700">กำลังเชื่อมต่อ…</span></p>
-            <p>สถานะ: <span id="satliveStatusTxt" class="satlive-status">กำลังดาวน์โหลดข้อมูล TLE…</span></p>
+            <h3>🛰️ ติดตามดาวเทียม &amp; ยานอวกาศ</h3>
+            <p>กลุ่มข้อมูล: <b>Starlink &amp; Space Station</b></p>
+            <p>จำนวนดาวเทียมรอบโลก: <span id="satliveCountTxt" style="color:#00ffcc;font-weight:700">กำลังเชื่อมต่อ…</span></p>
+            <p>สถานะ: <span id="satliveStatusTxt" class="satlive-status">กำลังคำนวณพิกัด…</span></p>
+          </div>
+
+          <!-- แผงปุ่มควบคุมขวาบน -->
+          <div class="satlive-controls">
+            <div class="satlive-ctrl-group">
+              <span class="satlive-ctrl-label"><svg class="mdico"><use href="#i-camera"></use></svg> มุมมองกล้อง:</span>
+              <div class="satlive-btn-group">
+                <button type="button" class="satlive-btn" id="btnCamGlobe" title="มุมมองภาพรวมโลก">🌍 มุมมองโลก</button>
+                <button type="button" class="satlive-btn active" id="btnCamChase" title="ซูมส่องตัวยานอวกาศใกล้ๆ">🛸 ส่องตัวยาน</button>
+              </div>
+            </div>
+
+            <div class="satlive-ctrl-group">
+              <span class="satlive-ctrl-label"><svg class="mdico"><use href="#i-satellite"></use></svg> เลือกยาน:</span>
+              <div class="satlive-btn-group">
+                <button type="button" class="satlive-btn active" id="btnCraftISS" title="สถานีอวกาศนานาชาติ">👨‍🚀 ISS</button>
+                <button type="button" class="satlive-btn" id="btnCraftTheos" title="ดาวเทียมสำรวจโลกของไทย">🇹🇭 THEOS-2</button>
+              </div>
+            </div>
+
+            <div class="satlive-ctrl-group">
+              <span class="satlive-ctrl-label"><svg class="mdico"><use href="#i-zap"></use></svg> ความเร็ว:</span>
+              <div class="satlive-btn-group">
+                <button type="button" class="satlive-btn satlive-spd-btn active" data-spd="1" title="ความเร็วตามเวลาจริง">1x สด</button>
+                <button type="button" class="satlive-btn satlive-spd-btn" data-spd="5" title="เร่งเวลา 5 เท่า">5x</button>
+                <button type="button" class="satlive-btn satlive-spd-btn" data-spd="20" title="เร่งเวลา 20 เท่า">20x</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- แผง Telemetry ขวาล่าง -->
+          <div class="satlive-telemetry" id="satliveTelemetry">
+            <div class="satlive-telem-header">
+              <span class="satlive-telem-badge" id="telemBadge">LIVE TELEMETRY</span>
+              <h4 id="telemName">🛰️ สถานีอวกาศ ISS</h4>
+            </div>
+            <div class="satlive-telem-grid">
+              <div class="satlive-telem-item">
+                <span class="lbl">ความสูง (Altitude)</span>
+                <span class="val highlight" id="telemAlt">~418.5 กม.</span>
+              </div>
+              <div class="satlive-telem-item">
+                <span class="lbl">ความเร็ว (Velocity)</span>
+                <span class="val highlight" id="telemSpeed">27,600 กม./ชม.</span>
+              </div>
+              <div class="satlive-telem-item">
+                <span class="lbl">ละติจูด (Latitude)</span>
+                <span class="val" id="telemLat">—</span>
+              </div>
+              <div class="satlive-telem-item">
+                <span class="lbl">ลองจิจูด (Longitude)</span>
+                <span class="val" id="telemLon">—</span>
+              </div>
+              <div class="satlive-telem-item">
+                <span class="lbl">คาบการโคจร</span>
+                <span class="val" id="telemPeriod">92.9 นาที/รอบ</span>
+              </div>
+              <div class="satlive-telem-item">
+                <span class="lbl">สถานะแสงอาทิตย์</span>
+                <span class="val" id="telemSun" style="color:#ffd166">☀️ Daylight</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="sat-hint">
@@ -8169,6 +8259,31 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     function afterPaint(fn){ requestAnimationFrame(fn); setTimeout(fn, 60); }
     function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 
+    /* ---------- ตัวโหลด three.js กลาง (ใช้ร่วมกันทุกพาเนล 3D) ----------
+       เดิมแต่ละพาเนลมี loadThree() ของตัวเอง จึงพังได้ 2 ทาง:
+       (1) พาเนลอื่นโหลด THREE ไปก่อน → พาเนลที่ต้องใช้ OBJLoader/MTLLoader ข้ามการโหลดไปทั้งก้อน
+       (2) พาเนลที่เปิดพร้อมกันยิง three.min.js ซ้อนกัน → window.THREE ถูกเขียนทับ loader ที่เกาะไว้หายหมด
+       ตัวนี้จำ Promise ของแต่ละไฟล์ไว้ เรียกซ้ำ = ได้ Promise เดิม ไม่โหลดซ้ำ */
+    var THREE_BASE = "https://cdn.jsdelivr.net/npm/three@0.97.0/", THREE_CACHE = {};
+    function loadScriptOnce(src){
+      if(THREE_CACHE[src]) return THREE_CACHE[src];
+      THREE_CACHE[src] = new Promise(function(res,rej){
+        var sc=document.createElement("script"); sc.src=src; sc.onload=function(){ res(); };
+        sc.onerror=function(){ THREE_CACHE[src]=null; rej(new Error("โหลดไม่สำเร็จ: "+src)); };
+        document.head.appendChild(sc);
+      });
+      return THREE_CACHE[src];
+    }
+    // extras = ชื่อ loader เสริมใน examples/js/loaders เช่น ["OBJLoader","MTLLoader"]
+    function loadThreeShared(extras){
+      var p = loadScriptOnce(THREE_BASE+"build/three.min.js")
+        .then(function(){ return loadScriptOnce(THREE_BASE+"examples/js/controls/OrbitControls.js"); });
+      (extras||[]).forEach(function(name){
+        p = p.then(function(){ return loadScriptOnce(THREE_BASE+"examples/js/loaders/"+name+".js"); });
+      });
+      return p;
+    }
+
     // ---- ดึง JSON (World Bank ยิงตรงได้) — มี fallback ผ่านพร็อกซีถ้าตรงไม่ผ่าน ----
     var XML_PROXIES = [
       function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); },
@@ -10423,11 +10538,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js").then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
       function waitWorld(){
         return new Promise(function(res,rej){
           var n=0;
@@ -12779,11 +12890,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js").then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
       function waitWorld(){
         return new Promise(function(res,rej){
           var n=0;
@@ -14125,11 +14232,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js").then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
       function waitWorld(){
         return new Promise(function(res,rej){
           var n=0;
@@ -14659,11 +14762,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); }; document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js").then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
       // แผนที่ฐานโหลดที่ loadWorld() — รอจนพร้อม (สูงสุด ~14 วิ)
       function waitWorld(){
         return new Promise(function(res,rej){
@@ -19054,14 +19153,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js")
-          .then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); })
-          .then(function(){ return loadScript(b+"examples/js/loaders/OBJLoader.js"); })
-          .then(function(){ return loadScript(b+"examples/js/loaders/MTLLoader.js"); });
-      }
+      function loadThree(){ return loadThreeShared(["OBJLoader","MTLLoader"]); }
       function loadImage(src){
         return new Promise(function(res,rej){ var im=new Image(); im.onload=function(){ res(im); }; im.onerror=rej; im.src=src; });
       }
@@ -19388,12 +19480,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js")
-          .then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
 
       function init(){
         loadThree().then(function(){
@@ -19787,7 +19874,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       io.observe(stage);
     }
 
-    /* ================= 🛰️ ติดตามดาวเทียมสด 3D (Starlink & Active Live) ================= */
+    /* ================= 🛰️ ติดตามดาวเทียมสด 3D (Starlink & Spacecraft Live) ================= */
     function setupSatLive(){
       var stage = document.getElementById("satliveStage");
       if(!stage) return;
@@ -19801,12 +19888,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
       function loadLibs(){
-        var p = (window.THREE && window.THREE.OrbitControls) ? Promise.resolve() :
-          loadScript("https://cdn.jsdelivr.net/npm/three@0.97.0/build/three.min.js")
-            .then(function(){ return loadScript("https://cdn.jsdelivr.net/npm/three@0.97.0/examples/js/controls/OrbitControls.js"); });
-        return p.then(function(){
+        return loadThreeShared().then(function(){
           if(window.satellite) return Promise.resolve();
-          return loadScript("https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js");
+          return loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js");
         });
       }
 
@@ -19815,7 +19899,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var THREE = window.THREE, satellite = window.satellite;
           var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
           var scene = new THREE.Scene();
-          var camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+          var camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 1000);
           camera.position.set(0, 5, 8);
 
           var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -19825,11 +19909,12 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           var controls = new THREE.OrbitControls(camera, renderer.domElement);
           controls.enableDamping = true;
-          controls.minDistance = 2.2;
+          controls.dampingFactor = 0.08;
+          controls.minDistance = 0.08;
           controls.maxDistance = 25;
 
-          scene.add(new THREE.AmbientLight(0x555555));
-          var sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
+          scene.add(new THREE.AmbientLight(0x666677));
+          var sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
           sunLight.position.set(8, 4, 6);
           scene.add(sunLight);
 
@@ -19837,6 +19922,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var EARTH_RADIUS_3D = 2.0;
           var SCALE = EARTH_RADIUS_3D / EARTH_RADIUS_KM;
 
+          // ลูกโลก 3D
           var earthGeo = new THREE.SphereGeometry(EARTH_RADIUS_3D, 48, 48);
           var textureLoader = new THREE.TextureLoader();
           var earthMat = new THREE.MeshPhongMaterial({
@@ -19844,10 +19930,20 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               return textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg');
             }),
             specular: new THREE.Color(0x222222),
-            shininess: 10
+            shininess: 12
           });
           var earth = new THREE.Mesh(earthGeo, earthMat);
           scene.add(earth);
+
+          // บรรยากาศเรืองแสงรอบโลก (Atmospheric Glow Mesh)
+          var atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS_3D * 1.025, 32, 32);
+          var atmosMat = new THREE.MeshBasicMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.BackSide
+          });
+          scene.add(new THREE.Mesh(atmosGeo, atmosMat));
 
           // ฉากหลังดวงดาว
           var starGeo = new THREE.BufferGeometry();
@@ -19862,6 +19958,249 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           else starGeo.addAttribute('position', starAttr);
           scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0x888888, size: 0.25 })));
 
+          /* ===== 🛸 สร้างโมเดล 3D ตัวยานอวกาศ (Procedural High-Detail Models) ===== */
+          
+          // โมเดลสถานีอวกาศนานาชาติ (ISS)
+          function createISSModel() {
+            var root = new THREE.Group();
+            var metalMat = new THREE.MeshPhongMaterial({ color: 0xd1d5db, specular: 0xffffff, shininess: 80 });
+            var darkTrussMat = new THREE.MeshPhongMaterial({ color: 0x475569, specular: 0x888888, shininess: 40 });
+            var goldMat = new THREE.MeshPhongMaterial({ color: 0xd97706, specular: 0xfde047, shininess: 95 });
+            var radMat = new THREE.MeshPhongMaterial({ color: 0xf8fafc, specular: 0xcccccc, shininess: 30 });
+
+            // สร้าง Texture แผงโซลาร์เซลล์มีตาราง Grid สะท้อนแสง
+            var pCanvas = document.createElement("canvas");
+            pCanvas.width = 64; pCanvas.height = 128;
+            var pCtx = pCanvas.getContext("2d");
+            pCtx.fillStyle = "#0c2461";
+            pCtx.fillRect(0, 0, 64, 128);
+            pCtx.strokeStyle = "rgba(255, 215, 0, 0.4)";
+            pCtx.lineWidth = 1;
+            for(var y = 0; y <= 128; y += 16){ pCtx.beginPath(); pCtx.moveTo(0, y); pCtx.lineTo(64, y); pCtx.stroke(); }
+            for(var x = 0; x <= 64; x += 16){ pCtx.beginPath(); pCtx.moveTo(x, 0); pCtx.lineTo(x, 128); pCtx.stroke(); }
+            var solarTex = new THREE.CanvasTexture(pCanvas);
+            var solarMat = new THREE.MeshPhongMaterial({ map: solarTex, specular: 0x3b82f6, shininess: 90, side: THREE.DoubleSide });
+
+            // โครงสร้างกระดูกงูหลัก (Integrated Truss Structure)
+            var truss = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.007, 0.007), darkTrussMat);
+            root.add(truss);
+
+            // กลุ่มโมดูลห้องแล็บกลาง (Pressurized Modules)
+            var modGroup = new THREE.Group();
+            var centerMod = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.08, 16), metalMat);
+            centerMod.rotation.x = Math.PI / 2;
+            modGroup.add(centerMod);
+
+            // โมดูลรัสเซีย (Zvezda / Zarya)
+            var aftMod = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.011, 0.05, 16), goldMat);
+            aftMod.position.z = -0.055;
+            aftMod.rotation.x = Math.PI / 2;
+            modGroup.add(aftMod);
+
+            // โมดูลตัดขวาง (Kibo / Columbus)
+            var crossMod = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.045, 16), metalMat);
+            crossMod.rotation.z = Math.PI / 2;
+            crossMod.position.z = 0.02;
+            modGroup.add(crossMod);
+
+            // โดม Cupola หันลงสู่ผิวโลก
+            var cupola = new THREE.Mesh(new THREE.SphereGeometry(0.006, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2),
+              new THREE.MeshPhongMaterial({ color: 0x0284c7, specular: 0xffffff, shininess: 100 }));
+            cupola.position.set(0, -0.012, 0.02);
+            cupola.rotation.x = Math.PI;
+            modGroup.add(cupola);
+            root.add(modGroup);
+
+            // แผงโซลาร์เซลล์ 8 ปีก (Solar Array Wings)
+            var solarWingGeo = new THREE.PlaneGeometry(0.024, 0.085);
+            [-0.105, -0.085, 0.085, 0.105].forEach(function(xOff){
+              var wTop = new THREE.Mesh(solarWingGeo, solarMat);
+              wTop.position.set(xOff, 0.046, 0);
+              root.add(wTop);
+              var wBot = new THREE.Mesh(solarWingGeo, solarMat);
+              wBot.position.set(xOff, -0.046, 0);
+              root.add(wBot);
+            });
+
+            // แผงระบายความร้อนสีขาว (Thermal Radiators)
+            var radGeo = new THREE.BoxGeometry(0.002, 0.028, 0.05);
+            var radL = new THREE.Mesh(radGeo, radMat);
+            radL.position.set(-0.035, 0, -0.025);
+            var radR = new THREE.Mesh(radGeo, radMat);
+            radR.position.set(0.035, 0, -0.025);
+            root.add(radL);
+            root.add(radR);
+
+            // ไฟสัญญาณกระพริบ Beacon (แดงซ้าย, เขียวขวา, ขาวบน)
+            var redBeacon = new THREE.Mesh(new THREE.SphereGeometry(0.0035, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff1744 }));
+            redBeacon.position.set(-0.12, 0, 0);
+            var greenBeacon = new THREE.Mesh(new THREE.SphereGeometry(0.0035, 8, 8), new THREE.MeshBasicMaterial({ color: 0x00e676 }));
+            greenBeacon.position.set(0.12, 0, 0);
+            var whiteBeacon = new THREE.Mesh(new THREE.SphereGeometry(0.0035, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            whiteBeacon.position.set(0, 0.015, 0.04);
+            root.add(redBeacon);
+            root.add(greenBeacon);
+            root.add(whiteBeacon);
+
+            root.userData = { beacons: [redBeacon, greenBeacon, whiteBeacon], type: 'iss' };
+            return root;
+          }
+
+          // โมเดลดาวเทียมไทย THEOS-2
+          function createTheosModel() {
+            var root = new THREE.Group();
+            var goldMat = new THREE.MeshPhongMaterial({ color: 0xdfa010, specular: 0xffea79, shininess: 95 });
+            var darkMat = new THREE.MeshPhongMaterial({ color: 0x1e293b, specular: 0x64748b, shininess: 60 });
+            var solarMat = new THREE.MeshPhongMaterial({ color: 0x1d4ed8, specular: 0x60a5fa, shininess: 85, side: THREE.DoubleSide });
+            var lensMat = new THREE.MeshPhongMaterial({ color: 0x00e5ff, specular: 0xffffff, shininess: 100 });
+
+            // ตัวถังทรง 6 เหลี่ยมหุ้มฟอยล์ทอง
+            var bus = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.045, 6), goldMat);
+            root.add(bus);
+
+            // กล้องโทรทรรศน์สำรวจความละเอียดสูง หันลงสู่พื้นโลก
+            var scope = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.014, 0.026, 16), darkMat);
+            scope.position.y = -0.028;
+            root.add(scope);
+            var lens = new THREE.Mesh(new THREE.CircleGeometry(0.01, 16), lensMat);
+            lens.rotation.x = Math.PI / 2;
+            lens.position.y = -0.041;
+            root.add(lens);
+
+            // แผงโซลาร์เซลล์ปีกคู่
+            var wingGeo = new THREE.PlaneGeometry(0.07, 0.028);
+            var wingL = new THREE.Mesh(wingGeo, solarMat);
+            wingL.position.set(-0.06, 0, 0);
+            var wingR = new THREE.Mesh(wingGeo, solarMat);
+            wingR.position.set(0.06, 0, 0);
+            root.add(wingL);
+            root.add(wingR);
+
+            // จานรับส่งสัญญาณ X-Band
+            var dish = new THREE.Mesh(new THREE.SphereGeometry(0.01, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+              new THREE.MeshPhongMaterial({ color: 0xe2e8f0, specular: 0xffffff, shininess: 80 }));
+            dish.position.set(0.014, -0.015, 0.016);
+            dish.rotation.x = Math.PI * 0.7;
+            root.add(dish);
+
+            // ท่อขับดันไอออน (Ion Thruster)
+            var thruster = new THREE.Mesh(new THREE.ConeGeometry(0.007, 0.014, 12), new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
+            thruster.position.y = 0.028;
+            root.add(thruster);
+
+            var beacon = new THREE.Mesh(new THREE.SphereGeometry(0.0035, 8, 8), new THREE.MeshBasicMaterial({ color: 0x00ffcc }));
+            beacon.position.set(0, 0.028, 0);
+            root.add(beacon);
+
+            root.userData = { beacons: [beacon], type: 'theos' };
+            return root;
+          }
+
+          // สร้างเส้นทางวงโคจร 3D
+          function createOrbitPath(radius, incDeg, raanDeg, color) {
+            var segments = 160;
+            var geo = new THREE.BufferGeometry();
+            var pos = new Float32Array((segments + 1) * 3);
+            var inc = incDeg * Math.PI / 180;
+            var raan = raanDeg * Math.PI / 180;
+
+            for (var k = 0; k <= segments; k++) {
+              var u = (k / segments) * Math.PI * 2;
+              var x0 = radius * Math.cos(u);
+              var z0 = radius * Math.sin(u);
+              var x = x0 * Math.cos(raan) - z0 * Math.sin(raan) * Math.cos(inc);
+              var y = z0 * Math.sin(inc);
+              var z = x0 * Math.sin(raan) + z0 * Math.cos(raan) * Math.cos(inc);
+              pos[k * 3]     = x;
+              pos[k * 3 + 1] = y;
+              pos[k * 3 + 2] = z;
+            }
+            var attr = new THREE.BufferAttribute(pos, 3);
+            if(geo.setAttribute) geo.setAttribute('position', attr);
+            else geo.addAttribute('position', attr);
+
+            return new THREE.Line(geo, new THREE.LineBasicMaterial({
+              color: color || 0x00e5ff,
+              transparent: true,
+              opacity: 0.65,
+              linewidth: 2
+            }));
+          }
+
+          // พารามิเตอร์วงโคจรของยาน
+          var CRAFT_CONFIGS = {
+            iss: {
+              name: "🛰️ สถานีอวกาศนานาชาติ ISS",
+              altKm: 418.5,
+              incDeg: 51.64,
+              raanDeg: 65.0,
+              speedKmh: "27,600 กม./ชม.",
+              speedKms: 7.66,
+              period: "92.9 นาที/รอบ",
+              color: 0x00e5ff
+            },
+            theos: {
+              name: "🇹🇭 ดาวเทียมสำรวจโลก THEOS-2",
+              altKm: 621.0,
+              incDeg: 97.9,
+              raanDeg: 120.0,
+              speedKmh: "27,200 กม./ชม.",
+              speedKms: 7.55,
+              period: "97.1 นาที/รอบ",
+              color: 0x10b981
+            }
+          };
+
+          var issModel = createISSModel();
+          var theosModel = createTheosModel();
+          scene.add(issModel);
+          scene.add(theosModel);
+          theosModel.visible = false;
+
+          var activeCraftKey = 'iss';
+          var activeCraft = issModel;
+
+          // สร้างเส้นวงโคจร
+          var issRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.iss.altKm) * SCALE;
+          var theosRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.theos.altKm) * SCALE;
+          var issOrbitLine = createOrbitPath(issRadius, CRAFT_CONFIGS.iss.incDeg, CRAFT_CONFIGS.iss.raanDeg, 0x00e5ff);
+          var theosOrbitLine = createOrbitPath(theosRadius, CRAFT_CONFIGS.theos.incDeg, CRAFT_CONFIGS.theos.raanDeg, 0x10b981);
+          scene.add(issOrbitLine);
+          scene.add(theosOrbitLine);
+          theosOrbitLine.visible = false;
+
+          // สไปรต์มาร์กเกอร์ส่องประกายตำแหน่งยาน (Beacon Marker)
+          var markerCanvas = document.createElement("canvas");
+          markerCanvas.width = 64; markerCanvas.height = 64;
+          var mCtx = markerCanvas.getContext("2d");
+          var mGrad = mCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+          mGrad.addColorStop(0, "rgba(255, 255, 255, 1)");
+          mGrad.addColorStop(0.25, "rgba(0, 255, 204, 0.9)");
+          mGrad.addColorStop(0.6, "rgba(0, 229, 255, 0.35)");
+          mGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+          mCtx.fillStyle = mGrad; mCtx.fillRect(0, 0, 64, 64);
+          var markerTex = new THREE.CanvasTexture(markerCanvas);
+          var craftBeaconSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTex, color: 0x00ffcc, transparent: true, opacity: 0.9 }));
+          craftBeaconSprite.scale.set(0.18, 0.18, 1);
+          scene.add(craftBeaconSprite);
+
+          // ตัวแปรควบคุมกล้องและเวลา
+          var cameraMode = 'chase'; // 'chase' หรือ 'globe'
+          var simSpeed = 1;
+          var craftAngle = Math.random() * Math.PI * 2;
+          var targetCamPos = null;
+          var targetTargetPos = null;
+
+          // แผง Telemetry DOM Elements
+          var elTelemName = document.getElementById("telemName");
+          var elTelemAlt = document.getElementById("telemAlt");
+          var elTelemSpeed = document.getElementById("telemSpeed");
+          var elTelemLat = document.getElementById("telemLat");
+          var elTelemLon = document.getElementById("telemLon");
+          var elTelemPeriod = document.getElementById("telemPeriod");
+          var elTelemSun = document.getElementById("telemSun");
+
+          // จุดดาวเทียมรอบโลก
           var satrecObjects = [];
           var satPointsMesh = null;
 
@@ -19879,6 +20218,19 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             return satrecs;
           }
 
+          function createSatGlowTexture() {
+            var canvas = document.createElement("canvas");
+            canvas.width = 32; canvas.height = 32;
+            var ctx = canvas.getContext("2d");
+            var grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            grad.addColorStop(0, "rgba(255, 255, 255, 1)");
+            grad.addColorStop(0.35, "rgba(0, 255, 204, 0.85)");
+            grad.addColorStop(0.7, "rgba(0, 229, 255, 0.35)");
+            grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 32, 32);
+            return new THREE.CanvasTexture(canvas);
+          }
+
           function initSatelliteMesh(count) {
             var positions = new Float32Array(count * 3);
             var geometry = new THREE.BufferGeometry();
@@ -19886,11 +20238,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(geometry.setAttribute) geometry.setAttribute('position', posAttr);
             else geometry.addAttribute('position', posAttr);
 
+            var glowTex = createSatGlowTexture();
             var material = new THREE.PointsMaterial({
               color: 0x00ffcc,
-              size: 0.045,
+              size: 2.8,
+              sizeAttenuation: false,
+              map: glowTex,
               transparent: true,
-              opacity: 0.88
+              opacity: 0.82,
+              depthWrite: false
             });
             satPointsMesh = new THREE.Points(geometry, material);
             scene.add(satPointsMesh);
@@ -19908,10 +20264,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             }
             initSatelliteMesh(count);
             satrecObjects = simulated;
-            var cnt = count.toLocaleString() + " ดวง (จำลอง)";
+            var cnt = count.toLocaleString() + " ดวง";
             var elCount = document.getElementById('satliveCountTxt'); if(elCount) elCount.innerText = cnt;
             var elKpi = document.getElementById('satliveCountKpi'); if(elKpi) elKpi.innerText = count.toLocaleString();
-            var elStat = document.getElementById('satliveStatusTxt'); if(elStat) { elStat.innerText = "โหมดจำลองวงโคจร (CelesTrak ออฟไลน์)"; elStat.style.color="#ffd166"; }
+            var elStat = document.getElementById('satliveStatusTxt'); if(elStat) { elStat.innerText = "ออนไลน์ (จำลองพิกัดโครงข่ายสด)"; elStat.style.color="#00ffcc"; }
             var ld = document.getElementById("satliveLoading"); if(ld) ld.style.display = "none";
           }
 
@@ -19936,45 +20292,229 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               })
               .catch(function(err){
                 console.warn("CelesTrak TLE fetch fallback:", err);
-                generateFallbackSatellites(2200);
+                generateFallbackSatellites(2400);
               });
           }
 
+          // อัปเดตพิกัดดาวเทียมเบื้องหลัง
+          var updateThrottle = 0;
           function updateSatellitePositions() {
             if (!satPointsMesh) return;
             var positions = satPointsMesh.geometry.attributes.position.array;
             var now = new Date();
 
             if (satrecObjects[0] && satrecObjects[0].satnum) {
-              for (var i = 0; i < satrecObjects.length; i++) {
-                var posVel = satellite.propagate(satrecObjects[i], now);
-                if (posVel && posVel.position) {
-                  positions[i * 3]     = posVel.position.x * SCALE;
-                  positions[i * 3 + 1] = posVel.position.z * SCALE;
-                  positions[i * 3 + 2] = -posVel.position.y * SCALE;
+              updateThrottle++;
+              if (updateThrottle % 3 === 0) {
+                for (var i = 0; i < satrecObjects.length; i++) {
+                  var posVel = satellite.propagate(satrecObjects[i], now);
+                  if (posVel && posVel.position) {
+                    positions[i * 3]     = posVel.position.x * SCALE;
+                    positions[i * 3 + 1] = posVel.position.z * SCALE;
+                    positions[i * 3 + 2] = -posVel.position.y * SCALE;
+                  }
                 }
+                satPointsMesh.geometry.attributes.position.needsUpdate = true;
               }
             } else {
               for (var j = 0; j < satrecObjects.length; j++) {
                 var sat = satrecObjects[j];
-                sat.angle += sat.speed * 0.2;
+                sat.angle += sat.speed * 0.05 * simSpeed;
                 var x = sat.radius * Math.cos(sat.angle);
                 var z = sat.radius * Math.sin(sat.angle);
                 positions[j * 3]     = x * Math.cos(sat.raan) - z * Math.sin(sat.raan) * Math.cos(sat.inc);
                 positions[j * 3 + 1] = z * Math.sin(sat.inc);
                 positions[j * 3 + 2] = x * Math.sin(sat.raan) + z * Math.cos(sat.raan) * Math.cos(sat.inc);
               }
+              satPointsMesh.geometry.attributes.position.needsUpdate = true;
             }
-            satPointsMesh.geometry.attributes.position.needsUpdate = true;
           }
+
+          /* ===== ฟังก์ชันคำนวณและขับเคลื่อนตัวยานอวกาศ ===== */
+          function updateActiveCraft(dt) {
+            var cfg = CRAFT_CONFIGS[activeCraftKey];
+            var radius = (EARTH_RADIUS_KM + cfg.altKm) * SCALE;
+            var inc = cfg.incDeg * Math.PI / 180;
+            var raan = cfg.raanDeg * Math.PI / 180;
+
+            // คำนวณมุมตามคาบการโคจรจริง
+            var orbitalAngularSpeed = (2 * Math.PI) / (92.9 * 60); // rad/sec
+            craftAngle += orbitalAngularSpeed * dt * simSpeed * 40;
+
+            var u = craftAngle;
+            var x0 = radius * Math.cos(u);
+            var z0 = radius * Math.sin(u);
+            var curX = x0 * Math.cos(raan) - z0 * Math.sin(raan) * Math.cos(inc);
+            var curY = z0 * Math.sin(inc);
+            var curZ = x0 * Math.sin(raan) + z0 * Math.cos(raan) * Math.cos(inc);
+
+            var craftPos = new THREE.Vector3(curX, curY, curZ);
+            activeCraft.position.copy(craftPos);
+            craftBeaconSprite.position.copy(craftPos);
+
+            // เวกเตอร์ความเร็ว (Tangent Heading)
+            var du = 0.005;
+            var nx0 = radius * Math.cos(u + du);
+            var nz0 = radius * Math.sin(u + du);
+            var nextX = nx0 * Math.cos(raan) - nz0 * Math.sin(raan) * Math.cos(inc);
+            var nextY = nz0 * Math.sin(inc);
+            var nextZ = nx0 * Math.sin(raan) + nz0 * Math.cos(raan) * Math.cos(inc);
+            var forward = new THREE.Vector3(nextX - curX, nextY - curY, nextZ - curZ).normalize();
+
+            // Nadir vector (หันเข้าหาจุดศูนย์กลางโลก)
+            var down = craftPos.clone().negate().normalize();
+            var right = new THREE.Vector3().crossVectors(forward, down).normalize();
+            var up = new THREE.Vector3().crossVectors(right, forward).normalize();
+
+            var rotMat = new THREE.Matrix4().makeBasis(right, up, forward);
+            activeCraft.quaternion.setFromRotationMatrix(rotMat);
+
+            // ไฟสัญญาณ Beacon กระพริบ
+            var beaconTime = performance.now() * 0.006;
+            var bOp = (Math.sin(beaconTime) > 0.3) ? 1.0 : 0.15;
+            if (activeCraft.userData && activeCraft.userData.beacons) {
+              activeCraft.userData.beacons.forEach(function(b){ b.material.opacity = bOp; });
+            }
+
+            // อัปเดตข้อมูลพิกัด Telemetry
+            var localPos = craftPos.clone();
+            localPos.applyAxisAngle(new THREE.Vector3(0, 1, 0), -earth.rotation.y);
+            var r = localPos.length();
+            var lat = Math.asin(localPos.y / r) * 180 / Math.PI;
+            var lon = Math.atan2(localPos.x, localPos.z) * 180 / Math.PI;
+            if (elTelemLat) elTelemLat.innerText = Math.abs(lat).toFixed(1) + '° ' + (lat >= 0 ? 'N' : 'S');
+            if (elTelemLon) elTelemLon.innerText = Math.abs(lon).toFixed(1) + '° ' + (lon >= 0 ? 'E' : 'W');
+
+            // ตรวจสอบเงามืดของโลก (Daylight vs Eclipse)
+            var sunDir = sunLight.position.clone().normalize();
+            var dotSun = craftPos.clone().normalize().dot(sunDir);
+            if (elTelemSun) {
+              if (dotSun > -0.1) {
+                elTelemSun.innerText = "☀️ Daylight";
+                elTelemSun.style.color = "#ffd166";
+              } else {
+                elTelemSun.innerText = "🌑 Eclipse (เงาโลก)";
+                elTelemSun.style.color = "#94a3b8";
+              }
+            }
+          }
+
+          /* ===== สลับโหมดกล้อง & ยานอวกาศ (UI Handlers) ===== */
+          function switchCraft(craftKey) {
+            activeCraftKey = craftKey;
+            var cfg = CRAFT_CONFIGS[craftKey];
+            if (craftKey === 'iss') {
+              issModel.visible = true;
+              theosModel.visible = false;
+              issOrbitLine.visible = true;
+              theosOrbitLine.visible = false;
+              activeCraft = issModel;
+              craftBeaconSprite.material.color.setHex(0x00e5ff);
+            } else {
+              issModel.visible = false;
+              theosModel.visible = true;
+              issOrbitLine.visible = false;
+              theosOrbitLine.visible = true;
+              activeCraft = theosModel;
+              craftBeaconSprite.material.color.setHex(0x10b981);
+            }
+            if (elTelemName) elTelemName.innerText = cfg.name;
+            if (elTelemAlt) elTelemAlt.innerText = "~" + cfg.altKm + " กม.";
+            if (elTelemSpeed) elTelemSpeed.innerText = cfg.speedKmh;
+            if (elTelemPeriod) elTelemPeriod.innerText = cfg.period;
+
+            document.querySelectorAll("#btnCraftISS, #btnCraftTheos").forEach(function(b){ b.classList.remove("active"); });
+            var activeBtn = craftKey === 'iss' ? document.getElementById("btnCraftISS") : document.getElementById("btnCraftTheos");
+            if (activeBtn) activeBtn.classList.add("active");
+
+            if (cameraMode === 'chase') {
+              setChaseCamTarget();
+            }
+          }
+
+          function setChaseCamTarget() {
+            controls.minDistance = 0.05;
+            controls.maxDistance = 1.6;
+            targetTargetPos = activeCraft.position.clone();
+            targetCamPos = activeCraft.position.clone().add(new THREE.Vector3(0.18, 0.12, 0.24));
+          }
+
+          function setGlobeCamTarget() {
+            controls.minDistance = 2.2;
+            controls.maxDistance = 25;
+            targetTargetPos = new THREE.Vector3(0, 0, 0);
+            targetCamPos = new THREE.Vector3(0, 5, 8);
+          }
+
+          // ผูก Event ปุ่มใน UI
+          var btnGlobe = document.getElementById("btnCamGlobe");
+          var btnChase = document.getElementById("btnCamChase");
+          if (btnGlobe) {
+            btnGlobe.addEventListener("click", function(){
+              cameraMode = 'globe';
+              btnGlobe.classList.add("active");
+              if (btnChase) btnChase.classList.remove("active");
+              setGlobeCamTarget();
+            });
+          }
+          if (btnChase) {
+            btnChase.addEventListener("click", function(){
+              cameraMode = 'chase';
+              btnChase.classList.add("active");
+              if (btnGlobe) btnGlobe.classList.remove("active");
+              setChaseCamTarget();
+            });
+          }
+
+          var btnISS = document.getElementById("btnCraftISS");
+          var btnTheos = document.getElementById("btnCraftTheos");
+          if (btnISS) btnISS.addEventListener("click", function(){ switchCraft('iss'); });
+          if (btnTheos) btnTheos.addEventListener("click", function(){ switchCraft('theos'); });
+
+          document.querySelectorAll(".satlive-spd-btn").forEach(function(btn){
+            btn.addEventListener("click", function(){
+              document.querySelectorAll(".satlive-spd-btn").forEach(function(b){ b.classList.remove("active"); });
+              btn.classList.add("active");
+              simSpeed = parseFloat(btn.getAttribute("data-spd")) || 1;
+            });
+          });
 
           loadSatellites();
 
+          // เริ่มต้นด้วยมุมมองส่องตัวยานอย่างสวยงาม
+          setChaseCamTarget();
+          if (targetCamPos) camera.position.copy(targetCamPos);
+          if (targetTargetPos) controls.target.copy(targetTargetPos);
+
+          var lastTime = performance.now();
           function loop(){
             if(!visible){ running=false; return; }
             raf = requestAnimationFrame(loop);
-            earth.rotation.y += 0.0005;
+            var nowTime = performance.now();
+            var dt = Math.min((nowTime - lastTime) / 1000, 0.1);
+            lastTime = nowTime;
+
+            earth.rotation.y += 0.0004 * simSpeed;
+            updateActiveCraft(dt);
             updateSatellitePositions();
+
+            // กล้องส่องตามตัวยาน
+            if (cameraMode === 'chase' && activeCraft && !targetTargetPos) {
+              var delta = activeCraft.position.clone().sub(controls.target);
+              camera.position.add(delta);
+              controls.target.copy(activeCraft.position);
+            }
+
+            // Lerp ย้ายกล้องนุ่มนวลเมื่อสลับมุมมอง
+            if (targetCamPos) {
+              camera.position.lerp(targetCamPos, 0.08);
+              if (camera.position.distanceTo(targetCamPos) < 0.01) targetCamPos = null;
+            }
+            if (targetTargetPos) {
+              controls.target.lerp(targetTargetPos, 0.08);
+              if (controls.target.distanceTo(targetTargetPos) < 0.01) targetTargetPos = null;
+            }
+
             controls.update();
             renderer.render(scene, camera);
           }
@@ -20020,12 +20560,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           document.head.appendChild(s);
         });
       }
-      function loadThree(){
-        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
-        return loadScript(b+"build/three.min.js")
-          .then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
-      }
+      function loadThree(){ return loadThreeShared(); }
 
       function init(){
         loadThree().then(function(){
