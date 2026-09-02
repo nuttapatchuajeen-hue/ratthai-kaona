@@ -83,14 +83,14 @@ mdSyncToggle();
     </div>
     <div class="sec-head">
       <div><span class="kick">Party Anthems</span><h1>เพลง<span class="o">ประจำพรรค</span></h1></div>
-      <p>เพลงหาเสียงของ 5 พรรคอันดับสูงสุด กดปุ่มเพื่อฟังได้ทันที หรือเปิดมิวสิกวิดีโอบน YouTube</p>
+      <p>เพลงหาเสียงของ 5 พรรคอันดับสูงสุด กดปุ่มเพื่อฟังผ่าน YouTube IFrame หรือเปิดมิวสิกวิดีโอบน YouTube</p>
     </div>
     <div class="panelbox">
       <div class="songs" id="songs"></div>
     </div>
     <div class="sec-head">
       <div><span class="kick">Anthems of the Past</span><h1>เพลง<s class="o strike-x">พรรค</s>ในอดีต</h1></div>
-      <p>เพลงของอดีตพรรคการเมืองที่ถูกยุบไปแล้ว — จึงขีดฆ่าคำว่า "พรรค" ไว้เป็นที่ระลึก กดปุ่มเพื่อฟังได้ทันที (เสียงสตรีมจาก YouTube) หรือเปิดมิวสิกวิดีโอบน YouTube</p>
+      <p>เพลงของอดีตพรรคการเมืองที่ถูกยุบไปแล้ว — จึงขีดฆ่าคำว่า "พรรค" ไว้เป็นที่ระลึก กดปุ่มเพื่อฟังผ่าน YouTube IFrame หรือเปิดมิวสิกวิดีโอบน YouTube</p>
     </div>
     <div class="panelbox">
       <div class="songs" id="pastsongs"></div>
@@ -140,129 +140,341 @@ mdSyncToggle();
     d.innerHTML=`<span class="sw" style="background:${colorOf(code)}"></span>${shortOf(code)} <b>${n}</b>`;minorEl.appendChild(d);});
 })();
 </script>
+<style>
+/* ---------- YouTube Mini Player ประจำหน้าคะแนนพรรค ---------- */
+#standingsyt{position:fixed;right:20px;bottom:20px;z-index:9990;width:320px;max-width:calc(100vw - 24px);
+  background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 18px 48px -12px rgba(6,20,32,.28), 0 4px 14px rgba(6,20,32,.08);color:var(--ink);touch-action:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .26s cubic-bezier(.22,.8,.3,1),opacity .22s ease,left .3s cubic-bezier(.22,.8,.3,1),top .3s cubic-bezier(.22,.8,.3,1),width .26s ease}
+html[data-theme="dark"] #standingsyt{background:rgba(14,26,38,.82);border-color:var(--line-2,#1E3A50);box-shadow:0 20px 50px -10px rgba(0,0,0,.65)}
+#standingsyt.off{opacity:0;transform:scale(.9) translateY(12px);pointer-events:none}
+#standingsyt.nofx{transition:none}
+#standingsyt.drag{transition:none;box-shadow:0 26px 62px -20px rgba(6,20,32,.55)}
+#standingsyt .ythead{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 11px;cursor:grab;
+  background:var(--wash);border-bottom:1px solid var(--line);user-select:none;-webkit-user-select:none}
+html[data-theme="dark"] #standingsyt .ythead{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);border-color:var(--line-2,#1E3A50)}
+#standingsyt.drag .ythead{cursor:grabbing}
+#standingsyt .ytmark{flex:0 0 auto;display:grid;place-items:center;color:#FF0033;line-height:0}
+#standingsyt .ytmark svg{width:22px;height:22px}
+#standingsyt.playing .ytmark{animation:ytpulse 1.9s ease-in-out infinite}
+@keyframes ytpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.13);opacity:.72}}
+#standingsyt .ytmeta{flex:1 1 auto;min-width:0;line-height:1.25}
+#standingsyt .ytmeta b{display:block;font-family:'Kanit';font-weight:600;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#standingsyt .ytmeta small{display:block;font-size:.66rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#standingsyt button{flex:0 0 auto;width:26px;height:26px;border:0;border-radius:8px;padding:0;background:transparent;
+  color:var(--ink-2);cursor:pointer;display:grid;place-items:center;transition:.12s}
+#standingsyt button:hover{background:var(--orange-soft);color:var(--orange-deep)}
+#standingsyt svg.ytic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#standingsyt .ytbody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
+#standingsyt.min .ytbody{grid-template-rows:0fr}
+#standingsyt.min .ythead{border-bottom:0}
+#standingsyt .ytinner{overflow:hidden;min-height:0}
+#standingsyt .ytframe{position:relative;aspect-ratio:16/9;margin:8px 8px 0;border-radius:10px;overflow:hidden;background:#000}
+#standingsyt .ytframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+#standingsyt .ytfoot{display:flex;align-items:center;gap:6px;padding:6px 10px 8px;font-size:.68rem}
+#standingsyt .ytfoot .sw{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+#standingsyt .ytparty{font-weight:600;color:var(--ink-2)}
+#standingsyt .ytsp{flex:1 1 auto}
+#standingsyt .ytopen{font-family:'Kanit';font-weight:600;color:var(--green-deep);text-decoration:none}
+#standingsyt .ytopen:hover{text-decoration:underline}
+@media(max-width:860px){#standingsyt{width:270px;right:10px;bottom:12px}}
+</style>
+
 <script>
-/* ===== เพลงประจำพรรค — ไฟล์ mp3 ใน ../songs/ + ลิงก์ MV บน YouTube ===== */
+/* ===== เพลงประจำพรรค + เพลงพรรคในอดีต — เล่นผ่าน YouTube IFrame API (ถูกลิขสิทธิ์ 100%) ===== */
 (function(){
-  const PM=window.DATA.partyMeta;
-  const SONGS=[
-    {code:'BJT', file:'bhumjaithai.mp3', title:'เพลงแคมเปญหาเสียง พรรคภูมิใจไทย · นิติพงษ์ ห่อนาค', yt:'https://youtu.be/gbYT1lmJ9uo'},
-    {code:'PPC', file:'peoples.mp3',     title:'MV เพลงประชาชน (Official)',                       yt:'https://youtu.be/VozRnFsUYHM'},
-    {code:'PT',  file:'pheuthai.mp3',    title:'เพื่อไทยแลนด์สไลด์ (Official MV)',                 yt:'https://youtu.be/A3Fm138GC1Q'},
-    {code:'KLT2',file:'klatham.mp3',     title:'เพลงประจำพรรคกล้าธรรม',                            yt:'https://youtu.be/EMbQMrGUSWw'},
-    {code:'DEM', file:'democrat.mp3',    title:'ประชาธิปัตย์มาแล้ว',                               yt:'https://youtu.be/_XHP2_m3T1I'}
+  const PM = window.DATA.partyMeta;
+  const SONGS = [
+    {code:'BJT', id:'gbYT1lmJ9uo', title:'เพลงแคมเปญหาเสียง พรรคภูมิใจไทย · นิติพงษ์ ห่อนาค'},
+    {code:'PPC', id:'VozRnFsUYHM', title:'MV เพลงประชาชน (Official)'},
+    {code:'PT',  id:'A3Fm138GC1Q', title:'เพื่อไทยแลนด์สไลด์ (Official MV)'},
+    {code:'KLT2',id:'EMbQMrGUSWw', title:'เพลงประจำพรรคกล้าธรรม'},
+    {code:'DEM', id:'_XHP2_m3T1I', title:'ประชาธิปัตย์มาแล้ว'}
   ];
-  const wrap=document.getElementById('songs');
-  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  SONGS.forEach(sg=>{
-    const m=PM[sg.code]; if(!m) return;   // ปีเก่าไม่มีพรรคยุคใหม่นี้ — ข้ามไป (กัน crash)
-    const col=m.color;
-    const row=document.createElement('div');
-    row.className='songrow'; row.style.setProperty('--pc',col);
-    row.innerHTML=`
-      <button class="playbtn" type="button" aria-label="เล่นเพลง ${m.short}">
-        <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
-        <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
-      </button>
-      <div class="sg-meta">
-        <div class="sg-party"><span class="sw" style="background:${col}"></span>${m.short}</div>
-        <div class="sg-title">${sg.title}</div>
-      </div>
-      <div class="sg-mid">
-        <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
-        <div class="sg-time num"><b>0:00</b><span> / –:––</span></div>
-      </div>
-      <a class="ytlink" href="${sg.yt}" target="_blank" rel="noopener" title="เปิดมิวสิกวิดีโอ ${m.short} บน YouTube">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
-    const audio=new Audio('../songs/'+sg.file); audio.preload='metadata';
-    const btn=row.querySelector('.playbtn'), fill=row.querySelector('.sg-fill'),
-          tCur=row.querySelector('.sg-time b'), tDur=row.querySelector('.sg-time span'),
-          track=row.querySelector('.sg-track');
-    audio.addEventListener('loadedmetadata',()=>{tDur.textContent=' / '+fmt(audio.duration);});
-    audio.addEventListener('timeupdate',()=>{
-      tCur.textContent=fmt(audio.currentTime);
-      if(audio.duration)fill.style.width=(audio.currentTime/audio.duration*100)+'%';
-    });
-    // ตัวหยุดประจำแถว — ล้างการลงทะเบียนเฉพาะเมื่อยังเป็นของตัวเอง (กันลบของแถวอื่นทับ)
-    const myStop=()=>{audio.pause();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
-    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';if(window.__mdStop===myStop)window.__mdStop=null;});
-    btn.addEventListener('click',()=>{
-      if(audio.paused){
-        if(window.__mdStop&&window.__mdStop!==myStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (รวมหมวดเพลงพรรคในอดีต)
-        audio.play();row.classList.add('playing');
-        window.__mdStop=myStop;
-      }else{myStop();}
-    });
-    track.addEventListener('click',e=>{
-      if(!audio.duration)return;
-      const r=track.getBoundingClientRect();
-      audio.currentTime=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*audio.duration;
-    });
-    wrap.appendChild(row);
-  });
-})();
-</script>
-<script>
-/* ===== เพลงพรรคในอดีต — พรรคถูกยุบแล้ว (ขีดฆ่าคำว่า "พรรค") เครื่องเล่นหน้าตาเดียวกับด้านบน
-   เล่นจากไฟล์ mp3 ในเครื่อง (../songs-past/) + มีปุ่มลิงก์ไป YouTube เป็นทางสำรอง ===== */
-(function(){
-  const PAST=[
-    {name:'อนาคตใหม่', year:'ยุบ พ.ศ. 2563', color:'#F47920', title:'The Future of Our Country', file:'anakhotmai.mp3', id:'wAvkRPrsliw'},
-    {name:'ก้าวไกล',   year:'ยุบ พ.ศ. 2567', color:'#FF6A13', title:'ก้าวไกลก้าวหน้า · วงสามัญชน x ส.ส.คำพอง เทพาคำ (Lyric Video)', file:'kaoklai.mp3', id:'99KfzrvfIns'},
-    {name:'ไทยรักไทย', year:'ยุบ พ.ศ. 2550', color:'#1B3C8F', title:'บทเพลงแห่งนโยบาย · Song of the Policy', file:'thairakthai.mp3', id:'Uurw_CC3VbQ'},
-    {name:'เสรีมนังคศิลา', year:'ยุบ พ.ศ. 2500',   color:'#B08D57', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', file:'serimanangkhasila.mp3', id:'UFdzBThGxbc'},
-    {name:'สหประชาไทย',   year:'สิ้นสุด พ.ศ. 2514', color:'#5E7A99', title:'มาร์ชสหประชาไทย', file:'sahaprachathai.mp3', id:'Qv_SY27Uh5U'},
-    {name:'กิจสังคม',     year:'พ.ศ. 2517–2561',   color:'#1F8A70', title:'หัวหน้าและเลขาธิการพรรคกิจสังคม (2517–2561)', file:'kitsangkhom.mp3', id:'lcxJxVxkMxo'},
-    {name:'ความหวังใหม่', year:'ยุบรวม พ.ศ. 2545', color:'#3949AB', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', file:'khwamwangmai.mp3', id:'NlVsqCH8s_k'},
-    {name:'พลังประชาชน',  year:'ยุบ พ.ศ. 2551',    color:'#C0392B', title:'พลังประชาชน · กี้ อริสมันต์ (MV)', file:'phalangprachachon.mp3', id:'FNur5U-Y710'}
+  const PAST = [
+    {name:'อนาคตใหม่', year:'ยุบ พ.ศ. 2563', color:'#F47920', title:'The Future of Our Country', id:'wAvkRPrsliw'},
+    {name:'ก้าวไกล',   year:'ยุบ พ.ศ. 2567', color:'#FF6A13', title:'ก้าวไกลก้าวหน้า · วงสามัญชน x ส.ส.คำพอง เทพาคำ (Lyric Video)', id:'99KfzrvfIns'},
+    {name:'ไทยรักไทย', year:'ยุบ พ.ศ. 2550', color:'#1B3C8F', title:'บทเพลงแห่งนโยบาย · Song of the Policy', id:'Uurw_CC3VbQ'},
+    {name:'เสรีมนังคศิลา', year:'ยุบ พ.ศ. 2500',   color:'#B08D57', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', id:'UFdzBThGxbc'},
+    {name:'สหประชาไทย',   year:'สิ้นสุด พ.ศ. 2514', color:'#5E7A99', title:'มาร์ชสหประชาไทย', id:'Qv_SY27Uh5U'},
+    {name:'กิจสังคม',     year:'พ.ศ. 2517–2561',   color:'#1F8A70', title:'หัวหน้าและเลขาธิการพรรคกิจสังคม (2517–2561)', id:'lcxJxVxkMxo'},
+    {name:'ความหวังใหม่', year:'ยุบรวม พ.ศ. 2545', color:'#3949AB', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', id:'NlVsqCH8s_k'},
+    {name:'พลังประชาชน',  year:'ยุบ พ.ศ. 2551',    color:'#C0392B', title:'พลังประชาชน · กี้ อริสมันต์ (MV)', id:'FNur5U-Y710'}
   ];
-  const wrap=document.getElementById('pastsongs');
-  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  PAST.forEach(p=>{
-    const row=document.createElement('div');
-    row.className='songrow past'; row.style.setProperty('--pc',p.color);
-    row.innerHTML=`
-      <button class="playbtn" type="button" aria-label="เล่นเพลงอดีตพรรค${p.name}">
-        <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
-        <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
-      </button>
-      <div class="sg-meta">
-        <div class="sg-party"><span class="sw" style="background:${p.color}"></span><span><s>พรรค</s>${p.name}</span><small class="gone">· ${p.year}</small></div>
-        <div class="sg-title">${p.title}</div>
-      </div>
-      <div class="sg-mid">
-        <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
-        <div class="sg-time num"><b>0:00</b><span> / –:––</span></div>
-      </div>
-      <a class="ytlink" href="https://youtu.be/${p.id}" target="_blank" rel="noopener" title="เปิดเพลงอดีตพรรค${p.name} บน YouTube">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
-    const btn=row.querySelector('.playbtn'), fill=row.querySelector('.sg-fill'),
-          tCur=row.querySelector('.sg-time b'), tDur=row.querySelector('.sg-time span'),
-          track=row.querySelector('.sg-track');
-    // เล่นจากไฟล์ mp3 ในเครื่อง (../songs-past/) — เครื่องเล่นเดียวกับหมวดเพลงประจำพรรคด้านบน
-    const audio=new Audio('../songs-past/'+p.file); audio.preload='metadata';
-    audio.addEventListener('loadedmetadata',()=>{tDur.textContent=' / '+fmt(audio.duration);});
-    audio.addEventListener('timeupdate',()=>{
-      tCur.textContent=fmt(audio.currentTime);
-      if(audio.duration)fill.style.width=(audio.currentTime/audio.duration*100)+'%';
-    });
-    // ตัวหยุดประจำแถว — ล้างการลงทะเบียนเฉพาะเมื่อยังเป็นของตัวเอง (กันลบของแถวอื่นทับ)
-    const myStop=()=>{audio.pause();row.classList.remove('playing');if(window.__mdStop===myStop)window.__mdStop=null;};
-    audio.addEventListener('ended',()=>{row.classList.remove('playing');fill.style.width='0';tCur.textContent='0:00';if(window.__mdStop===myStop)window.__mdStop=null;});
-    audio.addEventListener('error',()=>{myStop();tDur.textContent=' / เล่นไม่ได้ · กดปุ่ม YouTube';});
-    btn.addEventListener('click',()=>{
-      if(audio.paused){
-        if(window.__mdStop&&window.__mdStop!==myStop)window.__mdStop(); // หยุดเพลงอื่นที่กำลังเล่น (ทั้งสองหมวด)
-        audio.play();row.classList.add('playing');
-        window.__mdStop=myStop;
-      }else{myStop();}
-    });
-    track.addEventListener('click',e=>{
-      if(!audio.duration)return;
-      const r=track.getBoundingClientRect();
-      audio.currentTime=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1)*audio.duration;
-    });
-    wrap.appendChild(row);
+
+  const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+  /* สร้างการ์ดลอย YouTube Mini Player */
+  const card = document.createElement('div');
+  card.id = 'standingsyt'; card.className = 'off nofx';
+  card.setAttribute('aria-label', 'ตัวเล่นเพลง YouTube');
+  card.innerHTML =
+    '<div class="ythead">'
+    + '<span class="ytmark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor">'
+    + '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2'
+    + ' 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4'
+    + 'a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/>'
+    + '</svg></span>'
+    + '<span class="ytmeta"><b id="syt-ttl">กำลังเล่น</b><small id="syt-sub">YouTube Official Embed</small></span>'
+    + '<button type="button" data-y="min" title="ย่อ/ขยาย" aria-label="ย่อ/ขยาย">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path class="i-min" d="M5 12h14"/><path class="i-max" d="m7 14 5-5 5 5" style="display:none"/></svg></button>'
+    + '<button type="button" data-y="close" title="ปิดเครื่องเล่น" aria-label="ปิดเครื่องเล่น">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>'
+    + '</div>'
+    + '<div class="ytbody"><div class="ytinner">'
+    + '<div class="ytframe"><div id="syt-mount"></div></div>'
+    + '<div class="ytfoot">'
+    + '<span class="sw" id="syt-sw"></span><span class="ytparty" id="syt-party"></span>'
+    + '<span class="ytsp"></span>'
+    + '<a class="ytopen" id="syt-open" target="_blank" rel="noopener" title="เปิดมิวสิกวิดีโอบน YouTube">ดูบน YouTube ↗</a>'
+    + '</div></div></div>';
+  document.body.appendChild(card);
+
+  const cardTtl = card.querySelector('#syt-ttl'), cardSub = card.querySelector('#syt-sub');
+  const cardSw = card.querySelector('#syt-sw'), cardParty = card.querySelector('#syt-party');
+  const cardOpen = card.querySelector('#syt-open'), head = card.querySelector('.ythead');
+
+  /* ระบบลากและย่อขยาย */
+  let minimized = false;
+  card.addEventListener('click', e => {
+    const b = e.target.closest('button[data-y]'); if (!b) return;
+    if (b.dataset.y === 'min') {
+      minimized = !minimized; card.classList.toggle('min', minimized);
+      const im = card.querySelector('.i-min'), ix = card.querySelector('.i-max');
+      if (im) im.style.display = minimized ? 'none' : '';
+      if (ix) ix.style.display = minimized ? '' : 'none';
+      return;
+    }
+    if (b.dataset.y === 'close') { stopAll(); }
   });
+
+  let dragging = false, moved = false, gx = 0, gy = 0;
+  head.addEventListener('pointerdown', e => {
+    if (e.target.closest('button')) return;
+    dragging = true; moved = false;
+    const r = card.getBoundingClientRect(); gx = e.clientX - r.left; gy = e.clientY - r.top;
+    card.classList.add('drag');
+    try { head.setPointerCapture(e.pointerId); } catch (err) { }
+    e.preventDefault();
+  });
+  head.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const w = card.offsetWidth, h = card.offsetHeight;
+    const x = Math.min(innerWidth - w - 4, Math.max(4, e.clientX - gx));
+    const y = Math.min(innerHeight - h - 4, Math.max(4, e.clientY - gy));
+    moved = true; card.style.left = x + 'px'; card.style.top = y + 'px';
+    card.style.right = 'auto'; card.style.bottom = 'auto';
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false; card.classList.remove('drag');
+    const r = card.getBoundingClientRect(), M = 16;
+    const toRight = (r.left + r.width / 2) >= innerWidth / 2;
+    card.style.left = toRight ? (innerWidth - r.width - M) + 'px' : M + 'px';
+  }
+  head.addEventListener('pointerup', endDrag);
+  head.addEventListener('pointercancel', endDrag);
+
+  /* โหลด YouTube IFrame API */
+  let player = null, apiReady = false, pendingVideoId = null;
+  let activeSong = null, activeRow = null;
+  let progressTimer = null;
+
+  function loadAPI(cb) {
+    if (window.YT && window.YT.Player) return cb();
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function() {
+      if (typeof prev === 'function') { try { prev(); } catch (e) { } }
+      cb();
+    };
+    if (document.getElementById('ytapi')) return;
+    const s = document.createElement('script');
+    s.id = 'ytapi'; s.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+  }
+
+  function initPlayer(firstId) {
+    player = new YT.Player('syt-mount', {
+      host: 'https://www.youtube-nocookie.com',
+      videoId: firstId,
+      playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1,
+        origin: /^https?:$/.test(location.protocol) ? location.origin : undefined },
+      events: {
+        onReady: () => {
+          apiReady = true;
+          try { player.setVolume(85); } catch (e) { }
+          if (pendingVideoId) { player.loadVideoById(pendingVideoId); pendingVideoId = null; }
+          else { player.playVideo(); }
+        },
+        onStateChange: e => {
+          // 1 = PLAYING · 2 = PAUSED · 0 = ENDED
+          if (e.data === 1) {
+            card.classList.add('playing');
+            if (activeRow) activeRow.classList.add('playing');
+            startTicker();
+          } else if (e.data === 2) {
+            card.classList.remove('playing');
+            if (activeRow) activeRow.classList.remove('playing');
+            stopTicker();
+          } else if (e.data === 0) {
+            card.classList.remove('playing');
+            if (activeRow) {
+              activeRow.classList.remove('playing');
+              const fill = activeRow.querySelector('.sg-fill'), tCur = activeRow.querySelector('.sg-time b');
+              if (fill) fill.style.width = '0';
+              if (tCur) tCur.textContent = '0:00';
+            }
+            stopTicker();
+          }
+        },
+        onError: () => {
+          if (activeRow) {
+            const tDur = activeRow.querySelector('.sg-time span');
+            if (tDur) tDur.textContent = ' / ดูบน YouTube';
+          }
+        }
+      }
+    });
+  }
+
+  function startTicker() {
+    stopTicker();
+    progressTimer = setInterval(() => {
+      if (!player || typeof player.getCurrentTime !== 'function' || !activeRow) return;
+      const cur = player.getCurrentTime() || 0;
+      const dur = player.getDuration() || 0;
+      const fill = activeRow.querySelector('.sg-fill');
+      const tCur = activeRow.querySelector('.sg-time b');
+      const tDur = activeRow.querySelector('.sg-time span');
+      if (tCur) tCur.textContent = fmt(cur);
+      if (tDur && dur) tDur.textContent = ' / ' + fmt(dur);
+      if (fill && dur) fill.style.width = (cur / dur * 100) + '%';
+    }, 250);
+  }
+  function stopTicker() {
+    if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+  }
+
+  function stopAll() {
+    try { if (player && player.pauseVideo) player.pauseVideo(); } catch (e) { }
+    if (activeRow) activeRow.classList.remove('playing');
+    card.classList.add('off');
+    card.classList.remove('playing');
+    stopTicker();
+    if (window.__mdStop === stopAll) window.__mdStop = null;
+  }
+
+  function playSong(sg, row) {
+    if (activeSong && activeSong.id === sg.id && activeRow === row) {
+      // เพลงเดิม: toggle เล่น/หยุด
+      if (row.classList.contains('playing')) {
+        try { player && player.pauseVideo(); } catch (e) { }
+      } else {
+        if (window.__mdStop && window.__mdStop !== stopAll) window.__mdStop();
+        window.__mdStop = stopAll;
+        try { player && player.playVideo(); } catch (e) { }
+      }
+      return;
+    }
+
+    if (window.__mdStop && window.__mdStop !== stopAll) window.__mdStop();
+    window.__mdStop = stopAll;
+
+    // ล้างสถานะแถวเดิม
+    if (activeRow && activeRow !== row) {
+      activeRow.classList.remove('playing');
+      const f = activeRow.querySelector('.sg-fill'), tc = activeRow.querySelector('.sg-time b');
+      if (f) f.style.width = '0';
+      if (tc) tc.textContent = '0:00';
+    }
+
+    activeSong = sg; activeRow = row;
+    cardTtl.textContent = sg.title;
+    cardSub.textContent = sg.partyText || sg.party;
+    cardParty.innerHTML = sg.party;
+    cardSw.style.background = sg.color || '#F47920';
+    cardOpen.href = 'https://youtu.be/' + sg.id;
+    card.classList.remove('off');
+    setTimeout(() => card.classList.remove('nofx'), 0);
+
+    if (!player) {
+      loadAPI(() => initPlayer(sg.id));
+    } else if (!apiReady) {
+      pendingVideoId = sg.id;
+    } else {
+      player.loadVideoById(sg.id);
+    }
+  }
+
+  function bindSeek(track, row) {
+    track.addEventListener('click', e => {
+      if (!activeRow || activeRow !== row || !player || typeof player.getDuration !== 'function') return;
+      const dur = player.getDuration() || 0;
+      if (!dur) return;
+      const r = track.getBoundingClientRect();
+      const pct = Math.min(Math.max(0, (e.clientX - r.left) / r.width), 1);
+      player.seekTo(pct * dur, true);
+    });
+  }
+
+  /* 1. สร้างแถว "เพลงประจำพรรค" */
+  const wrap1 = document.getElementById('songs');
+  if (wrap1) {
+    SONGS.forEach(sg => {
+      const m = PM[sg.code]; if (!m) return;
+      const col = m.color;
+      const songData = { id: sg.id, title: sg.title, party: m.short, partyText: m.short, color: col };
+      const row = document.createElement('div');
+      row.className = 'songrow'; row.style.setProperty('--pc', col);
+      row.innerHTML = `
+        <button class="playbtn" type="button" aria-label="เล่นเพลง ${m.short}">
+          <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
+          <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+        </button>
+        <div class="sg-meta">
+          <div class="sg-party"><span class="sw" style="background:${col}"></span>${m.short}</div>
+          <div class="sg-title">${sg.title}</div>
+        </div>
+        <div class="sg-mid">
+          <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
+          <div class="sg-time num"><b>0:00</b><span> / YouTube</span></div>
+        </div>
+        <a class="ytlink" href="https://youtu.be/${sg.id}" target="_blank" rel="noopener" title="เปิดมิวสิกวิดีโอ ${m.short} บน YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
+      row.querySelector('.playbtn').addEventListener('click', () => playSong(songData, row));
+      bindSeek(row.querySelector('.sg-track'), row);
+      wrap1.appendChild(row);
+    });
+  }
+
+  /* 2. สร้างแถว "เพลงพรรคในอดีต" */
+  const wrap2 = document.getElementById('pastsongs');
+  if (wrap2) {
+    PAST.forEach(p => {
+      const songData = { id: p.id, title: p.title, party: '<s>พรรค</s>' + p.name, partyText: p.name + ' (' + p.year + ')', color: p.color };
+      const row = document.createElement('div');
+      row.className = 'songrow past'; row.style.setProperty('--pc', p.color);
+      row.innerHTML = `
+        <button class="playbtn" type="button" aria-label="เล่นเพลงอดีตพรรค${p.name}">
+          <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.3v13.4c0 .8.9 1.3 1.6.9l10.5-6.7c.6-.4.6-1.4 0-1.8L9.6 4.4c-.7-.4-1.6.1-1.6.9Z"/></svg>
+          <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>
+        </button>
+        <div class="sg-meta">
+          <div class="sg-party"><span class="sw" style="background:${p.color}"></span><span><s>พรรค</s>${p.name}</span><small class="gone">· ${p.year}</small></div>
+          <div class="sg-title">${p.title}</div>
+        </div>
+        <div class="sg-mid">
+          <div class="sg-track" title="กดเพื่อเลื่อนตำแหน่งเพลง"><div class="sg-fill"></div></div>
+          <div class="sg-time num"><b>0:00</b><span> / YouTube</span></div>
+        </div>
+        <a class="ytlink" href="https://youtu.be/${p.id}" target="_blank" rel="noopener" title="เปิดเพลงอดีตพรรค${p.name} บน YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/></svg>YouTube</a>`;
+      row.querySelector('.playbtn').addEventListener('click', () => playSong(songData, row));
+      bindSeek(row.querySelector('.sg-track'), row);
+      wrap2.appendChild(row);
+    });
+  }
 })();
 </script>
 <script src="../js/theme-toggle-drag.js"></script>

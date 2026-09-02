@@ -1829,8 +1829,305 @@
     .map-zoom-controls { top: 75px; left: 12px; }
     .drone-tour-panel { min-width: 90%; }
   }
+
+  
+  /* 🏢 Corporate Tenant Logos & Office Towers (matching Image 6) */
+  .ashton-employer-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    pointer-events: auto;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .ashton-tenant-logos-cluster {
+    display: inline-flex;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    padding: 2px 4px;
+    gap: 3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  [data-theme="dark"] .ashton-tenant-logos-cluster,
+  .theme-dark .ashton-tenant-logos-cluster {
+    background: #1E293B;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  .ashton-tenant-logo-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #FFFFFF;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .ashton-tenant-logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .ashton-extra-badge {
+    font-size: 9px;
+    font-weight: 800;
+    color: #4B5563;
+    padding: 0 3px;
+  }
+  [data-theme="dark"] .ashton-extra-badge,
+  .theme-dark .ashton-extra-badge {
+    color: #CBD5E1;
+  }
+  .ashton-bldg-badge-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #111827;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 2px 6px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  [data-theme="dark"] .ashton-bldg-badge-name,
+  .theme-dark .ashton-bldg-badge-name {
+    color: #F8FAFC;
+    background: rgba(15, 23, 42, 0.92);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .ashton-tenant-subname {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #B85A3F;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  [data-theme="dark"] .ashton-tenant-subname,
+  .theme-dark .ashton-tenant-subname {
+    color: #FCA5A5;
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  /* 🏛️ Ashton 5 Pillars Architecture Styles */
+  .ashton-title-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .ashton-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .ashton-main-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+    margin: 0;
+  }
+  .ashton-theme-switch {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    gap: 2px;
+  }
+  [data-theme="dark"] .ashton-theme-switch,
+  .theme-dark .ashton-theme-switch {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .ashton-theme-btn {
+    width: 22px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .ashton-theme-btn.active {
+    background: var(--text-main);
+    color: var(--card-bg);
+  }
+  .ashton-tagline {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.35;
+    margin: 6px 0 0 0;
+  }
+
+  .ashton-sec-kicker {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin: 14px 0 6px 0;
+  }
+  .ashton-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+  .ashton-row-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  /* Ashton Switches */
+  .switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+  }
+  .switch-toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(150, 150, 150, 0.3);
+    transition: .2s;
+    border-radius: 20px;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+  }
+  input:checked + .slider { background-color: var(--accent); }
+  input:checked + .slider:before { transform: translateX(16px); }
+
+  .switch-orange input:checked + .slider { background-color: #EDA340 !important; }
+  .switch-purple input:checked + .slider { background-color: #7A6BA8 !important; }
+  .switch-brown input:checked + .slider { background-color: #7C6A4E !important; }
+  .switch-terracotta input:checked + .slider { background-color: #A8574C !important; }
+  .switch-maroon input:checked + .slider { background-color: #9E4A44 !important; }
+  .switch-gold input:checked + .slider { background-color: #C9A227 !important; }
+  .switch-grey input:checked + .slider { background-color: #8C8C8C !important; }
+  .switch-green input:checked + .slider { background-color: #4C8C3F !important; }
+  .switch-beige input:checked + .slider { background-color: #B0A48E !important; }
+  .switch-blue input:checked + .slider { background-color: #3B82F6 !important; }
+  .switch-brick input:checked + .slider { background-color: #B85A3F !important; }
+  .switch-coral input:checked + .slider { background-color: #E05A47 !important; }
+  .switch-pink input:checked + .slider { background-color: #D9375E !important; }
+
+  /* Tree hierarchy vertical line & sub-pills */
+  .tree-branch-wrap {
+    margin: 4px 0 8px 4px;
+    padding-left: 8px;
+    border-left: 2px solid #CBD5E1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .branch-edu { border-left-color: #7C6A4E; }
+  .branch-health { border-left-color: #A8574C; }
+  .branch-sport { border-left-color: #5E7A5B; }
+  .branch-dining { border-left-color: #B08046; }
+  .branch-spa { border-left-color: #7A8C74; }
+  .branch-culture { border-left-color: #8A6A82; }
+
+  .sub-pills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tree-sub-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 12px;
+    font-size: 9.5px;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    cursor: pointer;
+  }
+  .tree-sub-btn.active {
+    border-color: var(--text-main);
+    color: var(--text-main);
+    font-weight: 700;
+  }
+
+  .amenities-pills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+  }
+  .amenity-grid-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 10.5px;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    cursor: pointer;
+  }
+  .amenity-grid-btn.active {
+    border-color: var(--text-main);
+    background: rgba(150, 150, 150, 0.1);
+  }
+
+  .pet-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 8px;
+    border-radius: 14px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: 1px solid #A8574C;
+    color: #A8574C;
+    cursor: pointer;
+  }
+  .rec-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 8px;
+    border-radius: 14px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: 1px solid #9E4A44;
+    color: #9E4A44;
+    cursor: pointer;
+  }
+
+  .ashton-methodology {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--card-border);
+    font-size: 9px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
 </style>
 <script src="../js/icons.js"></script>
+<script src="bkk-ashton-data.js"></script>
 </head>
 <body>
 
@@ -2074,116 +2371,307 @@
   </button>
 
 
-  <!-- 🧭 Left Comprehensive Intelligence & Lifestyle Sidebar (PHATTRA 6 Pillars) -->
+  <!-- 🧭 Left Comprehensive Intelligence & Lifestyle Sidebar (PHATTRA Ashton 5 Pillars) -->
   <div class="glass-card intel-sidebar" id="intelSidebar">
     <div class="intel-sidebar-header">
-      <div>
-        <span class="intel-kicker">URBAN & LIFESTYLE INTELLIGENCE</span>
-        <h3 class="intel-heading">BANGKOK 360° LAYERS</h3>
+      <div class="ashton-title-wrap">
+        <div class="ashton-header-top">
+          <h1 class="ashton-main-title">Ashton</h1>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="ashton-theme-switch">
+              <button type="button" class="ashton-theme-btn" id="btnAshtonDark" title="Dark mode">
+                <svg class="mdico" style="width:11px;height:11px;"><use href="#i-moon"></use></svg>
+              </button>
+              <button type="button" class="ashton-theme-btn active" id="btnAshtonLight" title="Light mode">
+                <svg class="mdico" style="width:11px;height:11px;"><use href="#i-sun"></use></svg>
+              </button>
+            </div>
+            <button type="button" class="intel-close-btn" id="closeIntelSidebar" title="ปิดแผงควบคุม">×</button>
+          </div>
+        </div>
+        <p class="ashton-tagline">What's coming, where the houses trade, who is hiring — one city, in layers.</p>
       </div>
-      <button type="button" class="intel-close-btn" id="closeIntelSidebar" title="ปิดแผงควบคุม">×</button>
     </div>
 
     <div class="intel-sidebar-body">
-      <!-- 1. HEIGHT EXTRUSION MODES -->
-      <div class="intel-section">
-        <div class="intel-sec-title">HEIGHT EXTRUSION DRIVER</div>
-        <div class="height-chips-grid" id="heightChipsContainer">
-          <button type="button" class="height-chip" data-height="flat">Flat (2D)</button>
-          <button type="button" class="height-chip active" data-height="projects">Projects (ความสูงจริง)</button>
-          <button type="button" class="height-chip" data-height="value">Value (ราคา/ตร.ม.)</button>
-          <button type="button" class="height-chip" data-height="roles">Open Roles (แหล่งงาน)</button>
-        </div>
-      </div>
-
-      <!-- 2. TRANSIT PROXIMITY FILTER -->
-      <div class="intel-section">
-        <div class="intel-sec-title">TRANSIT DISTANCE FILTER</div>
-        <div class="transit-dist-grid" id="transitDistFilterContainer">
-          <button type="button" class="transit-dist-btn active" data-dist="any">Any</button>
-          <button type="button" class="transit-dist-btn" data-dist="500">500 m</button>
-          <button type="button" class="transit-dist-btn" data-dist="1000">1 km</button>
-        </div>
-      </div>
-
-      <!-- 3. 🏢 THE PROPERTY -->
-      <div class="intel-section">
-        <div class="intel-sec-header">
-          <span class="intel-sec-title">THE PROPERTY</span>
-          <label class="switch-toggle">
+      <!-- 🔹 THE PROPERTY -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">THE PROPERTY</p>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Projects</span>
+          <label class="switch-toggle switch-orange">
             <input type="checkbox" id="toggleProjects" checked>
             <span class="slider"></span>
           </label>
         </div>
-        <div class="intel-sub-desc">คอนโดมิเนียม & เมกะโปรเจกต์ 35+ โครงการ (EIA Footprint)</div>
-      </div>
-
-      <!-- 4. 🏛️ THE STREET -->
-      <div class="intel-section">
-        <div class="intel-sec-title">THE STREET</div>
-        <div class="intel-toggle-row">
-          <span><svg class="mdico"><use href="#i-landmark"></use></svg> Embassies (สถานทูต 10 แห่ง)</span>
-          <label class="switch-toggle">
-            <input type="checkbox" id="toggleEmbassies" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="intel-toggle-row">
-          <span><svg class="mdico"><use href="#i-waves"></use></svg> Flooding (จุดเสี่ยงน้ำท่วม 6 จุด)</span>
-          <label class="switch-toggle">
-            <input type="checkbox" id="toggleFlooding" checked>
-            <span class="slider"></span>
-          </label>
+        <!-- Pipeline mode & Search -->
+        <div style="display:flex; align-items:center; gap:6px; margin:6px 0 8px;">
+          <div style="display:inline-flex; border:1px solid var(--card-border); border-radius:14px; padding:2px; background:rgba(0,0,0,0.04);">
+            <button type="button" id="btnPropOurs" style="border:none; background:transparent; font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer; color:var(--text-muted);">Our properties 2</button>
+            <button type="button" id="btnPropPipeline" class="active" style="border:none; background:var(--text-main); color:var(--card-bg); font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer;">What's coming 444</button>
+          </div>
         </div>
       </div>
 
-      <!-- 5. 🌿 THE LIFE — AMENITIES -->
-      <div class="intel-section">
-        <div class="intel-sec-header">
-          <span class="intel-sec-title">THE LIFE — AMENITIES</span>
-          <label class="switch-toggle">
-            <input type="checkbox" id="toggleAmenities" checked>
+      <!-- 🔹 THE STREET -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">THE STREET</p>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Embassies</span>
+          <label class="switch-toggle switch-purple">
+            <input type="checkbox" id="toggleEmbassies">
             <span class="slider"></span>
           </label>
-        </div>
-        <div class="amenities-chips-wrap" id="amenitiesChipsWrap">
-          <button type="button" class="amenity-subchip active" data-sub="parks"><span><svg class="mdico"><use href="#i-trees"></use></svg> Parks</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="education"><span><svg class="mdico"><use href="#i-graduation-cap"></use></svg> Education</span> <span class="chip-badge">7</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="health"><span><svg class="mdico"><use href="#i-hospital"></use></svg> Health</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="sport"><span><svg class="mdico"><use href="#i-dumbbell"></use></svg> Sport</span> <span class="chip-badge">5</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="dining"><span><svg class="mdico"><use href="#i-soup"></use></svg> Dining</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="spa"><span><svg class="mdico"><use href="#i-heart"></use></svg> Spa</span> <span class="chip-badge">4</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="culture"><span><svg class="mdico"><use href="#i-drama"></use></svg> Culture</span> <span class="chip-badge">5</span></button>
         </div>
       </div>
 
-      <!-- 6. 🐾 WITH A PET -->
-      <div class="intel-section">
-        <div class="intel-sec-header">
-          <span class="intel-sec-title">WITH A PET (PET-FRIENDLY)</span>
-          <label class="switch-toggle">
-            <input type="checkbox" id="togglePetFriendly" checked>
+      <!-- 🔹 THE LIFE -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">THE LIFE</p>
+
+        <!-- Amenities -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Amenities</span>
+          <label class="switch-toggle switch-brown">
+            <input type="checkbox" id="toggleAmenities">
             <span class="slider"></span>
           </label>
         </div>
-        <div class="pet-chips-wrap" id="petChipsWrap">
-          <button type="button" class="pet-subchip active" data-petsub="vet"><span><svg class="mdico"><use href="#i-stethoscope"></use></svg> Vet & Emergency</span> <span class="chip-badge">4</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="malls"><span><svg class="mdico"><use href="#i-coffee"></use></svg> Malls & Dining</span> <span class="chip-badge">5</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="parks"><span><svg class="mdico"><use href="#i-footprints"></use></svg> Parks & Dog Runs</span> <span class="chip-badge">3</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="boarding"><span><svg class="mdico"><use href="#i-house"></use></svg> Boarding & Daycare</span> <span class="chip-badge">3</span></button>
+        <div class="ashton-sub-content" id="amenitiesSubContent">
+          <!-- Main 2-Column Grid -->
+          <div class="amenities-pills-grid">
+            <button type="button" class="amenity-grid-btn active" data-kind="parks">
+              <span><span class="color-dot" style="background:#22C55E;"></span> Parks</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="education">
+              <span><span class="color-dot" style="background:#7C6A4E;"></span> Education</span>
+              <span class="pill-num">37</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="health">
+              <span><span class="color-dot" style="background:#A8574C;"></span> Health</span>
+              <span class="pill-num">150</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="sport">
+              <span><span class="color-dot" style="background:#5E7A5B;"></span> Sport</span>
+              <span class="pill-num">252</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="dining">
+              <span><span class="color-dot" style="background:#B08046;"></span> Dining</span>
+              <span class="pill-num">157</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="spa">
+              <span><span class="color-dot" style="background:#7A8C74;"></span> Spa</span>
+              <span class="pill-num">121</span>
+            </button>
+            <button type="button" class="amenity-grid-btn active" data-kind="culture" style="grid-column: 1 / -1;">
+              <span><span class="color-dot" style="background:#8A6A82;"></span> Culture</span>
+              <span class="pill-num">54</span>
+            </button>
+          </div>
+
+          <!-- Tree Hierarchy sub-pills -->
+          <div class="tree-branch-wrap branch-edu">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">International 17</button>
+              <button type="button" class="tree-sub-btn">Private 3</button>
+            </div>
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn">University 17</button>
+            </div>
+          </div>
+
+          <div class="tree-branch-wrap branch-health">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">Private 143</button>
+              <button type="button" class="tree-sub-btn">Public 7</button>
+            </div>
+          </div>
+
+          <div class="tree-branch-wrap branch-sport">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">Golf 44</button>
+              <button type="button" class="tree-sub-btn">Tennis 55</button>
+            </div>
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn">Polo & riding 17</button>
+              <button type="button" class="tree-sub-btn">Pilates 59</button>
+            </div>
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn">Yoga 23</button>
+              <button type="button" class="tree-sub-btn">Gym 54</button>
+            </div>
+          </div>
+
+          <div class="tree-branch-wrap branch-dining">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">Fine dining 67</button>
+              <button type="button" class="tree-sub-btn">Rooftop 30</button>
+            </div>
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn">Coffee 60</button>
+            </div>
+          </div>
+
+          <div class="tree-branch-wrap branch-spa">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">Spa 82</button>
+              <button type="button" class="tree-sub-btn">Wellness 39</button>
+            </div>
+          </div>
+
+          <div class="tree-branch-wrap branch-culture">
+            <div class="sub-pills-row">
+              <button type="button" class="tree-sub-btn active">Gallery 23</button>
+              <button type="button" class="tree-sub-btn">Museum 31</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- With a pet -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">With a pet</span>
+          <label class="switch-toggle switch-terracotta">
+            <input type="checkbox" id="togglePetFriendly">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="ashton-sub-content" id="petsSubContent">
+          <div class="sub-pills-row" style="gap: 5px;">
+            <button type="button" class="pet-pill-btn active" data-petsub="vet">Vet & emergency 227</button>
+            <button type="button" class="pet-pill-btn active" data-petsub="venue">Malls, cafés & dining 128</button>
+            <button type="button" class="pet-pill-btn" data-petsub="park">Parks & dog runs 53</button>
+            <button type="button" class="pet-pill-btn" data-petsub="boarding">Boarding & daycare 58</button>
+            <button type="button" class="pet-pill-btn" data-petsub="groom">Grooming & spa 62</button>
+            <button type="button" class="pet-pill-btn" data-petsub="shop">Food & supplies 46</button>
+            <button type="button" class="pet-pill-btn" data-petsub="stay">Stays that take pets 93</button>
+          </div>
+        </div>
+
+        <!-- Recognised -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Recognised</span>
+          <label class="switch-toggle switch-maroon">
+            <input type="checkbox" id="toggleRecognised">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="ashton-sub-content" id="recognisedSubContent">
+          <div class="sub-pills-row" style="gap: 5px;">
+            <button type="button" class="rec-pill-btn active" data-rec="dining">Restaurants 330</button>
+            <button type="button" class="rec-pill-btn active" data-rec="hotel">Hotels 129</button>
+            <button type="button" class="rec-pill-btn" data-rec="bar">Bars 225</button>
+            <button type="button" class="rec-pill-btn" data-rec="vineyard">Vineyards 100</button>
+            <button type="button" class="rec-pill-btn" data-rec="hospital">Hospitals 11</button>
+          </div>
+        </div>
+
+        <!-- Brands -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Brands</span>
+          <label class="switch-toggle switch-gold">
+            <input type="checkbox" id="toggleBrands">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="ashton-sub-content" id="brandsSubContent">
+          <div class="sub-pills-row" style="gap: 5px;">
+            <button type="button" class="tree-sub-btn active" data-bcat="stay">Hotels & resorts 131</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="beauty">Fragrance & beauty 257</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="jewel">Jewellery 411</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="fashion">Fashion 158</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="craft">Thai craft 21</button>
+          </div>
+        </div>
+
+        <!-- Centres -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Centres</span>
+          <label class="switch-toggle switch-grey">
+            <input type="checkbox" id="toggleCentres">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Sport -->
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Sport</span>
+          <label class="switch-toggle switch-green">
+            <input type="checkbox" id="toggleSport">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
 
-      <!-- 7. 💼 THE WORK & HIRING -->
-      <div class="intel-section">
-        <div class="intel-sec-header">
-          <span class="intel-sec-title">THE WORK — CORPORATE & TECH</span>
-          <label class="switch-toggle">
-            <input type="checkbox" id="toggleCorporate" checked>
+      <!-- 🔹 THE NUMBERS -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">THE NUMBERS</p>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Districts</span>
+          <label class="switch-toggle switch-beige">
+            <input type="checkbox" id="toggleDistricts">
             <span class="slider"></span>
           </label>
         </div>
-        <div class="intel-sub-desc">TikTok, Deloitte, Google, Microsoft, Agoda, LINE, Bluebik, Shopee ฯลฯ</div>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Flooding</span>
+          <label class="switch-toggle switch-blue">
+            <input type="checkbox" id="toggleFlooding">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Hiring</span>
+          <label class="switch-toggle switch-brick">
+            <input type="checkbox" id="toggleCorporate">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 🔹 THE FEW -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">THE FEW</p>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">Residences</span>
+          <label class="switch-toggle switch-coral">
+            <input type="checkbox" id="toggleResidences">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="ashton-toggle-row">
+          <span class="ashton-row-label">My shortlist</span>
+          <label class="switch-toggle switch-pink">
+            <input type="checkbox" id="toggleShortlist">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 🔹 3D CONTROLS & DEVELOPERS -->
+      <div class="ashton-section">
+        <p class="ashton-sec-kicker">3D CITY & DEVELOPERS</p>
+        <div class="layer-btns-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 6px;">
+          <button type="button" class="menu-btn active" id="btn3DBuildings"><span><svg class="mdico"><use href="#i-building-2"></use></svg></span> 3D Buildings</button>
+          <button type="button" class="menu-btn active" id="btnLandmarksToggle"><span><svg class="mdico"><use href="#i-sparkles"></use></svg></span> Landmarks 3D</button>
+        </div>
+        <div class="explore-tools-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 8px;">
+          <button type="button" class="menu-btn" id="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> Drone Tour</button>
+          <button type="button" class="menu-btn" id="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> Route Finder</button>
+        </div>
+        <div class="brand-chips-wrap" id="brandChipsContainer" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+          <button type="button" class="brand-chip active" data-brand="all">All</button>
+          <button type="button" class="brand-chip" data-brand="ananda">Ananda</button>
+          <button type="button" class="brand-chip" data-brand="sansiri">Sansiri</button>
+          <button type="button" class="brand-chip" data-brand="ap">AP</button>
+          <button type="button" class="brand-chip" data-brand="sc">SC ASSET</button>
+          <button type="button" class="brand-chip" data-brand="origin">Origin</button>
+          <button type="button" class="brand-chip" data-brand="noble">Noble</button>
+        </div>
+      </div>
+
+      <!-- 🔹 FOOTER METHODOLOGY -->
+      <div class="ashton-methodology">
+        <p>Buildings are drawn as massing from each project's real plot area — a volume, not a design. Fainter blocks are projects whose filing did not state a plot size. Named residences carry OpenStreetMap outlines where OSM has drawn one. Station distances are straight-line, not walking.</p>
       </div>
     </div>
   </div>
@@ -2397,11 +2885,16 @@
     transitDistFilter: "any", // "any", "500", "1000"
     layers: {
       projects: true,
-      embassies: true,
-      flooding: true,
-      amenities: true,
-      petFriendly: true,
-      corporate: true
+      embassies: false,
+      flooding: false,
+      amenities: false,
+      petFriendly: false,
+      corporate: false,
+      recognised: false,
+      brands: false,
+      centres: false,
+      sport: false,
+      residences: false
     },
     activeAmenities: { parks: true, education: true, health: true, sport: true, dining: true, spa: true, culture: true },
     activePets: { vet: true, malls: true, parks: true, boarding: true },
@@ -3024,6 +3517,95 @@
       });
     }
 
+    // 6. Ashton 3D Office Towers Massing (from bkk-ashton-data.js)
+    if (typeof ASHTON_DATA !== "undefined" && ASHTON_DATA.officeTowers) {
+      var towerFeatures = [];
+      ASHTON_DATA.officeTowers.forEach(function(b, idx) {
+        if (b.ring && b.ring.length > 2) {
+          towerFeatures.push({
+            type: "Feature",
+            geometry: { type: "Polygon", coordinates: [b.ring] },
+            properties: {
+              id: "tow-" + idx,
+              height: (b.height || 25) * 3.5,
+              roles: (b.companies || []).length,
+              name: b.name || (b.companies ? b.companies[0] : "Office Tower")
+            }
+          });
+        }
+      });
+
+      if (!map.getSource("ashton-towers-src")) {
+        map.addSource("ashton-towers-src", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: towerFeatures }
+        });
+      }
+
+      if (!map.getLayer("ashton-towers-3d")) {
+        map.addLayer({
+          id: "ashton-towers-3d",
+          type: "fill-extrusion",
+          source: "ashton-towers-src",
+          paint: {
+            "fill-extrusion-height": ["get", "height"],
+            "fill-extrusion-base": 0,
+            "fill-extrusion-color": [
+              "interpolate", ["linear"], ["get", "roles"],
+              0, "#E2E8F0",
+              1, "#CBD5E1",
+              3, "#EDA340",
+              8, "#B85A3F"
+            ],
+            "fill-extrusion-opacity": 0.65
+          }
+        });
+      }
+    }
+
+    // 7. Ashton Embassy Plots Outlines (from bkk-ashton-data.js)
+    if (typeof ASHTON_DATA !== "undefined" && ASHTON_DATA.embassiesList) {
+      var embFeatures = [];
+      ASHTON_DATA.embassiesList.forEach(function(emb, idx) {
+        if (emb.ring && emb.ring.length > 2) {
+          embFeatures.push({
+            type: "Feature",
+            geometry: { type: "Polygon", coordinates: [emb.ring] },
+            properties: { id: "emb-" + idx, name: emb.name }
+          });
+        }
+      });
+
+      if (embFeatures.length && !map.getSource("ashton-emb-plots-src")) {
+        map.addSource("ashton-emb-plots-src", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: embFeatures }
+        });
+      }
+
+      if (embFeatures.length && !map.getLayer("ashton-emb-plots-fill")) {
+        map.addLayer({
+          id: "ashton-emb-plots-fill",
+          type: "fill",
+          source: "ashton-emb-plots-src",
+          paint: {
+            "fill-color": "#7A6BA8",
+            "fill-opacity": 0.18
+          }
+        });
+        map.addLayer({
+          id: "ashton-emb-plots-line",
+          type: "line",
+          source: "ashton-emb-plots-src",
+          paint: {
+            "line-color": "#7A6BA8",
+            "line-width": 1.5,
+            "line-opacity": 0.85
+          }
+        });
+      }
+    }
+
     // 5. 10 Mass Transit Lines & Station Badges
     if (window.BKK_TRANSIT) {
       if (!map.getSource("transit-lines")) {
@@ -3487,6 +4069,84 @@
       });
     }
 
+    // 5.5 Ashton Corporate & Office Tower Markers with Tenant Logos
+    if (typeof ASHTON_DATA !== "undefined" && ASHTON_DATA.officeTowers) {
+      ASHTON_DATA.officeTowers.forEach(function(b) {
+        if (!b.lng || !b.lat) return;
+        var tenants = b.tenantList || [];
+        var bName = b.name || (b.companies && b.companies[0]);
+        if (!bName) return;
+
+        var el = document.createElement("div");
+        el.className = "ashton-employer-pin";
+
+        var logosWithImg = tenants.filter(function(t) { return !!t.logo; });
+        var htmlStr = "";
+
+        if (logosWithImg.length > 0) {
+          htmlStr += '<div class="ashton-tenant-logos-cluster">';
+          var maxLogos = Math.min(logosWithImg.length, 3);
+          for (var i = 0; i < maxLogos; i++) {
+            htmlStr += '<span class="ashton-tenant-logo-circle"><img src="' + logosWithImg[i].logo + '" alt="' + logosWithImg[i].name + '" /></span>';
+          }
+          if (tenants.length > 3) {
+            htmlStr += '<span class="ashton-extra-badge">+' + (tenants.length - 3) + '</span>';
+          }
+          htmlStr += '</div>';
+        }
+
+        htmlStr += '<span class="ashton-bldg-badge-name">' + bName + '</span>';
+        if (b.companies && b.companies.length > 0 && b.name && b.companies[0] !== b.name) {
+          htmlStr += '<span class="ashton-tenant-subname">' + b.companies[0] + '</span>';
+        }
+
+        el.innerHTML = htmlStr;
+
+        var marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+          .setLngLat([b.lng, b.lat])
+          .addTo(STATE.map);
+
+        STATE.intelMarkers.push({
+          marker: marker,
+          el: el,
+          coords: [b.lng, b.lat],
+          layer: "corporate",
+          sub: "office",
+          allowed: false,
+          culled: false
+        });
+      });
+    }
+
+    // 6. Ashton Luxury & Trophy POIs from bkk-ashton-data.js
+    if (typeof ASHTON_DATA !== "undefined") {
+      if (ASHTON_DATA.recognised) {
+        ASHTON_DATA.recognised.forEach(function(r) {
+          addIntelMarker({ name: r.name, sub: r.type }, [r.lng, r.lat], "recognised", r.type);
+        });
+      }
+      if (ASHTON_DATA.brands) {
+        ASHTON_DATA.brands.forEach(function(b) {
+          addIntelMarker({ name: b.name, sub: b.brand }, [b.lng, b.lat], "brands", b.brand);
+        });
+      }
+      if (ASHTON_DATA.centres) {
+        ASHTON_DATA.centres.forEach(function(c) {
+          addIntelMarker({ name: c.name, sub: "mall" }, [c.lng, c.lat], "centres", "mall");
+        });
+      }
+      if (ASHTON_DATA.sport) {
+        ASHTON_DATA.sport.forEach(function(s) {
+          addIntelMarker({ name: s.name, sub: s.kind }, [s.lng, s.lat], "sport", s.kind);
+        });
+      }
+      if (ASHTON_DATA.residences) {
+        ASHTON_DATA.residences.forEach(function(res) {
+          addIntelMarker({ name: res.name, sub: "trophy" }, [res.lng, res.lat], "residences", "trophy");
+        });
+      }
+    }
+
     updateIntelMarkers();
   }
 
@@ -3523,6 +4183,11 @@
       else if (m.layer === "petFriendly") {
         if (!STATE.layers.petFriendly || !STATE.activePets[m.sub]) allowed = false;
       }
+      else if (m.layer === "recognised" && !STATE.layers.recognised) allowed = false;
+      else if (m.layer === "brands" && !STATE.layers.brands) allowed = false;
+      else if (m.layer === "centres" && !STATE.layers.centres) allowed = false;
+      else if (m.layer === "sport" && !STATE.layers.sport) allowed = false;
+      else if (m.layer === "residences" && !STATE.layers.residences) allowed = false;
 
       if (zoom < 12.0) allowed = false;
 
@@ -3547,24 +4212,36 @@
      it are dropped. Insertion order = priority (embassies, amenities, pets, corp, flood). */
   function cullIntelOverlaps() {
     var vis = [];
-    STATE.intelMarkers.forEach(function(m) {
-      if (!m.allowed) { m.culled = false; return; }
-      m.el.style.display = "inline-flex";
-      vis.push(m);
-    });
+    var vpW = window.innerWidth;
+    var vpH = window.innerHeight;
+    var count = 0;
+    var maxCount = 40;
 
-    // batch the writes above, then the reads here, so this costs one reflow not 150
-    vis.forEach(function(m) {
-      if (!m.w) { m.w = m.el.offsetWidth; m.h = m.el.offsetHeight; }
+    STATE.intelMarkers.forEach(function(m) {
+      if (!m.allowed) { m.culled = false; m.el.style.display = "none"; return; }
+      var pt = STATE.map.project(m.coords);
+      if (pt.x < -40 || pt.x > vpW + 40 || pt.y < -40 || pt.y > vpH + 40) {
+        m.culled = true;
+        m.el.style.display = "none";
+        return;
+      }
+      if (!m.w) { m.w = 110; m.h = 24; }
+      vis.push({ m: m, pt: pt });
     });
 
     var placed = [];
     var PAD = 3;
-    vis.forEach(function(m) {
-      var pt = STATE.map.project(m.coords);
+    vis.forEach(function(item) {
+      var m = item.m;
+      var pt = item.pt;
+      if (count >= maxCount) {
+        m.culled = true;
+        m.el.style.display = "none";
+        return;
+      }
       var l = pt.x - m.w / 2 - PAD;
       var r = pt.x + m.w / 2 + PAD;
-      var t = pt.y - m.h - PAD;                    // markers are anchored "bottom"
+      var t = pt.y - m.h - PAD;
       var b = pt.y + PAD;
       var hit = false;
       for (var i = 0; i < placed.length; i++) {
@@ -3572,8 +4249,13 @@
         if (l < q.r && r > q.l && t < q.b && b > q.t) { hit = true; break; }
       }
       m.culled = hit;
-      if (hit) m.el.style.display = "none";
-      else placed.push({ l: l, r: r, t: t, b: b });
+      if (hit) {
+        m.el.style.display = "none";
+      } else {
+        m.el.style.display = "inline-flex";
+        placed.push({ l: l, r: r, t: t, b: b });
+        count++;
+      }
     });
   }
 
@@ -4516,6 +5198,88 @@
         updateIntelMarkers();
       });
     }
+
+    if ($("#toggleRecognised")) {
+      $("#toggleRecognised").addEventListener("change", function(e) {
+        STATE.layers.recognised = e.target.checked;
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#toggleBrands")) {
+      $("#toggleBrands").addEventListener("change", function(e) {
+        STATE.layers.brands = e.target.checked;
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#toggleCentres")) {
+      $("#toggleCentres").addEventListener("change", function(e) {
+        STATE.layers.centres = e.target.checked;
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#toggleSport")) {
+      $("#toggleSport").addEventListener("change", function(e) {
+        STATE.layers.sport = e.target.checked;
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#toggleDistricts")) {
+      $("#toggleDistricts").addEventListener("change", function(e) {
+        if ($("#chipDistricts")) $("#chipDistricts").click();
+      });
+    }
+
+    if ($("#toggleResidences")) {
+      $("#toggleResidences").addEventListener("change", function(e) {
+        STATE.layers.residences = e.target.checked;
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#toggleShortlist")) {
+      $("#toggleShortlist").addEventListener("change", function(e) {
+        updateIntelMarkers();
+      });
+    }
+
+    if ($("#btnAshtonDark")) {
+      $("#btnAshtonDark").addEventListener("click", function() {
+        $("#btnAshtonDark").classList.add("active");
+        if ($("#btnAshtonLight")) $("#btnAshtonLight").classList.remove("active");
+        if (STATE.theme !== "dark") $("#btnThemeToggle").click();
+      });
+    }
+
+    if ($("#btnAshtonLight")) {
+      $("#btnAshtonLight").addEventListener("click", function() {
+        $("#btnAshtonLight").classList.add("active");
+        if ($("#btnAshtonDark")) $("#btnAshtonDark").classList.remove("active");
+        if (STATE.theme !== "light") $("#btnThemeToggle").click();
+      });
+    }
+
+    if ($("#btnPropOurs") && $("#btnPropPipeline")) {
+      $("#btnPropOurs").addEventListener("click", function() {
+        $("#btnPropOurs").classList.add("active");
+        $("#btnPropPipeline").classList.remove("active");
+      });
+      $("#btnPropPipeline").addEventListener("click", function() {
+        $("#btnPropPipeline").classList.add("active");
+        $("#btnPropOurs").classList.remove("active");
+      });
+    }
+
+    // Sub-pills click handlers
+    $(".amenity-grid-btn, .tree-sub-btn, .pet-pill-btn, .rec-pill-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        btn.classList.toggle("active");
+        updateIntelMarkers();
+      });
+    });
 
     // Amenities Subchips
     $$("#amenitiesChipsWrap .amenity-subchip").forEach(function(btn) {

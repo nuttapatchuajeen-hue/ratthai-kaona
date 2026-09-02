@@ -258,36 +258,18 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
     $('ynote').textContent = TLE.note || '';
   })();
 
-  /* ---------- เพลงประกอบ — ไฟล์ mp3 ที่มีอยู่แล้วใน ../songs/ และ ../songs-past/ ---------- */
+  /* ---------- เพลงประกอบพื้นหลัง — ไฟล์ mp3 ที่มีอยู่ใน ../songs/ ---------- */
   var SONGS = [
-    { n: 'ภูมิใจไทย', f: '../songs/bhumjaithai.mp3' },
-    { n: 'ประชาชน', f: '../songs/peoples.mp3' },
-    { n: 'เพื่อไทย', f: '../songs/pheuthai.mp3' },
-    { n: 'กล้าธรรม', f: '../songs/klatham.mp3' },
-    { n: 'ประชาธิปัตย์', f: '../songs/democrat.mp3' },
-    { n: 'ก้าวไกล', f: '../songs-past/kaoklai.mp3' },
-    { n: 'อนาคตใหม่', f: '../songs-past/anakhotmai.mp3' },
-    { n: 'ไทยรักไทย', f: '../songs-past/thairakthai.mp3' },
-    { n: 'พลังประชาชน', f: '../songs-past/phalangprachachon.mp3' },
-    { n: 'ความหวังใหม่', f: '../songs-past/khwamwangmai.mp3' },
-    { n: 'กิจสังคม', f: '../songs-past/kitsangkhom.mp3' },
-    { n: 'สหประชาไทย', f: '../songs-past/sahaprachathai.mp3' },
-    { n: 'เสรีมนังคศิลา', f: '../songs-past/serimanangkhasila.mp3' }
+    { n: 'เพลงธีมการเลือกตั้ง', f: '../songs/all-elections.mp3' },
+    { n: 'เพลงชาติสยาม', f: '../songs/siam-anthem.mp3' },
+    { n: 'มาร์ชประชาธิปัตย์', f: '../songs/democrat-march.mp3' },
+    { n: 'เพลงชาติไทย', f: '../songs/chartthai.mp3' },
+    { n: 'ดนตรีบรรเลง 1', f: '../songs/bgm-1.mp3' },
+    { n: 'ดนตรีบรรเลง 2', f: '../songs/bgm-2.mp3' }
   ];
   var bgm = $('bgm'), sel = $('selSong');
   sel.innerHTML = SONGS.map(function (s, i) { return '<option value="' + i + '">♪ ' + s.n + '</option>'; }).join('');
-  /* ค่าเริ่มต้น: ไล่จากพรรคที่ได้ที่นั่งมากสุดลงมา หาพรรคแรกที่มีไฟล์เพลง
-     (ผู้ชนะบางปีไม่มีเพลง เช่น ชาติไทย/สามัคคีธรรม/สหภูมิ — จะได้เพลงร่วมยุคแทน
-      ไม่ใช่มาร์ชปี 2500 ทุกปีเหมือนเดิม) · ปีที่ยังไม่มีพรรคการเมืองใช้มาร์ชยุคเก่าสุด */
-  var byName = {}; SONGS.forEach(function (s, i) { byName[s.n] = i; });
-  var pick = byName[TLE.win || ''];
-  if (pick == null) {
-    (TLE.parties || []).some(function (p) {
-      if (byName[p[0]] != null) { pick = byName[p[0]]; return true; }
-      return false;
-    });
-  }
-  if (pick == null) pick = 12;
+  var pick = 0;
   sel.value = pick; bgm.src = SONGS[pick].f;
   sel.addEventListener('change', function () {
     var on = !bgm.paused; bgm.src = SONGS[sel.value].f; if (on) bgm.play().catch(function () { });

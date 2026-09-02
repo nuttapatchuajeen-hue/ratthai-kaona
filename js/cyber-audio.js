@@ -410,6 +410,16 @@
         dom.btnMin.setAttribute('title', isTucked ? 'ขยายปุ่มเพลง' : 'ย่อปุ่มเพลง');
         dom.btnMin.setAttribute('aria-label', isTucked ? 'ขยายปุ่มเพลง' : 'ย่อปุ่มเพลง');
       }
+      if (dom.pill) {
+        if (isTucked) {
+          dom.pill.setAttribute('title', 'คลิกเพื่อขยาย Cyber BGM Player');
+          dom.pill.setAttribute('aria-label', 'คลิกเพื่อขยาย Cyber BGM Player');
+        } else {
+          dom.pill.removeAttribute('title');
+          dom.pill.removeAttribute('aria-label');
+        }
+      }
+      if (updateCardOrientation) updateCardOrientation();
     }
     if (isTucked && drawerOpen) setDrawer(false);
   }
@@ -606,7 +616,7 @@
       '  </div>',
       '  <!-- FLOATING ROW WITH PILL & MINIMIZE BUTTON -->',
       '  <div class="cyber-bgm-row">',
-      '    <div class="cyber-bgm-pill" id="bgmPill" title="คลิกเพื่อเล่น/หยุด หรือขยายแผงควบคุมเพลง">',
+      '    <div class="cyber-bgm-pill" id="bgmPill" title="' + (isTucked ? 'คลิกเพื่อขยาย Cyber BGM Player' : 'คลิกเพื่อเล่น/หยุด หรือขยายแผงควบคุมเพลง') + '"' + (isTucked ? ' aria-label="คลิกเพื่อขยาย Cyber BGM Player"' : '') + '>',
       '      <div class="bgm-eq-visual">',
       '        <div class="bgm-eq-bar"></div>',
       '        <div class="bgm-eq-bar"></div>',
@@ -719,23 +729,33 @@
       if (!dom.slot) return;
       var slotW = dom.slot.offsetWidth || 180;
       var slotH = dom.slot.offsetHeight || 46;
-      var margin = 20;
+      var margin = window.innerWidth <= 768 ? 12 : 20;
 
       // ดูดติดขอบจอซ้าย หรือ ขวา ที่ใกล้ที่สุด (ไม่ลอยทับตัวหนังสือกลางจอ)
-      var snapLeft = (left < window.innerWidth / 2) ? margin : (window.innerWidth - slotW - margin);
+      var isL = (left + slotW / 2) < window.innerWidth / 2;
       var maxT = Math.max(margin, window.innerHeight - slotH - margin);
       var clampedT = Math.max(margin, Math.min(maxT, top));
 
       if (animate) {
-        dom.slot.style.transition = 'left 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), top 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15)';
+        dom.slot.style.transition = 'left 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), right 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), top 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15)';
       } else {
         dom.slot.style.transition = '';
       }
 
-      dom.slot.style.left = snapLeft + 'px';
+      if (isL) {
+        dom.slot.style.left = margin + 'px';
+        dom.slot.style.right = 'auto';
+        dom.slot.classList.add('bgm-side-l');
+        dom.slot.classList.remove('bgm-side-r');
+      } else {
+        dom.slot.style.right = margin + 'px';
+        dom.slot.style.left = 'auto';
+        dom.slot.classList.add('bgm-side-r');
+        dom.slot.classList.remove('bgm-side-l');
+      }
+
       dom.slot.style.top = clampedT + 'px';
       dom.slot.style.bottom = 'auto';
-      dom.slot.style.right = 'auto';
 
       updateCardOrientation();
 
@@ -745,7 +765,7 @@
         }, 320);
       }
 
-      return { left: snapLeft, top: clampedT };
+      return { side: isL ? 'left' : 'right', top: clampedT };
     }
 
     function applyPosition(left, top) {
@@ -763,14 +783,25 @@
       dom.slot.style.bottom = 'auto';
       dom.slot.style.right = 'auto';
 
+      var isL = (clampedL + slotW / 2) < window.innerWidth / 2;
+      dom.slot.classList.toggle('bgm-side-l', isL);
+      dom.slot.classList.toggle('bgm-side-r', !isL);
+
       updateCardOrientation();
     }
 
     // Restore saved position or snap to edge
     try {
       var savedPosXY = JSON.parse(localStorage.getItem('cyber-bgm-pos-xy') || 'null');
-      if (savedPosXY && typeof savedPosXY.left === 'number' && typeof savedPosXY.top === 'number') {
-        snapToEdge(savedPosXY.left, savedPosXY.top, false);
+      if (savedPosXY) {
+        var restoreT = typeof savedPosXY.top === 'number' ? savedPosXY.top : 300;
+        if (savedPosXY.side === 'right') {
+          snapToEdge(window.innerWidth, restoreT, false);
+        } else if (savedPosXY.side === 'left') {
+          snapToEdge(0, restoreT, false);
+        } else if (typeof savedPosXY.left === 'number') {
+          snapToEdge(savedPosXY.left, restoreT, false);
+        }
       }
     } catch(e) {}
 

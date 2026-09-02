@@ -122,22 +122,55 @@ html[data-theme="dark"] .ptip{background:#0E1C29;border:1px solid var(--line-2);
 .ava{position:relative;overflow:hidden}
 .ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%}
 
-/* campaign song player (ผู้ว่าฯ tab) */
-.songcard{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--wash);margin-bottom:13px}
-.songplay{width:40px;height:40px;border-radius:50%;border:0;flex:0 0 auto;cursor:pointer;display:grid;place-items:center;color:#fff;font-size:.9rem;background:linear-gradient(135deg,#00A651,#00783A);box-shadow:var(--shadow);transition:transform .1s}
-.songplay:active{transform:scale(.92)}
-.songinfo{flex:1 1 auto;min-width:0}
-.songttl{font-family:'Kanit';font-weight:600;font-size:.85rem;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.songsub{font-size:.66rem;color:var(--muted);margin:1px 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.songbar{height:6px;border-radius:4px;background:var(--line-2);overflow:hidden;cursor:pointer}
-.songbar i{display:block;height:100%;width:0;background:#00A651;border-radius:4px;transition:width .2s linear}
-.songtime{font-family:'Kanit';font-size:.64rem;color:var(--muted);flex:0 0 auto;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
-.songyt{flex:0 0 auto;font-family:'Kanit';font-weight:700;font-size:.62rem;color:#d00;background:rgba(220,0,0,.08);border:1px solid rgba(220,0,0,.25);border-radius:8px;padding:5px 7px;white-space:nowrap}
-.songwrap{margin-bottom:13px}
-.songhead{font-family:'Kanit';font-weight:600;font-size:.8rem;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:7px}
-.songhead svg{color:var(--orange-deep);flex:0 0 auto}
-.songlist{display:flex;flex-direction:column;gap:8px}
-.songlist .songcard{margin-bottom:0}
+/* ---------- การ์ดเพลงหาเสียง — YouTube mini player แบบลอย (แทนการ์ด mp3 + ปุ่ม YT เดิม) ----------
+   ฝังคลิปต้นทางผ่าน YouTube IFrame API = การฝังอย่างเป็นทางการ ไม่ต้องเก็บไฟล์เสียงไว้ในรีโปเอง
+   และยอดวิวยังกลับไปหาเจ้าของผลงาน
+   ลากย้ายได้ (จับที่แถบหัว) แล้วดูดเข้าติดขอบซ้าย/ขวาของจอเสมอ — จำตำแหน่งไว้ใน localStorage
+   ค่าตั้งต้นวางไว้ขอบซ้ายล่าง เพราะขอบขวาล่างมีปุ่ม "ผู้ช่วย AI" กับปุ่มสลับธีมลอยอยู่ก่อนแล้ว   */
+#bkkyt{position:fixed;left:14px;top:14px;z-index:9990;width:302px;max-width:calc(100vw - 24px);
+  background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 18px 48px -12px rgba(6,20,32,.28), 0 4px 14px rgba(6,20,32,.08);color:var(--ink);touch-action:none;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:left .3s cubic-bezier(.22,.8,.3,1),top .3s cubic-bezier(.22,.8,.3,1),width .26s ease,box-shadow .2s}
+html[data-theme="dark"] #bkkyt{background:rgba(14,26,38,.78);border-color:var(--line-2,#1E3A50);box-shadow:0 20px 50px -10px rgba(0,0,0,.6)}
+#bkkyt.nofx{transition:none}
+#bkkyt.drag{transition:none;box-shadow:0 26px 62px -20px rgba(6,20,32,.55)}
+#bkkyt .ythead{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 11px;cursor:grab;
+  background:var(--wash);border-bottom:1px solid var(--line);user-select:none;-webkit-user-select:none}
+html[data-theme="dark"] #bkkyt .ythead{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);border-color:var(--line-2,#1E3A50)}
+#bkkyt.drag .ythead{cursor:grabbing}
+#bkkyt .ytmark{flex:0 0 auto;display:grid;place-items:center;color:#FF0033;line-height:0}
+#bkkyt .ytmark svg{width:22px;height:22px}
+/* เต้นเบา ๆ ตอนกำลังเล่น = บอกสถานะได้แม้ย่อเหลือปุ่มกลม */
+#bkkyt.playing .ytmark{animation:ytpulse 1.9s ease-in-out infinite}
+@keyframes ytpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.13);opacity:.72}}
+@media(prefers-reduced-motion:reduce){#bkkyt.playing .ytmark{animation:none}}
+#bkkyt .ytmeta{flex:1 1 auto;min-width:0;line-height:1.25}
+#bkkyt .ytmeta b{display:block;font-family:'Kanit';font-weight:500;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bkkyt .ytmeta small{display:block;font-size:.66rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bkkyt button{flex:0 0 auto;width:26px;height:26px;border:0;border-radius:8px;padding:0;background:transparent;
+  color:var(--ink-2);cursor:pointer;display:grid;place-items:center;transition:.12s}
+#bkkyt button:hover{background:var(--orange-soft);color:var(--orange-deep)}
+#bkkyt svg.ytic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ตัวคลิป — ย่อด้วย grid-template-rows (อนิเมตได้ ต่างจาก height:auto) และไม่ถอด iframe ทิ้ง เพลงจึงเล่นต่อ */
+#bkkyt .ytbody{display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease}
+#bkkyt.min .ytbody{grid-template-rows:0fr}
+#bkkyt.min .ythead{border-bottom:0}
+#bkkyt .ytinner{overflow:hidden;min-height:0}
+#bkkyt .ytframe{position:relative;aspect-ratio:16/9;margin:9px 9px 0;border-radius:11px;overflow:hidden;background:#000}
+#bkkyt .ytframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+#bkkyt .ytfoot{display:flex;align-items:center;gap:4px;padding:6px 10px 8px}
+#bkkyt .ytno{font-family:'Kanit';font-size:.66rem;font-variant-numeric:tabular-nums;color:var(--muted);min-width:28px;text-align:center}
+#bkkyt .ytsp{flex:1 1 auto}
+#bkkyt .ytopen{flex:0 0 auto;font-family:'Kanit';font-weight:600;font-size:.66rem;color:var(--green-deep);border-bottom:1px solid transparent;transition:.12s}
+#bkkyt .ytopen:hover{border-bottom-color:currentColor}
+/* ย่อเก็บเป็นปุ่มกลมติดขอบ — คลิกที่ปุ่มเพื่อกางกลับ (ลากปุ่มย้ายขอบได้เหมือนกัน) */
+#bkkyt.bub{width:48px;border-radius:50%;cursor:pointer}
+#bkkyt.bub .ythead{padding:13px;justify-content:center;background:transparent;border-bottom:0}
+#bkkyt.bub .ytmeta,#bkkyt.bub .ythead button{display:none}
+#bkkyt.bub .ytbody{grid-template-rows:0fr}
+@media(max-width:860px){#bkkyt{width:262px}
+  #bkkyt .ytmeta b{font-size:.76rem}#bkkyt .ytmeta small{font-size:.62rem}}
 
 /* party seat totals */
 .ptot{display:flex;flex-direction:column;gap:11px}
@@ -623,61 +656,206 @@ function govAvatar(c,cls){
   return `<div class="${cls} ava">${face}${f?`<img src="bkk-photos/${f}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`;
 }
 
-/* ---------- campaign songs — เล่นจากไฟล์ mp3 ใน ../songs/ (เสียงอย่างเดียว)
-   + ปุ่ม YT ไว้เป็นลิงก์สำรอง (คลิป official ปิดการฝัง เล่นในหน้าไม่ได้) ---------- */
-const SONGS=[
-  {file:'chadchart-vote9.mp3',id:'sQUu4_yDrAI',title:'ชัช-ชัช-ชาติ เอ้า! กา เบอร์ 9',sub:'ทีมชัชชาติ · กรุงเทพฯ ทำงาน · official audio'},
-  {file:'chadchart-power.mp3',id:'NVJip0Tsub4',title:'เพลงในพลังของท่านชัชชาติ',sub:'เพลงให้กำลังใจท่านชัชชาติ'}
+/* ---------- เพลงหาเสียง 2569 — การ์ด YouTube แบบลอย ----------
+   เดิมเสิร์ฟไฟล์ .mp3 เองจาก ../songs/ แล้วมีปุ่ม "YT ▶" เป็นลิงก์สำรอง
+   เปลี่ยนมาฝังคลิปต้นทางผ่าน YouTube IFrame Player API = การฝังอย่างเป็นทางการ
+   → ถูกต้องตามลิขสิทธิ์ ไม่ต้องเก็บไฟล์เสียงไว้ในรีโป และยอดวิวกลับไปหาเจ้าของผลงาน
+   (ตรวจแล้วทั้งสองคลิป playableInEmbed = true จึงเล่นในหน้าได้จริง)
+
+   การ์ดลอยอยู่เหนือหน้า ลากย้ายได้ แล้ว "ดูดเข้าติดขอบซ้าย/ขวา" ของจอเสมอ
+   กากบาท = ย่อเก็บเป็นปุ่มกลมติดขอบ (ไม่ถอด iframe ทิ้ง เพลงที่เล่นอยู่จึงไม่สะดุด)   */
+const YTSONGS=[
+  {id:'sQUu4_yDrAI',title:'ชัช-ชัช-ชาติ เอ้า! กา เบอร์ 9',by:'ทีมชัชชาติ · กรุงเทพฯ ทำงาน · official audio'},
+  {id:'NVJip0Tsub4',title:'เพลงในพลังของท่านชัชชาติ',by:'เพลงให้กำลังใจท่านชัชชาติ'}
 ];
-const SONG={audio:[],cur:-1};
-function fmtTime(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-function songUI(){SONGS.forEach((s,i)=>{const b=el('songBtn'+i),a=SONG.audio[i];
-  if(b)b.innerHTML=(a&&!a.paused)?"<svg class='mdico'><use href='#i-pause'></use></svg>":"<svg class='mdico'><use href='#i-play'></use></svg>";});}
-function songRow(i){const a=SONG.audio[i];if(!a)return;
-  const d=a.duration||0,t=a.currentTime||0,p=el('songProg'+i),tm=el('songTime'+i);
-  if(p)p.style.width=(d?(t/d*100):0).toFixed(1)+'%';
-  if(tm)tm.textContent=d?(fmtTime(t)+' / '+fmtTime(d)):fmtTime(t);}
-function songFail(i){const tm=el('songTime'+i);if(tm)tm.textContent='เล่นไม่ได้ · กด YT';}
-/* หยุดทุกเพลงในหน้านี้ — ใช้เป็น window.__mdStop ให้เพลย์เยอร์หน้าอื่นสั่งหยุดได้ */
-function songStop(){SONG.audio.forEach(a=>{if(a&&!a.paused)a.pause();});
-  if(window.__mdStop===songStop)window.__mdStop=null;}
-function songAudio(i){
-  if(SONG.audio[i])return SONG.audio[i];
-  const a=new Audio('../songs/'+SONGS[i].file); a.preload='metadata'; SONG.audio[i]=a;
-  a.addEventListener('loadedmetadata',()=>songRow(i));
-  a.addEventListener('timeupdate',()=>songRow(i));
-  a.addEventListener('play',()=>{SONG.cur=i;songUI();});
-  a.addEventListener('pause',()=>songUI());
-  a.addEventListener('ended',()=>{a.currentTime=0;songRow(i);songUI();
-    if(window.__mdStop===songStop)window.__mdStop=null;});
-  a.addEventListener('error',()=>songFail(i));
-  return a;}
-function songPlay(i){
-  const a=songAudio(i);
-  if(a.paused){
-    if(window.__mdStop&&window.__mdStop!==songStop)window.__mdStop();   // หยุดเพลงของหน้าอื่นก่อน
-    SONG.audio.forEach((o,j)=>{if(o&&j!==i&&!o.paused)o.pause();});      // เล่นทีละเพลง
-    SONG.cur=i; window.__mdStop=songStop;
-    const p=a.play(); if(p&&p.catch)p.catch(()=>songFail(i));
-  }else a.pause();
-  songUI();}
-function songSeek(i,ev){const a=SONG.audio[i];if(!a||!a.duration)return;
-  const bar=el('songBar'+i);if(!bar)return;const r=bar.getBoundingClientRect();
-  a.currentTime=Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*a.duration;
-  songRow(i);}
-function songListHTML(){if(YEAR!==2569)return '';return `<div class="songwrap"><div class="songhead"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>เพลงหาเสียง · ชัชชาติ เบอร์ 9</div><div class="songlist">`+
-  SONGS.map((s,i)=>`<div class="songcard">`+
-    `<button class="songplay" id="songBtn${i}" title="เล่น/หยุดเพลง"><svg class='mdico'><use href='#i-play'></use></svg></button>`+
-    `<div class="songinfo"><div class="songttl">${s.title}</div>`+
-    `<div class="songsub">${s.sub}</div>`+
-    `<div class="songbar" id="songBar${i}"><i id="songProg${i}"></i></div></div>`+
-    `<div class="songtime" id="songTime${i}">0:00</div>`+
-    `<a class="songyt" href="https://youtu.be/${s.id}" target="_blank" rel="noopener" title="เปิดใน YouTube">YT ▶</a></div>`
-  ).join('')+`</div></div>`;}
-function bindSong(){if(YEAR!==2569)return;SONGS.forEach((s,i)=>{songAudio(i);
-  const b=el('songBtn'+i);if(b)b.onclick=()=>songPlay(i);
-  const bar=el('songBar'+i);if(bar)bar.onclick=e=>songSeek(i,e);
-  songRow(i);});songUI();}
+function initSongCard(){
+  if(YEAR!==2569||!YTSONGS.length||document.getElementById('bkkyt'))return;
+
+  const PKEY='bkk-yt-pos', BKEY='bkk-yt-bub', TKEY='bkk-yt-track';
+  const M=14;                                   // ระยะห่างขอบจอตอนดูดติด
+  const load=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
+  const save=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+
+  const card=document.createElement('div');
+  card.id='bkkyt'; card.className='nofx';
+  card.setAttribute('aria-label','เพลงหาเสียง ผู้ว่าฯ กทม. 2569');
+  card.innerHTML=
+    '<div class="ythead">'
+    + '<span class="ytmark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor">'
+    + '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2'
+    + ' 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4'
+    + 'a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8L15.6 12 10 15.2Z"/>'
+    + '</svg></span>'
+    + '<span class="ytmeta"><b></b><small></small></span>'
+    + '<button type="button" data-y="min" title="ย่อ/ขยาย" aria-label="ย่อ/ขยาย">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path class="i-min" d="M5 12h14"/><path class="i-max" d="m7 14 5-5 5 5" style="display:none"/></svg></button>'
+    + '<button type="button" data-y="close" title="ย่อเก็บเป็นปุ่มลอย" aria-label="ย่อเก็บเป็นปุ่มลอย">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>'
+    + '</div>'
+    // .ytinner ต้องครอบทุกอย่างชั้นเดียว — grid-template-rows:0fr ยุบได้เฉพาะแถวที่ประกาศไว้
+    + '<div class="ytbody"><div class="ytinner">'
+    + '<div class="ytframe"><div class="ytmount"></div></div>'
+    + '<div class="ytfoot">'
+    + '<button type="button" data-y="prev" title="เพลงก่อนหน้า" aria-label="เพลงก่อนหน้า">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path d="M18 5 8 12l10 7z" fill="currentColor" stroke="none"/><path d="M6 5v14"/></svg></button>'
+    + '<span class="ytno"></span>'
+    + '<button type="button" data-y="next" title="เพลงถัดไป" aria-label="เพลงถัดไป">'
+    + '<svg class="ytic" viewBox="0 0 24 24"><path d="M6 5l10 7L6 19z" fill="currentColor" stroke="none"/><path d="M18 5v14"/></svg></button>'
+    + '<span class="ytsp"></span>'
+    + '<a class="ytopen" target="_blank" rel="noopener" title="เปิดคลิปเต็มบน YouTube">ดูบน YouTube ↗</a>'
+    + '</div></div></div>';
+  document.body.appendChild(card);
+
+  const head=card.querySelector('.ythead'), mount=card.querySelector('.ytmount');
+  const mTtl=card.querySelector('.ytmeta b'), mBy=card.querySelector('.ytmeta small');
+  const mNo=card.querySelector('.ytno'), mOpen=card.querySelector('.ytopen');
+
+  /* ---------- ตำแหน่ง: ติดขอบซ้าย/ขวาเสมอ · แนวตั้งจำเป็นสัดส่วน (0 = บนสุด, 1 = ล่างสุด) ---------- */
+  let side=load(PKEY+'-side','l')==='r'?'r':'l';
+  let ty=parseFloat(load(PKEY+'-ty','1')); if(!isFinite(ty))ty=1;
+  let bub=load(BKEY, matchMedia('(max-width:860px)').matches?'1':'0')==='1';
+  let minimized=false;
+
+  /* มือถือมีแถบเมนูล่าง (.mobnav) ลอยทับอยู่ — เว้นที่ให้ ไม่งั้นการ์ดไปนั่งใต้แถบจนกดไม่ได้ */
+  function botGap(){
+    const n=document.querySelector('.mobnav');
+    if(!n)return 0;
+    const cs=getComputedStyle(n);
+    if(cs.display==='none'||cs.visibility==='hidden'||cs.position!=='fixed')return 0;
+    return n.getBoundingClientRect().height+8;
+  }
+  function place(){
+    const b=card.getBoundingClientRect();          // ใช้ค่าทศนิยมจริง ไม่ใช่ offsetWidth/Height ที่ปัดเศษ
+    const w=b.width, h=b.height;
+    const maxT=Math.max(M, innerHeight-h-M-botGap());
+    card.style.left=(side==='l'?M:Math.max(M,innerWidth-w-M))+'px';
+    card.style.top=(M+(maxT-M)*Math.min(1,Math.max(0,ty)))+'px';
+  }
+  function setBub(on){
+    bub=on; card.classList.toggle('bub',on);
+    save(BKEY,on?'1':'0');
+    card.title=on?'เปิดการ์ดเพลงหาเสียง':'';
+    place(); setTimeout(place,300);            // ความกว้าง/สูงเปลี่ยนระหว่างอนิเมชัน → วางซ้ำตอนนิ่งแล้ว
+  }
+  setBub(bub); place();
+  setTimeout(()=>card.classList.remove('nofx'),0);   // ⚠ ไม่ใช้ rAF — แท็บที่ยังไม่ active rAF จะค้าง แล้ว transition ตายถาวร
+  addEventListener('resize',place);
+  addEventListener('load',place);            // แถบเมนูล่างมาจาก nav.js (defer) — วางซ้ำหลังโหลดครบ
+  setTimeout(place,0);
+
+  /* ---------- ลากย้าย แล้วดูดเข้าขอบที่ใกล้กว่า ---------- */
+  let dragging=false, moved=false, gx=0, gy=0;
+  head.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button'))return;      // ปุ่มบนแถบหัวต้องกดได้ตามปกติ
+    dragging=true; moved=false;
+    const r=card.getBoundingClientRect(); gx=e.clientX-r.left; gy=e.clientY-r.top;
+    card.classList.add('drag');
+    try{head.setPointerCapture(e.pointerId);}catch(err){}
+    e.preventDefault();
+  });
+  head.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const w=card.offsetWidth, h=card.offsetHeight;
+    const x=Math.min(innerWidth-w-2,Math.max(2,e.clientX-gx));
+    const y=Math.min(innerHeight-h-2,Math.max(2,e.clientY-gy));
+    if(Math.abs(x-parseFloat(card.style.left||0))>3||Math.abs(y-parseFloat(card.style.top||0))>3)moved=true;
+    card.style.left=x+'px'; card.style.top=y+'px';
+  });
+  function endDrag(){
+    if(!dragging)return;
+    dragging=false; card.classList.remove('drag');
+    const r=card.getBoundingClientRect();
+    side=(r.left+r.width/2)<innerWidth/2?'l':'r';                       // ขอบที่ใกล้กว่า
+    const maxT=Math.max(M, innerHeight-r.height-M-botGap());
+    ty=maxT>M?Math.min(1,Math.max(0,(r.top-M)/(maxT-M))):1;
+    save(PKEY+'-side',side); save(PKEY+'-ty',String(ty));
+    place();                                                            // ← ดูดกลับเข้าขอบ (มี transition)
+    if(!moved&&bub)setBub(false);                                       // แตะปุ่มกลมเฉย ๆ = กางการ์ดกลับ
+  }
+  head.addEventListener('pointerup',endDrag);
+  head.addEventListener('pointercancel',endDrag);
+  /* ความสูงการ์ดขยับได้เอง (คลิปโหลดเสร็จ · ย่อ/กาง) → วางใหม่ให้ยังชิดขอบพอดี ไม่ล้นจอ */
+  if(window.ResizeObserver)new ResizeObserver(()=>{if(!dragging)place();}).observe(card);
+
+  /* ---------- ปุ่มบนการ์ด ---------- */
+  card.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-y]');
+    if(!b){ if(bub&&!moved)setBub(false); return; }
+    if(b.dataset.y==='min'){
+      minimized=!minimized; card.classList.toggle('min',minimized);
+      const im=card.querySelector('.i-min'), ix=card.querySelector('.i-max');
+      if(im)im.style.display=minimized?'none':'';
+      if(ix)ix.style.display=minimized?'':'none';
+      place(); return;
+    }
+    if(b.dataset.y==='close'){setBub(true);return;}
+    go(cur+(b.dataset.y==='next'?1:-1));
+  });
+
+  /* ---------- ตัวเล่น ---------- */
+  let player=null, ready=false, failed=false;
+  let cur=Math.min(YTSONGS.length-1,Math.max(0,parseInt(load(TKEY,'0'),10)||0));
+
+  const stop=()=>{try{player&&player.pauseVideo();}catch(e){}
+    if(window.__mdStop===stop)window.__mdStop=null;};
+  function paintPlay(on){
+    card.classList.toggle('playing',on);
+    if(on){
+      if(window.__mdStop&&window.__mdStop!==stop)window.__mdStop();     // หยุดเพลงอื่นในหน้านี้ก่อน
+      window.__mdStop=stop;
+    }else if(window.__mdStop===stop)window.__mdStop=null;
+  }
+  function paintMeta(){
+    const s=YTSONGS[cur];
+    mTtl.textContent=s.title;
+    mBy.textContent=failed?'เล่นในหน้านี้ไม่ได้ · กด "ดูบน YouTube"':s.by;
+    mNo.textContent=(cur+1)+'/'+YTSONGS.length;
+    mOpen.href='https://youtu.be/'+s.id;
+    head.title=s.title+' — '+s.by;
+  }
+  function go(i){
+    cur=(i+YTSONGS.length)%YTSONGS.length;
+    failed=false; paintMeta(); save(TKEY,String(cur));
+    if(!player||!ready)return;
+    const playing=card.classList.contains('playing');
+    try{ playing?player.loadVideoById(YTSONGS[cur].id):player.cueVideoById(YTSONGS[cur].id); }catch(e){}
+  }
+  paintMeta();
+
+  function loadAPI(cb){
+    if(window.YT&&window.YT.Player)return cb();
+    const prev=window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady=function(){
+      if(typeof prev==='function'){try{prev();}catch(e){}}
+      cb();
+    };
+    if(document.getElementById('ytapi'))return;    // มีสคริปต์รออยู่แล้ว แค่ต่อคิวพอ
+    const s=document.createElement('script');
+    s.id='ytapi'; s.src='https://www.youtube.com/iframe_api';
+    s.onerror=()=>card.remove();                   // เน็ตบล็อก YouTube → เก็บการ์ดไปเลย ไม่ให้ค้างเปล่า
+    document.head.appendChild(s);
+  }
+  loadAPI(()=>{
+    try{
+      player=new YT.Player(mount,{
+        host:'https://www.youtube-nocookie.com',   // โหมดความเป็นส่วนตัวสูง ไม่หยอดคุกกี้ติดตาม
+        videoId:YTSONGS[cur].id,
+        playerVars:{autoplay:0,playsinline:1,rel:0,modestbranding:1,
+          // เปิดจากไฟล์ตรง ๆ (file://) origin เป็นสตริง "null" ตัวเล่นจะไม่ยอมเล่น → ใส่เฉพาะตอนเสิร์ฟผ่าน http(s)
+          origin:/^https?:$/.test(location.protocol)?location.origin:undefined},
+        events:{
+          onReady:()=>{ready=true;try{player.setVolume(60);}catch(e){}},
+          // 1 = PLAYING · 2 = PAUSED · 0 = ENDED
+          onStateChange:e=>{
+            if(e.data===1)paintPlay(true);
+            else if(e.data===2||e.data===0)paintPlay(false);
+          },
+          onError:()=>{failed=true;paintMeta();}   // คลิปถูกลบ/ปิดการฝัง → บอกให้ไปดูบน YouTube แทน
+        }
+      });
+    }catch(e){card.remove();}
+  });
+}
 
 /* ---------- build map once ---------- */
 const svg=el('bkkmap'), kg=el('khetG'), lg=el('labelG');
@@ -977,9 +1155,7 @@ function renderPanel(){
       `<div class="whero" style="background:linear-gradient(135deg,${GOV.winnerColor},${shade(GOV.winnerColor)})">${govAvatar(w,'wav')}`+
       `<div class="wi"><div class="wn">${w.name}</div><div class="wmeta">${w.party}${w.no!=null?' · เบอร์ '+w.no:''}</div>`+
       `<div class="wbig">${fmt(w.votes)} <span>คะแนน${w.pct!=null?' · '+w.pct+'%':''}</span></div></div></div>`+
-      songListHTML()+
       `<div class="rank">${rows}</div>`+statStrip(GOV.stats);
-    bindSong();
     return;
   }
   // sk
@@ -1274,7 +1450,6 @@ window.setView=function(v){
   if(v==='gov'&&!HASGOV) v='sk';
   if((v==='sk'||v==='council')&&!HASSK) v=HASGOV?'gov':'sum';
   state.view=v; state.focus=null; state.sel=null;
-  if(v!=='gov')songStop();   // ออกจากแท็บผู้ว่าฯ แล้วหยุดเพลง
   ['gov','sk','sum','council','hist'].forEach(k=>{const b=el('tab-'+k);if(b)b.classList.toggle('active',k===v);});
   const isMap=(v==='gov'||v==='sk');
   el('mapGrid').style.display=isMap?'':'none';
@@ -1376,6 +1551,7 @@ if(!HASSK) ['tab-sk','tab-council'].forEach(id=>{const b=el(id);if(b)b.style.dis
 if(!HASGOV){ const g=el('tab-gov'); if(g)g.style.display='none'; }
 if(HASSK){ const sk=el('tab-sk'); if(sk&&sk.querySelector('b')) sk.querySelector('b').textContent=(SK.totalSeats||50); }
 setView(HASGOV?'gov':'sk');
+initSongCard();          // การ์ดเพลงหาเสียงแบบลอย (ขึ้นเฉพาะปี 2569)
 })();
 </script>
 <script src="../js/theme-toggle-drag.js"></script>
