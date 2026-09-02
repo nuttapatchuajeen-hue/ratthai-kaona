@@ -1346,10 +1346,13 @@ var NAV = [
           { pane:"ice",      ico:"<svg class='mdico'><use href='#i-snowflake'></use></svg>", label:"% การละลายน้ำแข็งโลก", existing:true },
           { pane:"sinking",  ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ประเทศเสี่ยงจมน้ำ", existing:true },
           { pane:"heat",     ico:"<svg class='mdico'><use href='#i-flame'></use></svg>", label:"คลื่นความร้อน", existing:true },
+          { pane:"world-enso", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"เอลนีโญ & ลานีญา (ENSO 3D)", existing:true },
           { pane:"pm25",     ico:"<svg class='mdico'><use href='#i-cloud-fog'></use></svg>", label:"ฝุ่น PM2.5", existing:true },
           { pane:"world-satellite", ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"วงโคจรดาวเทียม (Ground Track)", existing:true },
+          { pane:"world-satlive", ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"ติดตามดาวเทียมสด 3D (Live)", existing:true },
           { pane:"world-flood", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"แผนที่น้ำท่วมไทย (bivariate)", existing:true },
           { pane:"world-ocean", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ภัยพิบัติ & มหาสมุทรเดือด", existing:true },
+          { pane:"world-coral", ico:"<svg class='mdico'><use href='#i-shell'></use></svg>", label:"ปะการังฟอกขาวโลก (NOAA 3D)", existing:true },
           { pane:"world-quake", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"แผ่นดินไหว (ไล่เวลา)", existing:true }
       ]},
       { id:"math", ico:"<svg class='mdico'><use href='#i-calculator'></use></svg>", label:"คณิตศาสตร์ & โมเดลจำลอง", subs:[

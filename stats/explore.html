@@ -642,8 +642,64 @@
   .tg-rank h4{margin:0 0 7px;font-size:12.5px;font-weight:800;letter-spacing:.02em;color:var(--ink-soft)}
   .tg-rank .row{display:flex;align-items:center;gap:7px;font-size:12px;line-height:1.9;color:var(--ink-2)}
   .tg-rank .row b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ink)}
-  .tg-rank .dotc{width:8px;height:8px;border-radius:50%;flex:none}
-  @media(max-width:720px){ .tg-rank{display:none} }
+  /* --- 🌊 แบบจำลอง 3D เอลนีโญ & ลานีญา (ENSO 3D Dynamics) --- */
+  .enso-stage{position:relative;width:100%;height:clamp(470px,58vw,640px);background:#050811;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+  .enso-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+  .enso-panel{position:absolute;top:16px;left:16px;width:min(380px,calc(100% - 32px));background:rgba(10,15,26,.88);padding:16px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:10;color:#fff}
+  .enso-panel h3{margin:0 0 3px;font-size:15.5px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px}
+  .enso-panel p.desc{margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.4}
+  .enso-hist-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+  .enso-oni-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700;background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+  .enso-hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+  .enso-hbtn{padding:7px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#cbd5e1;cursor:pointer;font-size:11px;text-align:left;line-height:1.3;transition:all .18s ease;display:flex;flex-direction:column;gap:1px}
+  .enso-hbtn strong{font-size:12px;color:#fff}
+  .enso-hbtn span{font-size:10px;color:#94a3b8}
+  .enso-hbtn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)}
+  .enso-hbtn.active.el-nino{background:rgba(239,68,68,.2);border-color:#ef4444;color:#fff;box-shadow:0 0 12px rgba(239,68,68,.35)}
+  .enso-hbtn.active.el-nino strong{color:#fca5a5}
+  .enso-hbtn.active.la-nina{background:rgba(56,189,248,.2);border-color:#38bdf8;color:#fff;box-shadow:0 0 12px rgba(56,189,248,.35)}
+  .enso-hbtn.active.la-nina strong{color:#7dd3fc}
+  .enso-hbtn.active.neutral{background:rgba(148,163,184,.2);border-color:#94a3b8;color:#fff;box-shadow:0 0 12px rgba(148,163,184,.3)}
+  .enso-hbtn.active.neutral strong{color:#e2e8f0}
+  .enso-timeline{margin-bottom:10px}
+  .enso-slider-row{display:flex;align-items:center;gap:10px}
+  .enso-slider-row input[type=range]{flex:1;accent-color:#38bdf8;cursor:pointer;height:5px}
+  .enso-play-btn{background:#1e293b;border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:600;transition:background .2s}
+  .enso-play-btn:hover{background:#334155}
+  .enso-info{font-size:11.5px;line-height:1.45;color:#e2e8f0;background:rgba(0,0,0,.4);padding:9px 11px;border-radius:8px;border-left:3px solid #ef4444;margin-bottom:10px}
+  .enso-wind{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#94a3b8;background:rgba(255,255,255,.05);padding:6px 9px;border-radius:6px;margin-bottom:10px}
+  .enso-wind b{color:#38bdf8}
+  .enso-presets{display:flex;gap:5px;margin-bottom:10px}
+  .enso-pbtn{flex:1;padding:5px 4px;font-size:10.5px;font-weight:600;background:rgba(255,255,255,.08);color:#cbd5e1;border:1px solid rgba(255,255,255,.1);border-radius:6px;cursor:pointer;transition:all .15s}
+  .enso-pbtn:hover{background:rgba(255,255,255,.16);color:#fff}
+  .enso-colorbar{width:100%;height:8px;border-radius:4px;background:linear-gradient(to right, #082046 0%, #0284c7 20%, #38bdf8 35%, #e0f2fe 48%, #fef08a 52%, #f59e0b 68%, #ea580c 82%, #ef4444 100%)}
+  .enso-labels{display:flex;justify-content:space-between;font-size:9.5px;color:#94a3b8;margin-top:3px}
+  .noaa-compare-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:center;margin-top:14px}
+  @media(max-width:800px){ .noaa-compare-grid{grid-template-columns:1fr} }
+  .noaa-img-box{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:#000;box-shadow:var(--shadow)}
+  .noaa-img-box img{width:100%;height:auto;display:block;object-fit:cover}
+  .noaa-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.75);color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.05em;border:1px solid rgba(255,255,255,.2);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+
+  /* --- 🪸 ลูกโลก 3D ปะการังฟอกขาวโลก (NOAA Coral Reef Watch) --- */
+  .coral-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#030712;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+  .coral-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+  .coral-panel{position:absolute;top:16px;left:16px;width:min(320px,calc(100% - 32px));background:rgba(15,23,42,.88);padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;z-index:10}
+  .coral-panel h3{margin:0 0 6px;font-size:15px;font-weight:700;color:#f43f5e;display:flex;align-items:center;gap:6px}
+  .coral-panel p{margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.45}
+  .coral-legend{display:flex;flex-direction:column;gap:5px;font-size:11px;color:#cbd5e1;background:rgba(0,0,0,.3);padding:8px 10px;border-radius:8px}
+  .coral-leg-item{display:flex;align-items:center;gap:8px}
+  .coral-leg-dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .coral-tooltip{position:absolute;bottom:16px;left:16px;background:rgba(15,23,42,.92);border:1px solid rgba(244,63,94,.4);padding:10px 14px;border-radius:10px;font-size:12px;color:#fff;max-width:340px;z-index:10;pointer-events:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+
+  /* --- 🛰️ ติดตามดาวเทียมสด 3D (Starlink Live Tracker) --- */
+  .satlive-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#020208;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+  .satlive-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+  .satlive-hud{position:absolute;top:16px;left:16px;color:#fff;background:rgba(10,15,30,.86);border:1px solid rgba(0,255,204,.25);padding:14px 18px;border-radius:12px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:10;max-width:320px}
+  .satlive-hud h3{margin:0 0 6px;font-size:15px;font-weight:700;color:#00e5ff;display:flex;align-items:center;gap:6px}
+  .satlive-hud p{margin:4px 0;font-size:12.5px;color:#cbd5e1;line-height:1.4}
+  .satlive-hud b{color:#fff}
+  .satlive-status{font-weight:700;color:#facc15}
+  .satlive-hint{position:absolute;left:16px;bottom:16px;z-index:10;font-size:12px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 12px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:none}
 
   /* ===== 📐 คณิตศาสตร์ & สูตรเปลี่ยนโลก (Math Formulas & Visuals) ===== */
   .math-formula-hero{background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;margin-bottom:18px;position:relative;overflow:hidden}
@@ -2593,6 +2649,142 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ============ 🌊 ศูนย์ข้อมูลโลก · เอลนีโญ & ลานีญา (ENSO 3D Dynamics) ============ -->
+    <section class="tabpane" id="pane-world-enso" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-waves"></use></svg> เอลนีโญ &amp; ลานีญา (ENSO 3D Dynamics)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> ดัชนี ONI สูงสุด (Super El Niño)</div>
+          <div class="k-num">+2.6<span class="u">°C</span></div>
+          <div class="k-sub">ปี 2540–41 และ 2558–59 รุนแรงสุดในประวัติศาสตร์</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-repeat"></use></svg> รอบการเกิดวัฏจักร</div>
+          <div class="k-num">2–7<span class="u">ปี</span></div>
+          <div class="k-sub">สลับระหว่างเอลนีโญ, สภาวะปกติ, และลานีญา</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> เอลนีโญ (El Niño) ต่อไทย</div>
+          <div class="k-num">แล้ง<span class="u">ฝนทิ้งช่วง</span></div>
+          <div class="k-sub">อุณหภูมิเฉลี่ยสูงกว่าปกติ ภัยแล้งยาวนานขึ้น</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-waves"></use></svg> ลานีญา (La Niña) ต่อไทย</div>
+          <div class="k-num">ฝนชุก<span class="u">เสี่ยงน้ำท่วม</span></div>
+          <div class="k-sub">มรสุมกำลังแรงขึ้น เช่น มหาอุทกภัยปี 2554</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-globe"></use></svg> แบบจำลอง 3 มิติการกระจายอุณหภูมิผิวน้ำทะเล (ENSO SST Anomaly)</h2>
+          <span class="tag">WebGL Shader · Interactive 3D</span>
+        </div>
+        <p class="sub">หมุนลูกโลกสำรวจมหาสมุทรแปซิฟิก — สังเกตการสะสมของมวลน้ำอุ่น (แถบสีส้ม-แดง) และมวลน้ำเย็น (แถบสีฟ้า-น้ำเงิน) พร้อมสลับโหมดและเลื่อนไทม์ไลน์พัฒนาการ 12 เดือน</p>
+        
+        <div class="enso-stage" id="ensoStage">
+          <div class="sat-loading" id="ensoLoading"><div class="spin"></div><span>กำลังสร้างแบบจำลองลูกโลก 3 มิติ…</span></div>
+          <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+          <div class="enso-panel">
+            <h3>🌍 NOAA SST Anomaly 3D</h3>
+            <p class="desc">อุณหภูมิผิวน้ำทะเลตรวจวัดจริงจากดาวเทียม NOAA &amp; ไทม์ไลน์ปีประวัติศาสตร์</p>
+            
+            <div class="enso-hist-label">
+              <span>เลือกเหตุการณ์ประวัติศาสตร์จริง:</span>
+              <span class="enso-oni-badge" id="ensoOniBadge">ONI: +2.6°C</span>
+            </div>
+
+            <div class="enso-hist-grid" id="ensoHistGrid">
+              <button type="button" class="enso-hbtn el-nino active" data-id="1997">
+                <strong>🔴 1997–1998</strong>
+                <span>Super El Niño ศตวรรษ</span>
+              </button>
+              <button type="button" class="enso-hbtn la-nina" data-id="2010">
+                <strong>🔵 2010–2011</strong>
+                <span>Super La Niña น้ำท่วม 54</span>
+              </button>
+              <button type="button" class="enso-hbtn el-nino" data-id="2015">
+                <strong>🔴 2015–2016</strong>
+                <span>Godzilla El Niño</span>
+              </button>
+              <button type="button" class="enso-hbtn el-nino" data-id="2023">
+                <strong>🔴 2023–2024</strong>
+                <span>วิกฤตมหาสมุทรเดือด</span>
+              </button>
+              <button type="button" class="enso-hbtn la-nina" data-id="2025">
+                <strong>🔵 2025–2026</strong>
+                <span>สภาวะปัจจุบัน (Mild La Niña)</span>
+              </button>
+              <button type="button" class="enso-hbtn neutral" data-id="neutral">
+                <strong>⚪ สภาวะปกติ</strong>
+                <span>Baseline สมดุลธรรมชาติ</span>
+              </button>
+            </div>
+
+            <div class="enso-timeline">
+              <div class="enso-timeline-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11.5px;color:#cbd5e1">
+                <span>วิวัฒนาการรายเดือน:</span>
+                <span class="enso-month-badge" id="ensoMonthBadge">เดือนที่ 11 (พ.ย. - จุดพีคสูงสุด)</span>
+              </div>
+              <div class="enso-slider-row">
+                <button type="button" class="enso-play-btn" id="ensoPlayBtn">⏸ พัก</button>
+                <button type="button" class="enso-play-btn" id="ensoSpeedBtn" title="ความเร็วการเล่น">🐢 ช้า</button>
+                <input type="range" id="ensoTimeSlider" min="1" max="12" value="11" step="0.05" aria-label="แถบเวลาเดือน">
+              </div>
+            </div>
+
+            <div class="enso-info" id="ensoStatusInfo">
+              <strong>1997–1998 (Super El Niño):</strong> มวลน้ำร้อนจัดแผ่ขยายเต็มแปซิฟิกตะวันออก ส่งผลให้ไทยแล้งจัด ข้าวเสียหาย และเกิดไฟป่าอินโดนีเซียครั้งใหญ่
+            </div>
+
+            <div class="enso-wind">
+              <span>กระแสลมสินค้า (Trade Winds):</span>
+              <b id="ensoWindTxt">หยุดนิ่ง / พัดย้อนกลับ 💨</b>
+            </div>
+
+            <div class="enso-presets">
+              <button type="button" class="enso-pbtn" id="ensoCamPeru">🇵🇪 ฝั่งเปรู</button>
+              <button type="button" class="enso-pbtn" id="ensoCamNoaa">🌐 แปซิฟิก (NOAA)</button>
+              <button type="button" class="enso-pbtn" id="ensoCamThai">🇹🇭 ฝั่งไทย/เอเชีย</button>
+            </div>
+
+            <div class="enso-colorbar"></div>
+            <div class="enso-labels">
+              <span>-4°C (เย็นจัด / ลิ้นน้ำเย็น)</span>
+              <span>0°C (ปกติ)</span>
+              <span>+4°C (ร้อนจัด)</span>
+            </div>
+          </div>
+        </div>
+        <div class="sat-hint">
+          <svg class="mdico"><use href="#i-lightbulb"></use></svg> <b>ความรู้เพิ่มเติม:</b> 
+          ปรากฏการณ์ <b>ENSO (El Niño–Southern Oscillation)</b> เกิดจากปฏิสัมพันธ์ระหว่างบรรยากาศและมหาสมุทรแปซิฟิกเขตร้อน เมื่อลมสินค้า (Trade Winds) อ่อนแรง มวลน้ำอุ่นจะไหลย้อนกลับไปทางฝั่งเปรู ทำให้แถบเอเชียตะวันออกเฉียงใต้รวมถึงไทยเกิดความแห้งแล้งและฝนทิ้งช่วง ขณะที่หากลมสินค้าแรงจัด (ลานีญา) จะพัดมวลน้ำอุ่นมากองแถบอินโดนีเซีย-อ่าวไทย ก่อให้เกิดฝนตกชุกและพายุรุนแรง
+        </div>
+      </div>
+
+      <div class="card full" style="margin-top:16px">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-satellite"></use></svg> เปรียบเทียบกับภาพถ่ายดาวเทียมจริงจาก NOAA (Equatorial Pacific SST Anomaly)</h2>
+          <span class="tag">NOAA Key Messages · อ้างอิงสถิติจริง</span>
+        </div>
+        <div class="noaa-compare-grid">
+          <div class="noaa-img-box">
+            <img src="assets/noaa-pacific-sst.png" alt="NOAA Equatorial Pacific SST Anomaly Map" loading="lazy">
+            <span class="noaa-badge">NOAA Satellite SST</span>
+          </div>
+          <div>
+            <h3 style="margin:0 0 8px;font-size:15px;color:var(--ink)">การตรวจวัดอุณหภูมิผิวน้ำทะเลจริง (Equatorial Cold &amp; Warm Tongue)</h3>
+            <p style="font-size:13px;line-height:1.6;color:var(--ink-2);margin:0 0 10px">
+              ภาพดาวเทียมของ NOAA แสดงพื้นที่ <b>มหาสมุทรแปซิฟิกแถบศูนย์สูตร (Equatorial Pacific)</b> บริเวณนอกชายฝั่งทวีปอเมริกาใต้ (เปรู, เอกวาดอร์, อเมริกากลาง) สังเกต "ลิ้นน้ำเย็น (Cold Tongue)" สีฟ้า-ขาวที่ทอดยาวเป็นแนวนอนไปทางทิศตะวันตกตามเส้นศูนย์สูตร ซึ่งถูกขนาบด้วยมวลน้ำอุ่นสีส้ม-แดง
+            </p>
+            <p style="font-size:12.5px;line-height:1.5;color:var(--ink-soft);margin:0">
+              <b>จุดสังเกตสำคัญ:</b> ลิ้นน้ำเย็นนี้เกิดขึ้นจากการที่ลมสินค้าพัดพามวลน้ำอุ่นไปทางทิศตะวันตก และเหนี่ยวนำให้เกิดน้ำผุดเย็นลึก (Upwelling) อุดมด้วยสารอาหารขึ้นมาจากใต้ทะเลเปรู เมื่อเกิดเอลนีโญ ลิ้นน้ำเย็นนี้จะหายไปและถูกแทนที่ด้วยมวลน้ำร้อนจัด ส่งผลกระทบต่อสภาพอากาศโลกทันที
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ศูนย์ข้อมูลโลก · ฝุ่น PM2.5 (สด Open-Meteo Air Quality) ============ -->
     <section class="tabpane" id="pane-pm25" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-cloud-fog"></use></svg> ฝุ่น PM2.5</h2></div>
@@ -2666,6 +2858,56 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <p class="sub">เส้นทางเดียวกันเป๊ะ ฉายบนแผนที่ทรงกระบอก (<i>plate carrée</i>) — ตอนนี้กลายเป็นคลื่นเพราะความบิดเบือนของ projection · สังเกตว่าดาวเทียมดู "เร็วขึ้น" ตอนเข้าใกล้ขั้วโลก ทั้งที่ความเร็วจริงคงที่ (ระยะทางถูกยืดบนแผนที่)</p>
         <div class="sat-map"><canvas id="satMap"></canvas></div>
         <div class="src">ที่มา: เบสแมป <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> · โมเดล 3D Suomi NPP จาก <a href="https://github.com/nasa/NASA-3D-Resources" target="_blank" rel="noopener">NASA 3D Resources</a> · สร้างด้วย d3.js + three.js · ดัดแปลงจาก <a href="https://observablehq.com/@jake-low/satellite-ground-track-visualizer" target="_blank" rel="noopener">Satellite ground track visualizer (jake-low)</a></div>
+      </div>
+    </section>
+
+    <!-- ============ 🛰️ ศูนย์ข้อมูลโลก · ติดตามดาวเทียมสด 3D (Starlink Live) ============ -->
+    <section class="tabpane" id="pane-world-satlive" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-satellite"></use></svg> ติดตามดาวเทียมสด 3D (Real-Time Starlink &amp; Active)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-satellite"></use></svg> จำนวนดาวเทียมบนฟ้าขณะนี้</div>
+          <div class="k-num"><span id="satliveCountKpi">—</span><span class="u">ดวง</span></div>
+          <div class="k-sub">คำนวณพิกัดสดรอบโลกตามเวลาจริง (SGP4)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-layers"></use></svg> ระดับวงโคจรต่ำ (LEO)</div>
+          <div class="k-num">550<span class="u">กม.</span></div>
+          <div class="k-sub">เพดานบินหลักของกลุ่มดาวเทียม Starlink</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> ความเร็วในการโคจร</div>
+          <div class="k-num">~27,000<span class="u">กม./ชม.</span></div>
+          <div class="k-sub">โคจรรอบโลกครบ 1 รอบในเวลาประมาณ 90–95 นาที</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> แหล่งข้อมูลวงโคจร</div>
+          <div class="k-num">CelesTrak<span class="u">TLE</span></div>
+          <div class="k-sub">NORAD Two-Line Element Set อัปเดตสด</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-satellite"></use></svg> ระบบติดตามพิกัดดาวเทียมแบบเรียลไทม์ 3 มิติ</h2>
+          <span class="tag">CelesTrak Live · SGP4 Model</span>
+        </div>
+        <p class="sub">แสดงตำแหน่งดาวเทียมที่กำลังโคจรรอบโลกในเสี้ยววินาทีนี้จริงๆ โดยคำนวณจากชุดสมการวงโคจร SGP4 ร่วมกับ satellite.js · หมุน ซูม เพื่อสำรวจโครงข่ายดาวเทียมรอบโลก</p>
+        
+        <div class="satlive-stage" id="satliveStage">
+          <div class="sat-loading" id="satliveLoading"><div class="spin"></div><span>กำลังเชื่อมต่อฐานข้อมูล TLE และคำนวณวงโคจร…</span></div>
+          <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+          <div class="satlive-hud">
+            <h3>🛰️ ติดตามดาวเทียม 3 มิติ</h3>
+            <p>กลุ่มข้อมูล: <b>Starlink &amp; Active Satellites</b></p>
+            <p>จำนวนดาวเทียม: <span id="satliveCountTxt" style="color:#00ffcc;font-weight:700">กำลังเชื่อมต่อ…</span></p>
+            <p>สถานะ: <span id="satliveStatusTxt" class="satlive-status">กำลังดาวน์โหลดข้อมูล TLE…</span></p>
+          </div>
+        </div>
+        <div class="sat-hint">
+          <svg class="mdico"><use href="#i-lightbulb"></use></svg> <b>รู้หรือไม่?</b> 
+          ปัจจุบันมีดาวเทียมปฏิบัติการอยู่ในวงโคจรโลกมากกว่า 10,000 ดวง โดยกว่าครึ่งหนึ่งเป็นกลุ่มดาวเทียมสื่อสารบรอดแบนด์ Starlink ของ SpaceX ที่โคจรเป็นระนาบตาข่าย (Orbital Shells) ที่ระดับความสูงประมาณ 550 กิโลเมตร
+        </div>
       </div>
     </section>
 
@@ -4903,6 +5145,64 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <p class="sub">โลกเคยเกิดเหตุปะการังฟอกขาวระดับโลกมาแล้ว 4 ครั้ง — ครั้งล่าสุด (2566–2568) จากคลื่นความร้อนในทะเล กระทบแนวปะการังถึง <b>84%</b> ทำลายสถิติเดิม 65.7% ในเวลาเพียงครึ่งเดียว · แท่งแดง = ครั้งล่าสุด</p>
         <div class="plot" id="worldCoral"><div class="state-msg">กำลังวาดกราฟ…</div></div>
         <div class="src">ที่มา: <a href="https://icriforum.org/4gbe-2025/" target="_blank" rel="noopener">International Coral Reef Initiative (ICRI) / NOAA Coral Reef Watch ↗</a> — สัดส่วนแนวปะการังโลกที่เผชิญความเครียดจากความร้อน</div>
+      </div>
+    </section>
+
+    <!-- ============ 🪸 ศูนย์ข้อมูลโลก · ปะการังฟอกขาวโลก (NOAA 3D Coral Reef Watch) ============ -->
+    <section class="tabpane" id="pane-world-coral" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-shell"></use></svg> ปะการังฟอกขาวโลก &amp; คลื่นความร้อนในทะเล (NOAA 3D)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> แนวปะการังโลกเผชิญวิกฤต</div>
+          <div class="k-num">84<span class="u">%</span></div>
+          <div class="k-sub">เหตุการณ์ฟอกขาวครั้งที่ 4 (2566–69) รุนแรงสุดในประวัติศาสตร์</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-shield-alert"></use></svg> ระดับเตือนภัยสูงสุด (NOAA)</div>
+          <div class="k-num">Level 5<span class="u">Extreme</span></div>
+          <div class="k-sub">เกณฑ์ใหม่รองรับความตายหมู่ของปะการัง >80%</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> ประเทศที่ได้รับผลกระทบ</div>
+          <div class="k-num">54+<span class="u">ประเทศ</span></div>
+          <div class="k-sub">รวมถึงอ่าวไทย ทะเลอันดามัน และเกรตแบร์ริเออร์รีฟ</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-satellite"></use></svg> แหล่งตรวจวัดดาวเทียม</div>
+          <div class="k-num">NOAA<span class="u">CRW</span></div>
+          <div class="k-sub">ความละเอียด 5 กม. รายวัน (Coral Reef Watch)</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-globe"></use></svg> ลูกโลก 3 มิติแสดงจุดแนวปะการัง &amp; ระดับเตือนภัยความร้อนสะสมโลก</h2>
+          <span class="tag">NOAA CRW 5km Model · Interactive 3D</span>
+        </div>
+        <p class="sub">หมุนลูกโลก 3 มิติเพื่อสำรวจแนวปะการังหลักของโลก — คลิกหรือชี้ที่จุดพิกัดแนวปะการังเพื่อดูระดับความเครียดความร้อน (Degree Heating Weeks: DHW) และสถานะการเตือนภัยฟอกขาว</p>
+        
+        <div class="coral-stage" id="coralStage">
+          <div class="sat-loading" id="coralLoading"><div class="spin"></div><span>กำลังโหลดแผนที่แนวปะการังโลก 3 มิติ…</span></div>
+          <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+          <div class="coral-panel">
+            <h3>🪸 NOAA Coral Reef Watch</h3>
+            <p>สถานะเตือนภัยคลื่นความร้อนในทะเลและปะการังฟอกขาว</p>
+            <div class="coral-legend">
+              <div class="coral-leg-item"><span class="coral-leg-dot" style="background:#ef4444"></span><b>Alert Level 2+:</b> เสี่ยงตายหมู่รุนแรง (DHW ≥ 8)</div>
+              <div class="coral-leg-item"><span class="coral-leg-dot" style="background:#f97316"></span><b>Alert Level 1:</b> เริ่มฟอกขาวเป็นวงกว้าง (DHW ≥ 4)</div>
+              <div class="coral-leg-item"><span class="coral-leg-dot" style="background:#eab308"></span><b>Bleaching Warning:</b> เฝ้าระวังความร้อนสูง</div>
+              <div class="coral-leg-item"><span class="coral-leg-dot" style="background:#10b981"></span><b>Watch / Normal:</b> สภาวะปกติ</div>
+            </div>
+          </div>
+          <div class="coral-tooltip" id="coralTooltip" style="display:none">
+            <strong id="coralTipName">ชื่อแนวปะการัง</strong>
+            <div id="coralTipInfo" style="margin-top:4px;color:#cbd5e1">รายละเอียดสถานะ</div>
+          </div>
+        </div>
+        <div class="sat-hint">
+          <svg class="mdico"><use href="#i-lightbulb"></use></svg> <b>ทำความเข้าใจ Degree Heating Weeks (DHW):</b> 
+          DHW คือหน่วยวัดความเครียดความร้อนสะสมที่ปะการังได้รับ โดยคิดจากอุณหภูมิที่สูงเกินค่าเฉลี่ยปกติ 1°C คูณด้วยจำนวนสัปดาห์ หาก DHW เกิน 4°C-weeks ปะการังจะเริ่มฟอกขาวอย่างเห็นได้ชัด และหากเกิน 8–12°C-weeks ปะการังกว่า 50–80% จะเริ่มตายถาวร
+        </div>
       </div>
     </section>
 
@@ -19075,11 +19375,819 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       io.observe(stage);
     }
 
+    /* ================= 🌊 แบบจำลอง 3D เอลนีโญ & ลานีญา (ENSO 3D Dynamics) ================= */
+    function setupEnso(){
+      var stage = document.getElementById("ensoStage");
+      if(!stage) return;
+      var started = false, running = false, visible = false, raf = 0;
+
+      function loadScript(src){
+        return new Promise(function(res,rej){
+          var s=document.createElement("script"); s.src=src; s.onload=res;
+          s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); };
+          document.head.appendChild(s);
+        });
+      }
+      function loadThree(){
+        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
+        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
+        return loadScript(b+"build/three.min.js")
+          .then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
+      }
+
+      function init(){
+        loadThree().then(function(){
+          var THREE = window.THREE;
+          var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
+          var scene = new THREE.Scene();
+          var camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
+          camera.position.set(0, 3, 22);
+
+          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          renderer.setSize(w, h);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          stage.appendChild(renderer.domElement);
+
+          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.05;
+          controls.minDistance = 10;
+          controls.maxDistance = 50;
+
+          var months = [
+            "มกราคม (เริ่มสะสม)", "กุมภาพันธ์ (ก่อตัว)", "มีนาคม (ก่อตัว)", "เมษายน (ขยายตัว)",
+            "พฤษภาคม (ขยายตัว)", "มิถุนายน (ชัดเจนขึ้น)", "กรกฎาคม (รุนแรงขึ้น)", "สิงหาคม (รุนแรง)",
+            "กันยายน (ใกล้พีค)", "ตุลาคม (ใกล้พีค)", "พฤศจิกายน (จุดพีคสูงสุด)", "ธันวาคม (คงตัว/เริ่มคลาย)"
+          ];
+
+          var currentTargetMode = 1.0;
+          var currentModeValue = 1.0;
+          var isPlaying = true;
+          var currentMonth = 11.0;
+
+          var ensoShader = {
+            uniforms: {
+              earthTexture: { value: null },
+              uMode: { value: 1.0 },
+              uIntensity: { value: 1.0 },
+              uTime: { value: 0 }
+            },
+            vertexShader: [
+              "varying vec2 vUv;",
+              "varying vec3 vNormal;",
+              "void main() {",
+              "  vUv = uv;",
+              "  vNormal = normalize(normalMatrix * normal);",
+              "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+              "}"
+            ].join("\n"),
+            fragmentShader: [
+              "uniform sampler2D earthTexture;",
+              "uniform float uMode;",
+              "uniform float uIntensity;",
+              "uniform float uTime;",
+              "varying vec2 vUv;",
+              "varying vec3 vNormal;",
+              "vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }",
+              "vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }",
+              "vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }",
+              "float snoise(vec2 v) {",
+              "  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);",
+              "  vec2 i  = floor(v + dot(v, C.yy) );",
+              "  vec2 x0 = v -   i + dot(i, C.xx);",
+              "  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);",
+              "  vec4 x12 = x0.xyxy + C.xxzz;",
+              "  x12.xy -= i1;",
+              "  i = mod289(i);",
+              "  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));",
+              "  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);",
+              "  m = m*m ; m = m*m ;",
+              "  vec3 x = 2.0 * fract(p * C.www) - 1.0;",
+              "  vec3 h = abs(x) - 0.5;",
+              "  vec3 ox = floor(x + 0.5);",
+              "  vec3 a0 = x - ox;",
+              "  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );",
+              "  vec3 g;",
+              "  g.x  = a0.x  * x0.x  + h.x  * x0.y;",
+              "  g.yz = a0.yz * x12.xz + h.yz * x12.yw;",
+              "  return 130.0 * dot(m, g);",
+              "}",
+              "vec3 getNOAAColor(float val) {",
+              "  vec3 cDeepNavy   = vec3(0.03, 0.12, 0.27);",
+              "  vec3 cAzure      = vec3(0.01, 0.52, 0.78);",
+              "  vec3 cCyan       = vec3(0.22, 0.74, 0.97);",
+              "  vec3 cIceWhite   = vec3(0.92, 0.96, 1.00);",
+              "  vec3 cYellow     = vec3(0.99, 0.94, 0.54);",
+              "  vec3 cAmber      = vec3(0.96, 0.62, 0.04);",
+              "  vec3 cOrangeRed  = vec3(0.92, 0.35, 0.05);",
+              "  vec3 cCrimson    = vec3(0.94, 0.15, 0.15);",
+              "  if (val < -0.5) return mix(cDeepNavy, cAzure, (val + 1.0) * 2.0);",
+              "  else if (val < -0.15) return mix(cAzure, cCyan, (val + 0.5) / 0.35);",
+              "  else if (val < 0.0) return mix(cCyan, cIceWhite, (val + 0.15) / 0.15);",
+              "  else if (val < 0.20) return mix(cIceWhite, cYellow, val / 0.20);",
+              "  else if (val < 0.50) return mix(cYellow, cAmber, (val - 0.20) / 0.30);",
+              "  else if (val < 0.80) return mix(cAmber, cOrangeRed, (val - 0.50) / 0.30);",
+              "  else return mix(cOrangeRed, cCrimson, clamp((val - 0.80) / 0.20, 0.0, 1.0));",
+              "}",
+              "void main() {",
+              "  vec4 tex = texture2D(earthTexture, vUv);",
+              "  float gray = dot(tex.rgb, vec3(0.299, 0.587, 0.114));",
+              "  vec3 landColor = vec3(gray * 0.9);",
+              "  float pacX = vUv.x;",
+              "  if (pacX > 0.60) pacX -= 1.0;",
+              "  // จำกัดเฉพาะมหาสมุทรแปซิฟิก ไม่ล้นไปแอตแลนติก/อินเดีย",
+              "  float inPacific = smoothstep(-0.25, -0.14, pacX) * (1.0 - smoothstep(0.27, 0.30, pacX));",
+              "  float inEquator = 1.0 - smoothstep(0.09, 0.20, abs(vUv.y - 0.5));",
+              "  float pacificMask = inPacific * inEquator;",
+              "  float latDist = abs(vUv.y - 0.5);",
+              "  // ปรับระดับสัญญาณไม่ให้ชนเพดานจนเกิดปื้นแดงทึบ แต่ให้มีมิติริ้วคลื่นแทรกตลอดผืนน้ำ",
+              "  float enEastWarm = exp(-pow(latDist / 0.055, 2.0)) * exp(-pow((pacX - 0.16) / 0.16, 2.0)) * 0.65;",
+              "  float enCoastWarm = exp(-pow(latDist / 0.09, 2.0)) * exp(-pow((pacX - 0.26) / 0.06, 2.0)) * 0.35;",
+              "  float enColdFlanks = -exp(-pow((latDist - 0.12) / 0.07, 2.0)) * exp(-pow((pacX - 0.15) / 0.20, 2.0)) * 0.35;",
+              "  float elNinoSignal = (enEastWarm + enCoastWarm + enColdFlanks) * pacificMask;",
+              "  // รูปแบบ La Niña (ลิ้นน้ำเย็นจัดแกนขาว-ฟ้าไอซ์บลู ทอดยาวจากเปรูแบบ NOAA)",
+              "  float lnColdTongue = -exp(-pow(latDist / 0.045, 2.0)) * exp(-pow((pacX - 0.12) / 0.17, 2.0)) * 0.85;",
+              "  float lnWestWarm = exp(-pow(latDist / 0.09, 2.0)) * exp(-pow((pacX + 0.14) / 0.09, 2.0)) * 0.55;",
+              "  float lnFlanks = exp(-pow((latDist - 0.10) / 0.06, 2.0)) * exp(-pow((pacX - 0.10) / 0.18, 2.0)) * 0.30;",
+              "  float laNinaSignal = (lnColdTongue + lnWestWarm + lnFlanks) * pacificMask;",
+              "  // สภาวะปกติ",
+              "  float normalSignal = exp(-pow(latDist / 0.07, 2.0)) * exp(-pow((pacX + 0.12) / 0.08, 2.0)) * 0.25 * pacificMask;",
+              "  float baseSignal = 0.0;",
+              "  if (uMode > 0.0) { baseSignal = mix(normalSignal, elNinoSignal, uMode); }",
+              "  else { baseSignal = mix(normalSignal, laNinaSignal, -uMode); }",
+              "  // Domain Warping สำหรับริ้วคลื่นสมุทรศาสตร์ธรรมชาติ (Ocean Eddies & Rossby waves)",
+              "  vec2 st = vUv * vec2(32.0, 44.0);",
+              "  float t = uTime * 0.015;",
+              "  vec2 q = vec2(snoise(st + vec2(t, 0.0)), snoise(st + vec2(5.2, 1.3) + vec2(0.0, t)));",
+              "  vec2 r = vec2(snoise(st + 3.0 * q + vec2(1.7, 9.2) + vec2(t * 1.1, 0.0)), snoise(st + 3.0 * q + vec2(8.3, 2.8)));",
+              "  float eddyNoise = snoise(st + 3.5 * r) * 0.22 + snoise(vUv * 70.0) * 0.06;",
+              "  // ผสมผสานริ้วคลื่นเข้าไปในมวลน้ำ ทำให้ไม่เกิดปื้นแดงทึบ แต่จะมีริ้วลายส้ม-เหลือง-แดงแทรกอยู่ตลอด",
+              "  float anomaly = clamp((baseSignal + eddyNoise * (0.28 + 0.35 * abs(uMode))) * pacificMask * uIntensity, -1.0, 1.0);",
+              "  vec3 oceanColor = getNOAAColor(anomaly);",
+              "  float isOcean = smoothstep(0.0, 0.15, tex.b - (tex.r + tex.g) * 0.45);",
+              "  vec3 finalColor = mix(landColor, oceanColor, isOcean);",
+              "  float rim = 1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0);",
+              "  finalColor += vec3(0.15, 0.25, 0.4) * pow(rim, 3.5);",
+              "  gl_FragColor = vec4(finalColor, 1.0);",
+              "}"
+            ].join("\n")
+          };
+
+          var textureLoader = new THREE.TextureLoader();
+          var earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg', function(){
+            var ld = document.getElementById("ensoLoading"); if(ld) ld.style.display="none";
+          }, undefined, function(){
+            var ld = document.getElementById("ensoLoading"); if(ld) ld.style.display="none";
+          });
+          ensoShader.uniforms.earthTexture.value = earthMap;
+
+          var globeMat = new THREE.ShaderMaterial({
+            uniforms: ensoShader.uniforms,
+            vertexShader: ensoShader.vertexShader,
+            fragmentShader: ensoShader.fragmentShader
+          });
+
+          var globe = new THREE.Mesh(new THREE.SphereGeometry(8, 64, 64), globeMat);
+          globe.rotation.y = -0.15;
+          globe.rotation.x = 0.08;
+          scene.add(globe);
+
+          var months = [
+            "มกราคม (เริ่มสะสม)", "กุมภาพันธ์ (ก่อตัว)", "มีนาคม (ก่อตัว)", "เมษายน (ขยายตัว)",
+            "พฤษภาคม (ขยายตัว)", "มิถุนายน (ชัดเจนขึ้น)", "กรกฎาคม (รุนแรงขึ้น)", "สิงหาคม (รุนแรง)",
+            "กันยายน (ใกล้พีค)", "ตุลาคม (ใกล้พีค)", "พฤศจิกายน (จุดพีคสูงสุด)", "ธันวาคม (คงตัว/เริ่มคลาย)"
+          ];
+
+          var HIST_EVENTS = [
+            {
+              id: "1997",
+              year: "1997–1998",
+              title: "Super El Niño ศตวรรษที่ 20",
+              oni: "ONI: +2.6°C (Super)",
+              oniCol: "rgba(239,68,68,.2)",
+              oniTxtCol: "#f87171",
+              borderCol: "#ef4444",
+              modeVal: 1.0,
+              desc: "<strong>1997–1998 (Super El Niño):</strong> หนึ่งในเอลนีโญรุนแรงสุดในประวัติศาสตร์ ลิ้นน้ำร้อนจัดแผ่ขยายเต็มแปซิฟิกตะวันออก ไทยแล้งจัด ฝนทิ้งช่วง ข้าวเสียหายรุนแรง และเกิดไฟป่าอินโดนีเซียครั้งใหญ่",
+              wind: "หยุดนิ่ง / พัดย้อนกลับ (Westerly Bursts) 💨"
+            },
+            {
+              id: "2010",
+              year: "2010–2011",
+              title: "Super La Niña (มหาอุทกภัย 54)",
+              oni: "ONI: -1.7°C (Extreme)",
+              oniCol: "rgba(56,189,248,.2)",
+              oniTxtCol: "#7dd3fc",
+              borderCol: "#38bdf8",
+              modeVal: -1.0,
+              desc: "<strong>2010–2011 (Super La Niña):</strong> ลานีญากำลังแรงจัด ลิ้นน้ำเย็น (Cold Tongue) ทอดยาวผ่านเส้นศูนย์สูตร พัดมวลน้ำอุ่นและความชื้นสะสมในเอเชียตะวันออกเฉียงใต้และอ่าวไทย มรสุมชุกเป็นประวัติการณ์ นำไปสู่อุทกภัยครั้งใหญ่ 2554",
+              wind: "พัดรุนแรงจัดเป็นประวัติการณ์ ➡️➡️➡️"
+            },
+            {
+              id: "2015",
+              year: "2015–2016",
+              title: "Godzilla El Niño",
+              oni: "ONI: +2.6°C (Extreme)",
+              oniCol: "rgba(239,68,68,.2)",
+              oniTxtCol: "#f87171",
+              borderCol: "#ef4444",
+              modeVal: 1.0,
+              desc: "<strong>2015–2016 (Godzilla El Niño):</strong> ปรากฏการณ์ก็อดซิลลาเอลนีโญ อุณหภูมิผิวน้ำแปซิฟิกพุ่งทำลายสถิติ เกิดภัยแล้งรุนแรงในลุ่มน้ำเจ้าพระยา เขื่อนหลักเหลือน้ำใช้การต่ำสุดในรอบหลายสิบปี",
+              wind: "อ่อนกำลังมาก / ผันผวน 💨"
+            },
+            {
+              id: "2023",
+              year: "2023–2024",
+              title: "Global Heat El Niño",
+              oni: "ONI: +2.0°C (Very Strong)",
+              oniCol: "rgba(239,68,68,.2)",
+              oniTxtCol: "#f87171",
+              borderCol: "#ef4444",
+              modeVal: 0.85,
+              desc: "<strong>2023–2024 (วิกฤตมหาสมุทรเดือด):</strong> เอลนีโญรอบล่าสุดที่ผสมกับภาวะโลกร้อน ทำให้อุณหภูมิมหาสมุทรโลกทำลายสถิติสูงสุดใหม่ต่อเนื่องกว่า 400 วัน และเกิดวิกฤตปะการังฟอกขาวครั้งที่ 4 ระดับโลก",
+              wind: "อ่อนกำลังลงอย่างเห็นได้ชัด 💨"
+            },
+            {
+              id: "2025",
+              year: "2025–2026",
+              title: "สภาวะปัจจุบัน (Mild La Niña)",
+              oni: "ONI: -0.6°C (Mild)",
+              oniCol: "rgba(56,189,248,.2)",
+              oniTxtCol: "#7dd3fc",
+              borderCol: "#38bdf8",
+              modeVal: -0.45,
+              desc: "<strong>2025–2026 (ปัจจุบัน):</strong> สภาวะลานีญาแบบอ่อน ลิ้นน้ำเย็นเริ่มปรากฏตามเส้นศูนย์สูตร ปริมาณฝนในไทยและภูมิภาคอาเซียนมีแนวโน้มสูงกว่าค่าเฉลี่ยปกติเล็กน้อย",
+              wind: "พัดปานกลางค่อนข้างแรง ➡️➡️"
+            },
+            {
+              id: "neutral",
+              year: "สภาวะปกติ",
+              title: "Baseline สมดุลธรรมชาติ",
+              oni: "ONI: 0.0°C (Normal)",
+              oniCol: "rgba(148,163,184,.2)",
+              oniTxtCol: "#cbd5e1",
+              borderCol: "#94a3b8",
+              modeVal: 0.0,
+              desc: "<strong>สภาวะปกติ (Neutral Baseline):</strong> ลมสินค้าพัดพามวลน้ำอุ่นไปสะสมแถบแปซิฟิกตะวันตกตามธรรมชาติ เกิดน้ำผุดเย็นลึก (Upwelling) อุดมด้วยสารอาหารตามชายฝั่งเปรูตามฤดูกาลปกติ",
+              wind: "พัดตามฤดูกาลปกติ ➡️"
+            }
+          ];
+
+          var currentEvtIdx = 0;
+          var targetModeVal = HIST_EVENTS[0].modeVal;
+          var currentModeVal = targetModeVal;
+          var isPlaying = true;
+          var currentMonth = 11.0;
+          var playSpeed = 0.25; // ความเร็วเริ่มต้นแบบช้า สบายตา (แก้ปัญหา "ไวเกิน")
+
+          function calculateIntensity(m) {
+            if (HIST_EVENTS[currentEvtIdx].id === "neutral") return 0.25;
+            return 0.20 + 0.80 * Math.sin(((m - 1) / 11) * (Math.PI / 2));
+          }
+
+          function updateMonthDisplay() {
+            var idx = Math.min(11, Math.max(0, Math.floor(currentMonth) - 1));
+            var el = document.getElementById('ensoMonthBadge');
+            if(el) el.innerText = "เดือนที่ " + Math.floor(currentMonth) + " (" + months[idx] + ")";
+          }
+
+          function setHistoricalEvent(idx) {
+            currentEvtIdx = Math.max(0, Math.min(HIST_EVENTS.length - 1, idx));
+            var ev = HIST_EVENTS[currentEvtIdx];
+            targetModeVal = ev.modeVal;
+
+            // อัปเดตปุ่มใน Grid
+            var btns = document.querySelectorAll("#ensoHistGrid .enso-hbtn");
+            btns.forEach(function(b, i){
+              b.classList.toggle("active", i === currentEvtIdx);
+            });
+
+            // อัปเดต Badge ONI
+            var badge = document.getElementById("ensoOniBadge");
+            if(badge){
+              badge.innerText = ev.oni;
+              badge.style.background = ev.oniCol;
+              badge.style.color = ev.oniTxtCol;
+              badge.style.borderColor = ev.borderCol;
+            }
+
+            // อัปเดตกล่องข้อความ
+            var statusBox = document.getElementById("ensoStatusInfo");
+            if(statusBox){
+              statusBox.style.borderLeftColor = ev.borderCol;
+              statusBox.innerHTML = ev.desc;
+            }
+
+            // อัปเดตสถานะลม
+            var windBox = document.getElementById("ensoWindTxt");
+            if(windBox) windBox.innerHTML = ev.wind;
+          }
+
+          // ผูกเหตุการณ์คลิกปุ่มประวัติศาสตร์
+          var hBtns = document.querySelectorAll("#ensoHistGrid .enso-hbtn");
+          hBtns.forEach(function(btn, i){
+            btn.onclick = function(){
+              setHistoricalEvent(i);
+            };
+          });
+
+          // ผูก Slider เดือน
+          var monthSlider = document.getElementById("ensoTimeSlider");
+          if(monthSlider){
+            monthSlider.oninput = function(){
+              currentMonth = parseFloat(this.value);
+              updateMonthDisplay();
+            };
+          }
+
+          // ปุ่ม Play/Pause
+          var playBtn = document.getElementById("ensoPlayBtn");
+          if(playBtn){
+            playBtn.onclick = function(){
+              isPlaying = !isPlaying;
+              this.innerText = isPlaying ? "⏸ พัก" : "▶ เล่น";
+            };
+          }
+
+          // ปุ่มปรับความเร็ว (ช้า / ปกติ / เร็ว)
+          var speedBtn = document.getElementById("ensoSpeedBtn");
+          var speedModes = [
+            { label: "🐢 ช้า", rate: 0.22 },
+            { label: "🚶 สบายตา", rate: 0.45 },
+            { label: "🐇 ปกติ", rate: 0.85 }
+          ];
+          var speedIdx = 0;
+          if(speedBtn){
+            speedBtn.onclick = function(){
+              speedIdx = (speedIdx + 1) % speedModes.length;
+              playSpeed = speedModes[speedIdx].rate;
+              speedBtn.innerText = speedModes[speedIdx].label;
+            };
+          }
+
+          function setCamView(targetY, targetX){
+            globe.rotation.y = targetY;
+            globe.rotation.x = targetX;
+          }
+          var bPeru = document.getElementById("ensoCamPeru"),
+              bNoaa = document.getElementById("ensoCamNoaa"),
+              bThai = document.getElementById("ensoCamThai");
+          if(bPeru) bPeru.onclick = function(){ setCamView(-0.05, 0.05); };
+          if(bNoaa) bNoaa.onclick = function(){ setCamView(-0.35, 0.08); };
+          if(bThai) bThai.onclick = function(){ setCamView(-Math.PI * 0.95, 0.15); };
+
+          var clock = new THREE.Clock();
+          function loop(){
+            if(!visible){ running=false; return; }
+            raf = requestAnimationFrame(loop);
+            var delta = clock.getDelta();
+            ensoShader.uniforms.uTime.value = clock.getElapsedTime();
+
+            if (isPlaying) {
+              currentMonth += delta * playSpeed;
+              if (currentMonth > 12) currentMonth = 1;
+              if(monthSlider) monthSlider.value = currentMonth;
+              updateMonthDisplay();
+            }
+
+            // Lerp ค่อยๆ เปลี่ยนสถานะมวลน้ำให้เนียนตา
+            currentModeVal += (targetModeVal - currentModeVal) * 0.08;
+            ensoShader.uniforms.uMode.value = currentModeVal;
+            ensoShader.uniforms.uIntensity.value = calculateIntensity(currentMonth);
+
+            controls.update();
+            renderer.render(scene, camera);
+          }
+
+          function onResize(){
+            if(!stage || !renderer || !camera) return;
+            var nw = stage.clientWidth, nh = stage.clientHeight;
+            if(nw && nh){
+              camera.aspect = nw / nh;
+              camera.updateProjectionMatrix();
+              renderer.setSize(nw, nh);
+            }
+          }
+          window.addEventListener("resize", onResize);
+
+          running = true; loop();
+        }).catch(function(err){
+          console.warn("ENSO Three.js init error:", err);
+          var ld = document.getElementById("ensoLoading");
+          if(ld) ld.innerHTML = "<span>เกิดข้อผิดพลาดในการโหลดแบบจำลอง 3 มิติ</span>";
+        });
+      }
+
+      var io = new IntersectionObserver(function(entries){
+        var vis = entries.some(function(e){ return e.isIntersecting; });
+        visible = vis;
+        if(vis && !started){ started=true; init(); }
+        else if(vis && !running){ running=true; }
+      },{threshold:0.01});
+      io.observe(stage);
+    }
+
+    /* ================= 🛰️ ติดตามดาวเทียมสด 3D (Starlink & Active Live) ================= */
+    function setupSatLive(){
+      var stage = document.getElementById("satliveStage");
+      if(!stage) return;
+      var started = false, running = false, visible = false, raf = 0;
+
+      function loadScript(src){
+        return new Promise(function(res,rej){
+          var s=document.createElement("script"); s.src=src; s.onload=res;
+          s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); };
+          document.head.appendChild(s);
+        });
+      }
+      function loadLibs(){
+        var p = (window.THREE && window.THREE.OrbitControls) ? Promise.resolve() :
+          loadScript("https://cdn.jsdelivr.net/npm/three@0.97.0/build/three.min.js")
+            .then(function(){ return loadScript("https://cdn.jsdelivr.net/npm/three@0.97.0/examples/js/controls/OrbitControls.js"); });
+        return p.then(function(){
+          if(window.satellite) return Promise.resolve();
+          return loadScript("https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js");
+        });
+      }
+
+      function init(){
+        loadLibs().then(function(){
+          var THREE = window.THREE, satellite = window.satellite;
+          var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
+          var scene = new THREE.Scene();
+          var camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+          camera.position.set(0, 5, 8);
+
+          var renderer = new THREE.WebGLRenderer({ antialias: true });
+          renderer.setSize(w, h);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          stage.appendChild(renderer.domElement);
+
+          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.minDistance = 2.2;
+          controls.maxDistance = 25;
+
+          scene.add(new THREE.AmbientLight(0x555555));
+          var sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
+          sunLight.position.set(8, 4, 6);
+          scene.add(sunLight);
+
+          var EARTH_RADIUS_KM = 6371;
+          var EARTH_RADIUS_3D = 2.0;
+          var SCALE = EARTH_RADIUS_3D / EARTH_RADIUS_KM;
+
+          var earthGeo = new THREE.SphereGeometry(EARTH_RADIUS_3D, 48, 48);
+          var textureLoader = new THREE.TextureLoader();
+          var earthMat = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('assets/satellite/ne1-small.png', undefined, undefined, function(){
+              return textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg');
+            }),
+            specular: new THREE.Color(0x222222),
+            shininess: 10
+          });
+          var earth = new THREE.Mesh(earthGeo, earthMat);
+          scene.add(earth);
+
+          // ฉากหลังดวงดาว
+          var starGeo = new THREE.BufferGeometry();
+          var starPositions = new Float32Array(1800 * 3);
+          for (var i = 0; i < 1800 * 3; i += 3) {
+            starPositions[i]   = (Math.random() - 0.5) * 160;
+            starPositions[i+1] = (Math.random() - 0.5) * 160;
+            starPositions[i+2] = (Math.random() - 0.5) * 160;
+          }
+          var starAttr = new THREE.BufferAttribute(starPositions, 3);
+          if(starGeo.setAttribute) starGeo.setAttribute('position', starAttr);
+          else starGeo.addAttribute('position', starAttr);
+          scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0x888888, size: 0.25 })));
+
+          var satrecObjects = [];
+          var satPointsMesh = null;
+
+          function parseTLE(tleText) {
+            var lines = tleText.trim().split('\n');
+            var satrecs = [];
+            for (var i = 0; i < lines.length; i += 3) {
+              if (lines[i + 1] && lines[i + 2]) {
+                try {
+                  var satrec = satellite.twoline2satrec(lines[i + 1].trim(), lines[i + 2].trim());
+                  satrecs.push(satrec);
+                } catch (e) {}
+              }
+            }
+            return satrecs;
+          }
+
+          function initSatelliteMesh(count) {
+            var positions = new Float32Array(count * 3);
+            var geometry = new THREE.BufferGeometry();
+            var posAttr = new THREE.BufferAttribute(positions, 3);
+            if(geometry.setAttribute) geometry.setAttribute('position', posAttr);
+            else geometry.addAttribute('position', posAttr);
+
+            var material = new THREE.PointsMaterial({
+              color: 0x00ffcc,
+              size: 0.045,
+              transparent: true,
+              opacity: 0.88
+            });
+            satPointsMesh = new THREE.Points(geometry, material);
+            scene.add(satPointsMesh);
+          }
+
+          function generateFallbackSatellites(count) {
+            var simulated = [];
+            for (var i = 0; i < count; i++) {
+              var alt = 550 + Math.random() * 600;
+              var radius = (EARTH_RADIUS_KM + alt) * SCALE;
+              var inc = (Math.random() * 0.8 + 0.2) * Math.PI;
+              var raan = Math.random() * Math.PI * 2;
+              var speed = 0.005 + Math.random() * 0.005;
+              simulated.push({ radius: radius, inc: inc, raan: raan, speed: speed, angle: Math.random() * Math.PI * 2 });
+            }
+            initSatelliteMesh(count);
+            satrecObjects = simulated;
+            var cnt = count.toLocaleString() + " ดวง (จำลอง)";
+            var elCount = document.getElementById('satliveCountTxt'); if(elCount) elCount.innerText = cnt;
+            var elKpi = document.getElementById('satliveCountKpi'); if(elKpi) elKpi.innerText = count.toLocaleString();
+            var elStat = document.getElementById('satliveStatusTxt'); if(elStat) { elStat.innerText = "โหมดจำลองวงโคจร (CelesTrak ออฟไลน์)"; elStat.style.color="#ffd166"; }
+            var ld = document.getElementById("satliveLoading"); if(ld) ld.style.display = "none";
+          }
+
+          function loadSatellites() {
+            var statusEl = document.getElementById('satliveStatusTxt');
+            var countEl = document.getElementById('satliveCountTxt');
+            var countKpi = document.getElementById('satliveCountKpi');
+
+            fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
+              .then(function(res){
+                if(!res.ok) throw new Error("HTTP error " + res.status);
+                return res.text();
+              })
+              .then(function(text){
+                satrecObjects = parseTLE(text);
+                if(satrecObjects.length < 50) throw new Error("TLE data too small");
+                initSatelliteMesh(satrecObjects.length);
+                if(statusEl){ statusEl.innerText = 'ออนไลน์ (คำนวณพิกัดเรียลไทม์)'; statusEl.style.color = '#00ffcc'; }
+                if(countEl) countEl.innerText = satrecObjects.length.toLocaleString() + ' ดวง';
+                if(countKpi) countKpi.innerText = satrecObjects.length.toLocaleString();
+                var ld = document.getElementById("satliveLoading"); if(ld) ld.style.display = "none";
+              })
+              .catch(function(err){
+                console.warn("CelesTrak TLE fetch fallback:", err);
+                generateFallbackSatellites(2200);
+              });
+          }
+
+          function updateSatellitePositions() {
+            if (!satPointsMesh) return;
+            var positions = satPointsMesh.geometry.attributes.position.array;
+            var now = new Date();
+
+            if (satrecObjects[0] && satrecObjects[0].satnum) {
+              for (var i = 0; i < satrecObjects.length; i++) {
+                var posVel = satellite.propagate(satrecObjects[i], now);
+                if (posVel && posVel.position) {
+                  positions[i * 3]     = posVel.position.x * SCALE;
+                  positions[i * 3 + 1] = posVel.position.z * SCALE;
+                  positions[i * 3 + 2] = -posVel.position.y * SCALE;
+                }
+              }
+            } else {
+              for (var j = 0; j < satrecObjects.length; j++) {
+                var sat = satrecObjects[j];
+                sat.angle += sat.speed * 0.2;
+                var x = sat.radius * Math.cos(sat.angle);
+                var z = sat.radius * Math.sin(sat.angle);
+                positions[j * 3]     = x * Math.cos(sat.raan) - z * Math.sin(sat.raan) * Math.cos(sat.inc);
+                positions[j * 3 + 1] = z * Math.sin(sat.inc);
+                positions[j * 3 + 2] = x * Math.sin(sat.raan) + z * Math.cos(sat.raan) * Math.cos(sat.inc);
+              }
+            }
+            satPointsMesh.geometry.attributes.position.needsUpdate = true;
+          }
+
+          loadSatellites();
+
+          function loop(){
+            if(!visible){ running=false; return; }
+            raf = requestAnimationFrame(loop);
+            earth.rotation.y += 0.0005;
+            updateSatellitePositions();
+            controls.update();
+            renderer.render(scene, camera);
+          }
+
+          function onResize(){
+            if(!stage || !renderer || !camera) return;
+            var nw = stage.clientWidth, nh = stage.clientHeight;
+            if(nw && nh){
+              camera.aspect = nw / nh;
+              camera.updateProjectionMatrix();
+              renderer.setSize(nw, nh);
+            }
+          }
+          window.addEventListener("resize", onResize);
+
+          running = true; loop();
+        }).catch(function(err){
+          console.warn("SatLive Three.js/satellite.js init error:", err);
+          var ld = document.getElementById("satliveLoading");
+          if(ld) ld.innerHTML = "<span>เกิดข้อผิดพลาดในการโหลดระบบติดตามดาวเทียม</span>";
+        });
+      }
+
+      var io = new IntersectionObserver(function(entries){
+        var vis = entries.some(function(e){ return e.isIntersecting; });
+        visible = vis;
+        if(vis && !started){ started=true; init(); }
+        else if(vis && !running){ running=true; }
+      },{threshold:0.01});
+      io.observe(stage);
+    }
+
+    /* ================= 🪸 ลูกโลก 3D ปะการังฟอกขาวโลก (NOAA Coral Reef Watch) ================= */
+    function setupCoralGlobe(){
+      var stage = document.getElementById("coralStage");
+      if(!stage) return;
+      var started = false, running = false, visible = false, raf = 0;
+
+      function loadScript(src){
+        return new Promise(function(res,rej){
+          var s=document.createElement("script"); s.src=src; s.onload=res;
+          s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); };
+          document.head.appendChild(s);
+        });
+      }
+      function loadThree(){
+        if(window.THREE && window.THREE.OrbitControls) return Promise.resolve();
+        var b="https://cdn.jsdelivr.net/npm/three@0.97.0/";
+        return loadScript(b+"build/three.min.js")
+          .then(function(){ return loadScript(b+"examples/js/controls/OrbitControls.js"); });
+      }
+
+      function init(){
+        loadThree().then(function(){
+          var THREE = window.THREE;
+          var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
+          var scene = new THREE.Scene();
+          var camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
+          camera.position.set(0, 3, 22);
+
+          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          renderer.setSize(w, h);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          stage.appendChild(renderer.domElement);
+
+          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.05;
+          controls.minDistance = 11;
+          controls.maxDistance = 45;
+
+          scene.add(new THREE.AmbientLight(0x666666));
+          var dirLight = new THREE.DirectionalLight(0xffffff, 1.3);
+          dirLight.position.set(10, 8, 12);
+          scene.add(dirLight);
+
+          var GLOBE_R = 7.5;
+          var globeGeo = new THREE.SphereGeometry(GLOBE_R, 48, 48);
+          var textureLoader = new THREE.TextureLoader();
+          var earthMat = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg', function(){
+              var ld = document.getElementById("coralLoading"); if(ld) ld.style.display="none";
+            }, undefined, function(){
+              var ld = document.getElementById("coralLoading"); if(ld) ld.style.display="none";
+            }),
+            specular: new THREE.Color(0x222222),
+            shininess: 8
+          });
+          var globe = new THREE.Mesh(globeGeo, earthMat);
+          globe.rotation.y = -Math.PI * 0.75;
+          scene.add(globe);
+
+          var CORAL_REEFS = [
+            { name: "อ่าวไทย (เกาะเต่า / พะงัน / ชุมพร)", lat: 10.0, lon: 99.8, alert: "Alert Level 2 (วิกฤตหนัก)", dhw: "11.2 °C-weeks", col: 0xef4444 },
+            { name: "ทะเลอันดามัน (สิมิลัน / หมู่เกาะสุรินทร์)", lat: 8.6, lon: 97.6, alert: "Alert Level 2 (ฟอกขาวรุนแรง)", dhw: "9.8 °C-weeks", col: 0xef4444 },
+            { name: "เกรตแบร์ริเออร์รีฟ (Great Barrier Reef, ออสเตรเลีย)", lat: -18.2, lon: 147.7, alert: "Alert Level 5 (ตายหมู่ครั้งประวัติศาสตร์)", dhw: "14.6 °C-weeks", col: 0xb91c1c },
+            { name: "สามเหลี่ยมปะการัง (Coral Triangle, ราชาอัมพัต อินโดนีเซีย)", lat: -0.5, lon: 130.5, alert: "Alert Level 1 (ฟอกขาวขยายตัว)", dhw: "6.4 °C-weeks", col: 0xf97316 },
+            { name: "หมู่เกาะมัลดีฟส์ (มหาสมุทรอินเดีย)", lat: 3.2, lon: 73.2, alert: "Alert Level 2 (รุนแรง)", dhw: "10.1 °C-weeks", col: 0xef4444 },
+            { name: "ทะเลแดง (Red Sea, อียิปต์/ซาอุฯ)", lat: 24.0, lon: 36.5, alert: "Bleaching Warning (เฝ้าระวังความร้อน)", dhw: "3.5 °C-weeks", col: 0xeab308 },
+            { name: "ฟลอริดาคีย์ส & แคริบเบียน (Florida Keys & Caribbean)", lat: 24.5, lon: -81.0, alert: "Alert Level 3 (ฟอกขาวกว้างขวาง)", dhw: "12.8 °C-weeks", col: 0xdc2626 },
+            { name: "หมู่เกาะฮาวาย (Hawaii, สหรัฐฯ)", lat: 21.3, lon: -157.8, alert: "Watch (ปกติ/เฝ้าระวัง)", dhw: "2.1 °C-weeks", col: 0x10b981 },
+            { name: "หมู่เกาะกาลาปากอส (Galapagos Islands, เอกวาดอร์)", lat: -0.8, lon: -91.0, alert: "Alert Level 1 (อุณหภูมิผิวน้ำสูง)", dhw: "5.7 °C-weeks", col: 0xf97316 },
+            { name: "ฟิจิ & แปซิฟิกใต้ (Fiji / South Pacific)", lat: -17.7, lon: 178.0, alert: "Alert Level 2 (ฟอกขาวสูง)", dhw: "8.9 °C-weeks", col: 0xef4444 }
+          ];
+
+          function latLonToVec3(lat, lon, r) {
+            var phi = (90 - lat) * (Math.PI / 180);
+            var theta = (lon + 180) * (Math.PI / 180);
+            var x = -r * Math.sin(phi) * Math.cos(theta);
+            var z = r * Math.sin(phi) * Math.sin(theta);
+            var y = r * Math.cos(phi);
+            return new THREE.Vector3(x, y, z);
+          }
+
+          var markersGroup = new THREE.Group();
+          var markerMeshes = [];
+
+          CORAL_REEFS.forEach(function(reef){
+            var pos = latLonToVec3(reef.lat, reef.lon, GLOBE_R + 0.08);
+            var markerGeo = new THREE.SphereGeometry(0.24, 16, 16);
+            var markerMat = new THREE.MeshBasicMaterial({ color: reef.col });
+            var mesh = new THREE.Mesh(markerGeo, markerMat);
+            mesh.position.copy(pos);
+            mesh.userData = reef;
+
+            var ringGeo = new THREE.RingGeometry(0.28, 0.42, 18);
+            var ringMat = new THREE.MeshBasicMaterial({ color: reef.col, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+            var ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.copy(pos);
+            ring.lookAt(new THREE.Vector3(0,0,0));
+            markersGroup.add(ring);
+
+            markersGroup.add(mesh);
+            markerMeshes.push(mesh);
+          });
+          globe.add(markersGroup);
+
+          var raycaster = new THREE.Raycaster();
+          var mouse = new THREE.Vector2();
+          var tooltip = document.getElementById("coralTooltip"),
+              tipName = document.getElementById("coralTipName"),
+              tipInfo = document.getElementById("coralTipInfo");
+
+          function onPointerMove(e){
+            var rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(markerMeshes);
+            if(intersects.length > 0){
+              var d = intersects[0].object.userData;
+              if(d && tooltip){
+                tipName.innerText = "🪸 " + d.name;
+                tipInfo.innerHTML = "<b>สถานะ:</b> " + d.alert + "<br><b>ความเครียดความร้อน (DHW):</b> " + d.dhw;
+                tooltip.style.display = "block";
+                var tx = e.clientX - rect.left + 15;
+                var ty = e.clientY - rect.top - 20;
+                if(tx + 280 > rect.width) tx = rect.width - 290;
+                tooltip.style.left = tx + "px";
+                tooltip.style.top = ty + "px";
+                tooltip.style.bottom = "auto";
+              }
+            } else if(tooltip){
+              tooltip.style.display = "none";
+            }
+          }
+          renderer.domElement.addEventListener("pointermove", onPointerMove);
+
+          function loop(){
+            if(!visible){ running=false; return; }
+            raf = requestAnimationFrame(loop);
+            globe.rotation.y += 0.001;
+            controls.update();
+            renderer.render(scene, camera);
+          }
+
+          function onResize(){
+            if(!stage || !renderer || !camera) return;
+            var nw = stage.clientWidth, nh = stage.clientHeight;
+            if(nw && nh){
+              camera.aspect = nw / nh;
+              camera.updateProjectionMatrix();
+              renderer.setSize(nw, nh);
+            }
+          }
+          window.addEventListener("resize", onResize);
+
+          running = true; loop();
+        }).catch(function(err){
+          console.warn("Coral globe init error:", err);
+          var ld = document.getElementById("coralLoading");
+          if(ld) ld.innerHTML = "<span>เกิดข้อผิดพลาดในการโหลดลูกโลกปะการัง</span>";
+        });
+      }
+
+      var io = new IntersectionObserver(function(entries){
+        var vis = entries.some(function(e){ return e.isIntersecting; });
+        visible = vis;
+        if(vis && !started){ started=true; init(); }
+        else if(vis && !running){ running=true; }
+      },{threshold:0.01});
+      io.observe(stage);
+    }
+
     /* ---------- BOOT ---------- */
     function boot(){
       $$(".k-count").forEach(countUp);
       initNav();
       setupSatellite();
+      setupEnso();
+      setupSatLive();
+      setupCoralGlobe();
       setupPopLandscape();
       setupTradeGlobe();
       setupChipGlobe();
