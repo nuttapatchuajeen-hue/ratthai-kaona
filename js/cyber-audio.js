@@ -10,11 +10,11 @@
 
   // ── รายชื่อหมวดหมู่เพลง (Categories) ──
   var CATEGORIES = [
-    { id: 'all', label: 'ทั้งหมด', icon: '🌌', desc: 'เพลงทั้งหมดทุกแนว' },
-    { id: 'cyber', label: 'Cyber Synth', icon: '⚡', desc: 'ไซเบอร์พังก์ & ไฮเทค' },
-    { id: 'ambient', label: 'Ambient Lo-Fi', icon: '🌙', desc: 'ผ่อนคลาย & สบายๆ' },
-    { id: 'cinematic', label: 'Cinematic', icon: '🏛️', desc: 'ซิมโฟนี & อลังการ' },
-    { id: 'upbeat', label: 'Cyber Funk', icon: '🔥', desc: 'คึกคัก & มีพลัง' }
+    { id: 'all', label: 'ทั้งหมด', icon: 'sparkles', desc: 'เพลงทั้งหมดทุกแนว' },
+    { id: 'cyber', label: 'Cyber Synth', icon: 'zap', desc: 'ไซเบอร์พังก์ & ไฮเทค' },
+    { id: 'ambient', label: 'Ambient Lo-Fi', icon: 'moon', desc: 'ผ่อนคลาย & สบายๆ' },
+    { id: 'cinematic', label: 'Cinematic', icon: 'landmark', desc: 'ซิมโฟนี & อลังการ' },
+    { id: 'upbeat', label: 'Cyber Funk', icon: 'flame', desc: 'คึกคัก & มีพลัง' }
   ];
 
   // ── รายการเพลง BGM ทั้งหมด 17 แทร็ก ──
@@ -515,7 +515,7 @@
       var isActive = (c.id === selectedCategory);
       return [
         '<button type="button" class="bgm-cat-tab ' + (isActive ? 'active' : '') + '" data-cat="' + c.id + '" title="' + c.desc + '">',
-        '  <span class="bgm-cat-icon">' + c.icon + '</span>',
+        '  <span class="bgm-cat-icon">' + (typeof MDICO === 'function' ? MDICO(c.icon) : '') + '</span>',
         '  <span>' + c.label + '</span>',
         '  <span class="bgm-cat-count">' + count + '</span>',
         '</button>'

@@ -114,7 +114,7 @@
     },
     {
       id: 'fiscal',
-      name: '💰 สายงบประมาณ & จัดซื้อจัดจ้าง',
+      name: 'สายงบประมาณ & จัดซื้อจัดจ้าง',
       icon: '#i-wallet',
       color: '#fbbf24',
       desc: 'สำนักงบประมาณ, กรมบัญชีกลาง, สตง., สคร. (กำกับ รสก.), สบน. (หนี้สาธารณะ)',
@@ -123,7 +123,7 @@
     },
     {
       id: 'integrity',
-      name: '🛡️ สายตรวจสอบ & ปราบปรามทุจริต',
+      name: 'สายตรวจสอบ & ปราบปรามทุจริต',
       icon: '#i-shield-alert',
       color: '#f87171',
       desc: 'ป.ป.ช. (ไต่สวนทุจริต/ทรัพย์สิน), ป.ป.ท. (ฝ่ายบริหาร), สตง., ผู้ตรวจการแผ่นดิน, ปปง.',
@@ -132,7 +132,7 @@
     },
     {
       id: 'legal',
-      name: '⚖️ สายกฎหมาย & อัตรากำลังข้าราชการ',
+      name: 'สายกฎหมาย & อัตรากำลังข้าราชการ',
       icon: '#i-scale',
       color: '#a78bfa',
       desc: 'กฤษฎีกา (ตรวจร่าง กม.), ก.พ. (อัตรากำลัง/วินัย), ก.พ.ร. (พัฒนาระบบราชการ), สภาพัฒน์',
@@ -141,7 +141,7 @@
     },
     {
       id: 'regulator',
-      name: '🎯 สายองค์กรกำกับดูแลเฉพาะด้าน (Regulators)',
+      name: 'สายองค์กรกำกับดูแลเฉพาะด้าน (Regulators)',
       icon: '#i-sliders-horizontal',
       color: '#34d399',
       desc: 'ธปท. (ธนาคารรัฐ), กสทช. (โทรคมนาคม), กพท. (การบิน), อย. (ยา/เวชภัณฑ์), กกพ. (พลังงาน), สกมช. (ไซเบอร์), PDPC',
@@ -175,7 +175,7 @@
     if (typeof showPanel === 'function') showPanel(picked);
     if (typeof spineToNode === 'function') spineToNode(picked);
 
-    showToast('🎲 สุ่มพบ: <b>' + (picked.label || picked.data?.name || '') + '</b>', (picked.data?.cat || 'หน่วยงานภาครัฐ') + (picked.ministryID ? ' · สังกัด ' + (typeof minName === 'function' ? minName(picked.ministryID) : '') : ''));
+    showToast('<svg class="mdico"><use href="#i-shuffle"></use></svg> สุ่มพบ: <b>' + (picked.label || picked.data?.name || '') + '</b>', (picked.data?.cat || 'หน่วยงานภาครัฐ') + (picked.ministryID ? ' · สังกัด ' + (typeof minName === 'function' ? minName(picked.ministryID) : '') : ''));
   }
 
   /* ═══════════════════════════════════════════════════════════
@@ -260,7 +260,7 @@
     var countAgencies = Array.from(matchedSet).filter(function (n) { return n.type === 'org'; }).length;
     updateToolButtonUI('sector', tag.name + ' (' + countAgencies + ')', tag.color);
     closeSectorMenu();
-    showToast('🏷️ แท็ก: ' + tag.name, 'พบ ' + countAgencies + ' หน่วยงานที่เกี่ยวข้อง · กดปุ่มเพื่อเปลี่ยนหรือล้าง');
+    showToast('<svg class="mdico"><use href="#i-pin"></use></svg> แท็ก: ' + tag.name, 'พบ ' + countAgencies + ' หน่วยงานที่เกี่ยวข้อง · กดปุ่มเพื่อเปลี่ยนหรือล้าง');
   }
 
   function clearSectorFilter() {
@@ -350,7 +350,7 @@
 
     updateToolButtonUI('oversight', stream.name, stream.color);
     closeSectorMenu();
-    showToast('🔗 ' + stream.name, 'แสดงเส้นกำกับดูแลข้ามกระทรวง ' + edges.length + ' เส้น · กดเพื่อเปลี่ยนสายหรือล้าง');
+    showToast('<svg class="mdico"><use href="#i-link"></use></svg> ' + stream.name, 'แสดงเส้นกำกับดูแลข้ามกระทรวง ' + edges.length + ' เส้น · กดเพื่อเปลี่ยนสายหรือล้าง');
   }
 
   function clearOversightStream() {
@@ -379,13 +379,13 @@
     if (mode && label) {
       btn.classList.add('active');
       btn.style.setProperty('--btn-hl', color || '#00e5ff');
-      btn.innerHTML = '<span class="vb-ico">' + (mode === 'oversight' ? '🔗' : '🏷️') + '</span>' +
+      btn.innerHTML = '<span class="vb-ico">' + (mode === 'oversight' ? '<svg class="mdico"><use href="#i-link"></use></svg>' : '<svg class="mdico"><use href="#i-pin"></use></svg>') + '</span>' +
         '<span class="vb-tx">' + label + '</span>' +
         '<span class="sec-clear-btn" title="ล้างตัวกรอง" onclick="event.stopPropagation(); window.clearAllFilters();">✕</span>';
     } else {
       btn.classList.remove('active');
       btn.style.removeProperty('--btn-hl');
-      btn.innerHTML = '<span class="vb-ico"><svg class="mdico"><use href="#i-tag"></use></svg></span><span class="vb-tx">แท็ก & สายกำกับ</span>';
+      btn.innerHTML = '<span class="vb-ico"><svg class="mdico"><use href="#i-pin"></use></svg></span><span class="vb-tx">แท็ก & สายกำกับ</span>';
     }
   }
 
@@ -399,7 +399,7 @@
     menu.innerHTML = '' +
       '<div class="stm-tabs">' +
         '<button class="stm-tab-btn ' + (activeMenuTab === 'sector' ? 'active' : '') + '" onclick="window.switchMenuTab(\'sector\')">' +
-          '<svg class="mdico"><use href="#i-tag"></use></svg> แท็กภาคส่วน' +
+          '<svg class="mdico"><use href="#i-pin"></use></svg> แท็กภาคส่วน' +
         '</button>' +
         '<button class="stm-tab-btn ' + (activeMenuTab === 'oversight' ? 'active' : '') + '" onclick="window.switchMenuTab(\'oversight\')">' +
           '<svg class="mdico"><use href="#i-network"></use></svg> สายกำกับดูแลข้ามกระทรวง' +
@@ -434,7 +434,7 @@
         return '<button class="stm-item ' + (isAct ? 'active' : '') + '" style="--tag-clr:' + s.color + '" onclick="window.setOversightStream(\'' + s.id + '\')">' +
           '<div class="stm-dot" style="background:' + s.color + '"></div>' +
           '<div class="stm-info">' +
-            '<div class="stm-name">' + s.name + '</div>' +
+            '<div class="stm-name"><svg class="mdico"><use href="' + s.icon + '"></use></svg> ' + s.name + '</div>' +
             '<div class="stm-desc">' + s.desc + '</div>' +
           '</div>' +
         '</button>';
@@ -933,8 +933,8 @@
       var luckyBtn = document.createElement('button');
       luckyBtn.id = 'btn-lucky';
       luckyBtn.className = 'action-btn lucky-btn';
-      luckyBtn.title = 'สุ่มสำรวจหน่วยงานรัฐ (Lucky Agency 🎲)';
-      luckyBtn.innerHTML = '<span class="lucky-ico">🎲</span>';
+      luckyBtn.title = 'สุ่มสำรวจหน่วยงานรัฐ (Lucky Agency)';
+      luckyBtn.innerHTML = '<span class="lucky-ico"><svg class="mdico"><use href="#i-shuffle"></use></svg></span>';
       luckyBtn.onclick = luckyAgency;
       hdRight.insertBefore(luckyBtn, hdRight.firstChild);
 
@@ -960,7 +960,7 @@
       secBtn.className = 'view-btn';
       secBtn.type = 'button';
       secBtn.title = 'แท็กภาคส่วน & สายกำกับดูแลข้ามกระทรวง (Cross-Ministry Tags & Oversight Streams)';
-      secBtn.innerHTML = '<span class="vb-ico"><svg class="mdico"><use href="#i-tag"></use></svg></span><span class="vb-tx">แท็ก & สายกำกับ</span>';
+      secBtn.innerHTML = '<span class="vb-ico"><svg class="mdico"><use href="#i-pin"></use></svg></span><span class="vb-tx">แท็ก & สายกำกับ</span>';
       secBtn.onclick = toggleSectorMenu;
       fxToolbar.appendChild(secBtn);
 

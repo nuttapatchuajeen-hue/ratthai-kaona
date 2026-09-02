@@ -4021,7 +4021,9 @@
                : layer;
       el.className = "poi-intel-marker marker-" + tone;
 
-      var icon = data.countryIco || data.brandIco || data.ico || (layer === "flooding" ? MDICO("waves") : MDICO("map-pin"));
+      /* countryIco เป็นธงชาติ — ธงคือตัวข้อมูลเอง ไม่แปลงเป็นไอคอนเส้น
+         ที่เหลือเก็บเป็น "ชื่อไอคอน Lucide" ในไฟล์ข้อมูล แล้วมาประกอบเป็น <svg> ตรงนี้ */
+      var icon = data.countryIco || MDICO(data.brandIco || data.ico || (layer === "flooding" ? "waves" : "map-pin"));
       var badge = (data.roles ? ' <span class="chip-badge" style="background:#0284C7;color:#fff;">' + (data.roles.split(" ")[0]) + ' jobs</span>' : "");
       var label = (data.company || data.name || "").split("(")[0].trim();
 

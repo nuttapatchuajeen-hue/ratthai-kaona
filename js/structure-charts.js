@@ -49,7 +49,7 @@
     if (!B || !mid || !B.min[mid]) {
       el.innerHTML = `
         <div class="ip-power" style="text-align:center;padding:24px 12px;">
-          <div style="font-size:28px;margin-bottom:8px;">📊</div>
+          <div style="font-size:28px;margin-bottom:8px;"><svg class="mdico"><use href="#i-chart-column"></use></svg></div>
           <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">กราฟสถิติภาพรวม</div>
           <div style="font-size:11.5px;color:var(--text-dim);">ข้อมูลกราฟวิเคราะห์เฉพาะระดับกระทรวงและหน่วยงานหลัก</div>
         </div>
@@ -111,7 +111,7 @@
     var trendChartHtml = `
       <div class="ip-chart-box">
         <div class="ip-chart-title">
-          <span>📈 แนวโน้มงบประมาณ (3 ปีงบ)</span>
+          <span><svg class="mdico"><use href="#i-trending-up"></use></svg> แนวโน้มงบประมาณ (3 ปีงบ)</span>
           <span class="ip-chart-badge" style="background:${isUp ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};color:${isUp ? '#4ade80' : '#f87171'};border-color:${isUp ? '#4ade80' : '#f87171'}">
             ${isUp ? '▲ +' : '▼ '}${diff66_69}%
           </span>
@@ -150,7 +150,7 @@
       staffBarHtml = `
         <div class="ip-chart-box">
           <div class="ip-chart-title">
-            <span>👥 สัดส่วนประเภทบุคลากร</span>
+            <span><svg class="mdico"><use href="#i-users"></use></svg> สัดส่วนประเภทบุคลากร</span>
             <span class="ip-chart-badge">${num(staffTotal)} คน</span>
           </div>
           <div style="display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:10px;background:rgba(255,255,255,0.06);">
@@ -212,7 +212,7 @@
           topAgenciesHtml = `
             <div class="ip-chart-box">
               <div class="ip-chart-title">
-                <span>🏢 5 หน่วยงานในสังกัดที่มีกำลังพลสูงสุด</span>
+                <span><svg class="mdico"><use href="#i-building-2"></use></svg> 5 หน่วยงานในสังกัดที่มีกำลังพลสูงสุด</span>
                 <span class="ip-chart-badge">TOP 5</span>
               </div>
               ${rows}
@@ -227,7 +227,7 @@
     var insightHtml = `
       <div class="ip-power" style="background:rgba(0,229,255,0.06);border-color:rgba(0,229,255,0.25);">
         <div class="ip-power-top">
-          <span class="ip-power-kind" style="background:rgba(0,229,255,0.15);color:#00E5FF;border-color:rgba(0,229,255,0.4);">💡 สรุปวิเคราะห์ดัชนี (Quick Insights)</span>
+          <span class="ip-power-kind" style="background:rgba(0,229,255,0.15);color:#00E5FF;border-color:rgba(0,229,255,0.4);"><svg class="mdico"><use href="#i-lightbulb"></use></svg> สรุปวิเคราะห์ดัชนี (Quick Insights)</span>
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6;margin-top:6px;">
           • <b>งบประมาณเฉลี่ยต่อบุคลากร:</b> ประมาณ <span style="color:var(--gold);font-weight:700;">${costPerHead ? num(costPerHead) : '—'} บาท / คน / ปี</span><br>
