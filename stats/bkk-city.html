@@ -1343,9 +1343,21 @@
     border-radius: 13px;
     line-height: 1.15;
   }
-  .poi-intel-marker.is-embassy .poi-ico { font-size: 17px; line-height: 1; }
+  .poi-intel-marker.is-embassy .poi-ico { line-height: 0; }
   .poi-intel-marker.is-embassy .poi-label { max-width: 168px; white-space: normal; text-align: center; }
   .poi-intel-marker.is-embassy.is-compact { padding: 4px 6px; border-radius: 20px; }
+  /* รูปธงจริง (stats/flags/*.svg) — สัดส่วน 4:3 ตามชุด flag-icons */
+  .flag-ico {
+    display: block;
+    width: 26px;
+    height: 19.5px;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .poi-intel-marker.is-compact .flag-ico { width: 21px; height: 15.75px; }
 
   .marker-embassy { border-color: #38BDF8; color: #E0F2FE; }
   .marker-park { border-color: #22C55E; color: #DCFCE7; }
@@ -4008,12 +4020,14 @@
     });
   }
 
-  /* รหัสประเทศ ISO 3166-1 alpha-2 → ธงชาติ (regional indicator สองตัว)
-     "DE" → 🇩🇪 · คืนค่าว่างถ้ารหัสไม่ใช่ตัวอักษรสองตัว เพื่อให้ตกไปใช้ไอคอนสำรอง */
+  /* รหัสประเทศ ISO 3166-1 alpha-2 → รูปธงชาติใน stats/flags/
+     ใช้ "รูป" ไม่ใช่อีโมจิธง เพราะ Windows ไม่มี glyph ธงใน Segoe UI Emoji
+     จะเรนเดอร์ regional indicator เป็นตัวอักษรรหัสประเทศแทน (เห็นเป็น "US" ไม่ใช่ 🇺🇸)
+     alt เก็บรหัสไว้เป็นตัวสำรองกรณีโหลดรูปไม่ได้ · คืนค่าว่างถ้าไม่มีรหัส เพื่อให้ตกไปใช้ map-pin */
   function countryFlag(cc) {
     if (!cc || !/^[A-Za-z]{2}$/.test(cc)) return "";
-    var up = cc.toUpperCase();
-    return String.fromCodePoint(0x1F1E6 + up.charCodeAt(0) - 65, 0x1F1E6 + up.charCodeAt(1) - 65);
+    return '<img class="flag-ico" src="flags/' + cc.toLowerCase() + '.svg" alt="' +
+           cc.toUpperCase() + '" loading="lazy" decoding="async">';
   }
 
   /* 💎 Create & Manage Lifestyle & Intelligence POI Markers (GPU-locked maplibregl.Marker) */
