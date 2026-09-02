@@ -11,18 +11,20 @@
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   :root {
-    --bg-page: #F8F9FA;
+    --bg-page: #EDF4F8;              /* --paper   ทั้งเว็บ */
     --card-bg: rgba(255, 255, 255, 0.96);
-    --card-border: #E2E8F0;
-    --text-main: #1A202C;
-    --text-muted: #64748B;
-    --text-sub: #94A3B8;
-    --copper: #B86B43;
-    --copper-hover: #A05832;
-    --copper-light: rgba(184, 107, 67, 0.12);
+    --card-border: #C8DAE4;          /* --rule */
+    --text-main: #0A1822;            /* --ink */
+    --text-muted: #516A7A;           /* --ink-soft — ผ่าน AA 4.59:1 */
+    --text-sub: #7C93A3;
+    --accent: #04788F;               /* สีหลัก cyan ของเว็บ (#0089A9) เข้มขึ้นนิดให้ผ่าน AA 4.5:1 ทั้งพื้นและตัวอักษร */
+    --accent-hover: #055A75;
+    --accent-soft: rgba(4, 120, 143, 0.12);
+    --on-accent: #FFFFFF;            /* ตัวหนังสือบนพื้น accent */
     --bts-green: #008000;
     --mrt-blue: #194F9E;
-    --accent-cyan: #0284C7;
+    --accent-warm: #C33F0D;          /* ส้ม accent ของเว็บ (#D9480F) เข้มขึ้นนิดให้ผ่าน AA */
+    --on-warm: #FFFFFF;
     --shadow-soft: 0 10px 30px -8px rgba(0, 0, 0, 0.12), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
     --radius-pill: 999px;
     --radius-card: 14px;
@@ -35,10 +37,12 @@
     --text-main: #FDE8DC;
     --text-muted: #D1A594;
     --text-sub: #9C7565;
-    --copper: #F97316;
-    --copper-hover: #EA580C;
-    --copper-light: rgba(249, 115, 22, 0.18);
-    --accent-cyan: #FB923C;
+    --accent: #FF5C1A;               /* ส้ม hub เต็มค่า สำหรับธีมพระอาทิตย์ตก */
+    --accent-hover: #FF7A45;
+    --accent-soft: rgba(255, 92, 26, 0.18);
+    --on-accent: #2A0F04;
+    --accent-warm: #FFA24D;
+    --on-warm: #2A0F04;
     --shadow-soft: 0 12px 36px -10px rgba(0, 0, 0, 0.6);
   }
 
@@ -49,12 +53,14 @@
     --text-main: #E2E8F0;
     --text-muted: #94A3B8;
     --text-sub: #64748B;
-    --copper: #D48344;
-    --copper-hover: #E09458;
-    --copper-light: rgba(212, 131, 68, 0.18);
+    --accent: #00E5FF;               /* cyan hub เต็มค่าบนพื้นมืด */
+    --accent-hover: #5CF0FF;
+    --accent-soft: rgba(0, 229, 255, 0.16);
+    --on-accent: #04222B;
     --bts-green: #3DDC84;
     --mrt-blue: #38BDF8;
-    --accent-cyan: #00E5FF;
+    --accent-warm: #FF5C1A;
+    --on-warm: #2A0F04;
     --shadow-soft: 0 12px 36px -10px rgba(0, 0, 0, 0.7);
   }
 
@@ -69,7 +75,7 @@
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
   }
-  a { color: var(--copper); text-decoration: none; }
+  a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
   /* ---------- Luxury Header ---------- */
@@ -110,7 +116,7 @@
     font-size: 9.5px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--copper);
+    color: var(--accent);
     font-weight: 600;
   }
 
@@ -145,16 +151,16 @@
   }
   [data-theme="dark"] .chip { background: #131E2B; }
   [data-theme="sunset"] .chip { background: #2A1D18; }
-  .chip:hover { border-color: var(--copper); color: var(--text-main); }
+  .chip:hover { border-color: var(--accent); color: var(--text-main); }
   .chip.active {
     background: #000000;
     color: #FFFFFF;
     border-color: #000000;
   }
   [data-theme="dark"] .chip.active, [data-theme="sunset"] .chip.active {
-    background: var(--copper);
-    border-color: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
   }
   .chip-count {
     font-family: "Archivo", sans-serif;
@@ -183,8 +189,8 @@
   [data-theme="dark"] .search-input { background: #131E2B; }
   [data-theme="sunset"] .search-input { background: #2A1D18; }
   .search-input:focus {
-    border-color: var(--copper);
-    box-shadow: 0 0 0 3px var(--copper-light);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
   .search-ico {
     position: absolute;
@@ -221,7 +227,7 @@
     border-bottom: 1px solid var(--card-border);
   }
   .search-row:last-child { border-bottom: none; }
-  .search-row:hover { background: var(--copper-light); color: var(--copper); }
+  .search-row:hover { background: var(--accent-soft); color: var(--accent); }
   .search-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--card-border); color: var(--text-muted); }
 
   /* KPI Row */
@@ -240,7 +246,6 @@
     font-size: 15px;
     color: var(--text-main);
   }
-  .kpi-copper { color: var(--copper); }
 
   /* ---------- Map Stage ---------- */
   .stage { flex: 1 1 auto; position: relative; min-height: 0; }
@@ -277,8 +282,8 @@
     user-select: none;
   }
   .zoom-btn:hover {
-    border-color: var(--copper);
-    color: var(--copper);
+    border-color: var(--accent);
+    color: var(--accent);
     transform: scale(1.05);
   }
   .zoom-btn:active { transform: scale(0.96); }
@@ -448,7 +453,7 @@
   .photo-card-price {
     font-size: 9px;
     font-weight: 700;
-    color: var(--copper);
+    color: var(--accent);
     white-space: nowrap;
   }
 
@@ -487,7 +492,7 @@
   .brand-bar-title {
     font-size: 11px;
     font-weight: 800;
-    color: var(--copper);
+    color: var(--accent);
     letter-spacing: 0.05em;
     white-space: nowrap;
   }
@@ -508,13 +513,13 @@
   }
   .brand-chip:hover {
     background: rgba(255, 255, 255, 0.95);
-    border-color: var(--copper);
-    color: var(--copper);
+    border-color: var(--accent);
+    color: var(--accent);
   }
   .brand-chip.active {
-    background: var(--copper);
-    color: #FFFFFF;
-    border-color: var(--copper);
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
     box-shadow: 0 2px 8px rgba(184, 107, 67, 0.35);
   }
   .brand-dot {
@@ -555,7 +560,7 @@
   }
   .pin-mode-btn.active {
     background: #FFFFFF;
-    color: var(--copper);
+    color: var(--accent);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
   [data-theme="dark"] .brand-chip, [data-theme="sunset"] .brand-chip {
@@ -564,8 +569,8 @@
     color: #CBD5E1;
   }
   [data-theme="dark"] .brand-chip.active, [data-theme="sunset"] .brand-chip.active {
-    background: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    color: var(--on-accent);
   }
   [data-theme="dark"] .pin-mode-toggle, [data-theme="sunset"] .pin-mode-toggle {
     background: rgba(255, 255, 255, 0.08);
@@ -659,27 +664,119 @@
     z-index: 20;
   }
 
+  /* Lucide strokes read thin at 11px — give the chrome icons a touch more room */
+  .menu-btn .mdico,
+  .view-mode-btn .mdico,
+  .chip .mdico,
+  .brand-bar-title .mdico,
+  .pin-mode-btn .mdico { width: 1.2em; height: 1.2em; }
+  .poi-intel-marker .mdico { width: 1.15em; height: 1.15em; }
+
+  /* One column for every left-hand overlay: toolbar, Lifestyle pill, brand filter and
+     zoom controls. They each used a fixed `top` and drifted into one another whenever a
+     bar changed height — a flex column cannot overlap by construction. */
+  .toolbar-stack {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 22;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: calc(100% - 40px);
+    pointer-events: none;              /* gaps stay draggable map */
+  }
+  .toolbar-stack > * { pointer-events: auto; }
+  .toolbar-stack > .left-menu,
+  .toolbar-stack > .floating-intel-pill,
+  .toolbar-stack > .brand-filter-bar,
+  .toolbar-stack > .floating-expand-btn,
+  .toolbar-stack > .map-zoom-controls {
+    position: relative;
+    top: auto; left: auto; right: auto; bottom: auto;
+    max-width: 100%;
+  }
+  .toolbar-stack > .brand-filter-bar { width: 100%; }
+  .toolbar-stack > .brand-bar-mini {
+    position: relative;
+    top: auto; left: auto; right: auto; bottom: auto;
+  }
+  /* the mini pill is shown with an inline style, so the collapsed stack needs to win */
+  .toolbar-stack.collapsed > .brand-bar-mini { display: none !important; }
+
+  .brand-bar-collapse {
+    flex: none;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    cursor: pointer;
+    border-radius: 7px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+  }
+  .brand-bar-collapse:hover { color: var(--accent); border-color: var(--accent); }
+
+  .brand-bar-mini {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .brand-bar-mini:hover { border-color: var(--accent); color: #FFFFFF; }
+  .brand-bar-mini .mini-count { color: var(--text-muted); font-weight: 600; font-size: 10.5px; }
+
+  .toolbar-stack > .map-zoom-controls { margin-top: 2px; }
+  /* Collapsed: only the expand button and the zoom controls stay */
+  .toolbar-stack.collapsed > .left-menu,
+  .toolbar-stack.collapsed > .floating-intel-pill,
+  .toolbar-stack.collapsed > .brand-filter-bar { display: none; }
   .left-menu {
     left: 20px;
     top: 20px;
     padding: 6px;
     display: flex;
-    gap: 5px;
+    gap: 4px;
     align-items: center;
     flex-wrap: wrap;
     max-width: calc(100% - 40px);
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
   }
-  .left-menu.collapsed {
-    transform: translateY(-130%);
-    opacity: 0;
-    pointer-events: none;
+  /* Zone "fly to" dropdown — keeps the toolbar on one row */
+  .zone-menu-wrap { position: relative; display: inline-flex; }
+  .zone-caret { font-size: 10px; opacity: 0.7; margin-left: 2px; }
+  .zone-menu-wrap.open .zone-caret { transform: rotate(180deg); }
+  .zone-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 26;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 208px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   }
-  .brand-filter-bar.collapsed {
-    transform: translateY(-220%);
-    opacity: 0;
-    pointer-events: none;
+  .zone-dropdown .zone-item { width: 100%; justify-content: flex-start; }
+  .zone-dropdown .zone-item .label-text { display: inline !important; }
+  /* Collapse is a utility action — icon only, so the row keeps its width for real controls */
+  .btn-collapse-action .label-text { display: none; }
+
+  /* Narrow desktops: tighten the buttons instead of wrapping onto a second row */
+  @media (max-width: 1180px) {
+    .left-menu .menu-btn { padding: 6px 8px; font-size: 11px; gap: 4px; }
   }
+
+  .left-menu.collapsed { display: none; }
+  .brand-filter-bar.collapsed { display: none; }
 
   /* Floating Expand Button when Toolbar is Collapsed */
   .floating-expand-btn {
@@ -691,7 +788,7 @@
     border-radius: 20px;
     font-size: 12px;
     font-weight: 700;
-    color: var(--copper);
+    color: var(--accent);
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     cursor: pointer;
@@ -703,17 +800,17 @@
   }
   .floating-expand-btn:hover {
     transform: scale(1.05);
-    border-color: var(--copper);
+    border-color: var(--accent);
     color: var(--text-main);
   }
   .btn-collapse-action {
     background: rgba(184, 107, 67, 0.15) !important;
-    border-color: var(--copper) !important;
-    color: var(--copper) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
     margin-left: auto;
   }
   .btn-collapse-action:hover {
-    background: var(--copper) !important;
+    background: var(--accent) !important;
     color: #FFFFFF !important;
   }
 
@@ -735,11 +832,11 @@
   }
   [data-theme="dark"] .menu-btn { background: #131E2B; }
   [data-theme="sunset"] .menu-btn { background: #2A1D18; }
-  .menu-btn:hover { border-color: var(--copper); color: var(--text-main); }
+  .menu-btn:hover { border-color: var(--accent); color: var(--text-main); }
   .menu-btn.active {
-    background: var(--copper);
-    border-color: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
   }
 
   /* 📊 View Mode Switcher in Header */
@@ -768,14 +865,14 @@
   }
   .view-mode-btn:hover { color: var(--text-main); }
   .view-mode-btn.active {
-    background: var(--copper);
-    color: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(184, 107, 67, 0.4);
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 2px 8px rgba(0, 137, 169, 0.35);
   }
   .view-mode-btn.active-2d {
-    background: #0284C7;
-    color: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+    background: var(--accent-warm);
+    color: var(--on-warm);
+    box-shadow: 0 2px 8px rgba(195, 63, 13, 0.35);
   }
 
   /* 📊 2D Thematic Metric Bar (Top Toolbar in 2D Mode) */
@@ -987,7 +1084,7 @@
     font-size: 9.5px;
     font-weight: 800;
     letter-spacing: 0.08em;
-    color: var(--copper);
+    color: var(--accent);
     display: block;
     margin-bottom: 2px;
   }
@@ -1080,7 +1177,7 @@
     border-radius: 50%;
     transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .switch-toggle input:checked + .slider { background-color: var(--copper); }
+  .switch-toggle input:checked + .slider { background-color: var(--accent); }
   .switch-toggle input:checked + .slider:before { transform: translateX(16px); }
 
   /* Height Chips Grid */
@@ -1101,11 +1198,11 @@
     text-align: center;
     transition: all 0.15s ease;
   }
-  .height-chip:hover { border-color: var(--copper); color: var(--text-main); }
+  .height-chip:hover { border-color: var(--accent); color: var(--text-main); }
   .height-chip.active {
-    background: var(--copper);
-    border-color: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
   }
 
   /* Transit Proximity Grid */
@@ -1126,11 +1223,11 @@
     text-align: center;
     transition: all 0.15s ease;
   }
-  .transit-dist-btn:hover { border-color: #06B6D4; color: #FFFFFF; }
+  .transit-dist-btn:hover { border-color: var(--accent); color: var(--on-accent); }
   .transit-dist-btn.active {
-    background: #0284C7;
-    border-color: #06B6D4;
-    color: #FFFFFF;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
   }
 
   /* Amenities & Pet Chips Wraps */
@@ -1197,6 +1294,11 @@
     z-index: 120;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   }
+  /* Icon-only form used below INTEL_COMPACT_ZOOM */
+  .poi-intel-marker.is-compact { padding: 5px 7px; gap: 0; }
+  .poi-intel-marker.is-compact .poi-label,
+  .poi-intel-marker.is-compact .chip-badge { display: none; }
+
   .marker-embassy { border-color: #38BDF8; color: #E0F2FE; }
   .marker-park { border-color: #22C55E; color: #DCFCE7; }
   .marker-edu { border-color: #F59E0B; color: #FEF3C7; }
@@ -1227,7 +1329,7 @@
   }
   .floating-intel-pill:hover {
     transform: scale(1.05);
-    border-color: var(--copper);
+    border-color: var(--accent);
     color: #FFFFFF;
   }
 
@@ -1247,7 +1349,7 @@
     transition: all 0.2s ease;
     user-select: none;
   }
-  .getting-around-pill:hover { border-color: var(--copper); transform: translateY(-1px); }
+  .getting-around-pill:hover { border-color: var(--accent); transform: translateY(-1px); }
   .toggle-switch-icon {
     width: 28px;
     height: 16px;
@@ -1256,7 +1358,7 @@
     position: relative;
     display: inline-block;
   }
-  [data-theme="dark"] .toggle-switch-icon, [data-theme="sunset"] .toggle-switch-icon { background: var(--copper); }
+  [data-theme="dark"] .toggle-switch-icon, [data-theme="sunset"] .toggle-switch-icon { background: var(--accent); }
   .toggle-switch-icon::after {
     content: '';
     position: absolute;
@@ -1316,7 +1418,7 @@
     gap: 8px;
     min-width: 320px;
     max-width: 440px;
-    border-color: var(--copper);
+    border-color: var(--accent);
     animation: fadeInDown 0.3s ease-out;
   }
   @keyframes fadeInDown { from { opacity: 0; transform: translate(-50%, -15px); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -1328,7 +1430,7 @@
     width: 100%;
     font-size: 11px;
     font-weight: 700;
-    color: var(--copper);
+    color: var(--accent);
     letter-spacing: 0.1em;
   }
   .tour-title {
@@ -1363,8 +1465,8 @@
   }
   [data-theme="dark"] .tour-btn { background: #1E293B; }
   [data-theme="sunset"] .tour-btn { background: #33201A; }
-  .tour-btn:hover { border-color: var(--copper); color: var(--copper); }
-  .tour-btn.active-play { background: var(--copper); color: #FFFFFF; border-color: var(--copper); }
+  .tour-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tour-btn.active-play { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
   /* ---------- 🧭 Transit Route & Fare Planner Drawer ---------- */
   .route-planner-drawer {
@@ -1401,8 +1503,8 @@
   .route-calc-btn {
     width: 100%;
     padding: 10px;
-    background: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    color: var(--on-accent);
     border: none;
     border-radius: 8px;
     font-weight: 700;
@@ -1410,12 +1512,12 @@
     cursor: pointer;
     transition: background 0.15s;
   }
-  .route-calc-btn:hover { background: var(--copper-hover); }
+  .route-calc-btn:hover { background: var(--accent-hover); }
 
   .route-result-card {
     margin-top: 12px;
     padding: 12px;
-    background: var(--copper-light);
+    background: var(--accent-soft);
     border: 1px solid rgba(184, 107, 67, 0.25);
     border-radius: 10px;
     display: none;
@@ -1435,7 +1537,7 @@
     text-align: center;
     border: 1px solid var(--card-border);
   }
-  .route-stat-val { font-family: "Archivo", sans-serif; font-size: 15px; font-weight: 800; color: var(--copper); }
+  .route-stat-val { font-family: "Archivo", sans-serif; font-size: 15px; font-weight: 800; color: var(--accent); }
   .route-stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; }
 
   /* ---------- 50 Districts Hover Tooltip ---------- */
@@ -1456,7 +1558,7 @@
 
   .dist-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
   .dist-stats { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
-  .dist-stat-val { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--copper); }
+  .dist-stat-val { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--accent); }
 
   /* ---------- Luxury Right Project Intelligence Drawer ---------- */
   .project-drawer {
@@ -1491,8 +1593,8 @@
     border-radius: var(--radius-pill);
     font-size: 11px;
     font-weight: 700;
-    color: #FFFFFF;
-    background: var(--copper);
+    color: var(--on-accent);
+    background: var(--accent);
     margin-bottom: 6px;
   }
   .project-name {
@@ -1549,13 +1651,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 14px;
-    background: var(--copper-light);
+    background: var(--accent-soft);
     border: 1px solid rgba(184, 107, 67, 0.2);
     border-radius: 10px;
   }
-  .dev-info span { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--copper); text-transform: uppercase; }
+  .dev-info span { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
   .dev-info strong { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
-  .dev-link-btn { font-size: 12px; font-weight: 600; color: var(--copper); }
+  .dev-link-btn { font-size: 12px; font-weight: 600; color: var(--accent); }
 
   /* 500m Walkability Catchment Badge */
   .walkability-card {
@@ -1567,9 +1669,9 @@
     align-items: center;
     justify-content: space-between;
   }
-  .walk-title { font-size: 12px; font-weight: 700; color: var(--accent-cyan); display: flex; align-items: center; gap: 6px; }
+  .walk-title { font-size: 12px; font-weight: 700; color: var(--accent-warm); display: flex; align-items: center; gap: 6px; }
   .walk-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .walk-score-badge { font-family: "Archivo", sans-serif; font-size: 15px; font-weight: 800; color: var(--accent-cyan); background: var(--card-bg); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(2, 132, 199, 0.3); }
+  .walk-score-badge { font-family: "Archivo", sans-serif; font-size: 15px; font-weight: 800; color: var(--accent-warm); background: var(--card-bg); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(217, 72, 15, 0.3); }
 
   /* Key Metrics Grid */
   .metrics-grid {
@@ -1619,7 +1721,7 @@
   [data-theme="dark"] .unit-item { background: #131E2B; }
   [data-theme="sunset"] .unit-item { background: #2A1D18; }
   .unit-type-name { font-weight: 600; color: var(--text-main); }
-  .unit-size { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--copper); }
+  .unit-size { font-family: "Archivo", sans-serif; font-weight: 700; color: var(--accent); }
 
   .transport-list {
     display: flex;
@@ -1641,8 +1743,8 @@
   .fly-3d-btn {
     width: 100%;
     padding: 12px;
-    background: var(--copper);
-    color: #FFFFFF;
+    background: var(--accent);
+    color: var(--on-accent);
     border: none;
     border-radius: 10px;
     font-weight: 700;
@@ -1654,7 +1756,7 @@
     gap: 8px;
     transition: background 0.15s;
   }
-  .fly-3d-btn:hover { background: var(--copper-hover); }
+  .fly-3d-btn:hover { background: var(--accent-hover); }
 
   /* Loading Screen */
   .loading-overlay {
@@ -1675,7 +1777,7 @@
     height: 28px;
     border-radius: 50%;
     border: 3px solid var(--card-border);
-    border-top-color: var(--copper);
+    border-top-color: var(--accent);
     animation: spin 800ms linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -1692,6 +1794,7 @@
     .drone-tour-panel { min-width: 90%; }
   }
 </style>
+<script src="../js/icons.js"></script>
 </head>
 <body>
 
@@ -1706,13 +1809,13 @@
     <div class="header-actions">
       <!-- Mode Switcher Tabs (3D Real Estate vs 2D Thematic Analytics) -->
       <div class="view-mode-tabs">
-        <button type="button" class="view-mode-btn active" id="btnMode3D" title="3D Real Estate & Transit Model">🏙️ 3D Real Estate</button>
-        <button type="button" class="view-mode-btn" id="btnMode2D" title="2D Thematic Heatmap 50 เขต">📊 2D Thematic 50 เขต</button>
+        <button type="button" class="view-mode-btn active" id="btnMode3D" title="3D Real Estate & Transit Model"><svg class="mdico"><use href="#i-building-2"></use></svg> 3D Real Estate</button>
+        <button type="button" class="view-mode-btn" id="btnMode2D" title="2D Thematic Heatmap 50 เขต"><svg class="mdico"><use href="#i-chart-column"></use></svg> 2D Thematic 50 เขต</button>
       </div>
 
       <!-- Search -->
       <div class="search-wrapper">
-        <span class="search-ico">🔍</span>
+        <span class="search-ico"><svg class="mdico"><use href="#i-search"></use></svg></span>
         <input type="text" class="search-input" id="searchInput" placeholder="ค้นหาโครงการ, สถานี หรือเขต..." autocomplete="off">
         <div class="search-dropdown" id="searchDropdown"></div>
       </div>
@@ -1731,30 +1834,15 @@
           <span>50 Districts</span>
         </button>
         <button type="button" class="chip" id="btnThemeToggle" title="Toggle Light / Sunset / Dark Mode">
-          <span id="themeIco">🌙 Dark</span>
+          <span id="themeIco"><svg class="mdico"><use href="#i-moon"></use></svg> Dark</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- KPI Row -->
+  <!-- Live camera readout (the 24/181/50 counts live in the header chips above — no duplicate) -->
   <div class="kpi-row">
     <div class="kpi-item">
-      <span class="kpi-num kpi-copper" id="landmarkCountKpi">16</span>
-      <span>Iconic 3D Megaprojects</span>
-    </div>
-    <span>·</span>
-    <div class="kpi-item">
-      <span class="kpi-num">181</span>
-      <span>Stations across 10 Mass Transit Lines</span>
-    </div>
-    <span>·</span>
-    <div class="kpi-item">
-      <span class="kpi-num">50</span>
-      <span>BMA Districts</span>
-    </div>
-    <span>·</span>
-    <div class="kpi-item" style="margin-left: auto;">
       <span id="coordTag" style="font-size: 11px; font-variant-numeric: tabular-nums;">Silom - Sathorn - Rama IV Corridor</span>
     </div>
   </div>
@@ -1763,72 +1851,77 @@
 <div class="stage">
   <div id="map"></div>
 
-  <!-- Left Side Custom Zoom Controls -->
-  <div class="map-zoom-controls">
-    <button type="button" class="zoom-btn" id="btnZoomIn" title="ซูมเข้า">+</button>
-    <button type="button" class="zoom-btn" id="btnZoomOut" title="ซูมออก">−</button>
-    <button type="button" class="zoom-btn compass-btn" id="btnResetCompass" title="หันมุมมองทิศเหนือ / รีเซ็ต 3D">▲</button>
-  </div>
 
-  <!-- 3D Projected DOM Pins Container -->
-  <div id="pinContainer"></div>
-
-  <!-- Surrounding POI Pins Container -->
-  <div id="poiContainer"></div>
-
+  <!-- Left control stack — one column, so these overlays can never cover each other -->
+  <div class="toolbar-stack" id="toolbarStack">
+  <!-- 🎛️ Floating Expand Button (เมื่อย่อแถบเครื่องมือ) -->
+  <button type="button" class="glass-card floating-expand-btn" id="btnExpandBars" style="display:none;" title="ขยายแถบเครื่องมือ & ตัวกรองแบรนด์">
+    <span><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> เครื่องมือ & แบรนด์</span>
+    <span style="font-size:10.5px;color:var(--text-muted);font-weight:700;">(10 แบรนด์) <svg class="mdico" style="transform:rotate(90deg)"><use href="#i-chevron-right"></use></svg></span>
+  </button>
   <!-- Left Floating Menu -->
   <div class="glass-card left-menu" id="leftMenu">
     <button type="button" class="menu-btn active" id="btn3DBuildings" title="Toggle 3D City Buildings">
-      <span>🏢</span><span class="label-text"> 3D Buildings</span>
+      <span><svg class="mdico"><use href="#i-building-2"></use></svg></span><span class="label-text"> 3D Buildings</span>
     </button>
     <button type="button" class="menu-btn active" id="btnLandmarksToggle" title="Toggle Copper Landmark Models">
-      <span>✨</span><span class="label-text"> Landmarks 3D</span>
+      <span><svg class="mdico"><use href="#i-sparkles"></use></svg></span><span class="label-text"> Landmarks 3D</span>
     </button>
     <button type="button" class="menu-btn active" id="btnTransitToggle" title="Toggle Transit Lines">
-      <span>🚆</span><span class="label-text"> Transit Lines</span>
+      <span><svg class="mdico"><use href="#i-train-front"></use></svg></span><span class="label-text"> Transit Lines</span>
     </button>
     <button type="button" class="menu-btn" id="btnDistrictsToggle" title="Toggle 50 BMA Districts Layer">
-      <span>🗺️</span><span class="label-text"> 50 Districts</span>
+      <span><svg class="mdico"><use href="#i-map"></use></svg></span><span class="label-text"> 50 Districts</span>
     </button>
     <button type="button" class="menu-btn" id="btnDroneTour" title="Start 3D Cinematic Drone Tour">
-      <span>🎬</span><span class="label-text"> Drone Tour</span>
+      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span><span class="label-text"> Drone Tour</span>
     </button>
     <button type="button" class="menu-btn" id="btnRoutePlannerToggle" title="Transit Route & Fare Planner">
-      <span>🧭</span><span class="label-text"> Route Finder</span>
+      <span><svg class="mdico"><use href="#i-compass"></use></svg></span><span class="label-text"> Route Finder</span>
     </button>
     <button type="button" class="menu-btn" id="btnIntelSidebarToggle" title="เปิดแผงควบคุม Lifestyle 360° (Amenities, Pet, Embassies, Work)">
-      <span>💎</span><span class="label-text"> Lifestyle 360°</span>
+      <span><svg class="mdico"><use href="#i-gem"></use></svg></span><span class="label-text"> Lifestyle 360°</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlyCBD" title="บินชมโซนกลางเมือง (Silom, Sathorn, One Bangkok, Dusit Central Park)">
-      <span>🏙️</span><span class="label-text"> โซนกลางเมือง (CBD)</span>
+    <div class="zone-menu-wrap">
+      <button type="button" class="menu-btn" id="btnZoneMenu" aria-expanded="false" title="บินไปโซนต่าง ๆ ของกรุงเทพฯ">
+        <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> บินไปโซน</span><span class="zone-caret"><svg class="mdico" style="transform:rotate(90deg)"><use href="#i-chevron-right"></use></svg></span>
+      </button>
+      <div class="zone-dropdown glass-card" id="zoneDropdown" hidden>
+        <button type="button" class="menu-btn zone-item" id="btnFlyCBD" title="บินชมโซนกลางเมือง (Silom, Sathorn, One Bangkok, Dusit Central Park)">
+      <span><svg class="mdico"><use href="#i-building-2"></use></svg></span><span class="label-text"> โซนกลางเมือง (CBD)</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlySukhumvit" title="บินชมโซนสุขุมวิท-เพลินจิต (Central Embassy, EM District)">
-      <span>🛍️</span><span class="label-text"> สุขุมวิท-เพลินจิต</span>
+        <button type="button" class="menu-btn zone-item" id="btnFlySukhumvit" title="บินชมโซนสุขุมวิท-เพลินจิต (Central Embassy, EM District)">
+      <span><svg class="mdico"><use href="#i-shopping-basket"></use></svg></span><span class="label-text"> สุขุมวิท-เพลินจิต</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlyRiver" title="บินชมโซนริมแม่น้ำเจ้าพระยา (ICONSIAM)">
-      <span>🌊</span><span class="label-text"> ริมแม่น้ำ</span>
+        <button type="button" class="menu-btn zone-item" id="btnFlyRiver" title="บินชมโซนริมแม่น้ำเจ้าพระยา (ICONSIAM)">
+      <span><svg class="mdico"><use href="#i-waves"></use></svg></span><span class="label-text"> ริมแม่น้ำ</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlyGov" title="บินชมโซนรัฐสภา-เกียกกาย (สัปปายะสภาสถาน)">
-      <span>🏛️</span><span class="label-text"> รัฐสภาไทย</span>
+        <button type="button" class="menu-btn zone-item" id="btnFlyGov" title="บินชมโซนรัฐสภา-เกียกกาย (สัปปายะสภาสถาน)">
+      <span><svg class="mdico"><use href="#i-landmark"></use></svg></span><span class="label-text"> รัฐสภาไทย</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlyBangSue" title="บินชมโซนบางซื่อ (สถานีกลางกรุงเทพอภิวัฒน์)">
-      <span>🚆</span><span class="label-text"> ฮับบางซื่อ</span>
+        <button type="button" class="menu-btn zone-item" id="btnFlyBangSue" title="บินชมโซนบางซื่อ (สถานีกลางกรุงเทพอภิวัฒน์)">
+      <span><svg class="mdico"><use href="#i-train-front-tunnel"></use></svg></span><span class="label-text"> ฮับบางซื่อ</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFlyBangNa" title="บินชมโซนบางนา (The Forestias & True Digital Park)">
-      <span>🌲</span><span class="label-text"> บางนา-เทคฮับ</span>
+        <button type="button" class="menu-btn zone-item" id="btnFlyBangNa" title="บินชมโซนบางนา (The Forestias & True Digital Park)">
+      <span><svg class="mdico"><use href="#i-trees"></use></svg></span><span class="label-text"> บางนา-เทคฮับ</span>
     </button>
-    <button type="button" class="menu-btn" id="btnFitAll" title="มุมมองภาพรวมกรุงเทพฯ ทั้งหมด">
-      <span>⤢</span><span class="label-text"> ทั่วกรุงเทพฯ</span>
+        <button type="button" class="menu-btn zone-item" id="btnFitAll" title="มุมมองภาพรวมกรุงเทพฯ ทั้งหมด">
+      <span><svg class="mdico"><use href="#i-target"></use></svg></span><span class="label-text"> ทั่วกรุงเทพฯ</span>
     </button>
+      </div>
+    </div>
     <button type="button" class="menu-btn btn-collapse-action" id="btnCollapseBars" title="ย่อแถบเครื่องมือและตัวกรองแบรนด์">
-      <span>⌃</span><span class="label-text"> ย่อแถบ</span>
+      <span><svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg></span><span class="label-text"> ย่อแถบ</span>
     </button>
   </div>
-
+  <!-- 🧭 Floating Trigger Button on Left -->
+  <div class="glass-card floating-intel-pill" id="floatingIntelPill" title="เปิดแผงควบคุม Lifestyle 360° & Intelligence Layers">
+    <span><svg class="mdico"><use href="#i-gem"></use></svg> Lifestyle 360° & Amenities</span>
+  </div>
   <!-- 🏷️ Developer Brand Filter Toolbar -->
   <div class="brand-filter-bar glass-card" id="brandFilterBar">
     <div class="brand-bar-title">
-      <span>🏷️ DEVELOPERS:</span>
+      <span><svg class="mdico"><use href="#i-briefcase"></use></svg> DEVELOPERS:</span>
     </div>
     <div class="brand-chips-scroll" id="brandChipsContainer">
       <button type="button" class="brand-chip active" data-brand="all">All Brands (ทั้งหมด)</button>
@@ -1843,42 +1936,61 @@
       <button type="button" class="brand-chip" data-brand="supalai"><span class="brand-dot dot-supalai"></span> Supalai</button>
     </div>
     <div class="pin-mode-toggle">
-      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์">🏷️ Logo</button>
-      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย">📸 Photo</button>
+      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> Logo</button>
+      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> Photo</button>
     </div>
+    <button type="button" class="brand-bar-collapse" id="btnBrandCollapse" title="ย่อตัวกรองแบรนด์" aria-label="ย่อตัวกรองแบรนด์">
+      <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg>
+    </button>
+  </div>
+  <!-- Collapsed form of the brand filter — keeps the same slot so nothing shifts -->
+  <button type="button" class="glass-card brand-bar-mini" id="brandBarMini" style="display:none;" title="ขยายตัวกรองแบรนด์">
+    <span><svg class="mdico"><use href="#i-briefcase"></use></svg> DEVELOPERS</span>
+    <span class="mini-count">10 แบรนด์</span>
+    <svg class="mdico" style="transform:rotate(90deg)"><use href="#i-chevron-right"></use></svg>
+  </button>
+  <!-- Left Side Custom Zoom Controls -->
+  <div class="map-zoom-controls">
+    <button type="button" class="zoom-btn" id="btnZoomIn" title="ซูมเข้า">+</button>
+    <button type="button" class="zoom-btn" id="btnZoomOut" title="ซูมออก">−</button>
+    <button type="button" class="zoom-btn compass-btn" id="btnResetCompass" title="หันมุมมองทิศเหนือ / รีเซ็ต 3D">▲</button>
+  </div>
   </div>
 
-  <!-- 🎛️ Floating Expand Button (เมื่อย่อแถบเครื่องมือ) -->
-  <button type="button" class="glass-card floating-expand-btn" id="btnExpandBars" style="display:none;" title="ขยายแถบเครื่องมือ & ตัวกรองแบรนด์">
-    <span>🎛️ เครื่องมือ & แบรนด์</span>
-    <span style="font-size:10.5px;color:var(--text-muted);font-weight:700;">(10 แบรนด์) ⌄</span>
-  </button>
+  <!-- 3D Projected DOM Pins Container -->
+  <div id="pinContainer"></div>
+
+  <!-- Surrounding POI Pins Container -->
+  <div id="poiContainer"></div>
+
+
+
 
   <!-- 📊 2D District Thematic Metric Bar (Top in 2D Mode) -->
   <div class="thematic-analytics-bar glass-card" id="thematicMetricBar" style="display:none;">
     <div class="metric-chips-row" id="thematicChipsContainer">
       <button type="button" class="thematic-chip active" data-metric="dens">
-        <span>👥 ความหนาแน่นประชากร</span>
+        <span><svg class="mdico"><use href="#i-users"></use></svg> ความหนาแน่นประชากร</span>
         <span class="thematic-tag tag-real">จริง</span>
       </button>
       <button type="button" class="thematic-chip" data-metric="pop">
-        <span>👤 จำนวนประชากร</span>
+        <span><svg class="mdico"><use href="#i-user"></use></svg> จำนวนประชากร</span>
         <span class="thematic-tag tag-real">จริง</span>
       </button>
       <button type="button" class="thematic-chip" data-metric="pm">
-        <span>☁️ PM2.5 เฉลี่ยรายปี</span>
+        <span><svg class="mdico"><use href="#i-cloud-fog"></use></svg> PM2.5 เฉลี่ยรายปี</span>
         <span class="thematic-tag tag-ref">อิงจริง</span>
       </button>
       <button type="button" class="thematic-chip" data-metric="flood">
-        <span>🌊 จุดเสี่ยงน้ำท่วม</span>
+        <span><svg class="mdico"><use href="#i-waves"></use></svg> จุดเสี่ยงน้ำท่วม</span>
         <span class="thematic-tag tag-ref">อิงจริง</span>
       </button>
       <button type="button" class="thematic-chip" data-metric="traf">
-        <span>🚗 ดัชนีรถติด</span>
+        <span><svg class="mdico"><use href="#i-car"></use></svg> ดัชนีรถติด</span>
         <span class="thematic-tag tag-est">ประมาณการ</span>
       </button>
       <button type="button" class="thematic-chip" data-metric="cost">
-        <span>💰 ค่าครองชีพ / ราคาที่ดิน</span>
+        <span><svg class="mdico"><use href="#i-coins"></use></svg> ค่าครองชีพ / ราคาที่ดิน</span>
         <span class="thematic-tag tag-est">ประมาณการ</span>
       </button>
     </div>
@@ -1891,7 +2003,7 @@
       <span class="intel-rank" id="intelDistrictRank" style="display:none;">อันดับ #1</span>
     </div>
     <div class="intel-desc" id="intelDistrictDesc">
-      เลื่อนเมาส์/แตะที่เขตบนแผนที่เพื่อดูค่าครบทุกด้าน แล้วคลิกเพื่อเจาะลึก · ตอนนี้กำลังระบายสีตาม <strong id="intelCurrentMetricName" style="color:var(--accent-cyan);">ความหนาแน่นประชากร</strong>
+      เลื่อนเมาส์/แตะที่เขตบนแผนที่เพื่อดูค่าครบทุกด้าน แล้วคลิกเพื่อเจาะลึก · ตอนนี้กำลังระบายสีตาม <strong id="intelCurrentMetricName" style="color:var(--accent-warm);">ความหนาแน่นประชากร</strong>
     </div>
     <div class="intel-metrics-list" id="intelMetricsList" style="display:none;">
       <!-- Dynamic attribute rows populated by JS -->
@@ -1908,13 +2020,9 @@
 
   <!-- 🔙 Return to 3D Button (Bottom Left in 2D Mode) -->
   <button type="button" class="glass-card return-3d-btn" id="btnReturn3D" style="display:none;" title="กลับสู่มุมมอง 3D Real Estate">
-    <span>← กลับโหมด 3D Real Estate</span>
+    <span><svg class="mdico" style="transform:rotate(180deg)"><use href="#i-chevron-right"></use></svg> กลับโหมด 3D Real Estate</span>
   </button>
 
-  <!-- 🧭 Floating Trigger Button on Left -->
-  <div class="glass-card floating-intel-pill" id="floatingIntelPill" title="เปิดแผงควบคุม Lifestyle 360° & Intelligence Layers">
-    <span>💎 Lifestyle 360° & Amenities</span>
-  </div>
 
   <!-- 🧭 Left Comprehensive Intelligence & Lifestyle Sidebar (PHATTRA 6 Pillars) -->
   <div class="glass-card intel-sidebar" id="intelSidebar">
@@ -1964,14 +2072,14 @@
       <div class="intel-section">
         <div class="intel-sec-title">THE STREET</div>
         <div class="intel-toggle-row">
-          <span>🏛️ Embassies (สถานทูต 10 แห่ง)</span>
+          <span><svg class="mdico"><use href="#i-landmark"></use></svg> Embassies (สถานทูต 10 แห่ง)</span>
           <label class="switch-toggle">
             <input type="checkbox" id="toggleEmbassies" checked>
             <span class="slider"></span>
           </label>
         </div>
         <div class="intel-toggle-row">
-          <span>🌊 Flooding (จุดเสี่ยงน้ำท่วม 6 จุด)</span>
+          <span><svg class="mdico"><use href="#i-waves"></use></svg> Flooding (จุดเสี่ยงน้ำท่วม 6 จุด)</span>
           <label class="switch-toggle">
             <input type="checkbox" id="toggleFlooding" checked>
             <span class="slider"></span>
@@ -1989,13 +2097,13 @@
           </label>
         </div>
         <div class="amenities-chips-wrap" id="amenitiesChipsWrap">
-          <button type="button" class="amenity-subchip active" data-sub="parks"><span>🌳 Parks</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="education"><span>🎓 Education</span> <span class="chip-badge">7</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="health"><span>🏥 Health</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="sport"><span>🎾 Sport</span> <span class="chip-badge">5</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="dining"><span>🍽️ Dining</span> <span class="chip-badge">6</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="spa"><span>💆 Spa</span> <span class="chip-badge">4</span></button>
-          <button type="button" class="amenity-subchip active" data-sub="culture"><span>🎨 Culture</span> <span class="chip-badge">5</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="parks"><span><svg class="mdico"><use href="#i-trees"></use></svg> Parks</span> <span class="chip-badge">6</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="education"><span><svg class="mdico"><use href="#i-graduation-cap"></use></svg> Education</span> <span class="chip-badge">7</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="health"><span><svg class="mdico"><use href="#i-hospital"></use></svg> Health</span> <span class="chip-badge">6</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="sport"><span><svg class="mdico"><use href="#i-dumbbell"></use></svg> Sport</span> <span class="chip-badge">5</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="dining"><span><svg class="mdico"><use href="#i-soup"></use></svg> Dining</span> <span class="chip-badge">6</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="spa"><span><svg class="mdico"><use href="#i-heart"></use></svg> Spa</span> <span class="chip-badge">4</span></button>
+          <button type="button" class="amenity-subchip active" data-sub="culture"><span><svg class="mdico"><use href="#i-drama"></use></svg> Culture</span> <span class="chip-badge">5</span></button>
         </div>
       </div>
 
@@ -2009,10 +2117,10 @@
           </label>
         </div>
         <div class="pet-chips-wrap" id="petChipsWrap">
-          <button type="button" class="pet-subchip active" data-petsub="vet"><span>🩺 Vet & Emergency</span> <span class="chip-badge">4</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="malls"><span>☕ Malls & Dining</span> <span class="chip-badge">5</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="parks"><span>🐕 Parks & Dog Runs</span> <span class="chip-badge">3</span></button>
-          <button type="button" class="pet-subchip active" data-petsub="boarding"><span>🏨 Boarding & Daycare</span> <span class="chip-badge">3</span></button>
+          <button type="button" class="pet-subchip active" data-petsub="vet"><span><svg class="mdico"><use href="#i-stethoscope"></use></svg> Vet & Emergency</span> <span class="chip-badge">4</span></button>
+          <button type="button" class="pet-subchip active" data-petsub="malls"><span><svg class="mdico"><use href="#i-coffee"></use></svg> Malls & Dining</span> <span class="chip-badge">5</span></button>
+          <button type="button" class="pet-subchip active" data-petsub="parks"><span><svg class="mdico"><use href="#i-footprints"></use></svg> Parks & Dog Runs</span> <span class="chip-badge">3</span></button>
+          <button type="button" class="pet-subchip active" data-petsub="boarding"><span><svg class="mdico"><use href="#i-house"></use></svg> Boarding & Daycare</span> <span class="chip-badge">3</span></button>
         </div>
       </div>
 
@@ -2033,53 +2141,53 @@
   <!-- 🎬 3D Cinematic Drone Tour Controller -->
   <div class="glass-card drone-tour-panel" id="droneTourPanel" style="display:none;">
     <div class="tour-header">
-      <span>🎬 3D CINEMATIC DRONE TOUR</span>
+      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg> 3D CINEMATIC DRONE TOUR</span>
       <span id="tourStepText">Stop 1 / 5</span>
     </div>
     <div class="tour-title" id="tourTitleText">One Bangkok & Lumphini</div>
     <div class="tour-desc" id="tourDescText">Signature Tower (436m) · Lumphini Park · Rama IV Corridor</div>
     <div class="tour-controls">
-      <button type="button" class="tour-btn" id="btnTourPrev">⏮️ Prev</button>
-      <button type="button" class="tour-btn active-play" id="btnTourPlayPause">⏸️ Pause</button>
-      <button type="button" class="tour-btn" id="btnTourNext">Next ⏭️</button>
-      <button type="button" class="tour-btn" id="btnTourExit">✕ Exit</button>
+      <button type="button" class="tour-btn" id="btnTourPrev"><svg class="mdico" style="transform:rotate(180deg)"><use href="#i-skip-forward"></use></svg> Prev</button>
+      <button type="button" class="tour-btn active-play" id="btnTourPlayPause"><svg class="mdico"><use href="#i-pause"></use></svg> Pause</button>
+      <button type="button" class="tour-btn" id="btnTourNext">Next <svg class="mdico"><use href="#i-skip-forward"></use></svg></button>
+      <button type="button" class="tour-btn" id="btnTourExit"><svg class="mdico"><use href="#i-circle-x"></use></svg> Exit</button>
     </div>
   </div>
 
   <!-- 🧭 Transit Route & Fare Planner Drawer -->
   <div class="glass-card route-planner-drawer" id="routePlannerDrawer">
     <div class="drawer-title">
-      <span>🧭 TRANSIT ROUTE & FARE PLANNER</span>
+      <span><svg class="mdico"><use href="#i-compass"></use></svg> TRANSIT ROUTE & FARE PLANNER</span>
       <button type="button" class="drawer-close" id="closeRoutePlanner" style="font-size:16px;">×</button>
     </div>
     <div class="route-select-group">
-      <label class="route-label" for="selectOrigin">🟢 สถานีต้นทาง (Origin)</label>
+      <label class="route-label" for="selectOrigin"><svg class="mdico" style="color:#22C55E"><use href="#i-circle"></use></svg> สถานีต้นทาง (Origin)</label>
       <select class="route-select" id="selectOrigin"></select>
     </div>
     <div class="route-select-group">
-      <label class="route-label" for="selectDest">🔴 สถานีปลายทาง (Destination)</label>
+      <label class="route-label" for="selectDest"><svg class="mdico" style="color:#EF4444"><use href="#i-circle"></use></svg> สถานีปลายทาง (Destination)</label>
       <select class="route-select" id="selectDest"></select>
     </div>
-    <button type="button" class="route-calc-btn" id="btnCalculateRoute">⚡ ค้นหาเส้นทาง & คำนวณค่าโดยสาร</button>
+    <button type="button" class="route-calc-btn" id="btnCalculateRoute"><svg class="mdico"><use href="#i-zap"></use></svg> ค้นหาเส้นทาง & คำนวณค่าโดยสาร</button>
 
     <div class="route-result-card" id="routeResultCard">
-      <div style="font-size:12px;font-weight:700;color:var(--copper);" id="routeSummaryHeader">ผลการค้นหาเส้นทาง</div>
+      <div style="font-size:12px;font-weight:700;color:var(--accent);" id="routeSummaryHeader">ผลการค้นหาเส้นทาง</div>
       <div class="route-stat-grid">
         <div class="route-stat-box">
           <div class="route-stat-val" id="routeTimeVal">18 min</div>
-          <div class="route-stat-lbl">⏱️ เวลาเดินทางประมาณ</div>
+          <div class="route-stat-lbl"><svg class="mdico"><use href="#i-timer"></use></svg> เวลาเดินทางประมาณ</div>
         </div>
         <div class="route-stat-box">
           <div class="route-stat-val" id="routeFareVal">฿38</div>
-          <div class="route-stat-lbl">💰 ค่าโดยสารประมาณ</div>
+          <div class="route-stat-lbl"><svg class="mdico"><use href="#i-coins"></use></svg> ค่าโดยสารประมาณ</div>
         </div>
         <div class="route-stat-box">
           <div class="route-stat-val" id="routeStationsVal">7</div>
-          <div class="route-stat-lbl">🚉 จำนวนสถานี</div>
+          <div class="route-stat-lbl"><svg class="mdico"><use href="#i-train-front"></use></svg> จำนวนสถานี</div>
         </div>
         <div class="route-stat-box">
           <div class="route-stat-val" id="routeInterchangeVal">1</div>
-          <div class="route-stat-lbl">🔄 เปลี่ยนสาย</div>
+          <div class="route-stat-lbl"><svg class="mdico"><use href="#i-refresh-cw"></use></svg> เปลี่ยนสาย</div>
         </div>
       </div>
       <div id="routeStepDetails" style="font-size:11.5px;color:var(--text-muted);margin-top:4px;line-height:1.5;"></div>
@@ -2101,13 +2209,13 @@
   <div class="glass-card getting-around-pill active" id="btnGettingAround">
     <span class="toggle-switch-icon"></span>
     <span>Getting around</span>
-    <span style="font-size:11px;color:var(--text-muted);font-weight:400;">10 lines ⌃</span>
+    <span style="font-size:11px;color:var(--text-muted);font-weight:400;">10 lines <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg></span>
   </div>
 
   <!-- Transit Lines Drawer -->
   <div class="glass-card transit-drawer" id="transitDrawer">
     <div class="drawer-title">
-      <span>🚆 BANGKOK MASS TRANSIT</span>
+      <span><svg class="mdico"><use href="#i-train-front"></use></svg> BANGKOK MASS TRANSIT</span>
       <button type="button" class="drawer-close" id="closeDrawer" style="font-size:16px;">×</button>
     </div>
     <div id="transitList"></div>
@@ -2136,13 +2244,13 @@
           <span>DEVELOPER</span>
           <strong id="drawerDeveloper">PROUD REAL ESTATE</strong>
         </div>
-        <a class="dev-link-btn" id="drawerDevSite" href="#" target="_blank" rel="noopener">Official Site ↗</a>
+        <a class="dev-link-btn" id="drawerDevSite" href="#" target="_blank" rel="noopener">Official Site <svg class="mdico"><use href="#i-link"></use></svg></a>
       </div>
 
       <!-- 500m Walkability Catchment Badge -->
       <div class="walkability-card">
         <div>
-          <div class="walk-title">🚶 500m Walkability Catchment</div>
+          <div class="walk-title"><svg class="mdico"><use href="#i-footprints"></use></svg> 500m Walkability Catchment</div>
           <div class="walk-sub" id="walkabilitySubText">รัศมีเดินเท้า 5–7 นาที สู่ระบบขนส่งมวลชน</div>
         </div>
         <div class="walk-score-badge" id="walkScoreVal">96/100</div>
@@ -2196,7 +2304,7 @@
 
       <!-- 3D Perspective Orbit Action -->
       <button type="button" class="fly-3d-btn" id="btnDrawerFly3D">
-        <span>📐 View in 3D Perspective</span>
+        <span><svg class="mdico"><use href="#i-ruler"></use></svg> View in 3D Perspective</span>
       </button>
     </div>
   </div>
@@ -2378,7 +2486,6 @@
     if (window.BKK_LANDMARKS && window.BKK_LANDMARKS.rawList) {
       var count = window.BKK_LANDMARKS.rawList.length;
       if ($("#landmarkCountChip")) $("#landmarkCountChip").textContent = count;
-      if ($("#landmarkCountKpi")) $("#landmarkCountKpi").textContent = count;
     }
 
     STATE.map = new maplibregl.Map({
@@ -2735,7 +2842,7 @@
   function getBrandBadgeHTML(lm) {
     var brand = lm.brandId || "other";
     var badgeClass = "brand-badge brand-" + brand;
-    var letter = lm.badgeLetter || "★";
+    var letter = lm.badgeLetter || MDICO("star");
 
     if (brand === "ananda") letter = "A";
     else if (brand === "ap") letter = "AP";
@@ -2748,9 +2855,9 @@
     else if (brand === "mqdc") letter = "MQ";
     else if (brand === "proud") letter = "P";
     else if (brand === "tcc") letter = "1";
-    else if (brand === "kingpower") letter = "👑";
+    else if (brand === "kingpower") letter = MDICO("crown");
     else if (brand === "siampiwat") letter = "I";
-    else if (brand === "govt") letter = "🏛️";
+    else if (brand === "govt") letter = MDICO("landmark");
     else if (brand === "hilton") letter = "H";
     else if (brand === "bdms") letter = "B";
 
@@ -2848,7 +2955,7 @@
     project.nearbyPOIs.forEach(function(poi) {
       var el = document.createElement("div");
       el.className = "poi-pin";
-      el.innerHTML = '<div class="poi-dot" style="background:' + poi.color + ';"><span style="color:#fff;">📍</span></div>' +
+      el.innerHTML = '<div class="poi-dot" style="background:' + poi.color + ';"><span style="color:#fff;"><svg class="mdico"><use href="#i-map-pin"></use></svg></span></div>' +
         '<div class="poi-label">' + poi.name + '</div>';
 
       container.appendChild(el);
@@ -2887,11 +2994,11 @@
       var cls = "poi-intel-marker marker-" + (layer === "embassies" ? "embassy" : layer === "corporate" ? "corp" : layer === "flooding" ? "flood" : (sub === "education" ? "edu" : sub === "parks" ? "park" : (sub || layer)));
       el.className = cls;
 
-      var icon = data.countryIco || data.brandIco || data.ico || (layer === "flooding" ? "🌊" : "📍");
+      var icon = data.countryIco || data.brandIco || data.ico || (layer === "flooding" ? MDICO("waves") : MDICO("map-pin"));
       var badge = (data.roles ? ' <span class="chip-badge" style="background:#0284C7;color:#fff;">' + (data.roles.split(" ")[0]) + ' jobs</span>' : "");
       var label = (data.company || data.name || "").split("(")[0].trim();
 
-      el.innerHTML = '<span>' + icon + '</span><span>' + label + '</span>' + badge;
+      el.innerHTML = '<span class="poi-ico">' + icon + '</span><span class="poi-label">' + label + '</span>' + badge;
 
       el.addEventListener("click", function(e) {
         e.stopPropagation();
@@ -2957,28 +3064,90 @@
     updateIntelMarkers();
   }
 
-  function updateIntelMarkers() {
+  /* Below this zoom the markers collapse to an icon dot — 150 labels do not fit a city view */
+  var INTEL_COMPACT_ZOOM = 14.6;
+  var _intelCompact = null;
+  var _intelCullAt = 0;
+
+  function updateIntelMarkers(force) {
     if (!STATE.map || !STATE.ready || !STATE.intelMarkers || !STATE.intelMarkers.length) return;
 
     var zoom = STATE.map.getZoom();
+    var compact = zoom < INTEL_COMPACT_ZOOM;
+
+    if (compact !== _intelCompact) {
+      _intelCompact = compact;
+      force = true;
+      STATE.intelMarkers.forEach(function(m) {
+        m.el.classList.toggle("is-compact", compact);
+        m.w = 0;                                   // size changed — measure again
+      });
+    }
 
     STATE.intelMarkers.forEach(function(m) {
-      var isVisible = true;
+      var allowed = true;
 
       // Layer Toggle Check
-      if (m.layer === "embassies" && !STATE.layers.embassies) isVisible = false;
-      else if (m.layer === "flooding" && !STATE.layers.flooding) isVisible = false;
-      else if (m.layer === "corporate" && !STATE.layers.corporate) isVisible = false;
+      if (m.layer === "embassies" && !STATE.layers.embassies) allowed = false;
+      else if (m.layer === "flooding" && !STATE.layers.flooding) allowed = false;
+      else if (m.layer === "corporate" && !STATE.layers.corporate) allowed = false;
       else if (m.layer === "amenities") {
-        if (!STATE.layers.amenities || !STATE.activeAmenities[m.sub]) isVisible = false;
+        if (!STATE.layers.amenities || !STATE.activeAmenities[m.sub]) allowed = false;
       }
       else if (m.layer === "petFriendly") {
-        if (!STATE.layers.petFriendly || !STATE.activePets[m.sub]) isVisible = false;
+        if (!STATE.layers.petFriendly || !STATE.activePets[m.sub]) allowed = false;
       }
 
-      if (zoom < 12.0) isVisible = false;
+      if (zoom < 12.0) allowed = false;
 
-      m.el.style.display = isVisible ? "inline-flex" : "none";
+      m.allowed = allowed;
+      if (!allowed) m.el.style.display = "none";
+    });
+
+    // This runs on every render frame, so only re-solve the overlaps a few times a second
+    var now = (window.performance && performance.now) ? performance.now() : Date.now();
+    if (force || now - _intelCullAt > 140) {
+      _intelCullAt = now;
+      cullIntelOverlaps();
+    } else {
+      STATE.intelMarkers.forEach(function(m) {
+        m.el.style.display = (m.allowed && !m.culled) ? "inline-flex" : "none";
+      });
+    }
+  }
+
+  /* maplibregl.Marker elements are plain DOM, so unlike a symbol layer they never hide
+     each other. Solve it in screen space: first marker wins, later ones that overlap
+     it are dropped. Insertion order = priority (embassies, amenities, pets, corp, flood). */
+  function cullIntelOverlaps() {
+    var vis = [];
+    STATE.intelMarkers.forEach(function(m) {
+      if (!m.allowed) { m.culled = false; return; }
+      m.el.style.display = "inline-flex";
+      vis.push(m);
+    });
+
+    // batch the writes above, then the reads here, so this costs one reflow not 150
+    vis.forEach(function(m) {
+      if (!m.w) { m.w = m.el.offsetWidth; m.h = m.el.offsetHeight; }
+    });
+
+    var placed = [];
+    var PAD = 3;
+    vis.forEach(function(m) {
+      var pt = STATE.map.project(m.coords);
+      var l = pt.x - m.w / 2 - PAD;
+      var r = pt.x + m.w / 2 + PAD;
+      var t = pt.y - m.h - PAD;                    // markers are anchored "bottom"
+      var b = pt.y + PAD;
+      var hit = false;
+      for (var i = 0; i < placed.length; i++) {
+        var q = placed[i];
+        if (l < q.r && r > q.l && t < q.b && b > q.t) { hit = true; break; }
+      }
+      m.culled = hit;
+      if (hit) m.el.style.display = "none";
+      else placed.push({ l: l, r: r, t: t, b: b });
     });
   }
 
@@ -3068,7 +3237,7 @@
     STATE.selectedProject = project;
 
     $("#drawerCategory").textContent = project.category || "Development";
-    $("#drawerCategory").style.background = project.categoryColor || "var(--copper)";
+    $("#drawerCategory").style.background = project.categoryColor || "var(--accent)";
     $("#drawerTitle").textContent = project.name;
     $("#drawerLocation").textContent = project.location || "Bangkok";
     $("#drawerHeroImg").src = project.image || project.badgeImage || "";
@@ -3097,7 +3266,7 @@
     // Transport
     if (project.transport && project.transport.length) {
       $("#drawerTransportList").innerHTML = project.transport.map(function(t) {
-        var ico = t.type === "bts" ? "🚆" : t.type === "mrt" ? "🚇" : t.type === "boat" ? "⛴️" : "🚗";
+        var ico = t.type === "bts" ? MDICO("train-front") : t.type === "mrt" ? MDICO("train-front-tunnel") : t.type === "boat" ? MDICO("ship") : MDICO("car");
         return '<div class="transport-item"><span class="transport-name">' + ico + ' ' + t.name + '</span><span class="transport-dist">' + t.dist + '</span></div>';
       }).join("");
     } else {
@@ -3309,12 +3478,12 @@
       $("#intelDistrictDesc").innerHTML = 'พื้นที่ ' + (p.area || '-') + ' ตร.กม. · ประชากร ' + (p.pop ? p.pop.toLocaleString() : '-') + ' คน';
 
       $("#intelMetricsList").innerHTML =
-        '<div class="intel-stat-row"><span class="intel-stat-label">👥 ความหนาแน่นประชากร</span><span class="intel-stat-val">' + (p.dens ? p.dens.toLocaleString() : '-') + ' คน/ตร.กม.</span></div>' +
-        '<div class="intel-stat-row"><span class="intel-stat-label">👤 จำนวนประชากร</span><span class="intel-stat-val">' + (p.pop ? p.pop.toLocaleString() : '-') + ' คน</span></div>' +
-        '<div class="intel-stat-row"><span class="intel-stat-label">☁️ PM2.5 เฉลี่ยรายปี</span><span class="intel-stat-val">' + (p.pm || '-') + ' µg/m³</span></div>' +
-        '<div class="intel-stat-row"><span class="intel-stat-label">🌊 จุดเสี่ยงน้ำท่วม</span><span class="intel-stat-val">' + (p.flood || 0) + ' จุด</span></div>' +
-        '<div class="intel-stat-row"><span class="intel-stat-label">🚗 ดัชนีรถติด</span><span class="intel-stat-val">' + (p.traf || 0) + ' / 100</span></div>' +
-        '<div class="intel-stat-row"><span class="intel-stat-label">💰 ค่าครองชีพ / ราคาที่ดิน</span><span class="intel-stat-val">' + (p.cost || 0) + ' / 100</span></div>';
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("users") + ' ความหนาแน่นประชากร</span><span class="intel-stat-val">' + (p.dens ? p.dens.toLocaleString() : '-') + ' คน/ตร.กม.</span></div>' +
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("user") + ' จำนวนประชากร</span><span class="intel-stat-val">' + (p.pop ? p.pop.toLocaleString() : '-') + ' คน</span></div>' +
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("cloud-fog") + ' PM2.5 เฉลี่ยรายปี</span><span class="intel-stat-val">' + (p.pm || '-') + ' µg/m³</span></div>' +
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("waves") + ' จุดเสี่ยงน้ำท่วม</span><span class="intel-stat-val">' + (p.flood || 0) + ' จุด</span></div>' +
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("car") + ' ดัชนีรถติด</span><span class="intel-stat-val">' + (p.traf || 0) + ' / 100</span></div>' +
+        '<div class="intel-stat-row"><span class="intel-stat-label">' + MDICO("coins") + ' ค่าครองชีพ / ราคาที่ดิน</span><span class="intel-stat-val">' + (p.cost || 0) + ' / 100</span></div>';
       $("#intelMetricsList").style.display = "flex";
 
     } else {
@@ -3337,7 +3506,7 @@
       $("#intelDistrictTitle").textContent = "แตะเลือกเขต";
       $("#intelDistrictRank").style.display = "none";
       var mName = METRIC_CONFIGS[STATE.currentMetric] ? METRIC_CONFIGS[STATE.currentMetric].name : "ความหนาแน่นประชากร";
-      $("#intelDistrictDesc").innerHTML = 'เลื่อนเมาส์/แตะที่เขตบนแผนที่เพื่อดูค่าครบทุกด้าน แล้วคลิกเพื่อเจาะลึก · ตอนนี้กำลังระบายสีตาม <strong style="color:var(--accent-cyan);">' + mName + '</strong>';
+      $("#intelDistrictDesc").innerHTML = 'เลื่อนเมาส์/แตะที่เขตบนแผนที่เพื่อดูค่าครบทุกด้าน แล้วคลิกเพื่อเจาะลึก · ตอนนี้กำลังระบายสีตาม <strong style="color:var(--accent-warm);">' + mName + '</strong>';
       $("#intelMetricsList").style.display = "none";
     } else {
       var tip = $("#districtTooltip");
@@ -3382,7 +3551,7 @@
     $("#tourStepText").textContent = "Stop " + (index + 1) + " / " + DRONE_TOUR_STOPS.length;
     $("#tourTitleText").textContent = stop.title;
     $("#tourDescText").textContent = stop.desc;
-    $("#btnTourPlayPause").textContent = "⏸️ Pause";
+    $("#btnTourPlayPause").innerHTML = MDICO("pause") + " Pause";
     $("#btnTourPlayPause").classList.add("active-play");
 
     clearTimeout(STATE.droneTourTimer);
@@ -3423,7 +3592,7 @@
       $("#btnTourPlayPause").textContent = "▶️ Resume";
       $("#btnTourPlayPause").classList.remove("active-play");
     } else {
-      $("#btnTourPlayPause").textContent = "⏸️ Pause";
+      $("#btnTourPlayPause").innerHTML = MDICO("pause") + " Pause";
       $("#btnTourPlayPause").classList.add("active-play");
       playDroneTourStop(STATE.droneTourIndex);
     }
@@ -3657,13 +3826,13 @@
     $("#btnThemeToggle").addEventListener("click", function() {
       if (STATE.theme === "dark") {
         STATE.theme = "light";
-        $("#themeIco").textContent = "☀️ Light";
+        $("#themeIco").innerHTML = MDICO("sun") + " Light";
       } else if (STATE.theme === "light") {
         STATE.theme = "sunset";
-        $("#themeIco").textContent = "🌇 Sunset";
+        $("#themeIco").innerHTML = MDICO("sun-dim") + " Sunset";
       } else {
         STATE.theme = "dark";
-        $("#themeIco").textContent = "🌙 Dark";
+        $("#themeIco").innerHTML = MDICO("moon") + " Dark";
       }
 
       document.documentElement.setAttribute("data-theme", STATE.theme);
@@ -3675,17 +3844,54 @@
       });
     });
 
+    // 📍 Zone "fly to" dropdown
+    if ($("#btnZoneMenu") && $("#zoneDropdown")) {
+      var zoneWrap = $("#btnZoneMenu").parentNode;
+      var closeZoneMenu = function() {
+        $("#zoneDropdown").hidden = true;
+        zoneWrap.classList.remove("open");
+        $("#btnZoneMenu").setAttribute("aria-expanded", "false");
+      };
+      $("#btnZoneMenu").addEventListener("click", function(e) {
+        e.stopPropagation();
+        var willOpen = $("#zoneDropdown").hidden;
+        $("#zoneDropdown").hidden = !willOpen;
+        zoneWrap.classList.toggle("open", willOpen);
+        this.setAttribute("aria-expanded", String(willOpen));
+      });
+      // Fly somewhere, then get out of the way
+      $("#zoneDropdown").addEventListener("click", function(e) {
+        if (e.target.closest(".zone-item")) closeZoneMenu();
+      });
+      document.addEventListener("click", function(e) {
+        if (!$("#zoneDropdown").hidden && !zoneWrap.contains(e.target)) closeZoneMenu();
+      });
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") closeZoneMenu();
+      });
+    }
+    // 🏷️ Brand filter bar — collapse on its own, independent of the whole toolbar
+    if ($("#btnBrandCollapse") && $("#brandBarMini")) {
+      $("#btnBrandCollapse").addEventListener("click", function() {
+        $("#brandFilterBar").style.display = "none";
+        $("#brandBarMini").style.display = "inline-flex";
+      });
+      $("#brandBarMini").addEventListener("click", function() {
+        $("#brandBarMini").style.display = "none";
+        $("#brandFilterBar").style.display = "";   // back to whatever the stylesheet says
+      });
+    }
+
     // 🎛️ Toolbar Collapse & Expand Toggle
     if ($("#btnCollapseBars") && $("#btnExpandBars")) {
       $("#btnCollapseBars").addEventListener("click", function() {
-        $("#leftMenu").classList.add("collapsed");
-        $("#brandFilterBar").classList.add("collapsed");
+        if ($("#zoneDropdown")) $("#zoneDropdown").hidden = true;
+        $("#toolbarStack").classList.add("collapsed");
         $("#btnExpandBars").style.display = "inline-flex";
       });
 
       $("#btnExpandBars").addEventListener("click", function() {
-        $("#leftMenu").classList.remove("collapsed");
-        $("#brandFilterBar").classList.remove("collapsed");
+        $("#toolbarStack").classList.remove("collapsed");
         $("#btnExpandBars").style.display = "none";
       });
     }
@@ -3852,7 +4058,7 @@
           '<span class="transit-dot" style="background:' + l.color + '"></span>' +
           '<span>' + l.name + ' <small style="color:var(--text-sub);">(' + l.stations.length + ')</small></span>' +
         '</div>' +
-        '<input type="checkbox" class="transit-check" data-line="' + l.id + '" checked style="accent-color:var(--copper);cursor:pointer;">' +
+        '<input type="checkbox" class="transit-check" data-line="' + l.id + '" checked style="accent-color:var(--accent);cursor:pointer;">' +
       '</div>';
     }).join("");
     $("#transitList").innerHTML = html;
