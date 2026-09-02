@@ -1335,27 +1335,51 @@
   .poi-intel-marker.is-compact .poi-label,
   .poi-intel-marker.is-compact .chip-badge { display: none; }
 
-  /* ป้ายสถานทูต: ธงอยู่บน ชื่ออยู่ล่าง — ธงคือตัวข้อมูล จึงให้พื้นที่มันมากกว่าหมุดชั้นอื่น */
+  /* ป้ายสถานทูต: ธงอยู่บน ชื่ออยู่ล่าง ไม่มีกรอบ — ธงกับชื่อลอยบนแผนที่ตรง ๆ
+     ปกติหมุดชั้นอื่นใช้พิลล์ทึบเพื่อให้อ่านออก แต่สถานทูตมีธงเป็นตัวนำสายตาอยู่แล้ว
+     จึงตัดทั้งพิลล์ด้านนอกและชิปพื้นหลังของตัวอักษรออก แล้วใช้เงาขอบตัวอักษรแทน */
   .poi-intel-marker.is-embassy {
     flex-direction: column;
-    gap: 1px;
-    padding: 5px 11px 6px;
-    border-radius: 13px;
+    gap: 2px;
+    padding: 2px 4px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     line-height: 1.15;
   }
+  .poi-intel-marker.is-embassy:hover { box-shadow: none; }
   .poi-intel-marker.is-embassy .poi-ico { line-height: 0; }
-  .poi-intel-marker.is-embassy .poi-label { max-width: 168px; white-space: normal; text-align: center; }
-  .poi-intel-marker.is-embassy.is-compact { padding: 4px 6px; border-radius: 20px; }
-  /* รูปธงจริง (stats/flags/*.svg) — สัดส่วน 4:3 ตามชุด flag-icons */
+  .poi-intel-marker.is-embassy .poi-label {
+    max-width: 168px;
+    white-space: normal;
+    text-align: center;
+    padding: 0;
+    margin-top: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #0F172A;
+    /* เงาขาวรอบตัวอักษรแทนพื้นทึบ — อ่านออกบนแผนที่สว่างที่ลายเส้นเยอะ */
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 -1px 2px rgba(255, 255, 255, 0.95),
+                 1px 0 2px rgba(255, 255, 255, 0.95), -1px 0 2px rgba(255, 255, 255, 0.95);
+  }
+  [data-theme="dark"] .poi-intel-marker.is-embassy .poi-label,
+  [data-theme="sunset"] .poi-intel-marker.is-embassy .poi-label {
+    color: #F8FAFC;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 7px rgba(0, 0, 0, 0.9);
+  }
+  .poi-intel-marker.is-embassy.is-compact { padding: 2px; }
+  /* รูปธงจริง (stats/flags/*.svg) — สัดส่วน 4:3 ตามชุด flag-icons
+     เส้นขอบเข้มติดตัวธง + วงขาวรอบนอก ทำให้ธงสีอ่อน (เช่น ญี่ปุ่น) ไม่จมทั้งพื้นสว่างและพื้นมืด */
   .flag-ico {
     display: block;
     width: 26px;
     height: 19.5px;
     object-fit: cover;
     border-radius: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(0, 0, 0, 0.45);
+    background: rgba(255, 255, 255, 0.5);
   }
   .poi-intel-marker.is-compact .flag-ico { width: 21px; height: 15.75px; }
 

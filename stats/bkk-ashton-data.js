@@ -56161,7 +56161,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "n6992673703",
-      "country": "IR",
+      "country": "IE",
       "alsoFor": [],
       "kind": "embassy",
       "name": "Embassy of Ireland",
