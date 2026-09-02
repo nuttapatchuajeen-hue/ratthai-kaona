@@ -1335,6 +1335,18 @@
   .poi-intel-marker.is-compact .poi-label,
   .poi-intel-marker.is-compact .chip-badge { display: none; }
 
+  /* ป้ายสถานทูต: ธงอยู่บน ชื่ออยู่ล่าง — ธงคือตัวข้อมูล จึงให้พื้นที่มันมากกว่าหมุดชั้นอื่น */
+  .poi-intel-marker.is-embassy {
+    flex-direction: column;
+    gap: 1px;
+    padding: 5px 11px 6px;
+    border-radius: 13px;
+    line-height: 1.15;
+  }
+  .poi-intel-marker.is-embassy .poi-ico { font-size: 17px; line-height: 1; }
+  .poi-intel-marker.is-embassy .poi-label { max-width: 168px; white-space: normal; text-align: center; }
+  .poi-intel-marker.is-embassy.is-compact { padding: 4px 6px; border-radius: 20px; }
+
   .marker-embassy { border-color: #38BDF8; color: #E0F2FE; }
   .marker-park { border-color: #22C55E; color: #DCFCE7; }
   .marker-edu { border-color: #F59E0B; color: #FEF3C7; }
@@ -3996,6 +4008,14 @@
     });
   }
 
+  /* รหัสประเทศ ISO 3166-1 alpha-2 → ธงชาติ (regional indicator สองตัว)
+     "DE" → 🇩🇪 · คืนค่าว่างถ้ารหัสไม่ใช่ตัวอักษรสองตัว เพื่อให้ตกไปใช้ไอคอนสำรอง */
+  function countryFlag(cc) {
+    if (!cc || !/^[A-Za-z]{2}$/.test(cc)) return "";
+    var up = cc.toUpperCase();
+    return String.fromCodePoint(0x1F1E6 + up.charCodeAt(0) - 65, 0x1F1E6 + up.charCodeAt(1) - 65);
+  }
+
   /* 💎 Create & Manage Lifestyle & Intelligence POI Markers (GPU-locked maplibregl.Marker) */
   function createIntelPOIMarkers() {
     if (!STATE.map || !window.BKK_INTELLIGENCE) return;
@@ -4019,7 +4039,8 @@
                : layer === "petFriendly" ? "pet"
                : layer === "amenities" ? (sub === "education" ? "edu" : sub === "parks" ? "park" : (sub || layer))
                : layer;
-      el.className = "poi-intel-marker marker-" + tone;
+      /* สถานทูตวางธงไว้เหนือชื่อ ให้ธงเด่นและอ่านชื่อประเทศได้ทันทีเหมือนป้ายบนแปลงที่ดิน */
+      el.className = "poi-intel-marker marker-" + tone + (layer === "embassies" ? " is-embassy" : "");
 
       /* countryIco เป็นธงชาติ — ธงคือตัวข้อมูลเอง ไม่แปลงเป็นไอคอนเส้น
          ที่เหลือเก็บเป็น "ชื่อไอคอน Lucide" ในไฟล์ข้อมูล แล้วมาประกอบเป็น <svg> ตรงนี้ */
@@ -4047,10 +4068,16 @@
       });
     }
 
-    // 1. Embassies
-    if (I.embassies) {
-      I.embassies.forEach(function(emb) {
-        addIntelMarker(emb, emb.coords, "embassies");
+    /* 1. คณะผู้แทนทางการทูตครบ 109 แห่งจาก ASHTON_DATA.embassiesList (ชุดเดียวกับที่วาดแปลงที่ดิน)
+       ชุดคัดมือเดิมใน BKK_INTELLIGENCE.embassies 10 แห่งอยู่ในลิสต์นี้ครบแล้ว จึงไม่ใช้ซ้ำ
+       country เก็บเป็นรหัส ISO 3166-1 alpha-2 อยู่แล้ว จึงแปลงเป็นธงได้ตรง ๆ */
+    if (typeof ASHTON_DATA !== "undefined" && ASHTON_DATA.embassiesList) {
+      ASHTON_DATA.embassiesList.forEach(function(emb) {
+        if (!emb.lat || !emb.lng) return;
+        addIntelMarker(
+          { name: emb.name, countryIco: countryFlag(emb.country) },
+          [emb.lng, emb.lat], "embassies", emb.kind
+        );
       });
     }
 
@@ -4275,7 +4302,11 @@
         m.el.style.display = "none";
         return;
       }
-      if (!m.w) { m.w = 110; m.h = 24; }
+      /* ป้ายสถานทูตเป็นสองบรรทัด จึงเตี้ยกว่าไม่ได้และแคบกว่าหมุดพิลล์ปกติ */
+      if (!m.w) {
+        if (m.layer === "embassies" && !_intelCompact) { m.w = 120; m.h = 40; }
+        else { m.w = 110; m.h = 24; }
+      }
       vis.push({ m: m, pt: pt });
     });
 

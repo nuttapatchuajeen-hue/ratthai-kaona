@@ -58954,7 +58954,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "w1155382573",
-      "country": null,
+      "country": "IN",
       "alsoFor": [],
       "kind": "consulate",
       "name": "Consulate of India",
@@ -59001,7 +59001,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "n11434287862",
-      "country": null,
+      "country": "CG",
       "alsoFor": [],
       "kind": "consulate",
       "name": "Consulate of the Republic of the Congo",
@@ -59033,7 +59033,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "w625973350",
-      "country": null,
+      "country": "NZ",
       "alsoFor": [],
       "kind": "residence",
       "name": "New Zealand Offical Residence",
@@ -59086,7 +59086,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "w340721980",
-      "country": null,
+      "country": "JP",
       "alsoFor": [],
       "kind": "embassy",
       "name": "Residence of Ambassador of Japan",
@@ -59251,7 +59251,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "w332655879",
-      "country": null,
+      "country": "US",
       "alsoFor": [],
       "kind": "embassy",
       "name": "The Residence of The American Ambassador",
@@ -59320,7 +59320,7 @@ const ASHTON_DATA = {
     },
     {
       "id": "w1215111410",
-      "country": null,
+      "country": "IT",
       "alsoFor": [],
       "kind": "embassy",
       "name": "The Residence of The Italian Ambassador",
