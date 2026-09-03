@@ -4537,6 +4537,26 @@
     else applyColumnPitch();
   }
 
+  /* ประกอบตัวกรองสองแกน (แบรนด์ + ระยะเดินถึงสถานี) จาก STATE ไว้ที่เดียว
+     ทั้งสองแกนอยู่คนละปุ่มกัน ผู้ใช้กดสลับไปมาได้ ถ้าใครสร้างตัวกรองเองจากแกนที่
+     ตัวเองรู้ อีกแกนจะถูกล้างทิ้งเพราะ setFilter เขียนทับทั้งอัน — ให้ทุกจุดเรียก
+     ผ่านฟังก์ชันนี้เท่านั้น อย่าประกอบเงื่อนไขเองแล้วยิง setLandmarkFilter ตรง ๆ */
+  function applyLandmarkFilters() {
+    var brandF = STATE.selectedBrand === "all"
+      ? null : ["==", ["get", "brandId"], STATE.selectedBrand];
+
+    var dist = STATE.transitDistFilter;
+    if (dist !== "500" && dist !== "1000") {
+      setLandmarkFilter(brandF);
+      return;
+    }
+
+    // ไม่มีค่าระยะ = ตัดออก ไม่ใช่ปล่อยผ่าน (ของเดิม default 400 ทำให้ผ่านหมดทุกหลัง)
+    var maxM = dist === "500" ? 500 : 1000;
+    var distF = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], maxM];
+    setLandmarkFilter(brandF ? ["all", brandF, distF] : distF);
+  }
+
   /* 🚆 Transit Proximity Filter */
   function setTransitDistFilter(dist) {
     STATE.transitDistFilter = dist;
@@ -4544,19 +4564,7 @@
       b.classList.toggle("active", b.getAttribute("data-dist") === dist);
     });
 
-    if (!STATE.map || !STATE.map.getLayer("landmarks-model")) return;
-
-    var brandF = STATE.selectedBrand === "all"
-      ? null : ["==", ["get", "brandId"], STATE.selectedBrand];
-
-    if (dist === "any") {
-      setLandmarkFilter(brandF);
-    } else {
-      // ไม่มีค่าระยะ = ตัดออก ไม่ใช่ปล่อยผ่าน (ของเดิม default 400 ทำให้ผ่านหมดทุกหลัง)
-      var maxM = dist === "500" ? 500 : 1000;
-      var distF = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], maxM];
-      setLandmarkFilter(brandF ? ["all", brandF, distF] : distF);
-    }
+    applyLandmarkFilters();
   }
 
   /* Generate 500m Walkability Catchment Polygon */
@@ -5376,10 +5384,7 @@
         var brand = btn.getAttribute("data-brand") || "all";
         STATE.selectedBrand = brand;
 
-        if (map.getLayer("landmarks-model")) {
-          setLandmarkFilter(brand === "all" ? null : ["==", ["get", "brandId"], brand]);
-        }
-
+        applyLandmarkFilters();
         createDOMPins();
       });
     });
