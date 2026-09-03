@@ -19,10 +19,7 @@
   G.load().then(function (data) {
     D = data;
     years = D.years; gMean = D.gMean; aMean = D.aMean; tMean = D.tMean;
-    map = G.create($('#mapShell'), D, {
-      title: 'Change in Global Temperature',
-      subtitle: 'relative to 1951–1980'
-    });
+    map = G.create($('#mapShell'), D, { fill: true });
     init();
   }).catch(function (err) { G.showError($('#mapShell'), err); });
 
@@ -206,6 +203,27 @@
         b.setAttribute('aria-pressed', 'true');
         speedMul = parseFloat(b.dataset.speed);
       });
+    });
+
+    $('#btnFill').addEventListener('click', function () {
+      var on = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', on ? 'true' : 'false');
+      $('#lgNd').innerHTML = on
+        ? '<span></span> ช่องที่ NASA ไม่มีข้อมูล เติมด้วยค่าประมาณจากช่องข้างเคียง (ชี้ที่แผนที่จะขึ้น “ค่าประมาณ”)'
+        : '<span></span> ไม่มีข้อมูลในปีนั้น';
+      map.setFill(on);
+    });
+
+    $('#btnFs').addEventListener('click', function () {
+      var card = $('#mapCard');
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (card.requestFullscreen) card.requestFullscreen();
+    });
+    document.addEventListener('fullscreenchange', function () {
+      var on = !!document.fullscreenElement;
+      $('#btnFsTx').textContent = on ? 'ออกจากเต็มจอ' : 'เต็มจอ';
+      // ขนาดกล่องเปลี่ยน ต้องวาดแผนที่ใหม่ตามขนาดจริง
+      setTimeout(function () { if (map) map.resize(); }, 60);
     });
 
     $('#yearRange').addEventListener('input', function () {

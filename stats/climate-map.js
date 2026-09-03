@@ -99,6 +99,46 @@ window.Gistemp = (function () {
     return dataPromise;
   }
 
+  /* ---------- เติมช่องที่ไม่มีข้อมูลด้วยค่าประมาณ ----------
+     ปีเก่า ๆ (โดยเฉพาะก่อน ค.ศ. 1950) NASA ไม่มีสถานีตรวจวัดครอบคลุมทั้งโลก แผนที่จึงเป็นรูโหว่
+     ฟังก์ชันนี้ไล่เติมช่องว่างด้วยค่าเฉลี่ยของช่องข้างเคียงทีละวง จนกว่าจะเต็ม (ลองจิจูดวนรอบโลก)
+
+     ย้ำ: ค่าที่เติมเป็น "ค่าประมาณเชิงพื้นที่" ไม่ใช่ข้อมูลวัดจริงของ NASA
+     D.grid ต้นฉบับไม่ถูกแตะ ทูลทิปจึงยังแยกออกว่าช่องไหนของจริง ช่องไหนเป็นค่าประมาณ */
+  function buildFilled(D) {
+    if (D.gridFill) return D.gridFill;
+    var N = D.nlon, NL = D.nlat, cells = D.cells, src = D.grid;
+    var out = new Int8Array(src);
+    var hole = new Int32Array(cells), pend = new Int32Array(cells), pval = new Int8Array(cells);
+
+    for (var y = 0; y < D.rowOf.length; y++) {
+      var base = D.rowOf[y] * cells, nHole = 0;
+      for (var c = 0; c < cells; c++) if (out[base + c] === -128) hole[nHole++] = c;
+
+      var guard = 0;
+      while (nHole > 0 && guard++ < 200) {
+        var nPend = 0, nKeep = 0;
+        for (var k = 0; k < nHole; k++) {
+          var cc = hole[k], la = (cc / N) | 0, lo = cc - la * N, s = 0, w = 0, q;
+          q = out[base + la * N + (lo + 1) % N];            if (q !== -128) { s += q; w++; }
+          q = out[base + la * N + (lo - 1 + N) % N];        if (q !== -128) { s += q; w++; }
+          if (la + 1 < NL) { q = out[base + (la + 1) * N + lo]; if (q !== -128) { s += q; w++; } }
+          if (la > 0)      { q = out[base + (la - 1) * N + lo]; if (q !== -128) { s += q; w++; } }
+          if (w > 0) {
+            // เก็บไว้เขียนพร้อมกันท้ายรอบ ไม่งั้นช่องที่เพิ่งเติมจะลามต่อในรอบเดียวกันจนเกิดริ้วตามทิศที่ไล่
+            var v = Math.round(s / w); if (v < -127) v = -127; if (v > 127) v = 127;
+            pend[nPend] = cc; pval[nPend] = v; nPend++;
+          } else hole[nKeep++] = cc;
+        }
+        if (nPend === 0) break;                       // ปีนั้นไม่มีข้อมูลเลย — ปล่อยเป็นช่องว่างตามเดิม
+        for (var j = 0; j < nPend; j++) out[base + pend[j]] = pval[j];
+        nHole = nKeep;
+      }
+    }
+    D.gridFill = out;
+    return out;
+  }
+
   function prepare(meta, grid, topo) {
     buildColor();
     var nlat = meta.nlat, nlon = meta.nlon, cells = nlat * nlon;
@@ -136,7 +176,7 @@ window.Gistemp = (function () {
     }
 
     return {
-      meta: meta, grid: grid, nlat: nlat, nlon: nlon, cells: cells,
+      meta: meta, grid: grid, gridFill: null, nlat: nlat, nlon: nlon, cells: cells,
       years: years, rowOf: rowOf, gMean: gMean, aMean: aMean, tMean: tMean, thai: thai,
       landMesh: topojson.mesh(topo, topo.objects.countries, function (a, b) { return a === b; }),
       borderMesh: topojson.mesh(topo, topo.objects.countries, function (a, b) { return a !== b; }),
@@ -148,7 +188,6 @@ window.Gistemp = (function () {
   function create(host, D, opts) {
     injectCss();
     opts = opts || {};
-    var graticule = d3.geoGraticule().step([30, 30]);
 
     host.classList.add('gm-shell');
     host.innerHTML = '';
@@ -175,7 +214,8 @@ window.Gistemp = (function () {
 
     var rw = 0, rh = 0, img = null, buf32 = null, dpr = 1, projScale = 1, proj = null;
     var laA = null, loA = null, fxA = null, fyA = null, maskA = null;
-    var pos = 0, ndRGBA = noDataRGBA();
+    var pos = 0, ndRGBA = noDataRGBA(), fill = !!opts.fill;
+    if (fill) buildFilled(D);
     function U(css) { return css * dpr / projScale; }   // CSS px → หน่วยที่ใช้วาดบน cvV/cvO
 
     function layout() {
@@ -205,9 +245,19 @@ window.Gistemp = (function () {
       laA = new Uint16Array(n); loA = new Uint16Array(n);
       fxA = new Uint8Array(n); fyA = new Uint8Array(n); maskA = new Uint8Array(n);
       var meta = D.meta;
+
+      /* ขอบเขตจริงของแผนที่: proj.invert ของ Equal Earth ยังคืนพิกัดที่ดู "ปกติ" ให้จุดที่อยู่
+         นอกทรงกลมด้วย เช็กแค่ช่วง ±90/±180 จึงไม่พอ — จุดนอกขอบเลยถูกระบายสีเป็นริ้วพัด
+         ออกจากขั้ว วิธีที่แน่นอนคือวาดทรงกลมลงแคนวาสชั่วคราวแล้วอ่านกลับมาเป็นหน้ากาก */
+      var mc = document.createElement('canvas'); mc.width = rw; mc.height = rh;
+      var mx = mc.getContext('2d');
+      mx.fillStyle = '#fff'; mx.beginPath(); d3.geoPath(proj, mx)({ type: 'Sphere' }); mx.fill();
+      var sphere = mx.getImageData(0, 0, rw, rh).data;
+
       for (var y = 0; y < rh; y++) {
         for (var x = 0; x < rw; x++) {
           var p = y * rw + x;
+          if (!sphere[p * 4 + 3]) { maskA[p] = 0; continue; }
           var inv = proj.invert([x + 0.5, y + 0.5]);
           if (!inv || !isFinite(inv[0]) || !isFinite(inv[1]) ||
               inv[1] > 90.001 || inv[1] < -90.001 || inv[0] > 180.001 || inv[0] < -180.001) { maskA[p] = 0; continue; }
@@ -231,7 +281,8 @@ window.Gistemp = (function () {
       var i1 = Math.min(i0 + 1, D.years.length - 1);
       var f = pos - i0; if (f < 0) f = 0; if (f > 1) f = 1;
       var bA = D.rowOf[i0] * D.cells, bB = D.rowOf[i1] * D.cells;
-      var g = D.grid, n = rw * rh, N = D.nlon, NL = D.nlat;
+      var g = fill && D.gridFill ? D.gridFill : D.grid;
+      var n = rw * rh, N = D.nlon, NL = D.nlat;
 
       for (var p = 0; p < n; p++) {
         if (!maskA[p]) { buf32[p] = 0; continue; }
@@ -276,10 +327,6 @@ window.Gistemp = (function () {
       ctxV.clearRect(0, 0, rw, rh);
       var path = d3.geoPath(proj, ctxV), dark = isDark();
 
-      ctxV.lineWidth = U(0.6);
-      ctxV.strokeStyle = dark ? 'rgba(190,220,235,.14)' : 'rgba(20,50,70,.14)';
-      ctxV.beginPath(); path(graticule()); ctxV.stroke();
-
       ctxV.lineWidth = U(0.7);
       ctxV.strokeStyle = dark ? 'rgba(214,236,246,.32)' : 'rgba(10,24,34,.32)';
       ctxV.beginPath(); path(D.borderMesh); ctxV.stroke();
@@ -308,8 +355,14 @@ window.Gistemp = (function () {
         ctxO.beginPath(); ctxO.arc(pt[0], pt[1], U(2), 0, 6.284);
         ctxO.fillStyle = accent; ctxO.fill();
 
-        var v = D.tMean[idx];
-        var label = 'ไทย ' + (v === null || v === undefined ? 'ไม่มีข้อมูล' : fmt(v));
+        // หมุดไทยอิงข้อมูลจริงก่อนเสมอ ปีที่ไม่มีข้อมูลจริงจึงค่อยใช้ค่าที่เติม (ใส่ ≈ กำกับ)
+        // ไม่งั้นแผนที่ระบายสีตรงไทยอยู่แต่ป้ายบอก “ไม่มีข้อมูล” ซึ่งขัดกันเอง
+        var v = D.tMean[idx], approx = false;
+        if ((v === null || v === undefined) && fill && D.gridFill) {
+          var tq = D.gridFill[D.rowOf[idx] * D.cells + D.thai.la * D.nlon + D.thai.lo];
+          if (tq !== -128) { v = tq * 0.1; approx = true; }
+        }
+        var label = 'ไทย ' + (v === null || v === undefined ? 'ไม่มีข้อมูล' : (approx ? '≈ ' : '') + fmt(v));
         ctxO.font = '600 ' + U(12.5) + 'px "IBM Plex Sans Thai",system-ui,sans-serif';
         ctxO.textBaseline = 'middle';
         var tw = ctxO.measureText(label).width;
@@ -350,8 +403,13 @@ window.Gistemp = (function () {
       var idx = Math.round(pos);
       var la = Math.min(D.nlat - 1, Math.max(0, Math.floor((inv[1] - D.meta.lat0) / D.meta.dlat)));
       var lo = ((Math.floor((inv[0] - D.meta.lon0) / D.meta.dlon) % D.nlon) + D.nlon) % D.nlon;
-      var q = D.grid[D.rowOf[idx] * D.cells + la * D.nlon + lo];
-      elTip.innerHTML = '<b>' + (q === -128 ? 'ไม่มีข้อมูล' : fmt(q * 0.1)) + '</b> · ' + D.years[idx] + '<br>' +
+      var cell = D.rowOf[idx] * D.cells + la * D.nlon + lo;
+      var q = D.grid[cell], head;
+      if (q !== -128) head = '<b>' + fmt(q * 0.1) + '</b>';
+      else if (fill && D.gridFill && D.gridFill[cell] !== -128)
+        head = '<b>≈ ' + fmt(D.gridFill[cell] * 0.1) + '</b> <small>ค่าประมาณ</small>';
+      else head = '<b>ไม่มีข้อมูล</b>';
+      elTip.innerHTML = head + ' · ' + D.years[idx] + '<br>' +
         Math.abs(inv[1]).toFixed(0) + '°' + (inv[1] >= 0 ? 'N' : 'S') + ' ' +
         Math.abs(inv[0]).toFixed(0) + '°' + (inv[0] >= 0 ? 'E' : 'W');
       elTip.style.opacity = 1;
@@ -381,6 +439,8 @@ window.Gistemp = (function () {
       setYear: function (yr) { return api.setPos(D.indexOfYear(yr)); },
       yearAt: function () { return D.years[Math.round(pos)]; },
       resize: function () { if (layout()) render(); return api; },
+      get fill() { return fill; },
+      setFill: function (on) { fill = !!on; if (fill) buildFilled(D); render(); return api; },
       refreshTheme: function () { ndRGBA = noDataRGBA(); drawVector(); render(); return api; },
       destroy: function () {
         host.removeEventListener('pointermove', onMove);
