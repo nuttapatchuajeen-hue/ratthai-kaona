@@ -367,6 +367,16 @@
   .sn-tx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
   .sn-tx b{font-weight:700;font-size:13.5px}
   .sn-tx small{font-size:11.5px;color:var(--ink-soft);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* ลิงก์หน้าย่อยใต้หัวข้อ "ศูนย์ข้อมูลโลก" — เป็นหน้าลูกของหมวดนั้น ไม่ใช่หมวดที่สามของเว็บ
+     เส้นตั้งด้านซ้ายทำหน้าที่บอกลำดับชั้นแทนการเยื้องเปล่า ๆ */
+  .snav-sub{display:flex;align-items:center;gap:8px;margin:1px 0 1px 21px;padding:6px 10px;
+    border-radius:8px;color:var(--ink-soft);text-decoration:none;
+    border-left:2px solid var(--rule);transition:all .2s ease}
+  .snav-sub:hover{color:var(--green);border-left-color:var(--green);background:var(--paper-2)}
+  .snav-sub .mdico{font-size:14px;flex:none}
+  .snav-sub .ss-tx{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+  .snav-sub .ss-tx b{font-weight:700;font-size:12.5px}
+  .snav-sub .ss-tx small{font-size:10.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   /* หัวข้อหมวดหมู่ในหน้านี้ (Image 1 Style) */
   .side-sec{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:1px solid var(--rule);flex:1 1 auto}
@@ -577,9 +587,9 @@
             <span class="sn-ico"><svg class="mdico"><use href="#i-globe"></use></svg></span>
             <span class="sn-tx"><b>ศูนย์ข้อมูลโลก &amp; วิทย์-คณิต</b><small>ห้องทดลอง 2D/3D Interactive</small></span>
           </a>
-          <a class="snav" href="climate.html">
-            <span class="sn-ico"><svg class="mdico"><use href="#i-thermometer"></use></svg></span>
-            <span class="sn-tx"><b>แผนที่โลกร้อนไล่ปี</b><small>NASA GISTEMP · 1880–2025</small></span>
+          <a class="snav-sub" href="climate.html">
+            <svg class="mdico"><use href="#i-thermometer"></use></svg>
+            <span class="ss-tx"><b>แผนที่โลกร้อนไล่ปี</b><small>NASA GISTEMP · 1880–2025</small></span>
           </a>
         </nav>
         <div class="side-sec">
