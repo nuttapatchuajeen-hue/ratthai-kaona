@@ -97,6 +97,13 @@
     box-shadow:var(--glass-shadow),var(--glass-inset);backdrop-filter:blur(var(--glass-blur));
     -webkit-backdrop-filter:blur(var(--glass-blur));padding:18px;margin:22px 0;
   }
+  /* โหมดเต็มจอ — เหลือแค่แผนที่กับแถบควบคุม ไม่มีเมนูหรือส่วนอื่นของเว็บบัง */
+  #mapCard:fullscreen{margin:0;padding:14px 18px;border:0;border-radius:0;
+    background:var(--body-grad);background-attachment:fixed;
+    display:flex;flex-direction:column;gap:12px;overflow:auto}
+  #mapCard:fullscreen .card-head,#mapCard:fullscreen .tiles{display:none}
+  #mapCard:fullscreen #mapShell{flex:1 1 auto;min-height:0;display:flex;align-items:center}
+  #mapCard:fullscreen .gm-shell{width:100%;max-height:100%}
   .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 14px}
   .card-head h2{margin:0;font-family:"Noto Serif Thai",serif;font-size:19px;font-weight:800;color:var(--ink)}
   .card-head p{margin:0;font-size:13px;color:var(--ink-soft)}
@@ -112,6 +119,9 @@
     transition:transform .15s,border-color .2s,color .2s;backdrop-filter:blur(10px);
   }
   .btn:hover{transform:translateY(-1px);border-color:var(--green);color:var(--green)}
+  /* ปุ่มสลับโหมด (เติมช่องว่าง) — ป้ายบอกโหมดที่กำลังใช้ ไฮไลต์บอกว่าเปิดอยู่ */
+  .btn[aria-pressed="true"]{background:var(--green-soft);border-color:var(--green);color:var(--green-deep)}
+  html[data-theme="dark"] .btn[aria-pressed="true"]{color:var(--green)}
   .btn.primary{background:var(--green);border-color:var(--green);color:#fff}
   html[data-theme="dark"] .btn.primary{color:#031018}
   .btn.primary:hover{color:#fff;filter:brightness(1.08)}
@@ -231,7 +241,9 @@
       <h1>โลกร้อนขึ้น <em>แค่ไหน</em> — ดูทีละปี ตั้งแต่ ค.ศ. 1880</h1>
       <p class="lede">
         แผนที่นี้เล่นย้อนประวัติศาสตร์อุณหภูมิพื้นผิวโลกทีละปี สีน้ำเงินคือเย็นกว่าค่าเฉลี่ยช่วงปี 1951–1980
-        สีแดงคือร้อนกว่า ทุกจุดสีบนแผนที่มาจากข้อมูลกริดจริงของ NASA ไม่ใช่ภาพประกอบ
+        สีแดงคือร้อนกว่า สีทุกจุดมาจากข้อมูลกริดของ NASA ไม่ใช่ภาพประกอบ · ปีเก่า ๆ NASA ยังตรวจวัดไม่ทั่วโลก
+        หน้านี้จึง<b>เติมช่องที่ไม่มีข้อมูลด้วยค่าประมาณจากช่องข้างเคียง</b>ให้แผนที่ไม่เป็นรูโหว่
+        กดปุ่ม <b>“เติมช่องว่าง”</b> ที่แถบควบคุมเพื่อปิด แล้วดูว่าปีนั้น NASA มีข้อมูลจริงแค่ไหน
       </p>
       <div class="src-row">
         <span class="chip">ที่มา <b>NASA GISS Surface Temperature Analysis (GISTEMP v4)</b></span>
@@ -241,7 +253,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="mapCard">
       <div class="card-head">
         <h2>ความเปลี่ยนแปลงของอุณหภูมิโลก (Change in Global Temperature)</h2>
         <p>เทียบกับค่าเฉลี่ย ค.ศ. 1951–1980 · หน่วย °C</p>
@@ -262,6 +274,14 @@
           <button type="button" data-speed="2">2×</button>
           <button type="button" data-speed="4">4×</button>
         </div>
+        <button class="btn" id="btnFill" type="button" aria-pressed="true" title="เติมพื้นที่ที่ NASA ไม่มีข้อมูลด้วยค่าประมาณจากช่องข้างเคียง">
+          <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4zM6.6 15.5h2.1l1.1-3.1h4.4l1.1 3.1h2.1L13.1 3h-2.2zm3.8-4.9L12 6.1l1.6 4.5z"/></svg>
+          <span>เติมช่องว่าง</span>
+        </button>
+        <button class="btn" id="btnFs" type="button" title="ดูแผนที่เต็มจอ ไม่มีเมนูหรือส่วนอื่นของเว็บบัง">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM6 15v3h3v2H4v-5zm12 0h2v5h-5v-2h3z"/></svg>
+          <span id="btnFsTx">เต็มจอ</span>
+        </button>
         <div class="ctrl-spacer"></div>
         <label for="yearRange">เลื่อนดูรายปี</label>
         <input type="range" id="yearRange" min="0" max="145" value="0" step="0.01" style="flex:1 1 220px;min-width:180px;accent-color:var(--green)" />
@@ -272,7 +292,7 @@
           <div class="lg-grad" id="lgGrad"></div>
           <div class="lg-ticks"><span>−4°C</span><span>−2</span><span>0</span><span>+2</span><span>+4°C</span></div>
         </div>
-        <div class="lg-nd"><span></span> ไม่มีข้อมูลในปีนั้น</div>
+        <div class="lg-nd" id="lgNd"><span></span> ช่องที่ NASA ไม่มีข้อมูล เติมด้วยค่าประมาณจากช่องข้างเคียง (ชี้ที่แผนที่จะขึ้น “ค่าประมาณ”)</div>
       </div>
 
       <div class="tiles" id="tiles">
@@ -314,6 +334,8 @@
             <li>แสดงเฉพาะปีที่มีข้อมูลครบ 12 เดือน (ปีล่าสุดที่ยังไม่ครบปีจะถูกตัดออก)</li>
             <li>เก็บค่าเป็นจำนวนเต็ม 1 ไบต์ (ละเอียด 0.1°C) เพื่อให้ไฟล์เล็กพอโหลดผ่านเว็บ</li>
             <li>ค่าเฉลี่ยโลกคำนวณแบบถ่วงน้ำหนักตามพื้นที่ (cos ละติจูด) ได้ผลตรงกับตัวเลขที่ NASA ประกาศในระดับ ±0.03°C</li>
+            <li><b>เติมช่องว่าง (เปิดไว้เป็นค่าเริ่มต้น)</b> — ช่องที่ NASA ไม่มีข้อมูล จะถูกไล่เติมด้วยค่าเฉลี่ยของช่องข้างเคียงทีละวงจนเต็ม เป็น<b>ค่าประมาณเชิงพื้นที่ ไม่ใช่ค่าที่วัดได้จริง</b> · ชี้ที่แผนที่จะเห็นเครื่องหมาย ≈ กำกับ และปุ่มในแถบควบคุมปิดโหมดนี้ได้ตลอด</li>
+            <li>ตัวเลขในการ์ด (ทั้งโลก · อาร์กติก · ไทย) กับกราฟและแถบสีรายปีด้านล่าง คำนวณจาก<b>ข้อมูลจริงเท่านั้น</b> ไม่นับค่าที่เติมเข้าไป</li>
           </ul>
         </div>
       </div>

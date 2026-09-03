@@ -992,6 +992,12 @@ html[data-theme="dark"] .kpi.accent .k-num{text-shadow:0 0 30px rgba(255,92,26,.
   box-shadow:0 6px 18px -12px var(--v21-ring)}
 /* ปุ่มที่กำลังเลือกอยู่ พื้นเป็นสีเขียวแล้ว — hover ต้องไม่เปลี่ยนตัวอักษรเป็นสีเขียวตาม ไม่งั้นข้อความจมหายไปกับพื้น */
 .tl-btn.on:hover,.owid-tab.on:hover,.bkkm-pill.on:hover{color:var(--paper)}
+/* โหมดเต็มจอของแผนที่ — เหลือแค่แผนที่กับแถบควบคุม ไม่มี nav/ไซด์บาร์ของเว็บบัง */
+#gtCard:fullscreen{margin:0;padding:14px 18px;border:0;border-radius:0;background:var(--paper);
+  display:flex;flex-direction:column;gap:10px;overflow:auto}
+#gtCard:fullscreen .card-head,#gtCard:fullscreen .sub,#gtCard:fullscreen .src{display:none}
+#gtCard:fullscreen .tl-maps{flex:1 1 auto;min-height:0;align-items:center}
+#gtCard:fullscreen .gm-shell{width:100%;max-height:100%}
 .owid-tab.on,.owid-tab.active,.bkkm-pill.on,.bkkm-pill.active,.en-chip.on,.en-chip.active{
   box-shadow:0 8px 22px -12px var(--v21-ring)}
 .yp-yr,.owid-tl-yr,.tl-year-lab{text-shadow:0 0 18px var(--v21-ring)}
@@ -1707,9 +1713,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         </div>
       </div>
 
-      <div class="card full">
+      <div class="card full" id="gtCard">
         <div class="card-head"><h2><svg class="mdico"><use href="#i-map"></use></svg> ส่วนต่างอุณหภูมิพื้นผิวโลก — ไล่ปี</h2><span class="tag">เล่นได้ · ไล่ปี</span></div>
-        <p class="sub">กด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่น</b> ให้แผนที่ไล่ปีเอง หรือลากสไลเดอร์ · กด <b>“⇄ เทียบ 2 ปี”</b> วางแผนที่ปี 1880 เทียบปีปัจจุบันซ้าย-ขวา · ชี้จุดใดบนแผนที่เพื่อดูค่า · หมุดฟ้า = ไทย · สีเทา = ปีนั้นยังไม่มีข้อมูลตรงนั้น</p>
+        <p class="sub">กด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่น</b> ให้แผนที่ไล่ปีเอง หรือลากสไลเดอร์ · กด <b>“⇄ เทียบ 2 ปี”</b> วางแผนที่ปี 1880 เทียบปีปัจจุบันซ้าย-ขวา · <b>“⛶ เต็มจอ”</b> ดูแบบไม่มีเมนูบัง · ชี้จุดใดบนแผนที่เพื่อดูค่า · หมุดฟ้า = ไทย<br>
+        <b>“◍ เติมช่องว่าง”</b> (เปิดไว้ก่อน) — ปีเก่า ๆ NASA ยังตรวจวัดไม่ทั่วโลก ช่องที่ไม่มีข้อมูลจึงถูกเติมด้วย<b>ค่าประมาณจากช่องข้างเคียง</b> (ชี้แล้วจะขึ้น ≈ กำกับ) กดปิดเพื่อดูว่าปีนั้นมีข้อมูลจริงแค่ไหน — สีเทาคือช่องที่ไม่มีข้อมูล</p>
         <div class="tl-toolbar">
           <select id="gtSpeed">
             <option value="1">ความเร็ว ช้า (1 ปี/วิ)</option>
@@ -1718,6 +1725,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             <option value="12">ความเร็ว เร็วมาก (12 ปี/วิ)</option>
           </select>
           <button class="tl-btn" id="gtCompare">⇄ เทียบ 2 ปี</button>
+          <button class="tl-btn" id="gtFs" title="ดูแผนที่เต็มจอ ไม่มีเมนูหรือไซด์บาร์บัง">⛶ เต็มจอ</button>
+          <button class="tl-btn on" id="gtFill" title="ช่องที่ NASA ไม่มีข้อมูล (ส่วนใหญ่เป็นปีเก่า) ถูกเติมด้วยค่าประมาณจากช่องข้างเคียง — กดเพื่อสลับไปดูข้อมูลจริง">◍ เติมช่องว่าง</button>
           <span class="tl-year-lab" id="gtRange" style="min-width:auto;color:var(--ink-soft);font-size:12px"></span>
         </div>
         <div class="tl-maps" id="gtMaps">
@@ -1733,6 +1742,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <div class="src">
           ที่มา: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS Surface Temperature Analysis (GISTEMP v4) ↗</a>
           · GHCNv4 + ERSSTv5 เกลี่ยเชิงพื้นที่ 1,200 กม. · กริด 2°×2° เฉลี่ยรายเดือนเป็นรายปี ·
+          ตัวเลขในการ์ดด้านบนคำนวณจากข้อมูลจริงเท่านั้น ไม่นับช่องที่เติมค่าประมาณ ·
           <a href="climate.html">ดูแบบเต็มหน้า พร้อมแถบสีรายปีและกราฟ →</a>
         </div>
       </div>
@@ -10104,7 +10114,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
        โหลดกริด ~2.4 MB แบบ lazy: เริ่มดาวน์โหลดตอนเปิดแผงนี้จริงเท่านั้น
        โหมดเทียบ 2 ปี: แผนที่ซ้ายตรึงไว้ที่ปีแรก (1880) แผนที่ขวาเดินตามสไลเดอร์ ===== */
     var GT_STEP_MS=40;
-    var gtState={ pos:0, playing:false, speed:3, compare:false, wired:false, loading:false,
+    var gtState={ pos:0, playing:false, speed:3, compare:false, fill:true, wired:false, loading:false,
                   D:null, mapA:null, mapB:null, timer:null, lastIdx:-1 };
 
     // เดินด้วย setInterval แบบเดียวกับแผนที่ CO₂ (ไม่ใช้ rAF — บางเบราว์เซอร์หรี่จนค้าง)
@@ -10156,7 +10166,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       wrapB.hidden=!gtState.compare;
       btn.classList.toggle("on", gtState.compare);
       if(gtState.compare && !gtState.mapB){
-        gtState.mapB=Gistemp.create($("#gtMapB"), D, { compact:true });
+        gtState.mapB=Gistemp.create($("#gtMapB"), D, { compact:true, fill:gtState.fill });
       }
       if(gtState.mapA) gtState.mapA.resize();
       if(gtState.mapB) gtState.mapB.resize();
@@ -10166,6 +10176,23 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       if(gtState.wired) return; gtState.wired=true;
       var p=$("#gtPlay");     if(p) p.addEventListener("click", function(){ gtSetPlaying(!gtState.playing); });
       var c=$("#gtCompare");  if(c) c.addEventListener("click", gtToggleCompare);
+      var fs=$("#gtFs");      if(fs) fs.addEventListener("click", function(){
+        var card=$("#gtCard");
+        if(document.fullscreenElement) document.exitFullscreen();
+        else if(card && card.requestFullscreen) card.requestFullscreen();
+      });
+      document.addEventListener("fullscreenchange", function(){
+        var on=document.fullscreenElement===$("#gtCard");
+        var btn=$("#gtFs"); if(btn){ btn.textContent=on?"⛶ ออกจากเต็มจอ":"⛶ เต็มจอ"; btn.classList.toggle("on", on); }
+        // ขนาดกล่องเปลี่ยน ต้องวาดแผนที่ใหม่ตามขนาดจริง
+        setTimeout(function(){ if(gtState.mapA) gtState.mapA.resize(); if(gtState.mapB) gtState.mapB.resize(); }, 60);
+      });
+      var fl=$("#gtFill");    if(fl) fl.addEventListener("click", function(){
+        gtState.fill=!gtState.fill;
+        this.classList.toggle("on", gtState.fill);
+        if(gtState.mapA) gtState.mapA.setFill(gtState.fill);
+        if(gtState.mapB) gtState.mapB.setFill(gtState.fill);
+      });
       var s=$("#gtSpeed");    if(s) s.addEventListener("change", function(){ gtState.speed=parseFloat(this.value)||3; });
       var y=$("#gtYear");     if(y) y.addEventListener("input", function(){ gtSetPlaying(false); gtState.pos=parseFloat(this.value)||0; gtDraw(); });
       // สลับโหมดสว่าง/มืด → เส้นแผนที่กับสีช่องไม่มีข้อมูลต้องวาดใหม่
@@ -10188,7 +10215,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       Gistemp.load().then(function(D){
         gtState.D=D; gtState.loading=false;
         gtState.pos=D.years.length-1;                  // เปิดมาเห็นปีล่าสุดก่อน แล้วค่อยกดเล่นไล่จากปี 1880
-        gtState.mapA=Gistemp.create(box, D, { compact:true });
+        gtState.mapA=Gistemp.create(box, D, { compact:true, fill:gtState.fill });
         var sl=$("#gtYear"); if(sl){ sl.min=0; sl.max=String(D.years.length-1); sl.value=String(gtState.pos); }
         setTxt("#gtRange", D.years[0]+"–"+D.years[D.years.length-1]+" · °C เทียบค่าเฉลี่ย 1951–1980");
         setTxt("#gtKThSub", "จุดกริด "+Math.round(D.thai.lat)+"°N, "+Math.round(D.thai.lon)+"°E");
