@@ -379,6 +379,25 @@
   /* พื้นที่กด 44px ตามเกณฑ์สัมผัส แต่รางยังบางเท่าเดิม (content-box: height=ราง, padding=พื้นที่กด) */
   .tl-slider{flex:1;accent-color:var(--green);height:6px;cursor:pointer;min-width:120px;box-sizing:content-box;padding:19px 0;background:transparent}
   @media(max-width:640px){ .tl-maps.cmp{grid-template-columns:1fr} }
+  /* ---------- แถบสีรายปี (warming stripes) + กราฟค่าเฉลี่ยโลก + กล่องหมายเหตุ ----------
+     ตั้งชื่อขึ้นต้น gt- กันชนกับคลาสอื่นในหน้านี้ */
+  .gt-stripes{position:relative;display:flex;gap:1px;height:78px;margin-top:14px;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--rule)}
+  .gt-stripes i{flex:1 1 0;display:block;transition:opacity .18s}
+  .gt-stripes i.future{opacity:.22}        /* ปีที่ยังไม่ถึง — จางไว้ให้เห็นว่าไล่ถึงไหนแล้ว */
+  .gt-stripe-head{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);box-shadow:0 0 0 1px var(--paper-2);pointer-events:none;transition:left .08s linear;z-index:2}
+  .gt-stripe-axis{position:relative;height:18px;margin-top:6px;font-family:"Archivo",system-ui;font-size:11.5px;color:var(--ink-soft)}
+  .gt-stripe-axis span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+  .gt-stripe-axis span:first-child{transform:none}
+  .gt-stripe-axis span:last-child{transform:translateX(-100%)}
+  .gt-chart{position:relative;width:100%;height:230px;margin-top:18px}
+  .gt-chart canvas{position:absolute;inset:0;width:100%;height:100%}
+  .gt-notes{font-size:13.5px;color:var(--ink-2)}
+  .gt-notes h3{font-family:"Noto Serif Thai",serif;font-size:16px;margin:0 0 8px;color:var(--ink)}
+  .gt-notes ul{margin:0;padding-left:1.1em}
+  .gt-notes li{margin:5px 0}
+  .gt-notes code{font-family:"Archivo",ui-monospace,monospace;font-size:12.5px;background:var(--paper-3);border:1px solid var(--rule);padding:1px 6px;border-radius:6px}
+  .gt-two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  @media(max-width:720px){ .gt-stripes{height:56px} }
   /* ---------- หัวเล่นไล่ปีบนกราฟเส้น/แท่งรายปี (year player) ---------- */
   .yp-player{display:flex;align-items:center;gap:10px;margin-top:9px}
   .yp-play{flex:none;position:relative;width:30px;height:30px;border-radius:50%;border:none;background:var(--green);color:var(--paper);font-size:12.5px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .12s}
@@ -1700,7 +1719,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     <!-- ============ ศูนย์ข้อมูลโลก · แผนที่โลกร้อนไล่ปี (NASA GISTEMP) ============
          แผนที่เป็นภาพกริดจริงของ NASA วาดด้วยแคนวาสผ่านเอนจินร่วม climate-map.js
          (คนละเครื่องยนต์กับแผนที่ CO₂ ที่เป็น Observable Plot ระบายรายประเทศ)
-         หน้าเต็มพร้อมแถบสีรายปี + กราฟ อยู่ที่ climate.html -->
+         แถบสีรายปี + กราฟค่าเฉลี่ยโลก อยู่ในการ์ดถัดลงไปในแผงเดียวกันนี้ -->
     <section class="tabpane" id="pane-world-gistemp" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-thermometer"></use></svg> แผนที่โลกร้อนไล่ปี 1880–2025 (NASA)</h2></div>
       <div class="kpis">
@@ -1755,8 +1774,43 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <div class="src">
           ที่มา: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS Surface Temperature Analysis (GISTEMP v4) ↗</a>
           · GHCNv4 + ERSSTv5 เกลี่ยเชิงพื้นที่ 1,200 กม. · กริด 2°×2° เฉลี่ยรายเดือนเป็นรายปี ·
-          ตัวเลขในการ์ดด้านบนคำนวณจากข้อมูลจริงเท่านั้น ไม่นับช่องที่เติมค่าประมาณ ·
-          <a href="climate.html">ดูแบบเต็มหน้า พร้อมแถบสีรายปีและกราฟ →</a>
+          ตัวเลขในการ์ดด้านบนคำนวณจากข้อมูลจริงเท่านั้น ไม่นับช่องที่เติมค่าประมาณ
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> เส้นเวลาอุณหภูมิเฉลี่ยทั้งโลก</h2><span class="tag">คลิกแถบสีเพื่อกระโดดไปปีนั้น</span></div>
+        <p class="sub">หมายเหตุ: ค่าเฉลี่ยทั้งโลกแกว่งอยู่ราว −0.5 ถึง +1.3°C เท่านั้น แถบสีและแท่งกราฟในส่วนนี้จึงใช้สเกลสีที่เข้มกว่าแผนที่ (ให้ +1.3°C = แดงเข้มสุด) เพื่อให้เห็นความต่างระหว่างปีชัดขึ้น · คำนวณจาก<b>ข้อมูลจริงเท่านั้น</b> ไม่นับช่องที่เติมค่าประมาณ</p>
+        <div class="gt-stripes" id="gtStripes" title="คลิกเพื่อเลือกปี"><div class="gt-stripe-head" id="gtStripeHead"></div></div>
+        <div class="gt-stripe-axis" id="gtStripeAxis"></div>
+        <div class="gt-chart"><canvas id="gtChart"></canvas></div>
+      </div>
+
+      <div class="card full gt-notes">
+        <div class="gt-two-col">
+          <div>
+            <h3>ข้อมูลนี้มาจากไหน</h3>
+            <ul>
+              <li>ไฟล์ต้นทางคือ <code>gistemp1200_GHCNv4_ERSSTv5.nc</code> ของ NASA GISS — อุณหภูมิ<b>ส่วนต่าง (anomaly)</b> รายเดือน บนกริด 2°×2° ตั้งแต่ ค.ศ. 1880</li>
+              <li>ผสมข้อมูลสถานีตรวจอากาศบนบก (GHCN v4) กับอุณหภูมิผิวน้ำทะเล (ERSST v5) และเกลี่ยเชิงพื้นที่รัศมี 1,200 กม.</li>
+              <li>“ส่วนต่าง” หมายถึงต่างจากค่าเฉลี่ยของจุดนั้นเองในช่วงปี 1951–1980 ไม่ใช่อุณหภูมิสัมบูรณ์</li>
+            </ul>
+          </div>
+          <div>
+            <h3>วิธีประมวลผลในแผงนี้</h3>
+            <ul>
+              <li>เฉลี่ยรายเดือน → <b>รายปี</b> เฉพาะจุดกริดที่มีข้อมูลอย่างน้อย 6 เดือนในปีนั้น จุดที่ข้อมูลไม่พอจะแสดงเป็นช่องว่าง</li>
+              <li>แสดงเฉพาะปีที่มีข้อมูลครบ 12 เดือน (ปีล่าสุดที่ยังไม่ครบปีจะถูกตัดออก)</li>
+              <li>เก็บค่าเป็นจำนวนเต็ม 1 ไบต์ (ละเอียด 0.1°C) เพื่อให้ไฟล์เล็กพอโหลดผ่านเว็บ</li>
+              <li>ค่าเฉลี่ยโลกคำนวณแบบถ่วงน้ำหนักตามพื้นที่ (cos ละติจูด) ได้ผลตรงกับตัวเลขที่ NASA ประกาศในระดับ ±0.03°C</li>
+              <li><b>เติมช่องว่าง (เปิดไว้เป็นค่าเริ่มต้น)</b> — ช่องที่ NASA ไม่มีข้อมูล จะถูกไล่เติมด้วยค่าเฉลี่ยของช่องข้างเคียงทีละวงจนเต็ม เป็น<b>ค่าประมาณเชิงพื้นที่ ไม่ใช่ค่าที่วัดได้จริง</b> · ชี้ที่แผนที่จะเห็นเครื่องหมาย ≈ กำกับ และปุ่มในแถบเครื่องมือปิดโหมดนี้ได้ตลอด</li>
+              <li>ตัวเลขในการ์ด (ทั้งโลก · อาร์กติก · ไทย) กับกราฟและแถบสีรายปีด้านบน คำนวณจาก<b>ข้อมูลจริงเท่านั้น</b> ไม่นับค่าที่เติมเข้าไป</li>
+            </ul>
+          </div>
+        </div>
+        <div class="src">
+          เส้นพรมแดนประเทศจาก <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> (Natural Earth 110m) ·
+          แผนที่ฉาย Equal Earth · จัดทำเพื่อการศึกษาและนำเสนอ ไม่ใช่เอกสารราชการ
         </div>
       </div>
     </section>
@@ -8342,7 +8396,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-tile@1.0.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3"></script>
-  <!-- เครื่องยนต์แผนที่ส่วนต่างอุณหภูมิ NASA GISTEMP (ใช้ร่วมกับหน้าเต็ม climate.html) -->
+  <!-- เครื่องยนต์แผนที่ส่วนต่างอุณหภูมิ NASA GISTEMP -->
   <script src="climate-map.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
   <script src="th-map.js"></script>
@@ -10280,7 +10334,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       } else gtState.mapA.setPos(gtState.pos);
       setTxt("#gtYearLab", D.years[idx]);
       var sl=$("#gtYear"); if(sl && document.activeElement!==sl) sl.value=String(gtState.pos);
-      if(idx!==gtState.lastIdx){ gtKpis(idx); gtState.lastIdx=idx; }
+      var head=$("#gtStripeHead");
+      if(head) head.style.left=((idx+0.5)/D.years.length*100)+"%";
+      if(idx!==gtState.lastIdx){
+        gtKpis(idx);
+        var bars=$("#gtStripes"); if(bars){ bars=bars.querySelectorAll("i");
+          for(var b=0;b<bars.length;b++) bars[b].classList.toggle("future", b>idx); }
+        gtDrawChart(idx);
+        gtState.lastIdx=idx;
+      }
     }
     function gtKpis(idx){
       var D=gtState.D, F=Gistemp.fmt;
@@ -10293,6 +10355,111 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setTxt("#gtKHot", bestY);
       setTxt("#gtKHotSub", F(best)+(bestY===D.years[idx]?" · คือปีนี้เอง":""));
     }
+    /* ---------- แถบสีรายปี (warming stripes) ----------
+       สร้างครั้งเดียวหลังโหลดข้อมูล · ใช้ gMean ซึ่งเป็นค่าจริงล้วน ไม่นับช่องที่เติมประมาณ */
+    function gtBuildStripes(){
+      var D=gtState.D, host=$("#gtStripes"), head=$("#gtStripeHead");
+      if(!D||!host||!head) return;
+      var frag=document.createDocumentFragment();
+      for(var i=0;i<D.years.length;i++){
+        var b=document.createElement("i");
+        b.style.background = D.gMean[i]==null ? Gistemp.noDataColor() : Gistemp.stripeColor(D.gMean[i]);
+        b.title = D.years[i]+" · "+(D.gMean[i]==null?"ไม่มีข้อมูล":Gistemp.fmt(D.gMean[i]));
+        frag.appendChild(b);
+      }
+      host.insertBefore(frag, head);
+
+      // ป้ายปี — วางตามตำแหน่งจริงของปีนั้นบนแถบ ไม่ใช่แบ่งช่องเท่า ๆ กัน
+      var ax=$("#gtStripeAxis"); if(!ax) return;
+      ax.innerHTML="";
+      var y0=D.years[0], yN=D.years[D.years.length-1];
+      var ticks=[y0,1900,1920,1940,1960,1980,2000,2020];
+      if(yN-ticks[ticks.length-1] < 8) ticks.pop();   // กันป้ายปีสุดท้ายทับป้ายทศวรรษ
+      ticks.push(yN);
+      ticks.forEach(function(y){
+        var sp=document.createElement("span");
+        sp.textContent=y;
+        sp.style.left=((y-y0+0.5)/D.years.length*100)+"%";
+        ax.appendChild(sp);
+      });
+    }
+    function gtPaintStripes(){
+      var D=gtState.D, host=$("#gtStripes"); if(!D||!host) return;
+      var bars=host.querySelectorAll("i");
+      for(var i=0;i<bars.length;i++) bars[i].style.background = D.gMean[i]==null ? Gistemp.noDataColor() : Gistemp.stripeColor(D.gMean[i]);
+    }
+
+    /* ---------- กราฟค่าเฉลี่ยโลกรายปี + เส้นเฉลี่ยเคลื่อนที่ 10 ปี ---------- */
+    function gtDrawChart(idx){
+      var D=gtState.D, cv=$("#gtChart"); if(!D||!cv) return;
+      var r=cv.getBoundingClientRect(); if(!r.width) return;
+      if(idx==null||idx<0) idx=0; if(idx>D.years.length-1) idx=D.years.length-1;
+      var dpr=Math.min(window.devicePixelRatio||1,2);
+      cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+      var c=cv.getContext("2d");
+      c.setTransform(dpr,0,0,dpr,0,0);
+      c.clearRect(0,0,r.width,r.height);
+
+      var m={l:44,r:12,t:12,b:26};
+      var W=r.width-m.l-m.r, H=r.height-m.t-m.b;
+      var dark=Gistemp.isDark();
+      var ink=dark?"rgba(169,191,205,.9)":"rgba(44,67,86,.9)";
+      var faint=dark?"rgba(169,191,205,.16)":"rgba(44,67,86,.14)";
+
+      var x=d3.scaleLinear().domain([D.years[0],D.years[D.years.length-1]]).range([m.l,m.l+W]);
+      var y=d3.scaleLinear().domain([-0.6,1.5]).range([m.t+H,m.t]);
+
+      c.font='500 11px "Archivo",system-ui,sans-serif';
+      c.strokeStyle=faint; c.fillStyle=ink; c.lineWidth=1;
+      [-0.5,0,0.5,1,1.5].forEach(function(v){
+        var yy=Math.round(y(v))+0.5;
+        c.beginPath(); c.moveTo(m.l,yy); c.lineTo(m.l+W,yy); c.stroke();
+        c.textAlign="right"; c.textBaseline="middle";
+        c.fillText((v>0?"+":"")+v.toFixed(1), m.l-8, yy);
+      });
+      c.textAlign="center"; c.textBaseline="top";
+      [1900,1940,1980,2020].forEach(function(yr){ c.fillText(yr, x(yr), m.t+H+7); });
+
+      // เส้นศูนย์ = ค่าเฉลี่ยปี 1951–1980
+      c.strokeStyle=dark?"rgba(220,232,240,.45)":"rgba(10,24,34,.4)";
+      c.setLineDash([4,4]); c.beginPath();
+      c.moveTo(m.l,Math.round(y(0))+0.5); c.lineTo(m.l+W,Math.round(y(0))+0.5); c.stroke();
+      c.setLineDash([]);
+
+      // แท่งรายปีจนถึงปีที่แสดงอยู่
+      var bw=Math.max(1, W/D.years.length-0.6);
+      for(var i=0;i<=idx;i++){
+        if(D.gMean[i]==null) continue;
+        c.fillStyle=Gistemp.stripeColor(D.gMean[i]);
+        var yy=y(D.gMean[i]), yz=y(0);
+        c.fillRect(x(D.years[i])-bw/2, Math.min(yy,yz), bw, Math.abs(yy-yz));
+      }
+
+      // เส้นเฉลี่ยเคลื่อนที่ 10 ปี — วาดเส้นรองสีพื้นก่อน ให้อ่านออกทั้งบนแท่งอ่อนและแท่งแดงเข้ม
+      var mv=new Path2D(), started=false;
+      for(var j=0;j<=idx;j++){
+        var a=Math.max(0,j-9), sum=0, k=0;
+        for(var t=a;t<=j;t++){ if(D.gMean[t]!=null){ sum+=D.gMean[t]; k++; } }
+        if(!k) continue;
+        var px=x(D.years[j]), py=y(sum/k);
+        if(!started){ mv.moveTo(px,py); started=true; } else mv.lineTo(px,py);
+      }
+      c.lineJoin="round"; c.lineCap="round";
+      c.strokeStyle=dark?"rgba(4,10,16,.85)":"rgba(255,255,255,.9)"; c.lineWidth=4.5; c.stroke(mv);
+      c.strokeStyle=dark?"#DCE8F0":"#0A1822"; c.lineWidth=2; c.stroke(mv);
+
+      if(D.gMean[idx]!=null){
+        c.beginPath(); c.arc(x(D.years[idx]), y(D.gMean[idx]), 4.4, 0, 6.284);
+        c.fillStyle=dark?"rgba(4,10,16,.85)":"rgba(255,255,255,.9)"; c.fill();
+        c.beginPath(); c.arc(x(D.years[idx]), y(D.gMean[idx]), 3.2, 0, 6.284);
+        c.fillStyle=dark?"#DCE8F0":"#0A1822"; c.fill();
+      }
+
+      c.fillStyle=ink; c.textAlign="left"; c.textBaseline="top";
+      c.font='600 11.5px "IBM Plex Sans Thai",system-ui,sans-serif';
+      c.fillText("แท่ง = ค่าเฉลี่ยโลกรายปี · เส้นทึบ = ค่าเฉลี่ยเคลื่อนที่ 10 ปี", m.l+4, m.t+2);
+    }
+
     function gtToggleCompare(){
       var D=gtState.D; if(!D) return;
       gtState.compare=!gtState.compare;
@@ -10329,11 +10496,20 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         if(gtState.mapB) gtState.mapB.setFill(gtState.fill);
       });
       var s=$("#gtSpeed");    if(s) s.addEventListener("change", function(){ gtState.speed=parseFloat(this.value)||3; });
+      var st=$("#gtStripes"); if(st) st.addEventListener("click", function(e){
+        var D=gtState.D; if(!D) return;
+        var r=this.getBoundingClientRect();
+        var i=Math.floor((e.clientX-r.left)/r.width*D.years.length);
+        if(i<0) i=0; if(i>D.years.length-1) i=D.years.length-1;
+        gtSetPlaying(false); gtState.pos=i; gtDraw();
+      });
       var y=$("#gtYear");     if(y) y.addEventListener("input", function(){ gtSetPlaying(false); gtState.pos=parseFloat(this.value)||0; gtDraw(); });
-      // สลับโหมดสว่าง/มืด → เส้นแผนที่กับสีช่องไม่มีข้อมูลต้องวาดใหม่
+      // สลับโหมดสว่าง/มืด → เส้นแผนที่ สีช่องไม่มีข้อมูล แถบสีรายปี และกราฟ ต้องวาดใหม่ทั้งหมด
       new MutationObserver(function(){
         if(gtState.mapA) gtState.mapA.refreshTheme();
         if(gtState.mapB) gtState.mapB.refreshTheme();
+        gtPaintStripes();
+        gtDrawChart(gtState.lastIdx);
       }).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
     }
     function renderGistempMap(){
@@ -10342,6 +10518,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       if(gtState.D){                                   // สร้างแล้ว — แค่ปรับขนาดตามความกว้างที่เพิ่งโผล่
         if(gtState.mapA) gtState.mapA.resize();
         if(gtState.mapB) gtState.mapB.resize();
+        gtDrawChart(gtState.lastIdx);                  // แคนวาสกราฟต้องวาดใหม่ตามความกว้างจริง
         return;
       }
       if(gtState.loading) return;
@@ -10359,8 +10536,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           '<div style="height:13px;border-radius:999px;border:1px solid var(--rule);background:'+Gistemp.gradientCss(-4,4)+'"></div>'+
           '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:Archivo,system-ui;font-size:11.5px;color:var(--ink-soft)">'+
           '<span>−4°C</span><span>−2</span><span>0</span><span>+2</span><span>+4°C</span></div></div>';
+        gtBuildStripes();
         gtWire();
         gtDraw();
+        gtDrawChart(gtState.lastIdx<0?D.years.length-1:gtState.lastIdx);
       }).catch(function(e){ gtState.loading=false; Gistemp.showError(box, e); });
     }
 
@@ -19323,7 +19502,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           '<svg class="ng-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
         var subs = document.createElement("div"); subs.className = "ng-subs";
         g.subs.forEach(function(s){
-          // s.link = หัวข้อที่อยู่คนละหน้า (เช่น climate.html) → ทำเป็นลิงก์แทนปุ่มสลับ pane
+          // s.link = หัวข้อที่อยู่คนละหน้า → ทำเป็นลิงก์แทนปุ่มสลับ pane
           var b;
           if(s.link){
             b = document.createElement("a"); b.className = "ng-sub"; b.href = s.link; b.style.textDecoration = "none";
