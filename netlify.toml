@@ -1,4 +1,17 @@
 # รวมงานเว็บ md — static site, ไม่มีขั้นตอน build
-# โฮสต์บน Netlify (ย้ายจาก GitHub Pages 2026-06-11 เพื่อให้ repo เป็น private ได้)
+#
+# เว็บที่ใช้งานจริงตอนนี้เสิร์ฟจาก GitHub Pages:
+#   https://nuttapatchuajeen-hue.github.io/ratthai-kaona/
+# (สอดคล้องกับไฟล์ .nojekyll ในรูท และ 404.html ที่จัดการ base path /ratthai-kaona/ ของ Pages ไว้)
+#
+# คอมเมนต์เดิมตรงนี้เขียนว่า "โฮสต์บน Netlify (ย้ายจาก GitHub Pages 2026-06-11)" ซึ่งไม่ตรงกับ
+# ของจริง — ยังยืนยันไม่ได้ว่ารีโปนี้มีไซต์ Netlify ผูกอยู่ด้วยหรือเปล่า จึงเก็บไฟล์นี้ไว้ก่อน
+# publish = "." เท่ากับค่าเริ่มต้นของ Netlify อยู่แล้ว ต่อให้ยังมีไซต์ผูกอยู่ก็ไม่เปลี่ยนพฤติกรรม
+# ถ้าเช็กใน Netlify dashboard แล้วไม่มีไซต์ของรีโปนี้ → ลบไฟล์นี้ทิ้งได้เลย
+#
+# ระวังสับสน: Netlify ยังถูกใช้จริงในโปรเจกต์ แต่เป็น "คนละไซต์" —
+#   md-ai-proxy-nook.netlify.app = proxy ของผู้ช่วย AI และแบบประเมิน
+#   (js/ai-chat.js · hub/js/voices.js · hub/survey.html)
+# ไฟล์นี้ไม่ได้ตั้งค่าไซต์นั้น ลบไฟล์นี้ไม่กระทบ AI chat หรือแบบประเมิน
 [build]
   publish = "."
