@@ -2908,9 +2908,12 @@
 <script src="bkk-districts-geo.js"></script>
 <script src="bkk-transit-data.js"></script>
 <script src="bkk-landmarks-data.js"></script>
+<script src="bkk-osm3d-data.js"></script>
 <script src="bkk-amenities-data.js"></script>
 <script src="bkk-datacenter-data.js"></script>
 <script src="bkk-datacenter.js"></script>
+<script src="bkk-zoning-data.js"></script>
+<script src="bkk-zoning.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -3128,7 +3131,46 @@
       f.properties.nearestStation = n.name;
     });
 
+    // มวลอาคารจริงจาก OSM ต้องรับค่าเดียวกัน ไม่งั้นตัวกรองแบรนด์/ระยะเดินจะกรองไม่โดน
+    // แล้วตึกจริงจะค้างอยู่ทั้งที่กรองแบรนด์อื่นอยู่
+    var brandOf = {};
+    (window.BKK_LANDMARKS.rawList || []).forEach(function(lm) { brandOf[lm.id] = lm.brandId || "other"; });
+    if (window.BKK_OSM3D && window.BKK_OSM3D.polygons) {
+      window.BKK_OSM3D.polygons.features.forEach(function(f) {
+        f.properties.brandId = brandOf[f.properties.id] || "other";
+        var n = nearest[f.properties.id];
+        if (!n) return;
+        f.properties.distanceToStationMeters = n.m;
+        f.properties.nearestStation = n.name;
+      });
+    }
+
     STATION_DISTANCE_READY = true;
+  }
+
+  /* 🏙 แลนด์มาร์ก 2 ชั้น: landmarks-model = โมเดลวาดมือ, landmarks-osm-3d = มวลอาคารจริงจาก OSM
+     หลังที่มีของจริงแล้วต้องถูกตัดออกจากชั้นวาดมือ "ตลอดเวลา" ทุกครั้งที่ตั้งตัวกรองใหม่
+     ต้องประกอบกับ base filter นี้เสมอ ไม่งั้น setFilter จะล้างทิ้งแล้วกล่องโผล่ทับของจริง */
+  function landmarkBaseFilter() {
+    var ids = (window.BKK_OSM3D && window.BKK_OSM3D.replaceIds) || [];
+    return ["!", ["in", ["get", "id"], ["literal", ids]]];
+  }
+
+  function setLandmarkFilter(f) {
+    if (!STATE.map) return;
+    if (STATE.map.getLayer("landmarks-model")) {
+      STATE.map.setFilter("landmarks-model", f ? ["all", landmarkBaseFilter(), f] : landmarkBaseFilter());
+    }
+    if (STATE.map.getLayer("landmarks-osm-3d")) {
+      STATE.map.setFilter("landmarks-osm-3d", f || null);
+    }
+  }
+
+  function setLandmarkVisibility(vis) {
+    if (!STATE.map) return;
+    ["landmarks-model", "landmarks-osm-3d"].forEach(function(lid) {
+      if (STATE.map.getLayer(lid)) STATE.map.setLayoutProperty(lid, "visibility", vis);
+    });
   }
 
   function countWithinStation(maxM) {
@@ -3335,6 +3377,7 @@
       attributionControl: { compact: true }
     });
 
+    window.__DEBUG_MAP = STATE.map; /*TEMP-DEBUG*/
     STATE.map.on("style.load", onStyleLoaded);
     STATE.map.on("load", onStyleLoaded);
     STATE.map.on("move", updateCameraInfo);
@@ -3420,6 +3463,9 @@
           source: vsrc,
           "source-layer": "building",
           minzoom: 13.5,
+          // OSM Simple 3D Buildings: อาคารที่แยกมวลเป็น building:part จะมีเส้นขอบอาคาร (outline)
+          // ติดแท็ก hide_3d=true มาด้วย ถ้าไม่กรองทิ้ง กล่องขอบอาคารจะโผล่ทับมวลอาคารจริงที่แยกชิ้นไว้
+          filter: ["!=", ["get", "hide_3d"], true],
           paint: {
             "fill-extrusion-color": bldgColor,
             "fill-extrusion-height": ["coalesce", ["get", "render_height"], 5],
@@ -3820,6 +3866,8 @@
           type: "fill-extrusion",
           source: "landmarks-3d",
           minzoom: 13,
+          // หลังที่มีมวลอาคารจริงจาก OSM แล้ว ตัดออกจากชั้นวาดมือ ไม่งั้นกล่องจะบังของจริง
+          filter: landmarkBaseFilter(),
           paint: {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
@@ -3834,6 +3882,35 @@
           if (!e.features || !e.features.length) return;
           var pid = e.features[0].properties.id;
           openProjectDrawer(pid);
+        });
+      }
+    }
+
+    // 6b. มวลอาคารจริงจาก OpenStreetMap (bkk-osm3d-data.js)
+    //     มหานคร = building:part 69 ชิ้นจริง จึงได้ลายพิกเซลบิดเกลียว ไม่ใช่กล่องสี่เหลี่ยม
+    if (window.BKK_OSM3D && window.BKK_OSM3D.polygons) {
+      if (!map.getSource("landmarks-osm")) {
+        map.addSource("landmarks-osm", { type: "geojson", data: window.BKK_OSM3D.polygons });
+      }
+
+      if (!map.getLayer("landmarks-osm-3d")) {
+        map.addLayer({
+          id: "landmarks-osm-3d",
+          type: "fill-extrusion",
+          source: "landmarks-osm",
+          minzoom: 13,
+          paint: {
+            "fill-extrusion-color": ["get", "color"],
+            "fill-extrusion-height": ["get", "height"],
+            "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
+            "fill-extrusion-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 14, 0.96],
+            "fill-extrusion-vertical-gradient": true
+          }
+        });
+
+        map.on("click", "landmarks-osm-3d", function(e) {
+          if (!e.features || !e.features.length) return;
+          openProjectDrawer(e.features[0].properties.id);
         });
       }
     }
@@ -3900,6 +3977,11 @@
     // เรียกใหม่ทุกครั้งที่ style โหลด (สลับธีมจะล้างเลเยอร์ทิ้ง) — mount() รับการเรียกซ้ำได้
     if (window.BKK_DC && window.BKK_DC.mount) {
       try { window.BKK_DC.mount(map); } catch (e) { console.warn("data center layer:", e); }
+    }
+
+    // 🗺️ ชั้นผังสี กทม. & FAR/OSR Intel — โมดูลแยกใน bkk-zoning.js
+    if (window.BKK_ZONING && window.BKK_ZONING.mount) {
+      try { window.BKK_ZONING.mount(map); } catch (e) { console.warn("zoning layer:", e); }
     }
   }
 
@@ -4395,21 +4477,28 @@
       b.classList.toggle("active", b.getAttribute("data-height") === mode);
     });
 
-    if (!STATE.map || !STATE.map.getLayer("landmarks-model")) return;
+    if (!STATE.map) return;
 
+    var expr = null;
     if (mode === "flat") {
-      STATE.map.setPaintProperty("landmarks-model", "fill-extrusion-height", 2);
+      expr = 2;
     } else if (mode === "projects") {
-      STATE.map.setPaintProperty("landmarks-model", "fill-extrusion-height", ["get", "height"]);
+      expr = ["get", "height"];
     } else if (mode === "value") {
-      STATE.map.setPaintProperty("landmarks-model", "fill-extrusion-height", [
-        "*", ["coalesce", ["get", "height"], 100], 1.35
-      ]);
+      expr = ["*", ["coalesce", ["get", "height"], 100], 1.35];
     } else if (mode === "roles") {
-      STATE.map.setPaintProperty("landmarks-model", "fill-extrusion-height", [
-        "*", ["coalesce", ["get", "height"], 80], 1.6
-      ]);
+      expr = ["*", ["coalesce", ["get", "height"], 80], 1.6];
     }
+    if (expr === null) return;
+
+    // มวลอาคารจริงจาก OSM แยกเป็นชิ้นซ้อนกันตามความสูง (min_height) — โหมด flat ต้องรูดฐานลงพื้น
+    // ด้วย ไม่งั้นชิ้นบน ๆ จะมีฐานสูงกว่ายอดแล้วหายไปทั้งก้อน
+    ["landmarks-model", "landmarks-osm-3d"].forEach(function(lid) {
+      if (!STATE.map.getLayer(lid)) return;
+      STATE.map.setPaintProperty(lid, "fill-extrusion-height", expr);
+      STATE.map.setPaintProperty(lid, "fill-extrusion-base",
+        mode === "flat" ? 0 : ["coalesce", ["get", "min_height"], 0]);
+    });
   }
 
   /* 🏙 เลือกตัวชี้วัดที่จะดันความสูงแท่งเขต — "flat" = ปิดแท่ง */
@@ -4457,24 +4546,16 @@
 
     if (!STATE.map || !STATE.map.getLayer("landmarks-model")) return;
 
+    var brandF = STATE.selectedBrand === "all"
+      ? null : ["==", ["get", "brandId"], STATE.selectedBrand];
+
     if (dist === "any") {
-      if (STATE.selectedBrand === "all") STATE.map.setFilter("landmarks-model", null);
-      else STATE.map.setFilter("landmarks-model", ["==", ["get", "brandId"], STATE.selectedBrand]);
-    } else if (dist === "500") {
+      setLandmarkFilter(brandF);
+    } else {
       // ไม่มีค่าระยะ = ตัดออก ไม่ใช่ปล่อยผ่าน (ของเดิม default 400 ทำให้ผ่านหมดทุกหลัง)
-      var filter500 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], 500];
-      if (STATE.selectedBrand !== "all") {
-        STATE.map.setFilter("landmarks-model", ["all", ["==", ["get", "brandId"], STATE.selectedBrand], filter500]);
-      } else {
-        STATE.map.setFilter("landmarks-model", filter500);
-      }
-    } else if (dist === "1000") {
-      var filter1000 = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], 1000];
-      if (STATE.selectedBrand !== "all") {
-        STATE.map.setFilter("landmarks-model", ["all", ["==", ["get", "brandId"], STATE.selectedBrand], filter1000]);
-      } else {
-        STATE.map.setFilter("landmarks-model", filter1000);
-      }
+      var maxM = dist === "500" ? 500 : 1000;
+      var distF = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], maxM];
+      setLandmarkFilter(brandF ? ["all", brandF, distF] : distF);
     }
   }
 
@@ -4576,6 +4657,8 @@
 
     renderProjectPOIs(project);
     $("#projectDrawer").classList.add("open");
+    var dc = $("#dcxPanel"); if (dc) dc.classList.remove("open");
+    var zn = $("#znxPanel"); if (zn) zn.classList.remove("open");
   }
 
   function closeProjectDrawer() {
@@ -4665,7 +4748,7 @@
         STATE.map.setLayoutProperty("city-buildings-3d", "visibility", "none");
       }
       if (STATE.map.getLayer("landmarks-model")) {
-        STATE.map.setLayoutProperty("landmarks-model", "visibility", "none");
+        setLandmarkVisibility("none");
       }
       if (STATE.map.getLayer("districts-fill")) {
         STATE.map.setLayoutProperty("districts-fill", "visibility", "visible");
@@ -4702,7 +4785,7 @@
         STATE.map.setLayoutProperty("city-buildings-3d", "visibility", STATE.bldg3d ? "visible" : "none");
       }
       if (STATE.map.getLayer("landmarks-model")) {
-        STATE.map.setLayoutProperty("landmarks-model", "visibility", STATE.landmarks ? "visible" : "none");
+        setLandmarkVisibility(STATE.landmarks ? "visible" : "none");
       }
       if (STATE.map.getLayer("districts-fill")) {
         STATE.map.setLayoutProperty("districts-fill", "visibility", STATE.districts ? "visible" : "none");
@@ -5110,7 +5193,7 @@
       $("#chipLandmarks").classList.toggle("active", STATE.landmarks);
       $("#btnLandmarksToggle").classList.toggle("active", STATE.landmarks);
       if (map.getLayer("landmarks-model")) {
-        map.setLayoutProperty("landmarks-model", "visibility", STATE.landmarks ? "visible" : "none");
+        setLandmarkVisibility(STATE.landmarks ? "visible" : "none");
       }
       updatePins();
     }
@@ -5294,11 +5377,7 @@
         STATE.selectedBrand = brand;
 
         if (map.getLayer("landmarks-model")) {
-          if (brand === "all") {
-            map.setFilter("landmarks-model", null);
-          } else {
-            map.setFilter("landmarks-model", ["==", ["get", "brandId"], brand]);
-          }
+          setLandmarkFilter(brand === "all" ? null : ["==", ["get", "brandId"], brand]);
         }
 
         createDOMPins();
@@ -5356,7 +5435,7 @@
       $("#toggleProjects").addEventListener("change", function(e) {
         STATE.landmarks = e.target.checked;
         if (map.getLayer("landmarks-model")) {
-          map.setLayoutProperty("landmarks-model", "visibility", STATE.landmarks ? "visible" : "none");
+          setLandmarkVisibility(STATE.landmarks ? "visible" : "none");
         }
         createDOMPins();
       });

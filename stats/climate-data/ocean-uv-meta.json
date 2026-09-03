@@ -1,0 +1,19 @@
+{
+  "source": "NOAA CoastWatch / NESDIS — Sea Surface Height Anomalies and Geostrophic Currents from Altimetry (nesdisSSH1day, RADS)",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/nesdisSSH1day.html",
+  "variables": ["ugos", "vgos"],
+  "unit": "m/s",
+  "time": "2026-03-25T00:00:00Z",
+  "scale": 0.02,
+  "noData": -128,
+  "nlat": 180,
+  "nlon": 360,
+  "lat0": -89.875,
+  "lon0": -179.875,
+  "dlat": 1,
+  "dlon": 1,
+  "layout": "interleaved u,v per cell; row-major lat then lon; Int8 * scale = m/s",
+  "validCells": 36207,
+  "totalCells": 64800,
+  "maxSpeed": 5.388
+}

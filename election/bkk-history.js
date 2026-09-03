@@ -95,7 +95,7 @@ function renderHist(){
         <div class="hch"><span class="hdt">${o.date}</span>
           <span class="hsys">${o.cand?'ผู้สมัคร '+o.cand+' คน':'ครั้งที่ '+o.no}</span>
           <span class="hturn">ผู้ใช้สิทธิ <b>${o.turn}%</b></span></div>
-        <div class="hwin">
+        <div class="hwin" data-gov-name="${o.win}" data-gov-year="${o.y}" data-gov-party="${o.party}" data-gov-votes="${o.votes}" data-gov-pct="${o.pct||''}" style="cursor:pointer" title="แตะเพื่อดูการ์ดประวัติ ${o.win}">
           <div class="hav" style="background:${c}">${o.ini}</div>
           <div><div class="hwn">${o.win}<span class="hpt" style="background:${c}">${o.party}</span></div>
             <div class="hws">${fmt(o.votes)} <em>คะแนน${o.pct?' · '+o.pct+'%':''}</em></div></div>
@@ -104,7 +104,7 @@ function renderHist(){
           <div class="hbl"><span class="hbt"><i style="width:${wpc}%;background:${c}"></i></span><span class="hbn">${fmt(o.votes)}</span></div>
           <div class="hbl"><span class="hbt"><i style="width:${rpc}%;background:var(--line-2)"></i></span><span class="hbn">${o.runV?fmt(o.runV):'—'}</span></div>
         </div>
-        <div class="hrun"><span class="rl">อันดับ 2</span><b>${o.run}</b><span class="rl">· ${o.runP}</span></div>
+        <div class="hrun"><span class="rl">อันดับ 2</span><b data-gov-name="${o.run}" data-gov-year="${o.y}" data-gov-party="${o.runP}" data-gov-votes="${o.runV||''}" style="cursor:pointer;text-decoration:underline" title="แตะเพื่อดูการ์ดประวัติ ${o.run}">${o.run}</b><span class="rl">· ${o.runP}</span></div>
         <p class="hnote">${o.note}</p>
         ${btnRow(o)}
       </div></div>`;

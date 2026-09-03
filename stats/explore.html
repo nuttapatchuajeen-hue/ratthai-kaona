@@ -1676,6 +1676,66 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ============ ศูนย์ข้อมูลโลก · แผนที่โลกร้อนไล่ปี (NASA GISTEMP) ============
+         แผนที่เป็นภาพกริดจริงของ NASA วาดด้วยแคนวาสผ่านเอนจินร่วม climate-map.js
+         (คนละเครื่องยนต์กับแผนที่ CO₂ ที่เป็น Observable Plot ระบายรายประเทศ)
+         หน้าเต็มพร้อมแถบสีรายปี + กราฟ อยู่ที่ climate.html -->
+    <section class="tabpane" id="pane-world-gistemp" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-thermometer"></use></svg> แผนที่โลกร้อนไล่ปี 1880–2025 (NASA)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> ทั้งโลก · ปี <span id="gtKYear">—</span></div>
+          <div class="k-num" id="gtKGlob">—</div>
+          <div class="k-sub">ต่างจากค่าเฉลี่ย ค.ศ. 1951–1980 (คำนวณถ่วงน้ำหนักตามพื้นที่จากกริดจริง)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> อาร์กติก (64°–90°N)</div>
+          <div class="k-num" id="gtKArc">—</div>
+          <div class="k-sub">ขั้วโลกเหนือร้อนเร็วกว่าค่าเฉลี่ยโลกหลายเท่า</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-map-pin"></use></svg> ไทย (จุดกริดเหนือภาคกลาง)</div>
+          <div class="k-num" id="gtKTh">—</div>
+          <div class="k-sub" id="gtKThSub">จุดกริด 15°N, 101°E</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> ปีที่ร้อนที่สุด (นับถึงปีที่แสดง)</div>
+          <div class="k-num" id="gtKHot">—</div>
+          <div class="k-sub" id="gtKHotSub">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-map"></use></svg> ส่วนต่างอุณหภูมิพื้นผิวโลก — ไล่ปี</h2><span class="tag">เล่นได้ · ไล่ปี</span></div>
+        <p class="sub">กด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่น</b> ให้แผนที่ไล่ปีเอง หรือลากสไลเดอร์ · กด <b>“⇄ เทียบ 2 ปี”</b> วางแผนที่ปี 1880 เทียบปีปัจจุบันซ้าย-ขวา · ชี้จุดใดบนแผนที่เพื่อดูค่า · หมุดฟ้า = ไทย · สีเทา = ปีนั้นยังไม่มีข้อมูลตรงนั้น</p>
+        <div class="tl-toolbar">
+          <select id="gtSpeed">
+            <option value="1">ความเร็ว ช้า (1 ปี/วิ)</option>
+            <option value="3" selected>ความเร็ว ปกติ (3 ปี/วิ)</option>
+            <option value="6">ความเร็ว เร็ว (6 ปี/วิ)</option>
+            <option value="12">ความเร็ว เร็วมาก (12 ปี/วิ)</option>
+          </select>
+          <button class="tl-btn" id="gtCompare">⇄ เทียบ 2 ปี</button>
+          <span class="tl-year-lab" id="gtRange" style="min-width:auto;color:var(--ink-soft);font-size:12px"></span>
+        </div>
+        <div class="tl-maps" id="gtMaps">
+          <div class="tl-map-wrap"><div id="gtMapA"></div></div>
+          <div class="tl-map-wrap" id="gtWrapB" hidden><div id="gtMapB"></div></div>
+        </div>
+        <div class="tl-legend" id="gtLegend"></div>
+        <div class="tl-player">
+          <button class="tl-play" id="gtPlay" aria-label="เล่น/หยุด"><svg class="mdico"><use href="#i-play"></use></svg></button>
+          <span class="tl-year-lab" id="gtYearLab">—</span>
+          <input type="range" class="tl-slider" id="gtYear" min="0" max="145" value="145" step="0.01" />
+        </div>
+        <div class="src">
+          ที่มา: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS Surface Temperature Analysis (GISTEMP v4) ↗</a>
+          · GHCNv4 + ERSSTv5 เกลี่ยเชิงพื้นที่ 1,200 กม. · กริด 2°×2° เฉลี่ยรายเดือนเป็นรายปี ·
+          <a href="climate.html">ดูแบบเต็มหน้า พร้อมแถบสีรายปีและกราฟ →</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ศูนย์ข้อมูลโลก · ภาพรวม โลกร้อน & ภัยพิบัติ ============ -->
     <section class="tabpane" id="pane-disaster" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-thermometer"></use></svg> ภาพรวม โลกร้อน &amp; ภัยพิบัติ</h2></div>
@@ -8243,6 +8303,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-tile@1.0.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3"></script>
+  <!-- เครื่องยนต์แผนที่ส่วนต่างอุณหภูมิ NASA GISTEMP (ใช้ร่วมกับหน้าเต็ม climate.html) -->
+  <script src="climate-map.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
   <script src="th-map.js"></script>
   <!-- รูปทรง 50 เขต กทม. (dissolve จาก ADM3) + ข้อมูลเปรียบเทียบรายเขต -->
@@ -10036,7 +10098,109 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }).catch(function(){ setQuakeKpis(); });   // เชื่อมต่อไม่ได้ → คงค่าสำรอง
     }
 
-    function renderAll(){ renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    /* ===== แผนที่ NASA GISTEMP “ไล่ปี” — ใช้เอนจินร่วม climate-map.js (window.Gistemp)
+       โหลดกริด ~2.4 MB แบบ lazy: เริ่มดาวน์โหลดตอนเปิดแผงนี้จริงเท่านั้น
+       โหมดเทียบ 2 ปี: แผนที่ซ้ายตรึงไว้ที่ปีแรก (1880) แผนที่ขวาเดินตามสไลเดอร์ ===== */
+    var GT_STEP_MS=40;
+    var gtState={ pos:0, playing:false, speed:3, compare:false, wired:false, loading:false,
+                  D:null, mapA:null, mapB:null, timer:null, lastIdx:-1 };
+
+    // เดินด้วย setInterval แบบเดียวกับแผนที่ CO₂ (ไม่ใช้ rAF — บางเบราว์เซอร์หรี่จนค้าง)
+    function gtSetPlaying(p){
+      var D=gtState.D; if(!D) return;
+      if(p && gtState.pos>=D.years.length-1) gtState.pos=0;
+      gtState.playing=p; gtState.lastT=0;
+      if(gtState.timer){ clearInterval(gtState.timer); gtState.timer=null; }
+      if(p) gtState.timer=setInterval(gtStep, GT_STEP_MS);
+      var b=$("#gtPlay"); if(b) b.innerHTML='<svg class="mdico"><use href="#'+(p?"i-pause":"i-play")+'"></use></svg>';
+    }
+    // ก้าวตามเวลาจริง ไม่ใช่ก้าวละเท่าๆ กัน — เครื่องช้าจะวาดหยาบลงแต่ยังไล่ปีด้วยความเร็วเท่าเดิม
+    function gtStep(){
+      var D=gtState.D; if(!D) return;
+      var now=Date.now();
+      var dt=gtState.lastT ? Math.min((now-gtState.lastT)/1000, 0.5) : GT_STEP_MS/1000;
+      gtState.lastT=now;
+      gtState.pos+=dt*gtState.speed;
+      if(gtState.pos>=D.years.length-1){ gtState.pos=D.years.length-1; gtDraw(); gtSetPlaying(false); return; }
+      gtDraw();
+    }
+    function gtDraw(){
+      var D=gtState.D; if(!D||!gtState.mapA) return;
+      var idx=Math.round(gtState.pos); if(idx>D.years.length-1) idx=D.years.length-1; if(idx<0) idx=0;
+      if(gtState.compare){
+        gtState.mapA.setPos(0);
+        if(gtState.mapB) gtState.mapB.setPos(gtState.pos);
+      } else gtState.mapA.setPos(gtState.pos);
+      setTxt("#gtYearLab", D.years[idx]);
+      var sl=$("#gtYear"); if(sl && document.activeElement!==sl) sl.value=String(gtState.pos);
+      if(idx!==gtState.lastIdx){ gtKpis(idx); gtState.lastIdx=idx; }
+    }
+    function gtKpis(idx){
+      var D=gtState.D, F=Gistemp.fmt;
+      setTxt("#gtKYear", D.years[idx]);
+      setTxt("#gtKGlob", D.gMean[idx]==null?"—":F(D.gMean[idx]));
+      setTxt("#gtKArc",  D.aMean[idx]==null?"—":F(D.aMean[idx]));
+      setTxt("#gtKTh",   D.tMean[idx]==null?"—":F(D.tMean[idx]));
+      var best=-99,bestY=D.years[0];
+      for(var i=0;i<=idx;i++) if(D.gMean[i]!=null && D.gMean[i]>best){ best=D.gMean[i]; bestY=D.years[i]; }
+      setTxt("#gtKHot", bestY);
+      setTxt("#gtKHotSub", F(best)+(bestY===D.years[idx]?" · คือปีนี้เอง":""));
+    }
+    function gtToggleCompare(){
+      var D=gtState.D; if(!D) return;
+      gtState.compare=!gtState.compare;
+      var maps=$("#gtMaps"), wrapB=$("#gtWrapB"), btn=$("#gtCompare");
+      maps.classList.toggle("cmp", gtState.compare);
+      wrapB.hidden=!gtState.compare;
+      btn.classList.toggle("on", gtState.compare);
+      if(gtState.compare && !gtState.mapB){
+        gtState.mapB=Gistemp.create($("#gtMapB"), D, { compact:true });
+      }
+      if(gtState.mapA) gtState.mapA.resize();
+      if(gtState.mapB) gtState.mapB.resize();
+      gtDraw();
+    }
+    function gtWire(){
+      if(gtState.wired) return; gtState.wired=true;
+      var p=$("#gtPlay");     if(p) p.addEventListener("click", function(){ gtSetPlaying(!gtState.playing); });
+      var c=$("#gtCompare");  if(c) c.addEventListener("click", gtToggleCompare);
+      var s=$("#gtSpeed");    if(s) s.addEventListener("change", function(){ gtState.speed=parseFloat(this.value)||3; });
+      var y=$("#gtYear");     if(y) y.addEventListener("input", function(){ gtSetPlaying(false); gtState.pos=parseFloat(this.value)||0; gtDraw(); });
+      // สลับโหมดสว่าง/มืด → เส้นแผนที่กับสีช่องไม่มีข้อมูลต้องวาดใหม่
+      new MutationObserver(function(){
+        if(gtState.mapA) gtState.mapA.refreshTheme();
+        if(gtState.mapB) gtState.mapB.refreshTheme();
+      }).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+    }
+    function renderGistempMap(){
+      var box=$("#gtMapA"); if(!box || !window.Gistemp) return;
+      if(paneHidden(box)){ if(gtState.playing) gtSetPlaying(false); return; }   // ออกจากแผงแล้วให้หยุดเล่น
+      if(gtState.D){                                   // สร้างแล้ว — แค่ปรับขนาดตามความกว้างที่เพิ่งโผล่
+        if(gtState.mapA) gtState.mapA.resize();
+        if(gtState.mapB) gtState.mapB.resize();
+        return;
+      }
+      if(gtState.loading) return;
+      gtState.loading=true;
+      Gistemp.showLoading(box);
+      Gistemp.load().then(function(D){
+        gtState.D=D; gtState.loading=false;
+        gtState.pos=D.years.length-1;                  // เปิดมาเห็นปีล่าสุดก่อน แล้วค่อยกดเล่นไล่จากปี 1880
+        gtState.mapA=Gistemp.create(box, D, { compact:true });
+        var sl=$("#gtYear"); if(sl){ sl.min=0; sl.max=String(D.years.length-1); sl.value=String(gtState.pos); }
+        setTxt("#gtRange", D.years[0]+"–"+D.years[D.years.length-1]+" · °C เทียบค่าเฉลี่ย 1951–1980");
+        setTxt("#gtKThSub", "จุดกริด "+Math.round(D.thai.lat)+"°N, "+Math.round(D.thai.lon)+"°E");
+        var lg=$("#gtLegend");
+        if(lg) lg.innerHTML='<div style="width:min(420px,100%)">'+
+          '<div style="height:13px;border-radius:999px;border:1px solid var(--rule);background:'+Gistemp.gradientCss(-4,4)+'"></div>'+
+          '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:Archivo,system-ui;font-size:11.5px;color:var(--ink-soft)">'+
+          '<span>−4°C</span><span>−2</span><span>0</span><span>+2</span><span>+4°C</span></div></div>';
+        gtWire();
+        gtDraw();
+      }).catch(function(e){ gtState.loading=false; Gistemp.showError(box, e); });
+    }
+
+    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -18950,8 +19114,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           '<svg class="ng-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
         var subs = document.createElement("div"); subs.className = "ng-subs";
         g.subs.forEach(function(s){
-          var b = document.createElement("button"); b.type = "button"; b.className = "ng-sub"; b.setAttribute("data-pane", s.pane);
-          b.innerHTML = '<span class="s-ico">'+s.ico+'</span><span class="s-label">'+s.label+'</span>'+(s.existing?'':'<span class="s-soon">เร็วๆ นี้</span>');
+          // s.link = หัวข้อที่อยู่คนละหน้า (เช่น climate.html) → ทำเป็นลิงก์แทนปุ่มสลับ pane
+          var b;
+          if(s.link){
+            b = document.createElement("a"); b.className = "ng-sub"; b.href = s.link; b.style.textDecoration = "none";
+          } else {
+            b = document.createElement("button"); b.type = "button"; b.className = "ng-sub"; b.setAttribute("data-pane", s.pane);
+          }
+          b.innerHTML = '<span class="s-ico">'+s.ico+'</span><span class="s-label">'+s.label+'</span>'+
+            (s.link?'<span class="s-soon" style="color:var(--green);border-color:var(--green)">หน้าใหม่</span>':(s.existing?'':'<span class="s-soon">เร็วๆ นี้</span>'));
           subs.appendChild(b);
           if(!s.existing && content && !document.getElementById("pane-"+s.pane)){
             content.appendChild(makePlaceholder(s, g.label));
