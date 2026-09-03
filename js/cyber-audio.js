@@ -270,7 +270,11 @@
   if (isNaN(savedVol) || savedVol < 0) savedVol = 0.35;
   if (savedVol > 1) savedVol = 1;
 
-  var savedPlaying = localStorage.getItem('cyber-bgm-playing') === 'true';
+  // BGM default = ON: auto-play unless the user explicitly paused it
+  function shouldAutoPlay() {
+    return localStorage.getItem('cyber-bgm-playing') !== 'false';
+  }
+  var savedPlaying = shouldAutoPlay();
   var savedPos = parseFloat(sessionStorage.getItem('cyber-bgm-pos') || '0');
   if (isNaN(savedPos) || savedPos < 0) savedPos = 0;
   var savedTucked = localStorage.getItem('cyber-bgm-tucked') === 'true';
@@ -433,7 +437,7 @@
   }, 2000);
 
   function unlockAutoplayOnGesture() {
-    if (localStorage.getItem('cyber-bgm-playing') === 'true' && audio.paused) {
+    if (shouldAutoPlay() && audio.paused) {
       playAudio();
     }
     document.removeEventListener('click', unlockAutoplayOnGesture);
