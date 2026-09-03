@@ -990,6 +990,8 @@ html[data-theme="dark"] .kpi.accent .k-num{text-shadow:0 0 30px rgba(255,92,26,.
 .owid-tab:hover,.tl-btn:hover,.bkkm-pill:hover,.en-chip:hover,.owid-dl:hover{
   border-color:var(--v21-ring);color:var(--green);
   box-shadow:0 6px 18px -12px var(--v21-ring)}
+/* ปุ่มที่กำลังเลือกอยู่ พื้นเป็นสีเขียวแล้ว — hover ต้องไม่เปลี่ยนตัวอักษรเป็นสีเขียวตาม ไม่งั้นข้อความจมหายไปกับพื้น */
+.tl-btn.on:hover,.owid-tab.on:hover,.bkkm-pill.on:hover{color:var(--paper)}
 .owid-tab.on,.owid-tab.active,.bkkm-pill.on,.bkkm-pill.active,.en-chip.on,.en-chip.active{
   box-shadow:0 8px 22px -12px var(--v21-ring)}
 .yp-yr,.owid-tl-yr,.tl-year-lab{text-shadow:0 0 18px var(--v21-ring)}
