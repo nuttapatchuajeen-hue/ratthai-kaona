@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>กรุงเทพฯ 3D Urban Intelligence — โครงการ แลนด์มาร์ก และรถไฟฟ้า 10 สาย</title>
+<title>กรุงเทพฯ ทะลุมิติ — โครงการ แลนด์มาร์ก และรถไฟฟ้า 10 สาย</title>
 <meta name="description" content="แผนที่ 3 มิติกรุงเทพฯ โมเดลอาคารระฟ้า ข้อมูลโครงการเจาะลึก 50 เขต กทม. และโครงข่ายรถไฟฟ้า 10 สาย">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,20 +104,22 @@
     flex-direction: column;
   }
   .brand-title {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 20px;
+    /* ชื่อไทย — Cormorant Garamond ไม่มีกลีฟภาษาไทย และ letter-spacing กว้างทำให้สระบน-ล่างอ่านยาก */
+    font-family: "Noto Sans Thai", "Jost", sans-serif;
+    font-size: 19px;
     font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    letter-spacing: 0.01em;
     color: var(--text-main);
-    line-height: 1.1;
+    line-height: 1.3;
+    white-space: nowrap;
   }
   .brand-sub {
-    font-size: 9.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    font-family: "Noto Sans Thai", "Jost", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.01em;
     color: var(--accent);
     font-weight: 600;
+    line-height: 1.4;
   }
 
   .header-actions {
@@ -2183,15 +2185,15 @@
 <div class="header">
   <div class="header-top">
     <div class="brand">
-      <span class="brand-title">BANGKOK 3D</span>
-      <span class="brand-sub">URBAN & REAL ESTATE INTELLIGENCE</span>
+      <span class="brand-title">กรุงเทพฯ ทะลุมิติ</span>
+      <span class="brand-sub">เห็นเมืองกรุงทั้งใบ ทีละชั้น</span>
     </div>
 
     <div class="header-actions">
       <!-- Mode Switcher Tabs (3D Real Estate vs 2D Thematic Analytics) -->
       <div class="view-mode-tabs">
-        <button type="button" class="view-mode-btn active" id="btnMode3D" title="3D Real Estate & Transit Model"><svg class="mdico"><use href="#i-building-2"></use></svg> 3D Real Estate</button>
-        <button type="button" class="view-mode-btn" id="btnMode2D" title="2D Thematic Heatmap 50 เขต"><svg class="mdico"><use href="#i-chart-column"></use></svg> 2D Thematic 50 เขต</button>
+        <button type="button" class="view-mode-btn active" id="btnMode3D" title="โมเดลอสังหาฯ และรถไฟฟ้า 3 มิติ"><svg class="mdico"><use href="#i-building-2"></use></svg> อสังหาฯ 3 มิติ</button>
+        <button type="button" class="view-mode-btn" id="btnMode2D" title="แผนที่ไล่สีเชิงข้อมูล 50 เขต"><svg class="mdico"><use href="#i-chart-column"></use></svg> แผนที่สี 50 เขต</button>
       </div>
 
       <!-- Search -->
@@ -2204,22 +2206,22 @@
       <!-- Filter Chips -->
       <div class="filter-bar">
         <button type="button" class="chip active" id="chipLandmarks">
-          <span>Iconic Landmarks</span>
+          <span>แลนด์มาร์กเด่น</span>
           <span class="chip-count" id="landmarkCountChip">16</span>
         </button>
         <button type="button" class="chip" id="chipTransit">
-          <span>10 Transit Lines</span>
+          <span>รถไฟฟ้า 10 สาย</span>
           <span class="chip-count">181</span>
         </button>
         <button type="button" class="chip" id="chipDistricts">
-          <span>50 Districts</span>
+          <span>50 เขต</span>
         </button>
         <button type="button" class="chip" id="chipNearStation" title="แลนด์มาร์กที่อยู่ในรัศมี 500 ม. จากสถานีรถไฟฟ้า — กดเพื่อกรอง">
           <span>ใกล้สถานี 500 ม.</span>
           <span class="chip-count" id="nearStationCount">–</span>
         </button>
-        <button type="button" class="chip" id="btnThemeToggle" title="Toggle Light / Sunset / Dark Mode">
-          <span id="themeIco"><svg class="mdico"><use href="#i-moon"></use></svg> Dark</span>
+        <button type="button" class="chip" id="btnThemeToggle" title="สลับธีม สว่าง / พระอาทิตย์ตก / มืด">
+          <span id="themeIco"><svg class="mdico"><use href="#i-moon"></use></svg> มืด</span>
         </button>
       </div>
     </div>
@@ -2228,7 +2230,7 @@
   <!-- Live camera readout (the 24/181/50 counts live in the header chips above — no duplicate) -->
   <div class="kpi-row">
     <div class="kpi-item">
-      <span id="coordTag" style="font-size: 11px; font-variant-numeric: tabular-nums;">Silom - Sathorn - Rama IV Corridor</span>
+      <span id="coordTag" style="font-size: 11px; font-variant-numeric: tabular-nums;">แนวสีลม–สาทร–พระราม 4</span>
     </div>
   </div>
 </div>
@@ -2246,26 +2248,26 @@
   </button>
   <!-- Left Floating Menu -->
   <div class="glass-card left-menu" id="leftMenu">
-    <button type="button" class="menu-btn active" id="btn3DBuildings" title="Toggle 3D City Buildings">
-      <span><svg class="mdico"><use href="#i-building-2"></use></svg></span><span class="label-text"> 3D Buildings</span>
+    <button type="button" class="menu-btn active" id="btn3DBuildings" title="เปิด/ปิดอาคารเมือง 3 มิติ">
+      <span><svg class="mdico"><use href="#i-building-2"></use></svg></span><span class="label-text"> อาคาร 3 มิติ</span>
     </button>
-    <button type="button" class="menu-btn active" id="btnLandmarksToggle" title="Toggle Copper Landmark Models">
-      <span><svg class="mdico"><use href="#i-sparkles"></use></svg></span><span class="label-text"> Landmarks 3D</span>
+    <button type="button" class="menu-btn active" id="btnLandmarksToggle" title="เปิด/ปิดโมเดลแลนด์มาร์ก">
+      <span><svg class="mdico"><use href="#i-sparkles"></use></svg></span><span class="label-text"> แลนด์มาร์ก 3 มิติ</span>
     </button>
-    <button type="button" class="menu-btn active" id="btnTransitToggle" title="Toggle Transit Lines">
-      <span><svg class="mdico"><use href="#i-train-front"></use></svg></span><span class="label-text"> Transit Lines</span>
+    <button type="button" class="menu-btn active" id="btnTransitToggle" title="เปิด/ปิดเส้นทางรถไฟฟ้า">
+      <span><svg class="mdico"><use href="#i-train-front"></use></svg></span><span class="label-text"> เส้นทางรถไฟฟ้า</span>
     </button>
-    <button type="button" class="menu-btn" id="btnDistrictsToggle" title="Toggle 50 BMA Districts Layer">
-      <span><svg class="mdico"><use href="#i-map"></use></svg></span><span class="label-text"> 50 Districts</span>
+    <button type="button" class="menu-btn" id="btnDistrictsToggle" title="เปิด/ปิดชั้น 50 เขต กทม.">
+      <span><svg class="mdico"><use href="#i-map"></use></svg></span><span class="label-text"> 50 เขต</span>
     </button>
-    <button type="button" class="menu-btn" id="btnDroneTour" title="Start 3D Cinematic Drone Tour">
-      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span><span class="label-text"> Drone Tour</span>
+    <button type="button" class="menu-btn" id="btnDroneTour" title="เริ่มทัวร์โดรนแบบภาพยนตร์">
+      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span><span class="label-text"> ทัวร์โดรน</span>
     </button>
-    <button type="button" class="menu-btn" id="btnRoutePlannerToggle" title="Transit Route & Fare Planner">
-      <span><svg class="mdico"><use href="#i-compass"></use></svg></span><span class="label-text"> Route Finder</span>
+    <button type="button" class="menu-btn" id="btnRoutePlannerToggle" title="วางแผนเส้นทางและค่าโดยสาร">
+      <span><svg class="mdico"><use href="#i-compass"></use></svg></span><span class="label-text"> ค้นหาเส้นทาง</span>
     </button>
     <button type="button" class="menu-btn" id="btnIntelSidebarToggle" title="เปิดแผงควบคุม Lifestyle 360° (Amenities, Pet, Embassies, Work)">
-      <span><svg class="mdico"><use href="#i-gem"></use></svg></span><span class="label-text"> Lifestyle 360°</span>
+      <span><svg class="mdico"><use href="#i-gem"></use></svg></span><span class="label-text"> ไลฟ์สไตล์ 360°</span>
     </button>
     <div class="zone-menu-wrap">
       <button type="button" class="menu-btn" id="btnZoneMenu" aria-expanded="false" title="บินไปโซนต่าง ๆ ของกรุงเทพฯ">
@@ -2301,15 +2303,15 @@
   </div>
   <!-- 🧭 Floating Trigger Button on Left -->
   <div class="glass-card floating-intel-pill" id="floatingIntelPill" title="เปิดแผงควบคุม Lifestyle 360° & Intelligence Layers">
-    <span><svg class="mdico"><use href="#i-gem"></use></svg> Lifestyle 360° & Amenities</span>
+    <span><svg class="mdico"><use href="#i-gem"></use></svg> ไลฟ์สไตล์ 360° และสิ่งอำนวยความสะดวก</span>
   </div>
   <!-- 🏷️ Developer Brand Filter Toolbar -->
   <div class="brand-filter-bar glass-card" id="brandFilterBar">
     <div class="brand-bar-title">
-      <span><svg class="mdico"><use href="#i-briefcase"></use></svg> DEVELOPERS:</span>
+      <span><svg class="mdico"><use href="#i-briefcase"></use></svg> ผู้พัฒนา:</span>
     </div>
     <div class="brand-chips-scroll" id="brandChipsContainer">
-      <button type="button" class="brand-chip active" data-brand="all">All Brands (ทั้งหมด)</button>
+      <button type="button" class="brand-chip active" data-brand="all">ทุกแบรนด์</button>
       <button type="button" class="brand-chip" data-brand="ananda"><span class="brand-dot dot-ananda"></span> Ananda</button>
       <button type="button" class="brand-chip" data-brand="ap"><span class="brand-dot dot-ap"></span> AP Thailand</button>
       <button type="button" class="brand-chip" data-brand="sansiri"><span class="brand-dot dot-sansiri"></span> Sansiri</button>
@@ -2321,8 +2323,8 @@
       <button type="button" class="brand-chip" data-brand="supalai"><span class="brand-dot dot-supalai"></span> Supalai</button>
     </div>
     <div class="pin-mode-toggle">
-      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> Logo</button>
-      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> Photo</button>
+      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> โลโก้</button>
+      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> รูปภาพ</button>
     </div>
     <button type="button" class="brand-bar-collapse" id="btnBrandCollapse" title="ย่อตัวกรองแบรนด์" aria-label="ย่อตัวกรองแบรนด์">
       <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg>
@@ -2330,7 +2332,7 @@
   </div>
   <!-- Collapsed form of the brand filter — keeps the same slot so nothing shifts -->
   <button type="button" class="glass-card brand-bar-mini" id="brandBarMini" style="display:none;" title="ขยายตัวกรองแบรนด์">
-    <span><svg class="mdico"><use href="#i-briefcase"></use></svg> DEVELOPERS</span>
+    <span><svg class="mdico"><use href="#i-briefcase"></use></svg> ผู้พัฒนา</span>
     <span class="mini-count">10 แบรนด์</span>
     <svg class="mdico" style="transform:rotate(90deg)"><use href="#i-chevron-right"></use></svg>
   </button>
@@ -2427,26 +2429,26 @@
           <h1 class="ashton-main-title">Ashton</h1>
           <div style="display:flex; align-items:center; gap:8px;">
             <div class="ashton-theme-switch">
-              <button type="button" class="ashton-theme-btn" id="btnAshtonDark" title="Dark mode">
+              <button type="button" class="ashton-theme-btn" id="btnAshtonDark" title="โหมดมืด">
                 <svg class="mdico" style="width:11px;height:11px;"><use href="#i-moon"></use></svg>
               </button>
-              <button type="button" class="ashton-theme-btn active" id="btnAshtonLight" title="Light mode">
+              <button type="button" class="ashton-theme-btn active" id="btnAshtonLight" title="โหมดสว่าง">
                 <svg class="mdico" style="width:11px;height:11px;"><use href="#i-sun"></use></svg>
               </button>
             </div>
             <button type="button" class="intel-close-btn" id="closeIntelSidebar" title="ปิดแผงควบคุม">×</button>
           </div>
         </div>
-        <p class="ashton-tagline">What's coming, where the houses trade, who is hiring — one city, in layers.</p>
+        <p class="ashton-tagline">อะไรกำลังจะมา ที่ไหนซื้อขายกันจริง ใครกำลังรับคน — เมืองเดียว ดูทีละชั้น</p>
       </div>
     </div>
 
     <div class="intel-sidebar-body">
       <!-- 🔹 THE PROPERTY -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">THE PROPERTY</p>
+        <p class="ashton-sec-kicker">อสังหาริมทรัพย์</p>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Projects</span>
+          <span class="ashton-row-label">โครงการ</span>
           <label class="switch-toggle switch-orange">
             <input type="checkbox" id="toggleProjects" checked>
             <span class="slider"></span>
@@ -2455,17 +2457,17 @@
         <!-- Pipeline mode & Search -->
         <div style="display:flex; align-items:center; gap:6px; margin:6px 0 8px;">
           <div style="display:inline-flex; border:1px solid var(--card-border); border-radius:14px; padding:2px; background:rgba(0,0,0,0.04);">
-            <button type="button" id="btnPropOurs" style="border:none; background:transparent; font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer; color:var(--text-muted);">Our properties 2</button>
-            <button type="button" id="btnPropPipeline" class="active" style="border:none; background:var(--text-main); color:var(--card-bg); font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer;">What's coming 444</button>
+            <button type="button" id="btnPropOurs" style="border:none; background:transparent; font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer; color:var(--text-muted);">โครงการของเรา 2</button>
+            <button type="button" id="btnPropPipeline" class="active" style="border:none; background:var(--text-main); color:var(--card-bg); font-size:10px; font-weight:700; padding:2px 7px; border-radius:12px; cursor:pointer;">กำลังจะมา 444</button>
           </div>
         </div>
       </div>
 
       <!-- 🔹 THE STREET -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">THE STREET</p>
+        <p class="ashton-sec-kicker">ระดับถนน</p>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Embassies</span>
+          <span class="ashton-row-label">สถานทูต</span>
           <label class="switch-toggle switch-purple">
             <input type="checkbox" id="toggleEmbassies">
             <span class="slider"></span>
@@ -2475,11 +2477,11 @@
 
       <!-- 🔹 THE LIFE -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">THE LIFE</p>
+        <p class="ashton-sec-kicker">การใช้ชีวิต</p>
 
         <!-- Amenities -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Amenities</span>
+          <span class="ashton-row-label">สิ่งอำนวยความสะดวก</span>
           <label class="switch-toggle switch-brown">
             <input type="checkbox" id="toggleAmenities">
             <span class="slider"></span>
@@ -2489,30 +2491,30 @@
           <!-- Main 2-Column Grid -->
           <div class="amenities-pills-grid">
             <button type="button" class="amenity-grid-btn active" data-kind="parks">
-              <span><span class="color-dot" style="background:#22C55E;"></span> Parks</span>
+              <span><span class="color-dot" style="background:#22C55E;"></span> สวนสาธารณะ</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="education">
-              <span><span class="color-dot" style="background:#7C6A4E;"></span> Education</span>
+              <span><span class="color-dot" style="background:#7C6A4E;"></span> การศึกษา</span>
               <span class="pill-num">37</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="health">
-              <span><span class="color-dot" style="background:#A8574C;"></span> Health</span>
+              <span><span class="color-dot" style="background:#A8574C;"></span> สุขภาพ</span>
               <span class="pill-num">150</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="sport">
-              <span><span class="color-dot" style="background:#5E7A5B;"></span> Sport</span>
+              <span><span class="color-dot" style="background:#5E7A5B;"></span> กีฬา</span>
               <span class="pill-num">252</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="dining">
-              <span><span class="color-dot" style="background:#B08046;"></span> Dining</span>
+              <span><span class="color-dot" style="background:#B08046;"></span> ร้านอาหาร</span>
               <span class="pill-num">157</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="spa">
-              <span><span class="color-dot" style="background:#7A8C74;"></span> Spa</span>
+              <span><span class="color-dot" style="background:#7A8C74;"></span> สปา</span>
               <span class="pill-num">121</span>
             </button>
             <button type="button" class="amenity-grid-btn active" data-kind="culture" style="grid-column: 1 / -1;">
-              <span><span class="color-dot" style="background:#8A6A82;"></span> Culture</span>
+              <span><span class="color-dot" style="background:#8A6A82;"></span> ศิลปวัฒนธรรม</span>
               <span class="pill-num">54</span>
             </button>
           </div>
@@ -2520,64 +2522,64 @@
           <!-- Tree Hierarchy sub-pills -->
           <div class="tree-branch-wrap branch-edu">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="education/international">International 17</button>
-              <button type="button" class="tree-sub-btn active" data-asub="education/private">Private 3</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/international">นานาชาติ 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/private">เอกชน 3</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="education/university">University 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="education/university">มหาวิทยาลัย 17</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-health">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="health/private">Private 143</button>
-              <button type="button" class="tree-sub-btn active" data-asub="health/public">Public 7</button>
+              <button type="button" class="tree-sub-btn active" data-asub="health/private">เอกชน 143</button>
+              <button type="button" class="tree-sub-btn active" data-asub="health/public">รัฐ 7</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-sport">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="sport/golf">Golf 44</button>
-              <button type="button" class="tree-sub-btn active" data-asub="sport/tennis">Tennis 55</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/golf">กอล์ฟ 44</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/tennis">เทนนิส 55</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="sport/polo">Polo & riding 17</button>
-              <button type="button" class="tree-sub-btn active" data-asub="sport/pilates">Pilates 59</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/polo">โปโลและขี่ม้า 17</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/pilates">พิลาทิส 59</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="sport/yoga">Yoga 23</button>
-              <button type="button" class="tree-sub-btn active" data-asub="sport/gym">Gym 54</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/yoga">โยคะ 23</button>
+              <button type="button" class="tree-sub-btn active" data-asub="sport/gym">ฟิตเนส 54</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-dining">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="dining/fine">Fine dining 67</button>
-              <button type="button" class="tree-sub-btn active" data-asub="dining/rooftop">Rooftop 30</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/fine">ไฟน์ไดนิ่ง 67</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/rooftop">รูฟท็อป 30</button>
             </div>
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="dining/cafe">Coffee 60</button>
+              <button type="button" class="tree-sub-btn active" data-asub="dining/cafe">คาเฟ่ 60</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-spa">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="spa/spa">Spa 82</button>
-              <button type="button" class="tree-sub-btn active" data-asub="spa/wellness">Wellness 39</button>
+              <button type="button" class="tree-sub-btn active" data-asub="spa/spa">สปา 82</button>
+              <button type="button" class="tree-sub-btn active" data-asub="spa/wellness">เวลเนส 39</button>
             </div>
           </div>
 
           <div class="tree-branch-wrap branch-culture">
             <div class="sub-pills-row">
-              <button type="button" class="tree-sub-btn active" data-asub="culture/gallery">Gallery 23</button>
-              <button type="button" class="tree-sub-btn active" data-asub="culture/museum">Museum 31</button>
+              <button type="button" class="tree-sub-btn active" data-asub="culture/gallery">แกลเลอรี 23</button>
+              <button type="button" class="tree-sub-btn active" data-asub="culture/museum">พิพิธภัณฑ์ 31</button>
             </div>
           </div>
         </div>
 
         <!-- With a pet -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">With a pet</span>
+          <span class="ashton-row-label">พาสัตว์เลี้ยงไปได้</span>
           <label class="switch-toggle switch-terracotta">
             <input type="checkbox" id="togglePetFriendly">
             <span class="slider"></span>
@@ -2585,19 +2587,19 @@
         </div>
         <div class="ashton-sub-content" id="petsSubContent">
           <div class="sub-pills-row" style="gap: 5px;">
-            <button type="button" class="pet-pill-btn active" data-petsub="vet">Vet & emergency 227</button>
-            <button type="button" class="pet-pill-btn active" data-petsub="venue">Malls, cafés & dining 128</button>
-            <button type="button" class="pet-pill-btn" data-petsub="park">Parks & dog runs 53</button>
-            <button type="button" class="pet-pill-btn" data-petsub="boarding">Boarding & daycare 58</button>
-            <button type="button" class="pet-pill-btn" data-petsub="groom">Grooming & spa 62</button>
-            <button type="button" class="pet-pill-btn" data-petsub="shop">Food & supplies 46</button>
-            <button type="button" class="pet-pill-btn" data-petsub="stay">Stays that take pets 93</button>
+            <button type="button" class="pet-pill-btn active" data-petsub="vet">สัตวแพทย์และฉุกเฉิน 227</button>
+            <button type="button" class="pet-pill-btn active" data-petsub="venue">ห้าง คาเฟ่ ร้านอาหาร 128</button>
+            <button type="button" class="pet-pill-btn" data-petsub="park">สวนและลานวิ่งสุนัข 53</button>
+            <button type="button" class="pet-pill-btn" data-petsub="boarding">รับฝากเลี้ยง 58</button>
+            <button type="button" class="pet-pill-btn" data-petsub="groom">อาบน้ำตัดขน 62</button>
+            <button type="button" class="pet-pill-btn" data-petsub="shop">อาหารและอุปกรณ์สัตว์เลี้ยง 46</button>
+            <button type="button" class="pet-pill-btn" data-petsub="stay">ที่พักรับสัตว์เลี้ยง 93</button>
           </div>
         </div>
 
         <!-- Recognised -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Recognised</span>
+          <span class="ashton-row-label">ระดับรางวัล</span>
           <label class="switch-toggle switch-maroon">
             <input type="checkbox" id="toggleRecognised">
             <span class="slider"></span>
@@ -2605,17 +2607,17 @@
         </div>
         <div class="ashton-sub-content" id="recognisedSubContent">
           <div class="sub-pills-row" style="gap: 5px;">
-            <button type="button" class="rec-pill-btn active" data-rec="dining">Restaurants 330</button>
-            <button type="button" class="rec-pill-btn active" data-rec="hotel">Hotels 129</button>
-            <button type="button" class="rec-pill-btn" data-rec="bar">Bars 225</button>
-            <button type="button" class="rec-pill-btn" data-rec="vineyard">Vineyards 100</button>
-            <button type="button" class="rec-pill-btn" data-rec="hospital">Hospitals 11</button>
+            <button type="button" class="rec-pill-btn active" data-rec="dining">ร้านอาหาร 330</button>
+            <button type="button" class="rec-pill-btn active" data-rec="hotel">โรงแรม 129</button>
+            <button type="button" class="rec-pill-btn" data-rec="bar">บาร์ 225</button>
+            <button type="button" class="rec-pill-btn" data-rec="vineyard">ไร่องุ่น 100</button>
+            <button type="button" class="rec-pill-btn" data-rec="hospital">โรงพยาบาล 11</button>
           </div>
         </div>
 
         <!-- Brands -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Brands</span>
+          <span class="ashton-row-label">แบรนด์</span>
           <label class="switch-toggle switch-gold">
             <input type="checkbox" id="toggleBrands">
             <span class="slider"></span>
@@ -2623,17 +2625,17 @@
         </div>
         <div class="ashton-sub-content" id="brandsSubContent">
           <div class="sub-pills-row" style="gap: 5px;">
-            <button type="button" class="tree-sub-btn active" data-bcat="stay">Hotels & resorts 131</button>
-            <button type="button" class="tree-sub-btn active" data-bcat="beauty">Fragrance & beauty 257</button>
-            <button type="button" class="tree-sub-btn active" data-bcat="jewel">Jewellery 411</button>
-            <button type="button" class="tree-sub-btn active" data-bcat="fashion">Fashion 158</button>
-            <button type="button" class="tree-sub-btn active" data-bcat="craft">Thai craft 21</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="stay">โรงแรมและรีสอร์ต 131</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="beauty">น้ำหอมและความงาม 257</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="jewel">เครื่องประดับ 411</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="fashion">แฟชั่น 158</button>
+            <button type="button" class="tree-sub-btn active" data-bcat="craft">งานคราฟต์ไทย 21</button>
           </div>
         </div>
 
         <!-- Centres -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Centres</span>
+          <span class="ashton-row-label">ศูนย์การค้า</span>
           <label class="switch-toggle switch-grey">
             <input type="checkbox" id="toggleCentres">
             <span class="slider"></span>
@@ -2642,7 +2644,7 @@
 
         <!-- Sport -->
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Sport</span>
+          <span class="ashton-row-label">กีฬา</span>
           <label class="switch-toggle switch-green">
             <input type="checkbox" id="toggleSport">
             <span class="slider"></span>
@@ -2652,23 +2654,23 @@
 
       <!-- 🔹 THE NUMBERS -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">THE NUMBERS</p>
+        <p class="ashton-sec-kicker">ตัวเลขเมือง</p>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Districts</span>
+          <span class="ashton-row-label">รายเขต</span>
           <label class="switch-toggle switch-beige">
             <input type="checkbox" id="toggleDistricts">
             <span class="slider"></span>
           </label>
         </div>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Flooding</span>
+          <span class="ashton-row-label">น้ำท่วม</span>
           <label class="switch-toggle switch-blue">
             <input type="checkbox" id="toggleFlooding">
             <span class="slider"></span>
           </label>
         </div>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Hiring</span>
+          <span class="ashton-row-label">การจ้างงาน</span>
           <label class="switch-toggle switch-brick">
             <input type="checkbox" id="toggleCorporate">
             <span class="slider"></span>
@@ -2678,16 +2680,16 @@
 
       <!-- 🔹 THE FEW -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">THE FEW</p>
+        <p class="ashton-sec-kicker">กลุ่มพิเศษ</p>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">Residences</span>
+          <span class="ashton-row-label">เรสซิเดนซ์</span>
           <label class="switch-toggle switch-coral">
             <input type="checkbox" id="toggleResidences">
             <span class="slider"></span>
           </label>
         </div>
         <div class="ashton-toggle-row">
-          <span class="ashton-row-label">My shortlist</span>
+          <span class="ashton-row-label">รายการที่บันทึกไว้</span>
           <label class="switch-toggle switch-pink">
             <input type="checkbox" id="toggleShortlist">
             <span class="slider"></span>
@@ -2697,17 +2699,17 @@
 
       <!-- 🔹 3D CONTROLS & DEVELOPERS -->
       <div class="ashton-section">
-        <p class="ashton-sec-kicker">3D CITY & DEVELOPERS</p>
+        <p class="ashton-sec-kicker">เมือง 3 มิติ และผู้พัฒนา</p>
         <div class="layer-btns-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 6px;">
-          <button type="button" class="menu-btn active" id="btn3DBuildings"><span><svg class="mdico"><use href="#i-building-2"></use></svg></span> 3D Buildings</button>
-          <button type="button" class="menu-btn active" id="btnLandmarksToggle"><span><svg class="mdico"><use href="#i-sparkles"></use></svg></span> Landmarks 3D</button>
+          <button type="button" class="menu-btn active" id="btn3DBuildings"><span><svg class="mdico"><use href="#i-building-2"></use></svg></span> อาคาร 3 มิติ</button>
+          <button type="button" class="menu-btn active" id="btnLandmarksToggle"><span><svg class="mdico"><use href="#i-sparkles"></use></svg></span> แลนด์มาร์ก 3 มิติ</button>
         </div>
         <div class="explore-tools-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 8px;">
-          <button type="button" class="menu-btn" id="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> Drone Tour</button>
-          <button type="button" class="menu-btn" id="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> Route Finder</button>
+          <button type="button" class="menu-btn" id="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> ทัวร์โดรน</button>
+          <button type="button" class="menu-btn" id="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> ค้นหาเส้นทาง</button>
         </div>
         <div class="brand-chips-wrap" id="brandChipsContainer" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
-          <button type="button" class="brand-chip active" data-brand="all">All</button>
+          <button type="button" class="brand-chip active" data-brand="all">ทั้งหมด</button>
           <button type="button" class="brand-chip" data-brand="ananda">Ananda</button>
           <button type="button" class="brand-chip" data-brand="sansiri">Sansiri</button>
           <button type="button" class="brand-chip" data-brand="ap">AP</button>
@@ -2719,7 +2721,7 @@
 
       <!-- 🔹 FOOTER METHODOLOGY -->
       <div class="ashton-methodology">
-        <p>Buildings are drawn as massing from each project's real plot area — a volume, not a design. Fainter blocks are projects whose filing did not state a plot size. Named residences carry OpenStreetMap outlines where OSM has drawn one. Station distances are straight-line, not walking.</p>
+        <p>อาคารบนแผนที่วาดเป็นมวลอาคารจากขนาดที่ดินจริงของแต่ละโครงการ — เป็นปริมาตร ไม่ใช่แบบสถาปัตยกรรม · ก้อนที่จางกว่าคือโครงการที่เอกสารยื่นไม่ได้ระบุขนาดที่ดิน · เรสซิเดนซ์ที่มีชื่อใช้รอยอาคารจาก OpenStreetMap เฉพาะหลังที่ OSM วาดไว้แล้ว · ระยะถึงสถานีเป็นระยะเส้นตรง ไม่ใช่ระยะเดิน</p>
       </div>
     </div>
   </div>
@@ -2727,23 +2729,23 @@
   <!-- 🎬 3D Cinematic Drone Tour Controller -->
   <div class="glass-card drone-tour-panel" id="droneTourPanel" style="display:none;">
     <div class="tour-header">
-      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg> 3D CINEMATIC DRONE TOUR</span>
-      <span id="tourStepText">Stop 1 / 5</span>
+      <span><svg class="mdico"><use href="#i-clapperboard"></use></svg> ทัวร์โดรนแบบภาพยนตร์</span>
+      <span id="tourStepText">จุดที่ 1 / 5</span>
     </div>
-    <div class="tour-title" id="tourTitleText">One Bangkok & Lumphini</div>
-    <div class="tour-desc" id="tourDescText">Signature Tower (436m) · Lumphini Park · Rama IV Corridor</div>
+    <div class="tour-title" id="tourTitleText">วัน แบงค็อก และลุมพินี</div>
+    <div class="tour-desc" id="tourDescText">ซิกเนเจอร์ ทาวเวอร์ (436 ม.) · สวนลุมพินี · แนวพระราม 4</div>
     <div class="tour-controls">
-      <button type="button" class="tour-btn" id="btnTourPrev"><svg class="mdico" style="transform:rotate(180deg)"><use href="#i-skip-forward"></use></svg> Prev</button>
-      <button type="button" class="tour-btn active-play" id="btnTourPlayPause"><svg class="mdico"><use href="#i-pause"></use></svg> Pause</button>
-      <button type="button" class="tour-btn" id="btnTourNext">Next <svg class="mdico"><use href="#i-skip-forward"></use></svg></button>
-      <button type="button" class="tour-btn" id="btnTourExit"><svg class="mdico"><use href="#i-circle-x"></use></svg> Exit</button>
+      <button type="button" class="tour-btn" id="btnTourPrev"><svg class="mdico" style="transform:rotate(180deg)"><use href="#i-skip-forward"></use></svg> ก่อนหน้า</button>
+      <button type="button" class="tour-btn active-play" id="btnTourPlayPause"><svg class="mdico"><use href="#i-pause"></use></svg> หยุด</button>
+      <button type="button" class="tour-btn" id="btnTourNext">ถัดไป <svg class="mdico"><use href="#i-skip-forward"></use></svg></button>
+      <button type="button" class="tour-btn" id="btnTourExit"><svg class="mdico"><use href="#i-circle-x"></use></svg> ออก</button>
     </div>
   </div>
 
   <!-- 🧭 Transit Route & Fare Planner Drawer -->
   <div class="glass-card route-planner-drawer" id="routePlannerDrawer">
     <div class="drawer-title">
-      <span><svg class="mdico"><use href="#i-compass"></use></svg> TRANSIT ROUTE & FARE PLANNER</span>
+      <span><svg class="mdico"><use href="#i-compass"></use></svg> วางแผนเส้นทางและค่าโดยสาร</span>
       <button type="button" class="drawer-close" id="closeRoutePlanner" style="font-size:16px;">×</button>
     </div>
     <div class="route-select-group">
@@ -2760,7 +2762,7 @@
       <div style="font-size:12px;font-weight:700;color:var(--accent);" id="routeSummaryHeader">ผลการค้นหาเส้นทาง</div>
       <div class="route-stat-grid">
         <div class="route-stat-box">
-          <div class="route-stat-val" id="routeTimeVal">18 min</div>
+          <div class="route-stat-val" id="routeTimeVal">18 นาที</div>
           <div class="route-stat-lbl"><svg class="mdico"><use href="#i-timer"></use></svg> เวลาเดินทางประมาณ</div>
         </div>
         <div class="route-stat-box">
@@ -2794,14 +2796,14 @@
   <!-- Bottom-Left "Getting around 10 lines" Floating Pill -->
   <div class="glass-card getting-around-pill active" id="btnGettingAround">
     <span class="toggle-switch-icon"></span>
-    <span>Getting around</span>
-    <span style="font-size:11px;color:var(--text-muted);font-weight:400;">10 lines <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg></span>
+    <span>การเดินทาง</span>
+    <span style="font-size:11px;color:var(--text-muted);font-weight:400;">10 สาย <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg></span>
   </div>
 
   <!-- Transit Lines Drawer -->
   <div class="glass-card transit-drawer" id="transitDrawer">
     <div class="drawer-title">
-      <span><svg class="mdico"><use href="#i-train-front"></use></svg> BANGKOK MASS TRANSIT</span>
+      <span><svg class="mdico"><use href="#i-train-front"></use></svg> ระบบขนส่งมวลชนกรุงเทพฯ</span>
       <button type="button" class="drawer-close" id="closeDrawer" style="font-size:16px;">×</button>
     </div>
     <div id="transitList"></div>
@@ -2811,9 +2813,9 @@
   <div class="project-drawer" id="projectDrawer">
     <div class="drawer-header">
       <div>
-        <span class="category-badge" id="drawerCategory">Condominium</span>
+        <span class="category-badge" id="drawerCategory">คอนโดมิเนียม</span>
         <h2 class="project-name" id="drawerTitle">ROMM CONVENT</h2>
-        <div class="project-location" id="drawerLocation">Bangkok</div>
+        <div class="project-location" id="drawerLocation">กรุงเทพฯ</div>
       </div>
       <button type="button" class="drawer-close" id="closeProjectDrawer">×</button>
     </div>
@@ -2827,16 +2829,16 @@
       <!-- Developer Info -->
       <div class="developer-box">
         <div class="dev-info">
-          <span>DEVELOPER</span>
+          <span>ผู้พัฒนา</span>
           <strong id="drawerDeveloper">PROUD REAL ESTATE</strong>
         </div>
-        <a class="dev-link-btn" id="drawerDevSite" href="#" target="_blank" rel="noopener">Official Site <svg class="mdico"><use href="#i-link"></use></svg></a>
+        <a class="dev-link-btn" id="drawerDevSite" href="#" target="_blank" rel="noopener">เว็บไซต์ทางการ <svg class="mdico"><use href="#i-link"></use></svg></a>
       </div>
 
       <!-- 500m Walkability Catchment Badge -->
       <div class="walkability-card">
         <div>
-          <div class="walk-title"><svg class="mdico"><use href="#i-footprints"></use></svg> 500m Walkability Catchment</div>
+          <div class="walk-title"><svg class="mdico"><use href="#i-footprints"></use></svg> รัศมีเดินถึงใน 500 ม.</div>
           <div class="walk-sub" id="walkabilitySubText">รัศมีเดินเท้า 5–7 นาที สู่ระบบขนส่งมวลชน</div>
         </div>
         <div class="walk-score-badge" id="walkScoreVal">96/100</div>
@@ -2845,52 +2847,52 @@
       <!-- Key Metrics -->
       <div class="metrics-grid">
         <div class="metric-tile">
-          <div class="metric-label">FLOORS</div>
-          <div class="metric-val" id="drawerFloors">32 <small>fl</small></div>
+          <div class="metric-label">จำนวนชั้น</div>
+          <div class="metric-val" id="drawerFloors">32 <small>ชั้น</small></div>
         </div>
         <div class="metric-tile">
-          <div class="metric-label">UNITS</div>
-          <div class="metric-val" id="drawerUnits">175 <small>u</small></div>
+          <div class="metric-label">ยูนิต</div>
+          <div class="metric-val" id="drawerUnits">175 <small>ห้อง</small></div>
         </div>
         <div class="metric-tile">
-          <div class="metric-label">PARKING</div>
-          <div class="metric-val" id="drawerParking">198 <small>lots</small></div>
+          <div class="metric-label">ที่จอดรถ</div>
+          <div class="metric-val" id="drawerParking">198 <small>คัน</small></div>
         </div>
         <div class="metric-tile">
-          <div class="metric-label">LAND AREA</div>
-          <div class="metric-val" id="drawerLand">1.60 <small>rai</small></div>
+          <div class="metric-label">ขนาดที่ดิน</div>
+          <div class="metric-val" id="drawerLand">1.60 <small>ไร่</small></div>
         </div>
         <div class="metric-tile">
-          <div class="metric-label">HEIGHT</div>
-          <div class="metric-val" id="drawerHeight">135 <small>m</small></div>
+          <div class="metric-label">ความสูง</div>
+          <div class="metric-val" id="drawerHeight">135 <small>ม.</small></div>
         </div>
         <div class="metric-tile">
-          <div class="metric-label">PRICE / BUDGET</div>
+          <div class="metric-label">ราคา / งบประมาณ</div>
           <div class="metric-val" id="drawerUnitsPerFloor" style="font-size:13px;">฿19M+</div>
         </div>
       </div>
 
       <!-- Description -->
       <div>
-        <div class="section-heading">PROJECT OVERVIEW</div>
+        <div class="section-heading">ภาพรวมโครงการ</div>
         <div style="font-size:12.5px;line-height:1.65;color:var(--text-muted);" id="drawerDesc"></div>
       </div>
 
       <!-- Unit Types -->
       <div id="unitTypesSection">
-        <div class="section-heading">UNIT TYPES & SIZES</div>
+        <div class="section-heading">ประเภทและขนาดห้อง</div>
         <div class="units-list" id="drawerUnitsList"></div>
       </div>
 
       <!-- Transport & Connectivity -->
       <div>
-        <div class="section-heading">CONNECTIVITY & TRANSIT</div>
+        <div class="section-heading">การเดินทางและขนส่ง</div>
         <div class="transport-list" id="drawerTransportList"></div>
       </div>
 
       <!-- 3D Perspective Orbit Action -->
       <button type="button" class="fly-3d-btn" id="btnDrawerFly3D">
-        <span><svg class="mdico"><use href="#i-ruler"></use></svg> View in 3D Perspective</span>
+        <span><svg class="mdico"><use href="#i-ruler"></use></svg> ดูมุมมอง 3 มิติ</span>
       </button>
     </div>
   </div>
@@ -2898,7 +2900,7 @@
   <!-- Loading Screen -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
-    <span>Rendering 3D City & Mass Transit Architecture…</span>
+    <span>กำลังเรนเดอร์เมือง 3 มิติ และโครงข่ายขนส่งมวลชน…</span>
   </div>
 </div>
 
@@ -2907,6 +2909,8 @@
 <script src="bkk-transit-data.js"></script>
 <script src="bkk-landmarks-data.js"></script>
 <script src="bkk-amenities-data.js"></script>
+<script src="bkk-datacenter-data.js"></script>
+<script src="bkk-datacenter.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -3030,7 +3034,7 @@
 
   var DRONE_TOUR_STOPS = [
     {
-      title: "One Bangkok & Lumphini",
+      title: "วัน แบงค็อก และลุมพินี",
       desc: "Signature Tower (436m) · สวนลุมพินี · ทำเลพระราม 4",
       coords: [100.5470, 13.7270],
       zoom: 16.3,
@@ -3039,7 +3043,7 @@
       orbitDuration: 12000
     },
     {
-      title: "King Power Mahanakhon & Silom CBD",
+      title: "คิง เพาเวอร์ มหานคร และย่านสีลม",
       desc: "ตึกพิกเซลแลนด์มาร์ก (314m) · สกายวอล์กกระจก · ย่านการเงินสีลม-สาทร",
       coords: [100.5292, 13.7236],
       zoom: 16.6,
@@ -3048,7 +3052,7 @@
       orbitDuration: 12000
     },
     {
-      title: "ICONSIAM & Chao Phraya Riverfront",
+      title: "ไอคอนสยาม และริมเจ้าพระยา",
       desc: "ไอคอนสยาม & แมกโนเลียส์ วอเตอร์ฟรอนท์ (318m) · โค้งแม่น้ำเจ้าพระยา",
       coords: [100.5105, 13.7265],
       zoom: 16.0,
@@ -3066,7 +3070,7 @@
       orbitDuration: 12000
     },
     {
-      title: "The EM District & Sukhumvit Skyline",
+      title: "ดิ เอ็ม ดิสทริค และแนวสุขุมวิท",
       desc: "EmSphere / EmQuartier · สวนเบญจสิริ · ศูนย์กลางไลฟ์สไตล์ระดับโลก",
       coords: [100.5695, 13.7315],
       zoom: 16.2,
@@ -3589,7 +3593,7 @@
               id: "tow-" + idx,
               height: (b.height || 25) * 3.5,
               roles: (b.companies || []).length,
-              name: b.name || (b.companies ? b.companies[0] : "Office Tower")
+              name: b.name || (b.companies ? b.companies[0] : "อาคารสำนักงาน")
             }
           });
         }
@@ -3891,6 +3895,12 @@
     } catch(e) {}
 
     STATE.ready = true;
+
+    // 🖥️ ชั้นศูนย์ข้อมูล (Data Center) — โมดูลแยกใน bkk-datacenter.js
+    // เรียกใหม่ทุกครั้งที่ style โหลด (สลับธีมจะล้างเลเยอร์ทิ้ง) — mount() รับการเรียกซ้ำได้
+    if (window.BKK_DC && window.BKK_DC.mount) {
+      try { window.BKK_DC.mount(map); } catch (e) { console.warn("data center layer:", e); }
+    }
   }
 
   /* 🏷️ Developer Brand Badge & Photo Card Generators */
@@ -4500,19 +4510,19 @@
 
     STATE.selectedProject = project;
 
-    $("#drawerCategory").textContent = project.category || "Development";
+    $("#drawerCategory").textContent = project.category || "โครงการพัฒนา";
     $("#drawerCategory").style.background = project.categoryColor || "var(--accent)";
     $("#drawerTitle").textContent = project.name;
     $("#drawerLocation").textContent = project.location || "Bangkok";
     $("#drawerHeroImg").src = project.image || project.badgeImage || "";
-    $("#drawerDeveloper").textContent = project.developer || "Verified Developer";
+    $("#drawerDeveloper").textContent = project.developer || "ผู้พัฒนาที่ตรวจสอบแล้ว";
     $("#drawerDevSite").href = project.developerSite || "#";
 
-    $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>fl</small>';
-    $("#drawerUnits").innerHTML = (project.units || "-") + ' <small>u</small>';
-    $("#drawerParking").innerHTML = (project.parking || "-") + ' <small>lots (' + (project.parkingRatio || "100%") + ')</small>';
-    $("#drawerLand").innerHTML = (project.landRai ? project.landRai.toFixed(2) : "-") + ' <small>rai</small>';
-    $("#drawerHeight").innerHTML = (project.height || "-") + ' <small>m</small>';
+    $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>ชั้น</small>';
+    $("#drawerUnits").innerHTML = (project.units || "-") + ' <small>ห้อง</small>';
+    $("#drawerParking").innerHTML = (project.parking || "-") + ' <small>คัน (' + (project.parkingRatio || "100%") + ')</small>';
+    $("#drawerLand").innerHTML = (project.landRai ? project.landRai.toFixed(2) : "-") + ' <small>ไร่</small>';
+    $("#drawerHeight").innerHTML = (project.height || "-") + ' <small>ม.</small>';
     $("#drawerUnitsPerFloor").innerHTML = (project.priceRange || (project.unitsPerFloor ? project.unitsPerFloor + " u/fl" : "-"));
 
     $("#drawerDesc").textContent = project.desc || "";
@@ -4534,7 +4544,7 @@
         return '<div class="transport-item"><span class="transport-name">' + ico + ' ' + t.name + '</span><span class="transport-dist">' + t.dist + '</span></div>';
       }).join("");
     } else {
-      $("#drawerTransportList").innerHTML = '<div style="font-size:12px;color:var(--text-sub);">Central Bangkok Prime Location</div>';
+      $("#drawerTransportList").innerHTML = '<div style="font-size:12px;color:var(--text-sub);">ทำเลใจกลางกรุงเทพฯ</div>';
     }
 
     // Render 500m Walkability Catchment on Map
@@ -5205,13 +5215,13 @@
     $("#btnThemeToggle").addEventListener("click", function() {
       if (STATE.theme === "dark") {
         STATE.theme = "light";
-        $("#themeIco").innerHTML = MDICO("sun") + " Light";
+        $("#themeIco").innerHTML = MDICO("sun") + " สว่าง";
       } else if (STATE.theme === "light") {
         STATE.theme = "sunset";
-        $("#themeIco").innerHTML = MDICO("sun-dim") + " Sunset";
+        $("#themeIco").innerHTML = MDICO("sun-dim") + " พระอาทิตย์ตก";
       } else {
         STATE.theme = "dark";
-        $("#themeIco").innerHTML = MDICO("moon") + " Dark";
+        $("#themeIco").innerHTML = MDICO("moon") + " มืด";
       }
 
       document.documentElement.setAttribute("data-theme", STATE.theme);

@@ -4,115 +4,115 @@ const ASHTON_DATA = {
     "amenities": [
       {
         "id": "education",
-        "label": "Education",
+        "label": "การศึกษา",
         "color": "#7C6A4E",
         "subs": [
           {
             "id": "international",
-            "label": "International"
+            "label": "นานาชาติ"
           },
           {
             "id": "private",
-            "label": "Private"
+            "label": "เอกชน"
           },
           {
             "id": "university",
-            "label": "University"
+            "label": "มหาวิทยาลัย"
           }
         ]
       },
       {
         "id": "health",
-        "label": "Health",
+        "label": "สุขภาพ",
         "color": "#A8574C",
         "subs": [
           {
             "id": "private",
-            "label": "Private"
+            "label": "เอกชน"
           },
           {
             "id": "public",
-            "label": "Public"
+            "label": "รัฐ"
           }
         ]
       },
       {
         "id": "sport",
-        "label": "Sport",
+        "label": "กีฬา",
         "color": "#5E7A5B",
         "subs": [
           {
             "id": "golf",
-            "label": "Golf"
+            "label": "กอล์ฟ"
           },
           {
             "id": "tennis",
-            "label": "Tennis"
+            "label": "เทนนิส"
           },
           {
             "id": "polo",
-            "label": "Polo & riding"
+            "label": "โปโลและขี่ม้า"
           },
           {
             "id": "pilates",
-            "label": "Pilates"
+            "label": "พิลาทิส"
           },
           {
             "id": "yoga",
-            "label": "Yoga"
+            "label": "โยคะ"
           },
           {
             "id": "gym",
-            "label": "Gym"
+            "label": "ฟิตเนส"
           }
         ]
       },
       {
         "id": "dining",
-        "label": "Dining",
+        "label": "ร้านอาหาร",
         "color": "#B08046",
         "subs": [
           {
             "id": "fine",
-            "label": "Fine dining"
+            "label": "ไฟน์ไดนิ่ง"
           },
           {
             "id": "rooftop",
-            "label": "Rooftop"
+            "label": "รูฟท็อป"
           },
           {
             "id": "cafe",
-            "label": "Coffee"
+            "label": "คาเฟ่"
           }
         ]
       },
       {
         "id": "retreat",
-        "label": "Spa",
+        "label": "สปา",
         "color": "#7A8C74",
         "subs": [
           {
             "id": "spa",
-            "label": "Spa"
+            "label": "สปา"
           },
           {
             "id": "wellness",
-            "label": "Wellness"
+            "label": "เวลเนส"
           }
         ]
       },
       {
         "id": "culture",
-        "label": "Culture",
+        "label": "ศิลปวัฒนธรรม",
         "color": "#8A6A82",
         "subs": [
           {
             "id": "gallery",
-            "label": "Gallery"
+            "label": "แกลเลอรี"
           },
           {
             "id": "museum",
-            "label": "Museum"
+            "label": "พิพิธภัณฑ์"
           }
         ]
       }
@@ -120,49 +120,49 @@ const ASHTON_DATA = {
     "pets": [
       {
         "id": "vet",
-        "label": "Vet & emergency",
+        "label": "สัตวแพทย์และฉุกเฉิน",
         "labelTh": "โรงพยาบาล / คลินิกสัตว์",
         "color": "#A8574C",
         "on": true
       },
       {
         "id": "venue",
-        "label": "Malls, cafés & dining",
+        "label": "ห้าง คาเฟ่ ร้านอาหาร",
         "labelTh": "ห้าง คาเฟ่ ร้านอาหาร — เช็กนโยบายก่อนพาไป",
         "color": "#B08046",
         "on": true
       },
       {
         "id": "park",
-        "label": "Parks & dog runs",
+        "label": "สวนและลานวิ่งสุนัข",
         "labelTh": "สวน / ลานวิ่งสุนัข",
         "color": "#5E7A5B",
         "on": false
       },
       {
         "id": "boarding",
-        "label": "Boarding & daycare",
+        "label": "รับฝากเลี้ยง",
         "labelTh": "ฝากเลี้ยง / เดย์แคร์",
         "color": "#7C6A4E",
         "on": false
       },
       {
         "id": "groom",
-        "label": "Grooming & spa",
+        "label": "อาบน้ำตัดขน",
         "labelTh": "สปา / ตัดขน",
         "color": "#7A8C74",
         "on": false
       },
       {
         "id": "shop",
-        "label": "Food & supplies",
+        "label": "อาหารและอุปกรณ์สัตว์เลี้ยง",
         "labelTh": "อาหาร / อุปกรณ์",
         "color": "#8A6A82",
         "on": false
       },
       {
         "id": "stay",
-        "label": "Stays that take pets",
+        "label": "ที่พักรับสัตว์เลี้ยง",
         "labelTh": "ที่พักพาสัตว์ไปได้",
         "color": "#4E6E8A",
         "on": false
@@ -171,42 +171,42 @@ const ASHTON_DATA = {
     "recognised": [
       {
         "id": "dining",
-        "label": "Restaurants",
+        "label": "ร้านอาหาร",
         "labelTh": "ร้านอาหาร",
         "color": "#9E4A44",
         "on": true
       },
       {
         "id": "hotel",
-        "label": "Hotels",
+        "label": "โรงแรม",
         "labelTh": "โรงแรม",
         "color": "#456B85",
         "on": true
       },
       {
         "id": "bar",
-        "label": "Bars",
+        "label": "บาร์",
         "labelTh": "บาร์",
         "color": "#7A5E82",
         "on": false
       },
       {
         "id": "vineyard",
-        "label": "Vineyards",
+        "label": "ไร่องุ่น",
         "labelTh": "ไร่องุ่น",
         "color": "#6E4C5E",
         "on": false
       },
       {
         "id": "hospital",
-        "label": "Hospitals",
+        "label": "โรงพยาบาล",
         "labelTh": "โรงพยาบาล",
         "color": "#4E8277",
         "on": false
       },
       {
         "id": "school",
-        "label": "Schools",
+        "label": "โรงเรียน",
         "labelTh": "โรงเรียนนานาชาติ",
         "color": "#6B7689",
         "on": false
@@ -215,23 +215,23 @@ const ASHTON_DATA = {
     "brands": [
       {
         "id": "stay",
-        "label": "Hotels & resorts"
+        "label": "โรงแรมและรีสอร์ต"
       },
       {
         "id": "beauty",
-        "label": "Fragrance & beauty"
+        "label": "น้ำหอมและความงาม"
       },
       {
         "id": "jewel",
-        "label": "Jewellery"
+        "label": "เครื่องประดับ"
       },
       {
         "id": "fashion",
-        "label": "Fashion"
+        "label": "แฟชั่น"
       },
       {
         "id": "craft",
-        "label": "Thai craft"
+        "label": "งานคราฟต์ไทย"
       }
     ]
   },

@@ -30,22 +30,22 @@ window.BKK_INTELLIGENCE = {
     ],
 
     education: [
-      { id: "am-e1", name: "Shrewsbury International School (Riverside)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5098, 13.7125], height: 0, type: "International School", curriculum: "British" },
-      { id: "am-e2", name: "NIST International School", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5574, 13.7458], height: 0, type: "International School", curriculum: "IB World School" },
-      { id: "am-e3", name: "Bangkok Prep (Sukhumvit 77)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.6015, 13.7135], height: 0, type: "International School", curriculum: "British" },
-      { id: "am-e4", name: "จุฬาลงกรณ์มหาวิทยาลัย (Chulalongkorn University)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5320, 13.7380], height: 0, type: "Top University", curriculum: "National & Inter" },
-      { id: "am-e5", name: "International School Bangkok (ISB)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5280, 13.8850], height: 0, type: "International School", curriculum: "American / IB" },
-      { id: "am-e6", name: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ (Thammasat Univ.)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.4925, 13.7570], height: 0, type: "Top University", curriculum: "National & Inter" },
-      { id: "am-e7", name: "St. Andrews International School (Sathorn)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5332, 13.7222], height: 0, type: "International School", curriculum: "British" }
+      { id: "am-e1", name: "Shrewsbury International School (Riverside)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5098, 13.7125], height: 0, type: "โรงเรียนนานาชาติ", curriculum: "British" },
+      { id: "am-e2", name: "NIST International School", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5574, 13.7458], height: 0, type: "โรงเรียนนานาชาติ", curriculum: "IB World School" },
+      { id: "am-e3", name: "Bangkok Prep (Sukhumvit 77)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.6015, 13.7135], height: 0, type: "โรงเรียนนานาชาติ", curriculum: "British" },
+      { id: "am-e4", name: "จุฬาลงกรณ์มหาวิทยาลัย (Chulalongkorn University)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5320, 13.7380], height: 0, type: "มหาวิทยาลัยชั้นนำ", curriculum: "National & Inter" },
+      { id: "am-e5", name: "International School Bangkok (ISB)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5280, 13.8850], height: 0, type: "โรงเรียนนานาชาติ", curriculum: "American / IB" },
+      { id: "am-e6", name: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ (Thammasat Univ.)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.4925, 13.7570], height: 0, type: "มหาวิทยาลัยชั้นนำ", curriculum: "National & Inter" },
+      { id: "am-e7", name: "St. Andrews International School (Sathorn)", cat: "education", catLabel: "Education", ico: "graduation-cap", coords: [100.5332, 13.7222], height: 0, type: "โรงเรียนนานาชาติ", curriculum: "British" }
     ],
 
     health: [
-      { id: "am-h1", name: "โรงพยาบาลบำรุงราษฎร์ (Bumrungrad International)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5532, 13.7460], height: 60, beds: "580 beds", type: "World-class JCI" },
-      { id: "am-h2", name: "โรงพยาบาลเมดพาร์ค (MedPark Hospital)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5605, 13.7225], height: 95, beds: "300 beds", type: "Super Tertiary Care" },
-      { id: "am-h3", name: "โรงพยาบาลบีเอ็นเอช (BNH Hospital Sathorn)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5358, 13.7248], height: 45, beds: "225 beds", type: "Premium Boutique JCI" },
-      { id: "am-h4", name: "โรงพยาบาลสมิติเวช สุขุมวิท (Samitivej Sukhumvit)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5770, 13.7340], height: 50, beds: "400 beds", type: "Leading Private JCI" },
-      { id: "am-h5", name: "โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย (King Chulalongkorn)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5352, 13.7315], height: 110, beds: "1,500 beds", type: "Top Medical Center" },
-      { id: "am-h6", name: "โรงพยาบาลกรุงเทพ (Bangkok Hospital Headquarter)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5840, 13.7485], height: 55, beds: "488 beds", type: "BDMS Network Hub" }
+      { id: "am-h1", name: "โรงพยาบาลบำรุงราษฎร์ (Bumrungrad International)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5532, 13.7460], height: 60, beds: "580 beds", type: "รพ. มาตรฐาน JCI ระดับโลก" },
+      { id: "am-h2", name: "โรงพยาบาลเมดพาร์ค (MedPark Hospital)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5605, 13.7225], height: 95, beds: "300 beds", type: "ศูนย์การแพทย์ตติยภูมิขั้นสูง" },
+      { id: "am-h3", name: "โรงพยาบาลบีเอ็นเอช (BNH Hospital Sathorn)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5358, 13.7248], height: 45, beds: "225 beds", type: "รพ. บูทีก มาตรฐาน JCI" },
+      { id: "am-h4", name: "โรงพยาบาลสมิติเวช สุขุมวิท (Samitivej Sukhumvit)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5770, 13.7340], height: 50, beds: "400 beds", type: "รพ. เอกชนชั้นนำ มาตรฐาน JCI" },
+      { id: "am-h5", name: "โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย (King Chulalongkorn)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5352, 13.7315], height: 110, beds: "1,500 beds", type: "ศูนย์การแพทย์ชั้นนำ" },
+      { id: "am-h6", name: "โรงพยาบาลกรุงเทพ (Bangkok Hospital Headquarter)", cat: "health", catLabel: "Health", ico: "hospital", coords: [100.5840, 13.7485], height: 55, beds: "488 beds", type: "ศูนย์กลางเครือ BDMS" }
     ],
 
     sport: [
@@ -113,16 +113,16 @@ window.BKK_INTELLIGENCE = {
 
   // 💼 Corporate Headquarters & Tech Hiring Hubs
   corporate: [
-    { id: "corp-tt", name: "TikTok Thailand Head Office", company: "TikTok / ByteDance", brandIco: "music", building: "G Tower Grand Rama 9", coords: [100.56950, 13.75780], height: 130, industry: "Tech & Entertainment", roles: "48 Open Roles" },
-    { id: "corp-del", name: "Deloitte Thailand", company: "Deloitte Touche Tohmatsu", brandIco: "chart-column", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Management Consulting & Audit", roles: "65 Open Roles" },
-    { id: "corp-goo", name: "Google Thailand", company: "Google / Alphabet", brandIco: "globe", building: "Park Ventures Ecoplex", coords: [100.54780, 13.74280], height: 142, industry: "Big Tech & Cloud AI", roles: "32 Open Roles" },
-    { id: "corp-ms", name: "Microsoft Thailand", company: "Microsoft", brandIco: "laptop", building: "All Seasons Place (CRC Tower)", coords: [100.54760, 13.73680], height: 210, industry: "Enterprise Software & Cloud", roles: "24 Open Roles" },
-    { id: "corp-ago", name: "Agoda Global Operations Hub", company: "Agoda / Booking Holdings", brandIco: "plane", building: "CentralWorld Offices", coords: [100.53950, 13.74650], height: 204, industry: "Travel Tech & Platform", roles: "120 Open Roles" },
-    { id: "corp-line", name: "LINE Thailand", company: "LINE Company", brandIco: "smartphone", building: "Gaysorn Tower", coords: [100.54120, 13.74450], height: 127, industry: "Super App & Fintech", roles: "38 Open Roles" },
-    { id: "corp-bb", name: "Bluebik Group", company: "Bluebik Group PLC", brandIco: "gem", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Digital Transformation & AI", roles: "29 Open Roles" },
-    { id: "corp-sho", name: "Shopee & Sea Thailand", company: "Sea Group", brandIco: "shopping-basket", building: "Singha Complex", coords: [100.56350, 13.74850], height: 120, industry: "E-Commerce & Digital Media", roles: "85 Open Roles" },
-    { id: "corp-persol", name: "PERSOL Thailand", company: "PERSOLKELLY", brandIco: "users", building: "Empire Tower Sathorn", coords: [100.53035, 13.72080], height: 227, industry: "Executive Search & HR Solutions", roles: "15 Open Roles" },
-    { id: "corp-bbl", name: "Bangkok Bank Head Office", company: "Bangkok Bank PLC", brandIco: "landmark", building: "Bangkok Bank Silom HQ", coords: [100.52988, 13.72710], height: 150, industry: "Banking & Financial Services", roles: "90 Open Roles" }
+    { id: "corp-tt", name: "TikTok Thailand Head Office", company: "TikTok / ByteDance", brandIco: "music", building: "G Tower Grand Rama 9", coords: [100.56950, 13.75780], height: 130, industry: "Tech & Entertainment", roles: "48 ตำแหน่งงาน" },
+    { id: "corp-del", name: "Deloitte Thailand", company: "Deloitte Touche Tohmatsu", brandIco: "chart-column", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Management Consulting & Audit", roles: "65 ตำแหน่งงาน" },
+    { id: "corp-goo", name: "Google Thailand", company: "Google / Alphabet", brandIco: "globe", building: "Park Ventures Ecoplex", coords: [100.54780, 13.74280], height: 142, industry: "Big Tech & Cloud AI", roles: "32 ตำแหน่งงาน" },
+    { id: "corp-ms", name: "Microsoft Thailand", company: "Microsoft", brandIco: "laptop", building: "All Seasons Place (CRC Tower)", coords: [100.54760, 13.73680], height: 210, industry: "Enterprise Software & Cloud", roles: "24 ตำแหน่งงาน" },
+    { id: "corp-ago", name: "Agoda Global Operations Hub", company: "Agoda / Booking Holdings", brandIco: "plane", building: "CentralWorld Offices", coords: [100.53950, 13.74650], height: 204, industry: "Travel Tech & Platform", roles: "120 ตำแหน่งงาน" },
+    { id: "corp-line", name: "LINE Thailand", company: "LINE Company", brandIco: "smartphone", building: "Gaysorn Tower", coords: [100.54120, 13.74450], height: 127, industry: "Super App & Fintech", roles: "38 ตำแหน่งงาน" },
+    { id: "corp-bb", name: "Bluebik Group", company: "Bluebik Group PLC", brandIco: "gem", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Digital Transformation & AI", roles: "29 ตำแหน่งงาน" },
+    { id: "corp-sho", name: "Shopee & Sea Thailand", company: "Sea Group", brandIco: "shopping-basket", building: "Singha Complex", coords: [100.56350, 13.74850], height: 120, industry: "E-Commerce & Digital Media", roles: "85 ตำแหน่งงาน" },
+    { id: "corp-persol", name: "PERSOL Thailand", company: "PERSOLKELLY", brandIco: "users", building: "Empire Tower Sathorn", coords: [100.53035, 13.72080], height: 227, industry: "Executive Search & HR Solutions", roles: "15 ตำแหน่งงาน" },
+    { id: "corp-bbl", name: "Bangkok Bank Head Office", company: "Bangkok Bank PLC", brandIco: "landmark", building: "Bangkok Bank Silom HQ", coords: [100.52988, 13.72710], height: 150, industry: "Banking & Financial Services", roles: "90 ตำแหน่งงาน" }
   ],
 
   // 🌊 Major Flood Surveillance Points & Drainage Hubs
