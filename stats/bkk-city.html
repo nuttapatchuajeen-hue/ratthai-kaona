@@ -2708,6 +2708,23 @@
           <button type="button" class="menu-btn" id="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> ทัวร์โดรน</button>
           <button type="button" class="menu-btn" id="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> ค้นหาเส้นทาง</button>
         </div>
+        <!-- โหมดความสูงแลนด์มาร์ก และตัวกรองระยะถึงสถานี
+             ทั้ง CSS (.height-chips-grid / .transit-dist-grid) และตัวจัดการเหตุการณ์มีอยู่แล้ว
+             แต่ตัวปุ่มหายไปจาก markup ตั้งแต่รอบที่รื้อแผงนี้ ทำให้กรอง 1 กม. ไม่ได้เลย
+             (ชิป "ใกล้สถานี 500 ม." ให้ได้แค่ระยะเดียว) และสลับโหมดความสูงไม่ได้เลย -->
+        <p class="ashton-sec-kicker" style="margin-top:10px;">ความสูงแลนด์มาร์ก</p>
+        <div class="height-chips-grid" id="heightChipsContainer" style="margin-bottom:6px;">
+          <button type="button" class="height-chip" data-height="flat">แบนราบ</button>
+          <button type="button" class="height-chip active" data-height="projects">ความสูงจริง</button>
+        </div>
+
+        <p class="ashton-sec-kicker" style="margin-top:10px;">ระยะถึงสถานีรถไฟฟ้า</p>
+        <div class="transit-dist-grid" id="transitDistFilterContainer" style="margin-bottom:8px;">
+          <button type="button" class="transit-dist-btn active" data-dist="any">ทั้งหมด</button>
+          <button type="button" class="transit-dist-btn" data-dist="500">ใน 500 ม.</button>
+          <button type="button" class="transit-dist-btn" data-dist="1000">ใน 1 กม.</button>
+        </div>
+
         <div class="brand-chips-wrap" id="brandChipsContainer" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
           <button type="button" class="brand-chip active" data-brand="all">ทั้งหมด</button>
           <button type="button" class="brand-chip" data-brand="ananda">Ananda</button>
