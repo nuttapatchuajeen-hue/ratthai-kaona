@@ -194,6 +194,19 @@
   .src a{color:var(--green);font-weight:600}
   .state-msg{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px}
   .state-msg.err{color:var(--red)}
+  /* ---------- แถบตัวชี้วัดระบบโลก (sparkline 4 ช่อง) ---------- */
+  .es-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .es-cell{background:var(--paper-3);border:1px solid var(--rule);border-radius:13px;padding:13px 15px 11px;display:flex;flex-direction:column;gap:6px}
+  .es-cell .es-top{font-size:12px;color:var(--ink-soft);font-weight:600;display:flex;align-items:center;gap:7px;line-height:1.35}
+  .es-cell .es-num{font-family:"Archivo",sans-serif;font-weight:800;font-size:25px;line-height:1;color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .es-cell .es-num .u{font-size:13px;color:var(--ink-2);font-weight:700;margin-left:3px}
+  .es-cell .es-spark{width:100%;height:44px;display:block;overflow:visible}
+  .es-cell .es-foot{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:11px;color:var(--ink-soft)}
+  .es-cell .es-chg{font-weight:700;font-variant-numeric:tabular-nums;color:var(--red)}
+  .es-cell .es-more{color:var(--green);font-weight:600;background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:11px;white-space:nowrap}
+  .es-cell .es-more:hover{text-decoration:underline}
+  @media (max-width:880px){ .es-row{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .es-row{grid-template-columns:1fr} }
   /* ---- SKELETON โครงร่างระหว่างโหลดกราฟ · ครอบทุก .plot/.tilemap อัตโนมัติ
          (ยกเว้น .err ให้ยังเป็นข้อความแดงปกติ · กราฟเรนเดอร์เสร็จจะเขียนทับ innerHTML ทิ้งเอง) ---- */
   .plot > .state-msg:not(.err),
@@ -1764,6 +1777,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         </div>
       </div>
 
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-globe"></use></svg> ตัวชี้วัดระบบโลก 4 ตัว</h2><span class="tag">สรุปรวม · สด</span></div>
+        <p class="sub">สี่เส้นที่บอกอาการของโลกทั้งใบในที่เดียว — ก๊าซที่เราเติมเข้าไป (CO₂) · ความร้อนที่โลกเก็บไว้ (อุณหภูมิ) · และผลที่ตามมาสองอย่าง (น้ำทะเลสูงขึ้น · น้ำแข็งหด) · กด “ดูเต็ม →” เพื่อกระโดดไปกราฟใหญ่ของตัวชี้วัดนั้น</p>
+        <div class="es-row" id="esRow"><div class="state-msg">กำลังรวบรวมตัวชี้วัด…</div></div>
+        <div class="src">ที่มา: NOAA GML (CO₂ เมานาโลอา) · HadCRUT5 / Met Office Hadley Centre · Church &amp; White (2011) + UHSLC · NSIDC Sea Ice Index v3 — เรียบเรียงโดย <a href="https://ourworldindata.org" target="_blank" rel="noopener">Our World in Data ↗</a> · ดึงสดทุกครั้งที่เปิดหน้า</div>
+      </div>
+
       <div class="grid2">
         <div class="card">
           <div class="card-head"><h2><svg class="mdico"><use href="#i-thermometer"></use></svg> อุณหภูมิเฉลี่ยโลกที่สูงขึ้น</h2><span class="tag">เส้นเวลา · สด</span></div>
@@ -1778,6 +1798,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <div class="plot" id="disChart"><div class="state-msg">กำลังวาดกราฟ…</div></div>
           <div class="src">ที่มา: EM-DAT, CRED / UCLouvain · เรียบเรียงโดย <a href="https://ourworldindata.org/natural-disasters" target="_blank" rel="noopener">Our World in Data ↗</a></div>
         </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-factory"></use></svg> เส้นคีลลิง — CO₂ ในบรรยากาศ</h2><span class="tag">รายเดือน · สด</span></div>
+        <p class="sub">ความเข้มข้นคาร์บอนไดออกไซด์ในอากาศที่หอสังเกตการณ์เมานาโลอา ฮาวาย — วัดต่อเนื่องตั้งแต่ปี 1958 โดยชาร์ลส์ ดี. คีลลิง เป็นชุดข้อมูลที่ชี้ขาดว่ามนุษย์กำลังเปลี่ยนองค์ประกอบบรรยากาศจริง · <b>ฟันเลื่อยเล็ก ๆ</b> คือลมหายใจของโลก (ป่าซีกโลกเหนือดูดคาร์บอนช่วงฤดูร้อน แล้วคายคืนช่วงฤดูหนาว) แต่<b>เส้นรวมไต่ขึ้นทุกปี ไม่เคยลง</b></p>
+        <div class="plot" id="co2Chart"><div class="state-msg">กำลังโหลดข้อมูล NOAA…</div></div>
+        <div class="src">ที่มา: <a href="https://gml.noaa.gov/ccgg/trends/" target="_blank" rel="noopener">NOAA Global Monitoring Laboratory · Mauna Loa CO₂ (co2_mm_mlo.csv) ↗</a> — ค่าเฉลี่ยรายเดือน · ดึงสด (สำรอง: <a href="https://ourworldindata.org/grapher/monthly-concentration-of-atmospheric-carbon-dioxide" target="_blank" rel="noopener">OWID ↗</a> · ถ้าเน็ตไม่ติดจะแสดงค่าเฉลี่ย “รายปี” ที่ฝังไว้ในหน้า)</div>
       </div>
 
       <div class="card full">
@@ -8404,6 +8431,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     var SEA_LEVEL = SEA_LEVEL_FALL.slice();
     // น้ำแข็งทะเลอาร์กติก ต่ำสุด/สูงสุดรายปี (ล้าน กม.² · OWID/NSIDC)
     var ARCTIC = ARCTIC_FALL.slice();
+    // CO₂ ในบรรยากาศที่เมานาโลอา (ppm · NOAA GML) — สำรองเป็นค่าเฉลี่ยรายปี, ตัวสดเป็นรายเดือน
+    var CO2_PPM = CO2_PPM_FALL.slice(), CO2_PPM_MONTHLY = false;
     // ประชากรเสี่ยงน้ำท่วมชายฝั่งรายปี ภายในปี 2050 (ล้านคน · Climate Central 2024)
     var RISK = [
       {th:"จีน",n:93},{th:"บังกลาเทศ",n:42},{th:"อินเดีย",n:36},
@@ -8567,8 +8596,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var sget=sField?_tipAcc(sField):null;
         var inkSoft=cssVar("--ink-soft"), paper2=cssVar("--paper-2"), rule=cssVar("--rule"), ink=cssVar("--ink");
         var ylab=(opts.y&&opts.y.label)||"";
+        var xfmt=(typeof opts.__xfmt==="function")?opts.__xfmt:null;   // แปลงค่าแกน x ให้อ่านง่ายในทูลทิป (เช่น ปีทศนิยม → "มี.ค. 1958")
         function title(d){
-          var head=String(xget(d));
+          var head=String(xfmt?xfmt(xget(d)):xget(d));
           var lab= sget? String(sget(d)) : (ylab||"");
           return head + "\n" + (lab? lab+": ":"") + _tipFmt(yget(d));
         }
@@ -9231,6 +9261,111 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       });
       owidBarMount("#disChart", fig, { rows:DIS.map(function(d){ return {k:d.type, v:d.n}; }),
         nameLabel:"ประเภทภัย", valueLabel:"เหตุ/ปี", valueFmt:function(v){ return v; } });
+    }
+
+
+    /* ---------- เส้นคีลลิง: CO₂ ในบรรยากาศ (NOAA Mauna Loa · รายเดือน) ---------- */
+    // ป้ายแกน x: ชุดรายเดือนจะเป็นปีทศนิยม (1958.21) → แปลงเป็น "มี.ค. 1958", ชุดสำรองรายปีคืนปีตรง ๆ
+    function co2XLabel(x){
+      if(!CO2_PPM_MONTHLY) return Math.round(x);
+      var y=Math.floor(x+1e-6), m=Math.floor((x-y)*12);
+      if(m<0) m=0; if(m>11) m=11;
+      return THMON[m]+" "+y;
+    }
+    function renderCo2Ppm(){
+      var box=$("#co2Chart"); if(!box || !window.Plot) return;
+      if(!CO2_PPM || CO2_PPM.length<2) return;
+      var ink=cssVar("--ink"), red=cssVar("--red"), gold=cssVar("--gold");
+      var W=Math.max(300, box.clientWidth||900);
+      var first=CO2_PPM[0], last=CO2_PPM[CO2_PPM.length-1];
+      var lo=Infinity, hi=-Infinity;
+      CO2_PPM.forEach(function(d){ if(d.v<lo) lo=d.v; if(d.v>hi) hi=d.v; });
+      var pad=Math.max(4,(hi-lo)*0.06);
+      var fig=plotT({
+        width:W, height:340, marginLeft:52, marginBottom:34, marginTop:16, marginRight:18,
+        style: baseStyle(ink, FONT_W), __xfmt: co2XLabel,
+        x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
+        y:{ label:"ppm", grid:true, tickSize:0, domain:[lo-pad, hi+pad] },
+        marks:[
+          Plot.areaY(CO2_PPM, { x:"year", y1:function(){ return lo-pad; }, y2:"v", fill:red, fillOpacity:.09 }),
+          Plot.ruleY([350], { stroke:gold, strokeOpacity:.75, strokeDasharray:"4,4" }),
+          Plot.text([first], { x:"year", y:function(){ return 350; },
+            text:function(){ return "350 ppm — ระดับที่นักวิทยาศาสตร์เคยเสนอว่าปลอดภัย"; },
+            dy:-7, textAnchor:"start", fill:gold, fontSize:11, fontWeight:600 }),
+          Plot.lineY(CO2_PPM, { x:"year", y:"v", stroke:red,
+            strokeWidth: CO2_PPM_MONTHLY?1.5:2.4, curve: CO2_PPM_MONTHLY?"linear":"catmull-rom" }),
+          Plot.dot([last], { x:"year", y:"v", fill:red, r:4 }),
+          Plot.text([last], { x:"year", y:"v", text:function(d){ return d.v.toFixed(2)+" ppm"; },
+            dy:-13, textAnchor:"end", fill:red, fontWeight:700, fontSize:12 })
+        ]
+      });
+      owidMount("#co2Chart", fig, {
+        data:CO2_PPM, xKey:"year", yKey:"v", color:red,
+        xLabel: CO2_PPM_MONTHLY?"เดือน":"ปี (ค.ศ.)", yLabel:"ppm",
+        yearLabel: co2XLabel,
+        valueFmt:function(v){ return v.toFixed(2)+" ppm"; }
+      });
+    }
+
+    /* ---------- แถบตัวชี้วัดระบบโลก 4 ตัว (sparkline สรุปหน้าแรกของหมวด) ---------- */
+    // วาด sparkline เป็น SVG viewBox 100×30 ยืดเต็มช่อง — เส้น/จุดใช้ non-scaling-stroke จึงไม่บิดตามการยืด
+    function esSpark(series, color){
+      var n=series.length; if(n<2) return "";
+      var x0=series[0].x, x1=series[n-1].x, y0=Infinity, y1=-Infinity, i;
+      for(i=0;i<n;i++){ if(series[i].y<y0) y0=series[i].y; if(series[i].y>y1) y1=series[i].y; }
+      var dx=(x1-x0)||1, dy=(y1-y0)||1;
+      function px(v){ return ((v-x0)/dx*100).toFixed(2); }
+      function py(v){ return (28-(v-y0)/dy*26).toFixed(2); }
+      var d="";
+      for(i=0;i<n;i++){ d+=(i?"L":"M")+px(series[i].x)+" "+py(series[i].y); }
+      var lx=px(x1), ly=py(series[n-1].y);
+      return '<svg class="es-spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">'
+        +'<path d="'+d+'L'+lx+' 30L'+px(x0)+' 30Z" fill="'+color+'" fill-opacity=".12"/>'
+        +'<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
+        +'<line x1="'+lx+'" y1="'+ly+'" x2="'+lx+'" y2="'+ly+'" stroke="'+color+'" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
+        +'</svg>';
+    }
+    function esCell(c){
+      var s=c.series, n=s.length, first=s[0], last=s[n-1], diff=last.y-first.y;
+      var arrow=diff>=0?"▲":"▼";
+      return '<div class="es-cell">'
+        +'<div class="es-top"><svg class="mdico"><use href="#'+c.icon+'"></use></svg> '+c.label+'</div>'
+        +'<div class="es-num">'+c.fmt(last.y)+'<span class="u">'+c.unit+'</span></div>'
+        +esSpark(s, c.color)
+        +'<div class="es-foot">'
+        +'<span class="es-chg">'+arrow+' '+c.fmt(Math.abs(diff))+' '+c.unit+' ตั้งแต่ '+Math.round(first.x)+'</span>'
+        +'<button class="es-more" type="button" data-go="'+c.go+'">ดูเต็ม →</button>'
+        +'</div></div>';
+    }
+    function renderEarthIndex(){
+      var host=$("#esRow"); if(!host) return;
+      var red=cssVar("--red"), gold=cssVar("--gold"), green=cssVar("--green"), greenDeep=cssVar("--green-deep");
+      function pts(arr, xk, yk){
+        var out=[];
+        (arr||[]).forEach(function(d){ var y=d[yk]; if(y!=null && !isNaN(y)) out.push({x:+d[xk], y:+y}); });
+        return out;
+      }
+      var cells=[
+        { label:"CO₂ ในบรรยากาศ", icon:"i-factory", unit:"ppm", color:red, go:"card:#co2Chart",
+          series:pts(CO2_PPM,"year","v"), fmt:function(v){ return v.toFixed(1); } },
+        { label:"อุณหภูมิเฉลี่ยโลก", icon:"i-thermometer", unit:"°C", color:gold, go:"card:#tempChart",
+          series:pts(TEMP,"year","v"), fmt:function(v){ return v.toFixed(2); } },
+        { label:"ระดับน้ำทะเลเฉลี่ย", icon:"i-waves", unit:"มม.", color:green, go:"pane:sinking",
+          series:pts(SEA_LEVEL,"year","v"), fmt:function(v){ return Math.round(v).toLocaleString("en-US"); } },
+        { label:"น้ำแข็งอาร์กติกต่ำสุด/ปี", icon:"i-snowflake", unit:"ล้าน กม.²", color:greenDeep, go:"pane:ice",
+          series:pts(ARCTIC,"year","min"), fmt:function(v){ return v.toFixed(2); } }
+      ].filter(function(c){ return c.series.length>1; });
+      if(!cells.length) return;
+      host.innerHTML=cells.map(esCell).join("");
+      if(!host._esWired){
+        host._esWired=true;
+        host.addEventListener("click", function(e){
+          var b=e.target.closest(".es-more"); if(!b) return;
+          var go=(b.getAttribute("data-go")||"").split(":"), kind=go[0], val=go[1];
+          if(kind==="pane"){ showGroup("world", val); return; }
+          var el=$(val); if(el) scrollToY(el.getBoundingClientRect().top+window.scrollY-90);
+        });
+      }
     }
 
     function renderMap(){
@@ -10202,7 +10337,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }).catch(function(e){ gtState.loading=false; Gistemp.showError(box, e); });
     }
 
-    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -11680,7 +11815,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(!isNaN(v) && r.year) d.push({year:+r.year, v:v});
           });
           d.sort(function(a,b){ return a.year-b.year; });
-          if(d.length){ TEMP=d; renderTemp();
+          if(d.length){ TEMP=d; renderTemp(); renderEarthIndex();
             var last=d[d.length-1];
             setTxt("#kTempVal", last.v.toFixed(2)); setTxt("#kTempYear", "ปี "+last.year);
           }
@@ -11698,7 +11833,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             d.push({year:y, v:v});
           });
           d.sort(function(a,b){ return a.year-b.year; });
-          if(d.length){ SEA_LEVEL=d; renderSeaLevel(); setSinkingKpis(); }
+          if(d.length){ SEA_LEVEL=d; renderSeaLevel(); setSinkingKpis(); renderEarthIndex(); }
         }).catch(function(){});
     }
     function loadArctic(){
@@ -11710,8 +11845,53 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             var mn=parseFloat(r.arctic_sea_ice_extent_min), mx=parseFloat(r.arctic_sea_ice_extent_max);
             d.push({year:+r.year, min:isNaN(mn)?null:mn, max:isNaN(mx)?null:mx});
           });
-          if(d.length){ ARCTIC=d; renderArctic(); setIceKpis(); }
+          if(d.length){ ARCTIC=d; renderArctic(); setIceKpis(); renderEarthIndex(); }
         }).catch(function(){});
+    }
+
+    /* CO₂ เมานาโลอา — ลอง NOAA GML ก่อน (ต้นฉบับเส้นคีลลิง รายเดือน) แล้วค่อยตกไป OWID
+       ทั้งคู่ผ่าน fetchText ที่มีลูกโซ่พร็อกซีอยู่แล้ว (NOAA ไม่ได้ส่งหัว CORS เสมอไป) */
+    function applyCo2Ppm(d){
+      d.sort(function(a,b){ return a.year-b.year; });
+      if(d.length<24) return false;
+      CO2_PPM=d; CO2_PPM_MONTHLY=true; renderCo2Ppm(); renderEarthIndex();
+      return true;
+    }
+    function loadCo2PpmOwid(){
+      return fetchText("https://ourworldindata.org/grapher/monthly-concentration-of-atmospheric-carbon-dioxide.csv?csvType=full&useColumnShortNames=true")
+        .then(function(t){
+          var rows=parseCSV(t); if(!rows.length) return;
+          var skip={entity:1, code:1, year:1, day:1, date:1};
+          var keys=Object.keys(rows[0]).filter(function(k){ return !skip[k]; });
+          var d=[];
+          rows.forEach(function(r){
+            if(r.entity && r.entity!=="World") return;
+            var x=null;
+            if(r.day && r.day.length>=7) x=(+r.day.slice(0,4))+((+r.day.slice(5,7))-0.5)/12;
+            else if(r.year) x=+r.year;
+            if(x==null || isNaN(x)) return;
+            for(var i=0;i<keys.length;i++){
+              var v=parseFloat(r[keys[i]]);
+              if(!isNaN(v) && v>250 && v<800){ d.push({year:x, v:v}); break; }
+            }
+          });
+          applyCo2Ppm(d);
+        }).catch(function(){});
+    }
+    function loadCo2Ppm(){
+      return fetchText("https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv")
+        .then(function(t){
+          var d=[];
+          t.split(/\r?\n/).forEach(function(line){
+            if(!line || line.charAt(0)==="#") return;
+            var c=line.split(","); if(c.length<4) return;
+            var y=parseInt(c[0],10), m=parseInt(c[1],10), dec=parseFloat(c[2]), v=parseFloat(c[3]);
+            if(!(y>=1950 && y<=2100) || !(m>=1 && m<=12) || !(v>250 && v<800)) return;
+            d.push({ year:(isNaN(dec)?y+(m-0.5)/12:dec), v:v });
+          });
+          if(!applyCo2Ppm(d)) throw new Error("noaa co2: too few rows");
+        })
+        .catch(function(){ return loadCo2PpmOwid(); });
     }
 
     /* ---------- คลื่นความร้อน + PM2.5 (Open-Meteo — ยิงตรง CORS ได้ ไม่ต้องมีคีย์) ---------- */
@@ -20976,7 +21156,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setupRenewGlobe();
       setupAseanDigitalGlobe();
       afterPaint(function(){
-        renderTemp(); renderDis();
+        renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex();
         renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass();
         renderHeatField(); renderHotDays(); renderPmField(); renderPm25();
         setSinkingKpis(); setIceKpis(); setHeatKpis(); setPmKpis();
@@ -20992,6 +21172,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       loadFinance();
       loadUsDebt();
       loadTemp();
+      loadCo2Ppm();
       loadSeaLevel();
       loadArctic();
       loadHeat();
