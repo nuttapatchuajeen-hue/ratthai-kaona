@@ -280,6 +280,29 @@
   .bkkm-legend{margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:5px}
   .bkkm-legbar{width:min(360px,86%);height:12px;border-radius:7px;border:1px solid var(--rule)}
   .bkkm-legsc{display:flex;justify-content:space-between;width:min(360px,86%);font-family:"Archivo",sans-serif;font-size:12px;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  /* แผนที่ระดับความสูงจากระดับน้ำทะเล + จำลองน้ำทะเลท่วม (ข้อ 7) */
+  #bkkElevMap,#bkkSeaMap{min-height:60px}
+  #bkkElevMap svg,#bkkSeaMap svg{max-width:660px;width:100%;height:auto;display:block;margin:0 auto}
+  .elev-dist{cursor:default;transition:fill .3s ease;stroke:rgba(24,34,45,.45);stroke-width:.5}
+  .elev-dist:hover{stroke:var(--ink)!important;stroke-width:2px!important}
+  .elev-leg{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .elev-leg-bands{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px}
+  .elev-leg-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2)}
+  .elev-leg-sw{width:15px;height:15px;border-radius:4px;border:1px solid var(--rule);flex:none}
+  .elev-note{margin-top:10px;font-size:12.5px;color:var(--ink-soft);text-align:center;line-height:1.6}
+  .elev-note b{color:var(--ink)}
+  .sea-ctl{max-width:620px;margin:0 auto 16px}
+  .sea-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:11px}
+  .sea-preset{border:1px solid var(--rule);background:var(--paper);border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-2);transition:background .18s,color .18s,border-color .18s}
+  .sea-preset:hover{border-color:var(--green);color:var(--green)}
+  .sea-preset.on{background:var(--green);border-color:transparent;color:var(--paper)}
+  .sea-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin-top:14px}
+  .sea-stat{text-align:center;min-width:96px}
+  .sea-stat .sv{display:block;font-family:"Archivo",sans-serif;font-size:21px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+  .sea-stat.hot .sv{color:var(--red)}
+  .sea-stat .sl{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .sea-list{margin-top:13px;font-size:12.5px;color:var(--ink-soft);text-align:center;line-height:1.7}
+  .sea-list b{color:var(--ink)}
   .bkkm-side{background:var(--paper-3);border:1px solid var(--rule);border-radius:14px;padding:15px 16px;position:sticky;top:70px}
   .bkkm-side .bs-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;border-bottom:1px dashed var(--rule);padding-bottom:9px;margin-bottom:4px}
   .bkkm-side .bs-name{font-family:"Noto Serif Thai",serif;font-weight:800;font-size:18px;color:var(--ink)}
@@ -5464,6 +5487,27 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <div class="k-num">13.6<span class="u">ล้านคน</span></div>
           <div class="k-sub">บทเรียนน้ำท่วมใหญ่ที่ยังหลอนคนกรุง</div>
         </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-mountain"></use></svg> ระดับความสูงจากระดับน้ำทะเล &amp; พื้นที่เสี่ยงน้ำท่วม 50 เขต</h2><span class="tag">เมตร · เชิงเปรียบเทียบ</span></div>
+        <p class="sub">กรุงเทพฯ เป็นที่ราบลุ่มปากแม่น้ำ พื้นดินส่วนใหญ่สูงจากระดับน้ำทะเลเพียง <b>0.3–1.5 เมตร</b> — <b>ยิ่งพื้นที่ต่ำ (สีน้ำเงินเข้ม) ยิ่งเสี่ยงน้ำท่วมขัง/น้ำทะเลหนุน</b> โซนชายทะเลบางขุนเทียนและที่ราบลุ่มฝั่งตะวันออก (หนองจอก–ลาดกระบัง–คลองสามวา) คือจุดต่ำสุด ส่วนแนวสันดอนกลางเมืองเก่าริมเจ้าพระยาสูงกว่าเล็กน้อย · เลื่อนเมาส์/แตะเพื่อดูค่ารายเขต</p>
+        <div id="bkkElevMap"><div class="state-msg">กำลังวาดแผนที่…</div></div>
+        <div class="elev-leg" id="bkkElevLegend"></div>
+        <div class="elev-note" id="bkkElevNote"></div>
+        <div class="src">โครงเขตจาก ADM3 (dissolve จาก subdistricts.geojson) · ระดับความสูงเป็น<b>ค่าประมาณเชิงเปรียบเทียบรายเขต</b> อ้างอิงลักษณะภูมิประเทศจากแผนที่ความสูงจากระดับน้ำทะเล กทม. (กรมแผนที่ทหาร) — ใช้เปรียบเทียบความเสี่ยงเชิงสัมพัทธ์ ไม่ใช่ค่าระดับสำรวจจริงรายจุด</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-waves"></use></svg> จำลองน้ำทะเลท่วมกรุงเทพฯ — เลื่อนดูว่าน้ำสูงขึ้นเท่าไหร่ เขตไหนจมก่อน</h2><span class="tag">แบบจำลองอย่างง่าย</span></div>
+        <p class="sub">ลาก<b>แถบเลื่อน</b>เพื่อยกระดับน้ำทะเล แล้วดูว่าเขตใดจมก่อน–หลัง · เขตที่พื้นดินต่ำกว่าระดับน้ำจะกลายเป็น<b>สีน้ำเงินเข้ม (จมน้ำ)</b> · ตัวเลขด้านล่างอัปเดตสด — ใช้ประกอบการวางแผนลำดับความสำคัญของแนวป้องกัน คันกั้นน้ำ และระบบสูบ</p>
+        <div class="sea-ctl sat-ctl">
+          <div class="lab"><b><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> ระดับน้ำทะเลที่สูงขึ้น</b><span class="val" id="bkkSeaVal">+0.0 ม.</span></div>
+          <input type="range" id="bkkSeaSlider" min="0" max="2" step="0.1" value="0" aria-label="ระดับน้ำทะเลที่สูงขึ้น (เมตร)">
+          <div class="sea-presets" id="bkkSeaPresets"></div>
+        </div>
+        <div id="bkkSeaMap"><div class="state-msg">กำลังวาดแผนที่…</div></div>
+        <div class="sea-stats" id="bkkSeaStats"></div>
+        <div class="sea-list" id="bkkSeaList"></div>
+        <div class="src"><b>แบบจำลองอย่างง่าย (bathtub model)</b> — เทียบระดับน้ำกับความสูงเฉลี่ยของแต่ละเขตตรงๆ <b>ยังไม่คิดผลของคันกั้นน้ำ ประตูระบายน้ำ สถานีสูบ และการทรุดตัวของแผ่นดิน</b> จึงใช้เพื่อเรียงลำดับความเสี่ยงเชิงเปรียบเทียบ ไม่ใช่การพยากรณ์พื้นที่น้ำท่วมจริง · ฉากทัศน์ระดับน้ำอ้างอิงแนวโน้มจาก IPCC AR6 และ Climate Central</div>
       </div>
       <div class="card full">
         <div class="card-head"><h2><svg class="mdico"><use href="#i-cloud-rain"></use></svg> ฝนตกหนักช่วงไหน — ฤดูน้ำท่วมกรุงเทพฯ</h2><span class="tag">มม./เดือน · ค่าเฉลี่ย</span></div>
@@ -15824,6 +15868,116 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
     /* ================= ข้อ 7 · น้ำท่วม & งบประมาณ กทม. ================= */
     var BKK_BUDGET=[ {k:"สำนักการโยธา",v:9210},{k:"สำนักการระบายน้ำ",v:7081,hl:true},{k:"สำนักการแพทย์",v:6897} ];
+    /* ---- แผนที่ระดับความสูงจากระดับน้ำทะเล + จำลองน้ำทะเลท่วม (ใช้เรขาคณิต BKK_GEO ร่วมกับแผนที่ 50 เขต) ---- */
+    // ค่าประมาณเชิงเปรียบเทียบ (เมตรเหนือระดับน้ำทะเลปานกลาง) — อ้างอิงลักษณะภูมิประเทศจากแผนที่ความสูง กทม. (กรมแผนที่ทหาร) · ต่ำ = เสี่ยงน้ำท่วมมาก
+    var BKK_ELEV={"พระนคร":1.5,"ดุสิต":1.4,"หนองจอก":0.5,"บางรัก":1.4,"บางเขน":1.1,"บางกะปิ":1.0,"ปทุมวัน":1.5,"ป้อมปราบศัตรูพ่าย":1.4,"พระโขนง":0.9,"มีนบุรี":0.7,"ลาดกระบัง":0.6,"ยานนาวา":1.1,"สัมพันธวงศ์":1.4,"พญาไท":1.4,"ธนบุรี":1.2,"บางกอกใหญ่":1.2,"ห้วยขวาง":1.1,"คลองสาน":1.2,"ตลิ่งชัน":0.9,"บางกอกน้อย":1.2,"บางขุนเทียน":0.3,"ภาษีเจริญ":1.0,"หนองแขม":0.8,"ราษฎร์บูรณะ":0.8,"บางพลัด":1.2,"ดินแดง":1.3,"บึงกุ่ม":0.9,"สาทร":1.2,"บางซื่อ":1.3,"จตุจักร":1.2,"บางคอแหลม":1.1,"ประเวศ":0.8,"คลองเตย":1.0,"สวนหลวง":0.9,"จอมทอง":1.1,"ดอนเมือง":1.0,"ราชเทวี":1.4,"ลาดพร้าว":1.1,"วัฒนา":1.2,"บางแค":0.9,"หลักสี่":1.0,"สายไหม":0.9,"คันนายาว":0.9,"สะพานสูง":0.8,"วังทองหลาง":1.1,"คลองสามวา":0.6,"บางนา":0.8,"ทวีวัฒนา":0.8,"ทุ่งครุ":0.6,"บางบอน":0.7};
+    var BKK_ELEV_EXT=null;
+    function bkkElevExt(){ if(BKK_ELEV_EXT) return BKK_ELEV_EXT; var vs=Object.keys(BKK_ELEV).map(function(k){ return BKK_ELEV[k]; }); BKK_ELEV_EXT=[Math.min.apply(null,vs), Math.max.apply(null,vs)]; return BKK_ELEV_EXT; }
+    function bkkElevColor(v){ var e=bkkElevExt(), t=(v-e[0])/((e[1]-e[0])||1); return window.d3.interpolateYlGnBu(0.1+0.82*(1-t)); } // ต่ำ → น้ำเงินเข้ม (เสี่ยงสูง)
+    function bkkElevRisk(v){ return v<=0.5?"เสี่ยงน้ำท่วมสูงมาก":v<=0.8?"เสี่ยงสูง":v<=1.0?"เสี่ยงปานกลาง":v<=1.2?"เสี่ยงค่อนข้างต่ำ":"เสี่ยงต่ำสุด"; }
+    function bkkElevLegend(){
+      var box=$("#bkkElevLegend"); if(!box || !window.d3) return;
+      var bands=[{v:0.4,t:"≤ 0.5 ม. · เสี่ยงสูงมาก"},{v:0.7,t:"0.6–0.8 ม. · เสี่ยงสูง"},{v:0.95,t:"0.9–1.0 ม. · เสี่ยงปานกลาง"},{v:1.15,t:"1.1–1.2 ม. · เสี่ยงต่ำ"},{v:1.5,t:"≥ 1.3 ม. · เสี่ยงต่ำสุด"}];
+      box.innerHTML='<div class="elev-leg-bands">'+bands.map(function(b){ return '<span class="elev-leg-item"><span class="elev-leg-sw" style="background:'+bkkElevColor(b.v)+'"></span>'+b.t+'</span>'; }).join("")+'</div>';
+    }
+    function bkkElevNote(){
+      var box=$("#bkkElevNote"); if(!box) return;
+      var ks=Object.keys(BKK_ELEV), lo=ks[0], hi=ks[0];
+      ks.forEach(function(n){ if(BKK_ELEV[n]<BKK_ELEV[lo]) lo=n; if(BKK_ELEV[n]>BKK_ELEV[hi]) hi=n; });
+      box.innerHTML='พื้นที่ต่ำสุด: <b>เขต'+lo+'</b> (~'+BKK_ELEV[lo].toFixed(1)+' ม. · '+bkkElevRisk(BKK_ELEV[lo])+') · พื้นที่สูงสุด: <b>เขต'+hi+'</b> (~'+BKK_ELEV[hi].toFixed(1)+' ม.)';
+    }
+    function renderBkkElev(){
+      var box=$("#bkkElevMap"); if(!box || paneHidden(box)) return; var d3=window.d3, geo=window.BKK_GEO;
+      if(!d3 || !geo) return;
+      var NS="http://www.w3.org/2000/svg"; box.innerHTML="";
+      var svg=document.createElementNS(NS,"svg"); svg.setAttribute("viewBox","0 0 "+geo.w+" "+geo.h);
+      svg.setAttribute("role","img"); svg.setAttribute("aria-label","แผนที่ระดับความสูงจากระดับน้ำทะเล 50 เขต กรุงเทพมหานคร");
+      Object.keys(BKK_ELEV).forEach(function(n){
+        var g=geo.dist[n]; if(!g) return; var v=BKK_ELEV[n];
+        var p=document.createElementNS(NS,"path"); p.setAttribute("d", g.d); p.setAttribute("class","elev-dist");
+        p.setAttribute("fill", bkkElevColor(v)); p.setAttribute("stroke-linejoin","round");
+        bindProvHover(p, "<b>เขต"+n+"</b>สูงจากระดับน้ำทะเล <span class='v'>~"+v.toFixed(1)+" ม.</span><br>"+bkkElevRisk(v));
+        svg.appendChild(p);
+      });
+      var b=document.createElementNS(NS,"path"); b.setAttribute("d", geo.bounds); b.setAttribute("class","bkkm-bounds"); svg.appendChild(b);
+      box.appendChild(svg);
+      bkkElevLegend(); bkkElevNote();
+    }
+
+    /* ---- จำลองน้ำทะเลท่วม: เลื่อนระดับน้ำ แล้วดูว่าเขตไหนจมก่อน (bathtub model) ---- */
+    var BKK_SEA={ built:false, paths:{}, level:0 };
+    var BKK_SEA_PRESETS=[
+      {v:0,   t:"ปัจจุบัน"},
+      {v:0.5, t:"+0.5 ม. · น้ำทะเลหนุน+พายุ"},
+      {v:1.0, t:"+1.0 ม. · ปลายศตวรรษ (กลาง)"},
+      {v:1.5, t:"+1.5 ม. · ฉากทัศน์รุนแรง"},
+      {v:2.0, t:"+2.0 ม. · ขีดสุด"}
+    ];
+    function bkkSeaFill(elev, level){
+      if(elev>level){ // ยังไม่จม — ยิ่งใกล้ระดับน้ำยิ่งอุ่นขึ้น (เตือน)
+        var margin=Math.min(1,(elev-level)/1.2);
+        return window.d3.interpolateYlGn(0.28+0.5*margin);
+      }
+      var depth=Math.min(1,(level-elev)/1.5); // จมแล้ว — ยิ่งลึกยิ่งน้ำเงินเข้ม
+      return window.d3.interpolateBlues(0.45+0.5*depth);
+    }
+    function bkkSeaApply(){
+      var d3=window.d3, M=window.BKK_METRICS, lv=BKK_SEA.level;
+      if(!d3) return;
+      var sunk=[], pop=0, area=0;
+      Object.keys(BKK_ELEV).forEach(function(n){
+        var e=BKK_ELEV[n], p=BKK_SEA.paths[n];
+        if(p) p.setAttribute("fill", bkkSeaFill(e, lv));
+        if(e<=lv){ sunk.push(n); if(M&&M[n]){ pop+=M[n].pop; area+=M[n].area; } }
+      });
+      sunk.sort(function(a,b){ return BKK_ELEV[a]-BKK_ELEV[b]; });
+      var vEl=$("#bkkSeaVal"); if(vEl) vEl.textContent="+"+lv.toFixed(1)+" ม.";
+      var st=$("#bkkSeaStats");
+      if(st) st.innerHTML=
+        '<div class="sea-stat'+(sunk.length?' hot':'')+'"><span class="sv">'+sunk.length+'</span><span class="sl">เขตที่จมน้ำ (จาก 50)</span></div>'+
+        '<div class="sea-stat'+(pop?' hot':'')+'"><span class="sv">'+(pop/1e6).toFixed(2)+'</span><span class="sl">ล้านคนที่ได้รับผลกระทบ</span></div>'+
+        '<div class="sea-stat"><span class="sv">'+Math.round(area).toLocaleString("en-US")+'</span><span class="sl">ตร.กม. ที่จมน้ำ</span></div>';
+      var ls=$("#bkkSeaList");
+      if(ls){
+        if(!sunk.length) ls.innerHTML='ที่ระดับน้ำปัจจุบัน <b>ยังไม่มีเขตใดจมทั้งเขต</b> — แต่พื้นที่ลุ่มต่ำริมคลองและชายทะเลบางขุนเทียนท่วมขังเป็นประจำอยู่แล้ว';
+        else ls.innerHTML='เขตที่จมก่อน (เรียงจากต่ำสุด): <b>'+sunk.slice(0,12).map(function(n){ return n; }).join(" · ")+'</b>'+(sunk.length>12?' และอีก '+(sunk.length-12)+' เขต':'');
+      }
+      $$("#bkkSeaPresets .sea-preset").forEach(function(b){ b.classList.toggle("on", Math.abs(parseFloat(b.getAttribute("data-v"))-lv)<0.001); });
+    }
+    function renderBkkSea(){
+      var box=$("#bkkSeaMap"); if(!box || paneHidden(box)) return; var d3=window.d3, geo=window.BKK_GEO;
+      if(!d3 || !geo) return;
+      if(!BKK_SEA.built){
+        var NS="http://www.w3.org/2000/svg"; box.innerHTML="";
+        var svg=document.createElementNS(NS,"svg"); svg.setAttribute("viewBox","0 0 "+geo.w+" "+geo.h);
+        svg.setAttribute("role","img"); svg.setAttribute("aria-label","แผนที่จำลองน้ำทะเลท่วม 50 เขต กรุงเทพมหานคร");
+        BKK_SEA.paths={};
+        Object.keys(BKK_ELEV).forEach(function(n){
+          var g=geo.dist[n]; if(!g) return; var e=BKK_ELEV[n];
+          var p=document.createElementNS(NS,"path"); p.setAttribute("d", g.d); p.setAttribute("class","elev-dist");
+          p.setAttribute("stroke-linejoin","round");
+          bindProvHover(p, "<b>เขต"+n+"</b>พื้นดินสูง <span class='v'>~"+e.toFixed(1)+" ม.</span><br>จมเมื่อน้ำทะเลสูงขึ้นเกิน <span class='v'>+"+e.toFixed(1)+" ม.</span>");
+          svg.appendChild(p); BKK_SEA.paths[n]=p;
+        });
+        var b=document.createElementNS(NS,"path"); b.setAttribute("d", geo.bounds); b.setAttribute("class","bkkm-bounds"); svg.appendChild(b);
+        box.appendChild(svg);
+        var pre=$("#bkkSeaPresets");
+        if(pre){
+          pre.innerHTML=BKK_SEA_PRESETS.map(function(o){ return '<button type="button" class="sea-preset" data-v="'+o.v+'">'+o.t+'</button>'; }).join("");
+          $$("#bkkSeaPresets .sea-preset").forEach(function(btn){
+            btn.addEventListener("click", function(){
+              BKK_SEA.level=parseFloat(btn.getAttribute("data-v"));
+              var sl=$("#bkkSeaSlider"); if(sl) sl.value=BKK_SEA.level;
+              bkkSeaApply();
+            });
+          });
+        }
+        var sld=$("#bkkSeaSlider");
+        if(sld) sld.addEventListener("input", function(){ BKK_SEA.level=parseFloat(sld.value)||0; bkkSeaApply(); });
+        BKK_SEA.built=true;
+      }
+      bkkSeaApply();
+    }
     function renderBkkRain(){
       var box=$("#bkkRain"); if(!box || !window.Plot || paneHidden(box)) return;
       var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), blue="#1e6fb8";
@@ -15843,6 +15997,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     }
     function renderBkkFlood(){
       if(!document.getElementById("pane-bkk-flood")) return;
+      renderBkkElev();
+      renderBkkSea();
       renderBkkRain();
       hbarChart("#bkkBudget", BKK_BUDGET, {full:true, h:200, ml:150, mr:70, xlab:"ล้านบาท", nameLabel:"สำนักงาน", fmt:function(v){ return v.toLocaleString("en-US"); }});
     }
@@ -21645,8 +21801,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       /* ---------- สนามความเร็ว: อ่าน Int8 คู่ u,v ต่อช่อง + สุ่มค่าแบบ bilinear ---------- */
       function makeField(meta, buf){
-        var RAW=new Int8Array(buf), NLAT=meta.nlat, NLON=meta.nlon,
+        // ชนิดข้อมูลอ่านจาก meta — ไฟล์ 1° เป็น int8, ไฟล์ละเอียด 0.25° เป็น int16 (ค่าไม่ถูกตัดยอด)
+        // เสียบไฟล์ใหม่ได้เลยโดยไม่ต้องแก้โค้ด ขอแค่ meta ระบุ dtype/scale/noData ให้ถูก
+        var dtype=(meta.dtype||"int8").toLowerCase();
+        var RAW = (dtype==="int16") ? new Int16Array(buf) : new Int8Array(buf);
+        var NLAT=meta.nlat, NLON=meta.nlon,
             SC=meta.scale, ND=meta.noData, LAT0=meta.lat0, LON0=meta.lon0;
+        if(RAW.length !== NLAT*NLON*2){
+          throw new Error("ขนาดไฟล์กระแสน้ำไม่ตรงกับ meta: ได้ "+RAW.length+" ค่า แต่ meta บอก "+(NLAT*NLON*2));
+        }
         function cell(j,i){
           if(j<0 || j>=NLAT) return null;
           i=((i%NLON)+NLON)%NLON;
@@ -21670,6 +21833,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       /* ---------- ลากเส้นกระแสน้ำ ---------- */
       var MPD=111320, DT=52000, STEPS=64;   // เมตร/องศา, วินาทีต่อก้าว (~14.4 ชม.), จำนวนก้าว
+      var MAXSTEP=0.10;                    // ก้าวย่อยยาวสุด (องศา) ตั้งใหม่ตามความละเอียดกริดตอนโหลดข้อมูล
       /* แยกเป็น 3 ส่วน: สุ่มจุดตั้งต้น / ลากทีละเส้น / ตัวห่อ
          traceLines เป็นแบบซิงโครนัส (ใช้ในชุดทดสอบ) ส่วนหน้าเว็บใช้ traceLinesChunked
          ซึ่งแบ่งงานเป็นก้อนคั่นด้วย setTimeout เพื่อไม่ให้เธรดหลักค้างตอนเลื่อนหน้า */
@@ -21678,13 +21842,27 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var cs=Math.max(0.15, Math.cos(lat*Math.PI/180));   // กันหารศูนย์แถบขั้วโลก
         return [lat + c[1]*dt/MPD, lon + c[0]*dt/(MPD*cs), Math.sqrt(c[0]*c[0]+c[1]*c[1])];
       }
-      function ocAdvance(F, lat, lon){                      // RK2 จุดกึ่งกลาง
-        var a=ocStep(F, lat, lon, DT*0.5); if(!a) return null;
-        var b=ocStep(F, a[0], a[1], DT);   if(!b) return null;
-        var nlat=lat+(b[0]-a[0]), nlon=lon+(b[1]-a[1]);
-        if(nlat>88 || nlat<-88) return null;
-        if(nlon>180) nlon-=360; else if(nlon<-180) nlon+=360;
-        return [nlat, nlon, a[2]];
+      /* RK2 จุดกึ่งกลาง + ซอยก้าวย่อยอัตโนมัติเมื่อน้ำแรง
+         ก้าวเวลาคงที่ทำให้ในลำน้ำแคบอย่างกัลฟ์สตรีม (กว้างราว 1 องศา เร็ว 1.5 m/s)
+         ก้าวเดียวยาว ~0.7 องศา กระโดดพ้นลำน้ำออกไปในน้ำนิ่ง เส้นจึงตายกลางทาง
+         วัดแล้วเบี่ยงจากคำตอบละเอียดถึง 114% ของความยาวเส้น คือไปคนละที่เลย
+         จึงจำกัดความยาวก้าวย่อยไม่ให้เกิน MAXSTEP แล้วซอยเป็นหลายก้าว
+         น้ำช้าซึ่งเป็นมหาสมุทรส่วนใหญ่ยังใช้ก้าวเดียวเหมือนเดิม ไม่เสียความเร็ว */
+      function ocAdvance(F, lat, lon){
+        var c0=F.sample(lat, lon); if(!c0) return null;
+        var spd=Math.sqrt(c0[0]*c0[0]+c0[1]*c0[1]);
+        var sub=Math.ceil(spd*DT/MPD/MAXSTEP);
+        if(!(sub>1)) sub=1; else if(sub>8) sub=8;
+        var dt=DT/sub, la=lat, lo=lon, s, a, b, keep=null;
+        for(s=0;s<sub;s++){
+          a=ocStep(F, la, lo, dt*0.5); if(!a) return null;
+          b=ocStep(F, a[0], a[1], dt);  if(!b) return null;
+          if(keep===null) keep=a[2];
+          la=la+(b[0]-a[0]); lo=lo+(b[1]-a[1]);
+          if(la>88 || la<-88) return null;
+          if(lo>180) lo-=360; else if(lo<-180) lo+=360;
+        }
+        return [la, lo, keep];
       }
       function ocTraceOne(F, slat, slon){
         var pts=[[slat, slon, 0]], n, last, nx;
@@ -21773,7 +21951,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         }
         if(img){
           g.drawImage(img, 0, 0, MAPW, MAPH);
-          g.fillStyle="rgba(3,17,34,.58)"; g.fillRect(0,0,MAPW,MAPH);       // หรี่ทั้งใบ (ทะเลจะจบที่ตรงนี้)
+          // คูณสีน้ำเงินแทนการทับสีทึบ — ที่สว่างยังสว่างกว่าที่มืด ร่องรอยบาธีเมทรี
+          // (สันเขาใต้ทะเล ร่องลึก ไหล่ทวีป) จึงไม่ถูกกลบ ตรงกับที่ NASA เรียกว่า
+          // "the dark patterns under the ocean represent the undersea bathymetry"
+          g.globalCompositeOperation="multiply";
+          g.fillStyle="#35688f"; g.fillRect(0,0,MAPW,MAPH);
+          g.globalCompositeOperation="source-over";
+          g.fillStyle="rgba(2,12,26,.20)"; g.fillRect(0,0,MAPW,MAPH);        // หรี่อีกนิดให้เส้นกระแสน้ำเด่น
           if(hasWorld){
             g.save(); landPath(); g.clip();
             g.drawImage(img, 0, 0, MAPW, MAPH);                              // คืนสีทวีปให้สด
@@ -21887,6 +22071,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         Promise.all([loadThreeShared(), metaP, binP, waitWorld(), loadBaseImage()]).then(function(res){
           var THREE=window.THREE, meta=res[1], baseImg=res[4];
           FIELD=makeField(meta, res[2]);
+          // กริดละเอียดขึ้น ซอยก้าวถี่ขึ้น เพื่อให้เส้นเก็บวงน้ำวนที่ข้อมูลใหม่มีได้
+          MAXSTEP=Math.min(0.10, Math.abs(meta.dlat)*0.4);
 
           var narrow=(window.innerWidth||1200)<760;
           var ldMsg=document.querySelector("#ocLoading span");
