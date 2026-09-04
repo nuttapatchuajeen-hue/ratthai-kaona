@@ -70,11 +70,14 @@ def discover():
     return {"lat": latn, "lon": lonn, "time": timn, "range": actual}
 
 
-def build_url(d):
+def build_url(d, lat_from=None, lat_to=None, stride=1):
+    """สร้าง URL — ระบุช่วงละติจูดได้ เพื่อแบ่งโหลดเป็นแถบเวลาไฟล์ใหญ่เกิน"""
     t = "[(last)]" if d["time"] else ""
-    span = "[(%s):1:(%s)][(%s):1:(%s)]" % (
-        d["range"].get(d["lat"], [-89.875, 89.875])[0], d["range"].get(d["lat"], [-89.875, 89.875])[1],
-        d["range"].get(d["lon"], [-179.875, 179.875])[0], d["range"].get(d["lon"], [-179.875, 179.875])[1])
+    la = d["range"].get(d["lat"], [-89.875, 89.875])
+    lo = d["range"].get(d["lon"], [-179.875, 179.875])
+    a = la[0] if lat_from is None else lat_from
+    b = la[1] if lat_to   is None else lat_to
+    span = "[(%s):%d:(%s)][(%s):%d:(%s)]" % (a, stride, b, lo[0], stride, lo[1])
     q = ",".join(v + t + span for v in UVARS)
     return BASE + "/griddap/" + DATASET + ".csv?" + q
 
@@ -205,6 +208,10 @@ def main():
     ap.add_argument("--url", help="ระบุ URL เองแทนให้สคริปต์ถาม ERDDAP (ใช้เมื่อขั้นถามโครงสร้างมีปัญหา)")
     ap.add_argument("--print-url", action="store_true", help="แสดง URL ที่จะยิงแล้วจบ")
     ap.add_argument("--save-csv", help="เก็บ CSV ที่ดึงมาไว้ด้วย จะได้ไม่ต้องโหลดใหม่ถ้าขั้นถัดไปมีปัญหา")
+    ap.add_argument("--bands", type=int, default=1, metavar="N",
+                    help="แบ่งโหลดเป็น N แถบตามละติจูด (ใช้เมื่อโหลดทีเดียวแล้ว timeout — ลอง 6)")
+    ap.add_argument("--stride", type=int, default=1, metavar="K",
+                    help="เอาทุก K ช่อง (K=2 ได้ 0.5 องศา ไฟล์เล็กลง 4 เท่า แต่ยังละเอียดกว่าเดิม 2 เท่า)")
     ap.add_argument("--out-dir", default=HERE, help="โฟลเดอร์ปลายทาง")
     a = ap.parse_args()
 
@@ -222,16 +229,33 @@ def main():
                 print("  ! ถามโครงสร้างไม่สำเร็จ (%s: %s)" % (type(e).__name__, e))
                 print("  → ใช้ค่าปริยายของชุดข้อมูลนี้แทน ถ้าผลออกมาผิดให้ระบุ URL เองด้วย --url")
                 d = FALLBACK
-            url = build_url(d)
+            url = build_url(d, stride=a.stride)
         if a.print_url:
             print(url); return 0
-        print("ดึงข้อมูล (ไฟล์ใหญ่ อาจใช้เวลาหลายนาที)…\n ", url)
         try:
-            text = get(url)
+            if a.bands > 1 and not a.url:
+                la = d["range"].get(d["lat"], [-89.875, 89.875])
+                lo_, hi_ = la[0], la[1]
+                step = (hi_ - lo_) / a.bands
+                parts = []
+                for k in range(a.bands):
+                    f = lo_ + step * k
+                    t2 = hi_ if k == a.bands - 1 else lo_ + step * (k + 1) - 1e-6
+                    u = build_url(d, f, t2, a.stride)
+                    print("  แถบ %d/%d  lat %.3f…%.3f" % (k + 1, a.bands, f, t2))
+                    parts.append(get(u))
+                # ตัดหัวตาราง 2 บรรทัดของแถบที่ 2 เป็นต้นไปออก แล้วต่อกัน
+                text = parts[0]
+                for q in parts[1:]:
+                    text += "\n" + "\n".join(q.splitlines()[2:])
+            else:
+                print("ดึงข้อมูล (ไฟล์ใหญ่ อาจใช้เวลาหลายนาที)…\n ", url)
+                text = get(url)
         except Exception as e:
             print("\n✗ ดึงข้อมูลไม่สำเร็จ: %s: %s" % (type(e).__name__, e))
-            print("  ตรวจว่าเครื่องนี้ต่อเน็ตออกได้ และลองเปิด URL ข้างบนในเบราว์เซอร์ดู")
-            print("  ถ้าโหลดผ่านเบราว์เซอร์ได้ ให้ใช้:  python3 %s --from-csv <ไฟล์ที่โหลด>"
+            print("  ลองแบ่งโหลดเป็นแถบ:  python3 %s --bands 6" % os.path.basename(__file__))
+            print("  หรือลดความละเอียดครึ่งหนึ่ง:  python3 %s --stride 2" % os.path.basename(__file__))
+            print("  หรือเปิด URL ข้างบนในเบราว์เซอร์แล้วใช้:  python3 %s --from-csv <ไฟล์>"
                   % os.path.basename(__file__))
             return 2
         if a.save_csv:
