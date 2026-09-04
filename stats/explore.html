@@ -20969,11 +20969,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             var countEl = document.getElementById('satliveCountTxt');
             var countKpi = document.getElementById('satliveCountKpi');
 
-            fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
-              .then(function(res){
-                if(!res.ok) throw new Error("HTTP error " + res.status);
-                return res.text();
-              })
+            // ยิงตรง CelesTrak ก่อน แล้ว fallback ผ่าน CORS proxy (ชุดเดียวกับที่เว็บใช้ดึงข้อมูลสดอื่น)
+            // — ถ้าเบราว์เซอร์บล็อก CORS จะยังได้ TLE จริง แทนที่จะร่วงไปโหมดจำลองทันที
+            fetchText('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
               .then(function(text){
                 satrecObjects = parseTLE(text);
                 if(satrecObjects.length < 50) throw new Error("TLE data too small");
@@ -21174,6 +21172,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           loadSatellites();
 
+          // วางตัวยานลงบนวงโคจรจริงก่อน (ไม่งั้น activeCraft ยังอยู่ที่จุด (0,0,0) = ใจกลางโลก
+          // ทำให้กล้องโหมด "ส่องตัวยาน" ไปเริ่มอยู่ในลูกโลก → เห็นจอ 3D ดำสนิทตอนเปิดครั้งแรก)
+          updateActiveCraft(0);
           // เริ่มต้นด้วยมุมมองส่องตัวยานอย่างสวยงาม
           setChaseCamTarget();
           if (targetCamPos) camera.position.copy(targetCamPos);
