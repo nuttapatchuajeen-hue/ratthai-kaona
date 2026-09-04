@@ -263,6 +263,13 @@ def main():
             print("  เก็บ CSV ไว้ที่", a.save_csv)
     if not text.strip():
         sys.exit("ได้ข้อมูลเปล่ากลับมา — ตรวจ URL หรือชื่อชุดข้อมูล")
+    head = text.lstrip()[:400].lower()
+    if head.startswith("<") or "<table" in head or "<!doctype" in head:
+        sys.exit("ไฟล์นี้เป็น HTML ไม่ใช่ CSV\n"
+                 "  ในฟอร์ม ERDDAP ช่อง File type ค่าเริ่มต้นคือ .htmlTable ต้องเปลี่ยนเป็น .csv ก่อนกด Submit\n"
+                 "  (หรือแก้ .htmlTable ใน URL เป็น .csv แล้วโหลดใหม่)")
+    if "error" in head and "," not in head.split("\n")[0]:
+        sys.exit("แหล่งข้อมูลตอบกลับมาเป็นข้อความแจ้งข้อผิดพลาด ไม่ใช่ตาราง:\n  " + text.strip()[:300])
 
     pts, tstamp = parse_csv(text)
     print("อ่านได้ %s จุด" % format(len(pts), ","))
