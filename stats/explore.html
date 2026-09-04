@@ -706,6 +706,18 @@
   .enso-pbtn:hover{background:rgba(255,255,255,.16);color:#fff}
   .enso-colorbar{width:100%;height:8px;border-radius:4px;background:linear-gradient(to right, #082046 0%, #0284c7 20%, #38bdf8 35%, #e0f2fe 48%, #fef08a 52%, #f59e0b 68%, #ea580c 82%, #ef4444 100%)}
   .enso-labels{display:flex;justify-content:space-between;font-size:9.5px;color:#94a3b8;margin-top:3px}
+  .enso-mode-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .enso-modebtn{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:7px;cursor:pointer;
+    font-size:11px;font-weight:700;font-family:inherit;color:#94a3b8;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);transition:all .18s ease}
+  .enso-modebtn .sw{width:22px;height:12px;border-radius:7px;flex:none;position:relative;
+    background:rgba(255,255,255,.18);transition:background .18s ease}
+  .enso-modebtn .sw::after{content:"";position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;
+    background:#94a3b8;transition:all .18s ease}
+  .enso-modebtn.on{color:#fff;background:rgba(56,189,248,.16);border-color:rgba(56,189,248,.5)}
+  .enso-modebtn.on .sw{background:rgba(56,189,248,.55)}
+  .enso-modebtn.on .sw::after{left:12px;background:#e0f2fe}
+  .enso-mode-note{font-size:9.5px;line-height:1.35;color:#7c8ba1;flex:1;min-width:120px}
   .enso-foot{margin:7px 0 0;font-size:9.5px;line-height:1.45;color:#7c8ba1}
   .enso-foot b{color:#a9b8cc;font-weight:700}
   .enso-coverage{margin-top:5px;font-size:10px;color:#94a3b8}
@@ -2866,7 +2878,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <h2><svg class="mdico"><use href="#i-globe"></use></svg> แบบจำลอง 3 มิติการกระจายอุณหภูมิผิวน้ำทะเล (ENSO SST Anomaly)</h2>
           <span class="tag">ข้อมูลจริง GISTEMP/ERSSTv5 · WebGL 3D</span>
         </div>
-        <p class="sub">ระบายด้วย<b>ค่าที่วัดได้จริงรายปี</b> ไม่ใช่ภาพจำลอง — ส่วนต่างอุณหภูมิผิวน้ำทะเล (SST Anomaly) จากกริด NASA GISTEMP v4 ซึ่งส่วนพื้นน้ำคือชุด ERSSTv5 ของ NOAA · หมุนลูกโลกสำรวจแปซิฟิก แล้วเลื่อนไทม์ไลน์ไล่ปี 2423–2568 (ค.ศ. 1880–2025) เพื่อดูลิ้นน้ำเย็น–มวลน้ำร้อนสลับกันจริงตามประวัติศาสตร์</p>
+        <p class="sub">ระบายด้วย<b>ค่าที่วัดได้จริงรายปี</b> ไม่ใช่ภาพจำลอง — ส่วนต่างอุณหภูมิผิวน้ำทะเล (SST Anomaly) จากกริด NASA GISTEMP v4 ซึ่งส่วนพื้นน้ำคือชุด ERSSTv5 ของ NOAA · หมุนลูกโลกสำรวจแปซิฟิก แล้วเลื่อนไทม์ไลน์ไล่ปี 2423–2568 (ค.ศ. 1880–2025) เพื่อดูลิ้นน้ำเย็น–มวลน้ำร้อนสลับกันจริงตามประวัติศาสตร์ · ค่าเริ่มต้นเปิดโหมด <b>“หักแนวโน้มโลกร้อนออก”</b> ไว้ เพราะถ้าดูค่าดิบ ปีหลัง ค.ศ. 2000 จะแดงเกือบทั้งมหาสมุทรจนแยกเอลนีโญ–ลานีญาไม่ออก (กดปุ่มในแผงเพื่อสลับดูค่าดิบได้)</p>
         
         <div class="enso-stage" id="ensoStage">
           <div class="sat-loading" id="ensoLoading"><div class="spin"></div><span>กำลังสร้างแบบจำลองลูกโลก 3 มิติ…</span></div>
@@ -2920,6 +2932,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               <div class="enso-coverage" id="ensoCoverage">—</div>
             </div>
 
+            <div class="enso-mode-row">
+              <button type="button" class="enso-modebtn on" id="ensoRelBtn" aria-pressed="true">
+                <span class="sw"></span> หักแนวโน้มโลกร้อนออก
+              </button>
+              <span class="enso-mode-note" id="ensoRelNote">—</span>
+            </div>
+
             <div class="enso-info" id="ensoStatusInfo">
               กำลังอ่านค่าอุณหภูมิผิวน้ำทะเลของปีที่เลือก…
             </div>
@@ -2937,14 +2956,14 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
             <div class="enso-colorbar"></div>
             <div class="enso-labels">
-              <span>−2.5°C (เย็นกว่าค่าปกติ)</span>
-              <span>0°C (เท่าค่าปกติ)</span>
-              <span>+2.5°C (ร้อนกว่าค่าปกติ)</span>
+              <span id="ensoScaleLo">−1.5°C</span>
+              <span>0°C</span>
+              <span id="ensoScaleHi">+1.5°C</span>
             </div>
-            <p class="enso-foot">ค่าปกติ = ค่าเฉลี่ยปี ค.ศ. 1951–1980 · ตัวเลขในกรอบคือค่าเฉลี่ย<b>รายปี</b>ของพื้นที่ Niño 3.4 ที่คำนวณจากกริดนี้ ไม่ใช่ดัชนี ONI ทางการของ NOAA (ONI เป็นค่าเฉลี่ย 3 เดือน) ค่ารายปีจึงเบากว่าค่าพีคเสมอ</p>
+            <p class="enso-foot" id="ensoFoot">—</p>
           </div>
         </div>
-        <div class="src">ที่มาข้อมูลที่ใช้ระบายลูกโลก: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS — GISTEMP v4 ↗</a> (ไฟล์ gistemp1200_GHCNv4_ERSSTv5.nc · กริด 2°×2° รายปี ค.ศ. 1880–2025 เทียบฐาน 1951–1980) ซึ่งส่วนพื้นน้ำคือ <a href="https://www.ncei.noaa.gov/products/extended-reconstructed-sst" target="_blank" rel="noopener">NOAA ERSSTv5 ↗</a> · เป็นไฟล์ชุดเดียวกับแผง “แผนที่โลกร้อนไล่ปี” จึงดาวน์โหลดครั้งเดียวใช้ร่วมกัน · เกณฑ์แบ่งเฟส ±0.5°C และขอบเขตพื้นที่ Niño 3.4 ตาม <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">NOAA CPC ↗</a></div>
+        <div class="src">ที่มาข้อมูลที่ใช้ระบายลูกโลก: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS — GISTEMP v4 ↗</a> (ไฟล์ gistemp1200_GHCNv4_ERSSTv5.nc · กริด 2°×2° รายปี ค.ศ. 1880–2025 เทียบฐาน 1951–1980) ซึ่งส่วนพื้นน้ำคือ <a href="https://www.ncei.noaa.gov/products/extended-reconstructed-sst" target="_blank" rel="noopener">NOAA ERSSTv5 ↗</a> · เป็นไฟล์ชุดเดียวกับแผง “แผนที่โลกร้อนไล่ปี” จึงดาวน์โหลดครั้งเดียวใช้ร่วมกัน · เกณฑ์แบ่งเฟส ±0.5°C และขอบเขตพื้นที่ Niño 3.4 ตาม <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">NOAA CPC ↗</a> · โหมด “หักแนวโน้มโลกร้อนออก” ใช้แนวคิดเดียวกับดัชนี <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/RONI.ascii.txt" target="_blank" rel="noopener">RONI (Relative ONI) ของ NOAA ↗</a> แต่คำนวณเองจากกริดชุดนี้ โดยหักค่าเฉลี่ยผิวน้ำทะเลแถบ 20°S–20°N รายปี (แยกผืนน้ำออกจากพื้นดินด้วยรูปทวีปจากไฟล์ countries-110m ที่หน้านี้ใช้อยู่แล้ว) จึงไม่ใช่ค่า RONI ทางการ</div>
         <div class="sat-hint">
           <svg class="mdico"><use href="#i-lightbulb"></use></svg> <b>ความรู้เพิ่มเติม:</b> 
           ปรากฏการณ์ <b>ENSO (El Niño–Southern Oscillation)</b> เกิดจากปฏิสัมพันธ์ระหว่างบรรยากาศและมหาสมุทรแปซิฟิกเขตร้อน เมื่อลมสินค้า (Trade Winds) อ่อนแรง มวลน้ำอุ่นจะไหลย้อนกลับไปทางฝั่งเปรู ทำให้แถบเอเชียตะวันออกเฉียงใต้รวมถึงไทยเกิดความแห้งแล้งและฝนทิ้งช่วง ขณะที่หากลมสินค้าแรงจัด (ลานีญา) จะพัดมวลน้ำอุ่นมากองแถบอินโดนีเซีย-อ่าวไทย ก่อให้เกิดฝนตกชุกและพายุรุนแรง
@@ -20092,13 +20111,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         {
           id: "2023", year: 2023,
           borderCol: "#ef4444",
-          desc: "<strong>2566–2567 (2023–24) · วิกฤตมหาสมุทรเดือด:</strong> เอลนีโญ (ONI พีค +2.0°C) ที่ผสมกับภาวะโลกร้อน ทำให้อุณหภูมิมหาสมุทรโลกทำลายสถิติสูงสุดใหม่ต่อเนื่องกว่า 400 วัน และเกิดวิกฤตปะการังฟอกขาวครั้งที่ 4 ระดับโลก — สังเกตว่าทั้งผืนน้ำแดงขึ้นทั้งแผ่น ไม่ใช่แค่แปซิฟิก",
+          desc: "<strong>2566–2567 (2023–24) · วิกฤตมหาสมุทรเดือด:</strong> เอลนีโญ (ONI พีค +2.0°C) ที่ผสมกับภาวะโลกร้อน ทำให้อุณหภูมิมหาสมุทรโลกทำลายสถิติสูงสุดใหม่ต่อเนื่องกว่า 400 วัน และเกิดวิกฤตปะการังฟอกขาวครั้งที่ 4 ระดับโลก — <strong>ลองกดปุ่มสลับโหมดดู:</strong> ค่าดิบขึ้น +1.1°C แต่พอหักแนวโน้มออกเหลือแค่ +0.2°C เพราะปีนั้นทะเลเขตร้อนอุ่นขึ้นพร้อมกันทั้งแถบ (และตัวเอลนีโญพีคช่วง พ.ย. 2566–ม.ค. 2567 คาบเกี่ยวสองปีปฏิทิน ค่าเฉลี่ยรายปีจึงเจือจาง)",
           wind: "อ่อนกำลังลงอย่างเห็นได้ชัด 💨"
         },
         {
           id: "2025", year: 2025,
           borderCol: "#94a3b8",
-          desc: "<strong>2568 (2025) · ปีล่าสุดที่ข้อมูลครบ 12 เดือน:</strong> ค่าเฉลี่ยรายปีของ Niño 3.4 อยู่ราวศูนย์ ทั้งที่ช่วงปลายปีเข้าสู่ลานีญาอ่อน — เพราะครึ่งปีแรกกับครึ่งปีหลังหักล้างกัน เป็นตัวอย่างชัดว่าค่า<strong>รายปี</strong>กับค่าพีค<strong>ราย 3 เดือน</strong> (ONI) ต่างกันอย่างไร",
+          desc: "<strong>2568 (2025) · ปีล่าสุดที่ข้อมูลครบ 12 เดือน:</strong> ตัวอย่างที่ชัดที่สุดว่าทำไมต้องหักแนวโน้มโลกร้อนออก — ค่าดิบของ Niño 3.4 อยู่ราว<strong>ศูนย์</strong> ดูเหมือนไม่มีอะไรเกิดขึ้น แต่พอหักค่าเฉลี่ยทะเลเขตร้อน (+0.71°C) ออก กลับเป็น <strong>−0.7°C = ลานีญาชัดเจน</strong> ตรงกับสภาวะจริงของปีนั้น",
           wind: "พัดปานกลางค่อนข้างแรง ➡️➡️"
         },
         {
@@ -20262,6 +20281,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var isPlaying = false;
           var playSpeed = 6;                  // ปีต่อวินาที
           var lastBase = -1, lastShown = -1;
+          /* โหมดหักแนวโน้ม: ตั้งเป็นค่าเริ่มต้น เพราะแผงนี้มีไว้ดู ENSO
+             ถ้าไม่หัก ปีหลัง ค.ศ. 2000 จะแดงทั้งมหาสมุทรจนรูปแบบเอลนีโญ–ลานีญาจมหาย
+             (NOAA ก็หันมาใช้ดัชนี RONI ด้วยเหตุผลเดียวกัน) — กดปุ่มเพื่อดูค่าดิบได้ */
+          var relative = true;
 
           var slider = document.getElementById("ensoTimeSlider");
           if(slider){ slider.min = Y_MIN; slider.max = Y_MAX; slider.value = yearVal; }
@@ -20274,7 +20297,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(base >= Y_MAX){ base = Y_MAX; }
             var next = Math.min(Y_MAX, base + 1);
             if(base !== lastBase){
-              var ta = SST.textureOf(THREE, D, base), tb = SST.textureOf(THREE, D, next);
+              var ta = SST.textureOf(THREE, D, base, relative), tb = SST.textureOf(THREE, D, next, relative);
               if(ta) ensoShader.uniforms.sstA.value = ta;
               ensoShader.uniforms.sstB.value = tb || ta;
               lastBase = base;
@@ -20293,14 +20316,14 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(y === lastShown) return;
             lastShown = y;
 
-            var v = SST.nino34(D, y), cl = SST.classify(v);
+            var v = SST.nino34(D, y, relative), cl = SST.classify(v);
 
             var badge = document.getElementById("ensoMonthBadge");
             if(badge) badge.innerText = "พ.ศ. " + (y + 543) + " (ค.ศ. " + y + ")";
 
             var oni = document.getElementById("ensoOniBadge");
             if(oni){
-              oni.innerText = "Niño 3.4: " + SST.fmt(v) + " · " + cl.name;
+              oni.innerText = "Niño 3.4" + (relative ? " (หักแนวโน้ม)" : "") + ": " + SST.fmt(v) + " · " + cl.name;
               oni.style.color = cl.col;
               oni.style.background = "rgba(148,163,184,.16)";
               oni.style.borderColor = "rgba(148,163,184,.35)";
@@ -20315,6 +20338,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
                 cov.innerHTML = "ปีนี้มีค่าที่วัดได้จริงครอบคลุม <b>" + (c * 100).toFixed(1) +
                   "%</b> ของพื้นโลก" + (c < 0.92 ? " — ส่วนที่เหลือเติมด้วยค่าประมาณจากช่องข้างเคียง" : "");
               }
+            }
+
+            var note = document.getElementById("ensoRelNote");
+            if(note){
+              note.innerHTML = relative
+                ? "หักค่าเฉลี่ยผิวน้ำทะเลเขตร้อน 20°S–20°N ของปีนี้ (<b>" + SST.fmt(SST.tropicalMean(D, y)) + "</b>) ออกแล้ว"
+                : "กำลังแสดงค่าดิบ — แนวโน้มโลกร้อนรวมอยู่ในสีที่เห็นด้วย";
             }
 
             var evIdx = eventIndexOfYear(y);
@@ -20339,6 +20369,30 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             }
           }
 
+          // ป้ายแถบสีกับคำอธิบายท้ายแผงต้องเปลี่ยนตามโหมด ไม่งั้นตัวเลขจะไม่ตรงกับสีที่เห็น
+          function applyMode(){
+            var sc = relative ? SST.SCALE_REL : SST.SCALE;
+            ensoShader.uniforms.uScale.value = sc;
+
+            var lo = document.getElementById("ensoScaleLo"), hi = document.getElementById("ensoScaleHi");
+            if(lo) lo.innerText = "−" + sc.toFixed(1) + "°C";
+            if(hi) hi.innerText = "+" + sc.toFixed(1) + "°C";
+
+            var btn = document.getElementById("ensoRelBtn");
+            if(btn){ btn.classList.toggle("on", relative); btn.setAttribute("aria-pressed", relative ? "true" : "false"); }
+
+            var foot = document.getElementById("ensoFoot");
+            if(foot){
+              foot.innerHTML = relative
+                ? "โหมดนี้หัก<b>ค่าเฉลี่ยผิวน้ำทะเลเขตร้อน 20°S–20°N ของแต่ละปี</b>ออกจากทุกช่องบนแผนที่ เพื่อให้เห็นว่าที่ไหน “ร้อน/เย็นกว่าค่าเฉลี่ยเขตร้อนของปีนั้น” แทนที่จะเห็นแค่ว่าโลกร้อนขึ้นทุกปี — เป็นแนวคิดเดียวกับดัชนี RONI ของ NOAA แต่คำนวณเองจากกริดรายปีชุดนี้ ไม่ใช่ดัชนี RONI ทางการ"
+                : "โหมดค่าดิบ: สีคือส่วนต่างจากค่าเฉลี่ยปี ค.ศ. 1951–1980 ตรง ๆ ซึ่งรวมแนวโน้มโลกร้อนไว้ด้วย ปีหลัง ค.ศ. 2000 จึงออกแดงเกือบทั้งมหาสมุทร · ตัวเลขในกรอบเป็นค่าเฉลี่ย<b>รายปี</b>ของพื้นที่ Niño 3.4 ไม่ใช่ดัชนี ONI ทางการของ NOAA (ONI เป็นค่าเฉลี่ย 3 เดือน) ค่ารายปีจึงเบากว่าค่าพีคเสมอ";
+            }
+
+            lastBase = -1; lastShown = -1;   // บังคับสร้างพื้นผิวกับอ่านค่าใหม่ทั้งหมด
+            applyTextures();
+            updateReadout();
+          }
+
           function setYear(y, fromSlider){
             yearVal = clampYear(y);
             if(!fromSlider && slider) slider.value = yearVal;
@@ -20357,6 +20411,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           if(slider){
             slider.oninput = function(){ setYear(parseFloat(this.value), true); };
+          }
+
+          var relBtn = document.getElementById("ensoRelBtn");
+          if(relBtn){
+            relBtn.onclick = function(){ relative = !relative; applyMode(); };
           }
 
           var playBtn = document.getElementById("ensoPlayBtn");
@@ -20398,6 +20457,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           if(bThai) bThai.onclick = function(){ setCamView(-3.316, 0.10); };   // ~100°E ไทย/อาเซียน
 
           setYear(yearVal, false);
+          applyMode();
 
           var clock = new THREE.Clock();
           loop = function(){

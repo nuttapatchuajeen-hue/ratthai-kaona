@@ -18,11 +18,16 @@ window.EnsoSST = (function () {
   /* ค่าที่ทำให้สีแรงสุด (±) — ส่วนต่างผิวน้ำทะเลรายปีแทบไม่เคยเกินระดับนี้
      ต้องตรงกับป้ายใต้แถบสีในหน้าเว็บ */
   var SCALE = 2.5;
+  /* โหมด "หักแนวโน้มโลกร้อนออก" ค่ากระจายแคบกว่ามาก จึงต้องบีบสเกลตาม
+     ไม่งั้นรูปแบบเอลนีโญ–ลานีญาจะซีดจนดูไม่ออก (ดูค่าจริงในคอมเมนต์ของ tropicalMean) */
+  var SCALE_REL = 1.5;
   /* ช่วงที่เข้ารหัสลงไบต์ (±) — กว้างกว่า SCALE เผื่อขั้วโลกที่ผิดปกติจัด */
   var ENC = 6;
 
   /* พื้นที่ Niño 3.4 ตามนิยามของ NOAA CPC — 5°S–5°N, 170°W–120°W */
   var N34 = { lat0: -5, lat1: 5, lon0: -170, lon1: -120 };
+  /* แถบเขตร้อนที่ใช้เป็นตัวแทน "แนวโน้มโลกร้อนของมหาสมุทร" ในโหมดหักแนวโน้ม */
+  var TROP = { lat0: -20, lat1: 20 };
 
   /* ขอบเสริมซ้าย-ขวาของพื้นผิว (หน่วย: ช่องกริด)
      three.js ที่หน้านี้ใช้ (r97 / WebGL 1) ห่อพื้นผิวแบบ Repeat ไม่ได้ถ้าขนาดไม่ใช่กำลังสอง
@@ -33,13 +38,54 @@ window.EnsoSST = (function () {
   var fieldCache = {};   // ปี -> { val:Float32Array(°C), est:Uint8Array }
   var fieldOrder = [];   // ไล่ทิ้งของเก่าเมื่อแคชบานปลาย (กดไม่ให้กินแรมตอนเล่นไล่ปียาว ๆ)
   var FIELD_MAX = 40;
-  var texCache = {};     // ปี -> THREE.DataTexture
+  var texCache = {};     // "ปี|โหมด" -> THREE.DataTexture
   var texOrder = [];
   var TEX_MAX = 24;
+  var oceanMask = null;  // Uint8Array(cells) — 1 = ผืนน้ำ
+  var tropCache = {};    // ปี -> ค่าเฉลี่ยผิวน้ำทะเลเขตร้อนของปีนั้น (°C)
+  var dataPromise = null;
+
+  /* ---------- หน้ากากผืนน้ำ ----------
+     กริด GISTEMP รวมทั้งพื้นดินและผืนน้ำไว้ด้วยกัน แต่ค่าเฉลี่ย "มหาสมุทร" เขตร้อน
+     ต้องนับเฉพาะผืนน้ำ (พื้นดินร้อนเร็วกว่าทะเลมาก ถ้านับรวมจะหักเกินจริง)
+     จึงวาดรูปทวีปลงผ้าใบขนาดเท่ากริดแล้วอ่านพิกเซล — เร็วกว่าทดสอบจุดในรูปหลายเหลี่ยมทีละช่องมาก
+     ไฟล์ countries-110m.json เป็นไฟล์เดียวกับที่ climate-map.js โหลดไปแล้ว จึงได้จากแคชเบราว์เซอร์ */
+  function buildOceanMask(D, topo) {
+    var N = D.nlon, NL = D.nlat;
+    var cv = document.createElement('canvas');
+    cv.width = N; cv.height = NL;
+    var ctx = cv.getContext('2d');
+    var proj = d3.geoEquirectangular().scale(N / (2 * Math.PI)).translate([N / 2, NL / 2]);
+    var path = d3.geoPath(proj, ctx);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    path(topojson.merge(topo, topo.objects.countries.geometries));
+    ctx.fill();
+    var px = ctx.getImageData(0, 0, N, NL).data;
+    var mask = new Uint8Array(N * NL);
+    for (var la = 0; la < NL; la++) {
+      var crow = NL - 1 - la;                 // แถว 0 ของผ้าใบคือขั้วโลกเหนือ ส่วนของกริดคือขั้วโลกใต้
+      for (var lo = 0; lo < N; lo++) {
+        mask[la * N + lo] = px[(crow * N + lo) * 4 + 3] > 127 ? 0 : 1;
+      }
+    }
+    return mask;
+  }
 
   function load() {
+    if (dataPromise) return dataPromise;
     if (!window.Gistemp) return Promise.reject(new Error('ต้องโหลด climate-map.js ก่อน'));
-    return window.Gistemp.load();
+    dataPromise = Promise.all([
+      window.Gistemp.load(),
+      fetch('climate-data/countries-110m.json').then(function (r) {
+        if (!r.ok) throw new Error('geo ' + r.status);
+        return r.json();
+      })
+    ]).then(function (res) {
+      oceanMask = buildOceanMask(res[0], res[1]);
+      return res[0];
+    });
+    return dataPromise;
   }
 
   function rowOfYear(D, year) {
@@ -98,25 +144,50 @@ window.EnsoSST = (function () {
     return hit;
   }
 
+  /* ---------- ค่าเฉลี่ยผิวน้ำทะเลเขตร้อน 20°S–20°N ของปีนั้น (ถ่วงน้ำหนักด้วย cos ละติจูด) ----------
+     ใช้เป็นตัวแทน "พื้นหลังโลกร้อน" — ไต่จาก +0.16°C (ค.ศ. 1900) เป็น +0.27 (1980) และ +0.71 (2025)
+     พอหักออกแล้วรูปแบบเอลนีโญ–ลานีญาจึงโผล่ออกมาแทนที่จะถูกกลบด้วยสีแดงทั้งแผ่น
+     เป็นแนวคิดเดียวกับดัชนี RONI (Relative ONI) ของ NOAA แต่คำนวณจากกริดรายปีชุดนี้เอง */
+  function tropicalMean(D, year) {
+    if (tropCache[year] !== undefined) return tropCache[year];
+    var f = fieldOf(D, year);
+    if (!f) return null;
+    var m = D.meta, N = D.nlon, sv = 0, sw = 0;
+    for (var la = 0; la < D.nlat; la++) {
+      var lat = m.lat0 + (la + 0.5) * m.dlat;
+      if (lat < TROP.lat0 || lat > TROP.lat1) continue;
+      var w = Math.cos(lat * Math.PI / 180);
+      for (var lo = 0; lo < N; lo++) {
+        var c = la * N + lo;
+        if (oceanMask && !oceanMask[c]) continue;
+        sv += f.val[c] * w; sw += w;
+      }
+    }
+    tropCache[year] = sw > 0 ? sv / sw : 0;
+    return tropCache[year];
+  }
+
   /* ---------- พื้นผิวสำหรับเชดเดอร์ ----------
      แถวที่ 0 ของกริด = ขั้วโลกใต้ ซึ่งตรงกับ v=0 ของพื้นผิวพอดี (flipY = false)
      จึงยัดลงไปได้ตามลำดับเดิมโดยไม่ต้องพลิกแกน
      ส่วนแกนลองจิจูดเสริมขอบข้างละ HALO ช่องจากอีกฟากของโลก แล้วตั้ง wrap เป็น ClampToEdge
      เชดเดอร์จึงอ่านข้ามเส้น 180° ได้ต่อเนื่องโดยไม่ต้องพึ่ง RepeatWrapping */
-  function textureOf(THREE, D, year) {
-    var hit = texCache[year];
+  function textureOf(THREE, D, year, relative) {
+    var key = year + '|' + (relative ? 1 : 0);
+    var hit = texCache[key];
     if (hit) return hit;
 
     var f = fieldOf(D, year);
     if (!f) return null;
 
+    var off0 = relative ? tropicalMean(D, year) : 0;
     var N = D.nlon, NL = D.nlat, W = N + 2 * HALO;
     var buf = new Uint8Array(W * NL * 4);
     for (var la = 0; la < NL; la++) {
       for (var x = 0; x < W; x++) {
         var lo = (x - HALO + N) % N;           // ก๊อบจากอีกฟากเมื่อเลยขอบ
         var c = la * N + lo;
-        var v = f.val[c];
+        var v = f.val[c] - off0;
         if (v < -ENC) v = -ENC; else if (v > ENC) v = ENC;
         var o = (la * W + x) * 4;
         buf[o] = Math.round((v + ENC) / (2 * ENC) * 255);
@@ -134,8 +205,8 @@ window.EnsoSST = (function () {
     tex.generateMipmaps = false;
     tex.needsUpdate = true;
 
-    texCache[year] = tex;
-    texOrder.push(year);
+    texCache[key] = tex;
+    texOrder.push(key);
     while (texOrder.length > TEX_MAX) {
       var old = texOrder.shift();
       if (texCache[old]) { texCache[old].dispose(); delete texCache[old]; }
@@ -146,7 +217,7 @@ window.EnsoSST = (function () {
   /* ---------- ดัชนีพื้นที่ Niño 3.4 ของปีนั้น (ถ่วงน้ำหนักด้วย cos ละติจูด) ----------
      ย้ำ: นี่คือ “ค่าเฉลี่ยรายปี” ที่คำนวณจากกริด ไม่ใช่ค่า ONI ทางการของ NOAA
      ซึ่งเป็นค่าเฉลี่ยเคลื่อนที่ 3 เดือน ค่าที่ได้จึงเบากว่าค่าพีคเสมอ */
-  function nino34(D, year) {
+  function nino34(D, year, relative) {
     var f = fieldOf(D, year);
     if (!f) return null;
     var m = D.meta, N = D.nlon, sv = 0, sw = 0;
@@ -160,7 +231,8 @@ window.EnsoSST = (function () {
         sv += f.val[la * N + lo] * w; sw += w;
       }
     }
-    return sw > 0 ? sv / sw : null;
+    if (sw <= 0) return null;
+    return sv / sw - (relative ? tropicalMean(D, year) : 0);
   }
 
   /* เกณฑ์ ±0.5°C เป็นเกณฑ์เดียวกับที่ NOAA ใช้แบ่งเฟส ENSO */
@@ -185,6 +257,7 @@ window.EnsoSST = (function () {
   return {
     load: load, fieldOf: fieldOf, textureOf: textureOf,
     nino34: nino34, classify: classify, coverageOf: coverageOf, fmt: fmt,
-    SCALE: SCALE, ENC: ENC, HALO: HALO
+    tropicalMean: tropicalMean,
+    SCALE: SCALE, SCALE_REL: SCALE_REL, ENC: ENC, HALO: HALO
   };
 })();
