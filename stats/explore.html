@@ -767,6 +767,23 @@
   .enso-pbtn:hover{background:rgba(255,255,255,.16);color:#fff}
   .enso-colorbar{width:100%;height:8px;border-radius:4px;background:linear-gradient(to right, #082046 0%, #0284c7 20%, #38bdf8 35%, #e0f2fe 48%, #fef08a 52%, #f59e0b 68%, #ea580c 82%, #ef4444 100%)}
   .enso-labels{display:flex;justify-content:space-between;font-size:9.5px;color:#94a3b8;margin-top:3px}
+  .enso-mode-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .enso-modebtn{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:7px;cursor:pointer;
+    font-size:11px;font-weight:700;font-family:inherit;color:#94a3b8;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);transition:all .18s ease}
+  .enso-modebtn .sw{width:22px;height:12px;border-radius:7px;flex:none;position:relative;
+    background:rgba(255,255,255,.18);transition:background .18s ease}
+  .enso-modebtn .sw::after{content:"";position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;
+    background:#94a3b8;transition:all .18s ease}
+  .enso-modebtn.on{color:#fff;background:rgba(56,189,248,.16);border-color:rgba(56,189,248,.5)}
+  .enso-modebtn.on .sw{background:rgba(56,189,248,.55)}
+  .enso-modebtn.on .sw::after{left:12px;background:#e0f2fe}
+  .enso-mode-note{font-size:9.5px;line-height:1.35;color:#7c8ba1;flex:1;min-width:120px}
+  .enso-foot{margin:7px 0 0;font-size:9.5px;line-height:1.45;color:#7c8ba1}
+  .enso-foot b{color:#a9b8cc;font-weight:700}
+  .enso-coverage{margin-top:5px;font-size:10px;color:#94a3b8}
+  .enso-coverage b{color:#cbd5e1}
+  .enso-coverage.thin b{color:#fbbf24}
   .noaa-compare-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:center;margin-top:14px}
   @media(max-width:800px){ .noaa-compare-grid{grid-template-columns:1fr} }
   .noaa-img-box{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:#000;box-shadow:var(--shadow)}
@@ -2937,20 +2954,20 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       <div class="card full">
         <div class="card-head">
           <h2><svg class="mdico"><use href="#i-globe"></use></svg> แบบจำลอง 3 มิติการกระจายอุณหภูมิผิวน้ำทะเล (ENSO SST Anomaly)</h2>
-          <span class="tag">WebGL Shader · Interactive 3D</span>
+          <span class="tag">ข้อมูลจริง GISTEMP/ERSSTv5 · WebGL 3D</span>
         </div>
-        <p class="sub">หมุนลูกโลกสำรวจมหาสมุทรแปซิฟิก — สังเกตการสะสมของมวลน้ำอุ่น (แถบสีส้ม-แดง) และมวลน้ำเย็น (แถบสีฟ้า-น้ำเงิน) พร้อมสลับโหมดและเลื่อนไทม์ไลน์พัฒนาการ 12 เดือน</p>
+        <p class="sub">ระบายด้วย<b>ค่าที่วัดได้จริงรายปี</b> ไม่ใช่ภาพจำลอง — ส่วนต่างอุณหภูมิผิวน้ำทะเล (SST Anomaly) จากกริด NASA GISTEMP v4 ซึ่งส่วนพื้นน้ำคือชุด ERSSTv5 ของ NOAA · หมุนลูกโลกสำรวจแปซิฟิก แล้วเลื่อนไทม์ไลน์ไล่ปี 2423–2568 (ค.ศ. 1880–2025) เพื่อดูลิ้นน้ำเย็น–มวลน้ำร้อนสลับกันจริงตามประวัติศาสตร์ · ค่าเริ่มต้นเปิดโหมด <b>“หักแนวโน้มโลกร้อนออก”</b> ไว้ เพราะถ้าดูค่าดิบ ปีหลัง ค.ศ. 2000 จะแดงเกือบทั้งมหาสมุทรจนแยกเอลนีโญ–ลานีญาไม่ออก (กดปุ่มในแผงเพื่อสลับดูค่าดิบได้)</p>
         
         <div class="enso-stage" id="ensoStage">
           <div class="sat-loading" id="ensoLoading"><div class="spin"></div><span>กำลังสร้างแบบจำลองลูกโลก 3 มิติ…</span></div>
           <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
           <div class="enso-panel">
-            <h3>🌍 NOAA SST Anomaly 3D</h3>
-            <p class="desc">อุณหภูมิผิวน้ำทะเลตรวจวัดจริงจากดาวเทียม NOAA &amp; ไทม์ไลน์ปีประวัติศาสตร์</p>
+            <h3>🌍 SST Anomaly · ข้อมูลจริงรายปี</h3>
+            <p class="desc">ส่วนต่างอุณหภูมิผิวน้ำทะเลจากกริด NASA GISTEMP v4 (พื้นน้ำ = NOAA ERSSTv5) · ระบายเฉพาะผืนน้ำ พื้นดินแสดงเป็นภาพเทา</p>
             
             <div class="enso-hist-label">
               <span>เลือกเหตุการณ์ประวัติศาสตร์จริง:</span>
-              <span class="enso-oni-badge" id="ensoOniBadge">ONI: +2.6°C</span>
+              <span class="enso-oni-badge" id="ensoOniBadge">—</span>
             </div>
 
             <div class="enso-hist-grid" id="ensoHistGrid">
@@ -2971,34 +2988,42 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
                 <span>วิกฤตมหาสมุทรเดือด</span>
               </button>
               <button type="button" class="enso-hbtn la-nina" data-id="2025">
-                <strong>🔵 2025–2026</strong>
-                <span>สภาวะปัจจุบัน (Mild La Niña)</span>
+                <strong>🔵 2568 (2025)</strong>
+                <span>ปีล่าสุดที่ข้อมูลครบปี</span>
               </button>
               <button type="button" class="enso-hbtn neutral" data-id="neutral">
-                <strong>⚪ สภาวะปกติ</strong>
-                <span>Baseline สมดุลธรรมชาติ</span>
+                <strong>⚪ 2556 (2013)</strong>
+                <span>ปีที่ ENSO เป็นกลางจริง</span>
               </button>
             </div>
 
             <div class="enso-timeline">
               <div class="enso-timeline-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11.5px;color:#cbd5e1">
-                <span>วิวัฒนาการรายเดือน:</span>
-                <span class="enso-month-badge" id="ensoMonthBadge">เดือนที่ 11 (พ.ย. - จุดพีคสูงสุด)</span>
+                <span>ไล่ปีจากข้อมูลจริง:</span>
+                <span class="enso-month-badge" id="ensoMonthBadge">—</span>
               </div>
               <div class="enso-slider-row">
-                <button type="button" class="enso-play-btn" id="ensoPlayBtn">⏸ พัก</button>
+                <button type="button" class="enso-play-btn" id="ensoPlayBtn">▶ เล่น</button>
                 <button type="button" class="enso-play-btn" id="ensoSpeedBtn" title="ความเร็วการเล่น">🐢 ช้า</button>
-                <input type="range" id="ensoTimeSlider" min="1" max="12" value="11" step="0.05" aria-label="แถบเวลาเดือน">
+                <input type="range" id="ensoTimeSlider" min="1880" max="2025" value="1997" step="0.02" aria-label="แถบเวลารายปี">
               </div>
+              <div class="enso-coverage" id="ensoCoverage">—</div>
+            </div>
+
+            <div class="enso-mode-row">
+              <button type="button" class="enso-modebtn on" id="ensoRelBtn" aria-pressed="true">
+                <span class="sw"></span> หักแนวโน้มโลกร้อนออก
+              </button>
+              <span class="enso-mode-note" id="ensoRelNote">—</span>
             </div>
 
             <div class="enso-info" id="ensoStatusInfo">
-              <strong>1997–1998 (Super El Niño):</strong> มวลน้ำร้อนจัดแผ่ขยายเต็มแปซิฟิกตะวันออก ส่งผลให้ไทยแล้งจัด ข้าวเสียหาย และเกิดไฟป่าอินโดนีเซียครั้งใหญ่
+              กำลังอ่านค่าอุณหภูมิผิวน้ำทะเลของปีที่เลือก…
             </div>
 
             <div class="enso-wind">
-              <span>กระแสลมสินค้า (Trade Winds):</span>
-              <b id="ensoWindTxt">หยุดนิ่ง / พัดย้อนกลับ 💨</b>
+              <span>ลมสินค้า (ตามกลไก ENSO):</span>
+              <b id="ensoWindTxt">—</b>
             </div>
 
             <div class="enso-presets">
@@ -3009,12 +3034,14 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
             <div class="enso-colorbar"></div>
             <div class="enso-labels">
-              <span>-4°C (เย็นจัด / ลิ้นน้ำเย็น)</span>
-              <span>0°C (ปกติ)</span>
-              <span>+4°C (ร้อนจัด)</span>
+              <span id="ensoScaleLo">−1.5°C</span>
+              <span>0°C</span>
+              <span id="ensoScaleHi">+1.5°C</span>
             </div>
+            <p class="enso-foot" id="ensoFoot">—</p>
           </div>
         </div>
+        <div class="src">ที่มาข้อมูลที่ใช้ระบายลูกโลก: <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISS — GISTEMP v4 ↗</a> (ไฟล์ gistemp1200_GHCNv4_ERSSTv5.nc · กริด 2°×2° รายปี ค.ศ. 1880–2025 เทียบฐาน 1951–1980) ซึ่งส่วนพื้นน้ำคือ <a href="https://www.ncei.noaa.gov/products/extended-reconstructed-sst" target="_blank" rel="noopener">NOAA ERSSTv5 ↗</a> · เป็นไฟล์ชุดเดียวกับแผง “แผนที่โลกร้อนไล่ปี” จึงดาวน์โหลดครั้งเดียวใช้ร่วมกัน · เกณฑ์แบ่งเฟส ±0.5°C และขอบเขตพื้นที่ Niño 3.4 ตาม <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php" target="_blank" rel="noopener">NOAA CPC ↗</a> · โหมด “หักแนวโน้มโลกร้อนออก” ใช้แนวคิดเดียวกับดัชนี <a href="https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/RONI.ascii.txt" target="_blank" rel="noopener">RONI (Relative ONI) ของ NOAA ↗</a> แต่คำนวณเองจากกริดชุดนี้ โดยหักค่าเฉลี่ยผิวน้ำทะเลแถบ 20°S–20°N รายปี (แยกผืนน้ำออกจากพื้นดินด้วยรูปทวีปจากไฟล์ countries-110m ที่หน้านี้ใช้อยู่แล้ว) จึงไม่ใช่ค่า RONI ทางการ</div>
         <div class="sat-hint">
           <svg class="mdico"><use href="#i-lightbulb"></use></svg> <b>ความรู้เพิ่มเติม:</b> 
           ปรากฏการณ์ <b>ENSO (El Niño–Southern Oscillation)</b> เกิดจากปฏิสัมพันธ์ระหว่างบรรยากาศและมหาสมุทรแปซิฟิกเขตร้อน เมื่อลมสินค้า (Trade Winds) อ่อนแรง มวลน้ำอุ่นจะไหลย้อนกลับไปทางฝั่งเปรู ทำให้แถบเอเชียตะวันออกเฉียงใต้รวมถึงไทยเกิดความแห้งแล้งและฝนทิ้งช่วง ขณะที่หากลมสินค้าแรงจัด (ลานีญา) จะพัดมวลน้ำอุ่นมากองแถบอินโดนีเซีย-อ่าวไทย ก่อให้เกิดฝนตกชุกและพายุรุนแรง
@@ -3035,6 +3062,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             <h3 style="margin:0 0 8px;font-size:15px;color:var(--ink)">การตรวจวัดอุณหภูมิผิวน้ำทะเลจริง (Equatorial Cold &amp; Warm Tongue)</h3>
             <p style="font-size:13px;line-height:1.6;color:var(--ink-2);margin:0 0 10px">
               ภาพดาวเทียมของ NOAA แสดงพื้นที่ <b>มหาสมุทรแปซิฟิกแถบศูนย์สูตร (Equatorial Pacific)</b> บริเวณนอกชายฝั่งทวีปอเมริกาใต้ (เปรู, เอกวาดอร์, อเมริกากลาง) สังเกต "ลิ้นน้ำเย็น (Cold Tongue)" สีฟ้า-ขาวที่ทอดยาวเป็นแนวนอนไปทางทิศตะวันตกตามเส้นศูนย์สูตร ซึ่งถูกขนาบด้วยมวลน้ำอุ่นสีส้ม-แดง
+            </p>
+            <p style="font-size:12.5px;line-height:1.5;color:var(--ink-2);margin:0 0 10px">
+              <b>ต่างจากลูกโลกด้านบนตรงไหน:</b> ภาพนี้เป็นภาพถ่ายดาวเทียมความละเอียดสูงของ<b>ช่วงเวลาเดียว</b> ส่วนลูกโลกด้านบนคือกริดวิเคราะห์ย้อนหลัง (GISTEMP v4 / ERSSTv5) ที่หยาบกว่ามาก — ช่องละ 2°×2° และเป็นค่าเฉลี่ย<b>ทั้งปี</b> จึงเห็นเป็นปื้นนุ่ม ๆ ไม่เห็นริ้วกระแสน้ำย่อย แต่แลกมากับการที่ไล่ดูได้ยาวถึง 146 ปี
             </p>
             <p style="font-size:12.5px;line-height:1.5;color:var(--ink-soft);margin:0">
               <b>จุดสังเกตสำคัญ:</b> ลิ้นน้ำเย็นนี้เกิดขึ้นจากการที่ลมสินค้าพัดพามวลน้ำอุ่นไปทางทิศตะวันตก และเหนี่ยวนำให้เกิดน้ำผุดเย็นลึก (Upwelling) อุดมด้วยสารอาหารขึ้นมาจากใต้ทะเลเปรู เมื่อเกิดเอลนีโญ ลิ้นน้ำเย็นนี้จะหายไปและถูกแทนที่ด้วยมวลน้ำร้อนจัด ส่งผลกระทบต่อสภาพอากาศโลกทันที
@@ -8612,6 +8642,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3"></script>
   <!-- เครื่องยนต์แผนที่ส่วนต่างอุณหภูมิ NASA GISTEMP -->
   <script src="climate-map.js"></script>
+  <!-- ป้อนค่าผิวน้ำทะเลจริงจากกริดชุดเดียวกันให้ลูกโลก ENSO (ต้องมาหลัง climate-map.js) -->
+  <script src="enso-sst.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
   <script src="th-map.js"></script>
   <!-- รูปทรง 50 เขต กทม. (dissolve จาก ADM3) + ข้อมูลเปรียบเทียบรายเขต -->
@@ -20355,20 +20387,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       io.observe(stage);
     }
 
-    /* ================= 🌊 แบบจำลอง 3D เอลนีโญ & ลานีญา (ENSO 3D Dynamics) ================= */
+    /* ================= 🌊 ลูกโลก 3 มิติ เอลนีโญ & ลานีญา (ENSO SST Anomaly) =================
+       ระบายลูกโลกด้วย "ค่าที่วัดได้จริง" ไม่ใช่สัญญาณที่ปั้นขึ้นเอง —
+       ใช้กริด NASA GISTEMP v4 ชุดเดียวกับแผง "แผนที่โลกร้อนไล่ปี" (ดาวน์โหลดครั้งเดียวต่อหน้า
+       ผ่าน Gistemp.load()) ซึ่งส่วนที่เป็นพื้นน้ำคือชุด ERSSTv5 ของ NOAA
+       กริดหยาบ 2°×2° จึงให้เชดเดอร์อ่านแบบ bicubic เพื่อไล่สีเนียน โดยไม่เติมลวดลายปลอมลงไป */
     function setupEnso(){
       var stage = document.getElementById("ensoStage");
       if(!stage) return;
       var started = false, ready = false, running = false, visible = false, raf = 0;
-
-      function loadScript(src){
-        return new Promise(function(res,rej){
-          var s=document.createElement("script"); s.src=src; s.onload=res;
-          s.onerror=function(){ rej(new Error("โหลดไม่สำเร็จ: "+src)); };
-          document.head.appendChild(s);
-        });
-      }
-      function loadThree(){ return loadThreeShared(); }
 
       var loop, scene, camera, renderer, controls;
 
@@ -20382,10 +20409,62 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         running = false;
         if(raf){ cancelAnimationFrame(raf); raf = 0; }
       }
+      function fail(msg){
+        var ld = document.getElementById("ensoLoading");
+        if(ld) ld.innerHTML = "<span>" + msg + "</span>";
+      }
+
+      /* เหตุการณ์จริงในประวัติศาสตร์ -> ปีในกริดที่เห็นรูปแบบนั้นชัดที่สุด
+         (ONI ที่อ้างคือค่าพีค 3 เดือนของ NOAA CPC ส่วนตัวเลขในกรอบบนลูกโลกเป็นค่าเฉลี่ยรายปีที่คำนวณสด) */
+      var HIST_EVENTS = [
+        {
+          id: "1997", year: 1997,
+          borderCol: "#ef4444",
+          desc: "<strong>2540–2541 (1997–98) · Super El Niño:</strong> หนึ่งในเอลนีโญรุนแรงที่สุดเท่าที่วัดมา (ONI พีค +2.6°C) มวลน้ำร้อนแผ่เต็มแปซิฟิกตะวันออก ไทยแล้งจัด ฝนทิ้งช่วง ข้าวเสียหายรุนแรง และเกิดไฟป่าอินโดนีเซียครั้งใหญ่",
+          wind: "อ่อนกำลัง / พัดย้อนกลับ (Westerly Bursts) 💨"
+        },
+        {
+          id: "2010", year: 2011,
+          borderCol: "#38bdf8",
+          desc: "<strong>2553–2554 (2010–11) · Super La Niña:</strong> ลานีญากำลังแรงจัด (ONI พีค −1.7°C) ลิ้นน้ำเย็นทอดยาวตามแนวศูนย์สูตร ดันมวลน้ำอุ่นและความชื้นมาสะสมแถบอาเซียนและอ่าวไทย มรสุมชุกผิดปกติ นำไปสู่มหาอุทกภัย 2554 — ภาพที่เห็นคือค่าเฉลี่ยของปี 2011 ซึ่งเป็นปีที่สัญญาณลานีญาเด่นที่สุด",
+          wind: "พัดรุนแรงจัดเป็นประวัติการณ์ ➡️➡️➡️"
+        },
+        {
+          id: "2015", year: 2015,
+          borderCol: "#ef4444",
+          desc: "<strong>2558–2559 (2015–16) · Godzilla El Niño:</strong> ONI พีค +2.6°C เทียบเท่าปี 2540 อุณหภูมิผิวน้ำแปซิฟิกพุ่งทำลายสถิติ เกิดภัยแล้งรุนแรงในลุ่มน้ำเจ้าพระยา เขื่อนหลักเหลือน้ำใช้การต่ำสุดในรอบหลายสิบปี — ปี 2015 เป็นปีที่ค่าเฉลี่ยรายปีของ Niño 3.4 สูงที่สุดในกริดชุดนี้",
+          wind: "อ่อนกำลังมาก / ผันผวน 💨"
+        },
+        {
+          id: "2023", year: 2023,
+          borderCol: "#ef4444",
+          desc: "<strong>2566–2567 (2023–24) · วิกฤตมหาสมุทรเดือด:</strong> เอลนีโญ (ONI พีค +2.0°C) ที่ผสมกับภาวะโลกร้อน ทำให้อุณหภูมิมหาสมุทรโลกทำลายสถิติสูงสุดใหม่ต่อเนื่องกว่า 400 วัน และเกิดวิกฤตปะการังฟอกขาวครั้งที่ 4 ระดับโลก — <strong>ลองกดปุ่มสลับโหมดดู:</strong> ค่าดิบขึ้น +1.1°C แต่พอหักแนวโน้มออกเหลือแค่ +0.2°C เพราะปีนั้นทะเลเขตร้อนอุ่นขึ้นพร้อมกันทั้งแถบ (และตัวเอลนีโญพีคช่วง พ.ย. 2566–ม.ค. 2567 คาบเกี่ยวสองปีปฏิทิน ค่าเฉลี่ยรายปีจึงเจือจาง)",
+          wind: "อ่อนกำลังลงอย่างเห็นได้ชัด 💨"
+        },
+        {
+          id: "2025", year: 2025,
+          borderCol: "#94a3b8",
+          desc: "<strong>2568 (2025) · ปีล่าสุดที่ข้อมูลครบ 12 เดือน:</strong> ตัวอย่างที่ชัดที่สุดว่าทำไมต้องหักแนวโน้มโลกร้อนออก — ค่าดิบของ Niño 3.4 อยู่ราว<strong>ศูนย์</strong> ดูเหมือนไม่มีอะไรเกิดขึ้น แต่พอหักค่าเฉลี่ยทะเลเขตร้อน (+0.71°C) ออก กลับเป็น <strong>−0.7°C = ลานีญาชัดเจน</strong> ตรงกับสภาวะจริงของปีนั้น",
+          wind: "พัดปานกลางค่อนข้างแรง ➡️➡️"
+        },
+        {
+          id: "neutral", year: 2013,
+          borderCol: "#94a3b8",
+          desc: "<strong>2556 (2013) · ปีที่ ENSO เป็นกลางจริง:</strong> ค่าเฉลี่ย Niño 3.4 เกือบเท่าศูนย์พอดี ใช้เป็นภาพอ้างอิงว่า “ไม่มีทั้งเอลนีโญและลานีญา” หน้าตาเป็นอย่างไร — ลิ้นน้ำเย็นตามแนวศูนย์สูตรยังอยู่ตามธรรมชาติจากน้ำผุดเย็นลึก (Upwelling) ที่ชายฝั่งเปรู",
+          wind: "พัดตามฤดูกาลปกติ ➡️"
+        }
+      ];
 
       function init(){
-        loadThree().then(function(){
-          var THREE = window.THREE;
+        if(!window.EnsoSST || !window.Gistemp){
+          fail("โหลดชุดข้อมูลอุณหภูมิผิวน้ำทะเลไม่สำเร็จ");
+          return;
+        }
+        Promise.all([ loadThreeShared(), window.EnsoSST.load() ]).then(function(res){
+          var THREE = window.THREE, SST = window.EnsoSST, D = res[1];
+
+          var Y_MIN = D.years[0], Y_MAX = D.years[D.years.length - 1];
+
           var w = stage.clientWidth || 800, h = stage.clientHeight || 500;
           scene = new THREE.Scene();
           camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1000);
@@ -20405,23 +20484,17 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(renderer && scene && camera) renderer.render(scene, camera);
           });
 
-          var months = [
-            "มกราคม (เริ่มสะสม)", "กุมภาพันธ์ (ก่อตัว)", "มีนาคม (ก่อตัว)", "เมษายน (ขยายตัว)",
-            "พฤษภาคม (ขยายตัว)", "มิถุนายน (ชัดเจนขึ้น)", "กรกฎาคม (รุนแรงขึ้น)", "สิงหาคม (รุนแรง)",
-            "กันยายน (ใกล้พีค)", "ตุลาคม (ใกล้พีค)", "พฤศจิกายน (จุดพีคสูงสุด)", "ธันวาคม (คงตัว/เริ่มคลาย)"
-          ];
-
-          var currentTargetMode = 1.0;
-          var currentModeValue = 1.0;
-          var isPlaying = true;
-          var currentMonth = 11.0;
-
           var ensoShader = {
             uniforms: {
               earthTexture: { value: null },
-              uMode: { value: 1.0 },
-              uIntensity: { value: 1.0 },
-              uTime: { value: 0 }
+              sstA:   { value: null },
+              sstB:   { value: null },
+              uMix:   { value: 0 },
+              uGrid:  { value: new THREE.Vector2(D.nlon, D.nlat) },
+              uTexSize: { value: new THREE.Vector2(D.nlon + 2 * SST.HALO, D.nlat) },
+              uHalo:  { value: SST.HALO },
+              uScale: { value: SST.SCALE },
+              uEnc:   { value: SST.ENC }
             },
             vertexShader: [
               "varying vec2 vUv;",
@@ -20434,35 +20507,47 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             ].join("\n"),
             fragmentShader: [
               "uniform sampler2D earthTexture;",
-              "uniform float uMode;",
-              "uniform float uIntensity;",
-              "uniform float uTime;",
+              "uniform sampler2D sstA;",
+              "uniform sampler2D sstB;",
+              "uniform float uMix;",
+              "uniform vec2 uGrid;",
+              "uniform vec2 uTexSize;",
+              "uniform float uHalo;",
+              "uniform float uScale;",
+              "uniform float uEnc;",
               "varying vec2 vUv;",
               "varying vec3 vNormal;",
-              "vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }",
-              "vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }",
-              "vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }",
-              "float snoise(vec2 v) {",
-              "  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);",
-              "  vec2 i  = floor(v + dot(v, C.yy) );",
-              "  vec2 x0 = v -   i + dot(i, C.xx);",
-              "  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);",
-              "  vec4 x12 = x0.xyxy + C.xxzz;",
-              "  x12.xy -= i1;",
-              "  i = mod289(i);",
-              "  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));",
-              "  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);",
-              "  m = m*m ; m = m*m ;",
-              "  vec3 x = 2.0 * fract(p * C.www) - 1.0;",
-              "  vec3 h = abs(x) - 0.5;",
-              "  vec3 ox = floor(x + 0.5);",
-              "  vec3 a0 = x - ox;",
-              "  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );",
-              "  vec3 g;",
-              "  g.x  = a0.x  * x0.x  + h.x  * x0.y;",
-              "  g.yz = a0.yz * x12.xz + h.yz * x12.yw;",
-              "  return 130.0 * dot(m, g);",
+              // กริดต้นทางหยาบ 2° ถ้าอ่านตรง ๆ จะเห็นเป็นบันไดสี่เหลี่ยม
+              // จึงอ่านแบบ bicubic (B-spline 4 ก๊อก) — เกลี่ยจากค่าจริงล้วน ไม่มีลวดลายที่แต่งขึ้น
+              "vec4 cubicW(float v) {",
+              "  vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;",
+              "  vec4 s = n * n * n;",
+              "  float x = s.x;",
+              "  float y = s.y - 4.0 * s.x;",
+              "  float z = s.z - 4.0 * s.y + 6.0 * s.x;",
+              "  float wgt = 6.0 - x - y - z;",
+              "  return vec4(x, y, z, wgt) * (1.0 / 6.0);",
               "}",
+              "float sampleBicubic(sampler2D tex, vec2 uv) {",
+              // พิกัดคิดในหน่วยช่องกริด แล้วเลื่อนไปตามขอบเสริมที่แปะไว้ ก่อนหารด้วยขนาดพื้นผิวจริง
+              "  vec2 inv = 1.0 / uTexSize;",
+              "  vec2 coord = vec2(uv.x * uGrid.x + uHalo, uv.y * uGrid.y) - 0.5;",
+              "  vec2 f = fract(coord);",
+              "  coord -= f;",
+              "  vec4 cx = cubicW(f.x);",
+              "  vec4 cy = cubicW(f.y);",
+              "  vec4 c = coord.xxyy + vec2(-0.5, 1.5).xyxy;",
+              "  vec4 s = vec4(cx.xz + cx.yw, cy.xz + cy.yw);",
+              "  vec4 off = (c + vec4(cx.yw, cy.yw) / s) * inv.xxyy;",
+              "  float s0 = texture2D(tex, off.xz).r;",
+              "  float s1 = texture2D(tex, off.yz).r;",
+              "  float s2 = texture2D(tex, off.xw).r;",
+              "  float s3 = texture2D(tex, off.yw).r;",
+              "  float mx = s.x / (s.x + s.y);",
+              "  float my = s.z / (s.z + s.w);",
+              "  return mix(mix(s3, s2, mx), mix(s1, s0, mx), my);",
+              "}",
+              // ไล่สีชุดเดียวกับแผนภาพ SST Anomaly ของ NOAA (ฟ้าเย็น -> ขาวปกติ -> แดงร้อน)
               "vec3 getNOAAColor(float val) {",
               "  vec3 cDeepNavy   = vec3(0.03, 0.12, 0.27);",
               "  vec3 cAzure      = vec3(0.01, 0.52, 0.78);",
@@ -20472,7 +20557,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               "  vec3 cAmber      = vec3(0.96, 0.62, 0.04);",
               "  vec3 cOrangeRed  = vec3(0.92, 0.35, 0.05);",
               "  vec3 cCrimson    = vec3(0.94, 0.15, 0.15);",
-              "  if (val < -0.5) return mix(cDeepNavy, cAzure, (val + 1.0) * 2.0);",
+              "  if (val < -0.5) return mix(cDeepNavy, cAzure, clamp((val + 1.0) * 2.0, 0.0, 1.0));",
               "  else if (val < -0.15) return mix(cAzure, cCyan, (val + 0.5) / 0.35);",
               "  else if (val < 0.0) return mix(cCyan, cIceWhite, (val + 0.15) / 0.15);",
               "  else if (val < 0.20) return mix(cIceWhite, cYellow, val / 0.20);",
@@ -20484,37 +20569,12 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               "  vec4 tex = texture2D(earthTexture, vUv);",
               "  float gray = dot(tex.rgb, vec3(0.299, 0.587, 0.114));",
               "  vec3 landColor = vec3(gray * 0.9);",
-              "  float pacX = vUv.x;",
-              "  if (pacX > 0.60) pacX -= 1.0;",
-              "  // จำกัดเฉพาะมหาสมุทรแปซิฟิก ไม่ล้นไปแอตแลนติก/อินเดีย",
-              "  float inPacific = smoothstep(-0.25, -0.14, pacX) * (1.0 - smoothstep(0.27, 0.30, pacX));",
-              "  float inEquator = 1.0 - smoothstep(0.09, 0.20, abs(vUv.y - 0.5));",
-              "  float pacificMask = inPacific * inEquator;",
-              "  float latDist = abs(vUv.y - 0.5);",
-              "  // ปรับระดับสัญญาณไม่ให้ชนเพดานจนเกิดปื้นแดงทึบ แต่ให้มีมิติริ้วคลื่นแทรกตลอดผืนน้ำ",
-              "  float enEastWarm = exp(-pow(latDist / 0.055, 2.0)) * exp(-pow((pacX - 0.16) / 0.16, 2.0)) * 0.65;",
-              "  float enCoastWarm = exp(-pow(latDist / 0.09, 2.0)) * exp(-pow((pacX - 0.26) / 0.06, 2.0)) * 0.35;",
-              "  float enColdFlanks = -exp(-pow((latDist - 0.12) / 0.07, 2.0)) * exp(-pow((pacX - 0.15) / 0.20, 2.0)) * 0.35;",
-              "  float elNinoSignal = (enEastWarm + enCoastWarm + enColdFlanks) * pacificMask;",
-              "  // รูปแบบ La Niña (ลิ้นน้ำเย็นจัดแกนขาว-ฟ้าไอซ์บลู ทอดยาวจากเปรูแบบ NOAA)",
-              "  float lnColdTongue = -exp(-pow(latDist / 0.045, 2.0)) * exp(-pow((pacX - 0.12) / 0.17, 2.0)) * 0.85;",
-              "  float lnWestWarm = exp(-pow(latDist / 0.09, 2.0)) * exp(-pow((pacX + 0.14) / 0.09, 2.0)) * 0.55;",
-              "  float lnFlanks = exp(-pow((latDist - 0.10) / 0.06, 2.0)) * exp(-pow((pacX - 0.10) / 0.18, 2.0)) * 0.30;",
-              "  float laNinaSignal = (lnColdTongue + lnWestWarm + lnFlanks) * pacificMask;",
-              "  // สภาวะปกติ",
-              "  float normalSignal = exp(-pow(latDist / 0.07, 2.0)) * exp(-pow((pacX + 0.12) / 0.08, 2.0)) * 0.25 * pacificMask;",
-              "  float baseSignal = 0.0;",
-              "  if (uMode > 0.0) { baseSignal = mix(normalSignal, elNinoSignal, uMode); }",
-              "  else { baseSignal = mix(normalSignal, laNinaSignal, -uMode); }",
-              "  // Domain Warping สำหรับริ้วคลื่นสมุทรศาสตร์ธรรมชาติ (Ocean Eddies & Rossby waves)",
-              "  vec2 st = vUv * vec2(32.0, 44.0);",
-              "  float t = uTime * 0.015;",
-              "  vec2 q = vec2(snoise(st + vec2(t, 0.0)), snoise(st + vec2(5.2, 1.3) + vec2(0.0, t)));",
-              "  vec2 r = vec2(snoise(st + 3.0 * q + vec2(1.7, 9.2) + vec2(t * 1.1, 0.0)), snoise(st + 3.0 * q + vec2(8.3, 2.8)));",
-              "  float eddyNoise = snoise(st + 3.5 * r) * 0.22 + snoise(vUv * 70.0) * 0.06;",
-              "  // ผสมผสานริ้วคลื่นเข้าไปในมวลน้ำ ทำให้ไม่เกิดปื้นแดงทึบ แต่จะมีริ้วลายส้ม-เหลือง-แดงแทรกอยู่ตลอด",
-              "  float anomaly = clamp((baseSignal + eddyNoise * (0.28 + 0.35 * abs(uMode))) * pacificMask * uIntensity, -1.0, 1.0);",
-              "  vec3 oceanColor = getNOAAColor(anomaly);",
+              // ไล่สีข้ามปีให้ต่อเนื่องแบบเดียวกับภาพเคลื่อนไหวไล่ปีของ NASA/NOAA
+              "  float enc = mix(sampleBicubic(sstA, vUv), sampleBicubic(sstB, vUv), uMix);",
+              "  float anomC = enc * 2.0 * uEnc - uEnc;",
+              "  float val = clamp(anomC / uScale, -1.0, 1.0);",
+              "  vec3 oceanColor = getNOAAColor(val);",
+              // ระบายเฉพาะผืนน้ำ — พื้นดินในกริดเป็นอุณหภูมิอากาศ คนละปริมาณกับผิวน้ำทะเล
               "  float isOcean = smoothstep(0.0, 0.15, tex.b - (tex.r + tex.g) * 0.45);",
               "  vec3 finalColor = mix(landColor, oceanColor, isOcean);",
               "  float rim = 1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0);",
@@ -20539,173 +20599,166 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           });
 
           var globe = new THREE.Mesh(new THREE.SphereGeometry(8, 64, 64), globeMat);
-          globe.rotation.y = -0.15;
-          globe.rotation.x = 0.08;
+          globe.rotation.y = 1.047;   // เปิดมาให้เห็นแปซิฟิกเขตศูนย์สูตรก่อนเลย (ดูสูตรที่ปุ่มมุมกล้อง)
+          globe.rotation.x = 0.05;
           scene.add(globe);
 
-          var months = [
-            "มกราคม (เริ่มสะสม)", "กุมภาพันธ์ (ก่อตัว)", "มีนาคม (ก่อตัว)", "เมษายน (ขยายตัว)",
-            "พฤษภาคม (ขยายตัว)", "มิถุนายน (ชัดเจนขึ้น)", "กรกฎาคม (รุนแรงขึ้น)", "สิงหาคม (รุนแรง)",
-            "กันยายน (ใกล้พีค)", "ตุลาคม (ใกล้พีค)", "พฤศจิกายน (จุดพีคสูงสุด)", "ธันวาคม (คงตัว/เริ่มคลาย)"
-          ];
+          /* ---------- สถานะไทม์ไลน์ ---------- */
+          var yearVal = 1997;                 // ค่าต่อเนื่องจากสไลเดอร์ (ทศนิยม = คั่นกลางระหว่างปี)
+          var isPlaying = false;
+          var playSpeed = 6;                  // ปีต่อวินาที
+          var lastBase = -1, lastShown = -1;
+          /* โหมดหักแนวโน้ม: ตั้งเป็นค่าเริ่มต้น เพราะแผงนี้มีไว้ดู ENSO
+             ถ้าไม่หัก ปีหลัง ค.ศ. 2000 จะแดงทั้งมหาสมุทรจนรูปแบบเอลนีโญ–ลานีญาจมหาย
+             (NOAA ก็หันมาใช้ดัชนี RONI ด้วยเหตุผลเดียวกัน) — กดปุ่มเพื่อดูค่าดิบได้ */
+          var relative = true;
 
-          var HIST_EVENTS = [
-            {
-              id: "1997",
-              year: "1997–1998",
-              title: "Super El Niño ศตวรรษที่ 20",
-              oni: "ONI: +2.6°C (Super)",
-              oniCol: "rgba(239,68,68,.2)",
-              oniTxtCol: "#f87171",
-              borderCol: "#ef4444",
-              modeVal: 1.0,
-              desc: "<strong>1997–1998 (Super El Niño):</strong> หนึ่งในเอลนีโญรุนแรงสุดในประวัติศาสตร์ ลิ้นน้ำร้อนจัดแผ่ขยายเต็มแปซิฟิกตะวันออก ไทยแล้งจัด ฝนทิ้งช่วง ข้าวเสียหายรุนแรง และเกิดไฟป่าอินโดนีเซียครั้งใหญ่",
-              wind: "หยุดนิ่ง / พัดย้อนกลับ (Westerly Bursts) 💨"
-            },
-            {
-              id: "2010",
-              year: "2010–2011",
-              title: "Super La Niña (มหาอุทกภัย 54)",
-              oni: "ONI: -1.7°C (Extreme)",
-              oniCol: "rgba(56,189,248,.2)",
-              oniTxtCol: "#7dd3fc",
-              borderCol: "#38bdf8",
-              modeVal: -1.0,
-              desc: "<strong>2010–2011 (Super La Niña):</strong> ลานีญากำลังแรงจัด ลิ้นน้ำเย็น (Cold Tongue) ทอดยาวผ่านเส้นศูนย์สูตร พัดมวลน้ำอุ่นและความชื้นสะสมในเอเชียตะวันออกเฉียงใต้และอ่าวไทย มรสุมชุกเป็นประวัติการณ์ นำไปสู่อุทกภัยครั้งใหญ่ 2554",
-              wind: "พัดรุนแรงจัดเป็นประวัติการณ์ ➡️➡️➡️"
-            },
-            {
-              id: "2015",
-              year: "2015–2016",
-              title: "Godzilla El Niño",
-              oni: "ONI: +2.6°C (Extreme)",
-              oniCol: "rgba(239,68,68,.2)",
-              oniTxtCol: "#f87171",
-              borderCol: "#ef4444",
-              modeVal: 1.0,
-              desc: "<strong>2015–2016 (Godzilla El Niño):</strong> ปรากฏการณ์ก็อดซิลลาเอลนีโญ อุณหภูมิผิวน้ำแปซิฟิกพุ่งทำลายสถิติ เกิดภัยแล้งรุนแรงในลุ่มน้ำเจ้าพระยา เขื่อนหลักเหลือน้ำใช้การต่ำสุดในรอบหลายสิบปี",
-              wind: "อ่อนกำลังมาก / ผันผวน 💨"
-            },
-            {
-              id: "2023",
-              year: "2023–2024",
-              title: "Global Heat El Niño",
-              oni: "ONI: +2.0°C (Very Strong)",
-              oniCol: "rgba(239,68,68,.2)",
-              oniTxtCol: "#f87171",
-              borderCol: "#ef4444",
-              modeVal: 0.85,
-              desc: "<strong>2023–2024 (วิกฤตมหาสมุทรเดือด):</strong> เอลนีโญรอบล่าสุดที่ผสมกับภาวะโลกร้อน ทำให้อุณหภูมิมหาสมุทรโลกทำลายสถิติสูงสุดใหม่ต่อเนื่องกว่า 400 วัน และเกิดวิกฤตปะการังฟอกขาวครั้งที่ 4 ระดับโลก",
-              wind: "อ่อนกำลังลงอย่างเห็นได้ชัด 💨"
-            },
-            {
-              id: "2025",
-              year: "2025–2026",
-              title: "สภาวะปัจจุบัน (Mild La Niña)",
-              oni: "ONI: -0.6°C (Mild)",
-              oniCol: "rgba(56,189,248,.2)",
-              oniTxtCol: "#7dd3fc",
-              borderCol: "#38bdf8",
-              modeVal: -0.45,
-              desc: "<strong>2025–2026 (ปัจจุบัน):</strong> สภาวะลานีญาแบบอ่อน ลิ้นน้ำเย็นเริ่มปรากฏตามเส้นศูนย์สูตร ปริมาณฝนในไทยและภูมิภาคอาเซียนมีแนวโน้มสูงกว่าค่าเฉลี่ยปกติเล็กน้อย",
-              wind: "พัดปานกลางค่อนข้างแรง ➡️➡️"
-            },
-            {
-              id: "neutral",
-              year: "สภาวะปกติ",
-              title: "Baseline สมดุลธรรมชาติ",
-              oni: "ONI: 0.0°C (Normal)",
-              oniCol: "rgba(148,163,184,.2)",
-              oniTxtCol: "#cbd5e1",
-              borderCol: "#94a3b8",
-              modeVal: 0.0,
-              desc: "<strong>สภาวะปกติ (Neutral Baseline):</strong> ลมสินค้าพัดพามวลน้ำอุ่นไปสะสมแถบแปซิฟิกตะวันตกตามธรรมชาติ เกิดน้ำผุดเย็นลึก (Upwelling) อุดมด้วยสารอาหารตามชายฝั่งเปรูตามฤดูกาลปกติ",
-              wind: "พัดตามฤดูกาลปกติ ➡️"
+          var slider = document.getElementById("ensoTimeSlider");
+          if(slider){ slider.min = Y_MIN; slider.max = Y_MAX; slider.value = yearVal; }
+
+          function clampYear(y){ return y < Y_MIN ? Y_MIN : (y > Y_MAX ? Y_MAX : y); }
+
+          // ยัดพื้นผิวของปีล่าง/ปีบนเข้าเชดเดอร์ (สร้างครั้งเดียวต่อปี — EnsoSST แคชให้)
+          function applyTextures(){
+            var base = Math.floor(yearVal);
+            if(base >= Y_MAX){ base = Y_MAX; }
+            var next = Math.min(Y_MAX, base + 1);
+            if(base !== lastBase){
+              var ta = SST.textureOf(THREE, D, base, relative), tb = SST.textureOf(THREE, D, next, relative);
+              if(ta) ensoShader.uniforms.sstA.value = ta;
+              ensoShader.uniforms.sstB.value = tb || ta;
+              lastBase = base;
             }
-          ];
-
-          var currentEvtIdx = 0;
-          var targetModeVal = HIST_EVENTS[0].modeVal;
-          var currentModeVal = targetModeVal;
-          var isPlaying = true;
-          var currentMonth = 11.0;
-          var playSpeed = 0.25; // ความเร็วเริ่มต้นแบบช้า สบายตา (แก้ปัญหา "ไวเกิน")
-
-          function calculateIntensity(m) {
-            if (HIST_EVENTS[currentEvtIdx].id === "neutral") return 0.25;
-            return 0.20 + 0.80 * Math.sin(((m - 1) / 11) * (Math.PI / 2));
+            ensoShader.uniforms.uMix.value = (base >= Y_MAX) ? 0 : (yearVal - base);
           }
 
-          function updateMonthDisplay() {
-            var idx = Math.min(11, Math.max(0, Math.floor(currentMonth) - 1));
-            var el = document.getElementById('ensoMonthBadge');
-            if(el) el.innerText = "เดือนที่ " + Math.floor(currentMonth) + " (" + months[idx] + ")";
+          function eventIndexOfYear(y){
+            for(var i = 0; i < HIST_EVENTS.length; i++) if(HIST_EVENTS[i].year === y) return i;
+            return -1;
           }
 
-          function setHistoricalEvent(idx) {
-            currentEvtIdx = Math.max(0, Math.min(HIST_EVENTS.length - 1, idx));
-            var ev = HIST_EVENTS[currentEvtIdx];
-            targetModeVal = ev.modeVal;
+          // อัปเดตตัวเลขทุกอย่างในแผงให้ตรงกับปีที่กำลังแสดง
+          function updateReadout(){
+            var y = Math.round(yearVal);
+            if(y === lastShown) return;
+            lastShown = y;
 
-            // อัปเดตปุ่มใน Grid
+            var v = SST.nino34(D, y, relative), cl = SST.classify(v);
+
+            var badge = document.getElementById("ensoMonthBadge");
+            if(badge) badge.innerText = "พ.ศ. " + (y + 543) + " (ค.ศ. " + y + ")";
+
+            var oni = document.getElementById("ensoOniBadge");
+            if(oni){
+              oni.innerText = "Niño 3.4" + (relative ? " (หักแนวโน้ม)" : "") + ": " + SST.fmt(v) + " · " + cl.name;
+              oni.style.color = cl.col;
+              oni.style.background = "rgba(148,163,184,.16)";
+              oni.style.borderColor = "rgba(148,163,184,.35)";
+            }
+
+            var cov = document.getElementById("ensoCoverage");
+            if(cov){
+              var c = SST.coverageOf(D, y);
+              if(c === null || c === undefined) cov.innerText = "";
+              else {
+                cov.classList.toggle("thin", c < 0.92);
+                cov.innerHTML = "ปีนี้มีค่าที่วัดได้จริงครอบคลุม <b>" + (c * 100).toFixed(1) +
+                  "%</b> ของพื้นโลก" + (c < 0.92 ? " — ส่วนที่เหลือเติมด้วยค่าประมาณจากช่องข้างเคียง" : "");
+              }
+            }
+
+            var note = document.getElementById("ensoRelNote");
+            if(note){
+              note.innerHTML = relative
+                ? "หักค่าเฉลี่ยผิวน้ำทะเลเขตร้อน 20°S–20°N ของปีนี้ (<b>" + SST.fmt(SST.tropicalMean(D, y)) + "</b>) ออกแล้ว"
+                : "กำลังแสดงค่าดิบ — แนวโน้มโลกร้อนรวมอยู่ในสีที่เห็นด้วย";
+            }
+
+            var evIdx = eventIndexOfYear(y);
+            var ev = evIdx >= 0 ? HIST_EVENTS[evIdx] : null;
+
             var btns = document.querySelectorAll("#ensoHistGrid .enso-hbtn");
-            btns.forEach(function(b, i){
-              b.classList.toggle("active", i === currentEvtIdx);
-            });
+            for(var i = 0; i < btns.length; i++) btns[i].classList.toggle("active", i === evIdx);
 
-            // อัปเดต Badge ONI
-            var badge = document.getElementById("ensoOniBadge");
-            if(badge){
-              badge.innerText = ev.oni;
-              badge.style.background = ev.oniCol;
-              badge.style.color = ev.oniTxtCol;
-              badge.style.borderColor = ev.borderCol;
-            }
-
-            // อัปเดตกล่องข้อความ
             var statusBox = document.getElementById("ensoStatusInfo");
             if(statusBox){
-              statusBox.style.borderLeftColor = ev.borderCol;
-              statusBox.innerHTML = ev.desc;
+              statusBox.style.borderLeftColor = ev ? ev.borderCol : cl.col;
+              statusBox.innerHTML = ev ? ev.desc
+                : "<strong>พ.ศ. " + (y + 543) + " (ค.ศ. " + y + "):</strong> ค่าเฉลี่ยรายปีของพื้นที่ Niño 3.4 อยู่ที่ " +
+                  SST.fmt(v) + " จัดอยู่ในเฟส<strong>" + cl.name + "</strong> — ลากสไลเดอร์ต่อเพื่อเทียบกับปีข้างเคียง";
             }
 
-            // อัปเดตสถานะลม
             var windBox = document.getElementById("ensoWindTxt");
-            if(windBox) windBox.innerHTML = ev.wind;
+            if(windBox){
+              // ปีที่ไม่ใช่เหตุการณ์เด่น อธิบายตามกลไก ENSO (เอลนีโญ = ลมสินค้าอ่อน, ลานีญา = ลมสินค้าแรง)
+              windBox.innerHTML = ev ? ev.wind
+                : (v >= 0.5 ? "อ่อนกำลังกว่าปกติ 💨" : v <= -0.5 ? "พัดแรงกว่าปกติ ➡️➡️" : "พัดตามฤดูกาลปกติ ➡️");
+            }
           }
 
-          // ผูกเหตุการณ์คลิกปุ่มประวัติศาสตร์
+          // ป้ายแถบสีกับคำอธิบายท้ายแผงต้องเปลี่ยนตามโหมด ไม่งั้นตัวเลขจะไม่ตรงกับสีที่เห็น
+          function applyMode(){
+            var sc = relative ? SST.SCALE_REL : SST.SCALE;
+            ensoShader.uniforms.uScale.value = sc;
+
+            var lo = document.getElementById("ensoScaleLo"), hi = document.getElementById("ensoScaleHi");
+            if(lo) lo.innerText = "−" + sc.toFixed(1) + "°C";
+            if(hi) hi.innerText = "+" + sc.toFixed(1) + "°C";
+
+            var btn = document.getElementById("ensoRelBtn");
+            if(btn){ btn.classList.toggle("on", relative); btn.setAttribute("aria-pressed", relative ? "true" : "false"); }
+
+            var foot = document.getElementById("ensoFoot");
+            if(foot){
+              foot.innerHTML = relative
+                ? "โหมดนี้หัก<b>ค่าเฉลี่ยผิวน้ำทะเลเขตร้อน 20°S–20°N ของแต่ละปี</b>ออกจากทุกช่องบนแผนที่ เพื่อให้เห็นว่าที่ไหน “ร้อน/เย็นกว่าค่าเฉลี่ยเขตร้อนของปีนั้น” แทนที่จะเห็นแค่ว่าโลกร้อนขึ้นทุกปี — เป็นแนวคิดเดียวกับดัชนี RONI ของ NOAA แต่คำนวณเองจากกริดรายปีชุดนี้ ไม่ใช่ดัชนี RONI ทางการ"
+                : "โหมดค่าดิบ: สีคือส่วนต่างจากค่าเฉลี่ยปี ค.ศ. 1951–1980 ตรง ๆ ซึ่งรวมแนวโน้มโลกร้อนไว้ด้วย ปีหลัง ค.ศ. 2000 จึงออกแดงเกือบทั้งมหาสมุทร · ตัวเลขในกรอบเป็นค่าเฉลี่ย<b>รายปี</b>ของพื้นที่ Niño 3.4 ไม่ใช่ดัชนี ONI ทางการของ NOAA (ONI เป็นค่าเฉลี่ย 3 เดือน) ค่ารายปีจึงเบากว่าค่าพีคเสมอ";
+            }
+
+            lastBase = -1; lastShown = -1;   // บังคับสร้างพื้นผิวกับอ่านค่าใหม่ทั้งหมด
+            applyTextures();
+            updateReadout();
+          }
+
+          function setYear(y, fromSlider){
+            yearVal = clampYear(y);
+            if(!fromSlider && slider) slider.value = yearVal;
+            applyTextures();
+            updateReadout();
+          }
+
           var hBtns = document.querySelectorAll("#ensoHistGrid .enso-hbtn");
-          hBtns.forEach(function(btn, i){
-            btn.onclick = function(){
-              setHistoricalEvent(i);
-            };
-          });
-
-          // ผูก Slider เดือน
-          var monthSlider = document.getElementById("ensoTimeSlider");
-          if(monthSlider){
-            monthSlider.oninput = function(){
-              currentMonth = parseFloat(this.value);
-              updateMonthDisplay();
-            };
+          for(var bi = 0; bi < hBtns.length; bi++){
+            (function(i){
+              hBtns[i].onclick = function(){
+                if(HIST_EVENTS[i]) setYear(HIST_EVENTS[i].year, false);
+              };
+            })(bi);
           }
 
-          // ปุ่ม Play/Pause
+          if(slider){
+            slider.oninput = function(){ setYear(parseFloat(this.value), true); };
+          }
+
+          var relBtn = document.getElementById("ensoRelBtn");
+          if(relBtn){
+            relBtn.onclick = function(){ relative = !relative; applyMode(); };
+          }
+
           var playBtn = document.getElementById("ensoPlayBtn");
           if(playBtn){
+            playBtn.innerText = "▶ เล่น";
             playBtn.onclick = function(){
               isPlaying = !isPlaying;
               this.innerText = isPlaying ? "⏸ พัก" : "▶ เล่น";
             };
           }
 
-          // ปุ่มปรับความเร็ว (ช้า / ปกติ / เร็ว)
           var speedBtn = document.getElementById("ensoSpeedBtn");
           var speedModes = [
-            { label: "🐢 ช้า", rate: 0.22 },
-            { label: "🚶 สบายตา", rate: 0.45 },
-            { label: "🐇 ปกติ", rate: 0.85 }
+            { label: "🐢 ช้า", rate: 6 },
+            { label: "🚶 สบายตา", rate: 14 },
+            { label: "🐇 เร็ว", rate: 30 }
           ];
           var speedIdx = 0;
           if(speedBtn){
@@ -20723,28 +20776,29 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var bPeru = document.getElementById("ensoCamPeru"),
               bNoaa = document.getElementById("ensoCamNoaa"),
               bThai = document.getElementById("ensoCamThai");
-          if(bPeru) bPeru.onclick = function(){ setCamView(-0.05, 0.05); };
-          if(bNoaa) bNoaa.onclick = function(){ setCamView(-0.35, 0.08); };
-          if(bThai) bThai.onclick = function(){ setCamView(-Math.PI * 0.95, 0.15); };
+          /* มุมกล้องคิดจากสูตร: SphereGeometry ของ three หันจุดที่ u = 0.25 เข้ากล้องเมื่อ rotation.y = 0
+             และพื้นผิวแบบ equirectangular ใช้ u = (ลองจิจูด + 180) / 360
+             ดังนั้น rotation.y ที่ทำให้ลองจิจูด L หันเข้ากล้อง = (0.25 − u) × 2π */
+          if(bPeru) bPeru.onclick = function(){ setCamView(-0.175, 0.05); };   // ~80°W ชายฝั่งเปรู
+          if(bNoaa) bNoaa.onclick = function(){ setCamView(1.047, 0.05); };    // ~150°W กลางพื้นที่ Niño 3.4
+          if(bThai) bThai.onclick = function(){ setCamView(-3.316, 0.10); };   // ~100°E ไทย/อาเซียน
+
+          setYear(yearVal, false);
+          applyMode();
 
           var clock = new THREE.Clock();
-          function loop(){
-            if(!visible){ running=false; return; }
+          loop = function(){
+            if(!visible){ running = false; return; }
             raf = requestAnimationFrame(loop);
             var delta = clock.getDelta();
-            ensoShader.uniforms.uTime.value = clock.getElapsedTime();
 
-            if (isPlaying) {
-              currentMonth += delta * playSpeed;
-              if (currentMonth > 12) currentMonth = 1;
-              if(monthSlider) monthSlider.value = currentMonth;
-              updateMonthDisplay();
+            if(isPlaying){
+              yearVal += delta * playSpeed;
+              if(yearVal > Y_MAX) yearVal = Y_MIN;
+              if(slider) slider.value = yearVal;
+              applyTextures();
+              updateReadout();
             }
-
-            // Lerp ค่อยๆ เปลี่ยนสถานะมวลน้ำให้เนียนตา
-            currentModeVal += (targetModeVal - currentModeVal) * 0.08;
-            ensoShader.uniforms.uMode.value = currentModeVal;
-            ensoShader.uniforms.uIntensity.value = calculateIntensity(currentMonth);
 
             controls.update();
             renderer.render(scene, camera);
@@ -20765,9 +20819,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           ready = true;
           startLoop();
         }).catch(function(err){
-          console.warn("ENSO Three.js init error:", err);
-          var ld = document.getElementById("ensoLoading");
-          if(ld) ld.innerHTML = "<span>เกิดข้อผิดพลาดในการโหลดแบบจำลอง 3 มิติ</span>";
+          console.warn("ENSO init error:", err);
+          fail("เกิดข้อผิดพลาดในการโหลดแบบจำลอง 3 มิติ");
         });
       }
 
