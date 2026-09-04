@@ -727,7 +727,7 @@
   .oc-slider input{width:96px;accent-color:#2ec8ef}
   .oc-legend{position:absolute;right:16px;bottom:16px;z-index:11;width:168px;background:rgba(4,16,26,.82);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:9px 12px 10px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
   .oc-leg-title{font-size:11.5px;font-weight:600;color:#cbe6f2;margin-bottom:6px}
-  .oc-leg-bar{height:7px;border-radius:4px;background:linear-gradient(90deg,#1a6f9e,#4fb8dd 55%,#eafcff)}
+  .oc-leg-bar{height:7px;border-radius:4px;background:linear-gradient(90deg,#3d9fd6,#8fd4f0 55%,#ffffff)}
   .oc-leg-scale{display:flex;justify-content:space-between;font-size:10.5px;color:#7fa2b5;margin-top:4px}
   @media (max-width:520px){ .oc-legend{display:none} }
   .coral-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#030712;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
@@ -21578,20 +21578,54 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       /* ---------- แผนที่ฐาน: วาดทวีปลงแคนวาสแล้วใช้เป็นเท็กซ์เจอร์ (ไม่ต้องโหลดรูปจากนอก) ---------- */
       var MAPW=2048, MAPH=1024;
-      function paintBase(){
+      /* แผนที่ฐาน: ใช้ภาพ Natural Earth I ที่มีอยู่ในเว็บแล้ว (2048×1024 equirectangular
+         ขนาดตรงกับแคนวาสพอดี วางทับ 1:1 ได้เลย) — ได้ทวีปสีจริง น้ำแข็งขาว ทะเลมีร่องรอยความลึก
+         ทะเลของภาพต้นฉบับสว่างเกินจนเส้นกระแสน้ำจม จึงหรี่เฉพาะทะเลด้วยการทับสีเข้มทั้งใบ
+         แล้ววาดภาพเดิมซ้ำเฉพาะในขอบเขตทวีป (clip) เพื่อคืนสีบกให้สด
+         ถ้าโหลดภาพไม่สำเร็จ ตกไปใช้สีพื้นเรียบแบบเดิม ยังใช้งานได้ */
+      function paintBase(img){
         var cv=document.createElement("canvas"); cv.width=MAPW; cv.height=MAPH;
         var g=cv.getContext("2d");
-        g.fillStyle="#061a2e"; g.fillRect(0,0,MAPW,MAPH);          // ทะเลน้ำเงินเข้ม ให้เส้นกระแสน้ำเด่นแต่ยังแยกออกจากทวีป
-        if(typeof WORLD!=="undefined" && WORLD && window.d3){
-          var proj=d3.geoEquirectangular().translate([MAPW/2,MAPH/2]).scale(MAPW/(2*Math.PI));
-          var path=d3.geoPath(proj, g);
-          WORLD.features.forEach(function(f){
-            g.beginPath(); path(f);
-            g.fillStyle="#2c3f4c"; g.fill();
-            g.lineWidth=1.2; g.strokeStyle="#46647a"; g.stroke();
-          });
+        var hasWorld=(typeof WORLD!=="undefined" && WORLD && window.d3);
+        var proj, path;
+        if(hasWorld){
+          proj=d3.geoEquirectangular().translate([MAPW/2,MAPH/2]).scale(MAPW/(2*Math.PI));
+          path=d3.geoPath(proj, g);
+        }
+        function landPath(){
+          g.beginPath();
+          WORLD.features.forEach(function(f){ path(f); });
+        }
+        if(img){
+          g.drawImage(img, 0, 0, MAPW, MAPH);
+          g.fillStyle="rgba(3,17,34,.58)"; g.fillRect(0,0,MAPW,MAPH);       // หรี่ทั้งใบ (ทะเลจะจบที่ตรงนี้)
+          if(hasWorld){
+            g.save(); landPath(); g.clip();
+            g.drawImage(img, 0, 0, MAPW, MAPH);                              // คืนสีทวีปให้สด
+            g.fillStyle="rgba(5,18,32,.14)"; g.fillRect(0,0,MAPW,MAPH);      // หรี่บกนิดเดียว กันแย่งสายตาเส้นกระแสน้ำ
+            g.restore();
+            g.beginPath(); WORLD.features.forEach(function(f){ path(f); });
+            g.lineWidth=1; g.strokeStyle="rgba(150,196,224,.30)"; g.stroke(); // ขอบชายฝั่งบาง ๆ ให้คมขึ้น
+          }
+        } else {
+          g.fillStyle="#061a2e"; g.fillRect(0,0,MAPW,MAPH);
+          if(hasWorld){
+            WORLD.features.forEach(function(f){
+              g.beginPath(); path(f);
+              g.fillStyle="#2c3f4c"; g.fill();
+              g.lineWidth=1.2; g.strokeStyle="#46647a"; g.stroke();
+            });
+          }
         }
         return cv;
+      }
+      function loadBaseImage(){
+        return new Promise(function(res){
+          var im=new Image();
+          im.onload=function(){ res(im); };
+          im.onerror=function(){ res(null); };      // ไม่มีรูปก็ยังวาดลูกโลกได้ ไม่ต้องล้มทั้งแผง
+          im.src="assets/satellite/ne1-small.png";
+        });
       }
       function waitWorld(){
         return new Promise(function(res){
@@ -21663,7 +21697,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             uTime:{value:0}, uTail:{value:0.55}, uSize:{value:8.5},
             uDpr:{value:Math.min(window.devicePixelRatio||1, 2)},
             uOpacity:{value:0.82},
-            uLow:{value:new THREE.Color(0x1a6f9e)}, uHigh:{value:new THREE.Color(0xeafcff)}
+            uLow:{value:new THREE.Color(0x3d9fd6)}, uHigh:{value:new THREE.Color(0xffffff)}
           },
           vertexShader:VERT, fragmentShader:FRAG,
           transparent:true, blending:THREE.AdditiveBlending,
@@ -21675,8 +21709,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       function init(){
         var metaP=fetch("climate-data/ocean-uv-meta.json").then(function(r){ return r.json(); });
         var binP =fetch("climate-data/ocean-uv.bin").then(function(r){ return r.arrayBuffer(); });
-        Promise.all([loadThreeShared(), metaP, binP, waitWorld()]).then(function(res){
-          var THREE=window.THREE, meta=res[1];
+        Promise.all([loadThreeShared(), metaP, binP, waitWorld(), loadBaseImage()]).then(function(res){
+          var THREE=window.THREE, meta=res[1], baseImg=res[4];
           FIELD=makeField(meta, res[2]);
 
           var narrow=(window.innerWidth||1200)<760;
@@ -21701,7 +21735,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           controls.enablePan=false;
 
           globe=new THREE.Group(); scene.add(globe);
-          var tex=new THREE.CanvasTexture(paintBase());
+          var tex=new THREE.CanvasTexture(paintBase(baseImg));
           globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1, 64, 48),
                                    new THREE.MeshBasicMaterial({ map:tex })));
           // เรืองแสงขอบฟ้าบาง ๆ ให้ขอบโลกไม่ตัดแข็ง
