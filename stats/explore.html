@@ -660,6 +660,30 @@
   .sat-hint b{color:var(--green-deep)}
   html[data-theme="dark"] .sat-hint b{color:var(--green)}
   @media(max-width:720px){ .sat-controls{grid-template-columns:1fr} }
+  /* --- 🗳️ ประชาธิปไตย & การเลือกตั้งไทย (timeline-data.js) --- */
+  .thd-bars{display:flex;align-items:flex-end;gap:8px;overflow-x:auto;padding:18px 8px 8px;background:var(--paper);border:1px solid var(--rule);border-radius:12px}
+  .thd-bar{flex:0 0 auto;width:40px;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .thd-track{height:172px;width:24px;display:flex;align-items:flex-end;background:var(--paper-2);border-radius:6px 6px 0 0;overflow:hidden}
+  .thd-fill{width:100%;border-radius:6px 6px 0 0;min-height:3px}
+  .thd-pct{font:800 10px/1 "Archivo",sans-serif;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .thd-yr{font-size:10px;color:var(--ink-soft);white-space:nowrap}
+  .thd-legend{display:flex;flex-wrap:wrap;gap:7px 14px;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-2)}
+  .thd-legend .lg{display:inline-flex;align-items:center;gap:6px}
+  .thd-legend .sw{width:11px;height:11px;border-radius:3px;flex:none}
+  .thd-tl{display:flex;flex-direction:column;margin-top:4px}
+  .thd-row{display:grid;grid-template-columns:66px 1fr;gap:14px;padding:13px 0;border-top:1px dashed var(--rule)}
+  .thd-row:first-child{border-top:0}
+  .thd-yrbig{font:800 16px/1.1 "Archivo",sans-serif;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+  .thd-yrbig small{display:block;margin-top:2px;font:600 10px/1.3 "Archivo",sans-serif;color:var(--ink-soft)}
+  .thd-body h4{margin:0;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .thd-chip{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;padding:1px 9px;border-radius:20px;white-space:nowrap}
+  .thd-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.03em;padding:1px 7px;border-radius:5px;border:1px solid currentColor}
+  .thd-meta{font-size:11.5px;color:var(--ink-2);margin-top:4px;line-height:1.7}
+  .thd-meta b{color:var(--ink)}
+  .thd-body p{margin:4px 0 0;font-size:12px;color:var(--ink-soft);line-height:1.55}
+  .thd-row.coup{background:linear-gradient(90deg,rgba(229,72,77,.07),transparent);border-radius:8px}
+  .thd-row.coup .thd-yrbig,.thd-row.coup .thd-body h4{color:var(--red,#e5484d)}
+  @media(max-width:520px){ .thd-row{grid-template-columns:52px 1fr;gap:10px} .thd-yrbig{font-size:14px} }
   /* --- 🏔️ ภูมิทัศน์ประชากรไทย 3D (Plotly surface) --- */
   .pop-stage{position:relative;width:100%;height:clamp(400px,52vw,560px);background:#eef2f4;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
   html[data-theme="dark"] .pop-stage{background:#0b1016}
@@ -4588,6 +4612,45 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ============ การเมืองไทย · ประชาธิปไตย & การเลือกตั้ง (timeline-data.js) ============ -->
+    <section class="tabpane" id="pane-th-democracy" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเมืองไทย</span><h2 class="ph-title"><svg class="mdico"><use href="#i-vote"></use></svg> ประชาธิปไตย &amp; การเลือกตั้งไทย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-vote"></use></svg> การเลือกตั้งทั่วไป</div>
+          <div class="k-num"><span id="thdKElections">—</span><span class="u">ครั้ง</span></div>
+          <div class="k-sub">ตั้งแต่ครั้งแรก 15 พ.ย. 2476 ถึงปัจจุบัน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-swords"></use></svg> รัฐประหารสำเร็จ</div>
+          <div class="k-num"><span id="thdKCoups">—</span><span class="u">ครั้ง</span></div>
+          <div class="k-sub">ยึดอำนาจฉีกวงจรเลือกตั้งตลอด 90 กว่าปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-users"></use></svg> ผู้มาใช้สิทธิล่าสุด</div>
+          <div class="k-num"><span id="thdKTurnout">—</span></div>
+          <div class="k-sub" id="thdKTurnoutSub">สัดส่วนผู้ออกมาใช้สิทธิเลือกตั้งครั้งล่าสุด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-landmark"></use></svg> ส.ส. เลือกตั้งล่าสุด</div>
+          <div class="k-num"><span id="thdKSeats">—</span><span class="u">คน</span></div>
+          <div class="k-sub" id="thdKSeatsSub">จำนวน ส.ส. ที่มาจากการเลือกตั้ง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> ผู้มาใช้สิทธิเลือกตั้งทั่วไป (%) ราย พ.ศ.</h2><span class="tag">2476–ปัจจุบัน</span></div>
+        <p class="sub">แต่ละแท่งคือการเลือกตั้งทั่วไปหนึ่งครั้ง · ความสูง = สัดส่วนผู้มาใช้สิทธิ · สีแท่ง = พรรค/กลุ่มที่ได้ที่นั่งมากที่สุดในครั้งนั้น · เลื่อนแนวนอนเพื่อดูครบทุกสมัย</p>
+        <div class="thd-bars" id="thdBars"><div class="state-msg">กำลังโหลดข้อมูลการเลือกตั้ง…</div></div>
+        <div class="thd-legend" id="thdLegend"></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-scroll"></use></svg> เส้นเวลาประชาธิปไตยไทย</h2><span class="tag">เลือกตั้ง × รัฐประหาร</span></div>
+        <p class="sub">ไล่เรียงตามเวลา — การเลือกตั้งทั่วไปสลับกับการรัฐประหารและเหตุการณ์สำคัญ สะท้อน "ประชาธิปไตยที่ถูกขัดจังหวะ" ของไทย · แตะ/ชี้เพื่ออ่านบริบทแต่ละเหตุการณ์</p>
+        <div class="thd-tl" id="thdTimeline"><div class="state-msg">กำลังเรียงเส้นเวลา…</div></div>
+        <div class="src">ที่มา: <b>timeline-data.js</b> ของเว็บนี้ — เรียบเรียงจากวิกิพีเดีย (หน้า “การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป พ.ศ. …”) และผลนับคะแนน <a href="https://www.ect.go.th" target="_blank" rel="noopener">กกต.</a> สำหรับปี 2544 เป็นต้นมา · ดูรายละเอียดรายสมัยเต็มได้ที่ <a href="../election/" target="_blank" rel="noopener">หน้า “ผู้แทนราษฎร” ↗</a></div>
+      </div>
+    </section>
+
     <!-- ============ เศรษฐกิจไทย · การท่องเที่ยว ============ -->
     <section class="tabpane" id="pane-te-tourism" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">เศรษฐกิจไทย</span><h2 class="ph-title"><svg class="mdico"><use href="#i-plane"></use></svg> การท่องเที่ยว</h2></div>
@@ -8499,6 +8562,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <!-- เอนจินซูมแผนที่ใช้ร่วมกับหน้า ส.ส./ประชามติ/กทม. (ไอเดียบินเข้ากรอบจาก elect.in.th) -->
   <script src="../js/mapzoom.js"></script>
   <script src="explore-data.js"></script>
+  <script src="../election/timeline-data.js"></script>
   <script>
   (function(){
     "use strict";
@@ -21864,6 +21928,97 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }, {rootMargin:"200px"}).observe(stage);
     }
 
+    /* ================= 🗳️ ประชาธิปไตย & การเลือกตั้งไทย (จาก timeline-data.js) =================
+       เติมช่องว่าง "การเมืองไทย" ในศูนย์สถิติ — สร้างจากชุดข้อมูลไทม์ไลน์การเลือกตั้ง (window.TL)
+       ที่เว็บมีอยู่แล้ว: แถบผู้มาใช้สิทธิรายสมัย + เส้นเวลาเลือกตั้งสลับรัฐประหาร (DOM/CSS ล้วน) */
+    function setupThaiDemocracy(){
+      var pane = document.getElementById("pane-th-democracy");
+      if(!pane || pane.dataset.done) return;
+      var barsEl = document.getElementById("thdBars"), tlEl = document.getElementById("thdTimeline");
+      var TL = window.TL, PARTY = window.TL_PARTY || {};
+      if(!TL || !Array.isArray(TL) || !TL.length){
+        if(barsEl) barsEl.innerHTML = '<div class="state-msg">โหลดข้อมูลไทม์ไลน์ไม่สำเร็จ</div>';
+        if(tlEl) tlEl.innerHTML = '';
+        return;
+      }
+      pane.dataset.done = "1";
+
+      function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+      function pnum(t){ var m=String(t==null?"":t).replace("~","").match(/[\d.]+/); return m?parseFloat(m[0]):null; }
+      function colorOf(name){ return PARTY[name] || "#94A3AE"; }
+      function beOf(d){ if(d.be) return d.be; if(d.ce) return d.ce+543; var m=String(d.date||"").match(/25\d\d/); return m?parseInt(m[0],10):null; }
+
+      var rows = TL.slice().sort(function(a,b){ return (a.s||0)-(b.s||0); });
+      var elections = rows.filter(function(d){ return d.type !== "event"; });
+      var events    = rows.filter(function(d){ return d.type === "event"; });
+      var coups     = events.filter(function(d){ return /รัฐประหาร/.test(d.title || ""); });
+      var latest = elections[elections.length-1] || null;
+
+      // ---- KPIs ----
+      function setTx(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+      setTx("thdKElections", elections.length);
+      setTx("thdKCoups", coups.length);
+      var lt = latest ? pnum(latest.turnout) : null;
+      setTx("thdKTurnout", lt!=null ? lt.toFixed(2)+"%" : "—");
+      if(latest){ var el=document.getElementById("thdKTurnoutSub"); if(el) el.textContent = "เลือกตั้งทั่วไป พ.ศ. "+beOf(latest); }
+      setTx("thdKSeats", latest && latest.seats!=null ? Number(latest.seats).toLocaleString("en-US") : "—");
+      if(latest){ var e2=document.getElementById("thdKSeatsSub"); if(e2) e2.textContent = "เลือกตั้งทั่วไป พ.ศ. "+beOf(latest)+(latest.extra?(" ("+esc(latest.extra)+")"):""); }
+
+      // ---- แถบผู้มาใช้สิทธิรายสมัย ----
+      if(barsEl){
+        var bars = elections.map(function(e){
+          var t = pnum(e.turnout), h = t!=null ? Math.max(3, Math.min(100, t)) : 0;
+          var col = colorOf(e.win || "ไม่มีพรรคการเมือง");
+          var title = "เลือกตั้ง พ.ศ. "+beOf(e)+(e.win?(" · ชนะ: "+esc(e.win)):"")+(t!=null?(" · ผู้มาใช้สิทธิ "+t+"%"):" · ไม่มีข้อมูลผู้ใช้สิทธิ");
+          return '<div class="thd-bar" title="'+title+'">'+
+                   '<div class="thd-pct">'+(t!=null?t.toFixed(0):"—")+'</div>'+
+                   '<div class="thd-track"><div class="thd-fill" style="height:'+h+'%;background:'+col+'"></div></div>'+
+                   '<div class="thd-yr">'+beOf(e)+'</div>'+
+                 '</div>';
+        }).join("");
+        barsEl.innerHTML = bars || '<div class="state-msg">ไม่มีข้อมูล</div>';
+      }
+
+      // ---- legend: พรรคที่เคยชนะการเลือกตั้ง ----
+      var legEl = document.getElementById("thdLegend");
+      if(legEl){
+        var seen = {}, order = [];
+        elections.forEach(function(e){ var w=e.win||"ยังไม่มีพรรคการเมือง"; if(!seen[w]){ seen[w]=1; order.push(w); } });
+        legEl.innerHTML = order.map(function(w){
+          return '<span class="lg"><span class="sw" style="background:'+colorOf(w==="ยังไม่มีพรรคการเมือง"?"ไม่มีพรรคการเมือง":w)+'"></span>'+esc(w)+'</span>';
+        }).join("");
+      }
+
+      // ---- เส้นเวลา (เลือกตั้ง × รัฐประหาร) ----
+      if(tlEl){
+        var html = rows.map(function(d){
+          var be = beOf(d);
+          if(d.type === "event"){
+            return '<div class="thd-row coup">'+
+                     '<div class="thd-yrbig">'+(be||"")+'<small>'+esc(d.date||"")+'</small></div>'+
+                     '<div class="thd-body"><h4><svg class="mdico"><use href="#i-swords"></use></svg> '+esc(d.title||"เหตุการณ์สำคัญ")+'</h4>'+
+                     (d.desc?'<p>'+esc(d.desc)+'</p>':"")+'</div>'+
+                   '</div>';
+          }
+          var t = pnum(d.turnout);
+          var chip = d.win ? '<span class="thd-chip" style="background:'+colorOf(d.win)+'">'+esc(d.win)+'</span>' : '<span class="thd-chip" style="background:#94A3AE">ยังไม่มีพรรค</span>';
+          var tag = d.tag==="latest" ? '<span class="thd-tag" style="color:#2E9E5B">ล่าสุด</span>'
+                  : d.tag==="void" ? '<span class="thd-tag" style="color:var(--red,#e5484d)">เป็นโมฆะ</span>' : "";
+          var meta = [];
+          if(d.seats!=null) meta.push("<b>"+Number(d.seats).toLocaleString("en-US")+"</b> ส.ส."+(d.extra?(" "+esc(d.extra)):""));
+          if(t!=null) meta.push("ผู้มาใช้สิทธิ <b>"+t+"%</b>");
+          if(d.pm) meta.push("นายกฯ: <b>"+esc(d.pm)+"</b>");
+          return '<div class="thd-row">'+
+                   '<div class="thd-yrbig">'+(be||"")+'<small>'+esc(d.date||"")+'</small></div>'+
+                   '<div class="thd-body"><h4>เลือกตั้งทั่วไป '+chip+tag+'</h4>'+
+                     (meta.length?'<div class="thd-meta">'+meta.join(" · ")+'</div>':"")+
+                     (d.note?'<p>'+esc(d.note)+'</p>':"")+'</div>'+
+                 '</div>';
+        }).join("");
+        tlEl.innerHTML = html;
+      }
+    }
+
     /* ---------- BOOT ---------- */
     function boot(){
       $$(".k-count").forEach(countUp);
@@ -21871,6 +22026,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setupSatellite();
       setupEnso();
       setupSatLive();
+      setupThaiDemocracy();
       setupCoralGlobe();
       setupCurrentGlobe();
       setupPopLandscape();
