@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม · ภัยพิบัติ อาเซียน พลังงาน — สถิติข้อมูลรัฐ</title>
+<link rel="canonical" href="https://nuttapatchuajeen-hue.github.io/ratthai-kaona/stats/explore.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="รัฐไทยก้าวหน้า" />
+<meta property="og:locale" content="th_TH" />
+<meta property="og:title" content="ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม · ภัยพิบัติ อาเซียน พลังงาน — สถิติข้อมูลรัฐ" />
+<meta property="og:description" content="ศูนย์สถิติข้อมูลเปิด: ภูมิอากาศ ภัยพิบัติ อาเซียน การศึกษา การเงิน พลังงาน การเมืองไทย และติดตามดาวเทียมสด 3 มิติ — สร้างจากข้อมูลเปิดด้วย Observable Plot + D3" />
+<meta property="og:url" content="https://nuttapatchuajeen-hue.github.io/ratthai-kaona/stats/explore.html" />
+<meta property="og:image" content="https://nuttapatchuajeen-hue.github.io/ratthai-kaona/hub/images/logo.png" />
+<meta property="og:image:width" content="128" />
+<meta property="og:image:height" content="128" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม — สถิติข้อมูลรัฐ" />
+<meta name="twitter:description" content="ศูนย์สถิติข้อมูลเปิด: ภูมิอากาศ ภัยพิบัติ อาเซียน การศึกษา การเงิน พลังงาน การเมืองไทย และติดตามดาวเทียมสด 3 มิติ" />
+<meta name="twitter:image" content="https://nuttapatchuajeen-hue.github.io/ratthai-kaona/hub/images/logo.png" />
 <meta name="description" content="ศูนย์ข้อมูลภาพรวมโลกและสิ่งแวดล้อม: ภัยพิบัติ–ภูมิอากาศ (อุณหภูมิโลก น้ำท่วม คลื่นความร้อน), อาเซียน และพลังงาน/น้ำมัน — สร้างจากข้อมูลเปิด (Our World in Data, EM-DAT, World Bank, NASA) ด้วย Observable Plot + D3" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -660,6 +674,30 @@
   .sat-hint b{color:var(--green-deep)}
   html[data-theme="dark"] .sat-hint b{color:var(--green)}
   @media(max-width:720px){ .sat-controls{grid-template-columns:1fr} }
+  /* --- 🗳️ ประชาธิปไตย & การเลือกตั้งไทย (timeline-data.js) --- */
+  .thd-bars{display:flex;align-items:flex-end;gap:8px;overflow-x:auto;padding:18px 8px 8px;background:var(--paper);border:1px solid var(--rule);border-radius:12px}
+  .thd-bar{flex:0 0 auto;width:40px;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .thd-track{height:172px;width:24px;display:flex;align-items:flex-end;background:var(--paper-2);border-radius:6px 6px 0 0;overflow:hidden}
+  .thd-fill{width:100%;border-radius:6px 6px 0 0;min-height:3px}
+  .thd-pct{font:800 10px/1 "Archivo",sans-serif;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .thd-yr{font-size:10px;color:var(--ink-soft);white-space:nowrap}
+  .thd-legend{display:flex;flex-wrap:wrap;gap:7px 14px;align-items:center;margin-top:12px;font-size:11.5px;color:var(--ink-2)}
+  .thd-legend .lg{display:inline-flex;align-items:center;gap:6px}
+  .thd-legend .sw{width:11px;height:11px;border-radius:3px;flex:none}
+  .thd-tl{display:flex;flex-direction:column;margin-top:4px}
+  .thd-row{display:grid;grid-template-columns:66px 1fr;gap:14px;padding:13px 0;border-top:1px dashed var(--rule)}
+  .thd-row:first-child{border-top:0}
+  .thd-yrbig{font:800 16px/1.1 "Archivo",sans-serif;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+  .thd-yrbig small{display:block;margin-top:2px;font:600 10px/1.3 "Archivo",sans-serif;color:var(--ink-soft)}
+  .thd-body h4{margin:0;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .thd-chip{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;padding:1px 9px;border-radius:20px;white-space:nowrap}
+  .thd-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.03em;padding:1px 7px;border-radius:5px;border:1px solid currentColor}
+  .thd-meta{font-size:11.5px;color:var(--ink-2);margin-top:4px;line-height:1.7}
+  .thd-meta b{color:var(--ink)}
+  .thd-body p{margin:4px 0 0;font-size:12px;color:var(--ink-soft);line-height:1.55}
+  .thd-row.coup{background:linear-gradient(90deg,rgba(229,72,77,.07),transparent);border-radius:8px}
+  .thd-row.coup .thd-yrbig,.thd-row.coup .thd-body h4{color:var(--red,#e5484d)}
+  @media(max-width:520px){ .thd-row{grid-template-columns:52px 1fr;gap:10px} .thd-yrbig{font-size:14px} }
   /* --- 🏔️ ภูมิทัศน์ประชากรไทย 3D (Plotly surface) --- */
   .pop-stage{position:relative;width:100%;height:clamp(400px,52vw,560px);background:#eef2f4;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
   html[data-theme="dark"] .pop-stage{background:#0b1016}
@@ -3148,7 +3186,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               <span class="satlive-ctrl-label"><svg class="mdico"><use href="#i-satellite"></use></svg> เลือกยาน:</span>
               <div class="satlive-btn-group">
                 <button type="button" class="satlive-btn active" id="btnCraftISS" title="สถานีอวกาศนานาชาติ">👨‍🚀 ISS</button>
-                <button type="button" class="satlive-btn" id="btnCraftTheos" title="ดาวเทียมสำรวจโลกของไทย">🇹🇭 THEOS-2</button>
+                <button type="button" class="satlive-btn" id="btnCraftTheos" title="ดาวเทียมสำรวจโลกของไทย THEOS-2 (ปล่อย 2566)">🇹🇭 THEOS-2</button>
+                <button type="button" class="satlive-btn" id="btnCraftTheos1" title="ดาวเทียมสำรวจโลกดวงแรกของไทย THEOS-1 (ปล่อย 2551)">🇹🇭 THEOS-1</button>
               </div>
             </div>
 
@@ -4614,6 +4653,45 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <p class="sub">Dalio วัดอำนาจชาติจาก 8 ด้าน — สหรัฐฯ ยังนำด้านการเงิน สกุลเงินสำรอง และการทหาร ส่วนจีนนำด้านการค้า ผลผลิต และความสามารถแข่งขัน · ฟ้า = สหรัฐฯ · ส้ม = จีน</p>
         <div class="plot" id="gpoPowerRadar"><div class="state-msg">กำลังวาดกราฟ…</div></div>
         <div class="src">ที่มา: แนวคิด 8 determinants of power ของ Ray Dalio (ค่าเชิงเปรียบเทียบเพื่อการศึกษา)</div>
+      </div>
+    </section>
+
+    <!-- ============ การเมืองไทย · ประชาธิปไตย & การเลือกตั้ง (timeline-data.js) ============ -->
+    <section class="tabpane" id="pane-th-democracy" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเมืองไทย</span><h2 class="ph-title"><svg class="mdico"><use href="#i-vote"></use></svg> ประชาธิปไตย &amp; การเลือกตั้งไทย</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-vote"></use></svg> การเลือกตั้งทั่วไป</div>
+          <div class="k-num"><span id="thdKElections">—</span><span class="u">ครั้ง</span></div>
+          <div class="k-sub">ตั้งแต่ครั้งแรก 15 พ.ย. 2476 ถึงปัจจุบัน</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-swords"></use></svg> รัฐประหารสำเร็จ</div>
+          <div class="k-num"><span id="thdKCoups">—</span><span class="u">ครั้ง</span></div>
+          <div class="k-sub">ยึดอำนาจฉีกวงจรเลือกตั้งตลอด 90 กว่าปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-users"></use></svg> ผู้มาใช้สิทธิล่าสุด</div>
+          <div class="k-num"><span id="thdKTurnout">—</span></div>
+          <div class="k-sub" id="thdKTurnoutSub">สัดส่วนผู้ออกมาใช้สิทธิเลือกตั้งครั้งล่าสุด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-landmark"></use></svg> ส.ส. เลือกตั้งล่าสุด</div>
+          <div class="k-num"><span id="thdKSeats">—</span><span class="u">คน</span></div>
+          <div class="k-sub" id="thdKSeatsSub">จำนวน ส.ส. ที่มาจากการเลือกตั้ง</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> ผู้มาใช้สิทธิเลือกตั้งทั่วไป (%) ราย พ.ศ.</h2><span class="tag">2476–ปัจจุบัน</span></div>
+        <p class="sub">แต่ละแท่งคือการเลือกตั้งทั่วไปหนึ่งครั้ง · ความสูง = สัดส่วนผู้มาใช้สิทธิ · สีแท่ง = พรรค/กลุ่มที่ได้ที่นั่งมากที่สุดในครั้งนั้น · เลื่อนแนวนอนเพื่อดูครบทุกสมัย</p>
+        <div class="thd-bars" id="thdBars"><div class="state-msg">กำลังโหลดข้อมูลการเลือกตั้ง…</div></div>
+        <div class="thd-legend" id="thdLegend"></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-scroll"></use></svg> เส้นเวลาประชาธิปไตยไทย</h2><span class="tag">เลือกตั้ง × รัฐประหาร</span></div>
+        <p class="sub">ไล่เรียงตามเวลา — การเลือกตั้งทั่วไปสลับกับการรัฐประหารและเหตุการณ์สำคัญ สะท้อน "ประชาธิปไตยที่ถูกขัดจังหวะ" ของไทย · แตะ/ชี้เพื่ออ่านบริบทแต่ละเหตุการณ์</p>
+        <div class="thd-tl" id="thdTimeline"><div class="state-msg">กำลังเรียงเส้นเวลา…</div></div>
+        <div class="src">ที่มา: <b>timeline-data.js</b> ของเว็บนี้ — เรียบเรียงจากวิกิพีเดีย (หน้า “การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป พ.ศ. …”) และผลนับคะแนน <a href="https://www.ect.go.th" target="_blank" rel="noopener">กกต.</a> สำหรับปี 2544 เป็นต้นมา · ดูรายละเอียดรายสมัยเต็มได้ที่ <a href="../election/" target="_blank" rel="noopener">หน้า “ผู้แทนราษฎร” ↗</a></div>
       </div>
     </section>
 
@@ -8530,6 +8608,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <!-- เอนจินซูมแผนที่ใช้ร่วมกับหน้า ส.ส./ประชามติ/กทม. (ไอเดียบินเข้ากรอบจาก elect.in.th) -->
   <script src="../js/mapzoom.js"></script>
   <script src="explore-data.js"></script>
+  <script src="../election/timeline-data.js"></script>
   <script>
   (function(){
     "use strict";
@@ -20894,26 +20973,48 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               speedKms: 7.55,
               period: "97.1 นาที/รอบ",
               color: 0x10b981
+            },
+            theos1: {
+              name: "🇹🇭 ดาวเทียมสำรวจโลก THEOS-1",
+              altKm: 822.0,
+              incDeg: 98.7,
+              raanDeg: 200.0,
+              speedKmh: "26,600 กม./ชม.",
+              speedKms: 7.40,
+              period: "101.4 นาที/รอบ",
+              color: 0xf59e0b
             }
           };
 
           var issModel = createISSModel();
           var theosModel = createTheosModel();
+          var theos1Model = createTheosModel(); // THEOS-1 ใช้โมเดลดาวเทียมสำรวจโลกแบบเดียวกับ THEOS-2
           scene.add(issModel);
           scene.add(theosModel);
+          scene.add(theos1Model);
           theosModel.visible = false;
+          theos1Model.visible = false;
 
           var activeCraftKey = 'iss';
           var activeCraft = issModel;
 
           // สร้างเส้นวงโคจร
-          var issRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.iss.altKm) * SCALE;
-          var theosRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.theos.altKm) * SCALE;
-          var issOrbitLine = createOrbitPath(issRadius, CRAFT_CONFIGS.iss.incDeg, CRAFT_CONFIGS.iss.raanDeg, 0x00e5ff);
-          var theosOrbitLine = createOrbitPath(theosRadius, CRAFT_CONFIGS.theos.incDeg, CRAFT_CONFIGS.theos.raanDeg, 0x10b981);
+          function craftRadius(key){ return (EARTH_RADIUS_KM + CRAFT_CONFIGS[key].altKm) * SCALE; }
+          var issOrbitLine    = createOrbitPath(craftRadius('iss'),    CRAFT_CONFIGS.iss.incDeg,    CRAFT_CONFIGS.iss.raanDeg,    CRAFT_CONFIGS.iss.color);
+          var theosOrbitLine  = createOrbitPath(craftRadius('theos'),  CRAFT_CONFIGS.theos.incDeg,  CRAFT_CONFIGS.theos.raanDeg,  CRAFT_CONFIGS.theos.color);
+          var theos1OrbitLine = createOrbitPath(craftRadius('theos1'), CRAFT_CONFIGS.theos1.incDeg, CRAFT_CONFIGS.theos1.raanDeg, CRAFT_CONFIGS.theos1.color);
           scene.add(issOrbitLine);
           scene.add(theosOrbitLine);
+          scene.add(theos1OrbitLine);
           theosOrbitLine.visible = false;
+          theos1OrbitLine.visible = false;
+
+          // ทะเบียนยานทุกดวง — ใช้สลับการแสดงผล/ปุ่มแบบวนลูป (รองรับเพิ่มดวงใหม่ง่าย)
+          var CRAFTS = {
+            iss:    { model: issModel,    orbit: issOrbitLine,    btn: "btnCraftISS",    label: "ISS" },
+            theos:  { model: theosModel,  orbit: theosOrbitLine,  btn: "btnCraftTheos",  label: "THEOS-2" },
+            theos1: { model: theos1Model, orbit: theos1OrbitLine, btn: "btnCraftTheos1", label: "THEOS-1" }
+          };
 
           // สไปรต์มาร์กเกอร์ส่องประกายตำแหน่งยาน (Beacon Marker)
           var markerCanvas = document.createElement("canvas");
@@ -20929,6 +21030,22 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var craftBeaconSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTex, color: 0x00ffcc, transparent: true, opacity: 0.9 }));
           craftBeaconSprite.scale.set(0.18, 0.18, 1);
           scene.add(craftBeaconSprite);
+
+          // ป้ายชื่อยานลอยติดตามตัวยาน (Floating name label)
+          function drawCraftLabel(text){
+            var lc = document.createElement("canvas"); lc.width = 256; lc.height = 64;
+            var lx = lc.getContext("2d");
+            lx.font = 'bold 30px Archivo, "IBM Plex Sans Thai", sans-serif';
+            lx.textAlign = "center"; lx.textBaseline = "middle";
+            lx.lineWidth = 6; lx.strokeStyle = "rgba(2,6,18,.9)"; lx.strokeText(text, 128, 36);
+            lx.fillStyle = "#ffffff"; lx.fillText(text, 128, 36);
+            return new THREE.CanvasTexture(lc);
+          }
+          var craftLabelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: drawCraftLabel("ISS"), transparent: true, depthTest: false }));
+          craftLabelSprite.scale.set(0.52, 0.13, 1);
+          craftLabelSprite.renderOrder = 20;
+          scene.add(craftLabelSprite);
+          function setCraftLabel(text){ craftLabelSprite.material.map = drawCraftLabel(text); craftLabelSprite.material.needsUpdate = true; }
 
           // ตัวแปรควบคุมกล้องและเวลา
           var cameraMode = 'chase'; // 'chase' หรือ 'globe'
@@ -21022,11 +21139,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             var countEl = document.getElementById('satliveCountTxt');
             var countKpi = document.getElementById('satliveCountKpi');
 
-            fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
-              .then(function(res){
-                if(!res.ok) throw new Error("HTTP error " + res.status);
-                return res.text();
-              })
+            // ยิงตรง CelesTrak ก่อน แล้ว fallback ผ่าน CORS proxy (ชุดเดียวกับที่เว็บใช้ดึงข้อมูลสดอื่น)
+            // — ถ้าเบราว์เซอร์บล็อก CORS จะยังได้ TLE จริง แทนที่จะร่วงไปโหมดจำลองทันที
+            fetchText('https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle')
               .then(function(text){
                 satrecObjects = parseTLE(text);
                 if(satrecObjects.length < 50) throw new Error("TLE data too small");
@@ -21052,12 +21167,21 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if (satrecObjects[0] && satrecObjects[0].satnum) {
               updateThrottle++;
               if (updateThrottle % 3 === 0) {
+                // ECI → พิกัดภูมิศาสตร์จริง (ECEF ผ่าน GMST) แล้ววางให้ตรงพื้นผิวแผนที่โลกจริง
+                // (เดิมวาง ECI ดิบ ทำให้ฝูงดาวเทียมไม่ตรงกับทวีปบนลูกโลก)
+                var gmstNow = satellite.gstime(now);
+                var er = earth.rotation.y, ce = Math.cos(er), se = Math.sin(er);
                 for (var i = 0; i < satrecObjects.length; i++) {
                   var posVel = satellite.propagate(satrecObjects[i], now);
                   if (posVel && posVel.position) {
-                    positions[i * 3]     = posVel.position.x * SCALE;
-                    positions[i * 3 + 1] = posVel.position.z * SCALE;
-                    positions[i * 3 + 2] = -posVel.position.y * SCALE;
+                    var gd = satellite.eciToGeodetic(posVel.position, gmstNow);
+                    var latR = gd.latitude, lonR = gd.longitude, cl = Math.cos(latR);
+                    var rad = (EARTH_RADIUS_KM + gd.height) * SCALE;
+                    var cx = rad * cl * Math.cos(lonR), cy = rad * Math.sin(latR), cz = -rad * cl * Math.sin(lonR);
+                    // หมุนตามการหมุนเชิงมุมของลูกโลก (earth.rotation.y) ให้จุดอยู่ตรงทวีปเสมอ
+                    positions[i * 3]     = cx * ce + cz * se;
+                    positions[i * 3 + 1] = cy;
+                    positions[i * 3 + 2] = -cx * se + cz * ce;
                   }
                 }
                 satPointsMesh.geometry.attributes.position.needsUpdate = true;
@@ -21097,6 +21221,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             var craftPos = new THREE.Vector3(curX, curY, curZ);
             activeCraft.position.copy(craftPos);
             craftBeaconSprite.position.copy(craftPos);
+            // ป้ายชื่อลอยเหนือตัวยาน (เยื้องออกจากศูนย์กลางโลกเล็กน้อย)
+            craftLabelSprite.position.copy(craftPos).addScaledVector(craftPos.clone().normalize(), 0.16);
 
             // เวกเตอร์ความเร็ว (Tangent Heading)
             var du = 0.005;
@@ -21147,31 +21273,22 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           /* ===== สลับโหมดกล้อง & ยานอวกาศ (UI Handlers) ===== */
           function switchCraft(craftKey) {
+            if (!CRAFTS[craftKey]) return;
             activeCraftKey = craftKey;
             var cfg = CRAFT_CONFIGS[craftKey];
-            if (craftKey === 'iss') {
-              issModel.visible = true;
-              theosModel.visible = false;
-              issOrbitLine.visible = true;
-              theosOrbitLine.visible = false;
-              activeCraft = issModel;
-              craftBeaconSprite.material.color.setHex(0x00e5ff);
-            } else {
-              issModel.visible = false;
-              theosModel.visible = true;
-              issOrbitLine.visible = false;
-              theosOrbitLine.visible = true;
-              activeCraft = theosModel;
-              craftBeaconSprite.material.color.setHex(0x10b981);
-            }
+            Object.keys(CRAFTS).forEach(function(k){
+              var c = CRAFTS[k], on = (k === craftKey);
+              c.model.visible = on;
+              c.orbit.visible = on;
+              var btn = document.getElementById(c.btn); if (btn) btn.classList.toggle("active", on);
+              if (on) activeCraft = c.model;
+            });
+            craftBeaconSprite.material.color.setHex(cfg.color);
+            setCraftLabel(CRAFTS[craftKey].label);
             if (elTelemName) elTelemName.innerText = cfg.name;
             if (elTelemAlt) elTelemAlt.innerText = "~" + cfg.altKm + " กม.";
             if (elTelemSpeed) elTelemSpeed.innerText = cfg.speedKmh;
             if (elTelemPeriod) elTelemPeriod.innerText = cfg.period;
-
-            document.querySelectorAll("#btnCraftISS, #btnCraftTheos").forEach(function(b){ b.classList.remove("active"); });
-            var activeBtn = craftKey === 'iss' ? document.getElementById("btnCraftISS") : document.getElementById("btnCraftTheos");
-            if (activeBtn) activeBtn.classList.add("active");
 
             if (cameraMode === 'chase') {
               setChaseCamTarget();
@@ -21214,8 +21331,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           var btnISS = document.getElementById("btnCraftISS");
           var btnTheos = document.getElementById("btnCraftTheos");
+          var btnTheos1 = document.getElementById("btnCraftTheos1");
           if (btnISS) btnISS.addEventListener("click", function(){ switchCraft('iss'); });
           if (btnTheos) btnTheos.addEventListener("click", function(){ switchCraft('theos'); });
+          if (btnTheos1) btnTheos1.addEventListener("click", function(){ switchCraft('theos1'); });
 
           document.querySelectorAll(".satlive-spd-btn").forEach(function(btn){
             btn.addEventListener("click", function(){
@@ -21227,6 +21346,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           loadSatellites();
 
+          // วางตัวยานลงบนวงโคจรจริงก่อน (ไม่งั้น activeCraft ยังอยู่ที่จุด (0,0,0) = ใจกลางโลก
+          // ทำให้กล้องโหมด "ส่องตัวยาน" ไปเริ่มอยู่ในลูกโลก → เห็นจอ 3D ดำสนิทตอนเปิดครั้งแรก)
+          updateActiveCraft(0);
           // เริ่มต้นด้วยมุมมองส่องตัวยานอย่างสวยงาม
           setChaseCamTarget();
           if (targetCamPos) camera.position.copy(targetCamPos);
@@ -21873,6 +21995,97 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }, {rootMargin:"200px"}).observe(stage);
     }
 
+    /* ================= 🗳️ ประชาธิปไตย & การเลือกตั้งไทย (จาก timeline-data.js) =================
+       เติมช่องว่าง "การเมืองไทย" ในศูนย์สถิติ — สร้างจากชุดข้อมูลไทม์ไลน์การเลือกตั้ง (window.TL)
+       ที่เว็บมีอยู่แล้ว: แถบผู้มาใช้สิทธิรายสมัย + เส้นเวลาเลือกตั้งสลับรัฐประหาร (DOM/CSS ล้วน) */
+    function setupThaiDemocracy(){
+      var pane = document.getElementById("pane-th-democracy");
+      if(!pane || pane.dataset.done) return;
+      var barsEl = document.getElementById("thdBars"), tlEl = document.getElementById("thdTimeline");
+      var TL = window.TL, PARTY = window.TL_PARTY || {};
+      if(!TL || !Array.isArray(TL) || !TL.length){
+        if(barsEl) barsEl.innerHTML = '<div class="state-msg">โหลดข้อมูลไทม์ไลน์ไม่สำเร็จ</div>';
+        if(tlEl) tlEl.innerHTML = '';
+        return;
+      }
+      pane.dataset.done = "1";
+
+      function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+      function pnum(t){ var m=String(t==null?"":t).replace("~","").match(/[\d.]+/); return m?parseFloat(m[0]):null; }
+      function colorOf(name){ return PARTY[name] || "#94A3AE"; }
+      function beOf(d){ if(d.be) return d.be; if(d.ce) return d.ce+543; var m=String(d.date||"").match(/25\d\d/); return m?parseInt(m[0],10):null; }
+
+      var rows = TL.slice().sort(function(a,b){ return (a.s||0)-(b.s||0); });
+      var elections = rows.filter(function(d){ return d.type !== "event"; });
+      var events    = rows.filter(function(d){ return d.type === "event"; });
+      var coups     = events.filter(function(d){ return /รัฐประหาร/.test(d.title || ""); });
+      var latest = elections[elections.length-1] || null;
+
+      // ---- KPIs ----
+      function setTx(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+      setTx("thdKElections", elections.length);
+      setTx("thdKCoups", coups.length);
+      var lt = latest ? pnum(latest.turnout) : null;
+      setTx("thdKTurnout", lt!=null ? lt.toFixed(2)+"%" : "—");
+      if(latest){ var el=document.getElementById("thdKTurnoutSub"); if(el) el.textContent = "เลือกตั้งทั่วไป พ.ศ. "+beOf(latest); }
+      setTx("thdKSeats", latest && latest.seats!=null ? Number(latest.seats).toLocaleString("en-US") : "—");
+      if(latest){ var e2=document.getElementById("thdKSeatsSub"); if(e2) e2.textContent = "เลือกตั้งทั่วไป พ.ศ. "+beOf(latest)+(latest.extra?(" ("+esc(latest.extra)+")"):""); }
+
+      // ---- แถบผู้มาใช้สิทธิรายสมัย ----
+      if(barsEl){
+        var bars = elections.map(function(e){
+          var t = pnum(e.turnout), h = t!=null ? Math.max(3, Math.min(100, t)) : 0;
+          var col = colorOf(e.win || "ไม่มีพรรคการเมือง");
+          var title = "เลือกตั้ง พ.ศ. "+beOf(e)+(e.win?(" · ชนะ: "+esc(e.win)):"")+(t!=null?(" · ผู้มาใช้สิทธิ "+t+"%"):" · ไม่มีข้อมูลผู้ใช้สิทธิ");
+          return '<div class="thd-bar" title="'+title+'">'+
+                   '<div class="thd-pct">'+(t!=null?t.toFixed(0):"—")+'</div>'+
+                   '<div class="thd-track"><div class="thd-fill" style="height:'+h+'%;background:'+col+'"></div></div>'+
+                   '<div class="thd-yr">'+beOf(e)+'</div>'+
+                 '</div>';
+        }).join("");
+        barsEl.innerHTML = bars || '<div class="state-msg">ไม่มีข้อมูล</div>';
+      }
+
+      // ---- legend: พรรคที่เคยชนะการเลือกตั้ง ----
+      var legEl = document.getElementById("thdLegend");
+      if(legEl){
+        var seen = {}, order = [];
+        elections.forEach(function(e){ var w=e.win||"ยังไม่มีพรรคการเมือง"; if(!seen[w]){ seen[w]=1; order.push(w); } });
+        legEl.innerHTML = order.map(function(w){
+          return '<span class="lg"><span class="sw" style="background:'+colorOf(w==="ยังไม่มีพรรคการเมือง"?"ไม่มีพรรคการเมือง":w)+'"></span>'+esc(w)+'</span>';
+        }).join("");
+      }
+
+      // ---- เส้นเวลา (เลือกตั้ง × รัฐประหาร) ----
+      if(tlEl){
+        var html = rows.map(function(d){
+          var be = beOf(d);
+          if(d.type === "event"){
+            return '<div class="thd-row coup">'+
+                     '<div class="thd-yrbig">'+(be||"")+'<small>'+esc(d.date||"")+'</small></div>'+
+                     '<div class="thd-body"><h4><svg class="mdico"><use href="#i-swords"></use></svg> '+esc(d.title||"เหตุการณ์สำคัญ")+'</h4>'+
+                     (d.desc?'<p>'+esc(d.desc)+'</p>':"")+'</div>'+
+                   '</div>';
+          }
+          var t = pnum(d.turnout);
+          var chip = d.win ? '<span class="thd-chip" style="background:'+colorOf(d.win)+'">'+esc(d.win)+'</span>' : '<span class="thd-chip" style="background:#94A3AE">ยังไม่มีพรรค</span>';
+          var tag = d.tag==="latest" ? '<span class="thd-tag" style="color:#2E9E5B">ล่าสุด</span>'
+                  : d.tag==="void" ? '<span class="thd-tag" style="color:var(--red,#e5484d)">เป็นโมฆะ</span>' : "";
+          var meta = [];
+          if(d.seats!=null) meta.push("<b>"+Number(d.seats).toLocaleString("en-US")+"</b> ส.ส."+(d.extra?(" "+esc(d.extra)):""));
+          if(t!=null) meta.push("ผู้มาใช้สิทธิ <b>"+t+"%</b>");
+          if(d.pm) meta.push("นายกฯ: <b>"+esc(d.pm)+"</b>");
+          return '<div class="thd-row">'+
+                   '<div class="thd-yrbig">'+(be||"")+'<small>'+esc(d.date||"")+'</small></div>'+
+                   '<div class="thd-body"><h4>เลือกตั้งทั่วไป '+chip+tag+'</h4>'+
+                     (meta.length?'<div class="thd-meta">'+meta.join(" · ")+'</div>':"")+
+                     (d.note?'<p>'+esc(d.note)+'</p>':"")+'</div>'+
+                 '</div>';
+        }).join("");
+        tlEl.innerHTML = html;
+      }
+    }
+
     /* ---------- BOOT ---------- */
     function boot(){
       $$(".k-count").forEach(countUp);
@@ -21880,6 +22093,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setupSatellite();
       setupEnso();
       setupSatLive();
+      setupThaiDemocracy();
       setupCoralGlobe();
       setupCurrentGlobe();
       setupPopLandscape();

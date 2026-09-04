@@ -1468,6 +1468,9 @@ var NAV = [
           { pane:"geo-chip",      ico:"<svg class='mdico'><use href='#i-wrench'></use></svg>", label:"ชิป & เซมิคอนดักเตอร์", existing:true },
           { pane:"geo-power",     ico:"<svg class='mdico'><use href='#i-castle'></use></svg>", label:"วัฏจักรอำนาจ", existing:true }
       ]},
+      { id:"thpolitics", ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"การเมืองไทย", subs:[
+          { pane:"th-democracy", ico:"<svg class='mdico'><use href='#i-vote'></use></svg>", label:"ประชาธิปไตย & การเลือกตั้ง (2476–ปัจจุบัน)", existing:true }
+      ]},
       { id:"thecon", ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"เศรษฐกิจไทย", subs:[
           { pane:"te-tourism",    ico:"<svg class='mdico'><use href='#i-plane'></use></svg>", label:"การท่องเที่ยว", existing:true },
           { pane:"te-trade",      ico:"<svg class='mdico'><use href='#i-ship'></use></svg>", label:"การค้าระหว่างประเทศ", existing:true },
