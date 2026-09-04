@@ -3118,7 +3118,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               <span class="satlive-ctrl-label"><svg class="mdico"><use href="#i-satellite"></use></svg> เลือกยาน:</span>
               <div class="satlive-btn-group">
                 <button type="button" class="satlive-btn active" id="btnCraftISS" title="สถานีอวกาศนานาชาติ">👨‍🚀 ISS</button>
-                <button type="button" class="satlive-btn" id="btnCraftTheos" title="ดาวเทียมสำรวจโลกของไทย">🇹🇭 THEOS-2</button>
+                <button type="button" class="satlive-btn" id="btnCraftTheos" title="ดาวเทียมสำรวจโลกของไทย THEOS-2 (ปล่อย 2566)">🇹🇭 THEOS-2</button>
+                <button type="button" class="satlive-btn" id="btnCraftTheos1" title="ดาวเทียมสำรวจโลกดวงแรกของไทย THEOS-1 (ปล่อย 2551)">🇹🇭 THEOS-1</button>
               </div>
             </div>
 
@@ -20841,26 +20842,48 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               speedKms: 7.55,
               period: "97.1 นาที/รอบ",
               color: 0x10b981
+            },
+            theos1: {
+              name: "🇹🇭 ดาวเทียมสำรวจโลก THEOS-1",
+              altKm: 822.0,
+              incDeg: 98.7,
+              raanDeg: 200.0,
+              speedKmh: "26,600 กม./ชม.",
+              speedKms: 7.40,
+              period: "101.4 นาที/รอบ",
+              color: 0xf59e0b
             }
           };
 
           var issModel = createISSModel();
           var theosModel = createTheosModel();
+          var theos1Model = createTheosModel(); // THEOS-1 ใช้โมเดลดาวเทียมสำรวจโลกแบบเดียวกับ THEOS-2
           scene.add(issModel);
           scene.add(theosModel);
+          scene.add(theos1Model);
           theosModel.visible = false;
+          theos1Model.visible = false;
 
           var activeCraftKey = 'iss';
           var activeCraft = issModel;
 
           // สร้างเส้นวงโคจร
-          var issRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.iss.altKm) * SCALE;
-          var theosRadius = (EARTH_RADIUS_KM + CRAFT_CONFIGS.theos.altKm) * SCALE;
-          var issOrbitLine = createOrbitPath(issRadius, CRAFT_CONFIGS.iss.incDeg, CRAFT_CONFIGS.iss.raanDeg, 0x00e5ff);
-          var theosOrbitLine = createOrbitPath(theosRadius, CRAFT_CONFIGS.theos.incDeg, CRAFT_CONFIGS.theos.raanDeg, 0x10b981);
+          function craftRadius(key){ return (EARTH_RADIUS_KM + CRAFT_CONFIGS[key].altKm) * SCALE; }
+          var issOrbitLine    = createOrbitPath(craftRadius('iss'),    CRAFT_CONFIGS.iss.incDeg,    CRAFT_CONFIGS.iss.raanDeg,    CRAFT_CONFIGS.iss.color);
+          var theosOrbitLine  = createOrbitPath(craftRadius('theos'),  CRAFT_CONFIGS.theos.incDeg,  CRAFT_CONFIGS.theos.raanDeg,  CRAFT_CONFIGS.theos.color);
+          var theos1OrbitLine = createOrbitPath(craftRadius('theos1'), CRAFT_CONFIGS.theos1.incDeg, CRAFT_CONFIGS.theos1.raanDeg, CRAFT_CONFIGS.theos1.color);
           scene.add(issOrbitLine);
           scene.add(theosOrbitLine);
+          scene.add(theos1OrbitLine);
           theosOrbitLine.visible = false;
+          theos1OrbitLine.visible = false;
+
+          // ทะเบียนยานทุกดวง — ใช้สลับการแสดงผล/ปุ่มแบบวนลูป (รองรับเพิ่มดวงใหม่ง่าย)
+          var CRAFTS = {
+            iss:    { model: issModel,    orbit: issOrbitLine,    btn: "btnCraftISS",    label: "ISS" },
+            theos:  { model: theosModel,  orbit: theosOrbitLine,  btn: "btnCraftTheos",  label: "THEOS-2" },
+            theos1: { model: theos1Model, orbit: theos1OrbitLine, btn: "btnCraftTheos1", label: "THEOS-1" }
+          };
 
           // สไปรต์มาร์กเกอร์ส่องประกายตำแหน่งยาน (Beacon Marker)
           var markerCanvas = document.createElement("canvas");
@@ -20876,6 +20899,22 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           var craftBeaconSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTex, color: 0x00ffcc, transparent: true, opacity: 0.9 }));
           craftBeaconSprite.scale.set(0.18, 0.18, 1);
           scene.add(craftBeaconSprite);
+
+          // ป้ายชื่อยานลอยติดตามตัวยาน (Floating name label)
+          function drawCraftLabel(text){
+            var lc = document.createElement("canvas"); lc.width = 256; lc.height = 64;
+            var lx = lc.getContext("2d");
+            lx.font = 'bold 30px Archivo, "IBM Plex Sans Thai", sans-serif';
+            lx.textAlign = "center"; lx.textBaseline = "middle";
+            lx.lineWidth = 6; lx.strokeStyle = "rgba(2,6,18,.9)"; lx.strokeText(text, 128, 36);
+            lx.fillStyle = "#ffffff"; lx.fillText(text, 128, 36);
+            return new THREE.CanvasTexture(lc);
+          }
+          var craftLabelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: drawCraftLabel("ISS"), transparent: true, depthTest: false }));
+          craftLabelSprite.scale.set(0.52, 0.13, 1);
+          craftLabelSprite.renderOrder = 20;
+          scene.add(craftLabelSprite);
+          function setCraftLabel(text){ craftLabelSprite.material.map = drawCraftLabel(text); craftLabelSprite.material.needsUpdate = true; }
 
           // ตัวแปรควบคุมกล้องและเวลา
           var cameraMode = 'chase'; // 'chase' หรือ 'globe'
@@ -20997,12 +21036,21 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if (satrecObjects[0] && satrecObjects[0].satnum) {
               updateThrottle++;
               if (updateThrottle % 3 === 0) {
+                // ECI → พิกัดภูมิศาสตร์จริง (ECEF ผ่าน GMST) แล้ววางให้ตรงพื้นผิวแผนที่โลกจริง
+                // (เดิมวาง ECI ดิบ ทำให้ฝูงดาวเทียมไม่ตรงกับทวีปบนลูกโลก)
+                var gmstNow = satellite.gstime(now);
+                var er = earth.rotation.y, ce = Math.cos(er), se = Math.sin(er);
                 for (var i = 0; i < satrecObjects.length; i++) {
                   var posVel = satellite.propagate(satrecObjects[i], now);
                   if (posVel && posVel.position) {
-                    positions[i * 3]     = posVel.position.x * SCALE;
-                    positions[i * 3 + 1] = posVel.position.z * SCALE;
-                    positions[i * 3 + 2] = -posVel.position.y * SCALE;
+                    var gd = satellite.eciToGeodetic(posVel.position, gmstNow);
+                    var latR = gd.latitude, lonR = gd.longitude, cl = Math.cos(latR);
+                    var rad = (EARTH_RADIUS_KM + gd.height) * SCALE;
+                    var cx = rad * cl * Math.cos(lonR), cy = rad * Math.sin(latR), cz = -rad * cl * Math.sin(lonR);
+                    // หมุนตามการหมุนเชิงมุมของลูกโลก (earth.rotation.y) ให้จุดอยู่ตรงทวีปเสมอ
+                    positions[i * 3]     = cx * ce + cz * se;
+                    positions[i * 3 + 1] = cy;
+                    positions[i * 3 + 2] = -cx * se + cz * ce;
                   }
                 }
                 satPointsMesh.geometry.attributes.position.needsUpdate = true;
@@ -21042,6 +21090,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             var craftPos = new THREE.Vector3(curX, curY, curZ);
             activeCraft.position.copy(craftPos);
             craftBeaconSprite.position.copy(craftPos);
+            // ป้ายชื่อลอยเหนือตัวยาน (เยื้องออกจากศูนย์กลางโลกเล็กน้อย)
+            craftLabelSprite.position.copy(craftPos).addScaledVector(craftPos.clone().normalize(), 0.16);
 
             // เวกเตอร์ความเร็ว (Tangent Heading)
             var du = 0.005;
@@ -21092,31 +21142,22 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           /* ===== สลับโหมดกล้อง & ยานอวกาศ (UI Handlers) ===== */
           function switchCraft(craftKey) {
+            if (!CRAFTS[craftKey]) return;
             activeCraftKey = craftKey;
             var cfg = CRAFT_CONFIGS[craftKey];
-            if (craftKey === 'iss') {
-              issModel.visible = true;
-              theosModel.visible = false;
-              issOrbitLine.visible = true;
-              theosOrbitLine.visible = false;
-              activeCraft = issModel;
-              craftBeaconSprite.material.color.setHex(0x00e5ff);
-            } else {
-              issModel.visible = false;
-              theosModel.visible = true;
-              issOrbitLine.visible = false;
-              theosOrbitLine.visible = true;
-              activeCraft = theosModel;
-              craftBeaconSprite.material.color.setHex(0x10b981);
-            }
+            Object.keys(CRAFTS).forEach(function(k){
+              var c = CRAFTS[k], on = (k === craftKey);
+              c.model.visible = on;
+              c.orbit.visible = on;
+              var btn = document.getElementById(c.btn); if (btn) btn.classList.toggle("active", on);
+              if (on) activeCraft = c.model;
+            });
+            craftBeaconSprite.material.color.setHex(cfg.color);
+            setCraftLabel(CRAFTS[craftKey].label);
             if (elTelemName) elTelemName.innerText = cfg.name;
             if (elTelemAlt) elTelemAlt.innerText = "~" + cfg.altKm + " กม.";
             if (elTelemSpeed) elTelemSpeed.innerText = cfg.speedKmh;
             if (elTelemPeriod) elTelemPeriod.innerText = cfg.period;
-
-            document.querySelectorAll("#btnCraftISS, #btnCraftTheos").forEach(function(b){ b.classList.remove("active"); });
-            var activeBtn = craftKey === 'iss' ? document.getElementById("btnCraftISS") : document.getElementById("btnCraftTheos");
-            if (activeBtn) activeBtn.classList.add("active");
 
             if (cameraMode === 'chase') {
               setChaseCamTarget();
@@ -21159,8 +21200,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           var btnISS = document.getElementById("btnCraftISS");
           var btnTheos = document.getElementById("btnCraftTheos");
+          var btnTheos1 = document.getElementById("btnCraftTheos1");
           if (btnISS) btnISS.addEventListener("click", function(){ switchCraft('iss'); });
           if (btnTheos) btnTheos.addEventListener("click", function(){ switchCraft('theos'); });
+          if (btnTheos1) btnTheos1.addEventListener("click", function(){ switchCraft('theos1'); });
 
           document.querySelectorAll(".satlive-spd-btn").forEach(function(btn){
             btn.addEventListener("click", function(){
