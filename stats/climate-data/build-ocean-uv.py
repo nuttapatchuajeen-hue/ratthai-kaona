@@ -44,6 +44,11 @@ def get(url, timeout=300):
         return r.read().decode("utf-8", "replace")
 
 
+# ค่าที่ใช้ถ้าถาม ERDDAP ไม่สำเร็จ — อิงจากไฟล์ 1° เดิมที่มาจากชุดข้อมูลเดียวกัน
+FALLBACK = {"lat": "latitude", "lon": "longitude", "time": "time",
+            "range": {"latitude": [-89.875, 89.875], "longitude": [-179.875, 179.875]}}
+
+
 def discover():
     """ถามชื่อ/ช่วงของมิติจากตัว ERDDAP เอง แทนการเดา — กันพังเวลาแหล่งเปลี่ยนรูปแบบ"""
     info = json.loads(get(BASE + "/info/" + DATASET + "/index.json"))
@@ -197,7 +202,9 @@ def sanity(vals, meta):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--from-csv", help="อ่าน CSV จากไฟล์แทนการดึงจากเน็ต")
+    ap.add_argument("--url", help="ระบุ URL เองแทนให้สคริปต์ถาม ERDDAP (ใช้เมื่อขั้นถามโครงสร้างมีปัญหา)")
     ap.add_argument("--print-url", action="store_true", help="แสดง URL ที่จะยิงแล้วจบ")
+    ap.add_argument("--save-csv", help="เก็บ CSV ที่ดึงมาไว้ด้วย จะได้ไม่ต้องโหลดใหม่ถ้าขั้นถัดไปมีปัญหา")
     ap.add_argument("--out-dir", default=HERE, help="โฟลเดอร์ปลายทาง")
     a = ap.parse_args()
 
@@ -205,13 +212,33 @@ def main():
         print("อ่าน CSV จาก", a.from_csv)
         text = io.open(a.from_csv, encoding="utf-8").read()
     else:
-        print("ถามโครงสร้างชุดข้อมูลจาก ERDDAP…")
-        d = discover()
-        url = build_url(d)
+        if a.url:
+            url = a.url
+        else:
+            print("ถามโครงสร้างชุดข้อมูลจาก ERDDAP…")
+            try:
+                d = discover()
+            except Exception as e:
+                print("  ! ถามโครงสร้างไม่สำเร็จ (%s: %s)" % (type(e).__name__, e))
+                print("  → ใช้ค่าปริยายของชุดข้อมูลนี้แทน ถ้าผลออกมาผิดให้ระบุ URL เองด้วย --url")
+                d = FALLBACK
+            url = build_url(d)
         if a.print_url:
             print(url); return 0
         print("ดึงข้อมูล (ไฟล์ใหญ่ อาจใช้เวลาหลายนาที)…\n ", url)
-        text = get(url)
+        try:
+            text = get(url)
+        except Exception as e:
+            print("\n✗ ดึงข้อมูลไม่สำเร็จ: %s: %s" % (type(e).__name__, e))
+            print("  ตรวจว่าเครื่องนี้ต่อเน็ตออกได้ และลองเปิด URL ข้างบนในเบราว์เซอร์ดู")
+            print("  ถ้าโหลดผ่านเบราว์เซอร์ได้ ให้ใช้:  python3 %s --from-csv <ไฟล์ที่โหลด>"
+                  % os.path.basename(__file__))
+            return 2
+        if a.save_csv:
+            io.open(a.save_csv, "w", encoding="utf-8").write(text)
+            print("  เก็บ CSV ไว้ที่", a.save_csv)
+    if not text.strip():
+        sys.exit("ได้ข้อมูลเปล่ากลับมา — ตรวจ URL หรือชื่อชุดข้อมูล")
 
     pts, tstamp = parse_csv(text)
     print("อ่านได้ %s จุด" % format(len(pts), ","))
