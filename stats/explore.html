@@ -21748,8 +21748,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       /* ---------- สนามความเร็ว: อ่าน Int8 คู่ u,v ต่อช่อง + สุ่มค่าแบบ bilinear ---------- */
       function makeField(meta, buf){
-        var RAW=new Int8Array(buf), NLAT=meta.nlat, NLON=meta.nlon,
+        // ชนิดข้อมูลอ่านจาก meta — ไฟล์ 1° เป็น int8, ไฟล์ละเอียด 0.25° เป็น int16 (ค่าไม่ถูกตัดยอด)
+        // เสียบไฟล์ใหม่ได้เลยโดยไม่ต้องแก้โค้ด ขอแค่ meta ระบุ dtype/scale/noData ให้ถูก
+        var dtype=(meta.dtype||"int8").toLowerCase();
+        var RAW = (dtype==="int16") ? new Int16Array(buf) : new Int8Array(buf);
+        var NLAT=meta.nlat, NLON=meta.nlon,
             SC=meta.scale, ND=meta.noData, LAT0=meta.lat0, LON0=meta.lon0;
+        if(RAW.length !== NLAT*NLON*2){
+          throw new Error("ขนาดไฟล์กระแสน้ำไม่ตรงกับ meta: ได้ "+RAW.length+" ค่า แต่ meta บอก "+(NLAT*NLON*2));
+        }
         function cell(j,i){
           if(j<0 || j>=NLAT) return null;
           i=((i%NLON)+NLON)%NLON;
@@ -21876,7 +21883,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         }
         if(img){
           g.drawImage(img, 0, 0, MAPW, MAPH);
-          g.fillStyle="rgba(3,17,34,.58)"; g.fillRect(0,0,MAPW,MAPH);       // หรี่ทั้งใบ (ทะเลจะจบที่ตรงนี้)
+          // คูณสีน้ำเงินแทนการทับสีทึบ — ที่สว่างยังสว่างกว่าที่มืด ร่องรอยบาธีเมทรี
+          // (สันเขาใต้ทะเล ร่องลึก ไหล่ทวีป) จึงไม่ถูกกลบ ตรงกับที่ NASA เรียกว่า
+          // "the dark patterns under the ocean represent the undersea bathymetry"
+          g.globalCompositeOperation="multiply";
+          g.fillStyle="#35688f"; g.fillRect(0,0,MAPW,MAPH);
+          g.globalCompositeOperation="source-over";
+          g.fillStyle="rgba(2,12,26,.20)"; g.fillRect(0,0,MAPW,MAPH);        // หรี่อีกนิดให้เส้นกระแสน้ำเด่น
           if(hasWorld){
             g.save(); landPath(); g.clip();
             g.drawImage(img, 0, 0, MAPW, MAPH);                              // คืนสีทวีปให้สด
