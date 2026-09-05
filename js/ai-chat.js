@@ -36,18 +36,18 @@
   // ---- รายการโมเดล AI ที่รองรับ ----
   var AI_MODELS = [
     {
-      id: "gemini-2.0-flash",
-      name: "Gemini 2.0 Flash",
+      id: "gemini-flash-latest",
+      name: "Gemini Flash",
       badge: "Google",
       icon: "⚡",
-      tag: "แนะนำ · ตอบเร็วมาก ฉลาดล่าสุด",
+      tag: "แนะนำ · ตอบเร็วมาก ฉลาด อัปเดตล่าสุด ฟรี",
     },
     {
-      id: "gemini-1.5-flash",
-      name: "Gemini 1.5 Flash",
+      id: "gemini-3.6-flash",
+      name: "Gemini 3.6 Flash",
       badge: "Google",
       icon: "✨",
-      tag: "เสถียร · ประหยัดโทเคน",
+      tag: "รุ่นเสถียรล่าสุด ตอบภาษาไทยยอดเยี่ยม",
     },
     {
       id: "openthaigpt-thaillm-8b-instruct-v7.2",
@@ -80,9 +80,13 @@
   ];
 
   var MODEL_STORAGE_KEY = "mdai-selected-model-v2";
-  var selectedModelId = "gemini-2.0-flash";
+  var selectedModelId = "gemini-flash-latest";
   try {
     var stored = localStorage.getItem(MODEL_STORAGE_KEY);
+    if (stored === "gemini-2.0-flash" || stored === "gemini-1.5-flash") {
+      stored = "gemini-flash-latest";
+      localStorage.setItem(MODEL_STORAGE_KEY, stored);
+    }
     if (stored && AI_MODELS.some(function (m) { return m.id === stored; })) {
       selectedModelId = stored;
     }
@@ -957,6 +961,11 @@
       messages.filter(function (m) { return m && m.role !== "system"; }).slice(-12)
     );
 
+    var targetModel = modelId || "gemini-flash-latest";
+    if (targetModel === "gemini-2.0-flash" || targetModel === "gemini-1.5-flash") {
+      targetModel = "gemini-flash-latest";
+    }
+
     return fetch(endpoint, {
       method: "POST",
       headers: {
@@ -964,7 +973,7 @@
         "Authorization": "Bearer " + apiKey,
       },
       body: JSON.stringify({
-        model: modelId || "gemini-2.0-flash",
+        model: targetModel,
         messages: finalMessages,
         max_tokens: MAX_TOKENS,
         temperature: TEMPERATURE,
