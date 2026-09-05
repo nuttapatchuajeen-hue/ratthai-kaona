@@ -21814,7 +21814,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
            ขึ้น–จม — อนุภาคลอยขึ้น/จมลงตามค่า wt (upwelling / downwelling)
          ทุกชั้นโหลดตอนกดเปิดครั้งแรกเท่านั้น คนที่ไม่กดจะไม่โดนดาวน์โหลดเพิ่ม */
       var MATS=[];                       // ทุก material ที่ต้องขยับเวลา (uTime) และปรับ uDpr ตอนรีไซซ์
-      var DEEP={}, VERT=null;            // แคชชั้นที่โหลดแล้ว กดปิด-เปิดซ้ำไม่โหลดใหม่
+      // ⚠️ ห้ามตั้งชื่อตัวแปรนี้ว่า VERT — ชนกับตัวแปรเก็บโค้ด vertex shader ที่อยู่ล่างลงไปในสโคปเดียวกัน
+      // เคยชนมาแล้ว: ชั้นขึ้น–จมนึกว่ามีแคชอยู่แล้วเลยไม่โหลดจริง แล้วเงียบไปโดยไม่มี error
+      var DEEP={}, VERTF=null;           // แคชชั้นที่โหลดแล้ว กดปิด-เปิดซ้ำไม่โหลดใหม่
       var deepPts=null, vertPts=null, innerSphere=null, surfMesh=null;
       var deepBusy=false, vertBusy=false, deepDepth="2071";
       var DT_DEEP=520000;                // ก้าวเวลาของชั้นน้ำลึก ~6 วัน/ก้าว (ผิวน้ำ 14.4 ชม.)
@@ -22240,7 +22242,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           var narrow=(window.innerWidth||1200)<760;
           var ldMsg=document.querySelector("#ocLoading span");
-          return traceLinesChunked(FIELD, narrow?3500:11000, function(f){
+          return traceLinesChunked(FIELD, narrow?3000:9000, function(f){
             if(ldMsg) ldMsg.textContent="กำลังคำนวณเส้นกระแสน้ำจากข้อมูล NOAA… "+Math.round(f*100)+"%";
           }).then(function(lines){
 
@@ -22275,8 +22277,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1.035, 48, 32),
             new THREE.MeshBasicMaterial({ color:new THREE.Color(0x2ec8ef), transparent:true, opacity:0.06, side:THREE.BackSide })));
 
-          // ผิวน้ำเป็นริ้วขาวตามคลิป NASA — เหลือเหลือบฟ้าไว้เฉพาะน้ำช้า ให้ยังอ่านความเร็วออก
-          pts=buildFlow(THREE, lines, 1.004, { low:0x9ed6f0, high:0xffffff, ref:1.1 });
+          /* ผิวน้ำเป็นริ้วขาวตามคลิป NASA — เหลือเหลือบฟ้าไว้เฉพาะน้ำช้า ให้ยังอ่านความเร็วออก
+             จุดเล็กและจางกว่าค่าปริยายมาก เพราะพอข้อมูลละเอียดขึ้น 16 เท่า เส้นทับกันจน
+             มหาสมุทรกลายเป็นสีขาวทึบ ต้องเหลือพื้นน้ำสีดำไว้ให้เห็นวงน้ำวนทีละวงแบบของ NASA */
+          pts=buildFlow(THREE, lines, 1.004,
+            { low:0x9ed6f0, high:0xffffff, ref:1.1, size:5.4, tail:0.42, opacity:0.55 });
+          pts.renderOrder=1;
+          surfMesh.renderOrder=0;
           globe.add(pts);
 
           setTxt("#ocKLines", lines.length.toLocaleString("en-US"));
@@ -22312,8 +22319,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
                      : '<span class="v">พื้นทะเลตื้นกว่านี้</span>');
               if(c && d && (c[0]*d[0]+c[1]*d[1])<0) html+=' <span class="v">· สวนทางกับผิวน้ำ</span>';
             }
-            if(VERT && vertPts && vertPts.visible){
-              var wv=VERT.sample(ll[0], ll[1]);
+            if(VERTF && vertPts && vertPts.visible){
+              var wv=VERTF.sample(ll[0], ll[1]);
               if(wv) html+='<br>แนวดิ่ง <span class="v">'+(wv[0]>0?"เอ่อขึ้น":"จมลง")+'</span> '
                         +Math.abs(wv[0]*86400).toFixed(2)+' ม./วัน';
             }
@@ -22340,11 +22347,14 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(obj.geometry) obj.geometry.dispose();
             if(obj.material) obj.material.dispose();
           }
-          // ผิวโลกโปร่งเฉพาะตอนเปิดชั้นน้ำลึก ไม่งั้นริ้วสีน้ำเงินที่อยู่ข้างในจะถูกบังหมด
+          /* ผิวโลกโปร่งเฉพาะตอนเปิดชั้นน้ำลึก ไม่งั้นริ้วสีน้ำเงินที่อยู่ข้างในจะถูกบังหมด
+             และต้องหรี่ริ้วผิวน้ำลงด้วย — ริ้วขาวหนาแน่นกว่าริ้วน้ำเงินมาก ถ้าไม่หรี่จะกลบจนไม่เห็นสีน้ำเงิน */
           function surfaceTranslucent(on){
-            if(!surfMesh) return;
-            var m=surfMesh.material;
-            m.transparent=on; m.opacity=on?0.46:1; m.depthWrite=!on; m.needsUpdate=true;
+            if(surfMesh){
+              var m=surfMesh.material;
+              m.transparent=on; m.opacity=on?0.42:1; m.depthWrite=!on; m.needsUpdate=true;
+            }
+            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.30 : 0.55;
           }
           function ensureField(name, cache){
             if(cache) return Promise.resolve(cache);
@@ -22363,9 +22373,18 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               }, DT_DEEP);
             }).then(function(lines){
               dropLayer(deepPts);
+              if(!lines.length){
+                layerMsg("ชั้นน้ำลึกไม่มีเส้นให้วาด");
+                deepBusy=false;
+                var cd=document.getElementById("ocLDeep"); if(cd) cd.checked=false;
+                return;
+              }
               // ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
               deepPts=buildFlow(THREE, lines, 0.968,
-                { low:0x1b56c4, high:0x86d2ff, ref:0.18, size:7.2, tail:0.5, opacity:0.95 });
+                { low:0x2f6ae8, high:0x9fdcff, ref:0.18, size:8.0, tail:0.5, opacity:1 });
+              // ลำดับวาดคงที่: น้ำลึก → ผิวโลกโปร่ง → ริ้วผิวน้ำ → จุดขึ้น-จม
+              // ไม่งั้นสามชั้นมีจุดศูนย์กลางเดียวกัน three.js เรียงลำดับให้เองไม่แน่นอน
+              deepPts.renderOrder=-1;
               globe.add(deepPts);
               innerSphere.visible=true;
               surfaceTranslucent(true);
@@ -22388,12 +22407,19 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(vertBusy) return;
             vertBusy=true;
             layerMsg("กำลังโหลดข้อมูลการเคลื่อนที่แนวดิ่ง…");
-            ensureField("ocean-vert", VERT).then(function(F){
-              VERT=F;
+            ensureField("ocean-vert", VERTF).then(function(F){
+              VERTF=F;
               dropLayer(vertPts);
               vertPts=buildVertical(THREE, F, narrow?1400:3600);
-              if(vertPts) globe.add(vertPts);
-              layerMsg("");
+              if(vertPts){
+                vertPts.renderOrder=2;
+                globe.add(vertPts);
+                layerMsg("");
+              }else{
+                // เคยพลาดมาแล้วตอนตัวแปรชนกัน แล้วเงียบไปเฉย ๆ — คราวนี้บอกให้รู้
+                layerMsg("ชั้นขึ้น–จมไม่มีข้อมูลให้วาด");
+                var cv=document.getElementById("ocLVert"); if(cv) cv.checked=false;
+              }
               vertBusy=false;
             })["catch"](function(e){
               console.warn("vertical layer failed:", e);
