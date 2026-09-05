@@ -826,6 +826,10 @@
   .thc-info b{color:#2ec8ef}
   .thc-info .thc-x{position:absolute;top:6px;right:8px;background:none;border:0;color:#7fa2b5;font-size:16px;line-height:1;cursor:pointer;padding:2px 5px;border-radius:6px}
   .thc-info .thc-x:hover{color:#eafcff;background:rgba(255,255,255,.08)}
+  .thc-labs{position:absolute;inset:0;z-index:9;pointer-events:none}
+  .thc-lab{position:absolute;background:rgba(3,12,20,.6);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:3px 8px;font-size:11.5px;font-weight:600;color:#dbeefb;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .18s}
+  .thc-lab.on{opacity:1}
+  .thc-lab.sel{color:#fff;background:rgba(3,12,20,.88);border-color:rgba(255,255,255,.4)}
   .thc-legend{width:186px}
   .thc-leg-line{display:flex;align-items:center;gap:7px;font-size:11px;color:#a9c8d8;margin-top:6px}
   .thc-leg-line i{width:22px;height:4px;border-radius:3px;flex:0 0 auto}
@@ -5791,7 +5795,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <h2><svg class="mdico"><use href="#i-globe"></use></svg> ลูกโลกสายพาน — ลากหมุนได้ กดจุดเพื่ออ่านรายละเอียด</h2>
           <span class="tag">แผนภาพเชิงสัญลักษณ์</span>
         </div>
-        <p class="sub">มหาสมุทรทั้งใบเชื่อมกันเป็น <b>วงเดียว</b> ที่เรียกกันว่า “สายพานยักษ์” (Great Ocean Conveyor) — <b style="color:#ff8a3d">ริ้วส้ม</b> คือน้ำอุ่นที่ไหลอยู่บนผิว · <b style="color:#5aa8ff">ริ้วน้ำเงิน</b> คือน้ำเย็นเค็มที่จมลงไปไหลกลับใต้ท้องทะเลลึก 2–4 กิโลเมตร · ตัวขับไม่ใช่ลม แต่คือ<b>ความหนาแน่น</b> ที่มาจากอุณหภูมิ (thermo-) บวกความเค็ม (-haline) จึงเป็นที่มาของชื่อ <b>thermohaline circulation</b></p>
+        <p class="sub">มหาสมุทรทั้งใบเชื่อมกันเป็น <b>วงเดียว</b> ที่เรียกกันว่า “สายพานยักษ์” (Great Ocean Conveyor) — <b style="color:#ffe0bd">เส้นขาวอมอุ่น</b> คือน้ำอุ่นที่ไหลอยู่บนผิว · <b style="color:#cfe6ff">เส้นขาวอมฟ้า</b> คือน้ำเย็นเค็มที่จมลงไปไหลกลับใต้ท้องทะเลลึก 2–4 กิโลเมตร · <b>ขีดสว่างที่วิ่งไปตามเส้นบอกทิศทางการไหล</b> · ตัวขับไม่ใช่ลม แต่คือ<b>ความหนาแน่น</b> ที่มาจากอุณหภูมิ (thermo-) บวกความเค็ม (-haline) จึงเป็นที่มาของชื่อ <b>thermohaline circulation</b></p>
         <p class="sub">กด <b style="color:#9d8dff">จุดม่วง</b> = ที่ที่น้ำจมลงสู่ก้นสมุทร · <b style="color:#ffb23f">จุดส้ม</b> = ที่ที่น้ำลึกเอ่อกลับขึ้นผิว · <b style="color:#2ec8ef">จุดฟ้า</b> = จุดสำคัญอื่นที่ควรรู้จัก — ทั้งหมดกดอ่านคำอธิบายได้</p>
 
         <div class="oc-stage thc-stage" id="thcStage">
@@ -5802,16 +5806,16 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             <button class="oc-btn" id="thcPlay" type="button"><svg class="mdico"><use href="#i-pause"></use></svg> หยุด</button>
             <label class="oc-slider"><span>ความเร็วภาพ</span><input type="range" id="thcSpeed" min="20" max="300" value="100"></label>
             <span class="oc-sep"></span>
-            <label class="oc-chk"><input type="checkbox" id="thcLWarm" checked><i class="oc-dot" style="background:#ff8a3d"></i> น้ำอุ่นผิว</label>
-            <label class="oc-chk"><input type="checkbox" id="thcLCold" checked><i class="oc-dot" style="background:#5aa8ff"></i> น้ำเย็นลึก</label>
+            <label class="oc-chk"><input type="checkbox" id="thcLWarm" checked><i class="oc-dot" style="background:#ffe4c4"></i> น้ำอุ่นผิว</label>
+            <label class="oc-chk"><input type="checkbox" id="thcLCold" checked><i class="oc-dot" style="background:#cfe6ff"></i> น้ำเย็นลึก</label>
             <label class="oc-chk"><input type="checkbox" id="thcLSite" checked><i class="oc-dot" style="background:#9d8dff"></i> จุดสำคัญ</label>
             <span class="oc-sep"></span>
             <button class="oc-btn" id="thcHome" type="button"><svg class="mdico"><use href="#i-compass"></use></svg> มุมมองเริ่มต้น</button>
           </div>
           <div class="oc-legend thc-legend">
             <div class="oc-leg-title">อ่านลูกโลกนี้</div>
-            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,#ffb26b,#ff5c1a)"></i> น้ำอุ่นบนผิว</div>
-            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,#7fc0ff,#2f6fd0)"></i> น้ำเย็นในที่ลึก</div>
+            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,rgba(255,240,220,.22),#fff0dc)"></i> น้ำอุ่นบนผิว</div>
+            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,rgba(214,235,255,.18),#d6ebff)"></i> น้ำเย็นในที่ลึก</div>
             <div class="thc-leg-line"><i class="dotm" style="background:#9d8dff"></i> น้ำจมลงก้นสมุทร</div>
             <div class="thc-leg-line"><i class="dotm" style="background:#ffb23f"></i> น้ำลึกเอ่อขึ้นผิว</div>
             <div class="thc-leg-line"><i class="dotm" style="background:#2ec8ef"></i> จุดสำคัญอื่น</div>
@@ -5819,7 +5823,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <div class="thc-info" id="thcInfo"><button class="thc-x" id="thcInfoX" type="button" aria-label="ปิด">×</button><h4></h4><p></p></div>
         </div>
 
-        <div class="src">ภาพนี้เป็น <b>แผนภาพเชิงสัญลักษณ์</b> ของเส้นทางสายพาน (ตามแบบที่ Broecker เสนอไว้ปี 2530/1987 และที่ IPCC กับ NASA ใช้กันทั่วไป) — <b>ไม่ใช่</b>สนามความเร็วรายวันจากดาวเทียม ถ้าอยากดูกระแสน้ำ “ค่าจริงรายจุด” ให้ไปที่หัวข้อ <b>กระแสน้ำมหาสมุทรโลก 3 มิติ</b> ในเมนูด้านซ้าย · แนวคิดภาพจากคลิป <a href="https://svs.gsfc.nasa.gov/3658" target="_blank" rel="noopener">Thermohaline Circulation — NASA Scientific Visualization Studio ↗</a> · ตัวเลขกำกับจุดต่าง ๆ อ้างอิง RAPID/OSNAP, NOAA และ IPCC AR6 บทที่ 9 · แผนที่ฐาน Natural Earth (110m)</div>
+        <div class="src">ภาพนี้เป็น <b>แผนภาพเชิงสัญลักษณ์</b> ของเส้นทางสายพาน (ตามแบบที่ Broecker เสนอไว้ปี 2530/1987 และที่ IPCC กับ NASA ใช้กันทั่วไป) — <b>ไม่ใช่</b>สนามความเร็วรายวันจากดาวเทียม ถ้าอยากดูกระแสน้ำ “ค่าจริงรายจุด” ให้ไปที่หัวข้อ <b>กระแสน้ำมหาสมุทรโลก 3 มิติ</b> ในเมนูด้านซ้าย · แนวคิดภาพจากคลิป <a href="https://svs.gsfc.nasa.gov/3658" target="_blank" rel="noopener">Thermohaline Circulation — NASA Scientific Visualization Studio ↗</a> · ตัวเลขกำกับจุดต่าง ๆ อ้างอิง RAPID/OSNAP, NOAA และ IPCC AR6 บทที่ 9 · หน้าตาลูกโลก (โลกจากภาพถ่ายจริง + ช่อเส้นขาวมีขีดวิ่ง) ทำตามคลิปดังกล่าว โดยเรนเดอร์สดด้วย three.js ในเครื่องคุณ · ผิวโลกจาก <a href="https://www.naturalearthdata.com/downloads/10m-raster-data/10m-natural-earth-1/" target="_blank" rel="noopener">Natural Earth I with Shaded Relief and Bathymetry ↗</a> (สาธารณสมบัติ) ไฟล์เดียวกับพาเนลวงโคจรดาวเทียม</div>
       </div>
 
       <div class="card full">
@@ -22243,7 +22247,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         }
         function landPath(){
           g.beginPath();
-          WORLD.features.forEach(function(f){ path(f); });
+          LANDF.forEach(function(f){ path(f); });
         }
         if(img){
           g.drawImage(img, 0, 0, MAPW, MAPH);
@@ -22263,13 +22267,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             g.drawImage(img, 0, 0, MAPW, MAPH);                              // คืนสีทวีปให้สด
             g.fillStyle="rgba(5,18,32,.05)"; g.fillRect(0,0,MAPW,MAPH);      // แทบไม่หรี่ ทวีปในคลิปสว่างเป็นสีธรรมชาติ
             g.restore();
-            g.beginPath(); WORLD.features.forEach(function(f){ path(f); });
+            g.beginPath(); LANDF.forEach(function(f){ path(f); });
             g.lineWidth=1; g.strokeStyle="rgba(150,196,224,.30)"; g.stroke(); // ขอบชายฝั่งบาง ๆ ให้คมขึ้น
           }
         } else {
           g.fillStyle="#061a2e"; g.fillRect(0,0,MAPW,MAPH);
           if(hasWorld){
-            WORLD.features.forEach(function(f){
+            LANDF.forEach(function(f){
               g.beginPath(); path(f);
               g.fillStyle="#2c3f4c"; g.fill();
               g.lineWidth=1.2; g.strokeStyle="#46647a"; g.stroke();
@@ -22995,7 +22999,16 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       { id:"coldPac", kind:"cold", pts:[
         [-176,-60],[-179,-46],[178,-32],[176,-18],[174,-4],[173,9],[176,22],[-179,33],[-174,41],[-173,46] ] },
       { id:"aabw", kind:"cold", pts:[
-        [-46,-70],[-44,-66],[-45,-62],[-45,-60] ] }
+        [-46,-70],[-44,-66],[-45,-62],[-45,-60] ] },
+      // สาขาแอตแลนติกเหนือ: น้ำอุ่นไหลเลียบนอร์เวย์ขึ้นไปถึงสฟาลบาร์ด
+      { id:"warmNordic", kind:"warm", pts:[
+        [-16,62],[-8,65],[0,68],[8,70],[15,73],[18,76],[15,79] ] },
+      // กระแสน้ำเย็นเลียบกรีนแลนด์ฝั่งตะวันออก ไหลกลับลงใต้ผ่านช่องแคบเดนมาร์ก
+      { id:"coldEGC", kind:"cold", pts:[
+        [9,79],[0,79],[-9,77],[-17,74],[-24,70],[-30,66],[-34,62],[-38,58] ] },
+      // น้ำจมจากทะเลแลบราดอร์ ไหลลงใต้ไปสมทบกับกระแสน้ำลึกขอบตะวันตก
+      { id:"coldLab", kind:"cold", pts:[
+        [-52,62],[-56,58],[-58,53],[-56,48],[-60,44],[-66,40],[-70,36] ] }
     ];
 
     /* จุดที่กดอ่านได้ — kind: sink=น้ำจมลง · up=น้ำเอ่อขึ้น · note=จุดสำคัญอื่น */
@@ -23025,17 +23038,114 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       note:{ c:"#2ec8ef", label:"จุดสำคัญ" }
     };
 
+    /* ขนาดช่อเส้นของแต่ละเส้นทาง — n = จำนวนเส้น · w = ความกว้างช่อ (เรเดียนบนผิวโลก)
+       loop = เส้นทางปิดเป็นวง (กระแสวนรอบแอนตาร์กติกา) จะไม่บีบปลายช่อเข้าหากัน
+       pinch = [เริ่ม, จบ, ตัวคูณความกว้าง] ตามสัดส่วนความยาวเส้นทาง 0..1 */
+    var THC_BUNDLE = {
+      warm:    { n:11, w:0.072, pinch:[[0.52,0.80,0.38]] },   // ช่วงลอดแคริบเบียน–อ่าวเม็กซิโก–ช่องแคบฟลอริดา
+      coldAtl: { n:9,  w:0.068 },
+      coldACC: { n:11, w:0.082, loop:true },
+      coldInd: { n:7,  w:0.055 },
+      coldPac: { n:8,  w:0.062 },
+      aabw:    { n:5,  w:0.034 },
+      warmNordic: { n:8, w:0.044 },
+      coldEGC:    { n:8, w:0.042 },
+      coldLab:    { n:7, w:0.040 }
+    };
+
+    /* ---------- ลูกโลกสายพาน (three.js) ----------
+       ทำตามคลิป "Thermohaline Circulation" ของ NASA SVS ที่ผู้ใช้ส่งมา และให้เป็นพี่น้อง
+       กับลูกโลกกระแสน้ำในพาเนลข้าง ๆ
+
+       เส้นวาดเป็น "ริบบิ้น" (แถบสามเหลี่ยม) ไม่ใช่ THREE.Line เพราะ WebGL ตั้งความหนาเส้นไม่ได้
+       (linewidth ถูกเมินเกือบทุกเครื่อง ได้ 1 พิกเซลเสมอ) แต่เส้นในคลิปหนา 3–4 พิกเซลและมี
+       "หัวลูกศรจริง" วิ่งอยู่บนเส้น ซึ่งต้องมีพิกัดขวางเส้นถึงจะวาดได้ — ริบบิ้นให้ทั้งสองอย่าง:
+         · ขยายความกว้างในหน่วยพิกเซลจอ (คำนวณในเวอร์เท็กซ์เชดเดอร์) เส้นจึงหนาเท่ากันทุกระดับซูม
+         · เชดเดอร์วาดหัวลูกศรจากพิกัด (ระยะตามเส้น, ระยะขวางเส้น) โดยตรง ไม่ต้องมีจีออเมทรีลูกศรแยก
+       แต่ละเส้นกินแค่ช่วงหนึ่งของเส้นทาง (สุ่มจุดเริ่ม/ความยาว) ให้มีหัวมีท้ายเหมือนในคลิป
+       ไม่ใช่เส้นยาวรวดขนานกันเป็นราง
+
+       เท็กซ์เจอร์: assets/satellite/ne1-small.png ผสมสีแบบเดียวกับพาเนลกระแสน้ำ
+       ⚠️ เส้นทางยังเป็นแผนภาพเชิงสัญลักษณ์ ไม่ใช่สนามความเร็วที่วัดได้ */
     function setupThcGlobe(){
       var stage = document.getElementById("thcStage");
       if(!stage || !window.d3) return;
       var started=false, ready=false, running=false, visible=false, raf=0;
-      var cv, ctx, proj, path, land, borders, W=0, H=0, dpr=1;
-      var rot=[38,-16], zoom=1, spin=true, flowing=true, speed=1, phase=0, lastTs=0;
-      var picked=null, hovered=null, ROUTES=null;
+      var THREE, scene, camera, renderer, controls, globe;
+      var FLOW={}, MATS=[], RES=[], MARKS=[];
+      var W=0, H=0, clock=0, lastTs=0, flowing=true, speed=1;
+      var picked=null, hovered=null, ray=null, mouse=null;
       var elTip=document.getElementById("thcTip"),
           elInfo=document.getElementById("thcInfo");
 
-      /* ---- เกลาเส้นทาง: ยืดจุดตามวงกลมใหญ่ทุก ~2° แล้วเฉลี่ยเพื่อนบ้านในพิกัด 3 มิติให้โค้งลื่น ---- */
+      var MAPW=2048, MAPH=1024;
+      var HOME=[-45, 31];          // เปิดมาเห็นแอตแลนติกเหนือ — กัลฟ์สตรีมพุ่งไปหากรีนแลนด์ คือใจความของหัวข้อ
+      var DIST=3.35;               // คู่กับ fov 36 แล้วเห็นลูกโลกทั้งใบ เหลือขอบอวกาศนิดหน่อย
+      var ARROW=0.420;             // ระยะห่างหัวลูกศรบนเส้น (~2,700 กม. ลดความถี่ลงตามแบบ NASA ไม่ให้เบียดแน่น)
+
+      function ll2v(lon, lat, r){
+        var phi=(90-lat)*Math.PI/180, th=(lon+180)*Math.PI/180;
+        return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(th), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(th));
+      }
+      function rnd(seed){ var s=seed>>>0; return function(){ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+      function smoothstep(e0, e1, x){ var t=Math.max(0, Math.min(1, (x-e0)/(e1-e0||1e-6))); return t*t*(3-2*t); }
+
+      /* ---- พื้นผิวโลก: สูตรเดียวกับพาเนลกระแสน้ำ ----
+         คูณสีน้ำเงินลงบนภาพแทนการทับสีทึบ ที่สว่างจึงยังสว่างกว่าที่มืด ร่องรอยบาธีเมทรีไม่ถูกกลบ */
+      function paintBase(img){
+        var cv=document.createElement("canvas"); cv.width=MAPW; cv.height=MAPH;
+        var g=cv.getContext("2d");
+        var hasWorld=!!(LANDF && LANDF.length && window.d3), proj, path;
+        if(hasWorld){
+          proj=d3.geoEquirectangular().translate([MAPW/2,MAPH/2]).scale(MAPW/(2*Math.PI));
+          path=d3.geoPath(proj, g);
+        }
+        if(img){
+          g.drawImage(img, 0, 0, MAPW, MAPH);
+          g.globalCompositeOperation="multiply";
+          g.fillStyle="#2a6fc0"; g.fillRect(0,0,MAPW,MAPH);
+          g.globalCompositeOperation="source-over";
+          g.fillStyle="rgba(2,12,26,.08)"; g.fillRect(0,0,MAPW,MAPH);
+          if(hasWorld){
+            g.save();
+            g.beginPath(); LANDF.forEach(function(f){ path(f); }); g.clip();
+            g.drawImage(img, 0, 0, MAPW, MAPH);
+            g.fillStyle="rgba(5,18,32,.05)"; g.fillRect(0,0,MAPW,MAPH);
+            g.restore();
+            g.beginPath(); LANDF.forEach(function(f){ path(f); });
+            g.lineWidth=1; g.strokeStyle="rgba(150,196,224,.30)"; g.stroke();
+          }
+        } else {
+          g.fillStyle="#061a2e"; g.fillRect(0,0,MAPW,MAPH);
+          if(hasWorld){
+            LANDF.forEach(function(f){
+              g.beginPath(); path(f);
+              g.fillStyle="#2c3f4c"; g.fill();
+              g.lineWidth=1.2; g.strokeStyle="#46647a"; g.stroke();
+            });
+          }
+        }
+        return cv;
+      }
+      function loadBaseImage(){
+        return new Promise(function(res){
+          var im=new Image();
+          im.onload=function(){ res(im); };
+          im.onerror=function(){ res(null); };     // ไม่มีรูปก็ยังวาดลูกโลกได้ ไม่ต้องล้มทั้งแผง
+          im.src="assets/satellite/ne1-small.png";
+        });
+      }
+      /* รูปทวีปสำหรับระบายสีพื้นผิว — ใช้ WORLD ถ้าโหลดมาแล้ว ไม่งั้นอ่านไฟล์ในเครื่อง
+         (ไฟล์เดียวกับที่ climate-map.js ใช้ จึงมักได้จากแคชเบราว์เซอร์ ไม่ต้องรอ CDN) */
+      var LANDF=null;
+      function getLand(){
+        if(typeof WORLD!=="undefined" && WORLD && WORLD.features) return Promise.resolve(WORLD.features);
+        return d3.json("climate-data/countries-110m.json")
+          .then(function(topo){ return topojson.feature(topo, topo.objects.countries).features; })
+          ["catch"](function(){ return null; });      // ไม่มีรูปทวีปก็ยังวาดลูกโลกได้ ไม่ต้องล้มทั้งแผง
+      }
+
+      /* ---- เกลาเส้นทาง: ยืดตามวงกลมใหญ่ทุก ~0.6° แล้วเฉลี่ยเพื่อนบ้านในพิกัด 3 มิติให้โค้งลื่น ---- */
       function densify(pts, stepDeg){
         var out=[], i, k;
         for(i=0;i<pts.length-1;i++){
@@ -23066,264 +23176,441 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           return [Math.atan2(c[1],c[0])*180/Math.PI, Math.asin(Math.max(-1,Math.min(1,c[2])))*180/Math.PI];
         });
       }
-      function buildRoutes(){
-        ROUTES = THC_ROUTES.map(function(r){
-          var pts=smooth(densify(r.pts,2), 6);
-          // ตำแหน่งหัวลูกศรบอกทิศ — เว้นระยะเท่า ๆ กันตามความยาวเส้น
-          var arrows=[], n=pts.length, step=Math.max(10, Math.round(n/6));
-          for(var i=step;i<n-3;i+=step) arrows.push(i);
-          return { id:r.id, kind:r.kind, pts:pts, arrows:arrows };
+
+      /* ---- ช่อเส้นแบบ Laminar Flow (ขนานเรียบ ไม่ไขว้กัน) พร้อมมิติความลึก 3 มิติ ----
+         น้ำอุ่นผิวอยู่ระดับสูง (R_SURF ~1.016) ส่วนน้ำเย็นลึกอยู่ระดับก้นสมุทร (R_DEEP ~1.004)
+         ในจุดจมน้ำ (ทะเลนอร์ดิซ/กรีนแลนด์/แลบราดอร์) เส้นจะมุดดิ่งลงก้นสมุทร (Vertical Sinking) */
+      var R_SURF = 1.016;
+      var R_DEEP = 1.004;
+
+      function getRouteAltitude(route, t){
+        if(!route) return R_SURF;
+        var id = route.id;
+        // 1. เส้นทางน้ำอุ่นหลัก: ผิวน้ำ แต่พอถึงแอตแลนติกเหนือ (กรีนแลนด์/นอร์เวย์) มุดดิ่งลงก้นสมุทร (NADW sinking)
+        if(id === "warm"){
+          if(t < 0.78) return R_SURF;
+          var s = smoothstep(0.78, 0.98, t);
+          return R_SURF * (1 - s) + R_DEEP * s;
+        }
+        // 2. สาขาแอตแลนติกเหนือนอร์เวย์-สฟาลบาร์ด: มุดดิ่งลง
+        if(id === "warmNordic"){
+          var s = smoothstep(0.35, 0.95, t);
+          return R_SURF * (1 - s) + R_DEEP * s;
+        }
+        // 3. ทะเลแลบราดอร์: จุดจมน้ำอีกแห่ง มุดลงไปสมทบกับ NADW
+        if(id === "coldLab"){
+          var s = smoothstep(0.0, 0.65, t);
+          return R_SURF * (1 - s) + R_DEEP * s;
+        }
+        // 4. แอนตาร์กติก (AABW): ทะเลเวดเดลล์ น้ำหนาแน่นจมลงก้นทะเล
+        if(id === "aabw"){
+          var s = smoothstep(0.0, 0.70, t);
+          return R_SURF * (1 - s) + R_DEEP * s;
+        }
+        // 5. ปลายทางมหาสมุทรอินเดีย: น้ำลึกค่อยๆ เอ่อขึ้นสู่ผิวน้ำ (Upwelling)
+        if(id === "coldInd"){
+          if(t < 0.45) return R_DEEP;
+          var s = smoothstep(0.45, 0.95, t);
+          return R_DEEP * (1 - s) + R_SURF * s;
+        }
+        // 6. ปลายทางแปซิฟิกเหนือ: น้ำลึกเอ่อขึ้นสู่ผิว (Upwelling)
+        if(id === "coldPac"){
+          if(t < 0.50) return R_DEEP;
+          var s = smoothstep(0.50, 0.95, t);
+          return R_DEEP * (1 - s) + R_SURF * s;
+        }
+        // 7. น้ำลึกแอตแลนติก (NADW), ACC, และกระแสน้ำเย็นอื่นๆ วิ่งเลียบก้นสมุทร
+        if(route.kind === "cold") return R_DEEP;
+        return R_SURF;
+      }
+
+      function bundle(coreLL, count, spread, loop, seed, pinch, route){
+        var R=rnd(seed), i, b;
+        var n=coreLL.length;
+        var V=coreLL.map(function(p){ return ll2v(p[0], p[1], 1); });
+        var side=new Array(n);
+        for(i=0;i<n;i++){
+          var a=V[Math.max(0,i-1)], c=V[Math.min(n-1,i+1)];
+          var tg=c.clone().sub(a);
+          if(tg.lengthSq()<1e-12) tg=new THREE.Vector3(0,1,0);
+          side[i]=new THREE.Vector3().crossVectors(V[i], tg).normalize();
+        }
+        var lines=[];
+        for(b=0;b<count;b++){
+          var lane=count>1 ? (b/(count-1))*2-1 : 0;
+          // แต่ละเส้นวิ่งเกือบเต็มความยาว เพื่อให้พัลส์ในเชดเดอร์ไหลต่อเนื่องตลอดสาย
+          var span = loop ? 1.0 : (0.90 + R()*0.10);
+          var t0 = loop ? 0.0 : (R()*(1 - span));
+          var i0 = Math.max(0, Math.round(t0*(n-1)));
+          var i1 = Math.min(n-1, Math.round((t0+span)*(n-1)));
+          if(i1-i0 < 6) continue;
+
+          var line=[];
+          for(i=i0;i<=i1;i++){
+            var t=i/(n-1);
+            // ช่อเส้นขนานเรียบ (Laminar Parallel Lanes) — ไม่บวก sine wave สุ่มที่ทำให้เส้นไขว้กัน
+            var off=spread * lane * 0.85;
+
+            // เส้นทางเปิด: บีบช่อเข้าหากันที่หัวกับท้าย
+            if(!loop) off *= 0.25 + 0.75*Math.pow(Math.sin(Math.PI*t), 0.45);
+
+            // บีบช่อในจุดคอคอด (Pinch points)
+            if(pinch) for(var k=0;k<pinch.length;k++){
+              var q0=pinch[k][0], q1=pinch[k][1], kf=pinch[k][2], ease=0.07;
+              var inside=Math.min(smoothstep(q0-ease, q0+ease, t), 1-smoothstep(q1-ease, q1+ease, t));
+              off *= 1 + (kf-1)*inside;
+            }
+
+            // คำนวณความสูง 3 มิติ (Vertical Sinking / Upwelling) ตามตำแหน่ง
+            var alt = getRouteAltitude(route, t);
+            var p3d = V[i].clone().addScaledVector(side[i], off).normalize().multiplyScalar(alt);
+            line.push(p3d);
+          }
+          lines.push(line);
+        }
+        return lines;
+      }
+
+      /* ---- เส้น = ริบบิ้นกว้างคงที่ในหน่วยพิกเซลจอ + ขีดดาวตกและหัวลูกศรวาดในเชดเดอร์ ----
+         vU  = ตำแหน่งขวางเส้น −1..1 (ขอบซ้าย→ขอบขวา)
+         vT  = ระยะทางสะสมตามเส้น หารด้วยระยะห่างลูกศร
+         vF  = ตัวจางปลายเส้น ให้หัวกับท้ายไม่ตัดห้วน */
+      var V_FLOW = [
+        "attribute vec3 aSideDir;",
+        "attribute float aSide;",
+        "attribute float aT;",
+        "attribute float aSeed;",
+        "attribute float aFade;",
+        "uniform vec2 uRes;",
+        "uniform float uHalfPx;",
+        "varying float vU, vT, vF;",
+        "void main(){",
+        "  vec4 c0 = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+        "  vec4 c1 = projectionMatrix * modelViewMatrix * vec4(position + aSideDir * 0.01, 1.0);",
+        "  vec2 s0 = c0.xy / c0.w * uRes;",
+        "  vec2 s1 = c1.xy / c1.w * uRes;",
+        "  vec2 d  = s1 - s0;",
+        "  vec2 nrm = (length(d) > 1e-5) ? normalize(d) : vec2(0.0, 1.0);",
+        "  c0.xy += nrm * (aSide * uHalfPx / uRes) * c0.w;",
+        "  vU = aSide; vT = aT + aSeed; vF = aFade;",
+        "  gl_Position = c0;",
+        "}"
+      ].join("\n");
+      var F_FLOW = [
+        "precision mediump float;",
+        "uniform vec3 uColor;",
+        "uniform float uOpacity, uTime, uSpeed, uCore, uHead, uAA;",
+        "varying float vU, vT, vF;",
+        "void main(){",
+        "  float a = abs(vU);",
+        "  float coreEdge = 1.0 - smoothstep(uCore - uAA, uCore + uAA, a);",
+        "",
+        // ตำแหน่งตามวงรอบของพัลส์ (0.0 = หัวพัลส์ที่วิ่งนำหน้า -> 1.0 = ท้ายพัลส์)
+        "  float q = fract(uTime * uSpeed - vT);",
+        "",
+        // 1. หัวลูกศรเรียวแหลม (Slender Dart) คมกริบ ไม่กางปีกอ้วน
+        "  float tri = 1.0 - smoothstep(q / uHead - uAA, q / uHead + uAA, a * 1.55);",
+        "  float head = tri * step(q, uHead);",
+        "",
+        // 2. หางดาวตกเรียวยาวเป็นสายน้ำ (Long Fluid Tail): ค่อยๆ จางลงไปด้านหลัง
+        "  float tailLen = 0.80;",
+        "  float tailDecay = smoothstep(tailLen, 0.0, q);",
+        "  float tail = coreEdge * pow(tailDecay, 1.45);",
+        "",
+        // 3. เส้นรางนำทางโปร่งแสงบางเบา (Guide Track): จางเพียง 4% เพื่อความสะอาดตา
+        "  float track = coreEdge * 0.04;",
+        "",
+        // รวมแสง: หัวคมสว่างนำหน้า + หางพริ้วยาว
+        "  float pulse = max(head * 1.35, tail);",
+        "  float alpha = max(track, pulse) * vF;",
+        "",
+        "  if(alpha < 0.01) discard;",
+        "  gl_FragColor = vec4(uColor, alpha * uOpacity);",
+        "}"
+      ].join("\n");
+
+      /* lines = อาร์เรย์ของอาร์เรย์เวกเตอร์ 3 มิติ (คำนวณความสูงมาแล้ว) */
+      function buildRibbon(lines){
+        var total=0, segs=0, i, j;
+        for(i=0;i<lines.length;i++){ total+=lines[i].length; if(lines[i].length>1) segs+=lines[i].length-1; }
+        var pos=new Float32Array(total*2*3), sd=new Float32Array(total*2*3);
+        var side=new Float32Array(total*2), aT=new Float32Array(total*2),
+            seed=new Float32Array(total*2), fade=new Float32Array(total*2);
+        var idx=new Uint32Array(segs*6), q=0, p=0, R=rnd(97);
+        var tmp=new THREE.Vector3(), tg=new THREE.Vector3();
+        for(i=0;i<lines.length;i++){
+          var ln=lines[i], n=ln.length, base=p, acc=0, sSeed=R();
+          // ระยะทางสะสมของทั้งเส้น (ใช้คำนวณตัวจางปลายเส้นเป็นหน่วยเดียวกัน)
+          var arc=new Float32Array(n);
+          for(j=1;j<n;j++) arc[j]=arc[j-1]+ln[j-1].distanceTo(ln[j]);
+          var totalArc=arc[n-1]||1e-6, FADE=Math.min(0.12, totalArc*0.18);
+          for(j=0;j<n;j++){
+            var a=ln[Math.max(0,j-1)], c=ln[Math.min(n-1,j+1)];
+            tg.subVectors(c, a);
+            if(tg.lengthSq()<1e-12) tg.set(0,1,0);
+            tmp.crossVectors(ln[j], tg).normalize();
+            var f=Math.min(1, Math.min(arc[j], totalArc-arc[j])/FADE);
+            for(var s=0;s<2;s++){
+              pos[p*3]=ln[j].x; pos[p*3+1]=ln[j].y; pos[p*3+2]=ln[j].z;
+              sd[p*3]=tmp.x; sd[p*3+1]=tmp.y; sd[p*3+2]=tmp.z;
+              side[p]=s?1:-1; aT[p]=arc[j]/ARROW; seed[p]=sSeed * 3.5; fade[p]=f;
+              p++;
+            }
+          }
+          // สองสามเหลี่ยมต่อหนึ่งช่วง — ต่อเฉพาะภายในเส้นเดียวกัน
+          for(j=0;j<n-1;j++){
+            var v0=base+j*2, v1=v0+1, v2=v0+2, v3=v0+3;
+            idx[q++]=v0; idx[q++]=v1; idx[q++]=v2;
+            idx[q++]=v1; idx[q++]=v3; idx[q++]=v2;
+          }
+        }
+        var geo=new THREE.BufferGeometry();
+        geo.setIndex(new THREE.BufferAttribute(idx,1));
+        geo.addAttribute("position", new THREE.BufferAttribute(pos,3));
+        geo.addAttribute("aSideDir", new THREE.BufferAttribute(sd,3));
+        geo.addAttribute("aSide", new THREE.BufferAttribute(side,1));
+        geo.addAttribute("aT",    new THREE.BufferAttribute(aT,1));
+        geo.addAttribute("aSeed", new THREE.BufferAttribute(seed,1));
+        geo.addAttribute("aFade", new THREE.BufferAttribute(fade,1));
+        return geo;
+      }
+      function ribbonMesh(geo, color, opt){
+        opt=opt||{};
+        var half=opt.halfPx||4.2;
+        var mtl=new THREE.ShaderMaterial({
+          uniforms:{
+            uRes:{value:new THREE.Vector2(1,1)}, uHalfPx:{value:half},
+            uColor:{value:new THREE.Color(color)}, uOpacity:{value:opt.opacity||1},
+            uTime:{value:0}, uSpeed:{value:opt.speed||0.10},
+            uCore:{value:(opt.corePx||1.5)/half},        // ครึ่งความหนาแกนเส้น เทียบครึ่งความกว้างริบบิ้น
+            uHead:{value:opt.head||0.34},                // ความยาวหัวลูกศร เป็นสัดส่วนของระยะห่างลูกศร
+            uAA:{value:1.15/half}
+          },
+          vertexShader:V_FLOW, fragmentShader:F_FLOW,
+          transparent:true, depthTest:true, depthWrite:false, side:THREE.DoubleSide
+        });
+        MATS.push(mtl); RES.push(mtl.uniforms.uRes);
+        return new THREE.Mesh(geo, mtl);
+      }
+
+      /* ---- จุดสำคัญ ---- */
+      function haloTexture(hex){
+        var s=64, cv=document.createElement("canvas"); cv.width=cv.height=s;
+        var g=cv.getContext("2d"), grd=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+        grd.addColorStop(0, hex); grd.addColorStop(.32, hex); grd.addColorStop(1, "rgba(0,0,0,0)");
+        g.fillStyle=grd; g.beginPath(); g.arc(s/2,s/2,s/2,0,Math.PI*2); g.fill();
+        return new THREE.CanvasTexture(cv);
+      }
+      function buildMarkers(){
+        var host=document.createElement("div");
+        host.className="thc-labs"; stage.appendChild(host);
+        THC_SITES.forEach(function(s){
+          var col=THC_KIND[s.kind].c, p=ll2v(s.lon, s.lat, 1.018);
+          var dot=new THREE.Mesh(new THREE.SphereBufferGeometry(0.0135, 14, 12),
+            new THREE.MeshBasicMaterial({ color:new THREE.Color(col) }));
+          dot.position.copy(p); dot.userData.site=s; globe.add(dot);
+          var halo=new THREE.Sprite(new THREE.SpriteMaterial({
+            map:haloTexture(col), transparent:true, opacity:.5,
+            depthTest:true, depthWrite:false, blending:THREE.AdditiveBlending }));
+          halo.position.copy(p); halo.scale.setScalar(0.075); globe.add(halo);
+          var lab=document.createElement("div");
+          lab.className="thc-lab"; lab.textContent=s.name;
+          host.appendChild(lab);
+          MARKS.push({ site:s, dot:dot, halo:halo, lab:lab, pos:p });
         });
       }
-
-      /* ---- วาด ---- */
-      function radius(){ return Math.min(W,H)*0.455*zoom; }
-      function center(){ return [-rot[0], -rot[1]]; }
-      function visibleAt(lonlat){ return d3.geoDistance(lonlat, center()) < Math.PI/2 - 0.02; }
-
-      function strokeLine(pts, color, width, alpha, dash, offset, glow){
-        ctx.save();
-        ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width;
-        ctx.lineCap="round"; ctx.lineJoin="round";
-        if(dash){ ctx.setLineDash(dash); ctx.lineDashOffset=offset; } else ctx.setLineDash([]);
-        if(glow){ ctx.shadowColor=color; ctx.shadowBlur=glow; }
-        ctx.beginPath(); path({type:"LineString", coordinates:pts}); ctx.stroke();
-        ctx.restore();
+      function layoutLabels(){
+        var show=document.getElementById("thcLSite").checked, i;
+        for(i=0;i<MARKS.length;i++){
+          var m=MARKS[i], lab=m.lab;
+          if(!show){ lab.classList.remove("on"); continue; }
+          var wp=m.pos.clone().applyMatrix4(globe.matrixWorld);
+          var toCam=camera.position.clone().sub(wp).normalize();
+          if(wp.clone().normalize().dot(toCam)<=0.03){ lab.classList.remove("on"); continue; }
+          var v=wp.clone().project(camera);
+          if(v.x<-1.05||v.x>1.05||v.y<-1.05||v.y>1.05){ lab.classList.remove("on"); continue; }
+          var x=(v.x*.5+.5)*W, y=(-v.y*.5+.5)*H, flip=(x>W-160);
+          lab.style.left=Math.round(flip ? x-13 : x+13)+"px";
+          lab.style.top=Math.round(y)+"px";
+          lab.style.transform=flip ? "translate(-100%,-50%)" : "translate(0,-50%)";
+          lab.classList.add("on");
+          lab.classList.toggle("sel", picked===m.site.id || hovered===m.site.id);
+        }
       }
-      function drawArrows(r, color, size){
-        ctx.save(); ctx.fillStyle=color; ctx.globalAlpha=.9;
-        r.arrows.forEach(function(i){
-          var a=r.pts[i], b=r.pts[Math.min(i+2, r.pts.length-1)];
-          if(!visibleAt(a) || !visibleAt(b)) return;
-          var pa=proj(a), pb=proj(b); if(!pa||!pb) return;
-          var ang=Math.atan2(pb[1]-pa[1], pb[0]-pa[0]);
-          ctx.save(); ctx.translate(pa[0],pa[1]); ctx.rotate(ang);
-          ctx.beginPath(); ctx.moveTo(size,0); ctx.lineTo(-size*.72,size*.62); ctx.lineTo(-size*.42,0); ctx.lineTo(-size*.72,-size*.62);
-          ctx.closePath(); ctx.fill(); ctx.restore();
+
+      /* ---- ฉาก ---- */
+      function build(baseImg){
+        scene=new THREE.Scene();
+        camera=new THREE.PerspectiveCamera(36, 1.6, 0.05, 100);
+        globe=new THREE.Group(); scene.add(globe);
+
+        var tex=new THREE.CanvasTexture(paintBase(baseImg));
+        if(renderer.capabilities.getMaxAnisotropy) tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+        globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1, 96, 64),
+          new THREE.MeshBasicMaterial({ map:tex })));
+        globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1.045, 48, 32),
+          new THREE.MeshBasicMaterial({ color:new THREE.Color(0x6fc7ee), transparent:true,
+            opacity:.09, side:THREE.BackSide, depthWrite:false })));
+
+        var warm=[], cold=[];
+        THC_ROUTES.forEach(function(r, i){
+          var core=smooth(densify(r.pts, 0.6), 8);
+          var cfg=THC_BUNDLE[r.id] || { n:12, w:0.05 };
+          var bl=bundle(core, cfg.n, cfg.w, !!cfg.loop, 1000+i*97, cfg.pinch, r);
+          var dst=(r.kind==="warm") ? warm : cold;
+          dst.push.apply(dst, bl);
         });
-        ctx.restore();
-      }
-      function drawSite(s, r, on){
-        var p=proj([s.lon,s.lat]); if(!p) return null;
-        var col=THC_KIND[s.kind].c;
-        ctx.save();
-        ctx.beginPath(); ctx.arc(p[0],p[1], r*3.1, 0, Math.PI*2);
-        ctx.fillStyle=col; ctx.globalAlpha=on?.28:.16; ctx.fill();
-        ctx.globalAlpha=1;
-        ctx.beginPath(); ctx.arc(p[0],p[1], r, 0, Math.PI*2);
-        ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=on?16:8; ctx.fill();
-        ctx.shadowBlur=0;
-        ctx.lineWidth=on?2:1.3; ctx.strokeStyle="rgba(255,255,255,"+(on?.95:.62)+")"; ctx.stroke();
-        ctx.restore();
-        return p;
-      }
-      function drawLabel(s, p, on){
-        ctx.save();
-        ctx.font=(on?"700 ":"600 ")+"11.5px 'IBM Plex Sans Thai', system-ui, sans-serif";
-        ctx.textBaseline="middle";
-        var w=ctx.measureText(s.name).width, x=p[0]+13, y=p[1];
-        if(x+w>W-10) x=p[0]-13-w;
-        ctx.fillStyle="rgba(3,12,20,.66)";
-        ctx.beginPath();
-        if(ctx.roundRect) ctx.roundRect(x-5, y-9, w+10, 18, 6); else ctx.rect(x-5, y-9, w+10, 18);
-        ctx.fill();
-        ctx.fillStyle= on ? "#eafcff" : "rgba(208,231,244,.8)";
-        ctx.fillText(s.name, x, y+.5);
-        ctx.restore();
-      }
 
-      function draw(){
-        if(!ctx) return;
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-        ctx.clearRect(0,0,W,H);
-        var R=radius(), cx=W/2, cy=H/2;
-        proj.rotate([rot[0], rot[1], 0]).scale(R).translate([cx,cy]);
-
-        // ทะเลลึก + ขอบเรืองแสง
-        ctx.save();
-        ctx.beginPath(); path({type:"Sphere"});
-        var g=ctx.createRadialGradient(cx-R*.28, cy-R*.34, R*.1, cx, cy, R);
-        g.addColorStop(0,"#0d3350"); g.addColorStop(.55,"#08243a"); g.addColorStop(1,"#03101c");
-        ctx.fillStyle=g; ctx.fill();
-        ctx.shadowColor="rgba(46,200,239,.45)"; ctx.shadowBlur=26;
-        ctx.strokeStyle="rgba(46,200,239,.30)"; ctx.lineWidth=1.1; ctx.stroke();
-        ctx.restore();
-
-        // เส้นกริด
-        ctx.save(); ctx.strokeStyle="rgba(160,215,240,.075)"; ctx.lineWidth=.7;
-        ctx.beginPath(); path(d3.geoGraticule10()); ctx.stroke(); ctx.restore();
-
-        // แผ่นดิน
-        if(land){
-          ctx.save();
-          ctx.beginPath(); path(land); ctx.fillStyle="#1d4157"; ctx.fill();
-          ctx.strokeStyle="rgba(163,210,234,.62)"; ctx.lineWidth=.8; ctx.stroke();
-          if(borders){ ctx.beginPath(); path(borders); ctx.strokeStyle="rgba(163,210,234,.20)"; ctx.lineWidth=.5; ctx.stroke(); }
-          ctx.restore();
+        /* วาดสองชั้นจากจีออเมทรีก้อนเดียว: ชั้นล่างเป็นเงานุ่มบางเบา
+           ให้เส้นขาวตัดกับน้ำทะเล โดยไม่มีขอบมืดหนาเป็นสติ๊กเกอร์การ์ตูน */
+        function layer(lines, color, opt){
+          var geo=buildRibbon(lines);
+          var g=new THREE.Group();
+          var sh=ribbonMesh(geo, 0x010c18, { halfPx:opt.halfPx+0.4, corePx:opt.corePx+0.25,
+            head:opt.head, speed:opt.speed, opacity:0.12 });
+          sh.renderOrder=opt.order; g.add(sh);
+          var ln=ribbonMesh(geo, color, opt);
+          ln.renderOrder=opt.order+1; g.add(ln);
+          return g;
         }
+        // halfPx = 2.1-2.2px (บาง เพรียว คม แบบ NASA) · corePx = 0.8-0.85px
+        // head = 0.10 (หัวลูกศรคมเรียว) · speed = ความเร็วขีดสายน้ำ
+        FLOW.warm=layer(warm, 0xfff6ea, { halfPx:2.2, corePx:0.85, head:0.10, speed:0.105, opacity:0.96, order:4 });
+        FLOW.cold=layer(cold, 0xcdefff, { halfPx:2.0, corePx:0.80, head:0.10, speed:0.060, opacity:0.90, order:2 });
+        globe.add(FLOW.cold); globe.add(FLOW.warm);
 
-        if(ROUTES){
-          var showW=document.getElementById("thcLWarm").checked,
-              showC=document.getElementById("thcLCold").checked;
-          // วาดน้ำลึกก่อน (ให้ความรู้สึกว่าอยู่ "ใต้") แล้วค่อยน้ำผิวทับ
-          ROUTES.forEach(function(r){
-            var cold=r.kind==="cold";
-            if(cold ? !showC : !showW) return;
-            var base = cold ? "#4a90e2" : "#ff7a2f",
-                lit  = cold ? "#9ed0ff" : "#ffd08a";
-            strokeLine(r.pts, base, cold?7:8.5, cold?.20:.26, null, 0, 0);
-            strokeLine(r.pts, base, cold?3.0:3.6, cold?.55:.65, null, 0, 0);
-            strokeLine(r.pts, lit,  cold?2.6:3.2, cold?.85:.95, [13,27], -phase*(cold?.45:1), cold?9:13);
-          });
-          ROUTES.forEach(function(r){
-            var cold=r.kind==="cold";
-            if(cold ? !showC : !showW) return;
-            drawArrows(r, cold?"#bfe0ff":"#ffd9ae", cold?4.6:5.4);
-          });
-        }
+        buildMarkers();
 
-        if(document.getElementById("thcLSite").checked){
-          THC_SITES.forEach(function(s){
-            if(!visibleAt([s.lon,s.lat])){ s._p=null; return; }
-            var on=(picked===s.id || hovered===s.id);
-            s._p=drawSite(s, on?7.2:5.4, on);
-          });
-          THC_SITES.forEach(function(s){ if(s._p) drawLabel(s, s._p, picked===s.id||hovered===s.id); });
-        } else {
-          THC_SITES.forEach(function(s){ s._p=null; });
-        }
+        controls=new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enablePan=false; controls.minDistance=1.45; controls.maxDistance=6;
+        controls.enableDamping=true; controls.dampingFactor=.08;
+        controls.rotateSpeed=.42; controls.zoomSpeed=.7;
+        controls.autoRotate=true; controls.autoRotateSpeed=.32;
+        camera.position.copy(ll2v(HOME[0], HOME[1], DIST));
+        ray=new THREE.Raycaster(); mouse=new THREE.Vector2();
+        resize();
       }
 
-      /* ---- ลูป ---- */
       function frame(ts){
         if(!running) return;
         raf=requestAnimationFrame(frame);
         if(!lastTs) lastTs=ts;
         var dt=Math.min(120, ts-lastTs); lastTs=ts;
         if(flowing){
-          phase += dt*0.055*speed;
-          if(spin) rot[0]=(rot[0] + dt*0.0035*speed) % 360;
+          clock += dt*0.001*speed;
+          for(var i=0;i<MATS.length;i++) MATS[i].uniforms.uTime.value=clock;
         }
-        draw();
+        controls.update();
+        renderer.render(scene, camera);
+        layoutLabels();
       }
       function startLoop(){ if(running||!ready||!visible) return; running=true; lastTs=0; if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(frame); }
       function stopLoop(){ running=false; if(raf){ cancelAnimationFrame(raf); raf=0; } }
+      function redraw(){ if(!ready) return; controls.update(); renderer.render(scene,camera); layoutLabels(); }
 
       function resize(){
-        if(!cv) return;
+        if(!renderer) return;
         W=Math.round(stage.clientWidth||640); H=Math.round(stage.clientHeight||480);
-        dpr=Math.min(window.devicePixelRatio||1, 2);
-        cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
-        cv.style.width=W+"px"; cv.style.height=H+"px";
-        draw();
+        renderer.setSize(W, H);
+        camera.aspect=W/H; camera.updateProjectionMatrix();
+        // ริบบิ้นกว้างเป็นพิกเซล จึงต้องบอกขนาดจอจริงให้เชดเดอร์ทุกครั้งที่ขนาดเปลี่ยน
+        for(var i=0;i<RES.length;i++) RES[i].value.set(W, H);
+        // ต้อง update() ก่อนเรนเดอร์เฟรมแรกเสมอ — OrbitControls เป็นตัวหันกล้องเข้าหาลูกโลก
+        // ถ้าข้ามไป เฟรมแรกกล้องยังหันตามค่าเริ่มต้น (0,0,-1) แล้วได้จอเปล่า (เจอมาแล้ว)
+        if(controls) controls.update();
+        renderer.render(scene, camera); layoutLabels();
       }
 
-      function hit(x,y){
-        var best=null, bd=22*22;
-        THC_SITES.forEach(function(s){
-          if(!s._p) return;
-          var dx=s._p[0]-x, dy=s._p[1]-y, d=dx*dx+dy*dy;
-          if(d<bd){ bd=d; best=s; }
-        });
-        return best;
+      /* ---- ชี้/กด ---- */
+      function pick(ev){
+        if(!document.getElementById("thcLSite").checked) return null;
+        var r=renderer.domElement.getBoundingClientRect();
+        mouse.x=((ev.clientX-r.left)/r.width)*2-1;
+        mouse.y=-((ev.clientY-r.top)/r.height)*2+1;
+        ray.setFromCamera(mouse, camera);
+        var hits=ray.intersectObjects(MARKS.map(function(m){ return m.dot; }), false);
+        return hits.length ? hits[0].object.userData.site : null;
       }
       function showInfo(s){
         picked = s ? s.id : null;
         stage.classList.toggle("picked", !!s);
-        if(!s){ elInfo.classList.remove("on"); draw(); return; }
+        if(!s){ elInfo.classList.remove("on"); return; }
         elInfo.querySelector("h4").innerHTML = MDICO(s.ico)+" "+s.name
           +' <span style="font-weight:600;font-size:11px;color:'+THC_KIND[s.kind].c+'">· '+THC_KIND[s.kind].label+"</span>";
         elInfo.querySelector("p").innerHTML = s.text;
         elInfo.classList.add("on");
-        draw();
       }
-
       function wirePointer(){
-        var dragging=false, moved=0, sx=0, sy=0, r0=null, t0=0;
-        cv.addEventListener("pointerdown", function(e){
-          dragging=true; moved=0; sx=e.offsetX; sy=e.offsetY; r0=rot.slice(); t0=Date.now();
-          spin=false;                       // ผู้ใช้เริ่มคุมมุมเองแล้ว — หยุดหมุนอัตโนมัติ ไม่งั้นภาพเลื่อนหนีมือ
-          try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+        var cv=renderer.domElement, sx=0, sy=0, t0=0, down=false;
+        cv.style.cursor="grab";
+        cv.addEventListener("pointerdown", function(e){ down=true; sx=e.clientX; sy=e.clientY; t0=Date.now(); });
+        cv.addEventListener("pointerup", function(e){
+          if(!down) return; down=false;
+          if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>6 || Date.now()-t0>500) return;   // ลากหมุน ไม่ใช่กด
+          var s=pick(e);
+          showInfo(s && picked!==s.id ? s : null);
         });
         cv.addEventListener("pointermove", function(e){
-          if(dragging){
-            var dx=e.offsetX-sx, dy=e.offsetY-sy;
-            moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
-            var sens=57.3/radius();
-            rot[0]=r0[0]+dx*sens;
-            rot[1]=Math.max(-88, Math.min(88, r0[1]-dy*sens));
-            if(!running) draw();
-            return;
-          }
-          var s=hit(e.offsetX, e.offsetY), id=s?s.id:null;
+          if(down) return;
+          var s=pick(e);
+          hovered = s ? s.id : null;
           cv.style.cursor = s ? "pointer" : "grab";
-          if(id!==hovered){ hovered=id; if(!running) draw(); }
           if(s){
+            var r=cv.getBoundingClientRect();
             elTip.style.display="block";
             elTip.innerHTML="<b>"+s.name+"</b>"+THC_KIND[s.kind].label+" · <span class='v'>กดเพื่ออ่าน</span>";
-            var tw=elTip.offsetWidth||170;
-            elTip.style.left=Math.max(6, Math.min(W-tw-6, e.offsetX+14))+"px";
-            elTip.style.top=Math.max(6, e.offsetY-40)+"px";
+            var tw=elTip.offsetWidth||170, x=e.clientX-r.left, y=e.clientY-r.top;
+            elTip.style.left=Math.max(6, Math.min(W-tw-6, x+14))+"px";
+            elTip.style.top=Math.max(6, y-40)+"px";
           } else elTip.style.display="none";
         });
-        function up(e){
-          if(!dragging) return;
-          dragging=false;
-          try{ cv.releasePointerCapture(e.pointerId); }catch(err){}
-          if(moved<6 && Date.now()-t0<500){
-            var s=hit(e.offsetX, e.offsetY);
-            showInfo(s && picked!==s.id ? s : null);
-          }
-        }
-        cv.addEventListener("pointerup", up);
-        cv.addEventListener("pointercancel", up);
-        cv.addEventListener("pointerleave", function(){
-          elTip.style.display="none";
-          if(hovered){ hovered=null; if(!running) draw(); }
-        });
-        cv.addEventListener("wheel", function(e){
-          e.preventDefault();
-          zoom=Math.max(.85, Math.min(3.4, zoom*Math.exp(-e.deltaY*0.0016)));
-          if(!running) draw();
-        }, {passive:false});
+        cv.addEventListener("pointerleave", function(){ elTip.style.display="none"; hovered=null; });
+        // ผู้ใช้เริ่มคุมมุมเอง = หยุดหมุนอัตโนมัติ ไม่งั้นภาพเลื่อนหนีมือ
+        controls.addEventListener("start", function(){ controls.autoRotate=false; });
       }
-
       function wireControls(){
         var btn=document.getElementById("thcPlay");
         btn.addEventListener("click", function(){
           flowing=!flowing;
+          if(!flowing) controls.autoRotate=false;
           btn.innerHTML = flowing ? MDICO("pause")+" หยุด" : MDICO("play")+" เล่น";
         });
         document.getElementById("thcSpeed").addEventListener("input", function(){ speed=(+this.value)/100; });
-        ["thcLWarm","thcLCold","thcLSite"].forEach(function(id){
-          document.getElementById(id).addEventListener("change", function(){ if(!running) draw(); });
+        document.getElementById("thcLWarm").addEventListener("change", function(){ FLOW.warm.visible=this.checked; redraw(); });
+        document.getElementById("thcLCold").addEventListener("change", function(){ FLOW.cold.visible=this.checked; redraw(); });
+        document.getElementById("thcLSite").addEventListener("change", function(){
+          var on=this.checked;
+          MARKS.forEach(function(m){ m.dot.visible=on; m.halo.visible=on; });
+          if(!on) showInfo(null);
+          redraw();
         });
         document.getElementById("thcHome").addEventListener("click", function(){
-          rot=[38,-16]; zoom=1; spin=true; showInfo(null);
+          camera.position.copy(ll2v(HOME[0], HOME[1], DIST));
+          controls.target.set(0,0,0); controls.autoRotate=true; controls.update();
+          showInfo(null); redraw();
         });
         document.getElementById("thcInfoX").addEventListener("click", function(){ showInfo(null); });
       }
 
       function init(){
         if(started) return; started=true;
-        cv=document.createElement("canvas"); stage.appendChild(cv);
-        ctx=cv.getContext("2d");
-        proj=d3.geoOrthographic().clipAngle(90).precision(.4);
-        path=d3.geoPath(proj, ctx);
-        buildRoutes();
-        d3.json("climate-data/countries-110m.json")
-          .then(function(topo){
-            land=topojson.feature(topo, topo.objects.countries);
-            borders=topojson.mesh(topo, topo.objects.countries, function(a,b){ return a!==b; });
-          })
-          .catch(function(){ land=null; })
-          .then(function(){
-            ready=true;
-            var ld=document.getElementById("thcLoading");
-            if(ld && ld.parentNode) ld.parentNode.removeChild(ld);
-            wirePointer(); wireControls(); resize();
-            if(visible) startLoop();
-          });
+        Promise.all([ loadThreeShared(), getLand(), loadBaseImage() ]).then(function(res){
+          THREE=window.THREE;
+          LANDF=res[1];
+          renderer=new THREE.WebGLRenderer({ antialias:true, alpha:true });
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+          stage.appendChild(renderer.domElement);
+          build(res[2]);
+          wirePointer(); wireControls();
+          ready=true;
+          var ld=document.getElementById("thcLoading");
+          if(ld && ld.parentNode) ld.parentNode.removeChild(ld);
+          if(visible) startLoop(); else redraw();
+        })["catch"](function(err){
+          console.error("thc globe:", err);
+          var ld=document.getElementById("thcLoading");
+          if(ld) ld.innerHTML='<span style="color:var(--red)">โหลดลูกโลกไม่สำเร็จ<br><small>'+((err&&err.message)||"")+'</small></span>';
+        });
       }
 
       var rz; window.addEventListener("resize", function(){ clearTimeout(rz); rz=setTimeout(resize, 180); });
