@@ -36,18 +36,18 @@
   // ---- รายการโมเดล AI ที่รองรับ ----
   var AI_MODELS = [
     {
-      id: "gemini-flash-latest",
-      name: "Gemini Flash",
+      id: "gemini-2.0-flash",
+      name: "Gemini 2.0 Flash",
       badge: "Google",
       icon: "⚡",
-      tag: "แนะนำ · ตอบเร็วมาก ฉลาด อัปเดตล่าสุด ฟรี",
+      tag: "แนะนำ · ตอบเร็วมาก ฉลาดล่าสุด ฟรี",
     },
     {
-      id: "gemini-3.6-flash",
-      name: "Gemini 3.6 Flash",
+      id: "gemini-1.5-flash",
+      name: "Gemini 1.5 Flash",
       badge: "Google",
       icon: "✨",
-      tag: "รุ่นเสถียรล่าสุด ตอบภาษาไทยยอดเยี่ยม",
+      tag: "เสถียร · ประหยัดโทเคน",
     },
     {
       id: "openthaigpt-thaillm-8b-instruct-v7.2",
@@ -80,13 +80,9 @@
   ];
 
   var MODEL_STORAGE_KEY = "mdai-selected-model-v2";
-  var selectedModelId = "gemini-flash-latest";
+  var selectedModelId = "gemini-2.0-flash";
   try {
     var stored = localStorage.getItem(MODEL_STORAGE_KEY);
-    if (stored === "gemini-2.0-flash" || stored === "gemini-1.5-flash") {
-      stored = "gemini-flash-latest";
-      localStorage.setItem(MODEL_STORAGE_KEY, stored);
-    }
     if (stored && AI_MODELS.some(function (m) { return m.id === stored; })) {
       selectedModelId = stored;
     }
