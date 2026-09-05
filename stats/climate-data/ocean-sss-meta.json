@@ -1,0 +1,29 @@
+{
+  "source": "ESA SMOS (Miras) Near Real-Time Sea Surface Salinity — ค่าเฉลี่ย 3 วัน",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/coastwatchSMOSv662SSS3day_Lon0360.html",
+  "dataset": "coastwatchSMOSv662SSS3day_Lon0360",
+  "variables": [
+    "sss"
+  ],
+  "unit": "PSU",
+  "label": "ความเค็มผิวน้ำ",
+  "kind": "scalar",
+  "time": "2026-03-26T12:00:00Z",
+  "dtype": "int16",
+  "endian": "little",
+  "encoding": "raw 0..32000 เชิงเส้นระหว่าง vmin..vmax · value = vmin + raw/32000*(vmax-vmin)",
+  "vmin": 25.036346,
+  "vmax": 39.981327,
+  "noData": -32768,
+  "components": 1,
+  "nlat": 720,
+  "nlon": 1440,
+  "lat0": -89.875,
+  "lon0": -179.875,
+  "dlat": 0.25,
+  "dlon": 0.25,
+  "layout": "one value per cell; row-major lat then lon; Int16 little-endian",
+  "validCells": 460090,
+  "totalCells": 1036800,
+  "builtBy": "build-ocean-scalar.mjs"
+}
