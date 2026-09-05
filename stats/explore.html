@@ -21952,7 +21952,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       // ผลลัพธ์เหมือน traceLines ทุกประการ ต่างแค่ยอมคืนเธรดให้เบราว์เซอร์ระหว่างทาง
       function traceLinesChunked(F, nLines, onProgress, dt0){
         return new Promise(function(resolve){
-          var seeds=ocSeeds(F, nLines), out=[], k=0, CHUNK=900;
+          // 600 เส้นต่อก้อน ≈ 120 มิลลิวินาที — วัดแล้วก้อนละ 900 กินไป 184 มิลลิวินาที
+          // ซึ่งนานพอให้หน้าสะดุดเป็นจังหวะตอนลาก 14,000 เส้น
+          var seeds=ocSeeds(F, nLines), out=[], k=0, CHUNK=600;
           (function pump(){
             var end=Math.min(k+CHUNK, seeds.length), p;
             for(; k<end; k++){ p=ocTraceOne(F, seeds[k][0], seeds[k][1], dt0); if(p) out.push(p); }
@@ -22007,14 +22009,18 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           // คูณสีน้ำเงินแทนการทับสีทึบ — ที่สว่างยังสว่างกว่าที่มืด ร่องรอยบาธีเมทรี
           // (สันเขาใต้ทะเล ร่องลึก ไหล่ทวีป) จึงไม่ถูกกลบ ตรงกับที่ NASA เรียกว่า
           // "the dark patterns under the ocean represent the undersea bathymetry"
+          /* สีน้ำเงินสดแบบภาพ Perpetual Ocean — ไม่ใช่ทะเลเกือบดำ
+             เคยหรี่ทะเลลงเยอะเพราะคิดว่าต้องให้เส้นขาวเด่น แต่ดูเฟรมจริงของ NASA แล้ว
+             ทะเลเขาสว่างเป็นน้ำเงินสด เส้นขาวคลุมเต็มผืนน้ำ สิ่งที่ทำให้ไม่เละคือเส้นบางและโปร่ง
+             ไม่ใช่พื้นหลังมืด — ทะเลมืดเกินกลับทำให้เส้นขาวแข็งกระด้าง */
           g.globalCompositeOperation="multiply";
-          g.fillStyle="#35688f"; g.fillRect(0,0,MAPW,MAPH);
+          g.fillStyle="#2a6fc0"; g.fillRect(0,0,MAPW,MAPH);
           g.globalCompositeOperation="source-over";
-          g.fillStyle="rgba(2,12,26,.20)"; g.fillRect(0,0,MAPW,MAPH);        // หรี่อีกนิดให้เส้นกระแสน้ำเด่น
+          g.fillStyle="rgba(2,12,26,.08)"; g.fillRect(0,0,MAPW,MAPH);        // หรี่บาง ๆ พอให้ขอบฟ้าไม่จ้า
           if(hasWorld){
             g.save(); landPath(); g.clip();
             g.drawImage(img, 0, 0, MAPW, MAPH);                              // คืนสีทวีปให้สด
-            g.fillStyle="rgba(5,18,32,.14)"; g.fillRect(0,0,MAPW,MAPH);      // หรี่บกนิดเดียว กันแย่งสายตาเส้นกระแสน้ำ
+            g.fillStyle="rgba(5,18,32,.05)"; g.fillRect(0,0,MAPW,MAPH);      // แทบไม่หรี่ ทวีปในคลิปสว่างเป็นสีธรรมชาติ
             g.restore();
             g.beginPath(); WORLD.features.forEach(function(f){ path(f); });
             g.lineWidth=1; g.strokeStyle="rgba(150,196,224,.30)"; g.stroke(); // ขอบชายฝั่งบาง ๆ ให้คมขึ้น
@@ -22057,7 +22063,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         "uniform float uTime, uTail, uSize, uDpr;",
         "varying float vA, vS;",
         "void main(){",
-        "  float head = fract(uTime * (0.05 + aSpd * 0.42) + aSeed);",
+        // ช้ากว่าเดิมราวหนึ่งในสาม — ในคลิปน้ำไหลนิ่ง ๆ ให้ตาไล่ตามเส้นได้ทัน ไม่ใช่วิ่งพรวด
+        "  float head = fract(uTime * (0.03 + aSpd * 0.26) + aSeed);",
         "  float d = head - aT; d = d - floor(d);",          // ระยะ 'หลังหัว' แบบวนรอบ
         "  float a = 1.0 - smoothstep(0.0, uTail, d);",      // 1 ที่หัว → 0 ที่ปลายหาง (edge0<edge1 ตามสเปก GLSL)
         "  vA = a; vS = aSpd;",
@@ -22242,7 +22249,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           var narrow=(window.innerWidth||1200)<760;
           var ldMsg=document.querySelector("#ocLoading span");
-          return traceLinesChunked(FIELD, narrow?3000:9000, function(f){
+          return traceLinesChunked(FIELD, narrow?4200:14000, function(f){
             if(ldMsg) ldMsg.textContent="กำลังคำนวณเส้นกระแสน้ำจากข้อมูล NOAA… "+Math.round(f*100)+"%";
           }).then(function(lines){
 
@@ -22278,10 +22285,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             new THREE.MeshBasicMaterial({ color:new THREE.Color(0x2ec8ef), transparent:true, opacity:0.06, side:THREE.BackSide })));
 
           /* ผิวน้ำเป็นริ้วขาวตามคลิป NASA — เหลือเหลือบฟ้าไว้เฉพาะน้ำช้า ให้ยังอ่านความเร็วออก
-             จุดเล็กและจางกว่าค่าปริยายมาก เพราะพอข้อมูลละเอียดขึ้น 16 เท่า เส้นทับกันจน
-             มหาสมุทรกลายเป็นสีขาวทึบ ต้องเหลือพื้นน้ำสีดำไว้ให้เห็นวงน้ำวนทีละวงแบบของ NASA */
+             สูตรของเขาคือ "เส้นเยอะมาก + บางมาก + หางยาว" รวมกันแล้วอ่านเป็นผิวสัมผัสคล้ายสายไหม
+             ไม่ใช่เส้นหนาไม่กี่เส้น — จุดเล็กแค่ 3.6px แต่ลาก 14,000 เส้นคลุมเต็มผืนน้ำ
+             หาง 0.75 ทำให้แต่ละเส้นสว่างต่อเนื่องเกือบทั้งเส้น ไม่ขาดเป็นขีด ๆ */
           pts=buildFlow(THREE, lines, 1.004,
-            { low:0x9ed6f0, high:0xffffff, ref:1.1, size:5.4, tail:0.42, opacity:0.55 });
+            { low:0x9ed6f0, high:0xffffff, ref:1.1, size:3.6, tail:0.75, opacity:0.5 });
           pts.renderOrder=1;
           surfMesh.renderOrder=0;
           globe.add(pts);
@@ -22356,7 +22364,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               // (เคยลอง 0.42 แล้วสีน้ำเงินโดนกลืนไปกว่าครึ่งจนแยกจากริ้วขาวไม่ออก)
               m.transparent=on; m.opacity=on?0.25:1; m.depthWrite=!on; m.needsUpdate=true;
             }
-            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.26 : 0.55;
+            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.24 : 0.5;
           }
           function ensureField(name, cache){
             if(cache) return Promise.resolve(cache);
@@ -22456,7 +22464,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(flowing){
               clock+=dt*flowSpeed;
               for(var q=0;q<MATS.length;q++) MATS[q].uniforms.uTime.value=clock;
-              globe.rotation.y+=dt*0.02;
+              globe.rotation.y+=dt*0.014;
             }
             controls.update();
             renderer.render(scene, camera);
