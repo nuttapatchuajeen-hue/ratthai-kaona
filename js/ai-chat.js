@@ -346,13 +346,18 @@
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>' +
             '<span>โมเดล AI</span>' +
           '</div>' +
-          '<div class="mdai-model-drop-wrap">' +
-            '<button type="button" id="mdai-model-btn" aria-haspopup="listbox" aria-expanded="false" title="คลิกเพื่อสลับโมเดล AI">' +
-              '<span class="mdai-model-btn-ico">⚡</span>' +
-              '<span class="mdai-model-btn-name">Gemini 2.0 Flash</span>' +
-              '<svg class="mdai-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+          '<div style="display:flex;align-items:center;gap:6px">' +
+            '<div class="mdai-model-drop-wrap">' +
+              '<button type="button" id="mdai-model-btn" aria-haspopup="listbox" aria-expanded="false" title="คลิกเพื่อสลับโมเดล AI">' +
+                '<span class="mdai-model-btn-ico">⚡</span>' +
+                '<span class="mdai-model-btn-name">Gemini 2.0 Flash</span>' +
+                '<svg class="mdai-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+              '</button>' +
+              '<div id="mdai-model-menu" role="listbox" aria-label="เลือกโมเดล AI"></div>' +
+            '</div>' +
+            '<button type="button" id="mdai-key-btn" title="ตั้งค่า Gemini API Key ในเครื่อง" class="mdai-key-trigger-btn" aria-label="ตั้งค่า API Key">' +
+              '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 2.5-2.5a2.12 2.12 0 0 1 3 0l4.5 4.5zM3 21l6-6M9 15l2 2M11 13l2 2"/></svg>' +
             '</button>' +
-            '<div id="mdai-model-menu" role="listbox" aria-label="เลือกโมเดล AI"></div>' +
           '</div>' +
         '</div>' +
         '<div id="mdai-msgs"></div>' +
