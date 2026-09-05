@@ -22056,11 +22056,16 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         });
       }
 
+      /* วาดเส้นกระแสน้ำเป็น LineSegments ไม่ใช่ THREE.Points
+         ของเดิมยิงจุดกลม 65 จุดเรียงตามเส้นทางน้ำ ซูมออกดูเป็นเส้นก็จริง แต่พอซูมเข้า
+         ช่องว่างระหว่างจุดถ่างจนเห็นเป็นสร้อยลูกปัด (ยิ่งเจอตัวหยุดขยายจุดที่ระยะใกล้สุด
+         max(0.35,-mv.z) จุดเลยหยุดโตขณะที่ระยะห่างยังถ่างต่อ) เส้นจริงหนา 1 พิกเซล
+         ต่อเนื่องทุกระดับซูม และตรงกับหน้าตาสายไหมบาง ๆ ในคลิป Perpetual Ocean พอดี */
       var VERT = [
         "attribute float aT;",      // 0..1 ตำแหน่งบนเส้นของจุดนี้
         "attribute float aSeed;",   // เฟสเริ่มต้นของเส้น (คงที่ทั้งเส้น)
         "attribute float aSpd;",    // ความเร็วเฉลี่ยของเส้น 0..1 (คงที่ทั้งเส้น)
-        "uniform float uTime, uTail, uSize, uDpr;",
+        "uniform float uTime, uTail;",
         "varying float vA, vS;",
         "void main(){",
         // ช้ากว่าเดิมราวหนึ่งในสาม — ในคลิปน้ำไหลนิ่ง ๆ ให้ตาไล่ตามเส้นได้ทัน ไม่ใช่วิ่งพรวด
@@ -22068,9 +22073,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         "  float d = head - aT; d = d - floor(d);",          // ระยะ 'หลังหัว' แบบวนรอบ
         "  float a = 1.0 - smoothstep(0.0, uTail, d);",      // 1 ที่หัว → 0 ที่ปลายหาง (edge0<edge1 ตามสเปก GLSL)
         "  vA = a; vS = aSpd;",
-        "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
-        "  gl_PointSize = uSize * uDpr * (0.35 + 0.65 * a) / max(0.35, -mv.z);",
-        "  gl_Position = projectionMatrix * mv;",
+        "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
         "}"
       ].join("\n");
 
@@ -22080,12 +22083,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         "uniform float uOpacity;",
         "varying float vA, vS;",
         "void main(){",
-        "  vec2 c = gl_PointCoord - 0.5;",
-        "  float r2 = dot(c, c);",
-        "  if(r2 > 0.25) discard;",
-        "  float soft = 1.0 - smoothstep(0.02, 0.25, r2);",
+        // เส้นไม่มี gl_PointCoord ให้ตัดขอบเป็นวงกลมเหมือนจุด ความนุ่มมาจากค่า a ตามยาวเส้นแทน
         "  vec3 col = mix(uLow, uHigh, clamp(vS * 1.15, 0.0, 1.0));",
-        "  gl_FragColor = vec4(col, vA * soft * uOpacity);",
+        "  gl_FragColor = vec4(col, vA * uOpacity);",
         "}"
       ].join("\n");
 
@@ -22110,15 +22110,28 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             p++;
           }
         }
+        /* ต่อจุดที่อยู่ติดกันภายในเส้นเดียวกันเป็นท่อน ๆ ด้วยตารางดัชนี
+           ไม่ต้องคัดลอกพิกัดซ้ำ — ใช้ตำแหน่งชุดเดิม แค่บอกว่าคู่ไหนลากถึงกัน
+           ต้องไม่ลากข้ามรอยต่อระหว่างเส้น ไม่งั้นจะมีเส้นตรงพาดจากปลายเส้นหนึ่ง
+           ไปหัวอีกเส้นพาดข้ามมหาสมุทร */
+        var segs=0;
+        for(i=0;i<lines.length;i++) if(lines[i].length>1) segs+=lines[i].length-1;
+        var idx=new Uint32Array(segs*2), q=0, base=0;
+        for(li=0; li<lines.length; li++){
+          n=lines[li].length;
+          for(m=0;m<n-1;m++){ idx[q++]=base+m; idx[q++]=base+m+1; }
+          base+=n;
+        }
+
         var geo=new THREE.BufferGeometry();
+        geo.setIndex(new THREE.BufferAttribute(idx, 1));
         geo.addAttribute("position", new THREE.BufferAttribute(pos, 3));
         geo.addAttribute("aT",    new THREE.BufferAttribute(aT, 1, true));
         geo.addAttribute("aSeed", new THREE.BufferAttribute(aSeed, 1, true));
         geo.addAttribute("aSpd",  new THREE.BufferAttribute(aSpd, 1, true));
-        var m=new THREE.ShaderMaterial({
+        var mtl=new THREE.ShaderMaterial({
           uniforms:{
-            uTime:{value:0}, uTail:{value:opt.tail||0.55}, uSize:{value:opt.size||8.5},
-            uDpr:{value:Math.min(window.devicePixelRatio||1, 2)},
+            uTime:{value:0}, uTail:{value:opt.tail||0.55},
             uOpacity:{value:opt.opacity||0.82},
             uLow:{value:new THREE.Color(opt.low!=null?opt.low:0x3d9fd6)},
             uHigh:{value:new THREE.Color(opt.high!=null?opt.high:0xffffff)}
@@ -22127,8 +22140,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           transparent:true, blending:THREE.AdditiveBlending,
           depthTest:true, depthWrite:false
         });
-        MATS.push(m);
-        return new THREE.Points(geo, m);
+        MATS.push(mtl);
+        return new THREE.LineSegments(geo, mtl);
       }
 
       /* ---------- ชั้นขึ้น–จม: อนุภาคเดินตามแนวรัศมี ----------
@@ -22286,10 +22299,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           /* ผิวน้ำเป็นริ้วขาวตามคลิป NASA — เหลือเหลือบฟ้าไว้เฉพาะน้ำช้า ให้ยังอ่านความเร็วออก
              สูตรของเขาคือ "เส้นเยอะมาก + บางมาก + หางยาว" รวมกันแล้วอ่านเป็นผิวสัมผัสคล้ายสายไหม
-             ไม่ใช่เส้นหนาไม่กี่เส้น — จุดเล็กแค่ 3.6px แต่ลาก 14,000 เส้นคลุมเต็มผืนน้ำ
-             หาง 0.75 ทำให้แต่ละเส้นสว่างต่อเนื่องเกือบทั้งเส้น ไม่ขาดเป็นขีด ๆ */
+             ไม่ใช่เส้นหนาไม่กี่เส้น — เส้นหนา 1 พิกเซล แต่ลาก 14,000 เส้นคลุมเต็มผืนน้ำ
+             หาง 0.75 ทำให้แต่ละเส้นสว่างต่อเนื่องเกือบทั้งเส้น ไม่ขาดเป็นขีด ๆ
+             ทึบขึ้นเป็น 0.72 เพราะเส้น 1 พิกเซลกินพื้นที่น้อยกว่าจุดกลมเดิมมาก */
           pts=buildFlow(THREE, lines, 1.004,
-            { low:0x9ed6f0, high:0xffffff, ref:1.1, size:3.6, tail:0.75, opacity:0.5 });
+            { low:0x9ed6f0, high:0xffffff, ref:1.1, tail:0.75, opacity:0.72 });
           pts.renderOrder=1;
           surfMesh.renderOrder=0;
           globe.add(pts);
@@ -22360,11 +22374,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           function surfaceTranslucent(on){
             if(surfMesh){
               var m=surfMesh.material;
-              // 0.25 ไม่ใช่เลขสวย ๆ แต่เป็นเพดานที่ริ้วน้ำเงินยังทะลุขึ้นมาอ่านออก
-              // (เคยลอง 0.42 แล้วสีน้ำเงินโดนกลืนไปกว่าครึ่งจนแยกจากริ้วขาวไม่ออก)
-              m.transparent=on; m.opacity=on?0.25:1; m.depthWrite=!on; m.needsUpdate=true;
+              // 0.40 คือจุดประนีประนอม: โปร่งพอให้ริ้วน้ำเงินทะลุขึ้นมา แต่ยังเหลือสีทะเล
+              // น้ำเงินสดกับสีทวีปให้ดูออกว่าตรงไหนคือที่ไหน (เคยลด 0.25 แล้วทะเลกลายเป็นดำ)
+              m.transparent=on; m.opacity=on?0.40:1; m.depthWrite=!on; m.needsUpdate=true;
             }
-            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.24 : 0.5;
+            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.34 : 0.72;
           }
           function ensureField(name, cache){
             if(cache) return Promise.resolve(cache);
@@ -22390,9 +22404,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
                 return;
               }
               /* ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
-                 จุดใหญ่กว่าริ้วผิวน้ำ เพราะต้องส่องผ่านผิวโลกที่ยังทึบอยู่ 25% กว่าจะถึงตา */
+                 ทึบเต็มที่ เพราะต้องส่องผ่านผิวโลกที่ยังทึบอยู่ 40% กว่าจะถึงตา */
               deepPts=buildFlow(THREE, lines, 0.968,
-                { low:0x3b7bff, high:0xc9ecff, ref:0.18, size:9.5, tail:0.55, opacity:1 });
+                { low:0x3b7bff, high:0xc9ecff, ref:0.18, tail:0.6, opacity:1 });
               // ลำดับวาดคงที่: น้ำลึก → ผิวโลกโปร่ง → ริ้วผิวน้ำ → จุดขึ้น-จม
               // ไม่งั้นสามชั้นมีจุดศูนย์กลางเดียวกัน three.js เรียงลำดับให้เองไม่แน่นอน
               deepPts.renderOrder=-1;
@@ -22477,7 +22491,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               camera.aspect=nw/nh; camera.updateProjectionMatrix();
               renderer.setSize(nw, nh);
               var dpr=Math.min(window.devicePixelRatio||1, 2);
-              for(var q=0;q<MATS.length;q++) MATS[q].uniforms.uDpr.value=dpr;
+              // เฉพาะชั้นที่วาดด้วยจุด (ขึ้น–จม) ที่ต้องรู้ค่า dpr — ชั้นที่เป็นเส้นไม่มี uniform นี้
+              for(var q=0;q<MATS.length;q++) if(MATS[q].uniforms.uDpr) MATS[q].uniforms.uDpr.value=dpr;
               renderer.render(scene, camera);
             }
           });
