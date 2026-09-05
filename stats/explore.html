@@ -803,6 +803,14 @@
   .oc-btn:hover{background:rgba(46,200,239,.24);color:#eafcff}
   .oc-slider{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#8fb3c6}
   .oc-slider input{width:96px;accent-color:#2ec8ef}
+  .oc-sep{width:1px;height:18px;background:rgba(255,255,255,.14)}
+  .oc-chk{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#cbe6f2;cursor:pointer;-webkit-user-select:none;user-select:none}
+  .oc-chk input{accent-color:#2ec8ef;width:13px;height:13px;cursor:pointer;margin:0}
+  .oc-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .oc-sel{background:rgba(46,200,239,.10);color:#9fe6fb;border:1px solid rgba(46,200,239,.30);border-radius:7px;padding:3px 7px;font-family:inherit;font-size:11.5px}
+  .oc-sel:disabled{opacity:.42;cursor:not-allowed}
+  .oc-msg{display:none;font-size:11.5px;color:#8fd6f0}
+  .oc-leg-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#a9c8d8;margin-top:5px}
   .oc-legend{position:absolute;right:16px;bottom:16px;z-index:11;width:168px;background:rgba(4,16,26,.82);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:9px 12px 10px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
   .oc-leg-title{font-size:11.5px;font-weight:600;color:#cbe6f2;margin-bottom:6px}
   .oc-leg-bar{height:7px;border-radius:4px;background:linear-gradient(90deg,#3d9fd6,#8fd4f0 55%,#ffffff)}
@@ -5632,12 +5640,12 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <div class="kpi">
           <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> เส้นกระแสน้ำที่ลากสด</div>
           <div class="k-num"><span id="ocKLines">—</span><span class="u">เส้น</span></div>
-          <div class="k-sub">คำนวณในเครื่องคุณจากสนามความเร็วจริง ไม่ใช่ภาพเคลื่อนไหวสำเร็จรูป</div>
+          <div class="k-sub">คำนวณในเครื่องคุณจากสนามความเร็วจริง ไม่ใช่ภาพเคลื่อนไหวสำเร็จรูป · เปิดชั้นน้ำลึกเพิ่มอีก <span id="ocKDeep">—</span> เส้น</div>
         </div>
         <div class="kpi">
           <div class="k-top"><svg class="mdico"><use href="#i-satellite"></use></svg> ความละเอียดข้อมูล</div>
-          <div class="k-num">1°<span class="u">× 1°</span></div>
-          <div class="k-sub">36,207 จุดวัดทั่วมหาสมุทรโลก จากดาวเทียมวัดระดับน้ำทะเล</div>
+          <div class="k-num">0.25°<span class="u">× 0.25°</span></div>
+          <div class="k-sub">579,416 จุดวัดทั่วมหาสมุทรโลก จากดาวเทียมวัดระดับน้ำทะเล — ละเอียดกว่าเดิม 16 เท่า จึงเห็นวงน้ำวนได้</div>
         </div>
         <div class="kpi accent">
           <div class="k-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> ทำไมต้องสนใจ</div>
@@ -5652,6 +5660,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <span class="tag">NOAA · เรนเดอร์สดบน GPU</span>
         </div>
         <p class="sub">เส้นแสงแต่ละเส้นคือ <b>เส้นทางที่น้ำจะไหลไปจริง</b> ถ้าปล่อยของลอยลงไปตรงนั้น — ลากจากสนามความเร็วของกระแสน้ำทีละก้าว ไม่ได้วาดมั่ว · <b>เส้นยาวและสว่าง = น้ำไหลแรง</b> เห็นกัลฟ์สตรีมพุ่งขึ้นจากฟลอริดา คุโรชิโอะเลียบญี่ปุ่น และวงน้ำวนมหึมารอบทวีปแอนตาร์กติกา · ชี้เมาส์ที่ผิวโลกเพื่ออ่านความเร็วตรงจุดนั้น</p>
+        <p class="sub">เปิดได้ <b>สามชั้นซ้อนกัน</b> ที่ปุ่มมุมซ้ายบน — <b style="color:#dff2fb">ริ้วขาว</b> คือกระแสน้ำผิว · <b style="color:#7fb4ff">ริ้วน้ำเงิน</b> คือกระแสน้ำลึกที่อยู่ใต้ลงไป (สลับได้ระหว่าง ~1,000 กับ ~2,000 เมตร) · <b style="color:#ffb23f">จุดส้ม</b> ลอยขึ้นคือน้ำเอ่อขึ้นพาสารอาหารสู่ผิว ส่วน <b style="color:#9d8dff">จุดม่วง</b> จมลงคือน้ำเย็นเค็มหนักที่กำลังจมสู่ก้นสมุทร · <b>หลายที่สองชั้นไหลสวนทางกัน</b> เช่นใต้กัลฟ์สตรีม — ชี้เมาส์ค้างไว้จะอ่านค่าทั้งสองชั้นพร้อมกัน</p>
 
         <div class="oc-stage" id="ocStage">
           <div class="sat-loading" id="ocLoading"><div class="spin"></div><span>กำลังคำนวณเส้นกระแสน้ำจากข้อมูล NOAA…</span></div>
@@ -5660,15 +5669,27 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           <div class="oc-controls">
             <button class="oc-btn" id="ocPlay" type="button"><svg class="mdico"><use href="#i-pause"></use></svg> หยุด</button>
             <label class="oc-slider"><span>ความเร็วภาพ</span><input type="range" id="ocSpeed" min="10" max="300" value="100"></label>
+            <span class="oc-sep"></span>
+            <label class="oc-chk"><input type="checkbox" id="ocLSurf" checked><i class="oc-dot" style="background:#ffffff"></i> ผิวน้ำ</label>
+            <label class="oc-chk"><input type="checkbox" id="ocLDeep"><i class="oc-dot" style="background:#4f8ff0"></i> น้ำลึก</label>
+            <select class="oc-sel" id="ocDepth" disabled aria-label="เลือกความลึกของชั้นน้ำลึก">
+              <option value="997">~1,000 ม.</option>
+              <option value="2071" selected>~2,000 ม.</option>
+            </select>
+            <label class="oc-chk"><input type="checkbox" id="ocLVert"><i class="oc-dot" style="background:#ffb23f"></i> ขึ้น–จม</label>
+            <span class="oc-msg" id="ocLayerMsg"></span>
           </div>
           <div class="oc-legend">
-            <div class="oc-leg-title">ความเร็วกระแสน้ำ</div>
+            <div class="oc-leg-title">ความเร็วกระแสน้ำผิว</div>
             <div class="oc-leg-bar"></div>
             <div class="oc-leg-scale"><span>ช้า · 0</span><span>1.1+ ม./วิ</span></div>
+            <div class="oc-leg-row"><i class="oc-dot" style="background:#4f8ff0"></i> ริ้วน้ำเงิน = กระแสน้ำลึก</div>
+            <div class="oc-leg-row"><i class="oc-dot" style="background:#ffb23f"></i> จุดส้มลอยขึ้น = น้ำเอ่อขึ้น</div>
+            <div class="oc-leg-row"><i class="oc-dot" style="background:#7f6bff"></i> จุดม่วงจมลง = น้ำจมลง</div>
           </div>
         </div>
 
-        <div class="src">ที่มา: <a href="https://coastwatch.pfeg.noaa.gov/erddap/griddap/nesdisSSH1day.html" target="_blank" rel="noopener">NOAA CoastWatch / NESDIS — Geostrophic Currents from Altimetry (nesdisSSH1day, RADS) ↗</a> · ภาพรวมวันที่ 25 มี.ค. 2569 · เส้นกระแสน้ำคำนวณด้วยวิธี RK2 บนสนามความเร็วจริง · แผนที่ฐาน Natural Earth</div>
+        <div class="src">ที่มาชั้นผิวน้ำ: <a href="https://coastwatch.pfeg.noaa.gov/erddap/griddap/nesdisSSH1day.html" target="_blank" rel="noopener">NOAA CoastWatch / NESDIS — Geostrophic Currents from Altimetry (nesdisSSH1day, RADS) ↗</a> กริด 0.25° · ภาพรวมวันที่ 25 มี.ค. 2569<br>ที่มาชั้นน้ำลึกและการเคลื่อนที่แนวดิ่ง: <a href="https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdSoda331oceanmday.html" target="_blank" rel="noopener">SODA 3.3.1 Ocean State Reanalysis ↗</a> กริด 0.5° · ค่าเฉลี่ยเดือน <b>ธันวาคม 2558 (ค.ศ. 2015)</b> ซึ่งเป็นเดือนล่าสุดที่ชุดข้อมูลนี้มี — <b>คนละช่วงเวลากับชั้นผิวน้ำ</b> ใช้เทียบรูปแบบการไหลได้ แต่ไม่ใช่ภาพวันเดียวกัน · เส้นกระแสน้ำคำนวณด้วยวิธี RK2 บนสนามความเร็วจริง · แผนที่ฐาน Natural Earth</div>
       </div>
 
       <div class="card full">
@@ -5676,20 +5697,20 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <p class="sub">สามอย่างที่ควรรู้ก่อนสรุปอะไรจากภาพนี้ — เพื่อไม่ให้อ่านเกินกว่าที่ข้อมูลบอกได้</p>
         <div class="es-row">
           <div class="es-cell">
-            <div class="es-top"><svg class="mdico"><use href="#i-waves"></use></svg> นี่คือกระแสน้ำ “ผิวน้ำ”</div>
-            <div class="es-foot" style="display:block;line-height:1.6">วัดจากความต่างระดับผิวทะเลด้วยดาวเทียม จึงเป็นการไหลที่แรงโลกหมุนกับความลาดของผิวน้ำกำหนด ไม่รวมกระแสน้ำลึกและการไหลที่ลมพัดโดยตรง</div>
+            <div class="es-top"><svg class="mdico"><use href="#i-waves"></use></svg> สองชั้นนี้มาจากคนละวิธีวัด</div>
+            <div class="es-foot" style="display:block;line-height:1.6">ชั้นผิวน้ำวัดจากความต่างระดับผิวทะเลด้วยดาวเทียม — วัดได้เฉพาะผิว ส่วนกระแสน้ำใต้ผิวไม่มีดาวเทียมไหนมองเห็น ชั้นน้ำลึกจึงมาจากแบบจำลอง SODA ที่กลืนข้อมูลตรวจวัดจริง (ทุ่น เรือ ดาวเทียม) เข้าไป ไม่ใช่การวัดตรง ๆ</div>
           </div>
           <div class="es-cell">
-            <div class="es-top"><svg class="mdico"><use href="#i-clock"></use></svg> เป็นภาพนิ่งของวันเดียว</div>
-            <div class="es-foot" style="display:block;line-height:1.6">สนามความเร็วมาจากข้อมูลวันที่ 25 มี.ค. 2569 การเคลื่อนไหวที่เห็นคือการไหลตามสนามวันนั้น ไม่ใช่การเล่นย้อนเวลาหลายวัน</div>
+            <div class="es-top"><svg class="mdico"><use href="#i-clock"></use></svg> คนละช่วงเวลากัน</div>
+            <div class="es-foot" style="display:block;line-height:1.6">ผิวน้ำเป็นข้อมูลวันที่ 25 มี.ค. 2569 ส่วนชั้นน้ำลึกกับขึ้น–จมเป็นค่าเฉลี่ยเดือน ธ.ค. 2558 เพราะข้อมูลกระแสน้ำลึกทั้งโลกที่เปิดให้ใช้ฟรีมีถึงแค่ปีนั้น เทียบ “รูปแบบการไหล” กันได้ แต่ไม่ใช่ภาพของวันเดียวกัน</div>
           </div>
           <div class="es-cell">
-            <div class="es-top"><svg class="mdico"><use href="#i-ruler"></use></svg> กริด 1° หยาบกว่าของ NASA</div>
-            <div class="es-foot" style="display:block;line-height:1.6">คลิปของ NASA ใช้โมเดล ECCO2 ละเอียดกว่านี้หลายสิบเท่า วงน้ำวนเล็ก ๆ จึงหายไปบางส่วน แต่กระแสน้ำสายหลักของโลกครบถูกต้อง</div>
+            <div class="es-top"><svg class="mdico"><use href="#i-ruler"></use></svg> ยังหยาบกว่าของ NASA</div>
+            <div class="es-foot" style="display:block;line-height:1.6">ตอนนี้ผิวน้ำเป็นกริด 0.25° (ละเอียดกว่าเดิม 16 เท่า จนวงน้ำวนโผล่มาแล้ว) ชั้นน้ำลึก 0.5° ส่วนคลิป NASA ใช้ ECCO2 ที่ละเอียดกว่านี้อีกหลายเท่า วงน้ำวนเล็กสุดจึงยังหายไปบ้าง</div>
           </div>
           <div class="es-cell">
-            <div class="es-top"><svg class="mdico"><use href="#i-zap"></use></svg> เพดานความเร็ว 2.5 ม./วิ</div>
-            <div class="es-foot" style="display:block;line-height:1.6">ไฟล์ข้อมูลบีบเป็น 1 ไบต์ต่อค่า เพื่อให้โหลดเร็ว ทำให้กระแสน้ำที่แรงกว่านั้นถูกตัดยอด — กระทบเฉพาะแกนกลางของกัลฟ์สตรีมและคุโรชิโอะ</div>
+            <div class="es-top"><svg class="mdico"><use href="#i-zap"></use></svg> แนวดิ่งช้ากว่าที่เห็นมาก</div>
+            <div class="es-foot" style="display:block;line-height:1.6">น้ำที่เอ่อขึ้น–จมลงเคลื่อนที่ราววันละไม่กี่สิบเซนติเมตรถึงไม่กี่เมตร ช้ากว่ากระแสน้ำแนวราบเป็นแสนเท่า จุดที่เห็นวิ่งขึ้นลงจึงเป็นการ<b>เร่งให้เห็นทิศทาง</b> ไม่ใช่ความเร็วจริงตามสเกลเวลา</div>
           </div>
         </div>
       </div>
@@ -21774,7 +21795,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
     /* ================= 🌊 ลูกโลกกระแสน้ำมหาสมุทร 3 มิติ (GPU streamlines) =================
        แนวคิดเดียวกับภาพ "Perpetual Ocean" ของ NASA แต่รันสดในเบราว์เซอร์:
-       • อ่านสนามความเร็ว u,v จาก climate-data/ocean-uv.bin (NOAA CoastWatch · กริด 1°)
+       • อ่านสนามความเร็ว u,v จาก climate-data/ocean-uv.bin (NOAA CoastWatch · กริด 0.25°)
+         จอเล็ก/เน็ตช้าใช้ ocean-uv-lo.bin (0.25° ย่อเป็น 0.5° · เล็กลง 4 เท่า) — ดู ocPickSet()
        • ลากเส้นกระแสน้ำ (streamline) ด้วย RK2 ในพิกัด lat/lon → ได้เส้นโค้งตามการไหลจริง
        • ยัดทุกเส้นเป็น BufferGeometry ก้อนเดียว แล้วให้ "หัวหาง" วิ่งไปตามเส้นใน vertex shader
          → CPU ไม่ต้องทำอะไรต่อเฟรมเลย ขยับได้แสนจุดโดยไม่กระตุก
@@ -21784,8 +21806,18 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       var stage = document.getElementById("ocStage");
       if(!stage) return;
       var started=false, ready=false, running=false, visible=false, raf=0;
-      var scene, camera, renderer, controls, globe, pts, mat, loop, clock=0, lastTs=0;
+      var scene, camera, renderer, controls, globe, pts, loop, clock=0, lastTs=0;
       var FIELD=null, flowing=true, flowSpeed=1;
+      /* สามชั้นตามคลิป Perpetual Ocean ของ NASA
+           ผิวน้ำ  — ริ้วขาว จากดาวเทียมวัดระดับน้ำ 0.25° (ของเดิม)
+           น้ำลึก  — ริ้วน้ำเงินใต้เปลือกโลก จาก SODA สลับได้ 2 ความลึก
+           ขึ้น–จม — อนุภาคลอยขึ้น/จมลงตามค่า wt (upwelling / downwelling)
+         ทุกชั้นโหลดตอนกดเปิดครั้งแรกเท่านั้น คนที่ไม่กดจะไม่โดนดาวน์โหลดเพิ่ม */
+      var MATS=[];                       // ทุก material ที่ต้องขยับเวลา (uTime) และปรับ uDpr ตอนรีไซซ์
+      var DEEP={}, VERT=null;            // แคชชั้นที่โหลดแล้ว กดปิด-เปิดซ้ำไม่โหลดใหม่
+      var deepPts=null, vertPts=null, innerSphere=null, surfMesh=null;
+      var deepBusy=false, vertBusy=false, deepDepth="2071";
+      var DT_DEEP=520000;                // ก้าวเวลาของชั้นน้ำลึก ~6 วัน/ก้าว (ผิวน้ำ 14.4 ชม.)
 
       function startLoop(){
         if(running || !ready || !visible) return;
@@ -21807,28 +21839,34 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var RAW = (dtype==="int16") ? new Int16Array(buf) : new Int8Array(buf);
         var NLAT=meta.nlat, NLON=meta.nlon,
             SC=meta.scale, ND=meta.noData, LAT0=meta.lat0, LON0=meta.lon0;
-        if(RAW.length !== NLAT*NLON*2){
-          throw new Error("ขนาดไฟล์กระแสน้ำไม่ตรงกับ meta: ได้ "+RAW.length+" ค่า แต่ meta บอก "+(NLAT*NLON*2));
+        // จำนวนค่าต่อช่อง: 2 = กระแสน้ำแนวราบ (u,v) · 1 = ความเร็วแนวดิ่ง (wt ขึ้น/จม)
+        var NC=meta.components||2;
+        if(RAW.length !== NLAT*NLON*NC){
+          throw new Error("ขนาดไฟล์กระแสน้ำไม่ตรงกับ meta: ได้ "+RAW.length+" ค่า แต่ meta บอก "+(NLAT*NLON*NC));
         }
         function cell(j,i){
           if(j<0 || j>=NLAT) return null;
           i=((i%NLON)+NLON)%NLON;
-          var k=(j*NLON+i)*2, u=RAW[k], v=RAW[k+1];
-          return (u===ND||v===ND) ? null : [u*SC, v*SC];
+          var k=(j*NLON+i)*NC, q, o=[];
+          for(q=0;q<NC;q++){ if(RAW[k+q]===ND) return null; o.push(RAW[k+q]*SC); }
+          return o;
         }
         // ถ้ามุมไหนเป็นบก ใช้เฉพาะมุมที่เป็นน้ำแล้วถ่วงน้ำหนักใหม่ — น้ำน้อยกว่า 5% ถือว่าขึ้นบก
         function sample(lat, lon){
           var fj=(lat-LAT0)/meta.dlat, fi=((((lon-LON0)%360)+360)%360)/meta.dlon;
           var j0=Math.floor(fj), i0=Math.floor(fi), tj=fj-j0, ti=fi-i0;
-          var su=0, sv=0, sw=0, dj, di, c, w;
+          var acc=[0,0], sw=0, dj, di, c, w, q;
           for(dj=0; dj<=1; dj++) for(di=0; di<=1; di++){
             c=cell(j0+dj, i0+di); if(!c) continue;
             w=(dj?tj:1-tj)*(di?ti:1-ti);
-            su+=c[0]*w; sv+=c[1]*w; sw+=w;
+            for(q=0;q<NC;q++) acc[q]+=c[q]*w;
+            sw+=w;
           }
-          return sw>0.05 ? [su/sw, sv/sw] : null;
+          if(!(sw>0.05)) return null;
+          var o=[]; for(q=0;q<NC;q++) o.push(acc[q]/sw);
+          return o;
         }
-        return { meta:meta, cell:cell, sample:sample, NLAT:NLAT, NLON:NLON };
+        return { meta:meta, cell:cell, sample:sample, NLAT:NLAT, NLON:NLON, NC:NC };
       }
 
       /* ---------- ลากเส้นกระแสน้ำ ---------- */
@@ -21848,12 +21886,16 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
          วัดแล้วเบี่ยงจากคำตอบละเอียดถึง 114% ของความยาวเส้น คือไปคนละที่เลย
          จึงจำกัดความยาวก้าวย่อยไม่ให้เกิน MAXSTEP แล้วซอยเป็นหลายก้าว
          น้ำช้าซึ่งเป็นมหาสมุทรส่วนใหญ่ยังใช้ก้าวเดียวเหมือนเดิม ไม่เสียความเร็ว */
-      function ocAdvance(F, lat, lon){
+      /* dt0 = วินาทีต่อก้าว ปกติใช้ค่า DT ของกระแสน้ำผิว
+         ชั้นน้ำลึกไหลช้ากว่าผิวสิบเท่า ถ้าใช้ก้าวเวลาเท่ากันเส้นจะสั้นจนมองไม่เห็นว่าไหลไปทางไหน
+         จึงให้ผู้เรียกยืดก้าวเวลาได้ — ไม่ใช่การเร่งภาพ แต่เป็นการ "ตามน้ำไปนานขึ้น" */
+      function ocAdvance(F, lat, lon, dt0){
         var c0=F.sample(lat, lon); if(!c0) return null;
+        var D=dt0||DT;
         var spd=Math.sqrt(c0[0]*c0[0]+c0[1]*c0[1]);
-        var sub=Math.ceil(spd*DT/MPD/MAXSTEP);
+        var sub=Math.ceil(spd*D/MPD/MAXSTEP);
         if(!(sub>1)) sub=1; else if(sub>8) sub=8;
-        var dt=DT/sub, la=lat, lo=lon, s, a, b, keep=null;
+        var dt=D/sub, la=lat, lo=lon, s, a, b, keep=null;
         for(s=0;s<sub;s++){
           a=ocStep(F, la, lo, dt*0.5); if(!a) return null;
           b=ocStep(F, a[0], a[1], dt);  if(!b) return null;
@@ -21864,11 +21906,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         }
         return [la, lo, keep];
       }
-      function ocTraceOne(F, slat, slon){
+      function ocTraceOne(F, slat, slon, dt0){
         var pts=[[slat, slon, 0]], n, last, nx;
         for(n=0;n<STEPS;n++){
           last=pts[pts.length-1];
-          nx=ocAdvance(F, last[0], last[1]); if(!nx) break;
+          nx=ocAdvance(F, last[0], last[1], dt0); if(!nx) break;
           last[2]=nx[2]; pts.push(nx);
         }
         if(pts.length<4) return null;
@@ -21900,18 +21942,18 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         }
         return out;
       }
-      function traceLines(F, nLines){
+      function traceLines(F, nLines, dt0){
         var seeds=ocSeeds(F, nLines), out=[], k, p;
-        for(k=0;k<seeds.length;k++){ p=ocTraceOne(F, seeds[k][0], seeds[k][1]); if(p) out.push(p); }
+        for(k=0;k<seeds.length;k++){ p=ocTraceOne(F, seeds[k][0], seeds[k][1], dt0); if(p) out.push(p); }
         return out;
       }
       // ผลลัพธ์เหมือน traceLines ทุกประการ ต่างแค่ยอมคืนเธรดให้เบราว์เซอร์ระหว่างทาง
-      function traceLinesChunked(F, nLines, onProgress){
+      function traceLinesChunked(F, nLines, onProgress, dt0){
         return new Promise(function(resolve){
           var seeds=ocSeeds(F, nLines), out=[], k=0, CHUNK=900;
           (function pump(){
             var end=Math.min(k+CHUNK, seeds.length), p;
-            for(; k<end; k++){ p=ocTraceOne(F, seeds[k][0], seeds[k][1]); if(p) out.push(p); }
+            for(; k<end; k++){ p=ocTraceOne(F, seeds[k][0], seeds[k][1], dt0); if(p) out.push(p); }
             if(onProgress) onProgress(k/seeds.length);
             if(k<seeds.length) setTimeout(pump, 0); else resolve(out);
           })();
@@ -21927,6 +21969,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var lon=Math.atan2(z, -x)*180/Math.PI-180;
         if(lon<-180) lon+=360; else if(lon>180) lon-=360;
         return [lat, lon];
+      }
+      // ทิศที่น้ำไหลไป จาก u (ไปทางตะวันออก) กับ v (ไปทางเหนือ) — มีไว้ให้อ่านคู่กันสองชั้นแล้วเทียบทิศได้
+      var OC_DIRS=["เหนือ","ตะวันออกเฉียงเหนือ","ตะวันออก","ตะวันออกเฉียงใต้","ใต้","ตะวันตกเฉียงใต้","ตะวันตก","ตะวันตกเฉียงเหนือ"];
+      function ocDir(c){
+        if(!c) return "";
+        var sp=Math.sqrt(c[0]*c[0]+c[1]*c[1]);
+        if(!(sp>0)) return "";
+        var deg=(Math.atan2(c[0], c[1])*180/Math.PI+360)%360;
+        return "→ " + OC_DIRS[Math.round(deg/45)%8];
       }
 
       /* ---------- แผนที่ฐาน: วาดทวีปลงแคนวาสแล้วใช้เป็นเท็กซ์เจอร์ (ไม่ต้องโหลดรูปจากนอก) ---------- */
@@ -22029,7 +22080,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         "}"
       ].join("\n");
 
-      function buildFlow(THREE, lines, R){
+      /* opt: low/high = สีน้ำช้า/น้ำแรง · ref = ความเร็วที่ถือว่า "แรงเต็มสเกล" (m/s)
+         ชั้นน้ำลึกเร็วแค่เศษเสี้ยวของผิวน้ำ ถ้าใช้ ref เดียวกันจะกลายเป็นสีเดียวจืด ๆ ทั้งชั้น */
+      function buildFlow(THREE, lines, R, opt){
+        opt=opt||{};
+        var REF=opt.ref||1.1;
         var total=0, i;
         for(i=0;i<lines.length;i++) total+=lines[i].length;
         var pos=new Float32Array(total*3), aT=new Uint8Array(total), aSeed=new Uint8Array(total), aSpd=new Uint8Array(total);
@@ -22037,7 +22092,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         for(li=0; li<lines.length; li++){
           ln=lines[li]; n=ln.length;
           sum=0; for(m=0;m<n;m++) sum+=ln[m][2];
-          s=Math.round(Math.min(1, (sum/n)/1.1)*255);        // ความเร็วเฉลี่ยของเส้น เทียบ 1.1 m/s
+          s=Math.round(Math.min(1, (sum/n)/REF)*255);        // ความเร็วเฉลี่ยของเส้น เทียบ REF
           seed=Math.round(((li*2654435761)%1024)/1024*255);  // เฟสกระจายแบบคงที่ (ไม่สุ่มใหม่ทุกรอบ)
           for(m=0;m<n;m++){
             v=ocLLToVec(ln[m][0], ln[m][1], R);
@@ -22051,23 +22106,132 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         geo.addAttribute("aT",    new THREE.BufferAttribute(aT, 1, true));
         geo.addAttribute("aSeed", new THREE.BufferAttribute(aSeed, 1, true));
         geo.addAttribute("aSpd",  new THREE.BufferAttribute(aSpd, 1, true));
-        mat=new THREE.ShaderMaterial({
+        var m=new THREE.ShaderMaterial({
           uniforms:{
-            uTime:{value:0}, uTail:{value:0.55}, uSize:{value:8.5},
+            uTime:{value:0}, uTail:{value:opt.tail||0.55}, uSize:{value:opt.size||8.5},
             uDpr:{value:Math.min(window.devicePixelRatio||1, 2)},
-            uOpacity:{value:0.82},
-            uLow:{value:new THREE.Color(0x3d9fd6)}, uHigh:{value:new THREE.Color(0xffffff)}
+            uOpacity:{value:opt.opacity||0.82},
+            uLow:{value:new THREE.Color(opt.low!=null?opt.low:0x3d9fd6)},
+            uHigh:{value:new THREE.Color(opt.high!=null?opt.high:0xffffff)}
           },
           vertexShader:VERT, fragmentShader:FRAG,
           transparent:true, blending:THREE.AdditiveBlending,
           depthTest:true, depthWrite:false
         });
-        return new THREE.Points(geo, mat);
+        MATS.push(m);
+        return new THREE.Points(geo, m);
+      }
+
+      /* ---------- ชั้นขึ้น–จม: อนุภาคเดินตามแนวรัศมี ----------
+         wt เป็นค่าเดียวต่อช่อง (บวก=ขึ้น ลบ=จม) จึงไม่ใช่เส้นไหลแบบสองชั้นบน
+         วาดเป็นจุดที่วิ่งขึ้น-ลงตามแนวดิ่งเหนือจุดนั้น ๆ ความเร็วและขนาดตามค่าจริง
+         คัดเฉพาะช่องที่แรงพอ ไม่งั้นทั้งโลกเต็มไปด้วยจุดจนอ่านไม่ออก */
+      var VERT_UP = [
+        "attribute float aSign;",   // +1 ขึ้น / -1 จม
+        "attribute float aMag;",    // แรงแค่ไหน 0..1
+        "attribute float aSeed;",
+        "uniform float uTime, uSize, uDpr, uSpan;",
+        "varying float vA, vSign;",
+        "void main(){",
+        "  float ph = fract(uTime * (0.06 + aMag * 0.34) + aSeed);",
+        "  float travel = aSign > 0.0 ? ph : (1.0 - ph);",      // จมลง = เดินกลับทาง
+        "  float r = 1.004 + travel * uSpan;",
+        "  vec3 p = normalize(position) * r;",
+        "  vA = sin(ph * 3.14159265) * (0.35 + 0.65 * aMag);",  // จางที่ปลายทั้งสองข้าง
+        "  vSign = aSign;",
+        "  vec4 mv = modelViewMatrix * vec4(p, 1.0);",
+        "  gl_PointSize = uSize * uDpr * (0.5 + 0.9 * aMag) / max(0.35, -mv.z);",
+        "  gl_Position = projectionMatrix * mv;",
+        "}"
+      ].join("\n");
+      var FRAG_UP = [
+        "precision mediump float;",
+        "uniform vec3 uUp, uDown;",
+        "uniform float uOpacity;",
+        "varying float vA, vSign;",
+        "void main(){",
+        "  vec2 c = gl_PointCoord - 0.5;",
+        "  float r2 = dot(c, c);",
+        "  if(r2 > 0.25) discard;",
+        "  float soft = 1.0 - smoothstep(0.02, 0.25, r2);",
+        "  vec3 col = vSign > 0.0 ? uUp : uDown;",
+        "  gl_FragColor = vec4(col, vA * soft * uOpacity);",
+        "}"
+      ].join("\n");
+
+      function buildVertical(THREE, F, want){
+        // เก็บทุกช่องที่มีค่า แล้วค่อยตัดเอาแรงสุด — ได้จุดกระจายตามของจริง ไม่ใช่สุ่มมั่ว
+        var all=[], j, i, c, a;
+        for(j=0;j<F.NLAT;j++) for(i=0;i<F.NLON;i++){
+          c=F.cell(j,i); if(!c) continue;
+          a=Math.abs(c[0]); if(a<=0) continue;
+          all.push([a, c[0]>0?1:-1, j, i]);
+        }
+        if(!all.length) return null;
+        all.sort(function(x,y){ return y[0]-x[0]; });
+        var n=Math.min(want, all.length), top=all.slice(0, n);
+        var ref=top[Math.floor(n*0.05)][0]||top[0][0];      // อ้างอิงที่เปอร์เซ็นไทล์ 95 กันค่าโดดเดี่ยวครอบสเกล
+        var pos=new Float32Array(n*3), sg=new Float32Array(n), mg=new Float32Array(n), sd=new Float32Array(n);
+        var k, lat, lon, v;
+        for(k=0;k<n;k++){
+          lat=F.meta.lat0 + top[k][2]*F.meta.dlat;
+          lon=F.meta.lon0 + top[k][3]*F.meta.dlon;
+          v=ocLLToVec(lat, lon, 1);
+          pos[k*3]=v[0]; pos[k*3+1]=v[1]; pos[k*3+2]=v[2];
+          sg[k]=top[k][1];
+          mg[k]=Math.min(1, top[k][0]/ref);
+          sd[k]=((k*2654435761)%1024)/1024;
+        }
+        var geo=new THREE.BufferGeometry();
+        geo.addAttribute("position", new THREE.BufferAttribute(pos, 3));
+        geo.addAttribute("aSign",  new THREE.BufferAttribute(sg, 1));
+        geo.addAttribute("aMag",   new THREE.BufferAttribute(mg, 1));
+        geo.addAttribute("aSeed",  new THREE.BufferAttribute(sd, 1));
+        var m=new THREE.ShaderMaterial({
+          uniforms:{
+            uTime:{value:0}, uSize:{value:7.5}, uSpan:{value:0.075}, uOpacity:{value:0.9},
+            uDpr:{value:Math.min(window.devicePixelRatio||1, 2)},
+            uUp:{value:new THREE.Color(0xffb23f)},      // เอ่อขึ้น — สีอุ่น (น้ำเย็นพาสารอาหารขึ้นมา)
+            uDown:{value:new THREE.Color(0x7f6bff)}     // จมลง — สีม่วงน้ำเงิน แยกจากริ้วน้ำเงินชั้นน้ำลึก
+          },
+          vertexShader:VERT_UP, fragmentShader:FRAG_UP,
+          transparent:true, blending:THREE.AdditiveBlending,
+          depthTest:true, depthWrite:false
+        });
+        MATS.push(m);
+        return new THREE.Points(geo, m);
+      }
+
+      /* เลือกชุดข้อมูลตามเครื่องกับเน็ต — 0.25° (4 MB) เห็นวงน้ำวนครบ,
+         0.5° (1 MB) สำหรับจอเล็ก เน็ตช้า หรือโหมดประหยัดเน็ต
+         ทั้งสองไฟล์มี meta ของตัวเอง โค้ดที่เหลืออ่าน dtype/กริดจาก meta อยู่แล้ว ไม่ต้องแก้อะไรต่อ */
+      function ocPickSet(){
+        var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection||null;
+        var et=(c&&c.effectiveType)||"";
+        var slow=!!c&&(c.saveData===true||et==="slow-2g"||et==="2g"||et==="3g");
+        var small=(window.innerWidth||1200)<760;
+        var weak=(navigator.deviceMemory||8)<=2;
+        return (slow||small||weak) ? "ocean-uv-lo" : "ocean-uv";
+      }
+      function ocLoadSet(name){
+        var base="climate-data/"+name;
+        function ok(r){ if(!r.ok) throw new Error(base+" → HTTP "+r.status); return r; }
+        return Promise.all([
+          fetch(base+"-meta.json").then(ok).then(function(r){ return r.json(); }),
+          fetch(base+".bin").then(ok).then(function(r){ return r.arrayBuffer(); })
+        ]);
       }
 
       function init(){
-        var metaP=fetch("climate-data/ocean-uv-meta.json").then(function(r){ return r.json(); });
-        var binP =fetch("climate-data/ocean-uv.bin").then(function(r){ return r.arrayBuffer(); });
+        // ถ้าชุดที่เลือกโหลดไม่ได้ ถอยไปอีกชุดให้เอง ดีกว่าปล่อยให้ลูกโลกค้างเป็นจอเปล่า
+        var pick=ocPickSet();
+        var setP=ocLoadSet(pick)["catch"](function(err){
+          var alt=(pick==="ocean-uv") ? "ocean-uv-lo" : "ocean-uv";
+          console.warn("โหลดชุดกระแสน้ำ "+pick+" ไม่สำเร็จ ("+err.message+") — ใช้ "+alt+" แทน");
+          return ocLoadSet(alt);
+        });
+        var metaP=setP.then(function(x){ return x[0]; });
+        var binP =setP.then(function(x){ return x[1]; });
         Promise.all([loadThreeShared(), metaP, binP, waitWorld(), loadBaseImage()]).then(function(res){
           var THREE=window.THREE, meta=res[1], baseImg=res[4];
           FIELD=makeField(meta, res[2]);
@@ -22096,14 +22260,23 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           controls.enablePan=false;
 
           globe=new THREE.Group(); scene.add(globe);
+          /* ทรงกลมทึบชั้นใน — กันไม่ให้ริ้วน้ำลึกของซีกโลกด้านไกลทะลุมาให้รก
+             เวลาเปิดชั้นน้ำลึก ผิวโลกจะถูกทำให้โปร่ง แต่ลูกนี้ยังทึบอยู่ จึงยังบังด้านไกลได้ */
+          innerSphere=new THREE.Mesh(new THREE.SphereBufferGeometry(0.955, 48, 32),
+            new THREE.MeshBasicMaterial({ color:new THREE.Color(0x03101c) }));
+          innerSphere.visible=false;
+          globe.add(innerSphere);
+
           var tex=new THREE.CanvasTexture(paintBase(baseImg));
-          globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1, 64, 48),
-                                   new THREE.MeshBasicMaterial({ map:tex })));
+          surfMesh=new THREE.Mesh(new THREE.SphereBufferGeometry(1, 64, 48),
+                                  new THREE.MeshBasicMaterial({ map:tex }));
+          globe.add(surfMesh);
           // เรืองแสงขอบฟ้าบาง ๆ ให้ขอบโลกไม่ตัดแข็ง
           globe.add(new THREE.Mesh(new THREE.SphereBufferGeometry(1.035, 48, 32),
             new THREE.MeshBasicMaterial({ color:new THREE.Color(0x2ec8ef), transparent:true, opacity:0.06, side:THREE.BackSide })));
 
-          pts=buildFlow(THREE, lines, 1.004);
+          // ผิวน้ำเป็นริ้วขาวตามคลิป NASA — เหลือเหลือบฟ้าไว้เฉพาะน้ำช้า ให้ยังอ่านความเร็วออก
+          pts=buildFlow(THREE, lines, 1.004, { low:0x9ed6f0, high:0xffffff, ref:1.1 });
           globe.add(pts);
 
           setTxt("#ocKLines", lines.length.toLocaleString("en-US"));
@@ -22111,7 +22284,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
           /* ---- ชี้เมาส์เพื่ออ่านความเร็วกระแสน้ำตรงจุดนั้น ---- */
           var ray=new THREE.Raycaster(), mouse=new THREE.Vector2(),
-              tip=document.getElementById("ocTip"), sphere=globe.children[0];
+              tip=document.getElementById("ocTip"), sphere=surfMesh;
           renderer.domElement.addEventListener("pointermove", function(ev){
             if(!tip) return;
             var b=renderer.domElement.getBoundingClientRect();
@@ -22127,9 +22300,24 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             tip.style.left=(ev.clientX-b.left+14)+"px";
             tip.style.top=(ev.clientY-b.top+14)+"px";
             var ns=ll[0]>=0?"N":"S", ew=ll[1]>=0?"E":"W";
-            tip.innerHTML='<b>'+Math.abs(ll[0]).toFixed(1)+'° '+ns+' · '+Math.abs(ll[1]).toFixed(1)+'° '+ew+'</b>'
-              +(c ? 'ความเร็วกระแสน้ำ <span class="v">'+Math.sqrt(c[0]*c[0]+c[1]*c[1]).toFixed(2)+' m/s</span>'
+            var html='<b>'+Math.abs(ll[0]).toFixed(1)+'° '+ns+' · '+Math.abs(ll[1]).toFixed(1)+'° '+ew+'</b>'
+              +(c ? 'ผิวน้ำ <span class="v">'+Math.sqrt(c[0]*c[0]+c[1]*c[1]).toFixed(2)+' m/s</span> '+ocDir(c)
                   : '<span class="v">พื้นดิน / ไม่มีข้อมูล</span>');
+            // เปิดชั้นน้ำลึกไว้ก็อ่านค่าคู่กันได้ — จุดสำคัญของคลิปคือหลายที่สองชั้นนี้ไหลสวนทางกัน
+            var dF=DEEP[deepDepth];
+            if(dF && deepPts && deepPts.visible){
+              var d=dF.sample(ll[0], ll[1]);
+              html+='<br>ลึก ~'+Math.round(dF.meta.depth)+' ม. '
+                 +(d ? '<span class="v">'+Math.sqrt(d[0]*d[0]+d[1]*d[1]).toFixed(3)+' m/s</span> '+ocDir(d)
+                     : '<span class="v">พื้นทะเลตื้นกว่านี้</span>');
+              if(c && d && (c[0]*d[0]+c[1]*d[1])<0) html+=' <span class="v">· สวนทางกับผิวน้ำ</span>';
+            }
+            if(VERT && vertPts && vertPts.visible){
+              var wv=VERT.sample(ll[0], ll[1]);
+              if(wv) html+='<br>แนวดิ่ง <span class="v">'+(wv[0]>0?"เอ่อขึ้น":"จมลง")+'</span> '
+                        +Math.abs(wv[0]*86400).toFixed(2)+' ม./วัน';
+            }
+            tip.innerHTML=html;
           });
           renderer.domElement.addEventListener("pointerleave", function(){ if(tip) tip.style.display="none"; });
 
@@ -22142,12 +22330,105 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           });
           if(spd) spd.addEventListener("input", function(){ flowSpeed=+spd.value/100; });
 
+          /* ---- สลับชั้น: ผิวน้ำ / น้ำลึก / ขึ้น–จม ---- */
+          var msgEl=document.getElementById("ocLayerMsg");
+          function layerMsg(t){ if(msgEl){ msgEl.textContent=t||""; msgEl.style.display=t?"inline":"none"; } }
+          function dropLayer(obj){
+            if(!obj) return;
+            globe.remove(obj);
+            var k=MATS.indexOf(obj.material); if(k>=0) MATS.splice(k,1);
+            if(obj.geometry) obj.geometry.dispose();
+            if(obj.material) obj.material.dispose();
+          }
+          // ผิวโลกโปร่งเฉพาะตอนเปิดชั้นน้ำลึก ไม่งั้นริ้วสีน้ำเงินที่อยู่ข้างในจะถูกบังหมด
+          function surfaceTranslucent(on){
+            if(!surfMesh) return;
+            var m=surfMesh.material;
+            m.transparent=on; m.opacity=on?0.46:1; m.depthWrite=!on; m.needsUpdate=true;
+          }
+          function ensureField(name, cache){
+            if(cache) return Promise.resolve(cache);
+            return ocLoadSet(name).then(function(x){ return makeField(x[0], x[1]); });
+          }
+
+          function showDeep(){
+            if(deepBusy) return;
+            deepBusy=true;
+            var want=deepDepth;
+            layerMsg("กำลังโหลดกระแสน้ำลึก…");
+            ensureField("ocean-deep-"+want, DEEP[want]).then(function(F){
+              DEEP[want]=F;
+              return traceLinesChunked(F, narrow?2000:5200, function(f){
+                layerMsg("กำลังลากเส้นน้ำลึก… "+Math.round(f*100)+"%");
+              }, DT_DEEP);
+            }).then(function(lines){
+              dropLayer(deepPts);
+              // ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
+              deepPts=buildFlow(THREE, lines, 0.968,
+                { low:0x1b56c4, high:0x86d2ff, ref:0.18, size:7.2, tail:0.5, opacity:0.95 });
+              globe.add(deepPts);
+              innerSphere.visible=true;
+              surfaceTranslucent(true);
+              setTxt("#ocKDeep", lines.length.toLocaleString("en-US"));
+              layerMsg("");
+              deepBusy=false;
+            })["catch"](function(e){
+              console.warn("deep layer failed:", e);
+              layerMsg("โหลดชั้นน้ำลึกไม่สำเร็จ");
+              deepBusy=false;
+              var cb=document.getElementById("ocLDeep"); if(cb) cb.checked=false;
+            });
+          }
+          function hideDeep(){
+            dropLayer(deepPts); deepPts=null;
+            innerSphere.visible=false;
+            surfaceTranslucent(false);
+          }
+          function showVert(){
+            if(vertBusy) return;
+            vertBusy=true;
+            layerMsg("กำลังโหลดข้อมูลการเคลื่อนที่แนวดิ่ง…");
+            ensureField("ocean-vert", VERT).then(function(F){
+              VERT=F;
+              dropLayer(vertPts);
+              vertPts=buildVertical(THREE, F, narrow?1400:3600);
+              if(vertPts) globe.add(vertPts);
+              layerMsg("");
+              vertBusy=false;
+            })["catch"](function(e){
+              console.warn("vertical layer failed:", e);
+              layerMsg("โหลดชั้นขึ้น–จมไม่สำเร็จ");
+              vertBusy=false;
+              var cb=document.getElementById("ocLVert"); if(cb) cb.checked=false;
+            });
+          }
+
+          var cbS=document.getElementById("ocLSurf"), cbD=document.getElementById("ocLDeep"),
+              cbV=document.getElementById("ocLVert"), selD=document.getElementById("ocDepth");
+          if(cbS) cbS.addEventListener("change", function(){ if(pts) pts.visible=cbS.checked; });
+          if(cbD) cbD.addEventListener("change", function(){
+            if(selD) selD.disabled=!cbD.checked;
+            if(cbD.checked) showDeep(); else hideDeep();
+          });
+          if(cbV) cbV.addEventListener("change", function(){
+            if(cbV.checked){ if(vertPts) vertPts.visible=true; else showVert(); }
+            else if(vertPts) vertPts.visible=false;
+          });
+          if(selD) selD.addEventListener("change", function(){
+            deepDepth=selD.value;
+            if(cbD && cbD.checked){ hideDeep(); showDeep(); }
+          });
+
           loop=function(ts){
             if(!visible || !running){ running=false; raf=0; return; }
             raf=requestAnimationFrame(loop);
             var dt=lastTs ? Math.min(0.05, (ts-lastTs)/1000) : 0.016;
             lastTs=ts;
-            if(flowing){ clock+=dt*flowSpeed; mat.uniforms.uTime.value=clock; globe.rotation.y+=dt*0.02; }
+            if(flowing){
+              clock+=dt*flowSpeed;
+              for(var q=0;q<MATS.length;q++) MATS[q].uniforms.uTime.value=clock;
+              globe.rotation.y+=dt*0.02;
+            }
             controls.update();
             renderer.render(scene, camera);
           };
@@ -22158,7 +22439,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             if(nw && nh){
               camera.aspect=nw/nh; camera.updateProjectionMatrix();
               renderer.setSize(nw, nh);
-              mat.uniforms.uDpr.value=Math.min(window.devicePixelRatio||1, 2);
+              var dpr=Math.min(window.devicePixelRatio||1, 2);
+              for(var q=0;q<MATS.length;q++) MATS[q].uniforms.uDpr.value=dpr;
               renderer.render(scene, camera);
             }
           });

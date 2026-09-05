@@ -11,15 +11,16 @@
   "endian": "little",
   "scale": 0.0005,
   "noData": -32768,
-  "nlat": 720,
-  "nlon": 1440,
+  "nlat": 360,
+  "nlon": 720,
   "lat0": -89.875,
   "lon0": -179.875,
-  "dlat": 0.25,
-  "dlon": 0.25,
+  "dlat": 0.5,
+  "dlon": 0.5,
   "layout": "interleaved u,v per cell; row-major lat then lon; Int16 little-endian * scale = m/s",
-  "validCells": 579416,
-  "totalCells": 1036800,
+  "validCells": 144885,
+  "totalCells": 259200,
   "maxSpeed": 5.9758,
-  "builtBy": "build-ocean-uv.mjs"
+  "builtBy": "build-ocean-uv.mjs",
+  "stride": 2
 }

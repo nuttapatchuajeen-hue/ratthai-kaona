@@ -1,0 +1,30 @@
+{
+  "source": "SODA 3.3.1 Ocean State Reanalysis (Carton, Chepurin & Chen) ผ่าน NOAA CoastWatch ERDDAP",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdSoda331oceanmday.html",
+  "dataset": "erdSoda331oceanmday",
+  "variables": [
+    "u",
+    "v"
+  ],
+  "unit": "m/s",
+  "kind": "horizontal",
+  "note": "กระแสน้ำแนวราบที่ความลึกนี้ — คนละชุดข้อมูลกับผิวน้ำ และเป็นค่าเฉลี่ยรายเดือน",
+  "time": "2015-12-16T00:00:00Z",
+  "depth": 996.7153,
+  "dtype": "int16",
+  "endian": "little",
+  "scale": 0.00001693189875,
+  "noData": -32768,
+  "components": 2,
+  "nlat": 330,
+  "nlon": 720,
+  "lat0": -74.75,
+  "lon0": -179.75,
+  "dlat": 0.5,
+  "dlon": 0.5,
+  "layout": "interleaved u,v per cell; row-major lat then lon; Int16 little-endian * scale = m/s",
+  "validCells": 143772,
+  "totalCells": 237600,
+  "maxAbs": 0.54182076,
+  "builtBy": "build-ocean-deep.mjs"
+}

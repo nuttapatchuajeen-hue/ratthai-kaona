@@ -1,0 +1,29 @@
+{
+  "source": "SODA 3.3.1 Ocean State Reanalysis (Carton, Chepurin & Chen) ผ่าน NOAA CoastWatch ERDDAP",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdSoda331oceanmday.html",
+  "dataset": "erdSoda331oceanmday",
+  "variables": [
+    "wt"
+  ],
+  "unit": "m/s",
+  "kind": "vertical",
+  "note": "wt = dia-surface velocity ค่าบวกคือน้ำเอ่อขึ้น (upwelling) ค่าลบคือจมลง (downwelling)",
+  "time": "2015-12-16T00:00:00Z",
+  "depth": 110.0962,
+  "dtype": "int16",
+  "endian": "little",
+  "scale": 1.6675736250000003e-8,
+  "noData": -32768,
+  "components": 1,
+  "nlat": 330,
+  "nlon": 720,
+  "lat0": -74.75,
+  "lon0": -179.75,
+  "dlat": 0.5,
+  "dlon": 0.5,
+  "layout": "one value per cell; row-major lat then lon; Int16 little-endian * scale = m/s",
+  "validCells": 164886,
+  "totalCells": 237600,
+  "maxAbs": 0.00053362356,
+  "builtBy": "build-ocean-deep.mjs"
+}
