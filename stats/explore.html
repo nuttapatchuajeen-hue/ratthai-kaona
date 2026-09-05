@@ -22352,9 +22352,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           function surfaceTranslucent(on){
             if(surfMesh){
               var m=surfMesh.material;
-              m.transparent=on; m.opacity=on?0.42:1; m.depthWrite=!on; m.needsUpdate=true;
+              // 0.25 ไม่ใช่เลขสวย ๆ แต่เป็นเพดานที่ริ้วน้ำเงินยังทะลุขึ้นมาอ่านออก
+              // (เคยลอง 0.42 แล้วสีน้ำเงินโดนกลืนไปกว่าครึ่งจนแยกจากริ้วขาวไม่ออก)
+              m.transparent=on; m.opacity=on?0.25:1; m.depthWrite=!on; m.needsUpdate=true;
             }
-            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.30 : 0.55;
+            if(pts && pts.material) pts.material.uniforms.uOpacity.value = on ? 0.26 : 0.55;
           }
           function ensureField(name, cache){
             if(cache) return Promise.resolve(cache);
@@ -22379,9 +22381,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
                 var cd=document.getElementById("ocLDeep"); if(cd) cd.checked=false;
                 return;
               }
-              // ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
+              /* ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
+                 จุดใหญ่กว่าริ้วผิวน้ำ เพราะต้องส่องผ่านผิวโลกที่ยังทึบอยู่ 25% กว่าจะถึงตา */
               deepPts=buildFlow(THREE, lines, 0.968,
-                { low:0x2f6ae8, high:0x9fdcff, ref:0.18, size:8.0, tail:0.5, opacity:1 });
+                { low:0x3b7bff, high:0xc9ecff, ref:0.18, size:9.5, tail:0.55, opacity:1 });
               // ลำดับวาดคงที่: น้ำลึก → ผิวโลกโปร่ง → ริ้วผิวน้ำ → จุดขึ้น-จม
               // ไม่งั้นสามชั้นมีจุดศูนย์กลางเดียวกัน three.js เรียงลำดับให้เองไม่แน่นอน
               deepPts.renderOrder=-1;
