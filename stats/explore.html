@@ -816,6 +816,41 @@
   .oc-leg-bar{height:7px;border-radius:4px;background:linear-gradient(90deg,#3d9fd6,#8fd4f0 55%,#ffffff)}
   .oc-leg-scale{display:flex;justify-content:space-between;font-size:10.5px;color:#7fa2b5;margin-top:4px}
   @media (max-width:520px){ .oc-legend{display:none} }
+  /* ---- 🔄 สายพานยักษ์มหาสมุทร (Thermohaline Circulation) ---- */
+  .thc-stage{height:clamp(480px,62vw,700px)}
+  .thc-info{position:absolute;left:14px;bottom:48px;z-index:13;width:min(330px,62%);background:rgba(4,16,26,.9);border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:11px 30px 12px 13px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:none}
+  .thc-info.on{display:block}
+  .thc-info h4{margin:0 0 5px;font-size:13.5px;font-weight:700;color:#eafcff;display:flex;align-items:center;gap:7px;line-height:1.4}
+  .thc-info h4 .mdico{flex:0 0 auto}
+  .thc-info p{margin:0;font-size:11.8px;line-height:1.7;color:#a9c8d8}
+  .thc-info b{color:#2ec8ef}
+  .thc-info .thc-x{position:absolute;top:6px;right:8px;background:none;border:0;color:#7fa2b5;font-size:16px;line-height:1;cursor:pointer;padding:2px 5px;border-radius:6px}
+  .thc-info .thc-x:hover{color:#eafcff;background:rgba(255,255,255,.08)}
+  .thc-legend{width:186px}
+  .thc-leg-line{display:flex;align-items:center;gap:7px;font-size:11px;color:#a9c8d8;margin-top:6px}
+  .thc-leg-line i{width:22px;height:4px;border-radius:3px;flex:0 0 auto}
+  .thc-leg-line i.dotm{width:10px;height:10px;border-radius:50%}
+  @media (max-width:560px){ .thc-info{width:auto;right:14px} }
+
+  /* เครื่องมือ "น้ำแบบไหนถึงจะจม" */
+  .thc-den{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:22px;align-items:stretch;margin-top:6px}
+  @media (max-width:760px){ .thc-den{grid-template-columns:1fr} }
+  .thc-den-ctl{display:flex;flex-direction:column;gap:14px;justify-content:center}
+  .thc-row{display:flex;flex-direction:column;gap:6px}
+  .thc-row label{font-size:12.5px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;gap:10px}
+  .thc-row label span{color:var(--green);font-variant-numeric:tabular-nums}
+  .thc-row input[type=range]{width:100%;accent-color:var(--green)}
+  .thc-presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+  .thc-pre{background:var(--paper-2);border:1px solid var(--rule);border-radius:999px;padding:4px 11px;font-family:inherit;font-size:11.5px;color:var(--ink-soft);cursor:pointer}
+  .thc-pre:hover{border-color:var(--green);color:var(--green)}
+  .thc-pre.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
+  .thc-out{border:1px solid var(--rule);border-radius:12px;padding:11px 13px;background:var(--paper-2)}
+  .thc-out .big{font-size:24px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+  .thc-out .big small{font-size:12px;font-weight:600;color:var(--ink-soft);margin-left:4px}
+  .thc-out .verdict{margin-top:5px;font-size:12.5px;font-weight:700}
+  .thc-out .why{margin-top:3px;font-size:11.5px;color:var(--ink-soft);line-height:1.6}
+  .thc-col{border:1px solid var(--rule);border-radius:12px;background:var(--paper-2);padding:10px;display:flex;flex-direction:column}
+  .thc-col svg{width:100%;height:auto;display:block}
   .coral-stage{position:relative;width:100%;height:clamp(450px,56vw,620px);background:#030712;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
   .coral-stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none;cursor:grab}
   .coral-stage canvas:active{cursor:grabbing}
@@ -5677,12 +5712,21 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               <option value="2071" selected>~2,000 ม.</option>
             </select>
             <label class="oc-chk"><input type="checkbox" id="ocLVert"><i class="oc-dot" style="background:#ffb23f"></i> ขึ้น–จม</label>
+            <span class="oc-sep"></span>
+            <label class="oc-chk" for="ocColour">ระบายสีเส้นตาม</label>
+            <select class="oc-sel" id="ocColour" aria-label="เลือกตัวแปรที่ใช้ระบายสีเส้นกระแสน้ำ">
+              <option value="speed" selected>ความเร็ว (ขาว–ฟ้า)</option>
+              <option value="rainbow">ความเร็ว (รุ้ง)</option>
+              <option value="sst">อุณหภูมิผิวน้ำ</option>
+              <option value="sss">ความเค็มผิวน้ำ</option>
+              <option value="chl">คลอโรฟิลล์</option>
+            </select>
             <span class="oc-msg" id="ocLayerMsg"></span>
           </div>
           <div class="oc-legend">
-            <div class="oc-leg-title">ความเร็วกระแสน้ำผิว</div>
-            <div class="oc-leg-bar"></div>
-            <div class="oc-leg-scale"><span>ช้า · 0</span><span>1.1+ ม./วิ</span></div>
+            <div class="oc-leg-title" id="ocLegTitle">ความเร็วกระแสน้ำผิว</div>
+            <div class="oc-leg-bar" id="ocLegBar"></div>
+            <div class="oc-leg-scale"><span id="ocLegMin">0 ม./วิ</span><span id="ocLegMax">1.1+ ม./วิ</span></div>
             <div class="oc-leg-row"><i class="oc-dot" style="background:#4f8ff0"></i> ริ้วน้ำเงิน = กระแสน้ำลึก</div>
             <div class="oc-leg-row"><i class="oc-dot" style="background:#ffb23f"></i> จุดส้มลอยขึ้น = น้ำเอ่อขึ้น</div>
             <div class="oc-leg-row"><i class="oc-dot" style="background:#7f6bff"></i> จุดม่วงจมลง = น้ำจมลง</div>
@@ -5713,6 +5757,192 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             <div class="es-foot" style="display:block;line-height:1.6">น้ำที่เอ่อขึ้น–จมลงเคลื่อนที่ราววันละไม่กี่สิบเซนติเมตรถึงไม่กี่เมตร ช้ากว่ากระแสน้ำแนวราบเป็นแสนเท่า จุดที่เห็นวิ่งขึ้นลงจึงเป็นการ<b>เร่งให้เห็นทิศทาง</b> ไม่ใช่ความเร็วจริงตามสเกลเวลา</div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ ศูนย์ข้อมูลโลก · สายพานยักษ์มหาสมุทร (Thermohaline Circulation) ============ -->
+    <section class="tabpane" id="pane-world-thc" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-refresh-cw"></use></svg> สายพานยักษ์มหาสมุทร (Thermohaline)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-waves"></use></svg> กำลังของสายพานฝั่งแอตแลนติก (AMOC)</div>
+          <div class="k-num"><span id="kThcSv">17.0</span><span class="u">สเวอร์ดรุป</span></div>
+          <div class="k-sub">1 สเวอร์ดรุป = น้ำ 1 ล้าน ลบ.ม. ต่อวินาที — 17 Sv คือราว <b>14 เท่าของแม่น้ำทุกสายในโลกรวมกัน</b> · ค่าเฉลี่ยที่วัดได้จริงที่ละติจูด 26.5°N</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-hourglass"></use></svg> น้ำหนึ่งหยดวนครบรอบใน</div>
+          <div class="k-num">~1,000<span class="u">ปี</span></div>
+          <div class="k-sub">น้ำที่จมลงหน้ากรีนแลนด์วันนี้ จะโผล่ขึ้นผิวอีกฟากโลกในอีกราวพันปี — น้ำลึกแปซิฟิกเหนือคือน้ำที่ “เก่า” ที่สุดในมหาสมุทร</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-flame"></use></svg> ความร้อนที่ขนขึ้นเหนือ</div>
+          <div class="k-num">1.25<span class="u">เพตะวัตต์</span></div>
+          <div class="k-sub">= 1,250 ล้านล้านวัตต์ ราว <b>60 เท่า</b>ของพลังงานที่มนุษย์ทั้งโลกใช้ทุกรูปแบบรวมกัน — นี่คือเหตุผลที่ยุโรปเหนืออุ่นกว่าแคนาดาที่ละติจูดเดียวกัน</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-droplets"></use></svg> น้ำจืดจากกรีนแลนด์</div>
+          <div class="k-num">~267<span class="u">กิกะตัน/ปี</span></div>
+          <div class="k-sub">น้ำแข็งที่ละลายลงทะเลตั้งแต่ปี 2545 — น้ำจืดเจือความเค็มลง น้ำจึงเบาลงและ<b>จมยากขึ้น</b> ซึ่งคือกลไกที่ทำให้สายพานช้าลง</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-globe"></use></svg> ลูกโลกสายพาน — ลากหมุนได้ กดจุดเพื่ออ่านรายละเอียด</h2>
+          <span class="tag">แผนภาพเชิงสัญลักษณ์</span>
+        </div>
+        <p class="sub">มหาสมุทรทั้งใบเชื่อมกันเป็น <b>วงเดียว</b> ที่เรียกกันว่า “สายพานยักษ์” (Great Ocean Conveyor) — <b style="color:#ff8a3d">ริ้วส้ม</b> คือน้ำอุ่นที่ไหลอยู่บนผิว · <b style="color:#5aa8ff">ริ้วน้ำเงิน</b> คือน้ำเย็นเค็มที่จมลงไปไหลกลับใต้ท้องทะเลลึก 2–4 กิโลเมตร · ตัวขับไม่ใช่ลม แต่คือ<b>ความหนาแน่น</b> ที่มาจากอุณหภูมิ (thermo-) บวกความเค็ม (-haline) จึงเป็นที่มาของชื่อ <b>thermohaline circulation</b></p>
+        <p class="sub">กด <b style="color:#9d8dff">จุดม่วง</b> = ที่ที่น้ำจมลงสู่ก้นสมุทร · <b style="color:#ffb23f">จุดส้ม</b> = ที่ที่น้ำลึกเอ่อกลับขึ้นผิว · <b style="color:#2ec8ef">จุดฟ้า</b> = จุดสำคัญอื่นที่ควรรู้จัก — ทั้งหมดกดอ่านคำอธิบายได้</p>
+
+        <div class="oc-stage thc-stage" id="thcStage">
+          <div class="sat-loading" id="thcLoading"><div class="spin"></div><span>กำลังวาดลูกโลก…</span></div>
+          <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม · กดจุดวงกลมเพื่ออ่านรายละเอียด</div>
+          <div class="oc-tip" id="thcTip"></div>
+          <div class="oc-controls">
+            <button class="oc-btn" id="thcPlay" type="button"><svg class="mdico"><use href="#i-pause"></use></svg> หยุด</button>
+            <label class="oc-slider"><span>ความเร็วภาพ</span><input type="range" id="thcSpeed" min="20" max="300" value="100"></label>
+            <span class="oc-sep"></span>
+            <label class="oc-chk"><input type="checkbox" id="thcLWarm" checked><i class="oc-dot" style="background:#ff8a3d"></i> น้ำอุ่นผิว</label>
+            <label class="oc-chk"><input type="checkbox" id="thcLCold" checked><i class="oc-dot" style="background:#5aa8ff"></i> น้ำเย็นลึก</label>
+            <label class="oc-chk"><input type="checkbox" id="thcLSite" checked><i class="oc-dot" style="background:#9d8dff"></i> จุดสำคัญ</label>
+            <span class="oc-sep"></span>
+            <button class="oc-btn" id="thcHome" type="button"><svg class="mdico"><use href="#i-compass"></use></svg> มุมมองเริ่มต้น</button>
+          </div>
+          <div class="oc-legend thc-legend">
+            <div class="oc-leg-title">อ่านลูกโลกนี้</div>
+            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,#ffb26b,#ff5c1a)"></i> น้ำอุ่นบนผิว</div>
+            <div class="thc-leg-line"><i style="background:linear-gradient(90deg,#7fc0ff,#2f6fd0)"></i> น้ำเย็นในที่ลึก</div>
+            <div class="thc-leg-line"><i class="dotm" style="background:#9d8dff"></i> น้ำจมลงก้นสมุทร</div>
+            <div class="thc-leg-line"><i class="dotm" style="background:#ffb23f"></i> น้ำลึกเอ่อขึ้นผิว</div>
+            <div class="thc-leg-line"><i class="dotm" style="background:#2ec8ef"></i> จุดสำคัญอื่น</div>
+          </div>
+          <div class="thc-info" id="thcInfo"><button class="thc-x" id="thcInfoX" type="button" aria-label="ปิด">×</button><h4></h4><p></p></div>
+        </div>
+
+        <div class="src">ภาพนี้เป็น <b>แผนภาพเชิงสัญลักษณ์</b> ของเส้นทางสายพาน (ตามแบบที่ Broecker เสนอไว้ปี 2530/1987 และที่ IPCC กับ NASA ใช้กันทั่วไป) — <b>ไม่ใช่</b>สนามความเร็วรายวันจากดาวเทียม ถ้าอยากดูกระแสน้ำ “ค่าจริงรายจุด” ให้ไปที่หัวข้อ <b>กระแสน้ำมหาสมุทรโลก 3 มิติ</b> ในเมนูด้านซ้าย · แนวคิดภาพจากคลิป <a href="https://svs.gsfc.nasa.gov/3658" target="_blank" rel="noopener">Thermohaline Circulation — NASA Scientific Visualization Studio ↗</a> · ตัวเลขกำกับจุดต่าง ๆ อ้างอิง RAPID/OSNAP, NOAA และ IPCC AR6 บทที่ 9 · แผนที่ฐาน Natural Earth (110m)</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> ทำไมน้ำถึงจมลงได้เอง — กลไก 4 ขั้น</h2><span class="tag">คำอธิบาย</span></div>
+        <p class="sub">สายพานนี้ไม่มีเครื่องยนต์ ตัวที่ขับคือ<b>ความหนาแน่น</b>ล้วน ๆ — น้ำที่หนักกว่าจะจมลงไปใต้น้ำที่เบากว่า และน้ำจะหนักขึ้นได้สองทางเท่านั้น คือ<b>เย็นลง</b> กับ<b>เค็มขึ้น</b></p>
+        <div class="es-row">
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> 1 · น้ำอุ่นเดินทางขึ้นเหนือ</div>
+            <div class="es-foot" style="display:block;line-height:1.65">กัลฟ์สตรีมพาน้ำอุ่นจากเขตร้อนขึ้นไปถึงหน้ากรีนแลนด์และนอร์เวย์ ระหว่างทางมันปล่อยความร้อนออกสู่อากาศ — ความร้อนก้อนนี้เองที่ทำให้อังกฤษกับนอร์เวย์อุ่นกว่าแคนาดาที่ละติจูดเท่ากันหลายองศา</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> 2 · เย็นจัด + น้ำแข็งขับเกลือออกมา</div>
+            <div class="es-foot" style="display:block;line-height:1.65">พอถึงขั้วโลก น้ำเย็นลงเกือบถึงจุดเยือกแข็ง และเมื่อผิวน้ำกลายเป็นน้ำแข็งทะเล เกลือจะถูก “คายทิ้ง” ลงในน้ำข้างใต้ (brine rejection) น้ำตรงนั้นจึงทั้งเย็นและเค็มกว่าปกติ</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-trending-down"></use></svg> 3 · หนักจนจมลงก้นสมุทร</div>
+            <div class="es-foot" style="display:block;line-height:1.65">เย็น + เค็ม = หนาแน่นที่สุด น้ำก้อนนี้จมดิ่งลงไป 2–4 กิโลเมตร กลายเป็น “น้ำลึกแอตแลนติกเหนือ” (NADW) แล้วไหลลงใต้ไปตามขอบตะวันตกของมหาสมุทร</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-repeat"></use></svg> 4 · เอ่อกลับขึ้นผิว ครบวง</div>
+            <div class="es-foot" style="display:block;line-height:1.65">ลมตะวันตกกำลังแรงรอบทวีปแอนตาร์กติกาดูดน้ำลึกกลับขึ้นสู่ผิว อีกส่วนค่อย ๆ ผสมขึ้นในแปซิฟิกกับอินเดีย แล้วไหลกลับเป็นน้ำอุ่นบนผิว — ครบวงในราวหนึ่งพันปี</div>
+          </div>
+        </div>
+
+        <h3 style="margin:22px 0 4px;font-size:15px">ลองเอง: น้ำแบบไหนถึงจะจม</h3>
+        <p class="sub" style="margin-top:0">เลื่อนอุณหภูมิกับความเค็มดู แล้วเทียบกับ “น้ำลึกแอตแลนติกเหนือ” ที่เส้นประ — จะเห็นว่าแค่ความเค็มลดลงไม่ถึง 1 หน่วย ก็พอทำให้น้ำที่เคยจมได้ กลายเป็นน้ำที่ลอยอยู่บนผิวแทน</p>
+        <div class="thc-den">
+          <div class="thc-den-ctl">
+            <div class="thc-row">
+              <label for="thcDenT">อุณหภูมิน้ำ <span id="thcDenTv">2.0 °C</span></label>
+              <input type="range" id="thcDenT" min="-2" max="30" step="0.1" value="2">
+            </div>
+            <div class="thc-row">
+              <label for="thcDenS">ความเค็ม <span id="thcDenSv">35.00 หน่วย (PSU)</span></label>
+              <input type="range" id="thcDenS" min="30" max="38" step="0.05" value="35">
+            </div>
+            <div class="thc-presets" id="thcDenPre">
+              <button class="thc-pre" type="button" data-t="27" data-s="35.5">น้ำผิวเขตร้อน</button>
+              <button class="thc-pre on" type="button" data-t="2" data-s="35">น้ำหน้ากรีนแลนด์</button>
+              <button class="thc-pre" type="button" data-t="2" data-s="34.2">…ถ้าน้ำแข็งละลายเจือลง</button>
+              <button class="thc-pre" type="button" data-t="-0.8" data-s="34.7">น้ำก้นสมุทรแอนตาร์กติก</button>
+            </div>
+            <div class="thc-out">
+              <div class="big"><span id="thcDenV">—</span><small>กก./ลบ.ม.</small></div>
+              <div class="verdict" id="thcDenVerdict">—</div>
+              <div class="why" id="thcDenWhy">—</div>
+            </div>
+          </div>
+          <div class="thc-col"><svg id="thcDenCol" viewBox="0 0 230 300" role="img" aria-label="แผนภาพเปรียบเทียบความหนาแน่นของน้ำทะเล"></svg></div>
+        </div>
+        <div class="src">คำนวณด้วยสมการสถานะน้ำทะเลมาตรฐาน UNESCO EOS-80 ที่ความดันผิวน้ำ (Millero &amp; Poisson 1981) · ค่าอ้างอิงน้ำลึกแอตแลนติกเหนือ ~1,027.8 กก./ลบ.ม. (อุณหภูมิ 2–4 °C ความเค็ม ~34.9) จาก <a href="https://www.ncei.noaa.gov/products/world-ocean-atlas" target="_blank" rel="noopener">NOAA World Ocean Atlas ↗</a></div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-waves"></use></svg> สายพานอ่อนลงจริงไหม — ค่าที่วัดได้จากทุ่นกลางมหาสมุทร</h2><span class="tag">RAPID + OSNAP</span></div>
+        <p class="sub">ตั้งแต่ปี 2547 มีแนวทุ่นตรวจวัดพาดขวางมหาสมุทรแอตแลนติกที่ละติจูด <b>26.5°N</b> (โครงการ RAPID) คอยวัดปริมาตรน้ำที่ไหลขึ้นเหนือ–ลงใต้ตลอดเวลา และตั้งแต่ปี 2557 มีแนว <b>OSNAP</b> เพิ่มในเขตซับโพลาร์ระหว่างแคนาดา–กรีนแลนด์–สกอตแลนด์ · สังเกตว่าค่ามัน<b>แกว่งแรงมากในแต่ละปี</b> การดูปีเดียวจึงบอกอะไรไม่ได้เลย</p>
+        <div class="plot" id="thcAmocChart"><div class="state-msg">กำลังโหลดข้อมูล AMOC…</div></div>
+        <div class="src">ที่มา: <a href="https://rapid.ac.uk/" target="_blank" rel="noopener">RAPID-MOCHA-WBTS 26.5°N ↗</a> และ <a href="https://www.o-snap.org/" target="_blank" rel="noopener">OSNAP ↗</a> · รวบรวมโดย <a href="https://climate.metoffice.cloud/amoc.html" target="_blank" rel="noopener">Met Office Climate Dashboard ↗</a> · เฉลี่ยรายปีจากค่ารายเดือน แสดงเฉพาะปีที่มีข้อมูลครบ 12 เดือน (RAPID ค.ศ. 2005–2022 · OSNAP ค.ศ. 2015–2019) · <b>สืบค้นเมื่อ 5 ก.ย. 2569</b> เก็บไว้ที่ <code>climate-data/amoc-transports.json</code> เพราะต้นทางไม่เปิด CORS ให้ยิงตรง — หน้าเว็บยังลองดึงสดทับทุกครั้งที่เปิด ถ้าดึงติดจะได้ข้อมูลใหม่กว่าอัตโนมัติ · แนวโน้มอ่อนลง 1.0 [0.4–1.6] Sv ต่อทศวรรษ ในช่วง ค.ศ. 2004–2023 ตาม McCarthy et al. (2025), <i>Geophysical Research Letters</i></div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-snowflake"></use></svg> “รูโหว่โลกร้อน” กลางแอตแลนติกเหนือ</h2><span class="tag">คำนวณสดจากกริด NASA</span></div>
+        <p class="sub">แผนที่นี้ไม่ได้แสดงว่าที่ไหนร้อนขึ้นเท่าไร แต่แสดงว่าแต่ละจุด<b>ร้อนขึ้นเร็วหรือช้ากว่าค่าเฉลี่ยของทั้งโลก</b> — เกือบทุกที่บนแผนที่เป็นสีแดง (ร้อนขึ้นเร็วกว่าโลก) ยกเว้น<b>หย่อมสีน้ำเงินกลางมหาสมุทรใต้กรีนแลนด์</b> ที่แทบไม่ร้อนขึ้นเลยตลอดร้อยปี นักสมุทรศาสตร์เรียกมันว่า <b>cold blob</b> หรือรูโหว่โลกร้อน และมองว่าเป็นร่องรอยที่ชัดที่สุดว่าสายพานตรงนี้ส่งความร้อนขึ้นมาได้น้อยลง</p>
+        <div class="plot" id="thcHoleMap"><div class="state-msg">กำลังคำนวณจากกริดอุณหภูมิ NASA…</div></div>
+        <div class="src">คำนวณในเครื่องคุณจากกริดชุดเดียวกับหัวข้อ “แผนที่โลกร้อนไล่ปี” — <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP v4 ↗</a> (ช่อง 2°×2°) เทียบค่าเฉลี่ยปี ค.ศ. 2001–2025 กับ 1901–1950 แล้วหักค่าเฉลี่ยของทั้งโลกออก · ช่องที่ข้อมูลไม่ครบถูกเว้นว่าง</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-trending-down"></use></svg> หย่อมนี้เย็นลงเมื่อไหร่ — เทียบกับค่าเฉลี่ยโลกรายปี</h2><span class="tag">1880–ปัจจุบัน</span></div>
+        <p class="sub">เส้นนี้คือ “อุณหภูมิของหย่อมใต้กรีนแลนด์ (45–62°N, 55–15°W) ลบด้วยอุณหภูมิเฉลี่ยของทั้งโลก” — ค่าบวกแปลว่าหย่อมนี้อุ่นกว่าที่โลกเป็น ค่าลบแปลว่าตามโลกไม่ทัน · จะเห็นว่าจนถึงราวปี 2503 มันเคยอุ่นนำโลกมาตลอด แล้ว<b>พลิกลงมาติดลบตั้งแต่ทศวรรษ 2513 เป็นต้นมา</b></p>
+        <div class="plot" id="thcBlobChart"><div class="state-msg">กำลังคำนวณ…</div></div>
+        <div class="src">คำนวณในเครื่องคุณจาก <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP v4 ↗</a> (ถ่วงน้ำหนักตามพื้นที่ด้วย cos ละติจูด · เฉพาะปีที่มีข้อมูลครบ 12 เดือน) · แนวคิดการวัด cold blob ตาม Rahmstorf et al. (2015) และ Caesar et al. (2018), <i>Nature</i></div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-droplets"></use></svg> น้ำจืดที่เทลงหัวสายพาน — น้ำแข็งกรีนแลนด์ที่หายไป</h2><span class="tag">สด · GRACE/GRACE-FO</span></div>
+        <p class="sub">ดาวเทียมคู่ GRACE ชั่งน้ำหนักแผ่นน้ำแข็งได้จากแรงโน้มถ่วง เส้นนี้คือ<b>น้ำแข็งสะสมที่หายไปจากกรีนแลนด์</b> เทียบกับปี 2545 — ทุกกิกะตันที่ละลายคือน้ำจืดที่ไหลลงทะเลตรงจุดที่น้ำควรจะจม ทำให้น้ำตรงนั้นเค็มน้อยลง เบาลง และจมยากขึ้น</p>
+        <div class="plot" id="thcGreenChart"><div class="state-msg">กำลังโหลดข้อมูลน้ำแข็ง…</div></div>
+        <div class="src">ที่มา: NASA/JPL GRACE &amp; GRACE-FO — <a href="https://climate.nasa.gov/vital-signs/ice-sheets/" target="_blank" rel="noopener">NASA Vital Signs: Ice Sheets ↗</a> เรียบเรียงโดย <a href="https://ourworldindata.org/grapher/ice-sheet-mass-balance" target="_blank" rel="noopener">Our World in Data ↗</a> · ดึงสด</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-triangle-alert"></use></svg> ถ้าสายพานอ่อนลงมาก จะเกิดอะไรขึ้น</h2><span class="tag">ตามแบบจำลอง</span></div>
+        <p class="sub">นี่คือสิ่งที่แบบจำลองภูมิอากาศเห็นตรงกันเมื่อบังคับให้ AMOC อ่อนลงหรือหยุด — <b>ไม่ใช่คำพยากรณ์ว่าจะเกิดแน่</b> แต่คือ “ถ้าเกิด จะออกมาหน้าตาแบบนี้”</p>
+        <div class="es-row">
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> ยุโรปเหนือหนาวลง</div>
+            <div class="es-foot" style="display:block;line-height:1.65">ถ้าสายพานหยุดสนิท ยุโรปตะวันตกเฉียงเหนืออาจเย็นลงหลายองศาภายในไม่กี่ทศวรรษ สวนทางกับโลกที่ร้อนขึ้น — แต่ย้ำว่านี่คือกรณีหยุดสนิท ไม่ใช่กรณีอ่อนลงตามที่คาดกันในศตวรรษนี้</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-cloud-rain"></use></svg> แนวฝนโลกเลื่อนลงใต้</div>
+            <div class="es-foot" style="display:block;line-height:1.65">เมื่อซีกโลกเหนือเย็นลง แนวฝนเขตร้อน (ITCZ) จะขยับลงใต้ ทำให้มรสุมแอฟริกาตะวันตกและเอเชียใต้–เอเชียตะวันออกเฉียงใต้อ่อนแรงลง ซึ่งกระทบ<b>ไทย</b>โดยตรงผ่านฤดูฝน</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-waves"></use></svg> น้ำทะเลฝั่งอเมริกาสูงขึ้น</div>
+            <div class="es-foot" style="display:block;line-height:1.65">สายพานที่อ่อนลงทำให้น้ำกองสูงขึ้นตามชายฝั่งตะวันออกเฉียงเหนือของสหรัฐฯ ได้อีกหลายสิบเซนติเมตร ซ้อนทับกับระดับน้ำทะเลที่สูงขึ้นอยู่แล้ว</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-shell"></use></svg> ระบบนิเวศทะเลรวน</div>
+            <div class="es-foot" style="display:block;line-height:1.65">สายพานคือตัวส่งออกซิเจนลงก้นสมุทรและส่งสารอาหารกลับขึ้นผิว ถ้ามันช้าลง แหล่งประมงในแอตแลนติกเหนือและการดูดซับคาร์บอนของมหาสมุทรจะเปลี่ยนตามไปด้วย</div>
+          </div>
+        </div>
+        <div class="src">อ้างอิง: <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-9/" target="_blank" rel="noopener">IPCC AR6 WG1 บทที่ 9 — Ocean, Cryosphere and Sea Level Change ↗</a> และ <a href="https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-4/" target="_blank" rel="noopener">บทที่ 4 ↗</a></div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-scale"></use></svg> ตรงไหนที่นักวิทยาศาสตร์ยังเถียงกันอยู่</h2><span class="tag">อ่านก่อนสรุป</span></div>
+        <p class="sub">หัวข้อนี้เป็นหนึ่งในเรื่องที่มีข่าวพาดหัวเยอะที่สุดและคลาดเคลื่อนบ่อยที่สุด — สามข้อนี้คือสถานะจริงของความรู้ ณ ตอนนี้</p>
+        <div class="es-row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-clock"></use></svg> ข้อมูลตรงยังสั้นเกินไป</div>
+            <div class="es-foot" style="display:block;line-height:1.65">เราวัด AMOC ต่อเนื่องมาแค่ตั้งแต่ปี 2547 ราวสองทศวรรษ ขณะที่ตัวมันเองแกว่งเป็นรอบสิบ ๆ ปีอยู่แล้ว การจะแยก “แนวโน้มระยะยาว” ออกจาก “ความแกว่งตามธรรมชาติ” จึงยังทำได้ยากมาก งานปี 2568 ประเมินแนวโน้มอ่อนลงราว 1 Sv ต่อทศวรรษ แต่ช่วงความไม่แน่นอนยังกว้าง</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-triangle-alert"></use></svg> “จะพังกลางศตวรรษ” ยังไม่ใช่ฉันทามติ</div>
+            <div class="es-foot" style="display:block;line-height:1.65">งานของ Ditlevsen &amp; Ditlevsen (ค.ศ. 2023) ที่เป็นข่าวใหญ่ ประเมินว่าอาจพังช่วง ค.ศ. 2025–2095 โดยอนุมานจาก<b>ตัวแทน</b>ของ AMOC ไม่ใช่จากการวัดตรง จึงถูกวิจารณ์เรื่องสมมติฐานอย่างหนัก ขณะที่ IPCC AR6 ยังประเมินว่า “ไม่น่าจะพังกะทันหันก่อน ค.ศ. 2100” ด้วยความเชื่อมั่นปานกลาง</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-circle-check"></use></svg> สิ่งที่เห็นตรงกัน</div>
+            <div class="es-foot" style="display:block;line-height:1.65">ทุกฝ่ายเห็นตรงกันว่า AMOC <b>จะอ่อนลง</b>ในศตวรรษนี้ (IPCC ให้ระดับความเชื่อมั่นสูงมาก) และเห็นตรงกันว่ายิ่งโลกร้อนขึ้นและกรีนแลนด์ละลายมากเท่าไร ความเสี่ยงยิ่งสูงขึ้น — ข้อถกเถียงอยู่ที่ “เร็วแค่ไหน” ไม่ใช่ “ใช่หรือไม่”</div>
+          </div>
+        </div>
+        <div class="src">อ้างอิง: Ditlevsen &amp; Ditlevsen (2023), <i>Nature Communications</i> · van Westen et al. (2024), <i>Science Advances</i> · McCarthy et al. (2025), <i>Geophysical Research Letters</i> · <a href="https://www.ipcc.ch/report/ar6/wg1/" target="_blank" rel="noopener">IPCC AR6 WG1 ↗</a> · สรุปข้อถกเถียงแบบอ่านง่ายที่ <a href="https://interactive.carbonbrief.org/amoc-explainer/index.html" target="_blank" rel="noopener">Carbon Brief — AMOC explainer ↗</a></div>
       </div>
     </section>
 
@@ -10811,7 +11041,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }).catch(function(e){ gtState.loading=false; Gistemp.showError(box, e); });
     }
 
-    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -21820,6 +22050,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       var deepPts=null, vertPts=null, innerSphere=null, surfMesh=null;
       var deepBusy=false, vertBusy=false, deepDepth="2071";
       var DT_DEEP=520000;                // ก้าวเวลาของชั้นน้ำลึก ~6 วัน/ก้าว (ผิวน้ำ 14.4 ชม.)
+      /* เก็บเส้นที่ลากแล้วไว้ เพื่อสลับ "สีที่ระบายเส้น" ได้โดยไม่ต้องลากใหม่
+         ลาก 14,000 เส้นกินราว 1.2 วินาที ส่วนการสร้างสีชุดใหม่ใช้ไม่ถึงเสี้ยววินาที */
+      var LINES=null, SCAL={}, colourMode="speed", colourBusy=false;
 
       function startLoop(){
         if(running || !ready || !visible) return;
@@ -21841,8 +22074,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var RAW = (dtype==="int16") ? new Int16Array(buf) : new Int8Array(buf);
         var NLAT=meta.nlat, NLON=meta.nlon,
             SC=meta.scale, ND=meta.noData, LAT0=meta.lat0, LON0=meta.lon0;
-        // จำนวนค่าต่อช่อง: 2 = กระแสน้ำแนวราบ (u,v) · 1 = ความเร็วแนวดิ่ง (wt ขึ้น/จม)
+        // จำนวนค่าต่อช่อง: 2 = กระแสน้ำแนวราบ (u,v) · 1 = ความเร็วแนวดิ่ง (wt ขึ้น/จม) หรือค่าสเกลาร์
         var NC=meta.components||2;
+        /* ไฟล์กระแสน้ำเก็บแบบ "ค่าดิบ × scale" ส่วนไฟล์สเกลาร์ (อุณหภูมิ/ความเค็ม/คลอโรฟิลล์)
+           เก็บแบบแมปช่วง vmin..vmax ลง 0..32000 เพราะอุณหภูมิติดลบได้และคลอโรฟิลล์กระจาย
+           แบบลอการิทึม ใช้สเกลคูณตรง ๆ แล้วเสียความละเอียด */
+        var LIN=(meta.vmin!=null && meta.vmax!=null);
+        var VMIN=meta.vmin, VSTEP=LIN?(meta.vmax-meta.vmin)/32000:0;
         if(RAW.length !== NLAT*NLON*NC){
           throw new Error("ขนาดไฟล์กระแสน้ำไม่ตรงกับ meta: ได้ "+RAW.length+" ค่า แต่ meta บอก "+(NLAT*NLON*NC));
         }
@@ -21850,7 +22088,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           if(j<0 || j>=NLAT) return null;
           i=((i%NLON)+NLON)%NLON;
           var k=(j*NLON+i)*NC, q, o=[];
-          for(q=0;q<NC;q++){ if(RAW[k+q]===ND) return null; o.push(RAW[k+q]*SC); }
+          for(q=0;q<NC;q++){
+            if(RAW[k+q]===ND) return null;
+            o.push(LIN ? VMIN+RAW[k+q]*VSTEP : RAW[k+q]*SC);
+          }
           return o;
         }
         // ถ้ามุมไหนเป็นบก ใช้เฉพาะมุมที่เป็นน้ำแล้วถ่วงน้ำหนักใหม่ — น้ำน้อยกว่า 5% ถือว่าขึ้นบก
@@ -22064,30 +22305,63 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       var VERT = [
         "attribute float aT;",      // 0..1 ตำแหน่งบนเส้นของจุดนี้
         "attribute float aSeed;",   // เฟสเริ่มต้นของเส้น (คงที่ทั้งเส้น)
-        "attribute float aSpd;",    // ความเร็วเฉลี่ยของเส้น 0..1 (คงที่ทั้งเส้น)
+        "attribute float aSpd;",    // ความเร็วเฉลี่ยของเส้น 0..1 (คงที่ทั้งเส้น) — คุมความเร็วการไหล
+        "attribute float aVal;",    // ค่าที่ใช้ระบายสี "ต่อจุด" 0..1 · ติดลบ = ไม่มีข้อมูลตรงนั้น
         "uniform float uTime, uTail;",
-        "varying float vA, vS;",
+        "varying float vA, vV;",
         "void main(){",
         // ช้ากว่าเดิมราวหนึ่งในสาม — ในคลิปน้ำไหลนิ่ง ๆ ให้ตาไล่ตามเส้นได้ทัน ไม่ใช่วิ่งพรวด
         "  float head = fract(uTime * (0.03 + aSpd * 0.26) + aSeed);",
         "  float d = head - aT; d = d - floor(d);",          // ระยะ 'หลังหัว' แบบวนรอบ
         "  float a = 1.0 - smoothstep(0.0, uTail, d);",      // 1 ที่หัว → 0 ที่ปลายหาง (edge0<edge1 ตามสเปก GLSL)
-        "  vA = a; vS = aSpd;",
+        "  vA = a; vV = aVal;",
         "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
         "}"
       ].join("\n");
 
+      /* แถบสี 5 จุดหยุด ใช้ร่วมกันทุกโหมด — เปลี่ยนโหมดคือเปลี่ยนแค่ค่าสีทั้งห้ากับค่า aVal
+         ทำแบบนี้เพราะคลิป NASA ระบายสีเส้นด้วยหลายตัวแปร (ความเร็ว/อุณหภูมิ/ความเค็ม)
+         โดยใช้รูปแบบภาพเดียวกัน ต่างกันแค่แถบสีกับสเกล */
       var FRAG = [
         "precision mediump float;",
-        "uniform vec3 uLow, uHigh;",
+        "uniform vec3 uC0, uC1, uC2, uC3, uC4;",
         "uniform float uOpacity;",
-        "varying float vA, vS;",
+        "varying float vA, vV;",
+        "vec3 ramp(float t){",
+        "  t = clamp(t, 0.0, 1.0) * 4.0;",
+        "  if(t < 1.0) return mix(uC0, uC1, t);",
+        "  if(t < 2.0) return mix(uC1, uC2, t - 1.0);",
+        "  if(t < 3.0) return mix(uC2, uC3, t - 2.0);",
+        "  return mix(uC3, uC4, t - 3.0);",
+        "}",
         "void main(){",
         // เส้นไม่มี gl_PointCoord ให้ตัดขอบเป็นวงกลมเหมือนจุด ความนุ่มมาจากค่า a ตามยาวเส้นแทน
-        "  vec3 col = mix(uLow, uHigh, clamp(vS * 1.15, 0.0, 1.0));",
-        "  gl_FragColor = vec4(col, vA * uOpacity);",
+        // จุดที่ไม่มีข้อมูล (เช่น ดาวเทียมโดนเมฆบัง) วาดเป็นเทาจาง ๆ ให้เห็นว่ามีช่องโหว่
+        // ไม่ใช่ซ่อนทิ้งจนเข้าใจผิดว่าตรงนั้นไม่มีกระแสน้ำ
+        "  bool nodata = vV < 0.0;",
+        "  vec3 col = nodata ? vec3(0.42, 0.47, 0.53) : ramp(vV);",
+        "  gl_FragColor = vec4(col, vA * uOpacity * (nodata ? 0.30 : 1.0));",
         "}"
       ].join("\n");
+
+      /* โหมดสี — stops คือแถบสี 5 ขั้น, unit/fmt ใช้ทำป้ายใต้แถบสเกลในหน้าเว็บ
+         อุณหภูมิกับความเค็มไล่สีตามคลิป NASA (คราม→ม่วง→ส้ม→เหลือง และ เขียวน้ำทะเล→ขาว→แดง)
+         คลอโรฟิลล์ใช้สเกลลอการิทึม เพราะค่าจริงต่างกันเป็นพันเท่าระหว่างทะเลทรายมหาสมุทรกับชายฝั่ง */
+      var CMODES = {
+        speed:  { label:"ความเร็วกระแสน้ำผิว", file:null, unit:"ม./วิ", max:1.1, plus:true,
+                  stops:[0x2f6f9e,0x6fb6dd,0xa8dcf2,0xdff4ff,0xffffff] },
+        rainbow:{ label:"ความเร็ว (แถบสีรุ้ง)", file:null, unit:"ม./วิ", max:1.1, plus:true,
+                  stops:[0x2c3fd6,0x27b56b,0xf2e34c,0xf08a26,0xe03131] },
+        /* dmin/dmax = ช่วงที่ใช้ "แสดงผล" ไม่ใช่ช่วงต่ำสุด-สูงสุดในไฟล์
+           เพราะค่าสุดขั้วไม่กี่จุด (เช่น SMOS ใกล้ชายฝั่งอ่านได้ 39 PSU ซึ่งเกินจริง)
+           จะดึงสเกลจนน้ำทั้งมหาสมุทรกลายเป็นสีเดียว */
+        sst:    { label:"อุณหภูมิผิวน้ำ", file:"ocean-sst", unit:"°C", dmin:-2, dmax:32,
+                  stops:[0x1b1b6e,0x5b2a8c,0xb03a86,0xf0743a,0xffe066] },
+        sss:    { label:"ความเค็มผิวน้ำ", file:"ocean-sss", unit:"PSU", dmin:31, dmax:38,
+                  stops:[0x0e7a70,0x63c2b5,0xe6e6e6,0xe0603f,0xd11a1a] },
+        chl:    { label:"คลอโรฟิลล์", file:"ocean-chl", unit:"mg/m³", log:true, dmin:0.01, dmax:10, plus:true,
+                  stops:[0x1a2a6c,0x1f7a8c,0x35b779,0xb5de2b,0xfde725] }
+      };
 
       /* opt: low/high = สีน้ำช้า/น้ำแรง · ref = ความเร็วที่ถือว่า "แรงเต็มสเกล" (m/s)
          ชั้นน้ำลึกเร็วแค่เศษเสี้ยวของผิวน้ำ ถ้าใช้ ref เดียวกันจะกลายเป็นสีเดียวจืด ๆ ทั้งชั้น */
@@ -22097,7 +22371,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var total=0, i;
         for(i=0;i<lines.length;i++) total+=lines[i].length;
         var pos=new Float32Array(total*3), aT=new Uint8Array(total), aSeed=new Uint8Array(total), aSpd=new Uint8Array(total);
-        var p=0, li, ln, n, m, s, sum, seed, v;
+        // aVal เป็น Float32 ไม่ใช่ Uint8 เพราะต้องเก็บค่า -1 แทน "ไม่มีข้อมูล" ให้เชดเดอร์แยกออก
+        var aVal=new Float32Array(total);
+        var val=opt.valueAt || null;
+        var p=0, li, ln, n, m, s, sum, seed, v, t;
         for(li=0; li<lines.length; li++){
           ln=lines[li]; n=ln.length;
           sum=0; for(m=0;m<n;m++) sum+=ln[m][2];
@@ -22107,6 +22384,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             v=ocLLToVec(ln[m][0], ln[m][1], R);
             pos[p*3]=v[0]; pos[p*3+1]=v[1]; pos[p*3+2]=v[2];
             aT[p]=Math.round(m/(n-1)*255); aSeed[p]=seed; aSpd[p]=s;
+            // ไม่มีตัวแปลงค่า = ระบายตามความเร็ว "ของจุดนั้น" ไม่ใช่ค่าเฉลี่ยทั้งเส้น
+            // (ค่าเฉลี่ยทั้งเส้นทำให้แกนกลางกัลฟ์สตรีมกับขอบมันมีสีเดียวกัน)
+            t = val ? val(ln[m][0], ln[m][1]) : Math.min(1, ln[m][2]/REF);
+            aVal[p] = (t===null || t!==t) ? -1 : t;
             p++;
           }
         }
@@ -22129,12 +22410,15 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         geo.addAttribute("aT",    new THREE.BufferAttribute(aT, 1, true));
         geo.addAttribute("aSeed", new THREE.BufferAttribute(aSeed, 1, true));
         geo.addAttribute("aSpd",  new THREE.BufferAttribute(aSpd, 1, true));
+        geo.addAttribute("aVal",  new THREE.BufferAttribute(aVal, 1));
+        var st=opt.stops||CMODES.speed.stops;
         var mtl=new THREE.ShaderMaterial({
           uniforms:{
             uTime:{value:0}, uTail:{value:opt.tail||0.55},
             uOpacity:{value:opt.opacity||0.82},
-            uLow:{value:new THREE.Color(opt.low!=null?opt.low:0x3d9fd6)},
-            uHigh:{value:new THREE.Color(opt.high!=null?opt.high:0xffffff)}
+            uC0:{value:new THREE.Color(st[0])}, uC1:{value:new THREE.Color(st[1])},
+            uC2:{value:new THREE.Color(st[2])}, uC3:{value:new THREE.Color(st[3])},
+            uC4:{value:new THREE.Color(st[4])}
           },
           vertexShader:VERT, fragmentShader:FRAG,
           transparent:true, blending:THREE.AdditiveBlending,
@@ -22302,8 +22586,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
              ไม่ใช่เส้นหนาไม่กี่เส้น — เส้นหนา 1 พิกเซล แต่ลาก 14,000 เส้นคลุมเต็มผืนน้ำ
              หาง 0.75 ทำให้แต่ละเส้นสว่างต่อเนื่องเกือบทั้งเส้น ไม่ขาดเป็นขีด ๆ
              ทึบขึ้นเป็น 0.72 เพราะเส้น 1 พิกเซลกินพื้นที่น้อยกว่าจุดกลมเดิมมาก */
+          LINES=lines;                                  // เก็บไว้สลับสีทีหลังโดยไม่ต้องลากใหม่
           pts=buildFlow(THREE, lines, 1.004,
-            { low:0x9ed6f0, high:0xffffff, ref:1.1, tail:0.75, opacity:0.72 });
+            { stops:CMODES.speed.stops, ref:1.1, tail:0.75, opacity:0.72 });
           pts.renderOrder=1;
           surfMesh.renderOrder=0;
           globe.add(pts);
@@ -22345,6 +22630,14 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               var wv=VERTF.sample(ll[0], ll[1]);
               if(wv) html+='<br>แนวดิ่ง <span class="v">'+(wv[0]>0?"เอ่อขึ้น":"จมลง")+'</span> '
                         +Math.abs(wv[0]*86400).toFixed(2)+' ม./วัน';
+            }
+            // ถ้ากำลังระบายสีด้วยตัวแปรอื่น ให้อ่านค่าเป็นตัวเลขได้ด้วย ไม่ใช่เดาจากสีอย่างเดียว
+            var CM=CMODES[colourMode];
+            if(CM && CM.file && SCAL[colourMode]){
+              var sv=SCAL[colourMode].sample(ll[0], ll[1]);
+              html+='<br>'+CM.label+' '+(sv
+                ? '<span class="v">'+sv[0].toFixed(CM.log?2:1)+' '+CM.unit+'</span>'
+                : '<span class="v">ไม่มีข้อมูลตรงนี้</span>');
             }
             tip.innerHTML=html;
           });
@@ -22405,8 +22698,10 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               }
               /* ref 0.18 m/s — น้ำลึกเร็วไม่ถึงหนึ่งในสิบของผิวน้ำ ต้องตั้งสเกลสีของมันเอง
                  ทึบเต็มที่ เพราะต้องส่องผ่านผิวโลกที่ยังทึบอยู่ 40% กว่าจะถึงตา */
+              // ชั้นลึกระบายตามความเร็วของตัวเองเสมอ ไม่ตามโหมดสีของผิวน้ำ
+              // เพราะอุณหภูมิ/ความเค็มที่โหลดมาเป็นค่าที่ผิวน้ำ ไม่ใช่ที่ความลึกนั้น
               deepPts=buildFlow(THREE, lines, 0.968,
-                { low:0x3b7bff, high:0xc9ecff, ref:0.18, tail:0.6, opacity:1 });
+                { stops:[0x123f9e,0x2f6ae8,0x6aa8ff,0x9fdcff,0xdff2ff], ref:0.18, tail:0.6, opacity:1 });
               // ลำดับวาดคงที่: น้ำลึก → ผิวโลกโปร่ง → ริ้วผิวน้ำ → จุดขึ้น-จม
               // ไม่งั้นสามชั้นมีจุดศูนย์กลางเดียวกัน three.js เรียงลำดับให้เองไม่แน่นอน
               deepPts.renderOrder=-1;
@@ -22453,6 +22748,70 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
               var cb=document.getElementById("ocLVert"); if(cb) cb.checked=false;
             });
           }
+
+          /* ---- ระบายสีเส้นตามตัวแปรอื่น (ตามคลิป NASA เรื่องมหาสมุทรกับภูมิอากาศ) ---- */
+          function makeValueAt(F, M){
+            var lo=M.dmin, hi=M.dmax;
+            if(M.log){ var l0=Math.log10(lo), l1=Math.log10(hi);
+              return function(lat,lon){
+                var c=F.sample(lat,lon); if(!c) return -1;
+                return (Math.log10(Math.max(c[0], lo)) - l0) / (l1 - l0);
+              };
+            }
+            return function(lat,lon){
+              var c=F.sample(lat,lon); if(!c) return -1;
+              return (c[0]-lo)/(hi-lo);
+            };
+          }
+          function hex(n){ return "#"+("000000"+n.toString(16)).slice(-6); }
+          function updateLegend(key){
+            var M=CMODES[key];
+            var t=document.getElementById("ocLegTitle"), bar=document.getElementById("ocLegBar"),
+                mn=document.getElementById("ocLegMin"), mx=document.getElementById("ocLegMax");
+            if(t) t.textContent=M.label;
+            if(bar) bar.style.background="linear-gradient(90deg,"+M.stops.map(hex).join(",")+")";
+            var lo=(M.dmin!=null)?M.dmin:0, hi=(M.dmax!=null)?M.dmax:M.max;
+            if(mn) mn.textContent=(M.log?"≤":"")+lo+" "+M.unit;
+            if(mx) mx.textContent=hi+(M.plus?"+":"")+" "+M.unit;
+          }
+          function setColourMode(key){
+            var M=CMODES[key];
+            if(!M || colourBusy || !LINES) return;
+            colourBusy=true;
+            function apply(valueAt){
+              var old=pts;
+              var np=buildFlow(THREE, LINES, 1.004, {
+                stops:M.stops, ref:M.max||1.1, tail:0.75,
+                opacity:(deepPts?0.34:0.72), valueAt:valueAt
+              });
+              np.renderOrder=1;
+              globe.add(np);
+              dropLayer(old);              // ทิ้งของเก่าหลังใส่ของใหม่แล้ว ภาพจะได้ไม่วูบ
+              pts=np;
+              var cb=document.getElementById("ocLSurf");
+              if(cb) pts.visible=cb.checked;
+              colourMode=key; updateLegend(key); layerMsg(""); colourBusy=false;
+            }
+            if(!M.file){ apply(null); return; }         // โหมดความเร็ว ใช้ค่าที่ลากมาแล้ว
+            layerMsg("กำลังโหลด"+M.label+"…");
+            ensureField(M.file, SCAL[key]).then(function(F){
+              SCAL[key]=F; apply(makeValueAt(F, M));
+            })["catch"](function(e){
+              console.warn("colour mode "+key+" failed:", e);
+              layerMsg("โหลด"+M.label+"ไม่สำเร็จ");
+              colourBusy=false;
+              // ปิดตัวเลือกนั้นไปเลย ผู้ใช้จะได้ไม่กดวนแล้วงงว่าทำไมไม่มีอะไรเกิดขึ้น
+              var s=document.getElementById("ocColour");
+              if(s){
+                s.value=colourMode;
+                var o=s.querySelector('option[value="'+key+'"]');
+                if(o && !o.disabled){ o.disabled=true; o.textContent=o.textContent+" (ยังไม่มีข้อมูล)"; }
+              }
+            });
+          }
+          var selC=document.getElementById("ocColour");
+          if(selC) selC.addEventListener("change", function(){ setColourMode(selC.value); });
+          updateLegend("speed");
 
           var cbS=document.getElementById("ocLSurf"), cbD=document.getElementById("ocLDeep"),
               cbV=document.getElementById("ocLVert"), selD=document.getElementById("ocDepth");
@@ -22606,6 +22965,743 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }
     }
 
+    /* ================= 🔄 สายพานยักษ์มหาสมุทร (Thermohaline Circulation) =================
+       สามส่วนในพาเนลเดียว:
+       (1) ลูกโลกสายพาน — d3.geoOrthographic วาดลงแคนวาส (ไม่ใช้ three.js เพราะนี่คือ "แผนภาพ"
+           ไม่ใช่สนามความเร็ว: ต้องการเส้นเรียบ ป้ายภาษาไทย และจุดกดได้ ซึ่ง 2D ทำได้ดีกว่าและเบากว่า)
+           ⚠️ เส้นทางในนี้เป็นแผนภาพเชิงสัญลักษณ์ตามแบบ Broecker/NASA — ห้ามอ้างเป็นค่าที่วัดได้
+       (2) เครื่องมือความหนาแน่นน้ำทะเล — สมการ UNESCO EOS-80 ที่ความดันผิวน้ำ (ของจริง ไม่ใช่ค่าประมาณ)
+       (3) กราฟข้อมูลจริง 4 ตัว — โหลดแบบขี้เกียจ (เรียกตอน render ครั้งแรกที่พาเนลเปิด แบบเดียวกับ
+           renderGistempMap) เพราะกริด NASA หนัก 2.4 MB คนที่ไม่เปิดพาเนลนี้จะไม่โดนดาวน์โหลด */
+
+    /* ---------- เส้นทางสายพาน: จุดหลัก แล้วค่อยยืด+เกลาให้เรียบบนผิวทรงกลม ---------- */
+    var THC_ROUTES = [
+      { id:"warm", kind:"warm", pts:[
+        [-150,42],[-165,38],[-179,32],[168,26],[155,20],[140,13],[128,6],[124,2],
+        [118.5,-2],[117,-6],[113,-9],[103,-11],[90,-13],[74,-18],[58,-25],[42,-32],
+        [30,-36],[18,-36],[8,-33],[-5,-27],[-18,-19],[-28,-9],[-34,0],[-40,7],
+        [-50,11],[-62,13],[-72,15],[-80,19],[-84,21],[-86,24],[-83,26],[-79.5,27],
+        [-77,31],[-72,36],[-64,40],[-54,44],[-43,48],[-32,52],[-21,57],[-10,61],
+        [-2,65],[4,69],[8,73] ] },
+      { id:"coldAtl", kind:"cold", pts:[
+        [7,74],[-6,69],[-16,64],[-26,59],[-36,53],[-45,46],[-53,39],[-59,31],
+        [-62,22],[-58,14],[-52,6],[-45,-2],[-38,-11],[-35,-21],[-38,-31],[-43,-41],
+        [-46,-50],[-50,-57],[-45,-60] ] },
+      { id:"coldACC", kind:"cold", pts:[
+        [-45,-60],[-25,-58],[-5,-57],[18,-56],[42,-55],[68,-56],[92,-58],[116,-59],
+        [140,-61],[164,-62],[-172,-63],[-148,-62],[-124,-60],[-100,-58],[-78,-58],[-60,-60],[-45,-60] ] },
+      { id:"coldInd", kind:"cold", pts:[
+        [72,-56],[70,-46],[68,-34],[65,-22],[62,-10],[59,0],[58,7] ] },
+      { id:"coldPac", kind:"cold", pts:[
+        [-176,-60],[-179,-46],[178,-32],[176,-18],[174,-4],[173,9],[176,22],[-179,33],[-174,41],[-173,46] ] },
+      { id:"aabw", kind:"cold", pts:[
+        [-46,-70],[-44,-66],[-45,-62],[-45,-60] ] }
+    ];
+
+    /* จุดที่กดอ่านได้ — kind: sink=น้ำจมลง · up=น้ำเอ่อขึ้น · note=จุดสำคัญอื่น */
+    var THC_SITES = [
+      { id:"nordic", lon:-3, lat:73, kind:"sink", ico:"snowflake", name:"ทะเลกรีนแลนด์–นอร์เวย์",
+        text:"หัวใจของสายพานฝั่งแอตแลนติก น้ำอุ่นที่กัลฟ์สตรีมพามาถึงตรงนี้เย็นจัดจนหนักกว่าน้ำรอบข้าง แล้ว<b>จมลงกลายเป็นน้ำลึกแอตแลนติกเหนือ (NADW)</b> ไหลข้ามสันเขาใต้ทะเลกรีนแลนด์–สกอตแลนด์ลงใต้ราว <b>6 ล้าน ลบ.ม./วินาที</b>" },
+      { id:"labrador", lon:-55, lat:57, kind:"sink", ico:"snowflake", name:"ทะเลแลบราดอร์",
+        text:"แหล่งจมน้ำอีกแห่งที่อยู่ใกล้กรีนแลนด์ที่สุด จึงเป็นจุดที่<b>เปราะบางที่สุดต่อน้ำจืดจากน้ำแข็งละลาย</b> — ปีที่หนาวจัดน้ำจะจมลึกเกิน 2 กิโลเมตร ส่วนปีที่อุ่นแทบไม่จมเลย" },
+      { id:"weddell", lon:-45, lat:-68, kind:"sink", ico:"snowflake", name:"ทะเลเวดเดลล์",
+        text:"โรงงานผลิตน้ำที่<b>หนาแน่นที่สุดในโลก</b> — น้ำเย็นเกือบ −1 °C ที่ถูกน้ำแข็งทะเลคายเกลือใส่ จมลงไปนอนอยู่ก้นมหาสมุทรทุกใบ เรียกว่า “น้ำก้นสมุทรแอนตาร์กติก” (AABW)" },
+      { id:"ross", lon:175, lat:-74, kind:"sink", ico:"snowflake", name:"ทะเลรอสส์",
+        text:"แหล่งกำเนิด AABW หลักอีกแห่ง ฝั่งแปซิฟิก น้ำที่จมจากตรงนี้ใช้เวลา<b>หลายร้อยปี</b>กว่าจะไหลไปถึงก้นมหาสมุทรแปซิฟิกเหนือ" },
+      { id:"southern", lon:5, lat:-58, kind:"up", ico:"tornado", name:"มหาสมุทรใต้ · ลมตะวันตกกำลังแรง",
+        text:"<b>ทางออกใหญ่ที่สุดของน้ำลึกทั้งโลก</b> ลมตะวันตกที่พัดวนรอบทวีปแอนตาร์กติกาโดยไม่มีแผ่นดินขวาง ดูดน้ำลึกขึ้นสู่ผิวได้ราว 20–30 ล้าน ลบ.ม./วินาที พร้อมกับดันคาร์บอนเก่าที่เก็บไว้ใต้ทะเลกลับขึ้นมาด้วย" },
+      { id:"npac", lon:-175, lat:45, kind:"up", ico:"hourglass", name:"แปซิฟิกเหนือ",
+        text:"ปลายทางสุดท้ายของสายพาน น้ำลึกตรงนี้คือน้ำที่ <b>“เก่า” ที่สุดในโลก</b> — วัดอายุด้วยคาร์บอนได้ราว 1,000–1,600 ปี นับจากครั้งสุดท้ายที่มันได้สัมผัสอากาศ" },
+      { id:"indian", lon:60, lat:8, kind:"up", ico:"cloud-rain", name:"ทะเลอาหรับ & มหาสมุทรอินเดีย",
+        text:"ลมมรสุมพัดน้ำผิวออกจากฝั่ง น้ำลึกที่เย็นและอุดมสารอาหารจึงเอ่อขึ้นมาแทน — เป็นทั้งจุดที่สายพานโผล่ขึ้นผิว และเป็น<b>แหล่งประมงสำคัญ</b>ของภูมิภาค" },
+      { id:"gulf", lon:-73, lat:33, kind:"note", ico:"waves", name:"กัลฟ์สตรีม",
+        text:"กระแสน้ำผิวที่แรงที่สุดสายหนึ่งของโลก ~30 ล้าน ลบ.ม./วินาที เร็วได้ถึง 2 เมตร/วินาที · แต่<b>ตัวขับหลักของมันคือลม ไม่ใช่ความหนาแน่น</b> — สายพานเทอร์โมฮาไลน์แค่อาศัย “ทางร่วม” เส้นนี้ขึ้นเหนือเท่านั้น" },
+      { id:"rapid", lon:-50, lat:26.5, kind:"note", ico:"satellite-dish", name:"แนวตรวจวัด RAPID 26.5°N",
+        text:"แนวทุ่นและเครื่องวัดที่พาดขวางมหาสมุทรจากบาฮามาสถึงชายฝั่งแอฟริกา วัด AMOC ต่อเนื่องมาตั้งแต่ปี 2547 — <b>ตัวเลขสเวอร์ดรุปที่เห็นด้านบนมาจากแนวนี้</b>" }
+    ];
+    var THC_KIND = {
+      sink:{ c:"#9d8dff", label:"น้ำจมลงก้นสมุทร" },
+      up:{ c:"#ffb23f", label:"น้ำลึกเอ่อขึ้นผิว" },
+      note:{ c:"#2ec8ef", label:"จุดสำคัญ" }
+    };
+
+    function setupThcGlobe(){
+      var stage = document.getElementById("thcStage");
+      if(!stage || !window.d3) return;
+      var started=false, ready=false, running=false, visible=false, raf=0;
+      var cv, ctx, proj, path, land, borders, W=0, H=0, dpr=1;
+      var rot=[38,-16], zoom=1, spin=true, flowing=true, speed=1, phase=0, lastTs=0;
+      var picked=null, hovered=null, ROUTES=null;
+      var elTip=document.getElementById("thcTip"),
+          elInfo=document.getElementById("thcInfo");
+
+      /* ---- เกลาเส้นทาง: ยืดจุดตามวงกลมใหญ่ทุก ~2° แล้วเฉลี่ยเพื่อนบ้านในพิกัด 3 มิติให้โค้งลื่น ---- */
+      function densify(pts, stepDeg){
+        var out=[], i, k;
+        for(i=0;i<pts.length-1;i++){
+          var a=pts[i], b=pts[i+1];
+          var d=d3.geoDistance(a,b)*180/Math.PI, n=Math.max(2, Math.ceil(d/stepDeg)), ip=d3.geoInterpolate(a,b);
+          for(k=0;k<n;k++) out.push(ip(k/n));
+        }
+        out.push(pts[pts.length-1]);
+        return out;
+      }
+      function smooth(pts, passes){
+        var v=pts.map(function(p){
+          var la=p[1]*Math.PI/180, lo=p[0]*Math.PI/180;
+          return [Math.cos(la)*Math.cos(lo), Math.cos(la)*Math.sin(lo), Math.sin(la)];
+        });
+        for(var t=0;t<passes;t++){
+          var nv=v.slice();
+          for(var i=1;i<v.length-1;i++){
+            var x=(v[i-1][0]+2*v[i][0]+v[i+1][0])/4,
+                y=(v[i-1][1]+2*v[i][1]+v[i+1][1])/4,
+                z=(v[i-1][2]+2*v[i][2]+v[i+1][2])/4,
+                m=Math.sqrt(x*x+y*y+z*z)||1;
+            nv[i]=[x/m,y/m,z/m];
+          }
+          v=nv;
+        }
+        return v.map(function(c){
+          return [Math.atan2(c[1],c[0])*180/Math.PI, Math.asin(Math.max(-1,Math.min(1,c[2])))*180/Math.PI];
+        });
+      }
+      function buildRoutes(){
+        ROUTES = THC_ROUTES.map(function(r){
+          var pts=smooth(densify(r.pts,2), 6);
+          // ตำแหน่งหัวลูกศรบอกทิศ — เว้นระยะเท่า ๆ กันตามความยาวเส้น
+          var arrows=[], n=pts.length, step=Math.max(10, Math.round(n/6));
+          for(var i=step;i<n-3;i+=step) arrows.push(i);
+          return { id:r.id, kind:r.kind, pts:pts, arrows:arrows };
+        });
+      }
+
+      /* ---- วาด ---- */
+      function radius(){ return Math.min(W,H)*0.455*zoom; }
+      function center(){ return [-rot[0], -rot[1]]; }
+      function visibleAt(lonlat){ return d3.geoDistance(lonlat, center()) < Math.PI/2 - 0.02; }
+
+      function strokeLine(pts, color, width, alpha, dash, offset, glow){
+        ctx.save();
+        ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width;
+        ctx.lineCap="round"; ctx.lineJoin="round";
+        if(dash){ ctx.setLineDash(dash); ctx.lineDashOffset=offset; } else ctx.setLineDash([]);
+        if(glow){ ctx.shadowColor=color; ctx.shadowBlur=glow; }
+        ctx.beginPath(); path({type:"LineString", coordinates:pts}); ctx.stroke();
+        ctx.restore();
+      }
+      function drawArrows(r, color, size){
+        ctx.save(); ctx.fillStyle=color; ctx.globalAlpha=.9;
+        r.arrows.forEach(function(i){
+          var a=r.pts[i], b=r.pts[Math.min(i+2, r.pts.length-1)];
+          if(!visibleAt(a) || !visibleAt(b)) return;
+          var pa=proj(a), pb=proj(b); if(!pa||!pb) return;
+          var ang=Math.atan2(pb[1]-pa[1], pb[0]-pa[0]);
+          ctx.save(); ctx.translate(pa[0],pa[1]); ctx.rotate(ang);
+          ctx.beginPath(); ctx.moveTo(size,0); ctx.lineTo(-size*.72,size*.62); ctx.lineTo(-size*.42,0); ctx.lineTo(-size*.72,-size*.62);
+          ctx.closePath(); ctx.fill(); ctx.restore();
+        });
+        ctx.restore();
+      }
+      function drawSite(s, r, on){
+        var p=proj([s.lon,s.lat]); if(!p) return null;
+        var col=THC_KIND[s.kind].c;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(p[0],p[1], r*3.1, 0, Math.PI*2);
+        ctx.fillStyle=col; ctx.globalAlpha=on?.28:.16; ctx.fill();
+        ctx.globalAlpha=1;
+        ctx.beginPath(); ctx.arc(p[0],p[1], r, 0, Math.PI*2);
+        ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=on?16:8; ctx.fill();
+        ctx.shadowBlur=0;
+        ctx.lineWidth=on?2:1.3; ctx.strokeStyle="rgba(255,255,255,"+(on?.95:.62)+")"; ctx.stroke();
+        ctx.restore();
+        return p;
+      }
+      function drawLabel(s, p, on){
+        ctx.save();
+        ctx.font=(on?"700 ":"600 ")+"11.5px 'IBM Plex Sans Thai', system-ui, sans-serif";
+        ctx.textBaseline="middle";
+        var w=ctx.measureText(s.name).width, x=p[0]+13, y=p[1];
+        if(x+w>W-10) x=p[0]-13-w;
+        ctx.fillStyle="rgba(3,12,20,.66)";
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(x-5, y-9, w+10, 18, 6); else ctx.rect(x-5, y-9, w+10, 18);
+        ctx.fill();
+        ctx.fillStyle= on ? "#eafcff" : "rgba(208,231,244,.8)";
+        ctx.fillText(s.name, x, y+.5);
+        ctx.restore();
+      }
+
+      function draw(){
+        if(!ctx) return;
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.clearRect(0,0,W,H);
+        var R=radius(), cx=W/2, cy=H/2;
+        proj.rotate([rot[0], rot[1], 0]).scale(R).translate([cx,cy]);
+
+        // ทะเลลึก + ขอบเรืองแสง
+        ctx.save();
+        ctx.beginPath(); path({type:"Sphere"});
+        var g=ctx.createRadialGradient(cx-R*.28, cy-R*.34, R*.1, cx, cy, R);
+        g.addColorStop(0,"#0d3350"); g.addColorStop(.55,"#08243a"); g.addColorStop(1,"#03101c");
+        ctx.fillStyle=g; ctx.fill();
+        ctx.shadowColor="rgba(46,200,239,.45)"; ctx.shadowBlur=26;
+        ctx.strokeStyle="rgba(46,200,239,.30)"; ctx.lineWidth=1.1; ctx.stroke();
+        ctx.restore();
+
+        // เส้นกริด
+        ctx.save(); ctx.strokeStyle="rgba(160,215,240,.075)"; ctx.lineWidth=.7;
+        ctx.beginPath(); path(d3.geoGraticule10()); ctx.stroke(); ctx.restore();
+
+        // แผ่นดิน
+        if(land){
+          ctx.save();
+          ctx.beginPath(); path(land); ctx.fillStyle="#1d4157"; ctx.fill();
+          ctx.strokeStyle="rgba(163,210,234,.62)"; ctx.lineWidth=.8; ctx.stroke();
+          if(borders){ ctx.beginPath(); path(borders); ctx.strokeStyle="rgba(163,210,234,.20)"; ctx.lineWidth=.5; ctx.stroke(); }
+          ctx.restore();
+        }
+
+        if(ROUTES){
+          var showW=document.getElementById("thcLWarm").checked,
+              showC=document.getElementById("thcLCold").checked;
+          // วาดน้ำลึกก่อน (ให้ความรู้สึกว่าอยู่ "ใต้") แล้วค่อยน้ำผิวทับ
+          ROUTES.forEach(function(r){
+            var cold=r.kind==="cold";
+            if(cold ? !showC : !showW) return;
+            var base = cold ? "#4a90e2" : "#ff7a2f",
+                lit  = cold ? "#9ed0ff" : "#ffd08a";
+            strokeLine(r.pts, base, cold?7:8.5, cold?.20:.26, null, 0, 0);
+            strokeLine(r.pts, base, cold?3.0:3.6, cold?.55:.65, null, 0, 0);
+            strokeLine(r.pts, lit,  cold?2.6:3.2, cold?.85:.95, [13,27], -phase*(cold?.45:1), cold?9:13);
+          });
+          ROUTES.forEach(function(r){
+            var cold=r.kind==="cold";
+            if(cold ? !showC : !showW) return;
+            drawArrows(r, cold?"#bfe0ff":"#ffd9ae", cold?4.6:5.4);
+          });
+        }
+
+        if(document.getElementById("thcLSite").checked){
+          THC_SITES.forEach(function(s){
+            if(!visibleAt([s.lon,s.lat])){ s._p=null; return; }
+            var on=(picked===s.id || hovered===s.id);
+            s._p=drawSite(s, on?7.2:5.4, on);
+          });
+          THC_SITES.forEach(function(s){ if(s._p) drawLabel(s, s._p, picked===s.id||hovered===s.id); });
+        } else {
+          THC_SITES.forEach(function(s){ s._p=null; });
+        }
+      }
+
+      /* ---- ลูป ---- */
+      function frame(ts){
+        if(!running) return;
+        raf=requestAnimationFrame(frame);
+        if(!lastTs) lastTs=ts;
+        var dt=Math.min(120, ts-lastTs); lastTs=ts;
+        if(flowing){
+          phase += dt*0.055*speed;
+          if(spin) rot[0]=(rot[0] + dt*0.0035*speed) % 360;
+        }
+        draw();
+      }
+      function startLoop(){ if(running||!ready||!visible) return; running=true; lastTs=0; if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(frame); }
+      function stopLoop(){ running=false; if(raf){ cancelAnimationFrame(raf); raf=0; } }
+
+      function resize(){
+        if(!cv) return;
+        W=Math.round(stage.clientWidth||640); H=Math.round(stage.clientHeight||480);
+        dpr=Math.min(window.devicePixelRatio||1, 2);
+        cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+        cv.style.width=W+"px"; cv.style.height=H+"px";
+        draw();
+      }
+
+      function hit(x,y){
+        var best=null, bd=22*22;
+        THC_SITES.forEach(function(s){
+          if(!s._p) return;
+          var dx=s._p[0]-x, dy=s._p[1]-y, d=dx*dx+dy*dy;
+          if(d<bd){ bd=d; best=s; }
+        });
+        return best;
+      }
+      function showInfo(s){
+        picked = s ? s.id : null;
+        stage.classList.toggle("picked", !!s);
+        if(!s){ elInfo.classList.remove("on"); draw(); return; }
+        elInfo.querySelector("h4").innerHTML = MDICO(s.ico)+" "+s.name
+          +' <span style="font-weight:600;font-size:11px;color:'+THC_KIND[s.kind].c+'">· '+THC_KIND[s.kind].label+"</span>";
+        elInfo.querySelector("p").innerHTML = s.text;
+        elInfo.classList.add("on");
+        draw();
+      }
+
+      function wirePointer(){
+        var dragging=false, moved=0, sx=0, sy=0, r0=null, t0=0;
+        cv.addEventListener("pointerdown", function(e){
+          dragging=true; moved=0; sx=e.offsetX; sy=e.offsetY; r0=rot.slice(); t0=Date.now();
+          spin=false;                       // ผู้ใช้เริ่มคุมมุมเองแล้ว — หยุดหมุนอัตโนมัติ ไม่งั้นภาพเลื่อนหนีมือ
+          try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+        });
+        cv.addEventListener("pointermove", function(e){
+          if(dragging){
+            var dx=e.offsetX-sx, dy=e.offsetY-sy;
+            moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
+            var sens=57.3/radius();
+            rot[0]=r0[0]+dx*sens;
+            rot[1]=Math.max(-88, Math.min(88, r0[1]-dy*sens));
+            if(!running) draw();
+            return;
+          }
+          var s=hit(e.offsetX, e.offsetY), id=s?s.id:null;
+          cv.style.cursor = s ? "pointer" : "grab";
+          if(id!==hovered){ hovered=id; if(!running) draw(); }
+          if(s){
+            elTip.style.display="block";
+            elTip.innerHTML="<b>"+s.name+"</b>"+THC_KIND[s.kind].label+" · <span class='v'>กดเพื่ออ่าน</span>";
+            var tw=elTip.offsetWidth||170;
+            elTip.style.left=Math.max(6, Math.min(W-tw-6, e.offsetX+14))+"px";
+            elTip.style.top=Math.max(6, e.offsetY-40)+"px";
+          } else elTip.style.display="none";
+        });
+        function up(e){
+          if(!dragging) return;
+          dragging=false;
+          try{ cv.releasePointerCapture(e.pointerId); }catch(err){}
+          if(moved<6 && Date.now()-t0<500){
+            var s=hit(e.offsetX, e.offsetY);
+            showInfo(s && picked!==s.id ? s : null);
+          }
+        }
+        cv.addEventListener("pointerup", up);
+        cv.addEventListener("pointercancel", up);
+        cv.addEventListener("pointerleave", function(){
+          elTip.style.display="none";
+          if(hovered){ hovered=null; if(!running) draw(); }
+        });
+        cv.addEventListener("wheel", function(e){
+          e.preventDefault();
+          zoom=Math.max(.85, Math.min(3.4, zoom*Math.exp(-e.deltaY*0.0016)));
+          if(!running) draw();
+        }, {passive:false});
+      }
+
+      function wireControls(){
+        var btn=document.getElementById("thcPlay");
+        btn.addEventListener("click", function(){
+          flowing=!flowing;
+          btn.innerHTML = flowing ? MDICO("pause")+" หยุด" : MDICO("play")+" เล่น";
+        });
+        document.getElementById("thcSpeed").addEventListener("input", function(){ speed=(+this.value)/100; });
+        ["thcLWarm","thcLCold","thcLSite"].forEach(function(id){
+          document.getElementById(id).addEventListener("change", function(){ if(!running) draw(); });
+        });
+        document.getElementById("thcHome").addEventListener("click", function(){
+          rot=[38,-16]; zoom=1; spin=true; showInfo(null);
+        });
+        document.getElementById("thcInfoX").addEventListener("click", function(){ showInfo(null); });
+      }
+
+      function init(){
+        if(started) return; started=true;
+        cv=document.createElement("canvas"); stage.appendChild(cv);
+        ctx=cv.getContext("2d");
+        proj=d3.geoOrthographic().clipAngle(90).precision(.4);
+        path=d3.geoPath(proj, ctx);
+        buildRoutes();
+        d3.json("climate-data/countries-110m.json")
+          .then(function(topo){
+            land=topojson.feature(topo, topo.objects.countries);
+            borders=topojson.mesh(topo, topo.objects.countries, function(a,b){ return a!==b; });
+          })
+          .catch(function(){ land=null; })
+          .then(function(){
+            ready=true;
+            var ld=document.getElementById("thcLoading");
+            if(ld && ld.parentNode) ld.parentNode.removeChild(ld);
+            wirePointer(); wireControls(); resize();
+            if(visible) startLoop();
+          });
+      }
+
+      var rz; window.addEventListener("resize", function(){ clearTimeout(rz); rz=setTimeout(resize, 180); });
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          visible=e.isIntersecting;
+          if(visible && !started) init();
+          else if(visible && !running) startLoop();
+          else if(!visible && running) stopLoop();
+        });
+      }, {rootMargin:"200px"}).observe(stage);
+    }
+
+    /* ================= ความหนาแน่นน้ำทะเล (UNESCO EOS-80 ที่ความดันผิวน้ำ) =================
+       Millero & Poisson (1981) — สูตรเดียวกับที่ตำราสมุทรศาสตร์ใช้ ไม่ใช่ค่าประมาณคร่าว ๆ */
+    function thcRho(T,S){
+      var rw = 999.842594 + 6.793952e-2*T - 9.095290e-3*T*T + 1.001685e-4*T*T*T
+             - 1.120083e-6*Math.pow(T,4) + 6.536332e-9*Math.pow(T,5);
+      var A = 0.824493 - 4.0899e-3*T + 7.6438e-5*T*T - 8.2467e-7*T*T*T + 5.3875e-9*Math.pow(T,4);
+      var B = -5.72466e-3 + 1.0227e-4*T - 1.6546e-6*T*T;
+      return rw + A*S + B*Math.pow(S,1.5) + 4.8314e-4*S*S;
+    }
+    var THC_RHO_NADW=1027.8, THC_RHO_TROP=1023.1, THC_RHO_LO=1017, THC_RHO_HI=1031;
+    var thcDenPaint=null;                    // ให้ renderThcAll เรียกซ้ำได้ตอนสลับธีม (สีในกราฟอ่านจาก CSS var)
+
+    function setupThcDensity(){
+      var elT=document.getElementById("thcDenT"), elS=document.getElementById("thcDenS");
+      if(!elT || !elS) return;
+      var elTv=document.getElementById("thcDenTv"), elSv=document.getElementById("thcDenSv"),
+          elV=document.getElementById("thcDenV"), elVer=document.getElementById("thcDenVerdict"),
+          elWhy=document.getElementById("thcDenWhy"), svg=document.getElementById("thcDenCol"),
+          pre=document.getElementById("thcDenPre");
+
+      function yOf(r){ return 34 + (Math.max(THC_RHO_LO,Math.min(THC_RHO_HI,r))-THC_RHO_LO)/(THC_RHO_HI-THC_RHO_LO)*238; }
+      function paint(){
+        var T=+elT.value, S=+elS.value, r=thcRho(T,S);
+        elTv.textContent=T.toFixed(1)+" °C";
+        elSv.textContent=S.toFixed(2)+" หน่วย (PSU)";
+        elV.textContent=r.toFixed(2);
+
+        var ok=r>=THC_RHO_NADW, mid=!ok && r>=1026.9;
+        var col = ok ? cssVar("--green") : (mid ? "#d98324" : cssVar("--red"));
+        elVer.style.color=col;
+        elVer.textContent = ok ? "หนักพอที่จะจมลงก้นสมุทร" : (mid ? "จมได้ระดับกลาง แต่ยังไม่ถึงก้น" : "เบาเกินไป — ลอยค้างอยู่บนผิว");
+        var diff=r-THC_RHO_NADW;
+        elWhy.innerHTML = ok
+          ? "หนักกว่าน้ำลึกแอตแลนติกเหนือ "+Math.abs(diff).toFixed(2)+" กก./ลบ.ม. จึงมุดลงไปแทนที่น้ำเดิมได้ — นี่คือขั้นที่ 3 ของสายพาน"
+          : "เบากว่าน้ำลึกแอตแลนติกเหนือ "+Math.abs(diff).toFixed(2)+" กก./ลบ.ม. จึงค้างอยู่ชั้นบน — ถ้าน้ำหน้ากรีนแลนด์กลายเป็นแบบนี้ทั้งหมด สายพานตรงนั้นจะ<b>สะดุด</b>";
+
+        var yTrop=yOf(THC_RHO_TROP), yDeep=yOf(THC_RHO_NADW), yNow=yOf(r);
+        var h='<defs><linearGradient id="thcColG" x1="0" y1="0" x2="0" y2="1">'
+             +'<stop offset="0" stop-color="#bfe3f5"/><stop offset="1" stop-color="#0d3350"/></linearGradient></defs>'
+             +'<rect x="14" y="34" width="58" height="238" rx="9" fill="url(#thcColG)" opacity=".85"/>'
+             +'<text x="14" y="24" font-size="10" fill="currentColor" opacity=".7">เบา (ลอยขึ้น)</text>'
+             +'<text x="14" y="288" font-size="10" fill="currentColor" opacity=".7">หนัก (จมลง)</text>';
+        function ref(y,c,lab,val){
+          return '<line x1="10" y1="'+y+'" x2="76" y2="'+y+'" stroke="'+c+'" stroke-width="1.4" stroke-dasharray="4,3"/>'
+               + '<text x="82" y="'+(y-2)+'" font-size="9.5" fill="'+c+'" font-weight="700">'+lab+'</text>'
+               + '<text x="82" y="'+(y+9)+'" font-size="9" fill="currentColor" opacity=".65">'+val+'</text>';
+        }
+        h+=ref(yTrop, cssVar("--red"), "น้ำผิวเขตร้อน", "~1,023 กก./ลบ.ม.");
+        h+=ref(yDeep, "#2f6fd0", "น้ำลึกแอตแลนติกเหนือ", "~1,027.8 กก./ลบ.ม.");
+        h+='<line x1="43" y1="'+yNow+'" x2="43" y2="'+(ok?Math.min(268,yNow+22):yNow)+'" stroke="'+col+'" stroke-width="2" opacity=".5"/>'
+          +'<circle cx="43" cy="'+yNow+'" r="10" fill="'+col+'" opacity=".2"/>'
+          +'<circle cx="43" cy="'+yNow+'" r="5.4" fill="'+col+'" stroke="#fff" stroke-width="1.6"/>'
+          +'<text x="82" y="'+(yNow+3.5)+'" font-size="10.5" font-weight="800" fill="'+col+'">น้ำของคุณ '+r.toFixed(1)+'</text>';
+        svg.innerHTML=h;
+        svg.style.color=cssVar("--ink");
+
+        Array.prototype.forEach.call(pre.children, function(b){
+          b.classList.toggle("on", Math.abs((+b.dataset.t)-T)<.05 && Math.abs((+b.dataset.s)-S)<.03);
+        });
+      }
+      elT.addEventListener("input", paint);
+      elS.addEventListener("input", paint);
+      pre.addEventListener("click", function(e){
+        var b=e.target.closest(".thc-pre"); if(!b) return;
+        elT.value=b.dataset.t; elS.value=b.dataset.s; paint();
+      });
+      thcDenPaint=paint;
+      paint();
+    }
+
+    /* ================= ข้อมูลจริง 4 ชุดของพาเนลสายพาน =================
+       ทุกชุดโหลดครั้งแรกที่พาเนลถูกเปิด (render → เห็นว่ายังไม่มีข้อมูล → ยิงโหลด → render ซ้ำ) */
+    var THC_AMOC=null, THC_GREEN=null, THC_BLOB=null, THC_HOLE=null;
+    var thcAmocBusy=false, thcGreenBusy=false, thcGridBusy=false;
+
+    /* ---- (1) AMOC ที่วัดได้: RAPID 26.5°N + OSNAP (Met Office Climate Dashboard · CSV รายเดือน) ---- */
+    function thcAnnual(rows){
+      var by={};
+      rows.forEach(function(r){ if(r.v!=null) (by[r.y]=by[r.y]||[]).push(r.v); });
+      var out=[];
+      Object.keys(by).forEach(function(y){
+        if(by[y].length<12) return;          // เอาเฉพาะปีที่ครบ 12 เดือน ไม่งั้นเทียบข้ามปีไม่ได้
+        out.push({ year:+y, v:by[y].reduce(function(a,b){ return a+b; },0)/by[y].length });
+      });
+      return out.sort(function(a,b){ return a.year-b.year; });
+    }
+    function thcParseMoc(t){
+      var rows=[];
+      (t||"").trim().split(/\r?\n/).forEach(function(l){
+        if(l.charAt(0)==="#") return;
+        var c=l.split(",");
+        if(c.length<3 || !/^\d{4}$/.test(c[0].trim())) return;
+        var v=parseFloat(c[2]);
+        rows.push({ y:+c[0], m:+c[1], v:isNaN(v)?null:v });
+      });
+      return rows;
+    }
+    function thcSetAmoc(rapid, osnap){
+      if(!rapid.length && !osnap.length) return false;
+      if(THC_AMOC && rapid.length<=THC_AMOC.rapid.length && osnap.length<=THC_AMOC.osnap.length) return false;
+      THC_AMOC={ rapid:rapid, osnap:osnap };
+      if(rapid.length) setTxt("#kThcSv", (rapid.reduce(function(a,d){ return a+d.v; },0)/rapid.length).toFixed(1));
+      renderThcAmoc();
+      return true;
+    }
+    /* ต้นทาง (Met Office) ไม่ส่งหัว CORS และพร็อกซีสาธารณะที่หน้านี้ใช้ก็ล่ม/ขอคีย์เป็นระยะ
+       จึงอ่านไฟล์ในเครื่องก่อนเสมอ (สร้างด้วย climate-data/build-amoc.mjs) แล้วค่อยลองยิงสดทับ
+       — ยิงติดก็ได้ของใหม่กว่า ยิงไม่ติดก็ยังมีกราฟให้ดู ไม่ใช่ช่องว่าง */
+    function loadThcAmoc(){
+      if(thcAmocBusy) return; thcAmocBusy=true;
+      var B="https://climate.metoffice.cloud/formatted_data/";
+      function fromMonthly(rows){
+        return thcAnnual((rows||[]).map(function(r){ return { y:r[0], m:r[1], v:r[2] }; }));
+      }
+      fetch("climate-data/amoc-transports.json")
+        .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+        .then(function(j){
+          thcSetAmoc(fromMonthly(j.series.rapid.monthly), fromMonthly(j.series.osnap.monthly));
+        })
+        .catch(function(){})
+        .then(function(){
+          return Promise.all([
+            fetchText(B+"amoc_rapid_RAPID.csv").catch(function(){ return ""; }),
+            fetchText(B+"amoc_osnap_OSNAP.csv").catch(function(){ return ""; })
+          ]);
+        })
+        .then(function(res){
+          thcSetAmoc(thcAnnual(thcParseMoc(res[0])), thcAnnual(thcParseMoc(res[1])));
+        })
+        .catch(function(){})
+        .then(function(){
+          if(THC_AMOC) return;
+          var b=$("#thcAmocChart");
+          if(b) b.innerHTML='<div class="state-msg err">เชื่อมต่อข้อมูล AMOC ไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>';
+        });
+    }
+    var THC_S_RAPID="RAPID 26.5°N (กึ่งเขตร้อน)", THC_S_OSNAP="OSNAP (เขตซับโพลาร์)";
+    function renderThcAmoc(){
+      var box=$("#thcAmocChart"); if(!box || !window.Plot || paneHidden(box)) return;
+      if(!THC_AMOC){ loadThcAmoc(); return; }
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), red=cssVar("--red"), green=cssVar("--green");
+      var W=Math.max(300, box.clientWidth||900);
+      var rows=THC_AMOC.rapid.map(function(d){ return {year:d.year, v:d.v, k:THC_S_RAPID}; })
+        .concat(THC_AMOC.osnap.map(function(d){ return {year:d.year, v:d.v, k:THC_S_OSNAP}; }))
+        .sort(function(a,b){ return a.year-b.year; });
+      var lastR=THC_AMOC.rapid.slice(-1);
+      var mean=THC_AMOC.rapid.length ? THC_AMOC.rapid.reduce(function(a,d){ return a+d.v; },0)/THC_AMOC.rapid.length : null;
+      var marks=[];
+      if(mean!=null){
+        marks.push(Plot.ruleY([mean], { stroke:inkSoft, strokeOpacity:.55, strokeDasharray:"4,4" }));
+        marks.push(Plot.text([{x:rows[0].year, y:mean, t:"เฉลี่ยทั้งช่วง "+mean.toFixed(1)+" Sv"}],
+          { x:"x", y:"y", text:"t", dy:-7, textAnchor:"start", fill:inkSoft, fontSize:11 }));
+      }
+      marks.push(Plot.lineY(rows, { x:"year", y:"v", stroke:"k", strokeWidth:2.6, curve:"catmull-rom" }));
+      marks.push(Plot.dot(lastR, { x:"year", y:"v", fill:red, r:4 }));
+      marks.push(Plot.text(lastR, { x:"year", y:"v", text:function(d){ return d.v.toFixed(1)+" Sv"; },
+        dy:-12, textAnchor:"end", fill:red, fontWeight:700, fontSize:12 }));
+      var fig=plotT({
+        width:W, height:330, marginLeft:48, marginBottom:34, marginTop:14, marginRight:20,
+        style: baseStyle(ink, FONT_W),
+        x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
+        y:{ label:"สเวอร์ดรุป (ล้าน ลบ.ม./วินาที)", grid:true, tickSize:0 },
+        color:{ domain:[THC_S_RAPID, THC_S_OSNAP], range:[red, green], legend:true },
+        marks: marks
+      });
+      owidMount("#thcAmocChart", fig, { data:rows, xKey:"year", yKey:"v", seriesKey:"k", multi:true,
+        seriesOrder:[THC_S_RAPID, THC_S_OSNAP], yLabel:"Sv",
+        valueFmt:function(v){ return v.toFixed(2)+" Sv"; } });
+    }
+
+    /* ---- (2) น้ำแข็งกรีนแลนด์สะสมที่หายไป (GRACE/GRACE-FO ผ่าน OWID) ---- */
+    function loadThcGreenland(){
+      if(thcGreenBusy) return; thcGreenBusy=true;
+      fetchText("https://ourworldindata.org/grapher/ice-sheet-mass-balance.csv?csvType=full&useColumnShortNames=true")
+        .then(function(t){
+          var d=[];
+          parseCSV(t).forEach(function(r){
+            if((r.entity||r.Entity)!=="Greenland") return;
+            var day=r.day||r.Day; if(!day) return;
+            var v=parseFloat(r.land_ice_mass_nasa!=null ? r.land_ice_mass_nasa : r["Seasonal variation"]);
+            if(isNaN(v)) return;
+            d.push({ year:(+day.slice(0,4)) + ((+day.slice(5,7)-1)/12) + ((+day.slice(8,10)-1)/365), v:v });
+          });
+          d.sort(function(a,b){ return a.year-b.year; });
+          if(!d.length) return;
+          THC_GREEN=d; renderThcGreen();
+        }).catch(function(){
+          var b=$("#thcGreenChart");
+          if(b) b.innerHTML='<div class="state-msg err">เชื่อมต่อข้อมูลน้ำแข็งไม่สำเร็จ — ลองรีเฟรชอีกครั้ง</div>';
+        });
+    }
+    function renderThcGreen(){
+      var box=$("#thcGreenChart"); if(!box || !window.Plot || paneHidden(box)) return;
+      if(!THC_GREEN){ loadThcGreenland(); return; }
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green");
+      var W=Math.max(300, box.clientWidth||900), last=THC_GREEN[THC_GREEN.length-1];
+      var fig=plotT({
+        width:W, height:300, marginLeft:64, marginBottom:34, marginTop:14, marginRight:20,
+        style: baseStyle(ink, FONT_W),
+        x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
+        y:{ label:"กิกะตัน (เทียบ ค.ศ. 2002)", grid:true, tickSize:0 },
+        marks:[
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.5, strokeDasharray:"3,3" }),
+          Plot.areaY(THC_GREEN, { x:"year", y:"v", fill:green, fillOpacity:.12 }),
+          Plot.lineY(THC_GREEN, { x:"year", y:"v", stroke:green, strokeWidth:2.2 }),
+          Plot.dot([last], { x:"year", y:"v", fill:green, r:4 }),
+          Plot.text([last], { x:"year", y:"v", text:function(d){ return Math.round(d.v).toLocaleString("en-US")+" Gt"; },
+            dy:15, textAnchor:"end", fill:green, fontWeight:700, fontSize:12 })
+        ]
+      });
+      owidMount("#thcGreenChart", fig, { data:THC_GREEN, xKey:"year", yKey:"v", color:green,
+        yLabel:"กิกะตัน", yearLabel:function(y){ return Math.floor(y); },
+        valueFmt:function(v){ return Math.round(v).toLocaleString("en-US")+" Gt"; } });
+    }
+
+    /* ---- (3)+(4) cold blob + แผนที่รูโหว่โลกร้อน — คำนวณจากกริด GISTEMP ที่ climate-map.js ดูแลอยู่ ----
+       กล่อง cold blob 45–62°N, 55–15°W (ตาม Rahmstorf/Caesar) ถ่วงน้ำหนักด้วย cos ละติจูด
+       แผนที่: (เฉลี่ย ค.ศ. 2001–2025) − (เฉลี่ย 1901–1950) ของแต่ละช่อง แล้วหักค่าเดียวกันของทั้งโลกออก */
+    var THC_BOX={ lat0:45, lat1:62, lon0:-55, lon1:-15 };
+    var THC_MAP_BOX={ lat0:20, lat1:76, lon0:-80, lon1:12 };
+    function loadThcGrid(){
+      if(thcGridBusy || !window.Gistemp) return; thcGridBusy=true;
+      Gistemp.load().then(function(D){
+        var M=D.meta, nlat=D.nlat, nlon=D.nlon, cells=D.cells;
+        function latC(la){ return M.lat0 + (la+0.5)*M.dlat; }
+        function lonC(lo){ return M.lon0 + (lo+0.5)*M.dlon; }
+
+        // (3) อนุกรมรายปี: ค่าเฉลี่ยในกล่อง cold blob ลบด้วยค่าเฉลี่ยของทั้งโลก
+        var series=[];
+        for(var i=0;i<D.years.length;i++){
+          var base=D.rowOf[i]*cells, sv=0, sw=0;
+          for(var la=0;la<nlat;la++){
+            var y=latC(la); if(y<THC_BOX.lat0 || y>THC_BOX.lat1) continue;
+            var w=Math.cos(y*Math.PI/180);
+            for(var lo=0;lo<nlon;lo++){
+              var x=lonC(lo); if(x<THC_BOX.lon0 || x>THC_BOX.lon1) continue;
+              var q=D.grid[base+la*nlon+lo]; if(q===-128) continue;
+              sv+=q*M.scale*w; sw+=w;
+            }
+          }
+          if(sw<=0 || D.gMean[i]==null) continue;
+          series.push({ year:D.years[i], v:(sv/sw)-D.gMean[i] });
+        }
+        THC_BLOB=series;
+
+        // (4) แผนที่ — ช่องไหนข้อมูลไม่ถึง 60% ของปีในช่วงนั้น ให้เว้นว่างไว้ ไม่เดาแทน
+        function periodIdx(y0,y1){
+          var out=[]; for(var k=0;k<D.years.length;k++) if(D.years[k]>=y0 && D.years[k]<=y1) out.push(k);
+          return out;
+        }
+        var A=periodIdx(2001,2025), B=periodIdx(1901,1950);
+        function gAvg(idx){ var s=0,n=0; idx.forEach(function(k){ if(D.gMean[k]!=null){ s+=D.gMean[k]; n++; } }); return n?s/n:0; }
+        var dGlobal=gAvg(A)-gAvg(B);
+        function cellAvg(idx, la, lo){
+          var s=0,n=0;
+          for(var k=0;k<idx.length;k++){
+            var q=D.grid[D.rowOf[idx[k]]*cells+la*nlon+lo];
+            if(q===-128) continue;
+            s+=q*M.scale; n++;
+          }
+          return n>=idx.length*0.6 ? s/n : null;
+        }
+        var feats=[];
+        for(var la2=0;la2<nlat;la2++){
+          var yc=latC(la2); if(yc<THC_MAP_BOX.lat0 || yc>THC_MAP_BOX.lat1) continue;
+          var y0=M.lat0+la2*M.dlat, y1=y0+M.dlat;
+          for(var lo2=0;lo2<nlon;lo2++){
+            var xc=lonC(lo2); if(xc<THC_MAP_BOX.lon0 || xc>THC_MAP_BOX.lon1) continue;
+            var a=cellAvg(A,la2,lo2), b=cellAvg(B,la2,lo2);
+            if(a==null || b==null) continue;
+            var x0=M.lon0+lo2*M.dlon, x1=x0+M.dlon;
+            feats.push({ type:"Feature", v:(a-b)-dGlobal, lon:xc, lat:yc,
+              geometry:{ type:"Polygon", coordinates:[[[x0,y0],[x0,y1],[x1,y1],[x1,y0],[x0,y0]]] } });
+          }
+        }
+        THC_HOLE={ cells:feats, dGlobal:dGlobal, land:D.landMesh, yA:"2001–2025", yB:"1901–1950" };
+      }).catch(function(err){ console.error("thc grid:", err); }).then(function(){
+        if(!THC_BLOB){
+          var b=$("#thcBlobChart"); if(b) b.innerHTML='<div class="state-msg err">โหลดกริดอุณหภูมิ NASA ไม่สำเร็จ</div>';
+          var m=$("#thcHoleMap"); if(m) m.innerHTML='<div class="state-msg err">โหลดกริดอุณหภูมิ NASA ไม่สำเร็จ</div>';
+          return;
+        }
+        renderThcBlob(); renderThcHole();   // ถ้าวาดพัง ปล่อยให้เด้งขึ้นคอนโซลตรง ๆ จะได้เห็นสาเหตุจริง
+      });
+    }
+    function thcSmoothSeries(rows, win){
+      var half=(win-1)/2;
+      return rows.map(function(d,i){
+        var s=0,n=0;
+        for(var k=Math.max(0,i-half); k<=Math.min(rows.length-1,i+half); k++){ s+=rows[k].v; n++; }
+        return { year:d.year, v:s/n };
+      });
+    }
+    function renderThcBlob(){
+      var box=$("#thcBlobChart"); if(!box || !window.Plot || paneHidden(box)) return;
+      if(!THC_BLOB){ loadThcGrid(); return; }
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), blue="#2f6fd0";
+      var W=Math.max(300, box.clientWidth||900), last=THC_BLOB[THC_BLOB.length-1];
+      var fig=plotT({
+        width:W, height:320, marginLeft:54, marginBottom:34, marginTop:16, marginRight:20,
+        style: baseStyle(ink, FONT_W),
+        x:{ tickFormat:"d", label:null, ticks:8, tickSize:0 },
+        y:{ label:"°C เทียบค่าเฉลี่ยโลก", grid:true, tickSize:0 },
+        marks:[
+          Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.7 }),
+          Plot.lineY(THC_BLOB, { x:"year", y:"v", stroke:blue, strokeWidth:1.1, strokeOpacity:.4 }),
+          Plot.lineY(thcSmoothSeries(THC_BLOB,11), { x:"year", y:"v", stroke:blue, strokeWidth:2.8, curve:"catmull-rom" }),
+          Plot.dot([last], { x:"year", y:"v", fill:blue, r:4 }),
+          Plot.text([last], { x:"year", y:"v", text:function(d){ return (d.v>0?"+":"−")+Math.abs(d.v).toFixed(2)+" °C"; },
+            dy:-12, textAnchor:"end", fill:blue, fontWeight:700, fontSize:12 })
+        ]
+      });
+      owidMount("#thcBlobChart", fig, { data:THC_BLOB, xKey:"year", yKey:"v", color:blue,
+        yLabel:"°C เทียบค่าเฉลี่ยโลก",
+        valueFmt:function(v){ return (v>0?"+":"−")+Math.abs(v).toFixed(2)+" °C"; } });
+    }
+    function renderThcHole(){
+      var box=$("#thcHoleMap"); if(!box || !window.Plot || paneHidden(box)) return;
+      if(!THC_HOLE){ loadThcGrid(); return; }
+      var ink=cssVar("--ink"), paper=cssVar("--paper-2");
+      // ให้สัดส่วนกรอบ = สัดส่วนของกล่องละติจูด/ลองจิจูดพอดี แผนที่จะเต็มกรอบ ไม่มีแถบว่างซ้ายขวา
+      // (สำคัญ เพราะ clip:"frame" ตัดตามกรอบ ถ้ามีแถบว่าง เส้นชายฝั่งนอกพื้นที่จะโผล่มาลอยอยู่)
+      var W=Math.max(300, Math.min(box.clientWidth||900, 980));
+      var H=Math.round(W*(THC_MAP_BOX.lat1-THC_MAP_BOX.lat0)/(THC_MAP_BOX.lon1-THC_MAP_BOX.lon0));
+      var dom={ type:"Polygon", coordinates:[[
+        [THC_MAP_BOX.lon0,THC_MAP_BOX.lat0],[THC_MAP_BOX.lon0,THC_MAP_BOX.lat1],
+        [THC_MAP_BOX.lon1,THC_MAP_BOX.lat1],[THC_MAP_BOX.lon1,THC_MAP_BOX.lat0],
+        [THC_MAP_BOX.lon0,THC_MAP_BOX.lat0]]] };
+      // กรอบหย่อม cold blob วาดเป็นเส้น (LineString) ไม่ใช่รูปปิด จะได้ไม่ต้องพะวงเรื่องวงรอบ
+      var boxLine={ type:"LineString", coordinates:[
+        [THC_BOX.lon0,THC_BOX.lat0],[THC_BOX.lon1,THC_BOX.lat0],
+        [THC_BOX.lon1,THC_BOX.lat1],[THC_BOX.lon0,THC_BOX.lat1],
+        [THC_BOX.lon0,THC_BOX.lat0]] };
+      var fig=Plot.plot({
+        width:W, height:H, margin:0,
+        style: baseStyle(ink, FONT_W),
+        projection:{ type:"equirectangular", domain:dom },
+        color:{ type:"diverging", scheme:"RdBu", reverse:true, pivot:0, domain:[-1,1], clamp:true,
+                legend:true, label:"°C · ร้อนขึ้นช้ากว่า (น้ำเงิน) หรือเร็วกว่า (แดง) ค่าเฉลี่ยโลก" },
+        marks:[
+          Plot.geo(THC_HOLE.cells, { fill:"v", stroke:"v", strokeWidth:.6, title:function(d){
+            return "ละติจูด "+d.lat.toFixed(0)+"° ลองจิจูด "+d.lon.toFixed(0)+"°\n"
+                 + (d.v>0?"+":"−")+Math.abs(d.v).toFixed(2)+" °C เทียบค่าเฉลี่ยโลก"; } }),
+          Plot.geo(THC_HOLE.land, { stroke:"#ffffff", strokeOpacity:.4, strokeWidth:2.2, clip:"frame" }),
+          Plot.geo(THC_HOLE.land, { stroke:"#0a1620", strokeOpacity:.72, strokeWidth:.8, clip:"frame" }),
+          Plot.geo(boxLine, { stroke:"#ffffff", strokeOpacity:.6, strokeWidth:3.6 }),
+          Plot.geo(boxLine, { stroke:"#0a1620", strokeOpacity:.9, strokeWidth:1.7, strokeDasharray:"6,4" }),
+          Plot.text([{lon:-35, lat:63.8, t:"หย่อมที่ใช้วัดในกราฟถัดไป"}],
+            { x:"lon", y:"lat", text:"t", fill:ink, fontWeight:700, fontSize:11.5, stroke:paper, strokeWidth:3 })
+        ]
+      });
+      owidMapMount("#thcHoleMap", fig, {
+        rows: THC_HOLE.cells.slice().sort(function(a,b){ return a.v-b.v; }).slice(0,40).map(function(d){
+          return { k:"ละติจูด "+d.lat.toFixed(0)+"° ลองจิจูด "+d.lon.toFixed(0)+"°", v:d.v };
+        }),
+        nameLabel:"ช่องกริด (เรียงจากเย็นสุด 40 อันดับ)", valueLabel:"°C เทียบค่าเฉลี่ยโลก", sort:false,
+        valueFmt:function(v){ return (v>0?"+":"−")+Math.abs(v).toFixed(2)+" °C"; }
+      });
+    }
+
+    function renderThcAll(){
+      renderThcAmoc(); renderThcHole(); renderThcBlob(); renderThcGreen();
+      if(thcDenPaint) thcDenPaint();      // สีในแผนภาพความหนาแน่นอ่านจาก CSS var — ต้องวาดใหม่ตอนสลับธีม
+    }
+
     /* ---------- BOOT ---------- */
     function boot(){
       $$(".k-count").forEach(countUp);
@@ -22616,6 +23712,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setupThaiDemocracy();
       setupCoralGlobe();
       setupCurrentGlobe();
+      setupThcGlobe();
+      setupThcDensity();
       setupPopLandscape();
       setupTradeGlobe();
       setupChipGlobe();

@@ -1,0 +1,29 @@
+{
+  "source": "NASA Aqua MODIS L3SMI Chlorophyll-a (R2022 NRT) — ค่าเฉลี่ยรายเดือน",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chlamday_R2022NRT.html",
+  "dataset": "erdMH1chlamday_R2022NRT",
+  "variables": [
+    "chlorophyll"
+  ],
+  "unit": "mg/m³",
+  "label": "คลอโรฟิลล์-เอ",
+  "kind": "scalar",
+  "time": "2026-03-16T00:00:00Z",
+  "dtype": "int16",
+  "endian": "little",
+  "encoding": "raw 0..32000 เชิงเส้นระหว่าง vmin..vmax · value = vmin + raw/32000*(vmax-vmin)",
+  "vmin": 0.005402003,
+  "vmax": 82.8123,
+  "noData": -32768,
+  "components": 1,
+  "nlat": 721,
+  "nlon": 1440,
+  "lat0": -89.97917,
+  "lon0": -179.97917,
+  "dlat": 0.25,
+  "dlon": 0.25,
+  "layout": "one value per cell; row-major lat then lon; Int16 little-endian",
+  "validCells": 463257,
+  "totalCells": 1038240,
+  "builtBy": "build-ocean-scalar.mjs"
+}

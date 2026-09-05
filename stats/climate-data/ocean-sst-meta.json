@@ -1,0 +1,29 @@
+{
+  "source": "NOAA NCEI — Daily Optimum Interpolation SST (OISST) v2.1",
+  "sourceUrl": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg.html",
+  "dataset": "ncdcOisst21Agg",
+  "variables": [
+    "sst"
+  ],
+  "unit": "°C",
+  "label": "อุณหภูมิผิวน้ำทะเล",
+  "kind": "scalar",
+  "time": "2026-03-25T12:00:00Z",
+  "dtype": "int16",
+  "endian": "little",
+  "encoding": "raw 0..32000 เชิงเส้นระหว่าง vmin..vmax · value = vmin + raw/32000*(vmax-vmin)",
+  "vmin": -1.8,
+  "vmax": 31.63,
+  "noData": -32768,
+  "components": 1,
+  "nlat": 720,
+  "nlon": 1440,
+  "lat0": -89.875,
+  "lon0": -179.875,
+  "dlat": 0.25,
+  "dlon": 0.25,
+  "layout": "one value per cell; row-major lat then lon; Int16 little-endian",
+  "validCells": 693264,
+  "totalCells": 1036800,
+  "builtBy": "build-ocean-scalar.mjs"
+}
