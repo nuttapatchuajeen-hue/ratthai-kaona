@@ -14,86 +14,13 @@
   var PROXY_URL = "https://md-ai-proxy-nook.netlify.app/api/chat";
 
   // คำสั่งระบบ (บุคลิก/ขอบเขตของผู้ช่วย)
-  // คำสั่งระบบ (บุคลิก/ขอบเขตของผู้ช่วย + ฐานข้อมูลรัฐไทย มิ.ย. 2569)
   var SYSTEM_PROMPT =
-    "คุณคือ 'ผู้ช่วย AI ข้อมูลรัฐ' ของเว็บ 'รัฐไทยก้าวหน้า' ตอบคำถามเรื่องโครงสร้างภาครัฐไทย คณะรัฐมนตรี สมาชิกรัฐสภา และสถิติข้อมูลเปิดภาครัฐ ตอบภาษาไทย กระชับ สุภาพ ตรงประเด็น\n" +
-    "กฎสำคัญที่สุด: ต้องยึดตาม [ข้อมูลอ้างอิง] ด้านล่างเสมอ — เป็นข้อมูลปัจจุบัน (มิ.ย. 2569) ที่ใหม่กว่าความรู้เดิมของคุณ ห้ามตอบขัดแย้งกับข้อมูลนี้ ถ้าคำถามอยู่นอกเหนือข้อมูลอ้างอิงและไม่แน่ใจ ให้บอกตรง ๆ ว่าไม่มีข้อมูล อย่าเดา และแนะนำหน้าเว็บที่เกี่ยวข้องแทน\n\n" +
-    "[ข้อมูลอ้างอิง — มิถุนายน 2569]\n" +
-    "■ กระทรวง: ประเทศไทยมี 20 กระทรวง (นับรวมสำนักนายกรัฐมนตรีซึ่งมีฐานะเทียบเท่ากระทรวง) รวมหน่วยงานในกำกับ 278 หน่วยงาน ได้แก่ สำนักนายกรัฐมนตรี, กลาโหม, การคลัง, การต่างประเทศ, การท่องเที่ยวและกีฬา, การพัฒนาสังคมและความมั่นคงของมนุษย์ (พม.), เกษตรและสหกรณ์, คมนาคม, ทรัพยากรธรรมชาติและสิ่งแวดล้อม, ดิจิทัลเพื่อเศรษฐกิจและสังคม, พลังงาน, พาณิชย์, มหาดไทย, ยุติธรรม, แรงงาน, วัฒนธรรม, การอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม (อว.), ศึกษาธิการ, สาธารณสุข, อุตสาหกรรม\n" +
-    "■ คณะรัฐมนตรี: คณะที่ 66 รัฐบาลอนุทิน ชาญวีรกูล (เริ่ม 30 มี.ค. 2569) มีรัฐมนตรี 35 คน\n" +
-    "· นายกรัฐมนตรี: อนุทิน ชาญวีรกูล (ควบ รมว.มหาดไทย)\n" +
-    "· รองนายกรัฐมนตรี 7 คน: พิพัฒน์ รัชกิจประการ (ควบ รมว.คมนาคม), เอกนิติ นิติทัณฑ์ประภาศ (ควบ รมว.การคลัง), สีหศักดิ์ พวงเกตุแก้ว (ควบ รมว.การต่างประเทศ), ศุภจี สุธรรมพันธุ์ (ควบ รมว.พาณิชย์), ยศชนัน วงศ์สวัสดิ์ (ควบ รมว.อว.), ทรงศักดิ์ ทองศรี, ปกรณ์ นิลประพันธ์\n" +
-    "· รมว.กระทรวงอื่น: กลาโหม=อดุลย์ บุญธรรมเจริญ · ท่องเที่ยวฯ=สุรศักดิ์ พันธ์เจริญวรกุล · พม.=นิกร โสมกลาง · เกษตรฯ=สุริยะ จึงรุ่งเรืองกิจ · ทรัพยากรฯ=สุชาติ ชมกลิ่น · ดิจิทัลฯ=ไชยชนก ชิดชอบ · พลังงาน=เอกนัฏ พร้อมพันธุ์ · ยุติธรรม=รุทธพล เนาวรัตน์ · แรงงาน=จุลพันธ์ อมรวิวัฒน์ · วัฒนธรรม=ซาบีดา ไทยเศรษฐ์ · ศึกษาธิการ=ประเสริฐ จันทรรวงทอง · สาธารณสุข=พัฒนา พร้อมพัฒน์ · อุตสาหกรรม=วราวุธ ศิลปอาชา\n" +
-    "· รมต.ประจำสำนักนายกฯ 4 คน: ศุภมาส อิศรภักดี, นภินทร ศรีสรรพางค์, ภราดร ปริศนานันทกุล, สุขสมรวย วันทนียกุล\n" +
-    "· รมช.: เกษตรฯ (วัชระพล ขาวขำ, ปิยะรัฐชย์ ติยะไพรัช) · คมนาคม (สิริพงศ์ อังคสกุลเกียรติ, ภัทรพงศ์ ภัทรประสิทธิ์, สรรเพชญ บุญญามณี) · ดิจิทัลฯ (บุณย์ธิดา สมชัย) · มหาดไทย (พลพีร์ สุวรรณฉวี, เจเศรษฐ์ ไทยเศรษฐ์, วรศิษฎ์ เลียงประสิทธิ์) · ศึกษาธิการ (อัครนันท์ กัณณ์กิตตินันท์)\n" +
-    "■ สภาผู้แทนราษฎร (เลือกตั้ง 2569): ส.ส. 500 คน = แบ่งเขต 400 + บัญชีรายชื่อ 100 จาก 22 พรรค — ภูมิใจไทย 193 (เขต 174+บัญชี 19), ประชาชน 118 (87+31), เพื่อไทย 74 (58+16), กล้าธรรม 58 (56+2), ประชาธิปัตย์ 22 (10+12), ไทรวมพลัง 6, ประชาชาติ 5, พลังประชารัฐ 5, เศรษฐกิจ 3, ไทยสร้างไทย 2, รวมไทยสร้างชาติ 2, เพื่อชาติไทย 2 และอีก 10 พรรคได้พรรคละ 1 ที่นั่ง\n" +
-    "■ รัฐสภา: ส.ส. 500 + สมาชิกวุฒิสภา (สว.) 200 = ประชุมร่วมกัน 700 คน · ประธานสภาผู้แทนราษฎร (= ประธานรัฐสภา): โสภณ ซารัมย์ (ภูมิใจไทย) · รองประธานสภาฯ คนที่ 1: มัลลิกา จิระพันธุ์วาณิช · คนที่ 2: เลิศศักดิ์ พัฒนชัยกุล · ประธานวุฒิสภา (= รองประธานรัฐสภา): มงคล สุระสัจจะ\n" +
-    "■ หน้าในเว็บนี้: หน้าหลัก + เกี่ยวกับเรา · โครงสร้างรัฐไทย (แผนผังกระทรวง-กรม) · เลือกตั้ง (รายเขต, บัญชีรายชื่อ, คะแนนพรรค + เพลงประจำพรรค, ผังที่นั่งรัฐสภา) · ทำเนียบคณะรัฐมนตรี · สถิติข้อมูลรัฐ (จาก data.go.th และ World Bank) · แบบประเมินความพึงพอใจเว็บไซต์ (หน้า 'แบบประเมิน' — เชิญผู้ใช้ร่วมตอบได้) · ผู้จัดทำเว็บ: ณัฐภัทร ช่วยจีน (Master Nook)";
+    "คุณคือ 'ผู้ช่วยข้อมูลรัฐ' ของเว็บรวมงาน md ตอบคำถามเกี่ยวกับโครงสร้างภาครัฐไทย " +
+    "คณะรัฐมนตรี สมาชิกสภาผู้แทนราษฎร และสถิติข้อมูลเปิดภาครัฐ " +
+    "ตอบเป็นภาษาไทย กระชับ สุภาพ ตรงประเด็น ถ้าไม่แน่ใจหรือไม่มีข้อมูลให้บอกตรง ๆ อย่าเดา";
 
   var MAX_TOKENS = 1024;
   var TEMPERATURE = 0.2;
-
-  // ---- รายการโมเดล AI ที่รองรับ ----
-  var AI_MODELS = [
-    {
-      id: "gemini-2.0-flash",
-      name: "Gemini 2.0 Flash",
-      badge: "Google",
-      icon: "⚡",
-      tag: "แนะนำ · ตอบเร็วมาก ฉลาดล่าสุด ฟรี",
-    },
-    {
-      id: "gemini-1.5-flash",
-      name: "Gemini 1.5 Flash",
-      badge: "Google",
-      icon: "✨",
-      tag: "เสถียร · ประหยัดโทเคน",
-    },
-    {
-      id: "openthaigpt-thaillm-8b-instruct-v7.2",
-      name: "ThaiLLM 8B",
-      badge: "OpenThaiGPT",
-      icon: "🇹🇭",
-      tag: "โมเดลภาษาไทยเฉพาะทางภาครัฐ",
-    },
-    {
-      id: "gpt-4o-mini",
-      name: "GPT-4o Mini",
-      badge: "OpenAI",
-      icon: "🧠",
-      tag: "ฉลาด คมชัด · วิเคราะห์ลึกซึ้ง",
-    },
-    {
-      id: "deepseek-chat",
-      name: "DeepSeek Chat",
-      badge: "DeepSeek",
-      icon: "🎯",
-      tag: "ตรรกะสูง · ตอบตรงประเด็น",
-    },
-    {
-      id: "claude-3-5-haiku-20241022",
-      name: "Claude 3.5 Haiku",
-      badge: "Anthropic",
-      icon: "✒️",
-      tag: "ภาษาธรรมชาติ · เรียบเรียงสละสลวย",
-    },
-  ];
-
-  var MODEL_STORAGE_KEY = "mdai-selected-model-v2";
-  var selectedModelId = "gemini-2.0-flash";
-  try {
-    var stored = localStorage.getItem(MODEL_STORAGE_KEY);
-    if (stored && AI_MODELS.some(function (m) { return m.id === stored; })) {
-      selectedModelId = stored;
-    }
-  } catch (err) {}
-
-  function getSelectedModel() {
-    for (var i = 0; i < AI_MODELS.length; i++) {
-      if (AI_MODELS[i].id === selectedModelId) return AI_MODELS[i];
-    }
-    return AI_MODELS[0];
-  }
 
   // ---- ประวัติการสนทนา (อยู่ในหน่วยความจำ รีโหลดแล้วเริ่มใหม่) ----
   var messages = [{ role: "system", content: SYSTEM_PROMPT }];
@@ -204,53 +131,6 @@
     "#mdai-close{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:var(--mdai-on-accent);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}",
     "#mdai-close:hover{background:rgba(255,255,255,.32)}",
 
-    // แถบเลือกโมเดล (Model Selector Bar)
-    "#mdai-model-bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:var(--mdai-surface);border-bottom:1px solid var(--mdai-border);z-index:20;font-size:12px;user-select:none;-webkit-user-select:none}",
-    ".mdai-model-tag-lbl{color:var(--mdai-dim);font-weight:600;font-size:11px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:5px}",
-    ".mdai-model-tag-lbl svg{width:13px;height:13px;color:var(--mdai-accent2)}",
-    ".mdai-model-drop-wrap{position:relative}",
-    "#mdai-model-btn{display:inline-flex;align-items:center;gap:6px;padding:3.5px 10px 3.5px 8px;border-radius:999px;border:1px solid var(--mdai-border);background:var(--mdai-surface2);color:var(--mdai-text);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent}",
-    "#mdai-model-btn:hover{border-color:var(--mdai-accent2);background:var(--mdai-surface);box-shadow:0 0 10px rgba(0,229,255,.2);color:var(--mdai-accent2)}",
-    "#mdai-model-btn svg.mdai-chevron{width:12px;height:12px;transition:transform .2s ease;opacity:.7}",
-    "#mdai-model-btn[aria-expanded='true'] svg.mdai-chevron{transform:rotate(180deg)}",
-    "#mdai-model-menu{position:absolute;top:calc(100% + 6px);right:0;width:280px;max-width:calc(100vw - 60px);background:var(--mdai-surface);border:1px solid var(--mdai-border);border-radius:14px;box-shadow:var(--mdai-shadow),0 8px 30px rgba(0,0,0,.25);padding:5px;display:none;flex-direction:column;gap:3px;z-index:99;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}",
-    "#mdai-model-menu.mdai-show-menu{display:flex;animation:mdai-pop .18s cubic-bezier(.2,.8,.3,1.15)}",
-    "@keyframes mdai-pop{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}",
-    ".mdai-model-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:10px;cursor:pointer;border:1px solid transparent;background:transparent;color:var(--mdai-text);font-family:inherit;text-align:left;width:100%;transition:all .15s ease;-webkit-tap-highlight-color:transparent;box-sizing:border-box}",
-    ".mdai-model-item:hover{background:var(--mdai-surface2);border-color:var(--mdai-border)}",
-    ".mdai-model-item.active{background:linear-gradient(135deg,rgba(0,181,214,.14),rgba(0,229,255,.07));border-color:rgba(0,229,255,.4)}",
-    ".mdai-model-item-l{display:flex;align-items:center;gap:8px;overflow:hidden}",
-    ".mdai-model-badge-ico{font-size:13px;display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--mdai-surface2);border:1px solid var(--mdai-border);flex:0 0 24px}",
-    ".mdai-model-info-txt{display:flex;flex-direction:column;line-height:1.2;overflow:hidden}",
-    ".mdai-model-row1{display:flex;align-items:center;gap:5px;overflow:hidden}",
-    ".mdai-model-name-txt{font-weight:600;font-size:12px;white-space:nowrap}",
-    ".mdai-model-brand-pill{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(0,229,255,.12);color:var(--mdai-accent2);letter-spacing:.02em}",
-    ".mdai-model-desc-txt{font-size:10.5px;color:var(--mdai-dim);margin-top:2px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}",
-    ".mdai-model-chk-icon{width:14px;height:14px;color:var(--mdai-accent2);flex:0 0 14px;opacity:0;transition:opacity .15s}",
-    ".mdai-model-item.active .mdai-model-chk-icon{opacity:1}",
-    ".mdai-sys-notice{align-self:center;font-size:11px;color:var(--mdai-dim);background:var(--mdai-surface);border:1px solid var(--mdai-border);padding:3px 12px;border-radius:999px;margin:2px 0;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.05)}",
-
-    // ป็อปอัปตั้งค่า API Key ในเครื่อง
-    "#mdai-key-modal{position:absolute;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:70;display:none;place-items:center;padding:16px}",
-    "#mdai-key-modal.mdai-show-modal{display:grid;animation:mdai-pop .2s ease-out}",
-    ".mdai-modal-box{background:var(--mdai-surface);border:1px solid var(--mdai-border);border-radius:16px;padding:16px;width:100%;max-width:320px;box-shadow:var(--mdai-shadow);display:flex;flex-direction:column;gap:11px;box-sizing:border-box}",
-    ".mdai-modal-h{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--mdai-text);font-weight:700}",
-    ".mdai-modal-x{background:none;border:none;color:var(--mdai-dim);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:6px}",
-    ".mdai-modal-x:hover{color:var(--mdai-text);background:var(--mdai-surface2)}",
-    ".mdai-modal-p{margin:0;font-size:11.5px;color:var(--mdai-dim);line-height:1.45}",
-    ".mdai-modal-inp-wrap{display:flex;align-items:center;background:var(--mdai-surface2);border:1px solid var(--mdai-border);border-radius:10px;padding:6px 10px;gap:6px}",
-    ".mdai-modal-inp-wrap input{flex:1;border:none;background:transparent;color:var(--mdai-text);font-family:monospace;font-size:12px;outline:none}",
-    ".mdai-modal-inp-wrap button{background:none;border:none;cursor:pointer;font-size:13px;padding:0;line-height:1}",
-    ".mdai-modal-links{font-size:11.5px}",
-    ".mdai-modal-links a{color:var(--mdai-accent2);text-decoration:none;font-weight:600}",
-    ".mdai-modal-links a:hover{text-decoration:underline}",
-    ".mdai-modal-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:2px}",
-    ".mdai-btn-ghost{background:transparent;border:1px solid var(--mdai-border);color:var(--mdai-dim);padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer}",
-    ".mdai-btn-ghost:hover{color:#d7263d;border-color:#d7263d}",
-    ".mdai-btn-primary{background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));border:none;color:var(--mdai-on-accent);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}",
-    ".mdai-key-trigger-btn{background:var(--mdai-surface2);border:1px solid var(--mdai-border);border-radius:8px;width:26px;height:26px;display:grid;place-items:center;cursor:pointer;font-size:12px;color:var(--mdai-text);transition:all .18s;padding:0;flex:0 0 26px}",
-    ".mdai-key-trigger-btn:hover{border-color:var(--mdai-accent2);color:var(--mdai-accent2);box-shadow:0 0 8px rgba(0,229,255,.25)}",
-
     // กล่องข้อความ
     "#mdai-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--mdai-surface2)}",
     ".mdai-row{display:flex;max-width:85%}",
@@ -341,43 +221,7 @@
         '<div id="mdai-head"><span class="mdai-dot"></span><div><b>ผู้ช่วย AI ข้อมูลรัฐ</b>' +
         "<span>ถามเรื่องโครงสร้างรัฐ ครม. ส.ส. และสถิติ</span></div>" +
         '<button id="mdai-close" aria-label="ปิด">×</button></div>' +
-        '<div id="mdai-model-bar">' +
-          '<div class="mdai-model-tag-lbl">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>' +
-            '<span>โมเดล AI</span>' +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px">' +
-            '<div class="mdai-model-drop-wrap">' +
-              '<button type="button" id="mdai-model-btn" aria-haspopup="listbox" aria-expanded="false" title="คลิกเพื่อสลับโมเดล AI">' +
-                '<span class="mdai-model-btn-ico">⚡</span>' +
-                '<span class="mdai-model-btn-name">Gemini 2.0 Flash</span>' +
-                '<svg class="mdai-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
-              '</button>' +
-              '<div id="mdai-model-menu" role="listbox" aria-label="เลือกโมเดล AI"></div>' +
-            '</div>' +
-            '<button type="button" id="mdai-key-btn" title="ตั้งค่า Gemini API Key ในเครื่อง" class="mdai-key-trigger-btn" aria-label="ตั้งค่า API Key">' +
-              '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 2.5-2.5a2.12 2.12 0 0 1 3 0l4.5 4.5zM3 21l6-6M9 15l2 2M11 13l2 2"/></svg>' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
         '<div id="mdai-msgs"></div>' +
-        '<div id="mdai-key-modal" class="mdai-modal" role="dialog" aria-label="ตั้งค่า API Key">' +
-          '<div class="mdai-modal-box">' +
-            '<div class="mdai-modal-h"><b>🔑 ตั้งค่า Google Gemini API Key</b><button type="button" class="mdai-modal-x" aria-label="ปิด">×</button></div>' +
-            '<p class="mdai-modal-p">ใส่ Google Gemini API Key (ฟรี) เพื่อใช้งาน AI ได้ทันทีโดยไม่ต้องผ่าน proxy คีย์จะถูกบันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น ปลอดภัย 100%</p>' +
-            '<div class="mdai-modal-inp-wrap">' +
-              '<input type="password" id="mdai-gem-key-inp" placeholder="AIzaSy..." autocomplete="off" />' +
-              '<button type="button" id="mdai-key-eye" aria-label="ดูคีย์">👁️</button>' +
-            '</div>' +
-            '<div class="mdai-modal-links">' +
-              '<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">👉 กดรับ API Key ฟรีที่ Google AI Studio</a>' +
-            '</div>' +
-            '<div class="mdai-modal-acts">' +
-              '<button type="button" id="mdai-key-del" class="mdai-btn-ghost">ลบคีย์</button>' +
-              '<button type="button" id="mdai-key-save" class="mdai-btn-primary">บันทึก</button>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
         '<form id="mdai-form"><textarea id="mdai-input" rows="1" placeholder="พิมพ์คำถาม เช่น ครม., ส.ส., กระทรวง…" autocomplete="off"></textarea>' +
         '<button id="mdai-send" type="submit" aria-label="ส่ง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
         'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button></form>' +
@@ -665,168 +509,8 @@
       if (e.key === "Escape" && opened) close();
     });
 
-    // ---- จัดการตัวเลือกโมเดล AI ----
-    var modelBtn = panel.querySelector("#mdai-model-btn");
-    var modelMenu = panel.querySelector("#mdai-model-menu");
-    var modelBtnIco = panel.querySelector(".mdai-model-btn-ico");
-    var modelBtnName = panel.querySelector(".mdai-model-btn-name");
-
-    function renderModelMenu() {
-      if (!modelMenu) return;
-      modelMenu.innerHTML = "";
-      AI_MODELS.forEach(function (m) {
-        var isAct = m.id === selectedModelId;
-        var item = el(
-          '<button type="button" class="mdai-model-item' + (isAct ? ' active' : '') + '" role="option" aria-selected="' + isAct + '" data-id="' + m.id + '">' +
-            '<div class="mdai-model-item-l">' +
-              '<span class="mdai-model-badge-ico">' + m.icon + '</span>' +
-              '<div class="mdai-model-info-txt">' +
-                '<div class="mdai-model-row1">' +
-                  '<span class="mdai-model-name-txt">' + m.name + '</span>' +
-                  '<span class="mdai-model-brand-pill">' + m.badge + '</span>' +
-                '</div>' +
-                '<span class="mdai-model-desc-txt">' + m.tag + '</span>' +
-              '</div>' +
-            '</div>' +
-            '<svg class="mdai-model-chk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
-          '</button>'
-        );
-        modelMenu.appendChild(item);
-      });
-    }
-
-    function updateModelUI(announce) {
-      var cur = getSelectedModel();
-      if (modelBtnIco) modelBtnIco.textContent = cur.icon;
-      if (modelBtnName) modelBtnName.textContent = cur.name;
-      if (modelBtn) modelBtn.title = "โมเดลปัจจุบัน: " + cur.name + " (" + cur.badge + ") — คลิกเพื่อสลับโมเดล";
-      renderModelMenu();
-      if (announce) {
-        addSystemNotice("สลับเป็นโมเดล " + cur.name + " (" + cur.badge + ")");
-      }
-    }
-
-    function openModelMenu() {
-      if (!modelMenu || !modelBtn) return;
-      modelMenu.classList.add("mdai-show-menu");
-      modelBtn.setAttribute("aria-expanded", "true");
-    }
-
-    function closeModelMenu() {
-      if (!modelMenu || !modelBtn) return;
-      modelMenu.classList.remove("mdai-show-menu");
-      modelBtn.setAttribute("aria-expanded", "false");
-    }
-
-    if (modelBtn) {
-      modelBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var isShow = modelMenu.classList.contains("mdai-show-menu");
-        isShow ? closeModelMenu() : openModelMenu();
-      });
-    }
-
-    if (modelMenu) {
-      modelMenu.addEventListener("click", function (e) {
-        var btn = e.target.closest(".mdai-model-item");
-        if (!btn) return;
-        var newId = btn.getAttribute("data-id");
-        if (newId && newId !== selectedModelId) {
-          selectedModelId = newId;
-          try {
-            localStorage.setItem(MODEL_STORAGE_KEY, newId);
-          } catch (err) {}
-          updateModelUI(true);
-        }
-        closeModelMenu();
-      });
-    }
-
-    document.addEventListener("click", function (e) {
-      if (!panel.contains(e.target)) return;
-      if (modelMenu && !modelMenu.contains(e.target) && modelBtn && !modelBtn.contains(e.target)) {
-        closeModelMenu();
-      }
-    });
-
-    // ---- หน้าต่างตั้งค่า Gemini API Key ในเครื่อง ----
-    var keyModal = panel.querySelector("#mdai-key-modal");
-    var keyBtn = panel.querySelector("#mdai-key-btn");
-    var keyInput = panel.querySelector("#mdai-gem-key-inp");
-    var keyEye = panel.querySelector("#mdai-key-eye");
-    var keySave = panel.querySelector("#mdai-key-save");
-    var keyDel = panel.querySelector("#mdai-key-del");
-    var keyClose = panel.querySelector(".mdai-modal-x");
-    var pendingSendText = "";
-
-    function openKeyModal(pendingText) {
-      if (pendingText) pendingSendText = pendingText;
-      try {
-        var k = localStorage.getItem("mdai-gemini-key") || "";
-        if (keyInput) keyInput.value = k;
-      } catch (err) {}
-      if (keyModal) keyModal.classList.add("mdai-show-modal");
-      if (keyInput) keyInput.focus();
-    }
-
-    function closeKeyModal() {
-      if (keyModal) keyModal.classList.remove("mdai-show-modal");
-    }
-
-    if (keyBtn) {
-      keyBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        openKeyModal();
-      });
-    }
-
-    if (keyClose) keyClose.addEventListener("click", closeKeyModal);
-    if (keyModal) {
-      keyModal.addEventListener("click", function (e) {
-        if (e.target === keyModal) closeKeyModal();
-      });
-    }
-
-    if (keyEye && keyInput) {
-      keyEye.addEventListener("click", function () {
-        keyInput.type = keyInput.type === "password" ? "text" : "password";
-      });
-    }
-
-    if (keyDel) {
-      keyDel.addEventListener("click", function () {
-        try { localStorage.removeItem("mdai-gemini-key"); } catch (err) {}
-        if (keyInput) keyInput.value = "";
-        addSystemNotice("ลบ Gemini API Key ในเครื่องแล้ว");
-        closeKeyModal();
-      });
-    }
-
-    if (keySave && keyInput) {
-      keySave.addEventListener("click", function () {
-        var val = (keyInput.value || "").trim();
-        if (!val) {
-          alert("กรุณากรอก API Key ก่อนกดบันทึกครับ");
-          return;
-        }
-        try { localStorage.setItem("mdai-gemini-key", val); } catch (err) {}
-        addSystemNotice("บันทึก Gemini API Key เรียบร้อยแล้ว (ใช้งานได้ทันที)");
-        closeKeyModal();
-        if (pendingSendText) {
-          var t = pendingSendText;
-          pendingSendText = "";
-          send(t);
-        }
-      });
-    }
-
-    window._mdai_openKeyModal = openKeyModal;
-
-    updateModelUI(false);
-
     // ข้อความต้อนรับ + ชิปคำถามตัวอย่างในกล่องแชต
-    var initModel = getSelectedModel();
-    addBubble("ai", "สวัสดีครับ ผมเป็นผู้ช่วย AI ข้อมูลรัฐ ถามได้เลยครับ (" + initModel.name + ")", false, "hand");
+    addBubble("ai", "สวัสดีครับ ผมเป็นผู้ช่วย AI ข้อมูลรัฐ ถามได้เลยครับ", false, "hand");
 
     var msgsContainer = panel.querySelector("#mdai-msgs");
     var sug = el(
@@ -926,16 +610,6 @@
     return b;
   }
 
-  function addSystemNotice(text) {
-    var msgs = document.getElementById("mdai-msgs");
-    if (!msgs) return;
-    var row = document.createElement("div");
-    row.className = "mdai-sys-notice";
-    row.textContent = text;
-    msgs.appendChild(row);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
   function showTyping() {
     var msgs = document.getElementById("mdai-msgs");
     var row = document.createElement("div");
@@ -949,40 +623,6 @@
   function hideTyping() {
     var r = document.getElementById("mdai-typing-row");
     if (r) r.remove();
-  }
-
-  function sendToGeminiDirect(text, apiKey, modelId) {
-    var endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-    var finalMessages = [{ role: "system", content: SYSTEM_PROMPT }].concat(
-      messages.filter(function (m) { return m && m.role !== "system"; }).slice(-12)
-    );
-
-    var targetModel = modelId || "gemini-flash-latest";
-    if (targetModel === "gemini-2.0-flash" || targetModel === "gemini-1.5-flash") {
-      targetModel = "gemini-flash-latest";
-    }
-
-    return fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + apiKey,
-      },
-      body: JSON.stringify({
-        model: targetModel,
-        messages: finalMessages,
-        max_tokens: MAX_TOKENS,
-        temperature: TEMPERATURE,
-      }),
-    }).then(function (r) {
-      return r.json().then(function (data) {
-        if (!r.ok) {
-          var msg = data.error && (data.error.message || data.error);
-          throw new Error(msg || ("HTTP " + r.status));
-        }
-        return data;
-      });
-    });
   }
 
   function send(text) {
@@ -1007,52 +647,10 @@
     document.getElementById("mdai-send").disabled = true;
     showTyping();
 
-    // กรณีโมเดล Google Gemini: เรียกตรงด้วย API Key ในเครื่อง (ไม่ต้องพึ่งเซิร์ฟเวอร์ proxy)
-    if (selectedModelId.indexOf("gemini") !== -1) {
-      var gemKey = "";
-      try { gemKey = localStorage.getItem("mdai-gemini-key") || ""; } catch (e) {}
-
-      if (!gemKey) {
-        hideTyping();
-        busy = false;
-        document.getElementById("mdai-send").disabled = false;
-        if (window._mdai_openKeyModal) {
-          window._mdai_openKeyModal(text);
-        } else {
-          addBubble("ai", "กรุณากดปุ่ม 🔑 เพื่อใส่ Gemini API Key ก่อนใช้งานครับ", true);
-        }
-        return;
-      }
-
-      sendToGeminiDirect(text, gemKey, selectedModelId)
-        .then(function (data) {
-          hideTyping();
-          var reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-          reply = (reply || "").replace(/<think>[\s\S]*?(<\/think>|$)/g, "");
-          reply = reply.trim() || "ขออภัย ไม่ได้รับคำตอบครับ";
-          messages.push({ role: "assistant", content: reply });
-          addBubble("ai", reply);
-        })
-        .catch(function (err) {
-          hideTyping();
-          addBubble("ai", "เกิดข้อผิดพลาดจาก Gemini API: " + err.message + " (หากคีย์ไม่ถูกต้อง ให้กดปุ่ม 🔑 เพื่อใส่คีย์ใหม่ครับ)", true);
-        })
-        .finally(function () {
-          busy = false;
-          document.getElementById("mdai-send").disabled = false;
-        });
-      return;
-    }
-
     fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: messages,
-        model: selectedModelId,
-        max_tokens: MAX_TOKENS,
-        temperature: TEMPERATURE,
-      }),
+      body: JSON.stringify({ messages: messages, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }),
     })
       .then(function (r) {
         return r.json().then(function (data) {
