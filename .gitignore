@@ -17,6 +17,7 @@ hub/images/logo-original-1024.png
 Thumbs.db
 desktop.ini
 *.tmp
+*.bak
 *~
 .vscode/
 

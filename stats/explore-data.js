@@ -1437,7 +1437,8 @@ var NAV = [
           { pane:"fin-hyperinflation", ico:"<svg class='mdico'><use href='#i-hand-coins'></use></svg>", label:"ประวัติศาสตร์เงินเฟ้อ", existing:true },
           { pane:"fin-soundmoney", ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"เงินมั่นคง vs เงินอ่อนค่า", existing:true },
           { pane:"fin-wealth",    ico:"<svg class='mdico'><use href='#i-gem'></use></svg>", label:"ความมั่งคั่งของคนทั้งโลก", existing:true },
-          { pane:"fin-macro",     ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true }
+          { pane:"fin-macro",     ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"ความเหลื่อมล้ำ & ตลาดเงินตลาดทุน", existing:true },
+          { pane:"fin-century1900", ico:"<svg class='mdico'><use href='#i-history'></use></svg>", label:"เปรียบเทียบมหากาพย์ 1900–ปัจจุบัน (เล่นเวลา)", existing:true }
       ]},
       { id:"oil", ico:"<svg class='mdico'><use href='#i-fuel'></use></svg>", label:"น้ำมัน & พลังงาน", subs:[
           { pane:"en-elec",    ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"ไฟฟ้า", existing:true },
@@ -1712,4 +1713,297 @@ var MATH_EDU_HARMONIC = [
   { t: 5.0, under: 0.12, crit: 0.04, over: 0.12 },
   { t: 6.0, under: 0.14, crit: 0.02, over: 0.07 }
 ];
+
+/* ==========================================================================
+   📜 มหากาพย์เปรียบเทียบการเงิน & คุณภาพชีวิตโลก 1900–ปัจจุบัน (126 ปี)
+   ชุดข้อมูลประวัติศาสตร์สำหรับการเล่นเวลา (Timeline Playback) 14 มิติ
+   ========================================================================== */
+
+// 1. ปริมาณเงินดอลลาร์สหรัฐ M2 (ล้านล้านดอลลาร์ $ Trillion)
+var CENTURY_M2_USD = [
+  {year:1900, v:0.007}, {year:1910, v:0.012}, {year:1913, v:0.015}, {year:1917, v:0.024},
+  {year:1920, v:0.035}, {year:1925, v:0.041}, {year:1929, v:0.046}, {year:1933, v:0.032},
+  {year:1935, v:0.039}, {year:1940, v:0.055}, {year:1945, v:0.127}, {year:1950, v:0.153},
+  {year:1955, v:0.210}, {year:1960, v:0.312}, {year:1965, v:0.459}, {year:1970, v:0.628},
+  {year:1971, v:0.710}, {year:1975, v:1.02},  {year:1980, v:1.60},  {year:1985, v:2.50},
+  {year:1990, v:3.28},  {year:1995, v:3.64},  {year:2000, v:4.93},  {year:2005, v:6.68},
+  {year:2008, v:8.25},  {year:2010, v:8.76},  {year:2012, v:10.43}, {year:2015, v:12.31},
+  {year:2018, v:14.36}, {year:2019, v:15.33}, {year:2020, v:19.37}, {year:2021, v:21.49},
+  {year:2022, v:21.72}, {year:2023, v:20.87}, {year:2024, v:21.15}, {year:2025, v:21.45},
+  {year:2026, v:21.70}
+];
+
+// 2. ราคาทองคำแท้ ($/ทรอยออนซ์)
+var CENTURY_GOLD_USD = [
+  {year:1900, v:20.67}, {year:1910, v:20.67}, {year:1920, v:20.67}, {year:1930, v:20.67},
+  {year:1933, v:20.67}, {year:1934, v:35.00}, {year:1944, v:35.00}, {year:1950, v:35.00},
+  {year:1960, v:35.00}, {year:1970, v:35.00}, {year:1971, v:43.00}, {year:1973, v:97.00},
+  {year:1975, v:161.00},{year:1978, v:193.00},{year:1980, v:615.00},{year:1982, v:376.00},
+  {year:1985, v:317.00},{year:1990, v:384.00},{year:1995, v:384.00},{year:1999, v:279.00},
+  {year:2001, v:271.00},{year:2003, v:363.00},{year:2005, v:445.00},{year:2007, v:695.00},
+  {year:2008, v:872.00},{year:2009, v:972.00},{year:2010, v:1225.0},{year:2011, v:1572.0},
+  {year:2013, v:1411.0},{year:2015, v:1160.0},{year:2018, v:1268.0},{year:2020, v:1770.0},
+  {year:2021, v:1798.0},{year:2022, v:1800.0},{year:2023, v:1940.0},{year:2024, v:2390.0},
+  {year:2025, v:2680.0},{year:2026, v:2850.0}
+];
+
+// 3. Bitcoin (BTC) — สินทรัพย์ดิจิทัลที่กำเนิดมาทีหลัง (2009–ปัจจุบัน) เพื่อสู้เงินเฟียต ($/BTC)
+var CENTURY_BTC = [
+  {year:1900, v:0.0},    {year:1950, v:0.0},    {year:2000, v:0.0},    {year:2008, v:0.0},
+  {year:2009, v:0.0},    {year:2010, v:0.08},   {year:2011, v:4.70},   {year:2012, v:13.50},
+  {year:2013, v:755.0},  {year:2014, v:320.0},  {year:2015, v:430.0},  {year:2016, v:963.0},
+  {year:2017, v:14156},  {year:2018, v:3742},   {year:2019, v:7193},   {year:2020, v:29000},
+  {year:2021, v:46300},  {year:2022, v:16540},  {year:2023, v:42260},  {year:2024, v:93500},
+  {year:2025, v:98000},  {year:2026, v:105000}
+];
+
+// 4. อัตราเงินเฟ้อรายปีของสหรัฐฯ (% ต่อปี · CPI Inflation Rate)
+var CENTURY_INFLATION = [
+  {year:1900, v:1.2},  {year:1905, v:-0.5}, {year:1910, v:4.4},  {year:1914, v:1.0},
+  {year:1916, v:7.9},  {year:1917, v:17.4}, {year:1918, v:18.0}, {year:1920, v:15.6},
+  {year:1921, v:-10.5},{year:1925, v:2.3},  {year:1929, v:0.0},  {year:1931, v:-8.9},
+  {year:1932, v:-10.3},{year:1934, v:3.1},  {year:1938, v:-2.1}, {year:1941, v:5.0},
+  {year:1942, v:10.9}, {year:1946, v:8.3},  {year:1947, v:14.4}, {year:1950, v:1.3},
+  {year:1951, v:7.9},  {year:1955, v:-0.4}, {year:1960, v:1.7},  {year:1965, v:1.6},
+  {year:1970, v:5.7},  {year:1973, v:6.2},  {year:1974, v:11.0}, {year:1979, v:11.3},
+  {year:1980, v:13.5}, {year:1983, v:3.2},  {year:1990, v:5.4},  {year:1995, v:2.8},
+  {year:2000, v:3.4},  {year:2005, v:3.4},  {year:2008, v:3.8},  {year:2009, v:-0.4},
+  {year:2015, v:0.1},  {year:2020, v:1.2},  {year:2021, v:4.7},  {year:2022, v:8.0},
+  {year:2023, v:4.1},  {year:2024, v:2.9},  {year:2025, v:2.5},  {year:2026, v:2.3}
+];
+
+// 5. สัดส่วนความมั่งคั่ง: คนรวย 1% บนสุด vs คน 99% ที่เหลือ (% ของความมั่งคั่งรวม)
+var CENTURY_WEALTH_INEQ = [
+  {year:1900, top1:44.5, bot99:55.5, bot90:18.0}, {year:1910, top1:46.8, bot99:53.2, bot90:17.2},
+  {year:1920, top1:43.1, bot99:56.9, bot90:19.5}, {year:1928, top1:49.3, bot99:50.7, bot90:16.5},
+  {year:1933, top1:39.5, bot99:60.5, bot90:21.0}, {year:1940, top1:33.2, bot99:66.8, bot90:24.5},
+  {year:1945, top1:28.6, bot99:71.4, bot90:29.0}, {year:1950, top1:27.2, bot99:72.8, bot90:31.5},
+  {year:1960, top1:28.5, bot99:71.5, bot90:32.0}, {year:1970, top1:26.1, bot99:73.9, bot90:34.2},
+  {year:1978, top1:22.3, bot99:77.7, bot90:36.4}, {year:1985, top1:25.4, bot99:74.6, bot90:34.8},
+  {year:1990, top1:28.0, bot99:72.0, bot90:32.5}, {year:1995, top1:30.2, bot99:69.8, bot90:30.1},
+  {year:2000, top1:32.5, bot99:67.5, bot90:28.2}, {year:2007, top1:34.6, bot99:65.4, bot90:26.5},
+  {year:2010, top1:33.8, bot99:66.2, bot90:25.8}, {year:2015, top1:35.1, bot99:64.9, bot90:24.2},
+  {year:2020, top1:34.8, bot99:65.2, bot90:23.5}, {year:2024, top1:35.8, bot99:64.2, bot90:22.8},
+  {year:2026, top1:36.2, bot99:63.8, bot90:22.4}
+];
+
+// 6. อายุขัยเฉลี่ยประชากรเมื่อแรกเกิด (ปี · Life Expectancy at Birth)
+var CENTURY_LIFE_EXP = [
+  {year:1900, th:28.8, us:47.3, wld:32.0}, {year:1910, th:30.5, us:50.0, wld:34.0},
+  {year:1918, th:26.0, us:39.1, wld:26.5}, {year:1925, th:34.5, us:59.0, wld:37.0},
+  {year:1935, th:39.2, us:61.7, wld:41.0}, {year:1945, th:44.0, us:65.8, wld:45.5},
+  {year:1955, th:52.8, us:69.6, wld:48.0}, {year:1965, th:58.2, us:70.2, wld:54.0},
+  {year:1975, th:63.4, us:72.6, wld:59.5}, {year:1985, th:68.1, us:74.7, wld:63.0},
+  {year:1995, th:71.8, us:75.8, wld:65.5}, {year:2002, th:73.5, us:77.0, wld:67.5},
+  {year:2010, th:76.2, us:78.7, wld:70.2}, {year:2015, th:77.4, us:78.9, wld:72.0},
+  {year:2019, th:78.6, us:78.8, wld:73.0}, {year:2021, th:77.8, us:76.4, wld:71.0},
+  {year:2024, th:78.8, us:78.0, wld:73.2}, {year:2026, th:79.2, us:78.4, wld:73.5}
+];
+
+// 7. กำลังซื้อของ $1 ดอลลาร์สหรัฐ (เทียบปี 1900 = $1.00)
+var CENTURY_USD_PURCHASE = [
+  {year:1900, v:1.000}, {year:1913, v:0.810}, {year:1920, v:0.390}, {year:1930, v:0.460},
+  {year:1933, v:0.520}, {year:1945, v:0.380}, {year:1955, v:0.250}, {year:1971, v:0.160},
+  {year:1980, v:0.080}, {year:1990, v:0.050}, {year:2000, v:0.038}, {year:2010, v:0.030},
+  {year:2020, v:0.025}, {year:2024, v:0.021}, {year:2026, v:0.019}
+];
+
+// 8. หนี้สาธารณะสหรัฐฯ (ล้านล้าน $ Trillion) และสัดส่วนต่อ GDP (%)
+var CENTURY_US_DEBT = [
+  {year:1900, debt:0.0012, pct:7.0},  {year:1910, debt:0.0026, pct:7.5},
+  {year:1919, debt:0.025,  pct:33.0}, {year:1929, debt:0.017,  pct:16.0},
+  {year:1939, debt:0.040,  pct:43.0}, {year:1945, debt:0.258,  pct:118.0},
+  {year:1955, debt:0.274,  pct:66.0}, {year:1965, debt:0.317,  pct:44.0},
+  {year:1975, debt:0.533,  pct:31.0}, {year:1985, debt:1.82,   pct:42.0},
+  {year:1995, debt:4.97,   pct:65.0}, {year:2000, debt:5.67,   pct:55.0},
+  {year:2008, debt:10.02,  pct:68.0}, {year:2012, debt:16.07,  pct:98.0},
+  {year:2016, debt:19.57,  pct:104.0},{year:2020, debt:27.75,  pct:128.0},
+  {year:2023, debt:33.17,  pct:122.0},{year:2024, debt:35.50,  pct:124.0},
+  {year:2026, debt:36.80,  pct:125.5}
+];
+
+// 9. มูลค่าปลายทางของเงินลงทุน $100 ในปี 1900 ($ Dollar)
+var CENTURY_ASSETS_GROWTH = [
+  {year:1900, stock:100,  gold:100,  bond:100, cash:100},
+  {year:1920, stock:280,  gold:100,  bond:150, cash:39},
+  {year:1932, stock:190,  gold:100,  bond:210, cash:52},
+  {year:1945, stock:1150, gold:169,  bond:340, cash:38},
+  {year:1965, stock:12800,gold:169,  bond:620, cash:21},
+  {year:1971, stock:22400,gold:208,  bond:880, cash:16},
+  {year:1980, stock:41000,gold:2975, bond:1120,cash:8.0},
+  {year:1995, stock:420000,gold:1850,bond:2100,cash:5.0},
+  {year:2008, stock:1450000,gold:4220,bond:2950,cash:2.6},
+  {year:2020, stock:5200000,gold:8560,bond:3320,cash:2.5},
+  {year:2026, stock:8900000,gold:13780,bond:3450,cash:1.9}
+];
+
+// 10. ดัชนีตลาดหุ้น Dow Jones Industrial Average (จุด)
+var CENTURY_DOW = [
+  {year:1900, v:66},    {year:1910, v:82},    {year:1920, v:72},    {year:1929, v:381},
+  {year:1932, v:41},    {year:1940, v:131},   {year:1950, v:235},   {year:1954, v:404},
+  {year:1965, v:969},   {year:1972, v:1020},  {year:1982, v:1046},  {year:1987, v:1938},
+  {year:1995, v:5117},  {year:1999, v:11497}, {year:2007, v:13264}, {year:2009, v:10428},
+  {year:2015, v:17425}, {year:2017, v:24719}, {year:2020, v:30606}, {year:2024, v:43900},
+  {year:2026, v:44800}
+];
+
+// 11. ผลิตภาพแรงงาน vs ค่าตอบแทนจริง (ดัชนี 1948 = 100)
+var CENTURY_PROD_WAGE = [
+  {year:1948, prod:100, wage:100}, {year:1955, prod:122, wage:120},
+  {year:1965, prod:168, wage:165}, {year:1971, prod:196, wage:194},
+  {year:1980, prod:224, wage:205}, {year:1990, prod:258, wage:212},
+  {year:2000, prod:312, wage:232}, {year:2010, prod:385, wage:245},
+  {year:2020, prod:435, wage:265}, {year:2026, prod:470, wage:275}
+];
+
+// 12. อัตราส่วนราคาบ้านเฉลี่ยมัธยฐานต่อรายได้ครัวเรือนต่อปี (เท่าของรายได้)
+var CENTURY_HOME_AFFORD = [
+  {year:1950, v:2.1}, {year:1960, v:2.2}, {year:1970, v:2.4}, {year:1980, v:3.2},
+  {year:1990, v:3.5}, {year:2000, v:4.0}, {year:2006, v:4.8}, {year:2011, v:3.3},
+  {year:2018, v:4.4}, {year:2022, v:5.6}, {year:2024, v:5.4}, {year:2026, v:5.3}
+];
+
+// 13. ราคาน้ำมันดิบโลก ($/บาร์เรล)
+var CENTURY_OIL = [
+  {year:1900, v:1.19},  {year:1910, v:0.61},  {year:1920, v:3.07},  {year:1930, v:1.00},
+  {year:1940, v:1.02},  {year:1950, v:1.71},  {year:1960, v:1.80},  {year:1970, v:1.80},
+  {year:1973, v:3.29},  {year:1974, v:11.58}, {year:1979, v:31.61}, {year:1980, v:36.83},
+  {year:1986, v:14.43}, {year:1990, v:23.73}, {year:1998, v:12.72}, {year:2003, v:28.83},
+  {year:2008, v:97.26}, {year:2011, v:111.26},{year:2016, v:43.73}, {year:2020, v:41.84},
+  {year:2022, v:100.93},{year:2024, v:80.50}, {year:2026, v:76.00}
+];
+
+// 14. ประชากรโลก (พันล้านคน) & ประชากรไทย (ล้านคน)
+var CENTURY_POPULATION = [
+  {year:1900, wld:1.65, th:7.3},  {year:1910, wld:1.75, th:8.1},
+  {year:1920, wld:1.86, th:9.2},  {year:1930, wld:2.07, th:11.5},
+  {year:1940, wld:2.30, th:14.5}, {year:1950, wld:2.53, th:20.7},
+  {year:1960, wld:3.03, th:27.4}, {year:1970, wld:3.70, th:36.9},
+  {year:1980, wld:4.46, th:47.4}, {year:1990, wld:5.33, th:56.6},
+  {year:2000, wld:6.14, th:62.9}, {year:2010, wld:6.96, th:67.2},
+  {year:2020, wld:7.84, th:66.2}, {year:2024, wld:8.12, th:65.9},
+  {year:2026, wld:8.22, th:65.7}
+];
+
+// 15. ข้อมูลชุดรวมทุกมิติในกราฟเดียว (All-in-One Master Comparison 1900–2026)
+var CENTURY_ALL_IN_ONE = [
+  { year: 1900, m2: 0.007, gold: 20.67, btc: 0, usd: 1.000, life: 28.8, top1: 44.5, bot99: 55.5, dow: 66, pop: 1.65, oil: 1.19 },
+  { year: 1910, m2: 0.012, gold: 20.67, btc: 0, usd: 0.880, life: 30.5, top1: 46.8, bot99: 53.2, dow: 82, pop: 1.75, oil: 0.61 },
+  { year: 1914, m2: 0.017, gold: 20.67, btc: 0, usd: 0.800, life: 31.0, top1: 45.0, bot99: 55.0, dow: 75, pop: 1.80, oil: 0.81 },
+  { year: 1920, m2: 0.035, gold: 20.67, btc: 0, usd: 0.390, life: 29.5, top1: 43.1, bot99: 56.9, dow: 72, pop: 1.86, oil: 3.07 },
+  { year: 1929, m2: 0.046, gold: 20.67, btc: 0, usd: 0.460, life: 36.8, top1: 49.3, bot99: 50.7, dow: 381, pop: 2.05, oil: 1.27 },
+  { year: 1933, m2: 0.032, gold: 20.67, btc: 0, usd: 0.520, life: 38.0, top1: 39.5, bot99: 60.5, dow: 99, pop: 2.14, oil: 0.67 },
+  { year: 1940, m2: 0.055, gold: 35.00, btc: 0, usd: 0.450, life: 41.5, top1: 33.2, bot99: 66.8, dow: 131, pop: 2.30, oil: 1.02 },
+  { year: 1945, m2: 0.127, gold: 35.00, btc: 0, usd: 0.380, life: 44.0, top1: 28.6, bot99: 71.4, dow: 192, pop: 2.40, oil: 1.20 },
+  { year: 1950, m2: 0.153, gold: 35.00, btc: 0, usd: 0.300, life: 48.0, top1: 27.2, bot99: 72.8, dow: 235, pop: 2.53, oil: 1.71 },
+  { year: 1960, m2: 0.312, gold: 35.00, btc: 0, usd: 0.240, life: 55.0, top1: 28.5, bot99: 71.5, dow: 615, pop: 3.03, oil: 1.80 },
+  { year: 1971, m2: 0.710, gold: 43.00, btc: 0, usd: 0.160, life: 61.2, top1: 26.1, bot99: 73.9, dow: 890, pop: 3.77, oil: 2.24 },
+  { year: 1980, m2: 1.60,  gold: 615.0, btc: 0, usd: 0.080, life: 65.5, top1: 22.8, bot99: 77.2, dow: 963, pop: 4.46, oil: 36.83 },
+  { year: 1990, m2: 3.28,  gold: 384.0, btc: 0, usd: 0.050, life: 70.2, top1: 28.0, bot99: 72.0, dow: 2633, pop: 5.33, oil: 23.73 },
+  { year: 2000, m2: 4.93,  gold: 279.0, btc: 0, usd: 0.038, life: 73.0, top1: 32.5, bot99: 67.5, dow: 10786, pop: 6.14, oil: 28.50 },
+  { year: 2008, m2: 8.25,  gold: 872.0, btc: 0, usd: 0.032, life: 75.4, top1: 34.6, bot99: 65.4, dow: 8776, pop: 6.79, oil: 97.26 },
+  { year: 2009, m2: 8.54,  gold: 972.0, btc: 0, usd: 0.032, life: 75.8, top1: 33.5, bot99: 66.5, dow: 10428, pop: 6.87, oil: 61.67 },
+  { year: 2012, m2: 10.43, gold: 1670.0, btc: 13.5, usd: 0.029, life: 76.8, top1: 34.2, bot99: 65.8, dow: 13104, pop: 7.12, oil: 111.6 },
+  { year: 2017, m2: 13.84, gold: 1260.0, btc: 14156, usd: 0.026, life: 78.0, top1: 35.0, bot99: 65.0, dow: 24719, pop: 7.55, oil: 54.19 },
+  { year: 2020, m2: 19.37, gold: 1770.0, btc: 29000, usd: 0.025, life: 77.5, top1: 34.8, bot99: 65.2, dow: 30606, pop: 7.84, oil: 41.84 },
+  { year: 2024, m2: 21.15, gold: 2390.0, btc: 93500, usd: 0.021, life: 78.8, top1: 35.8, bot99: 64.2, dow: 43900, pop: 8.12, oil: 80.50 },
+  { year: 2026, m2: 21.70, gold: 2850.0, btc: 105000, usd: 0.019, life: 79.2, top1: 36.2, bot99: 63.8, dow: 44800, pop: 8.22, oil: 76.00 }
+];
+
+var CENTURY_METRIC_CONFIG = {
+  m2:    { name:"ปริมาณเงิน US M2", color:"#00E5FF", base:0.007, fmt:function(v){ return "$"+v.toFixed(2)+"T"; }, unit:"ล้านล้าน $" },
+  gold:  { name:"ราคาทองคำ",        color:"#FFB454", base:20.67, fmt:function(v){ return "$"+Math.round(v).toLocaleString("en-US"); }, unit:"$/oz" },
+  btc:   { name:"⚡ Bitcoin (BTC)", color:"#f59e0b", base:0.08,  fmt:function(v){ return v>0?"$"+Math.round(v).toLocaleString("en-US"):"ยังไม่กำเนิด (2009)"; }, unit:"$/BTC" },
+  usd:   { name:"กำลังซื้อ $1",     color:"#FF5C1A", base:1.000, fmt:function(v){ return "$"+v.toFixed(3)+" ("+(v*100).toFixed(1)+"%)"; }, unit:"กำลังซื้อ" },
+  dow:   { name:"หุ้น Dow Jones",    color:"#38bdf8", base:66,    fmt:function(v){ return Math.round(v).toLocaleString("en-US")+" จุด"; }, unit:"จุด" },
+  life:  { name:"อายุขัยคนไทย",      color:"#22c55e", base:28.8,  fmt:function(v){ return v.toFixed(1)+" ปี"; }, unit:"ปี" },
+  pop:   { name:"ประชากรโลก",       color:"#a855f7", base:1.65,  fmt:function(v){ return v.toFixed(2)+" พันล้านคน"; }, unit:"พันล้าน" },
+  top1:  { name:"คนรวย 1% บนสุด",    color:"#ec4899", base:44.5,  fmt:function(v){ return v.toFixed(1)+"%"; }, unit:"%" },
+  bot99: { name:"คน 99% ที่เหลือ",   color:"#10b981", base:55.5,  fmt:function(v){ return v.toFixed(1)+"%"; }, unit:"%" },
+  oil:   { name:"ราคาน้ำมันดิบ",     color:"#eab308", base:1.19,  fmt:function(v){ return "$"+v.toFixed(2); }, unit:"$/บาร์เรล" }
+};
+
+// 16. ข้อมูลกรอบช่วงเวลาวิกฤติสำคัญทางประวัติศาสตร์การเงินและโลก (1900–2026)
+var CENTURY_CRISES = [
+  {
+    id: "ww1",
+    start: 1914,
+    end: 1918,
+    name: "สงครามโลกครั้งที่ 1 (WWI)",
+    shortName: "1914 WWI",
+    color: "#ef4444",
+    bg: "rgba(239, 68, 68, 0.14)",
+    border: "rgba(239, 68, 68, 0.5)",
+    desc: "ตลาดหุ้นยุโรปและสหรัฐฯ ปิดทำการชั่วคราว รัฐบาลพิมพ์เงินระดมทุนสงครามจนเงินเฟ้อพุ่งสูงกว่า 18%"
+  },
+  {
+    id: "depression",
+    start: 1929,
+    end: 1933,
+    name: "วิกฤตเศรษฐกิจตกต่ำครั้งใหญ่ (Great Depression)",
+    shortName: "1929 Great Crash",
+    color: "#dc2626",
+    bg: "rgba(220, 38, 38, 0.16)",
+    border: "rgba(220, 38, 38, 0.55)",
+    desc: "ตลาดหุ้น Wall Street ถล่ม หุ้น Dow Jones ดิ่ง -89%, ธนาคารล้มกว่า 9,000 แห่ง, เกิดภาวะเงินฝืดรุนแรง -10.3%"
+  },
+  {
+    id: "ww2",
+    start: 1939,
+    end: 1945,
+    name: "สงครามโลกครั้งที่ 2 (WWII)",
+    shortName: "1939 WWII",
+    color: "#ea580c",
+    bg: "rgba(234, 88, 12, 0.14)",
+    border: "rgba(234, 88, 12, 0.5)",
+    desc: "หนี้สาธารณะสหรัฐฯ พุ่งทะลุ 118% ของ GDP นำไปสู่ข้อตกลง Bretton Woods (1944) สถาปนาดอลลาร์ผูกกับทองคำที่ $35/oz"
+  },
+  {
+    id: "nixon",
+    start: 1971,
+    end: 1975,
+    name: "นิกสันช็อก & วิกฤตราคาน้ำมัน (Nixon Shock)",
+    shortName: "1971 Nixon Shock",
+    color: "#f59e0b",
+    bg: "rgba(245, 158, 11, 0.15)",
+    border: "rgba(245, 158, 11, 0.55)",
+    desc: "สหรัฐฯ ประกาศยกเลิกการแลกเปลี่ยนดอลลาร์เป็นทองคำ ยุติระบบเบรตตันวูดส์ ราคาทองคำหลุด $35 พุ่งขึ้นกว่า 1,500% & เกิด Stagflation"
+  },
+  {
+    id: "dotcom",
+    start: 2000,
+    end: 2002,
+    name: "ฟองสบู่ด็อทคอมแตก (Dot-com Crash)",
+    shortName: "2000 Dot-com",
+    color: "#a855f7",
+    bg: "rgba(168, 85, 247, 0.14)",
+    border: "rgba(168, 85, 247, 0.5)",
+    desc: "ฟองสบู่หุ้นเทคโนโลยีแตก ดัชนี Nasdaq ร่วง -78%, Fed เริ่มลดดอกเบี้ยอัดฉีดสภาพคล่องเข้าสู่ระบบ"
+  },
+  {
+    id: "subprime",
+    start: 2007,
+    end: 2009,
+    name: "วิกฤตสินเชื่อซับไพรม์ & กำเนิด Bitcoin",
+    shortName: "2008 Subprime & BTC",
+    color: "#f97316",
+    bg: "rgba(249, 115, 22, 0.16)",
+    border: "rgba(249, 115, 22, 0.55)",
+    desc: "Lehman Brothers ล้มละลาย, Fed เริ่มทำนโยบาย QE พิมพ์เงินครั้งใหญ่, กำเนิด Bitcoin (2009) เพื่อเป็นสินทรัพย์ทางเลือกสู้เงินเฟียต"
+  },
+  {
+    id: "covid",
+    start: 2020,
+    end: 2022,
+    name: "วิกฤตโควิด-19 & อัดฉีดเงินประวัติศาสตร์ (COVID Stimulus)",
+    shortName: "2020 COVID Stimulus",
+    color: "#00E5FF",
+    bg: "rgba(0, 229, 255, 0.15)",
+    border: "rgba(0, 229, 255, 0.55)",
+    desc: "ล็อกดาวน์ทั่วโลก สหรัฐฯ พิมพ์เงินกระตุ้นเศรษฐกิจ ปริมาณเงิน M2 พุ่ง +40% ใน 2 ปี ผลักเงินเฟ้อสหรัฐฯ แตะ 9.1% สูงสุดใน 40 ปี"
+  }
+];
+
+
+
 

@@ -5510,6 +5510,307 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ============ การเงิน · เปรียบเทียบมหากาพย์ 1900–ปัจจุบัน (เล่นเวลา) ============ -->
+    <section class="tabpane" id="pane-fin-century1900" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">การเงิน</span><h2 class="ph-title"><svg class="mdico"><use href="#i-history"></use></svg> เปรียบเทียบมหากาพย์ 1900–ปัจจุบัน (เล่นเวลา 126 ปี)</h2></div>
+      
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-landmark"></use></svg> ปริมาณเงิน US M2</div>
+          <div class="k-num">3,100<span class="u">เท่า</span></div>
+          <div class="k-sub">จาก $7 พันล้าน (1900) สู่ $21.7 ล้านล้าน (2026)</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-gem"></use></svg> ราคาทองคำแท้</div>
+          <div class="k-num">+13,700<span class="u">%</span></div>
+          <div class="k-sub">จาก $20.67/oz สู่ระดับสูงสุดประวัติการณ์ &gt;$2,850</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-trending-down"></use></svg> กำลังซื้อ $1 ที่หายไป</div>
+          <div class="k-num">-98.1<span class="u">%</span></div>
+          <div class="k-sub">เงิน $1 ในปี 1900 วันนี้เหลือกำลังซื้อเทียบเท่าแค่ 1.9 เซนต์</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-heart-pulse"></use></svg> อายุขัยคนไทย 🇹🇭</div>
+          <div class="k-num">+50.4<span class="u">ปี</span></div>
+          <div class="k-sub">จาก 28.8 ปี (ยุค ร.5) สู่ 79.2 ปี แซงหน้าค่าเฉลี่ยสหรัฐฯ</div>
+        </div>
+      </div>
+
+      <!-- แถบควบคุมเวลารวม (Master Timeline Controller) -->
+      <div class="card full" style="border:1.5px solid var(--green);background:linear-gradient(135deg,var(--paper-2),var(--paper-3));box-shadow:0 8px 24px -10px rgba(0,229,255,0.25);">
+        <div class="card-head" style="margin-bottom:8px">
+          <h2><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> เครื่องเล่นเวลารวม (Master Timeline Sync 1900–2026)</h2>
+          <span class="tag" style="background:var(--green);color:var(--paper);font-weight:700">ควบคุมทุกกราฟพร้อมกัน</span>
+        </div>
+        <p class="sub" style="margin-bottom:14px">กดปุ่ม <b>▶ เล่นทุกกราฟพร้อมกัน</b> เพื่อดูการเปลี่ยนแปลงประวัติศาสตร์แบบแอนิเมชันพร้อมกัน หรือลากแถบสไลเดอร์เพื่อเลือกปี ค.ศ. (พ.ศ.) ที่ต้องการสำรวจเปรียบเทียบในทันที</p>
+        
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--paper);padding:14px 18px;border-radius:12px;border:1px solid var(--rule)">
+          <button type="button" id="masterPlayBtn" class="owid-tl-play" style="width:42px;height:42px;background:var(--green);color:var(--paper);border:none;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,229,255,0.35);transition:transform .15s ease;" title="เล่น/หยุดทุกกราฟพร้อมกัน" aria-label="เล่นทุกกราฟพร้อมกัน">
+            <svg class="mdico" style="width:20px;height:20px"><use href="#i-play"></use></svg>
+          </button>
+          <!-- ปุ่มควบคุมความเร็วการเล่น (Speed Selector) -->
+          <div style="display:flex;align-items:center;gap:3px;background:var(--paper-2);padding:3px 6px;border-radius:20px;border:1px solid var(--rule)">
+            <button type="button" class="master-speed-btn" data-speed="360" style="padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;transition:all .15s ease" title="ช้าพิเศษ (360ms/ปี · เจาะลึกประวัติศาสตร์)">🐢 ช้าพิเศษ</button>
+            <button type="button" class="master-speed-btn active" data-speed="220" style="padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;border:none;background:var(--green);color:var(--paper);cursor:pointer;transition:all .15s ease" title="ช้าพอดีแบบ OWID (220ms/ปี · ค่าเริ่มต้น)">(แนะนำ) ▶ ช้าพอดี</button>
+            <button type="button" class="master-speed-btn" data-speed="95" style="padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;transition:all .15s ease" title="เร็ว (95ms/ปี · สรุปภาพรวมไว)">⚡ เร็ว</button>
+          </div>
+          <span style="font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;color:var(--ink-soft)">1900 (พ.ศ. 2443)</span>
+          <input type="range" id="masterYearSlider" min="1900" max="2026" step="1" value="2026" style="flex:1;min-width:180px;accent-color:var(--green);height:8px;cursor:pointer" aria-label="สไลเดอร์ปีรวม">
+          <span style="font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;color:var(--ink-soft)">2026 (พ.ศ. 2569)</span>
+          <div style="background:var(--paper-2);padding:6px 14px;border-radius:8px;border:1px solid var(--rule-strong);text-align:center;min-width:140px">
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:20px;color:var(--green);line-height:1" id="masterYearDisplay">2026</div>
+            <div style="font-size:11px;color:var(--ink-soft);font-weight:600;margin-top:2px" id="masterThYearDisplay">พ.ศ. 2569</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-right:4px">กระโดดไปหมุดประวัติศาสตร์:</span>
+          <button type="button" class="era-chip" data-yr="1914" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--ink);cursor:pointer">1914 สงครามโลกครั้งที่ 1</button>
+          <button type="button" class="era-chip" data-yr="1929" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--red);cursor:pointer">1929 Great Crash</button>
+          <button type="button" class="era-chip" data-yr="1944" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--ink);cursor:pointer">1944 Bretton Woods</button>
+          <button type="button" class="era-chip" data-yr="1971" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gold);cursor:pointer">1971 Nixon Shock</button>
+          <button type="button" class="era-chip" data-yr="2008" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--red);cursor:pointer">2008 Subprime</button>
+          <button type="button" class="era-chip" data-yr="2009" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:#f59e0b;cursor:pointer">2009 กำเนิด BTC</button>
+          <button type="button" class="era-chip" data-yr="2020" style="background:var(--paper);border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--ink);cursor:pointer">2020 Covid Stimulus</button>
+          <button type="button" class="era-chip" data-yr="2026" style="background:var(--paper);border:1px solid var(--green);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--green);cursor:pointer">2026 ปัจจุบัน</button>
+        </div>
+      </div>
+
+      <!-- 🌟 กราฟมหากาพย์รวมทุกมิติในกราฟเดียว (All-in-One Master Comparison 1900–2026) -->
+      <div class="card full" id="card-finCentAllInOne" style="border:2px solid rgba(0,229,255,0.45);box-shadow:0 12px 36px -10px rgba(0,229,255,0.22);background:linear-gradient(180deg,var(--paper),var(--paper-2));position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#00E5FF,#FFB454,#f59e0b,#22c55e,#ec4899,#10b981,#38bdf8)"></div>
+        <div class="card-head" style="flex-wrap:wrap;gap:10px;margin-bottom:8px">
+          <div>
+            <h2 style="display:flex;align-items:center;gap:8px;font-size:1.22rem">
+              <span style="font-size:1.35rem">🌟</span> กราฟมหากาพย์รวมทุกมิติในกราฟเดียว (All-in-One Century Comparison 1900–2026)
+            </h2>
+            <p class="sub" style="margin:4px 0 0">
+              เปรียบเทียบวิวัฒนาการของ <b>10 ตัวแปรประวัติศาสตร์</b> บนแกนเวลาเดียวกัน แปลงเป็นดัชนีฐาน <b>100</b> บนสเกลลอการิทึม (Log Scale) พร้อมกรอบไฮไลต์ช่วงเวลาวิกฤติสำคัญ
+            </p>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="tag" style="background:var(--green);color:var(--paper);font-weight:800;border:none">ดัชนีฐาน 100 · Log Scale</span>
+            <span class="tag" style="background:var(--paper-3);border:1px solid var(--rule);font-weight:700">1900–2026 (126 ปี)</span>
+          </div>
+        </div>
+
+        <!-- แถบปุ่มเลือก Preset ด่วน เพื่อให้ดูง่าย ไม่รกตา -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 10px;padding:9px 12px;background:var(--paper-2);border-radius:10px;border:1px solid var(--rule)">
+          <span style="font-size:11.5px;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px">
+            <svg class="mdico" style="width:14px;height:14px"><use href="#i-sliders-horizontal"></use></svg> มุมมองด่วน:
+          </span>
+          <button type="button" class="aio-preset-btn active" data-preset="all" style="background:var(--green);color:var(--paper);border:none;padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s ease">✨ ครบทั้ง 10 มิติ</button>
+          <button type="button" class="aio-preset-btn" data-preset="finance" style="background:var(--paper);color:var(--ink);border:1px solid var(--rule);padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s ease">💰 สินทรัพย์ & การเงิน</button>
+          <button type="button" class="aio-preset-btn" data-preset="three_pillars" style="background:var(--paper);color:var(--ink);border:1px solid var(--rule);padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s ease">⚡ 3 เสาหลัก (M2 vs ทอง vs BTC)</button>
+          <button type="button" class="aio-preset-btn" data-preset="inequality" style="background:var(--paper);color:var(--ink);border:1px solid var(--rule);padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s ease">⚖️ ความมั่งคั่ง 1% vs 99%</button>
+          <button type="button" class="aio-preset-btn" data-preset="humanity" style="background:var(--paper);color:var(--ink);border:1px solid var(--rule);padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s ease">🏥 คุณภาพชีวิต & สังคม</button>
+          <button type="button" class="aio-preset-btn" data-preset="purchasing" style="background:var(--paper);color:var(--ink);border:1px solid var(--rule);padding:4px 11px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s ease">📉 กำลังซื้อ $1 vs ทองคำ vs M2</button>
+        </div>
+
+        <!-- แถบสวิตช์เปิด-ปิดเส้นรายตัว (Custom Filter Chips) -->
+        <div id="aioFilterChips" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:4px 0">
+          <!-- Rendered by JS: chips for m2, gold, btc, usd, dow, life, pop, top1, bot99, oil + crisis toggle -->
+        </div>
+
+        <!-- แผงรายงานสดค่าจริง 10 มิติ ณ ปีที่เลือก (Live Metric Pills) -->
+        <div id="aioLivePills" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px;padding:12px;background:var(--paper-3);border-radius:12px;border:1px solid var(--rule)">
+          <!-- Rendered by JS or static initial cards -->
+        </div>
+
+        <!-- แถบรายงานสดวิกฤติประวัติศาสตร์ตามปีที่เลือก/เล่น (Real-time Historical Crisis Banner) -->
+        <div id="aioCrisisBanner" style="margin-bottom:12px;padding:11px 16px;border-radius:10px;background:var(--paper-2);border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;transition:all .25s ease">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="crisis-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:800;background:var(--paper-3);color:var(--ink)">🕊️ ช่วงเวลาปกติ</span>
+            <span class="crisis-title" style="font-weight:800;font-size:13.5px;color:var(--ink)">ค.ศ. 2026 (พ.ศ. 2569)</span>
+          </div>
+          <div class="crisis-desc" style="font-size:12px;color:var(--ink-soft);flex:1;min-width:240px;text-align:right">
+            ช่วงเวลาปัจจุบันหลังการอัดฉีดเงินและวิกฤตเงินเฟ้อโควิด-19
+          </div>
+        </div>
+
+        <!-- กล่องกราฟหลัก -->
+        <div class="plot" id="finCentAllInOne"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+
+        <div class="src" style="margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <span>แหล่งข้อมูลรวม: Fed FRED, World Gold Council, Kraken/CoinMarketCap, US BLS, WID, UN Population Division &amp; OWID</span>
+          <span style="color:var(--ink-soft);font-weight:600">* จุดอ้างอิง: ค่าเริ่มต้นปี 1900 = 100 (ยกเว้น BTC เริ่มปี 2009 = 100)</span>
+        </div>
+      </div>
+
+      <!-- กราฟ 1: ปริมาณเงิน US M2 -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-landmark"></use></svg> ปริมาณเงินดอลลาร์สหรัฐ (US M2 Money Supply)</h2>
+          <span class="tag">ล้านล้านดอลลาร์ ($ Trillion) · 1900–2026</span>
+        </div>
+        <p class="sub">จากเพียง 7 พันล้านดอลลาร์ ($0.007T) ในปี 1900 พุ่งขึ้นเป็นกว่า 21.7 ล้านล้านดอลลาร์ในปัจจุบัน ขยายตัวกว่า 3,000 เท่า โดยเฉพาะช่วงหลังวิกฤต 2008 และมาตรการกระตุ้นเศรษฐกิจช่วงโควิด-19 ปี 2020 ที่มีการพิมพ์เงินเข้าสู่ระบบมากที่สุดในประวัติศาสตร์</p>
+        <div class="plot" id="finCentM2"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: Federal Reserve Bank of St. Louis (FRED) / National Bureau of Economic Research (NBER)</div>
+      </div>
+
+      <!-- กราฟ 2 & 3: ราคาทองคำแท้ vs Bitcoin (BTC) -->
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-gem"></use></svg> ราคาทองคำแท้ ($/ออนซ์) 126 ปี</h2>
+            <span class="tag">USD/oz · 1900–2026</span>
+          </div>
+          <p class="sub">ยุคมาตรฐานทองคำตรึงไว้ที่ $20.67 จนถึงปี 1933 ก่อนปรับเป็น $35 ในระบบเบรตตันวูดส์ เมื่อประธานาธิบดีนิกสันยกเลิกการผูกค่าเงินกับทองคำในปี 1971 ราคาทองคำก็ทะยานอย่างอิสระสะท้อนการด้อยค่าของเงินเฟียต จนทะลุ $2,800+ ในปัจจุบัน</p>
+          <div class="plot" id="finCentGold"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: World Gold Council / U.S. Treasury Department (ราคาสิ้นปี / พีครายปี)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-coins"></use></svg> ⚡ Bitcoin (BTC) — สินทรัพย์ดิจิทัลที่มาทีหลัง</h2>
+            <span class="tag" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid #f59e0b">กำเนิดปี 2009 · $/BTC</span>
+          </div>
+          <p class="sub">กำเนิดขึ้นหลังวิกฤตการเงิน 2008 โดย Satoshi Nakamoto เพื่อเป็นระบบเงินสดอิเล็กทรอนิกส์ไร้ศูนย์กลางและมีจำนวนจำกัด 21 ล้านเหรียญ เพื่อต่อต้านการพิมพ์เงินเฟียตไม่จำกัด จากราคาไม่กี่เซนต์ในปี 2010 สู่สินทรัพย์มูลค่าเกิน $100,000 ในปัจจุบัน</p>
+          <div class="plot" id="finCentBtc"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: CoinMarketCap / Kraken Exchange / Bitstamp (ราคาปิดสิ้นปี ค.ศ. 2009–2026)</div>
+        </div>
+      </div>
+
+      <!-- กราฟ 4 & 5: ผลกระทบเงินเฟ้อรายปี vs กำลังซื้อ $1 ที่หายไป -->
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-flame"></use></svg> 🔥 ผลกระทบเงินเฟ้อรายปี (Inflation Rate)</h2>
+            <span class="tag">% ต่อปี · สหรัฐฯ 1900–2026</span>
+          </div>
+          <p class="sub">บันทึกเหตุการณ์เงินเฟ้อครั้งสำคัญ: สงครามโลกครั้งที่ 1 (พุ่งแตะ 18%), ภาวะเงินฝืดรุนแรงช่วงวิกฤตเศรษฐกิจตกต่ำใหญ่ 1930s (-10.3%), ยุคหลังสงครามโลกครั้งที่ 2 (14.4%), วิกฤตน้ำมัน Stagflation 1970s (13.5%), และการดีดตัวหลังโควิด 2022 (8.0%)</p>
+          <div class="plot" id="finCentInflation"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: U.S. Bureau of Labor Statistics (Consumer Price Index - Historical)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-trending-down"></use></svg> กำลังซื้อของเงิน $1 ดอลลาร์ที่หายไป</h2>
+            <span class="tag">มูลค่าเทียบปี 1900 = $1.00</span>
+          </div>
+          <p class="sub">เงิน 1 ดอลลาร์ในปี 1900 สามารถซื้อสินค้าและบริการได้เทียบเท่ากับเงินประมาณ 38–40 ดอลลาร์ในปัจจุบัน ผลจากเงินเฟ้อสะสมต่อเนื่องทำให้กำลังซื้อที่แท้จริงของเงินสดดอลลาร์หดหายไปแล้วกว่า 98.1%</p>
+          <div class="plot" id="finCentUsdPur"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: คำนวณจากดัชนี CPI สหรัฐฯ (กำลังซื้อที่แท้จริงเทียบเงินสด $1)</div>
+        </div>
+      </div>
+
+      <!-- กราฟ 6: ความมั่งคั่ง 1% บนสุด vs ประชากร 99% ที่เหลือ (Thomas Piketty U-Curve) -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-scale"></use></svg> ส่วนแบ่งความมั่งคั่ง: คนรวย 1% บนสุด vs คน 99% ที่เหลือ (เทียบคน 90% ล่าง)</h2>
+          <span class="tag">% ของความมั่งคั่งรวมของประเทศ · 1900–2026</span>
+        </div>
+        <p class="sub">ความมั่งคั่งรวมทั้งประเทศเท่ากับ 100% เสมอ: <b>คน 99% ที่เหลือ (Bottom 99%)</b> เคยมีส่วนแบ่งสูงสุดถึง 77.7% ในทศวรรษ 1970 ยุคที่ความเหลื่อมล้ำต่ำสุด ก่อนจะลดลงเหลือ 63.8% ในปัจจุบัน ขณะที่ <b>คนรวย 1% บนสุด (Top 1%)</b> กุมความมั่งคั่งพุ่งขึ้นแตะ 36.2% โดยในกลุ่ม 99% นั้น ประชากรส่วนใหญ่ <b>90% ล่างสุด (Bottom 90%)</b> มีส่วนแบ่งความมั่งคั่งเพียง 22.4% เท่านั้น</p>
+        <div class="plot" id="finCentWealth"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: World Inequality Database (WID) / Thomas Piketty, Emmanuel Saez &amp; Gabriel Zucman</div>
+      </div>
+
+      <!-- กราฟ 7 & 8: อายุขัยเฉลี่ย & สุขภาพ vs ประชากรโลกและไทย -->
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-heart-pulse"></use></svg> วิวัฒนาการสุขภาพ &amp; อายุขัยเฉลี่ยเมื่อแรกเกิด</h2>
+            <span class="tag">ปี · ไทย vs สหรัฐฯ vs โลก (1900–2026)</span>
+          </div>
+          <p class="sub">ความสำเร็จด้านสาธารณสุขและยาปฏิชีวนะ: ค่าเฉลี่ยอายุขัยโลกเพิ่มจาก 32 สู่ 73.5 ปี ขณะที่ประเทศไทยก้าวกระโดดจากเพียง 28.8 ปีในปลายยุค ร.5 สู่ 79.2 ปีในปัจจุบัน โดยเฉพาะหลังมีโครงการหลักประกันสุขภาพถ้วนหน้า (30 บาท) จนแซงหน้าค่าเฉลี่ยสหรัฐฯ (78.4 ปี)</p>
+          <div class="plot" id="finCentLife"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: Our World in Data (Zijdenbos et al.) / UN Population Division (WPP 2024)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-users"></use></svg> ประชากรโลก &amp; ประชากรไทย (1900–2026)</h2>
+            <span class="tag">โลก (พันล้านคน) · ไทย (สิบล้านคน)</span>
+          </div>
+          <p class="sub">ประชากรโลกเพิ่มขึ้นกว่า 5 เท่าในรอบศตวรรษ จาก 1.65 พันล้านคนในปี 1900 สู่กว่า 8.2 พันล้านคนในปัจจุบัน ขณะที่ประชากรไทยเติบโตจาก 7.3 ล้านคนสู่จุดสูงสุดราว 66 ล้านคน และเริ่มเข้าสู่สังคมสูงวัยขั้นสุดยอด</p>
+          <div class="plot" id="finCentPop"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: United Nations Population Division / กรมการปกครอง กระทรวงมหาดไทย</div>
+        </div>
+      </div>
+
+      <!-- กราฟ 9: การเติบโตของเงินลงทุน $100 ในปี 1900 -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-chart-column"></use></svg> การแข่งขันผลตอบแทนสินทรัพย์: ถ้านำ $100 ในปี 1900 ไปลงทุน วันนี้จะมีมูลค่าเท่าไหร่?</h2>
+          <span class="tag">ดอลลาร์ ($ Dollar) · สเกลเชิงเปรียบเทียบ 1900–2026</span>
+        </div>
+        <p class="sub">พลังของผลตอบแทนทบต้น (Compound Interest) และสินทรัพย์ที่แท้จริง: หุ้นสหรัฐฯ (S&P 500 ปันผลทบต้น) เติบโตจาก $100 สู่กว่า <b>$8,900,000</b> ชนะเงินเฟ้อขาดลอย ขณะที่ทองคำเติบโตเป็น <b>$13,780</b> และพันธบัตรรัฐบาลเป็น <b>$3,450</b> ส่วนการถือเงินสด $100 ไว้ กำลังซื้อจริงในปัจจุบันลดลงเหลือเทียบเท่าแค่ <b>$1.90</b></p>
+        <div class="plot" id="finCentAssets"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: Robert Shiller (Yale Data) / Ibbotson Associates / World Gold Council</div>
+      </div>
+
+      <!-- กราฟ 10 & 11: หนี้สาธารณะสหรัฐฯ vs ดัชนี Dow Jones -->
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-landmark"></use></svg> หนี้สาธารณะสหรัฐฯ &amp; สัดส่วนต่อ GDP (%)</h2>
+            <span class="tag">ล้านล้านดอลลาร์ &amp; % GDP · 1900–2026</span>
+          </div>
+          <p class="sub">หนี้สินสหรัฐฯ ทะยานจาก 1.2 พันล้านดอลลาร์ (7% ของ GDP) ในปี 1900 สู่กว่า 36.8 ล้านล้านดอลลาร์ในปัจจุบัน คิดเป็นกว่า 125% ของ GDP แซงหน้าสถิติเดิมช่วงสิ้นสุดสงครามโลกครั้งที่ 2 (118%) สะท้อนภาระการคลังและงบประมาณขาดดุลเรื้อรัง</p>
+          <div class="plot" id="finCentDebt"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: U.S. Department of the Treasury / Congressional Budget Office (CBO)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-trending-up"></use></svg> ดัชนีตลาดหุ้น Dow Jones ย้อนหลัง 126 ปี</h2>
+            <span class="tag">จุด · ค.ศ. 1900–2026</span>
+          </div>
+          <p class="sub">ดัชนีอุตสาหกรรมดาวโจนส์เริ่มจาก 66 จุดในปี 1900 ผ่านวิกฤตเศรษฐกิจตกต่ำใหญ่ปี 1929 ที่ดัชนีดิ่งลงถึง 89% (ต้องใช้เวลา 25 ปีจึงกลับมาเท่าเดิม) สู่การเติบโตของเศรษฐกิจยุคใหม่ ทะลุ 1,000 จุดในปี 1972, ทะลุ 10,000 จุดในปี 1999 และแตะระดับ 44,000+ จุดในปัจจุบัน</p>
+          <div class="plot" id="finCentDow"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: S&P Dow Jones Indices (ปิดสิ้นปี ค.ศ. 1900–2026)</div>
+        </div>
+      </div>
+
+      <!-- กราฟ 12 & 13: ผลิตภาพ vs ค่าจ้างจริง & ราคาบ้านเทียบรายได้ -->
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-scissors"></use></svg> ผลิตภาพแรงงาน vs ค่าจ้างจริง (รอยแยกหลัง 1971)</h2>
+            <span class="tag">ดัชนี 1948 = 100 · 1948–2026</span>
+          </div>
+          <p class="sub">ก่อนปี 1971 ผลิตภาพและค่าจ้างแรงงานเติบโตไปด้วยกันเกือบ 1:1 แต่หลังจากสหรัฐฯ ยกเลิกมาตรฐานทองคำและเข้าสู่ยุคการเงินสมัยใหม่ ผลิตภาพพุ่งขึ้นถึง +260% ขณะที่ค่าตอบแทนชั่วโมงทำงานจริงของคนทำงานทั่วไปโตเพียง +120% เกิดช่องว่างความมั่งคั่งมหาศาล</p>
+          <div class="plot" id="finCentProdWage"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: Economic Policy Institute (EPI) analysis of BLS and BEA data (wtfhappenedin1971.com)</div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><svg class="mdico"><use href="#i-building-2"></use></svg> ราคาบ้านเฉลี่ยเทียบกับรายได้ครัวเรือน</h2>
+            <span class="tag">เท่าของรายได้ต่อปี · 1950–2026</span>
+          </div>
+          <p class="sub">ในทศวรรษ 1960 คนทำงานคนเดียวสามารถซื้อบ้านได้ด้วยเงินประมาณ 2.2 เท่าของรายได้ทั้งปี แต่ในปัจจุบันราคาบ้านพุ่งขึ้นไปสูงกว่า 5.3–5.6 เท่าของรายได้ ทำให้คนรุ่นใหม่เข้าถึงการมีบ้านของตนเองได้ยากที่สุดในรอบกึ่งศตวรรษ</p>
+          <div class="plot" id="finCentHome"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: U.S. Census Bureau / S&P CoreLogic Case-Shiller / Joint Center for Housing Studies (Harvard)</div>
+        </div>
+      </div>
+
+      <!-- กราฟ 14: ราคาน้ำมันดิบโลก -->
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-fuel"></use></svg> ราคาน้ำมันดิบโลก (Crude Oil Price 1900–2026)</h2>
+          <span class="tag">USD/บาร์เรล · ประวัติศาสตร์พลังงานและการเมืองโลก</span>
+        </div>
+        <p class="sub">จากยุคกำเนิดอุตสาหกรรมปิโตรเลียมที่ราคา $1.19/บาร์เรล ในปี 1900 สู่จุดเปลี่ยนสำคัญ: วิกฤตการณ์น้ำมัน 1973 และ 1979 ของกลุ่มโอเปกที่ผลักดันเงินเฟ้อทั่วโลก, พีคสูงสุด $147 ในปี 2008, วิกฤตราคาติดลบช่วงโควิด 2020 และการดีดตัวกลับช่วงสงครามรัสเซีย-ยูเครน</p>
+        <div class="plot" id="finCentOil"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: BP Statistical Review of World Energy / U.S. Energy Information Administration (EIA)</div>
+      </div>
+
+      <!-- กล่องสรุปบทเรียนประวัติศาสตร์ -->
+      <div class="card full" style="border-left:4px solid var(--gold);background:var(--paper-2)">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-compass"></use></svg> บทเรียนจากมหากาพย์ 126 ปี: เงินตรา คุณภาพชีวิต และความมั่งคั่ง</h2>
+          <span class="tag" style="color:var(--gold);border-color:var(--gold)">ภาพรวมเศรษฐศาสตร์</span>
+        </div>
+        <p class="sub" style="line-height:1.75;font-size:13.5px">
+          <b>1. มนุษย์มีคุณภาพชีวิตและอายุขัยที่ก้าวกระโดด:</b> วิทยาศาสตร์การแพทย์และสาธารณสุขทำให้มนุษย์มีอายุขัยเพิ่มขึ้นกว่าสองเท่าจากยุค 1900 โดยเฉพาะประเทศไทยที่สามารถยกระดับอายุขัยเฉลี่ยจาก 28.8 สู่กว่า 79 ปี<br>
+          <b>2. เงินสดไม่ใช่ที่เก็บมูลค่าระยะยาว:</b> การละทิ้งมาตรฐานทองคำในปี 1971 นำไปสู่การขยายตัวของปริมาณเงินอย่างไร้ขีดจำกัด ทำให้เงินสดสูญเสียกำลังซื้ออย่างต่อเนื่อง สินทรัพย์ที่มีการผลิตจริง (หุ้น) หรือมีจำนวนจำกัดตามธรรมชาติ (ทองคำ, Bitcoin) จึงเป็นเกราะป้องกันความมั่งคั่งที่แท้จริง<br>
+          <b>3. รอยแยกความเหลื่อมล้ำและภาระคนรุ่นใหม่:</b> เมื่อผลตอบแทนของสินทรัพย์โตเร็วกว่าค่าจ้างแรงงาน (Piketty: r &gt; g) ความเหลื่อมล้ำจึงถ่างกว้างขึ้น พร้อมกับต้นทุนปัจจัยสี่ เช่น ที่อยู่อาศัย ที่ต้องใช้เวลาทำงานแลกมามากกว่าคนรุ่นก่อนหลายเท่าตัว
+        </p>
+      </div>
+    </section>
+
     <!-- ============ กรุงเทพ · น้ำท่วม & งบประมาณ ============ -->
     <section class="tabpane" id="pane-bkk-flood" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">กรุงเทพ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-waves"></use></svg> น้ำท่วม &amp; งบประมาณเมือง</h2></div>
@@ -9630,7 +9931,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     function owidPlay(o){
       var st=o.st; if(!st.ready) return;
       owidStop(o); st.playing=true; o.btn.innerHTML=MDICO("pause");
-      var span=st.hi-st.lo, dur=Math.max(1600, Math.min(5200, span*45)), t0=Date.now();
+      var span=st.hi-st.lo;
+      var dur = (span >= 100) ? Math.max(22000, span * 190) : Math.max(1600, Math.min(5200, span*45));
+      var t0=Date.now();
       st.svg.style.pointerEvents="none";
       st.timer=setInterval(function(){
         if(o.box.offsetParent===null){ owidStop(o); return; }
@@ -9663,7 +9966,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         var cp=document.createElementNS(NS,"clipPath"); cp.setAttribute("id",cid);
         var crect=document.createElementNS(NS,"rect"); crect.setAttribute("x","0"); crect.setAttribute("y","0"); crect.setAttribute("height",H); crect.setAttribute("width",W);
         cp.appendChild(crect); defs.appendChild(cp);
-        ["area","line","dot","text"].forEach(function(lab){
+        ["area","line","dot","text","rect"].forEach(function(lab){
           Array.prototype.forEach.call(svg.querySelectorAll("g[aria-label='"+lab+"']"), function(g){ g.setAttribute("clip-path","url(#"+cid+")"); });
         });
         var head=document.createElementNS(NS,"g"); head.setAttribute("class","owid-head"); head.style.pointerEvents="none"; head.style.display="none";
@@ -12456,6 +12759,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       renderInflationAll(); renderPersonalAll(); renderDebtAll(); renderHistoryAll(); renderWealthAll();
       renderUsDebt(); renderUsDebtNum();
       renderFinMacro(); renderFinMoneyAll(); renderFinMoney5000(); renderFinHyper(); renderFinSound();
+      renderFinCentury1900();
     }
 
     /* ---------- โหลดเงินเฟ้อสด (World Bank) ---------- */
@@ -16119,6 +16423,815 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       gpoLine("#finGini", FIN_GINI, {full:true, h:270, ml:44, ticks:5, ylab:"ดัชนี Gini", color:cssVar("--green"), ydomain:[30,45], fmt:function(v){ return v.toFixed(1); }});
       gpoLine("#finRate", FIN_RATE, {h:260, ml:40, ticks:7, ylab:"% ต่อปี", color:cssVar("--red"), ydomain:[0,3], fmt:function(v){ return v.toFixed(2)+"%"; }});
       gpoLine("#finSet", FIN_SET, {h:260, ml:48, ticks:6, ylab:"จุด", color:cssVar("--green"), ydomain:[1300,1750], fmt:function(v){ return v.toLocaleString("en-US"); }});
+    }
+
+    /* ================= ข้อ 6.2 · เปรียบเทียบมหากาพย์ 1900–ปัจจุบัน (เล่นเวลา 126 ปี) ================= */
+    var _masterTimer = null, _masterPlaying = false, _masterSpeed = 220;
+    function initMasterCenturyTimeline(){
+      var sld = $("#masterYearSlider"), btn = $("#masterPlayBtn");
+      var yrDisp = $("#masterYearDisplay"), thYrDisp = $("#masterThYearDisplay");
+      if(!sld || sld._wired) return;
+      sld._wired = true;
+
+      var CHART_SELS = [
+        "#finCentAllInOne",
+        "#finCentM2", "#finCentGold", "#finCentBtc", "#finCentInflation",
+        "#finCentUsdPur", "#finCentWealth", "#finCentLife", "#finCentPop",
+        "#finCentAssets", "#finCentDebt", "#finCentDow", "#finCentProdWage",
+        "#finCentHome", "#finCentOil"
+      ];
+
+      function syncAll(yr){
+        if(sld) sld.value = yr;
+        if(yrDisp) yrDisp.textContent = yr;
+        if(thYrDisp) thYrDisp.textContent = "พ.ศ. " + (yr + 543);
+        if(typeof updateAioLivePills === "function") updateAioLivePills(yr);
+        if(typeof updateAioCrisisBanner === "function") updateAioCrisisBanner(yr);
+        CHART_SELS.forEach(function(sel){
+          var b = $(sel);
+          if(b && b._owid && b._owid.st && b._owid.st.ready){
+            owidStop(b._owid);
+            owidSeek(b._owid, yr);
+          }
+        });
+      }
+
+      sld.addEventListener("input", function(){
+        if(_masterPlaying) stopMasterPlay();
+        syncAll(+sld.value);
+      });
+
+      function stopMasterPlay(){
+        _masterPlaying = false;
+        if(_masterTimer){ clearInterval(_masterTimer); _masterTimer = null; }
+        if(btn) btn.innerHTML = '<svg class="mdico" style="width:20px;height:20px"><use href="#i-play"></use></svg>';
+      }
+
+      function startMasterPlay(){
+        _masterPlaying = true;
+        if(btn) btn.innerHTML = '<svg class="mdico" style="width:20px;height:20px"><use href="#i-pause"></use></svg>';
+        var cur = +sld.value;
+        if(cur >= 2026) cur = 1900;
+        _masterTimer = setInterval(function(){
+          var pane = document.getElementById("pane-fin-century1900");
+          if(!pane || paneHidden(pane)){ stopMasterPlay(); return; }
+          cur++;
+          if(cur > 2026){ cur = 2026; syncAll(cur); stopMasterPlay(); return; }
+          syncAll(cur);
+        }, _masterSpeed);
+      }
+
+      if(btn){
+        btn.addEventListener("click", function(){
+          if(_masterPlaying) stopMasterPlay(); else startMasterPlay();
+        });
+      }
+
+      // ปุ่มเลือกสปีดการเล่นเวลา (ช้าพิเศษ · ช้าพอดี · เร็ว)
+      $$(".master-speed-btn").forEach(function(sbtn){
+        sbtn.addEventListener("click", function(){
+          var sp = +sbtn.getAttribute("data-speed");
+          if(sp){
+            _masterSpeed = sp;
+            $$(".master-speed-btn").forEach(function(x){
+              var on = (x === sbtn);
+              x.classList.toggle("active", on);
+              x.style.background = on ? "var(--green)" : "transparent";
+              x.style.color = on ? "var(--paper)" : "var(--ink-soft)";
+            });
+            if(_masterPlaying){
+              if(_masterTimer) clearInterval(_masterTimer);
+              var cur = +sld.value;
+              _masterTimer = setInterval(function(){
+                var pane = document.getElementById("pane-fin-century1900");
+                if(!pane || paneHidden(pane)){ stopMasterPlay(); return; }
+                cur++;
+                if(cur > 2026){ cur = 2026; syncAll(cur); stopMasterPlay(); return; }
+                syncAll(cur);
+              }, _masterSpeed);
+            }
+          }
+        });
+      });
+
+      $$(".era-chip").forEach(function(chip){
+        chip.addEventListener("click", function(){
+          var y = +chip.getAttribute("data-yr");
+          if(y){
+            if(_masterPlaying) stopMasterPlay();
+            syncAll(y);
+          }
+        });
+      });
+    }
+
+    /* ===== กราฟมหากาพย์รวมทุกมิติในกราฟเดียว (All-in-One Master Comparison) ===== */
+    var _aioActive = ["m2", "gold", "btc", "usd", "dow", "life", "pop", "top1", "bot99", "oil"];
+    var _aioShowCrises = true;
+    var AIO_PRESETS = {
+      all: ["m2", "gold", "btc", "usd", "dow", "life", "pop", "top1", "bot99", "oil"],
+      finance: ["m2", "gold", "btc", "dow", "usd"],
+      three_pillars: ["m2", "gold", "btc"],
+      inequality: ["top1", "bot99"],
+      humanity: ["life", "pop", "top1", "bot99"],
+      purchasing: ["usd", "gold", "m2", "oil"]
+    };
+
+    function getAioInterpolated(yr){
+      if(typeof CENTURY_ALL_IN_ONE === "undefined" || !CENTURY_ALL_IN_ONE.length) return null;
+      var d = CENTURY_ALL_IN_ONE;
+      if(yr <= d[0].year) return d[0];
+      if(yr >= d[d.length - 1].year) return d[d.length - 1];
+      for(var i = 0; i < d.length - 1; i++){
+        if(yr >= d[i].year && yr <= d[i + 1].year){
+          var p = (yr - d[i].year) / (d[i + 1].year - d[i].year);
+          var res = { year: yr };
+          if(typeof CENTURY_METRIC_CONFIG !== "undefined"){
+            Object.keys(CENTURY_METRIC_CONFIG).forEach(function(k){
+              if(k === "btc" && yr < 2009){
+                res[k] = 0;
+              } else {
+                var v0 = d[i][k] || 0, v1 = d[i + 1][k] || 0;
+                res[k] = v0 + (v1 - v0) * p;
+              }
+            });
+          }
+          return res;
+        }
+      }
+      return d[d.length - 1];
+    }
+
+    function updateAioCrisisBanner(yr){
+      var banner = document.getElementById("aioCrisisBanner");
+      if(!banner) return;
+      var bBadge = banner.querySelector(".crisis-badge");
+      var bTitle = banner.querySelector(".crisis-title");
+      var bDesc = banner.querySelector(".crisis-desc");
+
+      var c = null;
+      if(typeof CENTURY_CRISES !== "undefined"){
+        for(var i = 0; i < CENTURY_CRISES.length; i++){
+          if(yr >= CENTURY_CRISES[i].start && yr <= CENTURY_CRISES[i].end){
+            c = CENTURY_CRISES[i];
+            break;
+          }
+        }
+      }
+
+      if(c){
+        banner.style.borderColor = c.border;
+        banner.style.boxShadow = "0 4px 18px " + c.bg;
+        banner.style.background = "linear-gradient(90deg, " + c.bg + ", var(--paper-2))";
+        if(bBadge){
+          bBadge.innerHTML = "🚨 " + c.shortName;
+          bBadge.style.background = c.color;
+          bBadge.style.color = "#ffffff";
+        }
+        if(bTitle){
+          bTitle.textContent = c.name;
+          bTitle.style.color = c.color;
+        }
+        if(bDesc){
+          bDesc.textContent = c.desc;
+          bDesc.style.color = "var(--ink)";
+        }
+      } else {
+        banner.style.borderColor = "var(--rule)";
+        banner.style.boxShadow = "none";
+        banner.style.background = "var(--paper-2)";
+        if(bBadge){
+          bBadge.innerHTML = "🕊️ ช่วงเวลาปกติ";
+          bBadge.style.background = "var(--paper-3)";
+          bBadge.style.color = "var(--ink)";
+        }
+        if(bTitle){
+          bTitle.textContent = "ค.ศ. " + yr + " (พ.ศ. " + (yr + 543) + ")";
+          bTitle.style.color = "var(--ink)";
+        }
+        if(bDesc){
+          bDesc.textContent = "ช่วงเวลาการพัฒนาและกิจกรรมทางเศรษฐกิจทั่วไป";
+          bDesc.style.color = "var(--ink-soft)";
+        }
+      }
+    }
+
+    function updateAioLivePills(yr){
+      var container = document.getElementById("aioLivePills");
+      if(!container || typeof CENTURY_METRIC_CONFIG === "undefined") return;
+      var cur = getAioInterpolated(yr);
+      if(!cur) return;
+
+      if(!container._built){
+        container._built = true;
+        var h = "";
+        Object.keys(CENTURY_METRIC_CONFIG).forEach(function(k){
+          var cfg = CENTURY_METRIC_CONFIG[k];
+          h += '<div class="aio-pill" id="aio-pill-' + k + '" data-key="' + k + '" style="background:var(--paper);padding:9px 12px;border-radius:10px;border:1px solid var(--rule);display:flex;flex-direction:column;gap:3px;transition:opacity .15s ease">'
+             + '  <div style="display:flex;align-items:center;justify-content:space-between;gap:4px">'
+             + '    <span style="font-size:11px;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:5px">'
+             + '      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + cfg.color + ';box-shadow:0 0 4px ' + cfg.color + '"></span>'
+             + '      ' + cfg.name
+             + '    </span>'
+             + '    <span class="aio-pill-ratio" style="font-size:10.5px;font-weight:800;color:' + cfg.color + '">--</span>'
+             + '  </div>'
+             + '  <div class="aio-pill-val" style="font-family:\'Archivo\',sans-serif;font-weight:800;font-size:15px;color:var(--ink);line-height:1.2">--</div>'
+             + '  <div class="aio-pill-sub" style="font-size:10px;color:var(--ink-soft)">--</div>'
+             + '</div>';
+        });
+        container.innerHTML = h;
+      }
+
+      Object.keys(CENTURY_METRIC_CONFIG).forEach(function(k){
+        var pill = document.getElementById("aio-pill-" + k);
+        if(!pill) return;
+        var cfg = CENTURY_METRIC_CONFIG[k];
+        var on = _aioActive.indexOf(k) >= 0;
+        pill.style.opacity = on ? "1" : "0.35";
+        pill.style.borderColor = on ? cfg.color + "55" : "var(--rule)";
+
+        var val = cur[k];
+        var valEl = pill.querySelector(".aio-pill-val");
+        var ratioEl = pill.querySelector(".aio-pill-ratio");
+        var subEl = pill.querySelector(".aio-pill-sub");
+
+        if(k === "btc" && yr < 2009){
+          if(valEl) valEl.textContent = "ยังไม่กำเนิด";
+          if(ratioEl) ratioEl.textContent = "กำเนิดปี 2009";
+          if(subEl) subEl.textContent = "สู้เงินเฟียตหลัง 2008";
+        } else if(val != null){
+          if(valEl) valEl.textContent = cfg.fmt(val);
+          var ratio = val / cfg.base;
+          var ratioText = "";
+          if(k === "usd"){
+            var drop = (1 - val) * 100;
+            ratioText = drop > 0 ? "-" + drop.toFixed(1) + "%" : "0%";
+          } else if(k === "top1" || k === "bot99"){
+            var diff = val - cfg.base;
+            ratioText = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%p";
+          } else if(ratio >= 1000000){
+            ratioText = "+" + (ratio / 1e6).toFixed(1) + "Mx";
+          } else if(ratio >= 1000){
+            ratioText = "+" + Math.round(ratio).toLocaleString("en-US") + "x";
+          } else if(ratio >= 2){
+            ratioText = "+" + ratio.toFixed(1) + "x";
+          } else if(ratio >= 1){
+            ratioText = "+" + ((ratio - 1) * 100).toFixed(0) + "%";
+          } else {
+            ratioText = ((ratio - 1) * 100).toFixed(1) + "%";
+          }
+          if(ratioEl) ratioEl.textContent = ratioText;
+          if(subEl){
+            if(k === "btc"){
+              subEl.textContent = "ฐาน 2009: $0.08";
+            } else {
+              subEl.textContent = "ฐาน 1900: " + (typeof cfg.base === "number" ? cfg.fmt(cfg.base) : cfg.base);
+            }
+          }
+        }
+      });
+    }
+
+    function updateAioChipStyles(){
+      $$(".aio-chip").forEach(function(chip){
+        var k = chip.getAttribute("data-key");
+        if(!k) return;
+        var cfg = (typeof CENTURY_METRIC_CONFIG !== "undefined") ? CENTURY_METRIC_CONFIG[k] : null;
+        var on = _aioActive.indexOf(k) >= 0;
+        chip.classList.toggle("on", on);
+        chip.classList.toggle("off", !on);
+        chip.style.opacity = on ? "1" : "0.42";
+        chip.style.background = on ? (cfg ? cfg.color + "22" : "var(--paper-2)") : "var(--paper)";
+        chip.style.color = on ? "var(--ink)" : "var(--ink-soft)";
+        chip.style.borderColor = on ? (cfg ? cfg.color : "var(--green)") : "var(--rule)";
+      });
+
+      var crisisBtn = document.getElementById("aioCrisisToggleBtn");
+      if(crisisBtn){
+        crisisBtn.classList.toggle("on", _aioShowCrises);
+        crisisBtn.style.background = _aioShowCrises ? "rgba(245,158,11,0.16)" : "var(--paper)";
+        crisisBtn.style.borderColor = _aioShowCrises ? "var(--gold)" : "var(--rule)";
+        crisisBtn.style.color = _aioShowCrises ? "var(--gold)" : "var(--ink-soft)";
+        crisisBtn.innerHTML = "🚨 กรอบวิกฤติ 7 ยุค: " + (_aioShowCrises ? "เปิด" : "ปิด");
+      }
+
+      var yr = +($("#masterYearSlider") ? $("#masterYearSlider").value : 2026);
+      updateAioLivePills(yr);
+      updateAioCrisisBanner(yr);
+    }
+
+    function initAioControls(){
+      var chipBox = document.getElementById("aioFilterChips");
+      if(chipBox && !chipBox._wired && typeof CENTURY_METRIC_CONFIG !== "undefined"){
+        chipBox._wired = true;
+        var h = "";
+        Object.keys(CENTURY_METRIC_CONFIG).forEach(function(k){
+          var cfg = CENTURY_METRIC_CONFIG[k];
+          var on = _aioActive.indexOf(k) >= 0;
+          h += '<button type="button" class="aio-chip ' + (on ? 'on' : 'off') + '" data-key="' + k + '" style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid ' + (on ? cfg.color : 'var(--rule)') + ';background:' + (on ? cfg.color + '22' : 'var(--paper)') + ';color:' + (on ? 'var(--ink)' : 'var(--ink-soft)') + ';opacity:' + (on ? '1' : '0.42') + ';transition:all .15s ease">'
+             + '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + cfg.color + '"></span>'
+             + cfg.name
+             + '</button>';
+        });
+
+        // ปุ่มสลับแสดง/ซ่อนกรอบวิกฤติประวัติศาสตร์
+        h += '<button type="button" id="aioCrisisToggleBtn" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--gold);background:rgba(245,158,11,0.16);color:var(--gold);transition:all .15s ease">'
+           + '🚨 กรอบวิกฤติ 7 ยุค: เปิด'
+           + '</button>';
+
+        chipBox.innerHTML = h;
+
+        chipBox.addEventListener("click", function(e){
+          var crisisBtn = e.target.closest("#aioCrisisToggleBtn");
+          if(crisisBtn){
+            _aioShowCrises = !_aioShowCrises;
+            updateAioChipStyles();
+            renderFinCentAllInOne();
+            return;
+          }
+
+          var btn = e.target.closest(".aio-chip");
+          if(!btn) return;
+          var k = btn.getAttribute("data-key");
+          if(!k) return;
+          var idx = _aioActive.indexOf(k);
+          if(idx >= 0){
+            if(_aioActive.length <= 1) return; // Keep at least 1 line
+            _aioActive.splice(idx, 1);
+          } else {
+            _aioActive.push(k);
+          }
+          // Clear active state on preset buttons
+          $$(".aio-preset-btn").forEach(function(b){
+            b.classList.remove("active");
+            b.style.background = "var(--paper)";
+            b.style.color = "var(--ink)";
+            b.style.border = "1px solid var(--rule)";
+          });
+          updateAioChipStyles();
+          renderFinCentAllInOne();
+        });
+      }
+
+      var presetWrap = document.getElementById("card-finCentAllInOne");
+      if(presetWrap && !presetWrap._presetsWired){
+        presetWrap._presetsWired = true;
+        $$(".aio-preset-btn").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var p = btn.getAttribute("data-preset");
+            if(AIO_PRESETS[p]){
+              _aioActive = AIO_PRESETS[p].slice();
+              $$(".aio-preset-btn").forEach(function(x){
+                var on = (x === btn);
+                x.classList.toggle("active", on);
+                x.style.background = on ? "var(--green)" : "var(--paper)";
+                x.style.color = on ? "var(--paper)" : "var(--ink)";
+                x.style.border = on ? "none" : "1px solid var(--rule)";
+                x.style.fontWeight = on ? "700" : "600";
+              });
+              updateAioChipStyles();
+              renderFinCentAllInOne();
+            }
+          });
+        });
+      }
+    }
+
+    function renderFinCentAllInOne(){
+      var sel = "#finCentAllInOne", box = $(sel);
+      if(!box || !window.Plot || paneHidden(box)) return;
+      if(typeof CENTURY_ALL_IN_ONE === "undefined" || typeof CENTURY_METRIC_CONFIG === "undefined") return;
+
+      initAioControls();
+      updateAioChipStyles();
+
+      var W = Math.max(280, box.clientWidth || 920);
+      var ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft");
+
+      var data = [];
+      var seriesOrder = [];
+      var colorDomain = [];
+      var colorRange = [];
+      var lastTexts = [];
+
+      var hasBtc = _aioActive.indexOf("btc") >= 0;
+
+      _aioActive.forEach(function(k){
+        var cfg = CENTURY_METRIC_CONFIG[k];
+        if(!cfg) return;
+        seriesOrder.push(cfg.name);
+        colorDomain.push(cfg.name);
+        colorRange.push(cfg.color);
+
+        var lastPt = null;
+        CENTURY_ALL_IN_ONE.forEach(function(row){
+          if(k === "btc" && row.year < 2009) return;
+          var rawVal = row[k];
+          if(rawVal == null) return;
+          var idxVal = (rawVal / cfg.base) * 100;
+          if(idxVal <= 0) return;
+          var pt = {
+            who: cfg.name,
+            year: row.year,
+            v: idxVal,
+            rawVal: rawVal,
+            rawStr: cfg.fmt(rawVal)
+          };
+          data.push(pt);
+          lastPt = pt;
+        });
+
+        if(lastPt){
+          var multStr = "";
+          var ratio = lastPt.rawVal / cfg.base;
+          if(k === "usd"){
+            multStr = "เหลือ 1.9¢ (-98.1%)";
+          } else if(k === "top1"){
+            multStr = "36.2% (-8.3%p)";
+          } else if(k === "bot99"){
+            multStr = "63.8% (+8.3%p)";
+          } else if(k === "btc"){
+            multStr = "+1.3Mx ($105k)";
+          } else if(ratio >= 1000000){
+            multStr = "+" + (ratio / 1e6).toFixed(1) + "Mx";
+          } else if(ratio >= 1000){
+            multStr = "+" + Math.round(ratio).toLocaleString("en-US") + "x";
+          } else {
+            multStr = "+" + ratio.toFixed(1) + "x";
+          }
+          lastTexts.push({
+            who: cfg.name,
+            year: lastPt.year,
+            v: lastPt.v,
+            label: cfg.name + " (" + multStr + ")"
+          });
+        }
+      });
+
+      data.sort(function(a, b){ return a.year - b.year; });
+
+      var yDomain = hasBtc ? [0.7, 250000000] : [0.7, 800000];
+      var yTicks = hasBtc ?
+        [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000] :
+        [1, 10, 100, 1000, 10000, 100000];
+
+      var mr = W > 640 ? 155 : 28;
+
+      var marks = [
+        Plot.ruleY([100], { stroke: inkSoft, strokeDasharray: "4,4", strokeOpacity: 0.65 }),
+        Plot.text([{ year: 1905, v: 100 }], { text: function(){ return "— เส้นฐาน 100 (ปี 1900 / 2009) —"; }, fill: inkSoft, fontSize: 10, dy: -8, textAnchor: "start" })
+      ];
+
+      // เพิ่มกรอบสีไฮไลต์ช่วงเวลาวิกฤติประวัติศาสตร์ตามคำขอของผู้ใช้ (Crisis Highlight Rectangles)
+      if(_aioShowCrises && typeof CENTURY_CRISES !== "undefined"){
+        marks.push(
+          Plot.rectX(CENTURY_CRISES, {
+            x1: "start", x2: "end",
+            fill: "bg", stroke: "border", strokeWidth: 1.2
+          }),
+          Plot.ruleX(CENTURY_CRISES.map(function(c){ return c.start; }), {
+            stroke: inkSoft, strokeDasharray: "3,3", strokeOpacity: 0.35
+          }),
+          Plot.text(CENTURY_CRISES, {
+            x: function(d){ return (d.start + d.end) / 2; },
+            y: function(){ return hasBtc ? 115000000 : 420000; },
+            text: "shortName", fill: "color", fontWeight: 800, fontSize: 9.5, textAnchor: "middle"
+          })
+        );
+      }
+
+      // เส้นต่อเนื่องหลัก (Plot.lineY) โดยไม่สร้างจุดล่วงหน้าในอนาคต (แก้เป็นไม่เห็นจุดลอยตามแบบ OWID)
+      marks.push(
+        Plot.lineY(data, {
+          x: "year", y: "v", stroke: "who", strokeWidth: 2.8, curve: "monotone-x"
+        })
+      );
+
+      // ข้อความกำกับปลายเส้น ณ ปี 2026 (ถูก clip ไว้จนกว่าจะเล่นถึงปี 2026)
+      if(W > 640 && lastTexts.length){
+        marks.push(
+          Plot.text(lastTexts, {
+            x: "year", y: "v", text: "label", dx: 8, textAnchor: "start", fill: "who", fontWeight: 700, fontSize: 10.5
+          })
+        );
+      }
+
+      // ใช้ Plot.plot ตรง ๆ โดยไม่ผ่าน tipify เพื่อไม่ให้สร้างจุด pointer.dot 173 จุดลอยในอนาคต
+      var fig = Plot.plot({
+        width: W, height: 390, marginLeft: 58, marginBottom: 36, marginTop: 26, marginRight: mr,
+        style: baseStyle(ink, FONT_W),
+        x: { label: null, tickFormat: "d", ticks: 9, tickSize: 0 },
+        y: {
+          type: "log",
+          domain: yDomain,
+          ticks: yTicks,
+          grid: true,
+          tickSize: 0,
+          tickFormat: function(d){
+            if(d >= 1000000) return (d / 1e6) + "M (" + (d / 100).toLocaleString("en-US") + "x)";
+            if(d >= 1000) return (d / 1e3) + "k (" + (d / 100) + "x)";
+            if(d === 100) return "100 (ฐาน 1x)";
+            if(d === 10) return "10 (0.1x)";
+            if(d === 1) return "1 (0.01x)";
+            return d;
+          },
+          label: "ดัชนีเทียบเท่า (ฐานเริ่มต้น = 100, สเกล Log)"
+        },
+        color: { domain: colorDomain, range: colorRange, legend: true },
+        marks: marks
+      });
+
+      owidMount(sel, fig, {
+        multi: true, data: data, xKey: "year", yKey: "v", seriesKey: "who",
+        seriesOrder: seriesOrder, xLabel: "ปี (ค.ศ.)", yLabel: "ดัชนีฐาน 100 (สเกล Log)",
+        valueFmt: function(v){
+          if(v >= 1000000) return (v / 1e6).toFixed(2) + "M (" + (v / 100).toFixed(0) + "x)";
+          if(v >= 1000) return (v / 1e3).toFixed(1) + "k (" + (v / 100).toFixed(1) + "x)";
+          return v.toFixed(1) + " (" + (v / 100).toFixed(2) + "x)";
+        }
+      });
+
+      // Hook local slider on #finCentAllInOne
+      var aioSlider = box.querySelector(".owid-range");
+      if(aioSlider && !aioSlider._aioHooked){
+        aioSlider._aioHooked = true;
+        aioSlider.addEventListener("input", function(){
+          var y = +aioSlider.value;
+          updateAioLivePills(y);
+          updateAioCrisisBanner(y);
+        });
+      }
+    }
+
+    function renderFinCentury1900(){
+      var pane = document.getElementById("pane-fin-century1900");
+      if(!pane || !window.Plot || paneHidden(pane)) return;
+
+      initMasterCenturyTimeline();
+      renderFinCentAllInOne();
+
+      var ink = cssVar("--ink"), inkSoft = cssVar("--ink-soft"), paper2 = cssVar("--paper-2");
+      var green = cssVar("--green"), red = cssVar("--red"), gold = cssVar("--gold");
+
+      // 1. ปริมาณเงิน US M2
+      if(typeof CENTURY_M2_USD !== "undefined"){
+        gpoLine("#finCentM2", CENTURY_M2_USD, {
+          full:true, h:280, ml:52, ticks:8, ylab:"ล้านล้าน $ (Trillion)", color:green,
+          fmt:function(v){ return "$"+v.toFixed(2)+"T"; }
+        });
+      }
+
+      // 2. ราคาทองคำแท้
+      if(typeof CENTURY_GOLD_USD !== "undefined"){
+        gpoLine("#finCentGold", CENTURY_GOLD_USD, {
+          h:270, ml:52, ticks:7, ylab:"$/ออนซ์ (USD)", color:gold,
+          fmt:function(v){ return "$"+Math.round(v).toLocaleString("en-US"); }
+        });
+      }
+
+      // 3. Bitcoin (BTC)
+      if(typeof CENTURY_BTC !== "undefined"){
+        gpoLine("#finCentBtc", CENTURY_BTC, {
+          h:270, ml:58, ticks:6, ylab:"$/BTC (USD)", color:"#f59e0b",
+          fmt:function(v){ return v>0 ? "$"+Math.round(v).toLocaleString("en-US") : "ยังไม่กำเนิด (เกิดปี 2009)"; }
+        });
+      }
+
+      // 4. อัตราเงินเฟ้อรายปี
+      if(typeof CENTURY_INFLATION !== "undefined"){
+        gpoLine("#finCentInflation", CENTURY_INFLATION, {
+          h:270, ml:46, ticks:7, rule:0, ylab:"% ต่อปี", color:red,
+          fmt:function(v){ return v.toFixed(1)+"%"; }
+        });
+      }
+
+      // 5. กำลังซื้อของ $1 ดอลลาร์
+      if(typeof CENTURY_USD_PURCHASE !== "undefined"){
+        gpoLine("#finCentUsdPur", CENTURY_USD_PURCHASE, {
+          h:270, ml:48, ticks:7, ylab:"กำลังซื้อ ($1)", color:red, ydomain:[0, 1.05],
+          fmt:function(v){ return "$"+v.toFixed(3); }
+        });
+      }
+
+      // 6. ความมั่งคั่ง 1% บนสุด vs 99% ที่เหลือ vs 90% ล่าง (Piketty U-Curve)
+      if(typeof CENTURY_WEALTH_INEQ !== "undefined"){
+        (function(){
+          var sel = "#finCentWealth", box = $(sel);
+          if(!box || paneHidden(box)) return;
+          var W = Math.max(280, box.clientWidth || 900);
+          var L_BOT99 = "คน 99% ที่เหลือ (Bottom 99%)";
+          var L_TOP1 = "คนรวย 1% บนสุด (Top 1%)";
+          var L_BOT90 = "คน 90% ล่างสุด (Bottom 90%)";
+          var data = [];
+          CENTURY_WEALTH_INEQ.forEach(function(d){
+            data.push({ who:L_BOT99, year:d.year, v:d.bot99 });
+            data.push({ who:L_TOP1, year:d.year, v:d.top1 });
+            data.push({ who:L_BOT90, year:d.year, v:d.bot90 });
+          });
+          var last = CENTURY_WEALTH_INEQ[CENTURY_WEALTH_INEQ.length - 1];
+          var lastDots = [
+            { who:L_BOT99, year:last.year, v:last.bot99 },
+            { who:L_TOP1, year:last.year, v:last.top1 },
+            { who:L_BOT90, year:last.year, v:last.bot90 }
+          ];
+          var fig = plotT({
+            width:W, height:320, marginLeft:46, marginBottom:34, marginTop:16, marginRight:50,
+            style: baseStyle(ink, FONT_W),
+            x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
+            y:{ label:"% ของความมั่งคั่งรวม", grid:true, tickSize:0, domain:[10, 85], tickFormat:function(d){ return d+"%"; } },
+            color:{ domain:[L_BOT99, L_TOP1, L_BOT90], range:["#10b981", "#ec4899", "#38bdf8"], legend:true },
+            marks:[
+              Plot.ruleY([50], { stroke:inkSoft, strokeDasharray:"3,3", strokeOpacity:0.45 }),
+              Plot.text([{ year:1905, v:50 }], { text:function(){ return "— เส้นกึ่งกลาง 50% —"; }, fill:inkSoft, fontSize:10, dy:-6, textAnchor:"start" }),
+              Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.8, curve:"monotone-x" }),
+              Plot.dot(lastDots, { x:"year", y:"v", fill:"who", stroke:paper2, strokeWidth:1.5, r:5 }),
+              Plot.text(lastDots, { x:"year", y:"v", text:function(d){ return d.v.toFixed(1)+"%"; }, dx:8, textAnchor:"start", fill:"who", fontWeight:700, fontSize:11.5 })
+            ]
+          });
+          owidMount(sel, fig, {
+            multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+            seriesOrder:[L_BOT99, L_TOP1, L_BOT90], xLabel:"ปี (ค.ศ.)", yLabel:"% ความมั่งคั่ง",
+            valueFmt:function(v){ return v.toFixed(1)+"%"; }
+          });
+        })();
+      }
+
+      // 7. อายุขัยเฉลี่ยแรกเกิด (ไทย vs สหรัฐฯ vs โลก)
+      if(typeof CENTURY_LIFE_EXP !== "undefined"){
+        (function(){
+          var sel = "#finCentLife", box = $(sel);
+          if(!box || paneHidden(box)) return;
+          var W = Math.max(280, box.clientWidth || 520);
+          var L_TH = "ประเทศไทย 🇹🇭", L_US = "สหรัฐอเมริกา 🇺🇸", L_WLD = "ค่าเฉลี่ยโลก 🌐";
+          var data = [];
+          CENTURY_LIFE_EXP.forEach(function(d){
+            data.push({ who:L_TH, year:d.year, v:d.th });
+            data.push({ who:L_US, year:d.year, v:d.us });
+            data.push({ who:L_WLD, year:d.year, v:d.wld });
+          });
+          var last = CENTURY_LIFE_EXP[CENTURY_LIFE_EXP.length - 1];
+          var fig = plotT({
+            width:W, height:280, marginLeft:44, marginBottom:34, marginTop:16, marginRight:24,
+            style: baseStyle(ink, FONT_W),
+            x:{ label:null, tickFormat:"d", ticks:7, tickSize:0 },
+            y:{ label:"อายุขัย (ปี)", grid:true, tickSize:0, domain:[20, 85] },
+            color:{ domain:[L_TH, L_US, L_WLD], range:[green, "#3b82f6", gold], legend:true },
+            marks:[
+              Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.5, curve:"monotone-x" }),
+              Plot.dot([{who:L_TH, year:last.year, v:last.th}], { x:"year", y:"v", fill:green, stroke:paper2, strokeWidth:1.5, r:5 }),
+              Plot.text([{who:L_TH, year:last.year, v:last.th}], { x:"year", y:"v", text:function(d){ return d.v.toFixed(1)+" ปี"; }, dy:-10, fill:green, fontWeight:700, fontSize:11 })
+            ]
+          });
+          owidMount(sel, fig, {
+            multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+            seriesOrder:[L_TH, L_US, L_WLD], xLabel:"ปี (ค.ศ.)", yLabel:"อายุขัย (ปี)",
+            valueFmt:function(v){ return v.toFixed(1)+" ปี"; }
+          });
+        })();
+      }
+
+      // 8. ประชากรโลกและไทย
+      if(typeof CENTURY_POPULATION !== "undefined"){
+        (function(){
+          var sel = "#finCentPop", box = $(sel);
+          if(!box || paneHidden(box)) return;
+          var W = Math.max(280, box.clientWidth || 520);
+          var L_WLD = "ประชากรโลก (พันล้านคน)", L_TH = "ประชากรไทย (สิบล้านคน)";
+          var data = [];
+          CENTURY_POPULATION.forEach(function(d){
+            data.push({ who:L_WLD, year:d.year, v:d.wld });
+            data.push({ who:L_TH, year:d.year, v:d.th/10 });
+          });
+          var last = CENTURY_POPULATION[CENTURY_POPULATION.length - 1];
+          var fig = plotT({
+            width:W, height:280, marginLeft:44, marginBottom:34, marginTop:16, marginRight:24,
+            style: baseStyle(ink, FONT_W),
+            x:{ label:null, tickFormat:"d", ticks:7, tickSize:0 },
+            y:{ label:"จำนวนประชากร", grid:true, tickSize:0, domain:[0, 9] },
+            color:{ domain:[L_WLD, L_TH], range:[gold, green], legend:true },
+            marks:[
+              Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.5, curve:"monotone-x" }),
+              Plot.dot([{who:L_WLD, year:last.year, v:last.wld}, {who:L_TH, year:last.year, v:last.th/10}],
+                { x:"year", y:"v", fill:"who", stroke:paper2, strokeWidth:1.5, r:4.5 })
+            ]
+          });
+          owidMount(sel, fig, {
+            multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+            seriesOrder:[L_WLD, L_TH], xLabel:"ปี (ค.ศ.)", yLabel:"ประชากร",
+            valueFmt:function(v){ return v.toFixed(2); }
+          });
+        })();
+      }
+
+      // 9. การเติบโตของ $100 ในปี 1900 (Log Scale)
+      if(typeof CENTURY_ASSETS_GROWTH !== "undefined"){
+        (function(){
+          var sel = "#finCentAssets", box = $(sel);
+          if(!box || paneHidden(box)) return;
+          var W = Math.max(280, box.clientWidth || 900);
+          var L_STK = "หุ้นสหรัฐฯ (S&P 500 ทบต้น)", L_GLD = "ทองคำแท้ (Gold)", L_BND = "พันธบัตรรัฐบาลสหรัฐฯ", L_CSH = "เงินสดดอลลาร์ (กำลังซื้อจริง)";
+          var data = [];
+          CENTURY_ASSETS_GROWTH.forEach(function(d){
+            data.push({ who:L_STK, year:d.year, v:d.stock });
+            data.push({ who:L_GLD, year:d.year, v:d.gold });
+            data.push({ who:L_BND, year:d.year, v:d.bond });
+            data.push({ who:L_CSH, year:d.year, v:d.cash });
+          });
+          var last = CENTURY_ASSETS_GROWTH[CENTURY_ASSETS_GROWTH.length - 1];
+          var fig = plotT({
+            width:W, height:310, marginLeft:58, marginBottom:34, marginTop:16, marginRight:36,
+            style: baseStyle(ink, FONT_W),
+            x:{ label:null, tickFormat:"d", ticks:8, tickSize:0 },
+            y:{ type:"log", domain:[0.8, 20000000], ticks:[1, 10, 100, 1000, 10000, 100000, 1000000, 10000000],
+                grid:true, tickSize:0, tickFormat:function(d){ return d>=1000000?"$"+(d/1e6)+"M":(d>=1000?"$"+(d/1e3)+"k":"$"+d); },
+                label:"มูลค่าดอลลาร์ ($ สเกล Log)" },
+            color:{ domain:[L_STK, L_GLD, L_BND, L_CSH], range:[green, gold, "#3b82f6", red], legend:true },
+            marks:[
+              Plot.ruleY([100], { stroke:inkSoft, strokeDasharray:"3,3", strokeOpacity:.5 }),
+              Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.6, curve:"monotone-x" }),
+              Plot.dot([{who:L_STK, year:last.year, v:last.stock}], { x:"year", y:"v", fill:green, stroke:paper2, strokeWidth:1.5, r:5 }),
+              Plot.text([{who:L_STK, year:last.year, v:last.stock}], { x:"year", y:"v", text:function(){ return "$8.9M+"; }, dy:-10, fill:green, fontWeight:700, fontSize:11.5 }),
+              Plot.text([{who:L_CSH, year:last.year, v:last.cash}], { x:"year", y:"v", text:function(){ return "$1.90"; }, dy:12, fill:red, fontWeight:700, fontSize:11 })
+            ]
+          });
+          owidMount(sel, fig, {
+            multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+            seriesOrder:[L_STK, L_GLD, L_BND, L_CSH], xLabel:"ปี (ค.ศ.)", yLabel:"มูลค่า ($)",
+            valueFmt:function(v){ return "$"+(v>=1000?Math.round(v).toLocaleString("en-US"):v.toFixed(2)); }
+          });
+        })();
+      }
+
+      // 10. หนี้สาธารณะสหรัฐฯ สัดส่วนต่อ GDP
+      if(typeof CENTURY_US_DEBT !== "undefined"){
+        gpoLine("#finCentDebt", CENTURY_US_DEBT.map(function(d){ return { year:d.year, v:d.pct }; }), {
+          h:270, ml:46, ticks:7, ylab:"% ของ GDP", color:red, ydomain:[0, 140],
+          fmt:function(v){ return v.toFixed(1)+"%"; }
+        });
+      }
+
+      // 11. ดัชนี Dow Jones
+      if(typeof CENTURY_DOW !== "undefined"){
+        gpoLine("#finCentDow", CENTURY_DOW, {
+          h:270, ml:54, ticks:7, ylab:"จุด (Points)", color:green,
+          fmt:function(v){ return v.toLocaleString("en-US"); }
+        });
+      }
+
+      // 12. ผลิตภาพ vs ค่าจ้างจริง (1948-2026)
+      if(typeof CENTURY_PROD_WAGE !== "undefined"){
+        (function(){
+          var sel = "#finCentProdWage", box = $(sel);
+          if(!box || paneHidden(box)) return;
+          var W = Math.max(280, box.clientWidth || 520);
+          var L_PRD = "ผลิตภาพแรงงาน (Productivity)", L_WAG = "ค่าจ้างจริงของคนทำงาน";
+          var data = [];
+          CENTURY_PROD_WAGE.forEach(function(d){
+            data.push({ who:L_PRD, year:d.year, v:d.prod });
+            data.push({ who:L_WAG, year:d.year, v:d.wage });
+          });
+          var last = CENTURY_PROD_WAGE[CENTURY_PROD_WAGE.length - 1];
+          var fig = plotT({
+            width:W, height:270, marginLeft:46, marginBottom:34, marginTop:16, marginRight:24,
+            style: baseStyle(ink, FONT_W),
+            x:{ label:null, tickFormat:"d", ticks:6, tickSize:0 },
+            y:{ label:"ดัชนี (1948 = 100)", grid:true, tickSize:0, domain:[80, 520] },
+            color:{ domain:[L_PRD, L_WAG], range:[green, red], legend:true },
+            marks:[
+              Plot.ruleX([1971], { stroke:gold, strokeDasharray:"4,3", strokeOpacity:.8 }),
+              Plot.text([{year:1971, v:480}], { x:"year", y:"v", text:function(){ return "1971 เลิกมาตรฐานทอง"; }, textAnchor:"start", dx:6, fill:gold, fontSize:10.5, fontWeight:600 }),
+              Plot.lineY(data, { x:"year", y:"v", stroke:"who", strokeWidth:2.5, curve:"monotone-x" }),
+              Plot.dot([{who:L_PRD, year:last.year, v:last.prod}, {who:L_WAG, year:last.year, v:last.wage}],
+                { x:"year", y:"v", fill:"who", stroke:paper2, strokeWidth:1.5, r:4.5 }),
+              Plot.text([{who:L_PRD, year:last.year, v:last.prod}], { x:"year", y:"v", text:function(d){ return "+"+d.v+"%"; }, dx:8, textAnchor:"start", fill:green, fontWeight:700, fontSize:11 })
+            ]
+          });
+          owidMount(sel, fig, {
+            multi:true, data:data, xKey:"year", yKey:"v", seriesKey:"who",
+            seriesOrder:[L_PRD, L_WAG], xLabel:"ปี (ค.ศ.)", yLabel:"ดัชนี (1948=100)",
+            valueFmt:function(v){ return Math.round(v); }
+          });
+        })();
+      }
+
+      // 13. ราคาบ้านเฉลี่ยเทียบรายได้
+      if(typeof CENTURY_HOME_AFFORD !== "undefined"){
+        gpoLine("#finCentHome", CENTURY_HOME_AFFORD, {
+          h:270, ml:46, ticks:6, ylab:"เท่าของรายได้ต่อปี", color:red, ydomain:[1.5, 6.5],
+          fmt:function(v){ return v.toFixed(1)+" เท่า"; }
+        });
+      }
+
+      // 14. ราคาน้ำมันดิบโลก
+      if(typeof CENTURY_OIL !== "undefined"){
+        gpoLine("#finCentOil", CENTURY_OIL, {
+          full:true, h:270, ml:46, ticks:8, ylab:"$/บาร์เรล", color:"#a855f7",
+          fmt:function(v){ return "$"+v.toFixed(2); }
+        });
+      }
+
+      // เชื่อมต่อ Master Timeline Controller
+      initMasterCenturyTimeline();
     }
 
     /* ================= ข้อ 7 · น้ำท่วม & งบประมาณ กทม. ================= */
