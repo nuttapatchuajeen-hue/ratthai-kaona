@@ -191,6 +191,14 @@
   "source": "https://commons.wikimedia.org/wiki/File:%E0%B8%9E%E0%B8%B1%E0%B8%99%E0%B9%80%E0%B8%AD%E0%B8%81_(%E0%B8%9E%E0%B8%B4%E0%B9%80%E0%B8%A8%E0%B8%A9)_%E0%B8%9E%E0%B8%A5_%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%AA%E0%B8%A3%E0%B8%B4%E0%B8%90%E0%B8%A7%E0%B8%B4%E0%B8%97%E0%B8%A2%E0%B9%8C.jpg",
   "commonsFile": "พันเอก (พิเศษ) พล เริงประเสริฐวิทย์.jpg"
  },
+ "พล.ต.ท.วิโรจน์ เปาอินทร์.jpg": {
+  "name": "พล.ต.ท.วิโรจน์ เปาอินทร์",
+  "artist": "NBT",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:%E0%B8%A7%E0%B8%B4%E0%B9%82%E0%B8%A3%E0%B8%88%E0%B8%99%E0%B9%8C_%E0%B9%80%E0%B8%9B%E0%B8%B2%E0%B8%AD%E0%B8%B4%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B9%8C_2019.jpg",
+  "commonsFile": "วิโรจน์_เปาอินทร์_2019.jpg"
+ },
  "พิชัย รัตตกุล.jpg": {
   "name": "พิชัย รัตตกุล",
   "artist": "Government of Thailand",
@@ -254,14 +262,6 @@
   "licenseUrl": "",
   "source": "https://commons.wikimedia.org/wiki/File:%E0%B8%AA%E0%B8%B8%E0%B8%81%E0%B8%B4%E0%B8%88_%E0%B8%99%E0%B8%B4%E0%B8%A1%E0%B8%A1%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%AB%E0%B8%A1%E0%B8%B4%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B9%8C_(%E0%B8%AA%E0%B8%B8%E0%B8%81%E0%B8%B4%E0%B8%88_%E0%B8%99%E0%B8%B4%E0%B8%A1%E0%B8%A1%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%AB%E0%B8%A1%E0%B8%B4%E0%B8%99%E0%B8%97%E0%B9%8C).jpg",
   "commonsFile": "สุกิจ นิมมานเหมินทร์ (สุกิจ นิมมานเหมินท์).jpg"
- },
- "สุดารัตน์ เกยุราพันธุ์.jpg": {
-  "name": "สุดารัตน์ เกยุราพันธุ์",
-  "artist": "NBT NEWS",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Sudarat_Keyuraphan_in_2019.png",
-  "commonsFile": "Sudarat Keyuraphan in 2019.png"
  },
  "สุวิทย์ คุณกิตติ.jpg": {
   "name": "สุวิทย์ คุณกิตติ",
@@ -342,5 +342,19 @@
   "licenseUrl": "",
   "source": "https://commons.wikimedia.org/wiki/File:Paetongtarn_Shinawatra_October_2023.jpg",
   "commonsFile": "Paetongtarn Shinawatra October 2023.jpg"
+ },
+ "วิโรจน์ เปาอินทร์.jpg": {
+  "name": "วิโรจน์ เปาอินทร์",
+  "artist": "ไม่ทราบ",
+  "license": "ยังไม่ยืนยัน — ต้องตรวจสอบก่อนเผยแพร่",
+  "licenseUrl": "",
+  "source": ""
+ },
+ "สุดารัตน์ เกยุราพันธุ์.jpg": {
+  "name": "สุดารัตน์ เกยุราพันธุ์",
+  "artist": "ไม่ทราบ",
+  "license": "ยังไม่ยืนยัน — ต้องตรวจสอบก่อนเผยแพร่",
+  "licenseUrl": "",
+  "source": ""
  }
 }
