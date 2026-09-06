@@ -8318,43 +8318,77 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         </div>
       </div>
 
-      <!-- 🦠 แบบจำลองการแพร่ระบาดแบบอนุภาค (Agent-Based SIR & Flatten The Curve) -->
-      <div class="phys-box">
+      <!-- 🦠 แบบจำลองการแพร่ระบาดชีวภาพสมจริง (Realistic Agent-Based SEIRD & Aerosol Epidemiology) -->
+      <div class="phys-box" id="epiSimBox">
         <div class="qlab-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
           <h3 style="margin:0;font-size:16px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;">
-            <svg class="mdico"><use href="#i-stethoscope"></use></svg> แบบจำลองการแพร่ระบาดแบบอนุภาค (Agent-Based SIR &amp; Flatten The Curve)
+            <svg class="mdico"><use href="#i-stethoscope"></use></svg> แบบจำลองการแพร่ระบาดชีวภาพสมจริง (Agent-Based SEIRD &amp; Aerosol Physics)
           </h3>
-          <span class="tag" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid #ef4444;">Epi-Sim 2D</span>
-        </div>
-        <div class="phys-stage-wrap">
-          <canvas class="phys-canvas" id="epiCanvas"></canvas>
-          <div class="qlab-hud">
-            <div class="qlab-hud-tag" id="hudEpiS" style="color:#38bdf8;"><b>กลุ่มเสี่ยง (S):</b> <span>195</span></div>
-            <div class="qlab-hud-tag alert" id="hudEpiI" style="color:#ef4444;"><b>ติดเชื้อ (I):</b> <span>5</span></div>
-            <div class="qlab-hud-tag success" id="hudEpiR" style="color:#10b981;"><b>หาย/มีภูมิ (R):</b> <span>0</span></div>
-            <div class="qlab-hud-tag" id="hudEpiR0"><b>สถานะ:</b> <span>พร้อมเริ่มแพร่เชื้อ</span></div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <span class="tag" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid #ef4444;">Epi-Sim 2D</span>
+            <span class="tag" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid #10b981;">Flatten The Curve</span>
           </div>
         </div>
-        <div class="qlab-controls">
+
+        <!-- 🧪 ตัวเลือกสายพันธุ์เชื้อโรค (Pathogen Presets) -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;background:var(--paper-3);padding:8px 12px;border-radius:10px;border:1px solid var(--rule);">
+          <span style="font-size:12px;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px;">
+            <svg class="mdico"><use href="#i-flask-conical"></use></svg> สายพันธุ์เชื้อโรค:
+          </span>
+          <button type="button" class="mlab-btn primary" id="btnEpiPresetCovidOmi" style="font-size:11.5px;padding:4px 10px;">🦠 COVID-19 (Omicron)</button>
+          <button type="button" class="mlab-btn" id="btnEpiPresetCovidClassic" style="font-size:11.5px;padding:4px 10px;">😷 COVID-19 (Classic)</button>
+          <button type="button" class="mlab-btn" id="btnEpiPresetMeasles" style="font-size:11.5px;padding:4px 10px;">🔴 โรคหัด (Measles)</button>
+          <button type="button" class="mlab-btn" id="btnEpiPresetFlu" style="font-size:11.5px;padding:4px 10px;">🤧 ไข้หวัดใหญ่ (Flu)</button>
+        </div>
+
+        <div class="phys-stage-wrap" style="aspect-ratio:auto;min-height:510px;max-height:620px;">
+          <canvas class="phys-canvas" id="epiCanvas" style="cursor:crosshair;"></canvas>
+          <div class="qlab-hud" style="max-width:calc(100% - 24px);display:flex;flex-wrap:wrap;gap:6px;">
+            <div class="qlab-hud-tag" id="hudEpiDay" style="color:#e2e8f0;border-color:rgba(255,255,255,.25);"><b>เวลา:</b> <span>Day 1 (08:00)</span></div>
+            <div class="qlab-hud-tag" id="hudEpiS" style="color:#38bdf8;"><b>กลุ่มเสี่ยง (S):</b> <span>195</span></div>
+            <div class="qlab-hud-tag" id="hudEpiE" style="color:#f59e0b;"><b>ฟักตัว (E):</b> <span>0</span></div>
+            <div class="qlab-hud-tag alert" id="hudEpiI" style="color:#ef4444;"><b>ติดเชื้อ (I):</b> <span>5</span></div>
+            <div class="qlab-hud-tag" id="hudEpiICU" style="color:#c084fc;"><b>เตียง ICU (H):</b> <span>0/20</span></div>
+            <div class="qlab-hud-tag success" id="hudEpiR" style="color:#10b981;"><b>หาย/มีภูมิ (R):</b> <span>0</span></div>
+            <div class="qlab-hud-tag" id="hudEpiD" style="color:#94a3b8;"><b>เสียชีวิต (D):</b> <span>0</span></div>
+            <div class="qlab-hud-tag" id="hudEpiRt" style="color:#f43f5e;"><b>R(t):</b> <span>2.80</span></div>
+            <div class="qlab-hud-tag" id="hudEpiR0"><b>สถานะ:</b> <span>พร้อมเริ่มระบาด</span></div>
+          </div>
+        </div>
+
+        <!-- 🕹️ ชุดควบคุมการจำลอง & มาตรการสาธารณสุข -->
+        <div class="qlab-controls" style="margin-top:10px;margin-bottom:12px;">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
             <button type="button" class="mlab-btn primary" id="btnEpiPlay"><svg class="mdico"><use href="#i-play"></use></svg> เริ่มแพร่เชื้อ / เดินเวลา</button>
             <button type="button" class="mlab-btn" id="btnEpiReset"><svg class="mlab-btn-ico"><use href="#i-refresh-cw"></use></svg> รีเซ็ตประชากร</button>
-            <button type="button" class="qlab-obs-toggle" id="btnEpiMask"><svg class="mdico"><use href="#i-shield"></use></svg> <span>😷 หน้ากากอนามัย: <b>ปิด</b></span></button>
-            <button type="button" class="qlab-obs-toggle" id="btnEpiLockdown"><svg class="mdico"><use href="#i-lock"></use></svg> <span>🔒 ล็อกดาวน์ 80%: <b>ปิด</b></span></button>
+            <button type="button" class="mlab-btn" id="btnEpiSpeed" title="ปรับความเร็วการจำลอง"><svg class="mdico"><use href="#i-fast-forward"></use></svg> <span>ความเร็ว: <b>1x</b></span></button>
           </div>
-          <div style="font-size:12px;color:var(--ink-soft);font-family:monospace;">
-            dS/dt = -β·S·I/N &nbsp;|&nbsp; dI/dt = β·S·I/N - γ·I
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="qlab-obs-toggle" id="btnEpiMask"><svg class="mdico"><use href="#i-shield"></use></svg> <span>😷 หน้ากากอนามัย: <b>ปิด</b></span></button>
+            <button type="button" class="qlab-obs-toggle" id="btnEpiDistance"><svg class="mdico"><use href="#i-users"></use></svg> <span>📏 เว้นระยะ 2 ม.: <b>ปิด</b></span></button>
+            <button type="button" class="qlab-obs-toggle" id="btnEpiLockdown"><svg class="mdico"><use href="#i-lock"></use></svg> <span>🔒 ล็อกดาวน์ตลาด: <b>ปิด</b></span></button>
+            <button type="button" class="qlab-obs-toggle" id="btnEpiQuarantine"><svg class="mdico"><use href="#i-hospital"></use></svg> <span>🏥 คัดกรอง &amp; ICU: <b>ปิด</b></span></button>
           </div>
         </div>
+
         <div class="qlab-sliders">
           <div class="mlab-ctl-group">
-            <div class="mlab-ctl-head"><span>อัตราการแพร่เชื้อ (Transmission Rate β)</span><b id="valEpiBeta">ปานกลาง (R₀ ≈ 2.8)</b></div>
-            <input type="range" id="sliderEpiBeta" min="0.15" max="0.85" step="0.05" value="0.45" />
+            <div class="mlab-ctl-head"><span>อัตราแพร่เชื้อ (Transmission Rate β)</span><b id="valEpiBeta">Omicron (R₀ ≈ 9.5)</b></div>
+            <input type="range" id="sliderEpiBeta" min="0.10" max="0.95" step="0.05" value="0.75" />
           </div>
           <div class="mlab-ctl-group">
-            <div class="mlab-ctl-head"><span>ประชากรที่ฉีดวัคซีนแล้วล่วงหน้า</span><b id="valEpiVac">0% (ยังไม่มีภูมิคุ้มกัน)</b></div>
-            <input type="range" id="sliderEpiVac" min="0" max="80" step="5" value="0" />
+            <div class="mlab-ctl-head"><span>ประชากรฉีดวัคซีนแล้วล่วงหน้า</span><b id="valEpiVac">0% (ยังไม่มีภูมิคุ้มกัน)</b></div>
+            <input type="range" id="sliderEpiVac" min="0" max="95" step="5" value="0" />
           </div>
+          <div class="mlab-ctl-group">
+            <div class="mlab-ctl-head"><span>ขีดความสามารถเตียง ICU (เตียง)</span><b id="valEpiIcu">20 เตียง (10% ประชากร)</b></div>
+            <input type="range" id="sliderEpiIcu" min="5" max="50" step="5" value="20" />
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--ink-soft);font-family:monospace;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:4px;">
+          <span>SEIR-HD: dS/dt = -βSI/N &nbsp;|&nbsp; dE/dt = βSI/N - σE &nbsp;|&nbsp; dI/dt = σE - γI &nbsp;|&nbsp; dH/dt = p·I - γ_h·H</span>
+          <span style="color:#38bdf8;">💡 เคล็ดลับ: คลิกที่ตัวบุคคลบนจอเพื่อเปิด Bio-Card หรือฉีดวัคซีน/กำหนดผู้ติดเชื้อ</span>
         </div>
       </div>
 
@@ -24135,31 +24169,45 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         ctx.fillStyle = bannerColor;
         ctx.fillText(bannerText, bBoxX + 16, bBoxY + 19);
       }
-
       ctx.restore();
       CRYPTOLAB.reqId = requestAnimationFrame(cryptoLabLoop);
     }
 
-    /* ================= 🦠 05. EPIDEMIOLOGY AGENT-BASED SIR LAB ================= */
+    /* ================= 🦠 05. EPIDEMIOLOGY AGENT-BASED SEIRD & AEROSOL LAB ================= */
     var EPILAB = {
       isInit: false, running: false, reqId: null,
-      agents: [], history: [],
-      beta: 0.45, maskOn: false, lockdownOn: false, vacRate: 0,
-      time: 0, recoveryTime: 360,
-      numAgents: 200
+      agents: [], particles: [], history: [],
+      beta: 0.75, maskOn: false, distanceOn: false, lockdownOn: false, quarantineOn: false,
+      vacRate: 0, icuCapacity: 20, speed: 1,
+      time: 0, numAgents: 200,
+      selectedPreset: "covid_omi",
+      selectedAgent: null,
+      hoverAgent: null,
+      presets: {
+        covid_omi: { name: "COVID-19 Omicron", beta: 0.75, r0Label: "Omicron (R₀ ≈ 9.5)", incTime: 90, infTime: 260, severeRate: 0.08, aerosolRad: 24, maskEfficacy: 0.72 },
+        covid_classic: { name: "COVID-19 Classic", beta: 0.45, r0Label: "Classic (R₀ ≈ 2.8)", incTime: 140, infTime: 340, severeRate: 0.12, aerosolRad: 19, maskEfficacy: 0.75 },
+        measles: { name: "โรคหัด (Measles)", beta: 0.92, r0Label: "หัด (R₀ ≈ 15.0)", incTime: 110, infTime: 380, severeRate: 0.10, aerosolRad: 30, maskEfficacy: 0.60 },
+        flu: { name: "ไข้หวัดใหญ่ (Flu)", beta: 0.28, r0Label: "ไข้หวัด (R₀ ≈ 1.4)", incTime: 60, infTime: 180, severeRate: 0.04, aerosolRad: 14, maskEfficacy: 0.78 }
+      }
     };
 
     function resetEpiLab(){
       EPILAB.agents = [];
+      EPILAB.particles = [];
       EPILAB.history = [];
       EPILAB.time = 0;
       EPILAB.running = false;
+      EPILAB.selectedAgent = null;
+      EPILAB.hoverAgent = null;
 
       var sBeta = document.getElementById("sliderEpiBeta");
       var sVac = document.getElementById("sliderEpiVac");
+      var sIcu = document.getElementById("sliderEpiIcu");
       if(sBeta) EPILAB.beta = parseFloat(sBeta.value);
       if(sVac) EPILAB.vacRate = parseInt(sVac.value);
+      if(sIcu) EPILAB.icuCapacity = parseInt(sIcu.value);
 
+      var conf = EPILAB.presets[EPILAB.selectedPreset] || EPILAB.presets.covid_omi;
       var numVaccinated = Math.round((EPILAB.vacRate / 100) * EPILAB.numAgents);
       var initialInfected = 5;
 
@@ -24168,43 +24216,91 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         if(i < initialInfected) state = "I";
         else if(i < initialInfected + numVaccinated) state = "R";
 
-        var speed = 1.2;
+        var isWest = (i % 2 === 0);
+        var homeX = isWest ? (30 + Math.random() * 220) : (450 + Math.random() * 220);
+        var homeY = 50 + Math.random() * 180;
+        var age = 15 + Math.floor(Math.random() * 65);
+        var isSuper = (i < 20); // 10% super-spreaders
+
+        var speed = 1.0 + Math.random() * 0.5;
         var angle = Math.random() * Math.PI * 2;
+
         EPILAB.agents.push({
-          x: 20 + Math.random() * 560,
-          y: 20 + Math.random() * 190,
+          id: i + 1,
+          x: homeX, y: homeY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          state: state, // "S", "I", "R"
-          infectedTime: state === "I" ? Math.floor(Math.random() * 60) : 0,
-          isFrozen: false
+          wanderAngle: angle,
+          homeDistrict: isWest ? 0 : 1,
+          homeX: homeX, homeY: homeY,
+          state: state, // "S", "E", "I", "H", "R", "D"
+          age: age,
+          isSuperSpreader: isSuper,
+          isVaccinated: (state === "R"),
+          viralExposure: 0,
+          incubationTimer: 0,
+          infectiousTimer: state === "I" ? Math.floor(Math.random() * 60) : 0,
+          hospitalTimer: 0,
+          isSevere: false,
+          isQuarantined: false,
+          targetZone: "home",
+          targetSwitchTick: Math.floor(Math.random() * 120),
+          infectionsCaused: 0,
+          couchCooldown: Math.floor(Math.random() * 150)
         });
       }
 
       var bPlay = document.getElementById("btnEpiPlay");
       if(bPlay) bPlay.innerHTML = "<svg class='mdico'><use href='#i-play'></use></svg> เริ่มแพร่เชื้อ / เดินเวลา";
-      updateEpiHUD(EPILAB.numAgents - initialInfected - numVaccinated, initialInfected, numVaccinated);
+      updateEpiHUD(EPILAB.numAgents - initialInfected - numVaccinated, 0, initialInfected, 0, numVaccinated, 0, conf.beta * 4);
     }
 
-    function updateEpiHUD(s, i, r){
+    function updateEpiHUD(s, e, i, h, r, d, rt){
+      var hDay = document.getElementById("hudEpiDay");
       var hS = document.getElementById("hudEpiS");
+      var hE = document.getElementById("hudEpiE");
       var hI = document.getElementById("hudEpiI");
+      var hICU = document.getElementById("hudEpiICU");
       var hR = document.getElementById("hudEpiR");
+      var hD = document.getElementById("hudEpiD");
+      var hRt = document.getElementById("hudEpiRt");
       var hR0 = document.getElementById("hudEpiR0");
 
+      var currentDay = 1 + Math.floor(EPILAB.time / 60);
+      var currentHour = Math.floor((EPILAB.time % 60) / 2.5);
+      var hourStr = (currentHour < 10 ? "0" : "") + currentHour + ":00";
+
+      if(hDay) hDay.innerHTML = "<b>เวลา:</b> <span>Day " + currentDay + " (" + hourStr + ")</span>";
       if(hS) hS.innerHTML = "<b>กลุ่มเสี่ยง (S):</b> <span>" + s + "</span>";
+      if(hE) hE.innerHTML = "<b>ฟักตัว (E):</b> <span>" + e + "</span>";
       if(hI) hI.innerHTML = "<b>ติดเชื้อ (I):</b> <span>" + i + "</span>";
+      if(hICU){
+        var icuPct = Math.round((h / Math.max(1, EPILAB.icuCapacity)) * 100);
+        var icuColor = h > EPILAB.icuCapacity ? "#ef4444" : h > EPILAB.icuCapacity * 0.75 ? "#f59e0b" : "#c084fc";
+        hICU.style.color = icuColor;
+        hICU.innerHTML = "<b>เตียง ICU (H):</b> <span>" + h + "/" + EPILAB.icuCapacity + " (" + icuPct + "%)</span>";
+      }
       if(hR) hR.innerHTML = "<b>หาย/มีภูมิ (R):</b> <span>" + r + "</span>";
+      if(hD) hD.innerHTML = "<b>เสียชีวิต (D):</b> <span>" + d + "</span>";
+      if(hRt){
+        var rtColor = rt > 1.2 ? "#ef4444" : rt > 0.9 ? "#f59e0b" : "#10b981";
+        hRt.style.color = rtColor;
+        hRt.innerHTML = "<b>R(t):</b> <span>" + rt.toFixed(2) + "</span>";
+      }
+
       if(hR0){
-        if(i === 0 && EPILAB.time > 10){
+        if(i === 0 && e === 0 && h === 0 && EPILAB.time > 30){
           hR0.className = "qlab-hud-tag success";
-          hR0.innerHTML = "<b>สถานะ:</b> <span>โรคระบาดสิ้นสุดลงแล้ว!</span>";
-        } else if(i > 75){
+          hR0.innerHTML = "<b>สถานะ:</b> <span>โรคระบาดสิ้นสุดลงแล้ว! (ปลอดเชื้อ)</span>";
+        } else if(h > EPILAB.icuCapacity){
+          hR0.className = "qlab-hud-tag alert observer-on";
+          hR0.innerHTML = "<b>สถานะ:</b> <span>🚨 วิกฤต! เตียง ICU ล้น (" + (h - EPILAB.icuCapacity) + " ราย ขาดเครื่องช่วยหายใจ)</span>";
+        } else if(i + h > EPILAB.icuCapacity * 1.5){
           hR0.className = "qlab-hud-tag alert";
-          hR0.innerHTML = "<b>สถานะ:</b> <span>เกินความจุเตียง ICU!</span>";
+          hR0.innerHTML = "<b>สถานะ:</b> <span>⚠️ การระบาดรุนแรง เสี่ยงระบบ รพ. ล่มสลาย</span>";
         } else {
           hR0.className = "qlab-hud-tag";
-          hR0.innerHTML = "<b>สถานะ:</b> <span>กำลังแพร่ระบาด (t=" + Math.round(EPILAB.time / 20) + " วัน)</span>";
+          hR0.innerHTML = "<b>สถานะ:</b> <span>กำลังแพร่ระบาดตามชีวฟิสิกส์</span>";
         }
       }
     }
@@ -24218,13 +24314,45 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }
       EPILAB.isInit = true;
 
-      // Buttons & Controls
+      // Controls
       var bPlay = document.getElementById("btnEpiPlay");
       var bReset = document.getElementById("btnEpiReset");
+      var bSpeed = document.getElementById("btnEpiSpeed");
       var bMask = document.getElementById("btnEpiMask");
+      var bDist = document.getElementById("btnEpiDistance");
       var bLock = document.getElementById("btnEpiLockdown");
+      var bQuar = document.getElementById("btnEpiQuarantine");
       var sBeta = document.getElementById("sliderEpiBeta");
       var sVac = document.getElementById("sliderEpiVac");
+      var sIcu = document.getElementById("sliderEpiIcu");
+
+      // Presets
+      var pOmi = document.getElementById("btnEpiPresetCovidOmi");
+      var pCla = document.getElementById("btnEpiPresetCovidClassic");
+      var pMea = document.getElementById("btnEpiPresetMeasles");
+      var pFlu = document.getElementById("btnEpiPresetFlu");
+
+      function applyPreset(key){
+        EPILAB.selectedPreset = key;
+        var p = EPILAB.presets[key];
+        [pOmi, pCla, pMea, pFlu].forEach(function(btn){ if(btn) btn.classList.remove("primary"); });
+        if(key === "covid_omi" && pOmi) pOmi.classList.add("primary");
+        if(key === "covid_classic" && pCla) pCla.classList.add("primary");
+        if(key === "measles" && pMea) pMea.classList.add("primary");
+        if(key === "flu" && pFlu) pFlu.classList.add("primary");
+
+        if(sBeta){
+          sBeta.value = p.beta;
+          var disp = document.getElementById("valEpiBeta");
+          if(disp) disp.textContent = p.r0Label;
+        }
+        resetEpiLab();
+      }
+
+      if(pOmi) pOmi.addEventListener("click", function(){ applyPreset("covid_omi"); });
+      if(pCla) pCla.addEventListener("click", function(){ applyPreset("covid_classic"); });
+      if(pMea) pMea.addEventListener("click", function(){ applyPreset("measles"); });
+      if(pFlu) pFlu.addEventListener("click", function(){ applyPreset("flu"); });
 
       if(bPlay) bPlay.addEventListener("click", function(){
         EPILAB.running = !EPILAB.running;
@@ -24233,33 +24361,99 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       if(bReset) bReset.addEventListener("click", resetEpiLab);
 
+      if(bSpeed) bSpeed.addEventListener("click", function(){
+        EPILAB.speed = EPILAB.speed === 1 ? 2 : EPILAB.speed === 2 ? 4 : 1;
+        this.querySelector("b").textContent = EPILAB.speed + "x";
+      });
+
       if(bMask) bMask.addEventListener("click", function(){
         EPILAB.maskOn = !EPILAB.maskOn;
         this.classList.toggle("active", EPILAB.maskOn);
-        this.querySelector("b").textContent = EPILAB.maskOn ? "เปิด (ลดแพร่ 70%)" : "ปิด";
+        this.querySelector("b").textContent = EPILAB.maskOn ? "เปิด (ลดแพร่ 75%)" : "ปิด";
+      });
+
+      if(bDist) bDist.addEventListener("click", function(){
+        EPILAB.distanceOn = !EPILAB.distanceOn;
+        this.classList.toggle("active", EPILAB.distanceOn);
+        this.querySelector("b").textContent = EPILAB.distanceOn ? "เปิด (หลบเลี่ยง 2ม.)" : "ปิด";
       });
 
       if(bLock) bLock.addEventListener("click", function(){
         EPILAB.lockdownOn = !EPILAB.lockdownOn;
         this.classList.toggle("active", EPILAB.lockdownOn);
-        this.querySelector("b").textContent = EPILAB.lockdownOn ? "เปิด (ล็อก 80%)" : "ปิด";
-        // Freeze or unfreeze 80% of agents
-        for(var i = 0; i < EPILAB.agents.length; i++){
-          EPILAB.agents[i].isFrozen = EPILAB.lockdownOn && (i % 5 !== 0);
-        }
+        this.querySelector("b").textContent = EPILAB.lockdownOn ? "เปิด (ปิดตลาดกลาง)" : "ปิด";
+      });
+
+      if(bQuar) bQuar.addEventListener("click", function(){
+        EPILAB.quarantineOn = !EPILAB.quarantineOn;
+        this.classList.toggle("active", EPILAB.quarantineOn);
+        this.querySelector("b").textContent = EPILAB.quarantineOn ? "เปิด (กักตัวสู่ ICU)" : "ปิด";
       });
 
       if(sBeta) sBeta.addEventListener("input", function(){
         EPILAB.beta = parseFloat(this.value);
         var disp = document.getElementById("valEpiBeta");
-        if(disp) disp.textContent = EPILAB.beta < 0.3 ? "ต่ำ (R₀ ≈ 1.5)" : EPILAB.beta < 0.6 ? "ปานกลาง (R₀ ≈ 2.8)" : "สูงมาก (R₀ ≈ 6.0)";
+        if(disp) disp.textContent = "β = " + EPILAB.beta.toFixed(2) + " (R₀ ≈ " + (EPILAB.beta * 12.5).toFixed(1) + ")";
       });
 
       if(sVac) sVac.addEventListener("input", function(){
         EPILAB.vacRate = parseInt(this.value);
         var disp = document.getElementById("valEpiVac");
-        if(disp) disp.textContent = EPILAB.vacRate + "% " + (EPILAB.vacRate >= 70 ? "(ภูมิคุ้มกันหมู่!)" : "");
+        if(disp) disp.textContent = EPILAB.vacRate + "% " + (EPILAB.vacRate >= 75 ? "(เกณฑ์ภูมิคุ้มกันหมู่!)" : "");
         resetEpiLab();
+      });
+
+      if(sIcu) sIcu.addEventListener("input", function(){
+        EPILAB.icuCapacity = parseInt(this.value);
+        var disp = document.getElementById("valEpiIcu");
+        if(disp) disp.textContent = EPILAB.icuCapacity + " เตียง (" + Math.round((EPILAB.icuCapacity / EPILAB.numAgents) * 100) + "% ประชากร)";
+      });
+
+      // Canvas pointer interaction (Inspection & Click to interact)
+      canvas.addEventListener("pointermove", function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mx = e.clientX - rect.left;
+        var my = e.clientY - rect.top;
+        var found = null;
+        for(var i = 0; i < EPILAB.agents.length; i++){
+          var a = EPILAB.agents[i];
+          var dx = a.x - mx, dy = a.y - my;
+          if(dx * dx + dy * dy < 144){
+            found = a;
+            break;
+          }
+        }
+        EPILAB.hoverAgent = found;
+      });
+
+      canvas.addEventListener("pointerleave", function(){
+        EPILAB.hoverAgent = null;
+      });
+
+      canvas.addEventListener("click", function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mx = e.clientX - rect.left;
+        var my = e.clientY - rect.top;
+        for(var i = 0; i < EPILAB.agents.length; i++){
+          var a = EPILAB.agents[i];
+          var dx = a.x - mx, dy = a.y - my;
+          if(dx * dx + dy * dy < 196){
+            EPILAB.selectedAgent = a;
+            // Toggle infect / vaccinate on click
+            if(a.state === "S"){
+              a.state = "I";
+              a.infectiousTimer = 0;
+            } else if(a.state === "I"){
+              a.state = "H";
+              a.hospitalTimer = 0;
+            } else if(a.state === "R"){
+              a.state = "S";
+              a.isVaccinated = false;
+            }
+            return;
+          }
+        }
+        EPILAB.selectedAgent = null;
       });
 
       resetEpiLab();
@@ -24287,56 +24481,320 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       ctx.save();
       ctx.scale(dpr, dpr);
 
+      // Background
       ctx.fillStyle = "#030712";
       ctx.fillRect(0, 0, w, h);
 
-      var simH = h * 0.68; // Top simulation space
-      var chartH = h - simH - 12; // Bottom chart space
+      var simH = h * 0.65; // Upper simulation arena
+      var chartH = h - simH - 14; // Bottom multi-curve chart
 
-      // Simulation arena border
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      // City Districts & Layout
+      var westBorder = w * 0.32;
+      var marketLeft = w * 0.35, marketRight = w * 0.65;
+      var eastBorder = w * 0.68;
+      var hospW = Math.min(190, w * 0.28), hospH = 105;
+      var hospX = w - hospW - 14, hospY = 14;
+
+      // Draw subtle city grid lines
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.035)";
+      ctx.lineWidth = 1;
+      for(var gx = 20; gx < w; gx += 30){
+        ctx.beginPath(); ctx.moveTo(gx, 10); ctx.lineTo(gx, simH - 5); ctx.stroke();
+      }
+      for(var gy = 20; gy < simH; gy += 30){
+        ctx.beginPath(); ctx.moveTo(10, gy); ctx.lineTo(w - 10, gy); ctx.stroke();
+      }
+
+      // 1. Central Market Zone (High density gathering hub)
+      if(!EPILAB.lockdownOn){
+        ctx.fillStyle = "rgba(245, 158, 11, 0.045)";
+        ctx.fillRect(marketLeft, 20, marketRight - marketLeft, simH - 30);
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.22)";
+        ctx.setLineDash([5, 5]);
+        ctx.strokeRect(marketLeft, 20, marketRight - marketLeft, simH - 30);
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(245, 158, 11, 0.75)";
+        ctx.font = "bold 10px 'Fira Code', monospace";
+        ctx.fillText("🏛️ ศูนย์รวมชุมชน & ตลาดกลาง (High Density Hub)", marketLeft + 10, 36);
+      } else {
+        // Locked down market
+        ctx.fillStyle = "rgba(239, 68, 68, 0.08)";
+        ctx.fillRect(marketLeft, 20, marketRight - marketLeft, simH - 30);
+        ctx.strokeStyle = "rgba(239, 68, 68, 0.5)";
+        ctx.setLineDash([4, 4]);
+        ctx.strokeRect(marketLeft, 20, marketRight - marketLeft, simH - 30);
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#ef4444";
+        ctx.font = "bold 10px 'Fira Code', monospace";
+        ctx.fillText("🔒 ตลาดถูกปิดตามมาตรการล็อกดาวน์ (Curfew / Restricted)", marketLeft + 10, 36);
+      }
+
+      // 2. Residential Districts labels
+      ctx.fillStyle = "rgba(56, 189, 248, 0.4)";
+      ctx.font = "9px 'Fira Code', monospace";
+      ctx.fillText("🏠 ย่านที่พักอาศัยตะวันตก", 18, 30);
+      ctx.fillText("🏠 ย่านที่พักอาศัยตะวันออก", eastBorder + 8, 30);
+
+      // 3. Field Hospital & ICU Ward
+      ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
+      ctx.fillRect(hospX, hospY, hospW, hospH);
+      ctx.strokeStyle = "rgba(192, 132, 252, 0.4)";
       ctx.lineWidth = 1.5;
+      ctx.strokeRect(hospX, hospY, hospW, hospH);
+
+      // Hospital header
+      ctx.fillStyle = "#c084fc";
+      ctx.font = "bold 9.5px 'Fira Code', monospace";
+      ctx.fillText("🏥 รพ. สนาม & เตียง ICU", hospX + 8, hospY + 16);
+
+      // Draw ICU Mini Beds grid inside hospital
+      var bedRows = 3, bedCols = Math.min(10, Math.ceil(EPILAB.icuCapacity / bedRows));
+      var bedW = 11, bedH = 15, bedGapX = 5, bedGapY = 5;
+      var bedStartX = hospX + 10, bedStartY = hospY + 26;
+      var curSevereInICU = 0;
+
+      for(var bi = 0; bi < EPILAB.agents.length; bi++){
+        if(EPILAB.agents[bi].state === "H") curSevereInICU++;
+      }
+
+      for(var bIdx = 0; bIdx < EPILAB.icuCapacity; bIdx++){
+        var bCol = bIdx % bedCols;
+        var bRow = Math.floor(bIdx / bedCols);
+        var bx = bedStartX + bCol * (bedW + bedGapX);
+        var by = bedStartY + bRow * (bedH + bedGapY);
+        if(bx + bedW > hospX + hospW - 6) break;
+
+        var isOccupied = bIdx < curSevereInICU;
+        ctx.fillStyle = isOccupied ? "rgba(239, 68, 68, 0.9)" : "rgba(192, 132, 252, 0.2)";
+        ctx.fillRect(bx, by, bedW, bedH);
+        ctx.strokeStyle = isOccupied ? "#ef4444" : "rgba(255,255,255,0.2)";
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(bx, by, bedW, bedH);
+
+        // Bed pillow marker
+        ctx.fillStyle = isOccupied ? "#ffffff" : "rgba(255,255,255,0.4)";
+        ctx.fillRect(bx + 2, by + 2, bedW - 4, 3);
+      }
+
+      if(curSevereInICU > EPILAB.icuCapacity){
+        ctx.fillStyle = "#ef4444";
+        ctx.font = "bold 9px 'Fira Code', monospace";
+        ctx.fillText("⚠️ ล้นเตียง +" + (curSevereInICU - EPILAB.icuCapacity) + " ราย!", hospX + 8, hospY + hospH - 8);
+      } else {
+        ctx.fillStyle = "#10b981";
+        ctx.font = "9px 'Fira Code', monospace";
+        ctx.fillText("ว่าง " + (EPILAB.icuCapacity - curSevereInICU) + " เตียง", hospX + 8, hospY + hospH - 8);
+      }
+
+      // Simulation Arena Outer Boundary
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.lineWidth = 1.2;
       ctx.strokeRect(10, 10, w - 20, simH - 10);
 
-      var countS = 0, countI = 0, countR = 0;
-      var infectionRadius = EPILAB.maskOn ? 10 : 22;
-      var infectProb = EPILAB.maskOn ? EPILAB.beta * 0.25 : EPILAB.beta;
+      var conf = EPILAB.presets[EPILAB.selectedPreset] || EPILAB.presets.covid_omi;
+      var baseInfectRadius = conf.aerosolRad;
+      var effectiveRadius = EPILAB.maskOn ? baseInfectRadius * 0.45 : baseInfectRadius;
+      var transmissionBeta = EPILAB.beta;
 
-      // Update agents
-      for(var i = 0; i < EPILAB.agents.length; i++){
-        var a = EPILAB.agents[i];
-        if(a.state === "S") countS++;
-        else if(a.state === "I") countI++;
-        else if(a.state === "R") countR++;
+      var countS = 0, countE = 0, countI = 0, countH = 0, countR = 0, countD = 0;
+      var currentStepFactor = EPILAB.speed;
 
-        if(EPILAB.running){
-          if(!a.isFrozen){
-            a.x += a.vx;
-            a.y += a.vy;
-            if(a.x < 16 || a.x > w - 16) a.vx *= -1;
-            if(a.y < 16 || a.y > simH - 6) a.vy *= -1;
+      // Sub-steps for simulation stability at higher speeds
+      for(var step = 0; step < currentStepFactor; step++){
+        if(!EPILAB.running) break;
+
+        EPILAB.time++;
+
+        // 1. Move & Update Agents
+        for(var i = 0; i < EPILAB.agents.length; i++){
+          var a = EPILAB.agents[i];
+          if(a.state === "D") continue; // Deceased do not move
+
+          // If Hospitalized in ICU
+          if(a.state === "H"){
+            // Stay within hospital ICU ward bounds
+            var targetHospX = hospX + 20 + (a.id % 8) * 16;
+            var targetHospY = hospY + 30 + (a.id % 4) * 14;
+            a.x += (targetHospX - a.x) * 0.1;
+            a.y += (targetHospY - a.y) * 0.1;
+
+            a.hospitalTimer++;
+            // Check ICU saturation mortality risk
+            if(countH > EPILAB.icuCapacity){
+              var excess = countH - EPILAB.icuCapacity;
+              var mortalityRisk = 0.0035 * (1 + excess / EPILAB.icuCapacity);
+              if(Math.random() < mortalityRisk){
+                a.state = "D"; // Died due to lack of ICU bed / ventilator
+                continue;
+              }
+            }
+
+            // Normal hospital recovery
+            if(a.hospitalTimer > 280){
+              a.state = "R";
+              a.isSevere = false;
+            }
+            continue;
           }
 
-          // Recovery countdown
-          if(a.state === "I"){
-            a.infectedTime++;
-            if(a.infectedTime > EPILAB.recoveryTime){
-              a.state = "R";
+          // Natural human wandering & target steering
+          if(!a.isQuarantined){
+            a.wanderAngle += (Math.random() - 0.5) * 0.35;
+
+            // Target destination logic (Home vs Market)
+            a.targetSwitchTick--;
+            if(a.targetSwitchTick <= 0){
+              a.targetSwitchTick = 120 + Math.floor(Math.random() * 180);
+              if(!EPILAB.lockdownOn && Math.random() < (a.isSuperSpreader ? 0.6 : 0.25)){
+                a.targetZone = "market";
+              } else {
+                a.targetZone = "home";
+              }
+            }
+
+            var steerX = Math.cos(a.wanderAngle) * 0.25;
+            var steerY = Math.sin(a.wanderAngle) * 0.25;
+
+            if(a.targetZone === "market" && !EPILAB.lockdownOn){
+              var marketCenterX = (marketLeft + marketRight) / 2;
+              var marketCenterY = simH / 2;
+              steerX += (marketCenterX - a.x) * 0.006;
+              steerY += (marketCenterY - a.y) * 0.006;
+            } else {
+              // Steer toward home residential district
+              steerX += (a.homeX - a.x) * 0.004;
+              steerY += (a.homeY - a.y) * 0.004;
+            }
+
+            // Social Distancing Force (Repulsive steering)
+            if(EPILAB.distanceOn){
+              for(var k = 0; k < EPILAB.agents.length; k++){
+                if(k === i) continue;
+                var otherA = EPILAB.agents[k];
+                if(otherA.state === "D") continue;
+                var ndx = a.x - otherA.x;
+                var ndy = a.y - otherA.y;
+                var distSq = ndx * ndx + ndy * ndy;
+                if(distSq < 576 && distSq > 0.01){ // 24px distance
+                  var dist = Math.sqrt(distSq);
+                  var repulse = (24 - dist) / 24 * 0.6;
+                  steerX += (ndx / dist) * repulse;
+                  steerY += (ndy / dist) * repulse;
+                }
+              }
+            }
+
+            a.vx = Math.max(-1.6, Math.min(1.6, a.vx + steerX));
+            a.vy = Math.max(-1.6, Math.min(1.6, a.vy + steerY));
+
+            a.x += a.vx;
+            a.y += a.vy;
+
+            // Soft boundaries
+            if(a.x < 18){ a.x = 18; a.vx = Math.abs(a.vx); }
+            if(a.x > w - 18){ a.x = w - 18; a.vx = -Math.abs(a.vx); }
+            if(a.y < 20){ a.y = 20; a.vy = Math.abs(a.vy); }
+            if(a.y > simH - 12){ a.y = simH - 12; a.vy = -Math.abs(a.vy); }
+
+            // Lockdown zone restriction: prevent crossing into market
+            if(EPILAB.lockdownOn){
+              if(a.homeDistrict === 0 && a.x > westBorder){
+                a.x = westBorder; a.vx = -Math.abs(a.vx);
+              } else if(a.homeDistrict === 1 && a.x < eastBorder){
+                a.x = eastBorder; a.vx = Math.abs(a.vx);
+              }
             }
           }
 
-          // Infection spread on proximity
+          // Disease progression: E (Exposed / Incubation)
+          if(a.state === "E"){
+            a.incubationTimer++;
+            if(a.incubationTimer > conf.incTime){
+              a.state = "I";
+              a.infectiousTimer = 0;
+              // Check severity based on age & vaccine
+              var ageRisk = (a.age > 60) ? 2.5 : (a.age > 45) ? 1.2 : 0.6;
+              var vacProtect = a.isVaccinated ? 0.15 : 1.0;
+              a.isSevere = (Math.random() < conf.severeRate * ageRisk * vacProtect);
+            }
+          }
+
+          // Disease progression: I (Infectious)
           if(a.state === "I"){
+            a.infectiousTimer++;
+
+            // Periodic coughing & aerosol burst
+            a.couchCooldown--;
+            if(a.couchCooldown <= 0){
+              a.couchCooldown = 120 + Math.floor(Math.random() * 120);
+              // Spawn aerosol burst
+              var pCount = EPILAB.maskOn ? 3 : 8;
+              for(var p = 0; p < pCount; p++){
+                var pAngle = a.wanderAngle + (Math.random() - 0.5) * 0.8;
+                var pSpd = 0.5 + Math.random() * 1.5;
+                EPILAB.particles.push({
+                  x: a.x, y: a.y,
+                  vx: Math.cos(pAngle) * pSpd,
+                  vy: Math.sin(pAngle) * pSpd,
+                  life: 25 + Math.floor(Math.random() * 20),
+                  maxLife: 45,
+                  rad: 2 + Math.random() * 2
+                });
+              }
+            }
+
+            // Quarantine policy: detect and isolate
+            if(EPILAB.quarantineOn && a.infectiousTimer > 40 && !a.isQuarantined){
+              if(Math.random() < 0.75){
+                a.isQuarantined = true;
+                if(a.isSevere){
+                  a.state = "H";
+                  a.hospitalTimer = 0;
+                  continue;
+                }
+              }
+            }
+
+            // Severe progression to Hospital
+            if(a.isSevere && a.infectiousTimer > 70){
+              a.state = "H";
+              a.hospitalTimer = 0;
+              continue;
+            }
+
+            // Recovery from I
+            if(a.infectiousTimer > conf.infTime){
+              a.state = "R";
+              a.isQuarantined = false;
+            }
+          }
+
+          // Airborne Transmission & Viral Exposure accumulation
+          if(a.state === "I"){
+            var sheddingPower = a.isSuperSpreader ? 2.0 : 1.0;
+            var maskShed = EPILAB.maskOn ? (1 - conf.maskEfficacy) : 1.0;
+
             for(var j = 0; j < EPILAB.agents.length; j++){
-              var other = EPILAB.agents[j];
-              if(other.state === "S"){
-                var dx = a.x - other.x;
-                var dy = a.y - other.y;
-                var distSq = dx * dx + dy * dy;
-                if(distSq < infectionRadius * infectionRadius){
-                  if(Math.random() < infectProb * 0.08){
-                    other.state = "I";
-                    other.infectedTime = 0;
+              var target = EPILAB.agents[j];
+              if(target.state === "S"){
+                var tdx = a.x - target.x;
+                var tdy = a.y - target.y;
+                var tdistSq = tdx * tdx + tdy * tdy;
+                var effRadSq = effectiveRadius * effectiveRadius;
+
+                if(tdistSq < effRadSq){
+                  var dist = Math.sqrt(tdistSq);
+                  var maskInhale = (EPILAB.maskOn ? 0.4 : 1.0);
+                  var vacProtect = target.isVaccinated ? 0.12 : 1.0;
+                  var doseRate = transmissionBeta * sheddingPower * maskShed * maskInhale * vacProtect;
+                  var distanceFalloff = 1 / (1 + (dist / 10) * (dist / 10));
+
+                  target.viralExposure += doseRate * distanceFalloff * 0.14;
+
+                  if(target.viralExposure >= 1.0){
+                    target.state = "E";
+                    target.incubationTimer = 0;
+                    a.infectionsCaused++;
                   }
                 }
               }
@@ -24344,79 +24802,289 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           }
         }
 
-        // Draw Agent
-        if(a.state === "S"){
+        // Update floating aerosol particles
+        for(var pi = EPILAB.particles.length - 1; pi >= 0; pi--){
+          var part = EPILAB.particles[pi];
+          part.x += part.vx;
+          part.y += part.vy;
+          part.vx *= 0.94;
+          part.vy *= 0.94;
+          part.life--;
+          if(part.life <= 0){
+            EPILAB.particles.splice(pi, 1);
+          }
+        }
+      }
+
+      // Count Census
+      var totalActiveInfectious = 0;
+      var totalSecondaryInfections = 0;
+      for(var c = 0; c < EPILAB.agents.length; c++){
+        var st = EPILAB.agents[c].state;
+        if(st === "S") countS++;
+        else if(st === "E") countE++;
+        else if(st === "I"){ countI++; totalActiveInfectious++; totalSecondaryInfections += EPILAB.agents[c].infectionsCaused; }
+        else if(st === "H"){ countH++; totalActiveInfectious++; }
+        else if(st === "R") countR++;
+        else if(st === "D") countD++;
+      }
+
+      var currentRt = totalActiveInfectious > 0 ? (totalSecondaryInfections / totalActiveInfectious) : 0;
+      if(currentRt === 0 && countI > 0) currentRt = EPILAB.beta * 4.2;
+
+      // History Record
+      if(EPILAB.running && EPILAB.time % 4 === 0){
+        EPILAB.history.push({
+          time: EPILAB.time,
+          s: countS, e: countE, i: countI, h: countH, r: countR, d: countD,
+          rt: currentRt
+        });
+        if(EPILAB.history.length > w - 40) EPILAB.history.shift();
+        updateEpiHUD(countS, countE, countI, countH, countR, countD, currentRt);
+      }
+
+      // Render Floating Aerosol Particles
+      for(var pj = 0; pj < EPILAB.particles.length; pj++){
+        var prt = EPILAB.particles[pj];
+        var alpha = (prt.life / prt.maxLife) * 0.35;
+        ctx.fillStyle = "rgba(239, 68, 68, " + alpha + ")";
+        ctx.beginPath();
+        ctx.arc(prt.x, prt.y, prt.rad, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Render Agents
+      var pulse = Math.sin(EPILAB.time * 0.08) * 3;
+      for(var ai = 0; ai < EPILAB.agents.length; ai++){
+        var ag = EPILAB.agents[ai];
+
+        // S (Susceptible)
+        if(ag.state === "S"){
           ctx.fillStyle = "#38bdf8";
-          ctx.beginPath(); ctx.arc(a.x, a.y, 3.2, 0, Math.PI * 2); ctx.fill();
-        } else if(a.state === "I"){
-          // Glowing infection halo
-          ctx.fillStyle = "rgba(239,68,68,0.18)";
-          ctx.beginPath(); ctx.arc(a.x, a.y, infectionRadius, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // If Vaccinated
+          if(ag.isVaccinated){
+            ctx.strokeStyle = "rgba(16, 185, 129, 0.6)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(ag.x, ag.y, 5.5, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // If partially exposed (Progress ring)
+          if(ag.viralExposure > 0.15){
+            ctx.strokeStyle = "rgba(245, 158, 11, " + Math.min(1, ag.viralExposure) + ")";
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(ag.x, ag.y, 6, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * ag.viralExposure);
+            ctx.stroke();
+          }
+        }
+        // E (Exposed / Incubation)
+        else if(ag.state === "E"){
+          ctx.fillStyle = "#f59e0b";
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Amber aura
+          ctx.fillStyle = "rgba(245, 158, 11, 0.18)";
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // I (Infectious)
+        else if(ag.state === "I"){
+          // Breathing aerosol plume halo
+          var rad = effectiveRadius + pulse;
+          var grad = ctx.createRadialGradient(ag.x, ag.y, 2, ag.x, ag.y, Math.max(5, rad));
+          grad.addColorStop(0, "rgba(239, 68, 68, 0.35)");
+          grad.addColorStop(0.7, "rgba(239, 68, 68, 0.12)");
+          grad.addColorStop(1, "rgba(239, 68, 68, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, Math.max(5, rad), 0, Math.PI * 2);
+          ctx.fill();
+
+          // Super-spreader extra indicator
+          if(ag.isSuperSpreader){
+            ctx.strokeStyle = "rgba(239, 68, 68, 0.7)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.arc(ag.x, ag.y, rad + 4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+
+          // Core dot
           ctx.fillStyle = "#ef4444";
-          ctx.shadowColor = "#ef4444"; ctx.shadowBlur = 6;
-          ctx.beginPath(); ctx.arc(a.x, a.y, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowColor = "#ef4444"; ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 4.2, 0, Math.PI * 2);
+          ctx.fill();
           ctx.shadowBlur = 0;
-        } else if(a.state === "R"){
+
+          // Mask indicator
+          if(EPILAB.maskOn){
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(ag.x - 2, ag.y - 1.5, 4, 3);
+          }
+        }
+        // H (Hospitalized in ICU)
+        else if(ag.state === "H"){
+          ctx.fillStyle = "#c084fc";
+          ctx.shadowColor = "#c084fc"; ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 3.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Pulse heart beat ring
+          ctx.strokeStyle = "rgba(192, 132, 252, 0.5)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 6 + (EPILAB.time % 20) * 0.4, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        // R (Recovered)
+        else if(ag.state === "R"){
           ctx.fillStyle = "#10b981";
-          ctx.beginPath(); ctx.arc(a.x, a.y, 3.2, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ag.x, ag.y, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // D (Deceased)
+        else if(ag.state === "D"){
+          ctx.strokeStyle = "#64748b";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(ag.x - 3, ag.y - 3); ctx.lineTo(ag.x + 3, ag.y + 3);
+          ctx.moveTo(ag.x + 3, ag.y - 3); ctx.lineTo(ag.x - 3, ag.y + 3);
+          ctx.stroke();
         }
       }
 
-      if(EPILAB.running){
-        EPILAB.time++;
-        if(EPILAB.time % 3 === 0){
-          EPILAB.history.push({ s: countS, i: countI, r: countR });
-          if(EPILAB.history.length > w - 40) EPILAB.history.shift();
-          updateEpiHUD(countS, countI, countR);
-        }
+      // Interactive Agent Hover / Selection Inspector Card
+      var inspectA = EPILAB.selectedAgent || EPILAB.hoverAgent;
+      if(inspectA){
+        var cardW = 190, cardH = 92;
+        var cx = Math.min(w - cardW - 15, Math.max(15, inspectA.x + 12));
+        var cy = Math.min(simH - cardH - 10, Math.max(15, inspectA.y - 45));
+
+        ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
+        ctx.fillRect(cx, cy, cardW, cardH);
+        ctx.strokeStyle = inspectA.state === "I" ? "#ef4444" : inspectA.state === "H" ? "#c084fc" : "#38bdf8";
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(cx, cy, cardW, cardH);
+
+        // Highlight ring around inspected agent
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(inspectA.x, inspectA.y, 9, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 10px 'Fira Code', monospace";
+        ctx.fillText("👤 ประชากร #" + inspectA.id + " (" + inspectA.age + " ปี)", cx + 8, cy + 15);
+
+        var stText = inspectA.state === "S" ? "กลุ่มเสี่ยง (ปกติ)" :
+                     inspectA.state === "E" ? "ระยะฟักตัว (ไม่แสดงอาการ)" :
+                     inspectA.state === "I" ? "ติดเชื้อ & แพร่เชื้อ" :
+                     inspectA.state === "H" ? "วิกฤต (ในห้อง ICU)" :
+                     inspectA.state === "R" ? "หายแล้ว (มีภูมิคุ้มกัน)" : "เสียชีวิต";
+        var stCol = inspectA.state === "S" ? "#38bdf8" :
+                    inspectA.state === "E" ? "#f59e0b" :
+                    inspectA.state === "I" ? "#ef4444" :
+                    inspectA.state === "H" ? "#c084fc" :
+                    inspectA.state === "R" ? "#10b981" : "#94a3b8";
+
+        ctx.fillStyle = stCol;
+        ctx.font = "bold 9.5px 'Fira Code', monospace";
+        ctx.fillText("สถานะ: " + stText, cx + 8, cy + 31);
+
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.font = "9px 'Fira Code', monospace";
+        ctx.fillText("การรับเชื้อ (Dose): " + Math.round(inspectA.viralExposure * 100) + "%", cx + 8, cy + 46);
+        ctx.fillText("วัคซีน: " + (inspectA.isVaccinated ? "ฉีดแล้ว (มีภูมิ)" : "ยังไม่ได้รับ"), cx + 8, cy + 60);
+        ctx.fillText("แพร่ต่อแล้ว: " + inspectA.infectionsCaused + " ราย " + (inspectA.isSuperSpreader ? "⭐ Super" : ""), cx + 8, cy + 74);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fillText("💡 คลิกเพื่อสลับสถานะ / ฉีดวัคซีน", cx + 8, cy + 86);
       }
 
-      // Draw Live Epidemic Curve (Bottom Chart)
-      var chartTop = simH + 6;
+      // ================= 📈 LIVE SEIRD EPIDEMIOLOGICAL CHART =================
+      var chartTop = simH + 8;
       var chartLeft = 16, chartW = w - 32;
-      ctx.fillStyle = "rgba(15,23,42,0.8)";
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
       ctx.fillRect(chartLeft, chartTop, chartW, chartH);
       ctx.strokeStyle = "rgba(255,255,255,0.15)";
       ctx.strokeRect(chartLeft, chartTop, chartW, chartH);
 
-      // Hospital ICU threshold line (at e.g. 35% of population = 70 infected)
-      var icuY = chartTop + chartH * (1 - 70 / EPILAB.numAgents);
-      ctx.strokeStyle = "rgba(239,68,68,0.7)";
+      // Hospital ICU Capacity Threshold Line
+      var icuRatio = EPILAB.icuCapacity / EPILAB.numAgents;
+      var icuY = chartTop + chartH * (1 - icuRatio);
+
+      // Danger zone background above ICU
+      if(countH > EPILAB.icuCapacity){
+        ctx.fillStyle = "rgba(239, 68, 68, 0.08)";
+        ctx.fillRect(chartLeft, chartTop, chartW, icuY - chartTop);
+      }
+
+      ctx.strokeStyle = "rgba(239, 68, 68, 0.85)";
       ctx.setLineDash([4, 4]);
-      ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(chartLeft, icuY); ctx.lineTo(chartLeft + chartW, icuY); ctx.stroke();
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(chartLeft, icuY);
+      ctx.lineTo(chartLeft + chartW, icuY);
+      ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = "rgba(239,68,68,0.9)";
-      ctx.font = "bold 9.5px Fira Code, monospace";
-      ctx.fillText("ขีดความสามารถเตียง ICU รองรับได้สูงสุด", chartLeft + 8, icuY - 4);
 
+      ctx.fillStyle = "#ef4444";
+      ctx.font = "bold 9.5px 'Fira Code', monospace";
+      ctx.fillText("ขีดความสามารถเตียง ICU (" + EPILAB.icuCapacity + " เตียง)", chartLeft + 8, icuY - 5);
+
+      // Chart Legend
+      ctx.font = "9px 'Fira Code', monospace";
+      var lx = chartLeft + 220;
+      if(lx < chartLeft + chartW - 240){
+        ctx.fillStyle = "#38bdf8"; ctx.fillText("● S", lx, chartTop + 14);
+        ctx.fillStyle = "#f59e0b"; ctx.fillText("● E", lx + 35, chartTop + 14);
+        ctx.fillStyle = "#ef4444"; ctx.fillText("● I", lx + 70, chartTop + 14);
+        ctx.fillStyle = "#c084fc"; ctx.fillText("● H(ICU)", lx + 105, chartTop + 14);
+        ctx.fillStyle = "#10b981"; ctx.fillText("● R", lx + 160, chartTop + 14);
+        ctx.fillStyle = "#94a3b8"; ctx.fillText("● D", lx + 195, chartTop + 14);
+      }
+
+      // Draw Curves
       if(EPILAB.history.length > 1){
-        var stepX = chartW / Math.max(120, EPILAB.history.length);
-        // Draw I(t) curve
-        ctx.strokeStyle = "#ef4444";
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        for(var hx = 0; hx < EPILAB.history.length; hx++){
-          var pt = EPILAB.history[hx];
-          var px = chartLeft + hx * stepX;
-          var py = chartTop + chartH * (1 - pt.i / EPILAB.numAgents);
-          if(hx === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
+        var stepX = chartW / Math.max(160, EPILAB.history.length);
 
-        // Draw R(t) curve
-        ctx.strokeStyle = "#10b981";
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        for(var rx = 0; rx < EPILAB.history.length; rx++){
-          var ptr = EPILAB.history[rx];
-          var prx = chartLeft + rx * stepX;
-          var pry = chartTop + chartH * (1 - ptr.r / EPILAB.numAgents);
-          if(rx === 0) ctx.moveTo(prx, pry);
-          else ctx.lineTo(prx, pry);
+        function drawCurve(prop, color, width){
+          ctx.strokeStyle = color;
+          ctx.lineWidth = width;
+          ctx.beginPath();
+          for(var hx = 0; hx < EPILAB.history.length; hx++){
+            var pt = EPILAB.history[hx];
+            var val = pt[prop];
+            var px = chartLeft + hx * stepX;
+            var py = chartTop + chartH * (1 - val / EPILAB.numAgents);
+            if(hx === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
         }
-        ctx.stroke();
+
+        drawCurve("s", "rgba(56, 189, 248, 0.8)", 1.2);
+        drawCurve("e", "#f59e0b", 1.5);
+        drawCurve("i", "#ef4444", 2.2);
+        drawCurve("h", "#c084fc", 1.8);
+        drawCurve("r", "#10b981", 1.8);
+        drawCurve("d", "#94a3b8", 1.5);
       }
 
       ctx.restore();
