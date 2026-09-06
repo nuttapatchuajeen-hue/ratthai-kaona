@@ -1397,7 +1397,11 @@ var NAV = [
           { pane:"math-euler",      ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"เอกลักษณ์ออยเลอร์ & เชิงซ้อน", existing:true },
           { pane:"math-calculus",   ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"แคลคูลัส & อัตราการเปลี่ยนแปลง", existing:true },
           { pane:"math-normal",     ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"การแจกแจงปกติ & ความน่าจะเป็น", existing:true },
-          { pane:"math-wave",       ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"สมการคลื่น & สัมพัทธภาพ", existing:true }
+          { pane:"math-wave",       ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"สมการคลื่น & สัมพัทธภาพ", existing:true },
+          { pane:"math-quantum",    ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"กลศาสตร์ควอนตัม & ฟิสิกส์อนุภาค (Lab)", existing:true },
+          { pane:"math-em",         ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"สนามแม่เหล็กไฟฟ้า & แมกซ์เวลล์", existing:true },
+          { pane:"math-relativity", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"หลุมดำ & กาล-อวกาศบิดเบี้ยว", existing:true },
+          { pane:"math-thermo",     ico:"<svg class='mdico'><use href='#i-flame'></use></svg>", label:"อุณหพลศาสตร์ & เอนโทรปี", existing:true }
       ]},
       { id:"mathedu", ico:"<svg class='mdico'><use href='#i-graduation-cap'></use></svg>", label:"คณิตศาสตร์ ม.ต้น-ปลาย-มหาลัย", subs:[
           { pane:"edu-linear",     ico:"<svg class='mdico'><use href='#i-ruler'></use></svg>", label:"[ม.ต้น] ระบบพิกัด 2D & y = mx+c", existing:true },
