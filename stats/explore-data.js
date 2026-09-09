@@ -1366,6 +1366,7 @@ var NAV = [
       ]},
       { id:"world", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"ศูนย์ข้อมูลโลก", subs:[
           { pane:"world-gistemp", ico:"<svg class='mdico'><use href='#i-thermometer'></use></svg>", label:"แผนที่โลกร้อนไล่ปี 1880–2025 (NASA)", existing:true },
+          { pane:"world-co2", ico:"<svg class='mdico'><use href='#i-factory'></use></svg>", label:"CO₂ 1 ปีของโลก (NASA)", existing:true },
           { pane:"disaster", ico:"<svg class='mdico'><use href='#i-thermometer'></use></svg>", label:"ภาพรวม โลกร้อน & ภัยพิบัติ", existing:true },
           { pane:"ice",      ico:"<svg class='mdico'><use href='#i-snowflake'></use></svg>", label:"% การละลายน้ำแข็งโลก", existing:true },
           { pane:"sinking",  ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"ประเทศเสี่ยงจมน้ำ", existing:true },

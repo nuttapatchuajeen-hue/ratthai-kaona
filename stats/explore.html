@@ -416,6 +416,9 @@
   /* พื้นที่กด 44px ตามเกณฑ์สัมผัส แต่รางยังบางเท่าเดิม (content-box: height=ราง, padding=พื้นที่กด) */
   .tl-slider{flex:1;accent-color:var(--green);height:6px;cursor:pointer;min-width:120px;box-sizing:content-box;padding:19px 0;background:transparent}
   @media(max-width:640px){ .tl-maps.cmp{grid-template-columns:1fr} }
+  /* ---------- แผง CO₂ 1 ปีของโลก (คลิป NASA + แผนที่ CarbonTracker) ----------
+     ตั้งชื่อขึ้นต้น co2- กันชนกับคลาสอื่น · ตัวแผนที่มีสไตล์ของตัวเองอยู่ใน co2-map.js */
+  .co2-chart{width:100%;min-height:320px;overflow-x:auto}
   /* ---------- แถบสีรายปี (warming stripes) + กราฟค่าเฉลี่ยโลก + กล่องหมายเหตุ ----------
      ตั้งชื่อขึ้นต้น gt- กันชนกับคลาสอื่นในหน้านี้ */
   .gt-stripes{position:relative;display:flex;gap:1px;height:78px;margin-top:14px;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--rule)}
@@ -2001,6 +2004,110 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           เส้นพรมแดนประเทศจาก <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> (Natural Earth 110m) ·
           แผนที่ฉาย Equal Earth · จัดทำเพื่อการศึกษาและนำเสนอ ไม่ใช่เอกสารราชการ
         </div>
+      </div>
+    </section>
+
+    <!-- ============ ศูนย์ข้อมูลโลก · CO₂ 1 ปีของโลก ============
+         ที่มาของหัวข้อ: คลิป NASA "A Year in the Life of Earth's CO2" ซึ่งเป็น "แบบจำลอง" GEOS-5 Nature Run ของปี ค.ศ. 2006
+         แผนที่ในแผงนี้จึงตั้งใจใช้ "ข้อมูลจริง" ปีเดียวกัน (NOAA CarbonTracker CT2025)
+         เพื่อให้ดูคู่กันได้ทีละภาพ · กริดสร้างด้วย climate-data/build-co2-grid.mjs
+         เอนจินวาดแผนที่: co2-map.js (window.Co2Year) — ฉาย equirectangular แบบเดียวกับคลิป -->
+    <section class="tabpane" id="pane-world-co2" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-factory"></use></svg> CO₂ 1 ปีของโลก — ก๊าซเดินทางไปไหนบ้าง (NASA)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> CO₂ เฉลี่ยทั้งโลก · <span id="co2KDate">—</span></div>
+          <div class="k-num" id="co2KMean">—<span class="u">ppm</span></div>
+          <div class="k-sub">ถ่วงน้ำหนักตามพื้นที่จากกริดจริงทั้งใบ (ไม่ใช่ค่าจากสถานีเดียว)</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-trees"></use></svg> ขั้วโลกเหนือ 60°–90°N แกว่งทั้งปี</div>
+          <div class="k-num" id="co2KNorth">—<span class="u">ppm</span></div>
+          <div class="k-sub">ป่าและทุ่งซีกโลกเหนือดูดคาร์บอนช่วงร้อน แล้วคายคืนช่วงหนาว — “ลมหายใจ” ของโลก</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-snowflake"></use></svg> ซีกโลกใต้ 30°–90°S แกว่งทั้งปี</div>
+          <div class="k-num" id="co2KSouth">—<span class="u">ppm</span></div>
+          <div class="k-sub">แทบไม่มีจังหวะฤดูกาล เพราะเป็นผืนน้ำเกือบทั้งหมด ที่ขยับคือแนวโน้มขาขึ้นทั้งปี</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-trending-up"></use></svg> 2549 → 2567 (18 ปี)</div>
+          <div class="k-num">+41.8<span class="u">ppm</span></div>
+          <div class="k-sub">380.3 → 422.0 ppm · เฉลี่ยปีละ +2.3 ppm — คำนวณจากกริดชุดเดียวกันทั้งสองปี</div>
+        </div>
+      </div>
+
+      <div class="card full" id="co2Card">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-map"></use></svg> แผนที่ CO₂ ทั้งโลกจากข้อมูลจริง — ไล่วันทั้งปี</h2>
+          <span class="tag">เล่นได้ · ไล่วัน</span>
+        </div>
+        <p class="sub">กด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่น</b> ให้แผนที่ไล่วันเอง หรือลากสไลเดอร์ · ชี้จุดไหนก็ได้เพื่ออ่านค่า ppm ตรงนั้น · หมุดฟ้า = กรุงเทพฯ<br>
+        <b>สลับ “ปี”</b> เพื่อเทียบปี 2549 (ปีเดียวกับคลิป NASA) กับปี 2567 — แถบสีของแต่ละปีคนละช่วงกัน เพราะทั้งโลกขยับขึ้นไป 40 ppm แล้ว · <b>สลับ “ชั้นอากาศ”</b> ระหว่างค่าเฉลี่ยทั้งคอลัมน์ (แบบเดียวกับคลิป) กับอากาศใกล้พื้นที่ 400 เมตร ซึ่งเห็นแหล่งปล่อยและป่าที่กำลังหายใจชัดกว่ามาก</p>
+        <div class="tl-toolbar">
+          <select id="co2Year">
+            <option value="2006" selected>ปี พ.ศ. 2549 (ค.ศ. 2006) — ปีเดียวกับคลิป</option>
+            <option value="2024">ปี พ.ศ. 2567 (ค.ศ. 2024) — ล่าสุดที่มีข้อมูลครบปี</option>
+          </select>
+          <select id="co2Layer">
+            <option value="xco2" selected>ชั้นอากาศ: เฉลี่ยทั้งคอลัมน์ (XCO₂)</option>
+            <option value="sfc">ชั้นอากาศ: ใกล้พื้น 400 เมตร</option>
+          </select>
+          <select id="co2Speed">
+            <option value="5">ความเร็ว ช้า (1 ปี ≈ 24 วิ)</option>
+            <option value="10" selected>ความเร็ว ปกติ (1 ปี ≈ 12 วิ)</option>
+            <option value="20">ความเร็ว เร็ว (1 ปี ≈ 6 วิ)</option>
+          </select>
+          <button class="tl-btn" id="co2Fs" title="ดูแผนที่เต็มจอ ไม่มีเมนูหรือไซด์บาร์บัง">⛶ เต็มจอ</button>
+          <span class="tl-year-lab" id="co2Range" style="min-width:auto;color:var(--ink-soft);font-size:12px"></span>
+        </div>
+        <div id="co2Map"></div>
+        <div class="tl-legend" id="co2Legend"></div>
+        <div class="tl-player">
+          <button class="tl-play" id="co2Play" aria-label="เล่น/หยุด"><svg class="mdico"><use href="#i-play"></use></svg></button>
+          <span class="tl-year-lab" id="co2DateLab" style="min-width:112px">—</span>
+          <input type="range" class="tl-slider" id="co2Slider" min="0" max="121" value="0" step="0.01" />
+        </div>
+        <div class="src">
+          ที่มา: <a href="https://gml.noaa.gov/aftp/products/carbontracker/co2/CT2025/molefractions/xCO2_1330LST/" target="_blank" rel="noopener">NOAA Global Monitoring Laboratory — CarbonTracker CT2025 ↗</a>
+          (ชุด xCO2_1330LST · ค่า ณ เวลาท้องถิ่น 13:30 น. · กริด 3°×2° · ที่นี่หยิบมา 1 ภาพทุก 3 วัน รวมปีละ 122 ภาพ) ·
+          เส้นชายฝั่ง/พรมแดนจาก <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> (Natural Earth 110m) ·
+          CarbonTracker เป็นชุด<b>ผสานข้อมูลตรวจวัดจริงเข้ากับแบบจำลองการไหลเวียนอากาศ</b> ไม่ใช่การวัดตรงทุกจุด
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-waves"></use></svg> ลมหายใจของโลก — แยกตามแถบละติจูด</h2>
+          <span class="tag">คำนวณสดจากกริดที่โหลดอยู่</span>
+        </div>
+        <p class="sub">เส้นแต่ละเส้นคือค่าเฉลี่ย CO₂ ของแถบละติจูดนั้นทั้งแถบ ไล่ไปตลอดปีที่เลือก · ยิ่งขึ้นไปทางเหนือ เส้นยิ่งแกว่งแรง เพราะแผ่นดินและป่าไม้ส่วนใหญ่ของโลกอยู่ซีกเหนือ — พอถึงฤดูใบไม้ผลิ-ร้อน ต้นไม้ดูดคาร์บอนจนค่าดิ่งลง แล้วพอใบร่วงเข้าฤดูหนาว การย่อยสลายก็คายคืนออกมา ส่วนแถบใต้สุดเกือบเป็นเส้นตรง</p>
+        <div class="co2-chart" id="co2BandChart"></div>
+        <div class="src">คำนวณในเครื่องคุณจากไฟล์กริดของแผงด้านบน (ถ่วงน้ำหนักตามพื้นที่ด้วย cos ละติจูด) · เปลี่ยนปี/ชั้นอากาศด้านบนแล้วกราฟนี้จะคำนวณใหม่ตาม</div>
+      </div>
+
+      <div class="card full gt-notes">
+        <div class="gt-two-col">
+          <div>
+            <h3>คลิปกับแผนที่ในหน้านี้ต่างกันตรงไหน</h3>
+            <ul>
+              <li><a href="https://svs.gsfc.nasa.gov/11719/" target="_blank" rel="noopener">คลิป “A Year in the Life of Earth’s CO₂” ของ NASA ↗</a> = <b>แบบจำลอง</b> GEOS-5 “Nature Run” ความละเอียดสูงมาก (NASA ระบุว่าละเอียดกว่าแบบจำลองภูมิอากาศทั่วไป 64 เท่า) จึงเห็นริ้ววงเล็ก ๆ ของลมชัดสวย แต่เป็นการ “ปล่อยให้แบบจำลองเดินเอง” ตลอดปี 2006</li>
+              <li>แผนที่ในหน้านี้ = <b>NOAA CarbonTracker</b> ซึ่งดึงค่าที่สถานีตรวจวัดจริงทั่วโลกเข้ามาบังคับแบบจำลองเป็นระยะ ๆ ตัวเลขจึงยึดกับของจริง แต่กริดหยาบกว่ามาก (3°×2°) ภาพเลยเป็นปื้นนุ่ม ๆ ไม่มีริ้วย่อย</li>
+              <li>ทั้งสองอันเล่าเรื่องเดียวกัน: CO₂ ไม่ได้อยู่นิ่งเหนือประเทศที่ปล่อยมัน แต่ถูกลมพาไปทั้งโลกภายในไม่กี่สัปดาห์</li>
+            </ul>
+          </div>
+          <div>
+            <h3>วิธีประมวลผลในแผงนี้</h3>
+            <ul>
+              <li>ไฟล์ต้นทางเป็น NetCDF รายวันของ CarbonTracker CT2025 — หยิบมา 1 ไฟล์ทุก 3 วัน ตลอดปี 2006 และ 2024</li>
+              <li>เก็บค่าเป็นจำนวนเต็ม 1 ไบต์ต่อช่อง (มี min/scale กำกับในไฟล์ .json) ให้ไฟล์เล็กพอโหลดผ่านเว็บ — ปีละราว 1.3 MB ต่อชั้นอากาศ และจะโหลดเฉพาะชุดที่กดดูจริงเท่านั้น</li>
+              <li>ช่วงสีตัดค่าสุดโต่งบน-ล่างข้างละ 0.5% ทิ้ง ไม่งั้นจุดผิดปกติไม่กี่ช่องจะดึงสเกลจนทั้งแผนที่กลายเป็นสีเดียว</li>
+              <li>ระหว่างสองภาพที่ห่างกัน 3 วัน แผนที่จะไล่สีต่อเนื่องให้ (interpolate) เพื่อให้ดูลื่นเหมือนคลิป — ค่าที่ทูลทิปอ่านได้เป็นค่าที่ผสมแล้วเช่นกัน</li>
+              <li>ตัวเลขในการ์ดด้านบนและกราฟแถบละติจูด คำนวณสดจากกริดชุดเดียวกันในเครื่องผู้ใช้</li>
+            </ul>
+          </div>
+        </div>
+        <div class="src">จัดทำเพื่อการศึกษาและนำเสนอ ไม่ใช่เอกสารราชการ · ผลงานของ NASA และ NOAA ที่อ้างถึงในหน้านี้เป็นสาธารณสมบัติ (public domain) ตามนโยบายของหน่วยงาน</div>
       </div>
     </section>
 
@@ -10251,6 +10358,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3"></script>
   <!-- เครื่องยนต์แผนที่ส่วนต่างอุณหภูมิ NASA GISTEMP -->
   <script src="climate-map.js"></script>
+  <!-- เอนจินแผนที่ CO₂ ไล่วัน (แผง "CO₂ 1 ปีของโลก") -->
+  <script src="co2-map.js"></script>
   <!-- ป้อนค่าผิวน้ำทะเลจริงจากกริดชุดเดียวกันให้ลูกโลก ENSO (ต้องมาหลัง climate-map.js) -->
   <script src="enso-sst.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
@@ -12401,7 +12510,174 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }).catch(function(e){ gtState.loading=false; Gistemp.showError(box, e); });
     }
 
-    function renderAll(){ renderGistempMap(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    /* ===== แผง "CO₂ 1 ปีของโลก" — แผนที่ไล่วันทั้งปี + กราฟแถบละติจูด =====
+       ใช้เอนจินร่วม co2-map.js (window.Co2Year) · ข้อมูล NOAA CarbonTracker CT2025
+       โหลดกริดแบบ lazy ทีละชุด (ปีละ ~1.3 MB ต่อชั้นอากาศ) — เริ่มโหลดตอนเปิดแผงนี้จริง
+       และโหลดชุดใหม่ต่อเมื่อผู้ใช้กดเปลี่ยนปี/ชั้นอากาศเท่านั้น
+       เดินด้วย setInterval เหมือนแผนที่ GISTEMP (rAF ถูกหรี่จนค้างในบางแท็บ) ===== */
+    var CO2M_STEP_MS=40;
+    var CO2M_BANDS=[
+      { key:"60–90°N",  y0:0,  y1:15, color:"#cf1f5c" },
+      { key:"30–60°N",  y0:15, y1:30, color:"#f08b1e" },
+      { key:"20°S–20°N",y0:35, y1:55, color:"#25b78d" },
+      { key:"30–90°S",  y0:60, y1:90, color:"#1163bd" }
+    ];
+    var co2m={ pos:0, playing:false, speed:10, year:"2006", layer:"xco2",
+               wired:false, loading:false, D:null, map:null, timer:null, lastIdx:-1 };
+
+    function co2mSetPlaying(p){
+      if(!co2m.D) return;
+      co2m.playing=p; co2m.lastT=0;
+      if(co2m.timer){ clearInterval(co2m.timer); co2m.timer=null; }
+      if(p) co2m.timer=setInterval(co2mStep, CO2M_STEP_MS);
+      var b=$("#co2Play"); if(b) b.innerHTML='<svg class="mdico"><use href="#'+(p?"i-pause":"i-play")+'"></use></svg>';
+    }
+    // ก้าวตามเวลาจริง เครื่องช้าจะวาดหยาบลงแต่ยังไล่วันด้วยจังหวะเท่าเดิม · ถึงสิ้นปีแล้ววนกลับต้นปี (เหมือนคลิป)
+    function co2mStep(){
+      var D=co2m.D; if(!D) return;
+      var now=Date.now();
+      var dt=co2m.lastT ? Math.min((now-co2m.lastT)/1000, 0.5) : CO2M_STEP_MS/1000;
+      co2m.lastT=now;
+      co2m.pos+=dt*co2m.speed;
+      if(co2m.pos>=D.frames-1) co2m.pos=0;
+      co2mDraw();
+    }
+    function co2mDraw(){
+      var D=co2m.D; if(!D||!co2m.map) return;
+      co2m.map.setPos(co2m.pos);
+      var idx=Math.round(co2m.pos); if(idx<0) idx=0; if(idx>D.frames-1) idx=D.frames-1;
+      var sl=$("#co2Slider"); if(sl && document.activeElement!==sl) sl.value=String(co2m.pos);
+      if(idx!==co2m.lastIdx){
+        setTxt("#co2DateLab", Co2Year.thaiDate(D.dates[idx]));
+        co2mKpis(idx);
+        co2m.lastIdx=idx;
+      }
+    }
+
+    /* ค่าเฉลี่ยรายแถบละติจูด — คำนวณครั้งเดียวต่อชุดข้อมูล แล้วเก็บติดไว้กับตัว D */
+    function co2mBands(D){
+      if(D._bands) return D._bands;
+      var out=CO2M_BANDS.map(function(b){ return { key:b.key, color:b.color, series:[] }; });
+      var N=D.nlon, C=D.cells, g=D.data, mn=D.min, sc=D.scale;
+      for(var f=0; f<D.frames; f++){
+        for(var k=0; k<CO2M_BANDS.length; k++){
+          var b=CO2M_BANDS[k], sum=0, w=0;
+          for(var y=b.y0; y<b.y1; y++){
+            var wt=Math.cos((D.meta.lat0 + y*D.meta.dlat)*Math.PI/180), row=f*C+y*N;
+            for(var x=0; x<N; x++){ sum += (mn + g[row+x]*sc)*wt; w += wt; }
+          }
+          out[k].series.push(sum/w);
+        }
+      }
+      D._bands=out;
+      return out;
+    }
+    function co2mRange(series){
+      var lo=Infinity, hi=-Infinity;
+      for(var i=0;i<series.length;i++){ if(series[i]<lo) lo=series[i]; if(series[i]>hi) hi=series[i]; }
+      return hi-lo;
+    }
+
+    function co2mKpis(idx){
+      var D=co2m.D; if(!D) return;
+      var B=co2mBands(D);
+      setTxt("#co2KDate", Co2Year.thaiDate(D.dates[idx]));
+      var m=$("#co2KMean");   if(m) m.innerHTML=D.gMean[idx].toFixed(1)+'<span class="u">ppm</span>';
+      var n=$("#co2KNorth");  if(n) n.innerHTML=co2mRange(B[0].series).toFixed(1)+'<span class="u">ppm</span>';
+      var s=$("#co2KSouth");  if(s) s.innerHTML=co2mRange(B[3].series).toFixed(1)+'<span class="u">ppm</span>';
+    }
+
+    function co2mLegend(){
+      var D=co2m.D, box=$("#co2Legend"); if(!D||!box) return;
+      var lo=D.domain[0], hi=D.domain[1];
+      Co2Year.buildColor(lo, hi);
+      var ticks=[], n=5;
+      for(var i=0;i<n;i++) ticks.push((lo+(hi-lo)*i/(n-1)).toFixed(0));
+      box.innerHTML='<div style="width:min(460px,100%)">'+
+        '<div style="height:13px;border-radius:999px;border:1px solid var(--rule);background:'+Co2Year.gradientCss(lo,hi)+'"></div>'+
+        '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:Archivo,system-ui;font-size:11.5px;color:var(--ink-soft)">'+
+        ticks.map(function(t,i){ return '<span>'+t+(i===n-1?" ppm":"")+'</span>'; }).join('')+'</div></div>';
+    }
+
+    function co2mDrawBandChart(){
+      var box=$("#co2BandChart"), D=co2m.D;
+      if(!box || !D || !window.Plot) return;
+      var B=co2mBands(D), rows=[];
+      B.forEach(function(b){
+        b.series.forEach(function(v,i){ rows.push({ t:new Date(D.dates[i]+"T00:00:00Z"), v:v, b:b.key }); });
+      });
+      var ink=cssVar("--ink"), W=Math.max(300, box.clientWidth||900);
+      var fig=plotT({
+        width:W, height:360, marginLeft:56, marginBottom:34, marginTop:16, marginRight:18,
+        style: baseStyle(ink, FONT_W),
+        __xfmt: function(t){ return THMON[t.getUTCMonth()]+" "+(t.getUTCFullYear()+543); },
+        x:{ label:null, ticks:"month", tickSize:0, tickFormat:function(t){ return THMON[t.getUTCMonth()]; } },
+        y:{ label:"ppm", grid:true, tickSize:0 },
+        color:{ domain:B.map(function(b){ return b.key; }), range:B.map(function(b){ return b.color; }), legend:true },
+        marks:[ Plot.lineY(rows, { x:"t", y:"v", stroke:"b", strokeWidth:2.1, curve:"catmull-rom" }) ]
+      });
+      box.innerHTML=""; if(fig) box.appendChild(fig);
+    }
+
+    function co2mWire(){
+      if(co2m.wired) return; co2m.wired=true;
+      var p=$("#co2Play"); if(p) p.addEventListener("click", function(){ co2mSetPlaying(!co2m.playing); });
+      var sl=$("#co2Slider"); if(sl) sl.addEventListener("input", function(){ co2mSetPlaying(false); co2m.pos=parseFloat(this.value)||0; co2mDraw(); });
+      var sp=$("#co2Speed"); if(sp) sp.addEventListener("change", function(){ co2m.speed=parseFloat(this.value)||10; });
+      var yr=$("#co2Year");  if(yr) yr.addEventListener("change", function(){ co2m.year=this.value; co2mLoad(); });
+      var ly=$("#co2Layer"); if(ly) ly.addEventListener("change", function(){ co2m.layer=this.value; co2mLoad(); });
+      var fs=$("#co2Fs");    if(fs) fs.addEventListener("click", function(){
+        var card=$("#co2Card");
+        if(document.fullscreenElement) document.exitFullscreen();
+        else if(card && card.requestFullscreen) card.requestFullscreen();
+      });
+      document.addEventListener("fullscreenchange", function(){
+        var on=document.fullscreenElement===$("#co2Card");
+        var btn=$("#co2Fs"); if(btn){ btn.textContent=on?"⛶ ออกจากเต็มจอ":"⛶ เต็มจอ"; btn.classList.toggle("on", on); }
+        if(co2m.map) afterPaint(function(){ co2m.map.resize(); });
+      });
+      // สลับสว่าง/มืด — ตัวแผนที่ใช้สีชุดเดิมทั้งสองธีม แต่กราฟแถบละติจูดต้องวาดใหม่
+      new MutationObserver(function(){ co2mDrawBandChart(); })
+        .observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+    }
+
+    /* โหลด (หรือสลับ) ชุดข้อมูลตามปี+ชั้นอากาศที่เลือกอยู่ */
+    function co2mLoad(){
+      var box=$("#co2Map"); if(!box || !window.Co2Year) return;
+      var wasPlaying=co2m.playing;
+      co2mSetPlaying(false);
+      if(!co2m.map) Co2Year.showLoading(box);
+      co2m.loading=true;
+      var want=co2m.layer+"-"+co2m.year;
+      Co2Year.load(co2m.layer, co2m.year).then(function(D){
+        if(want!==co2m.layer+"-"+co2m.year) return;   // ผู้ใช้กดเปลี่ยนซ้ำระหว่างรอ — ทิ้งชุดที่มาช้า
+        co2m.loading=false; co2m.D=D; co2m.lastIdx=-1;
+        if(co2m.pos>D.frames-1) co2m.pos=0;
+        if(co2m.map && box.querySelector("canvas")) co2m.map.setData(D);
+        else co2m.map=Co2Year.create(box, D, {});
+        var sl=$("#co2Slider"); if(sl){ sl.min=0; sl.max=String(D.frames-1); sl.value=String(co2m.pos); }
+        setTxt("#co2Range", D.meta.year+" · "+D.frames+" ภาพ · "+D.domain[0].toFixed(0)+"–"+D.domain[1].toFixed(0)+" ppm");
+        co2mLegend();
+        co2mWire();
+        co2mDraw();
+        co2mDrawBandChart();
+        if(wasPlaying) co2mSetPlaying(true);
+      }).catch(function(e){ co2m.loading=false; Co2Year.showError(box, e); });
+    }
+
+    function renderCo2Year(){
+      var box=$("#co2Map"); if(!box || !window.Co2Year) return;
+      if(paneHidden(box)){ if(co2m.playing) co2mSetPlaying(false); return; }   // ออกจากแผงแล้วให้หยุดเล่น
+      if(co2m.D){
+        if(co2m.map) co2m.map.resize();
+        co2mDrawBandChart();                          // กราฟต้องวาดใหม่ตามความกว้างจริง
+        return;
+      }
+      if(co2m.loading) return;
+      co2mLoad();
+    }
+
+    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
