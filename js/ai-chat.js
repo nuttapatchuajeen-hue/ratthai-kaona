@@ -23,12 +23,11 @@
   var TEMPERATURE = 0.2;
 
   // ---- โมเดล AI ที่เลือกได้ในแผงแชต (id ต้องตรงกับ MODEL_CONFIGS ฝั่ง proxy) ----
-  // "" = ไม่ส่ง model ไปเลย ให้ proxy เลือกให้ (พฤติกรรมเดิม)
+  // ตัวแรกคือค่าเริ่มต้น — ระบุชื่อรุ่นจริงไปเลย ไม่ใช้ "อัตโนมัติ" ที่ไม่บอกว่าได้ตัวไหน
   var MODELS = [
-    { id: "", label: "อัตโนมัติ (ตามเซิร์ฟเวอร์)" },
+    { id: "openthaigpt-thaillm-8b-instruct-v7.2", label: "ThaiLLM 8B (ไทย)" },
     { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
     { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)" },
-    { id: "openthaigpt-thaillm-8b-instruct-v7.2", label: "ThaiLLM 8B (ไทย)" },
   ];
   var MODEL_KEY = "mdai-model-v1";
   var model = readModel();
@@ -37,7 +36,7 @@
     var v = "";
     try { v = localStorage.getItem(MODEL_KEY) || ""; } catch (err) { v = ""; }
     for (var i = 0; i < MODELS.length; i++) if (MODELS[i].id === v) return v;
-    return "";
+    return MODELS[0].id;
   }
 
   function saveModel(v) {
