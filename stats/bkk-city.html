@@ -1395,6 +1395,70 @@
   .marker-corp { border-color: #06B6D4; color: #CFFAFE; }
   .marker-flood { border-color: #0284C7; color: #E0F2FE; }
 
+  /* 🛍 ห้างร้าน & แบรนด์ทั่วประเทศ — สีแยกตามประเภทอาคาร ไม่ใช่ตามแบรนด์
+     (แบรนด์มี 29 ตัว ถ้าให้สีรายแบรนด์แผนที่จะอ่านไม่ออก) */
+  .marker-mall   { border-color: #A855F7; color: #F3E8FF; }
+  .marker-cinema { border-color: #F43F5E; color: #FFE4E6; }
+  .marker-bigbox { border-color: #14B8A6; color: #CCFBF1; }
+  .marker-fnb    { border-color: #FBBF24; color: #FEF3C7; }
+  /* อาคารที่มีร้านข้างในให้เห็นชัดกว่าหมุดเดี่ยว */
+  .poi-intel-marker.has-tenants { box-shadow: 0 4px 14px rgba(0,0,0,.45), 0 0 0 3px rgba(168,85,247,.22); }
+  .poi-intel-marker .tenant-count {
+    font-size: 9.5px; font-weight: 800; line-height: 1;
+    padding: 2px 5px; border-radius: 8px;
+    background: rgba(255,255,255,.16); color: #fff;
+  }
+  .poi-intel-marker.is-compact .tenant-count { display: none; }
+
+  /* การ์ดรายละเอียดอาคาร + รายชื่อร้านข้างใน */
+  .brand-card {
+    position: absolute; right: 14px; bottom: 76px; z-index: 60;
+    width: min(340px, calc(100vw - 28px));
+    max-height: min(62vh, 560px); overflow: auto;
+    border-radius: 16px; padding: 14px 15px 13px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+    color: #E2E8F0; font-size: 12px; line-height: 1.55;
+  }
+  .brand-card h3 { margin: 0 6px 2px 0; font-size: 15px; font-weight: 800; color: #fff; }
+  .brand-card .bc-close {
+    position: absolute; top: 10px; right: 10px; width: 26px; height: 26px;
+    border-radius: 8px; border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.06); color: #CBD5E1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-card .bc-close:hover { background: rgba(255,255,255,.14); color: #fff; }
+  .brand-card .bc-meta { color: #94A3B8; font-size: 11px; margin-bottom: 8px; }
+  .brand-card .bc-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px;
+    font-weight: 800; margin-right: 5px; border: 1px solid currentColor;
+  }
+  .brand-card .bc-row { display: flex; gap: 7px; margin: 3px 0; align-items: flex-start; }
+  .brand-card .bc-row .mdico { width: 13px; height: 13px; flex: 0 0 auto; margin-top: 2px; opacity: .75; }
+  .brand-card .bc-sec {
+    margin-top: 11px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,.1);
+    font-size: 11px; font-weight: 800; color: #F1F5F9; letter-spacing: .02em;
+  }
+  .brand-card .bc-tenant {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 5px 0; border-bottom: 1px dashed rgba(255,255,255,.07);
+  }
+  .brand-card .bc-tenant:last-child { border-bottom: 0; }
+  .brand-card .bc-tenant b { font-weight: 700; color: #fff; }
+  .brand-card .bc-tenant span { color: #94A3B8; font-size: 10.5px; white-space: nowrap; }
+  .brand-card a.bc-gmap { color: #7DD3FC; text-decoration: none; font-weight: 700; }
+  .brand-card a.bc-gmap:hover { text-decoration: underline; }
+  html[data-theme="light"] .brand-card {
+    background: rgba(255,255,255,.97); color: #1E293B;
+    border-color: rgba(15,23,42,.12); box-shadow: 0 18px 48px rgba(15,23,42,.18);
+  }
+  html[data-theme="light"] .brand-card h3 { color: #0F172A; }
+  html[data-theme="light"] .brand-card .bc-meta,
+  html[data-theme="light"] .brand-card .bc-tenant span { color: #64748B; }
+  html[data-theme="light"] .brand-card .bc-tenant b { color: #0F172A; }
+  html[data-theme="light"] .brand-card .bc-close { color: #475569; border-color: rgba(15,23,42,.14); background: rgba(15,23,42,.04); }
+
   /* Floating Trigger Button on Left */
   .floating-intel-pill {
     position: absolute;
@@ -2736,6 +2800,23 @@
         </div>
       </div>
 
+      <!-- 🔹 ห้างร้าน แบรนด์ และร้านในอาคาร (ทั่วประเทศ ไม่ใช่เฉพาะ กทม.) -->
+      <div class="ashton-section" id="brandSection">
+        <p class="ashton-sec-kicker">ห้างร้าน &amp; แบรนด์ทั่วประเทศ</p>
+        <button type="button" class="menu-btn" id="btnBrandsToggle" style="width:100%; margin-bottom:8px;">
+          <span><svg class="mdico"><use href="#i-shopping-basket"></use></svg></span> เปิดชั้นห้างร้าน
+        </button>
+        <div class="brand-chips-wrap" id="brandTypeChips" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+          <button type="button" class="brand-chip active" data-btype="mall">ห้าง/ศูนย์การค้า</button>
+          <button type="button" class="brand-chip active" data-btype="cinema">โรงหนัง</button>
+          <button type="button" class="brand-chip active" data-btype="bigbox">ค้าปลีกใหญ่</button>
+          <button type="button" class="brand-chip" data-btype="fnb">ร้านอาหาร/คาเฟ่</button>
+        </div>
+        <p class="ashton-sec-kicker" style="margin-top:2px;">เลือกแบรนด์</p>
+        <div class="brand-chips-wrap" id="brandNameChips" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;"></div>
+        <p id="brandCountLine" style="font-size:10.5px; color:var(--text-muted); margin:2px 0 0;"></p>
+      </div>
+
       <!-- 🔹 FOOTER METHODOLOGY -->
       <div class="ashton-methodology">
         <p>อาคารบนแผนที่วาดเป็นมวลอาคารจากขนาดที่ดินจริงของแต่ละโครงการ — เป็นปริมาตร ไม่ใช่แบบสถาปัตยกรรม · ก้อนที่จางกว่าคือโครงการที่เอกสารยื่นไม่ได้ระบุขนาดที่ดิน · เรสซิเดนซ์ที่มีชื่อใช้รอยอาคารจาก OpenStreetMap เฉพาะหลังที่ OSM วาดไว้แล้ว · ระยะถึงสถานีเป็นระยะเส้นตรง ไม่ใช่ระยะเดิน</p>
@@ -2931,6 +3012,7 @@
 <script src="bkk-datacenter.js"></script>
 <script src="bkk-zoning-data.js"></script>
 <script src="bkk-zoning.js"></script>
+<script src="bkk-brands-data.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -2966,8 +3048,11 @@
       brands: false,
       centres: false,
       sport: false,
-      residences: false
+      residences: false,
+      shops: false            // ห้างร้าน/แบรนด์ทั่วประเทศ (bkk-brands-data.js) — คนละชุดกับ brands ข้างบนที่เป็นแบรนด์ลักชัวรี
     },
+    activeShopTypes: {},      // mall / cinema / bigbox / fnb
+    activeShopBrands: {},     // คีย์แบรนด์ เช่น major, lotus — ว่าง = ไม่กรอง
     /* ชิปย่อยแต่ละกลุ่มในแผง Ashton — คีย์ตรงกับ data-* ของปุ่ม และกับ sub ของหมุด
        ค่าเริ่มต้นอ่านจากคลาส .active ใน HTML ตอน setupAshtonChips() จึงไม่ต้องกำหนดซ้ำที่นี่ */
     activeAmenities: {},      // data-kind:  parks / education / health / sport / dining / spa / culture
@@ -3434,6 +3519,7 @@
 
   var interactionsInitialized = false;
   var ashtonChipsInitialized = false;
+  var shopControlsInitialized = false;
   function onStyleLoaded() {
     try {
       addMapLayers();
@@ -3445,6 +3531,11 @@
         ashtonChipsInitialized = true;
       }
       createIntelPOIMarkers();
+      /* ชั้นห้างร้านไม่สร้างหมุดจนกว่าจะเปิดใช้ — แค่ผูกปุ่ม/ชิปไว้ก่อน */
+      if (!shopControlsInitialized) {
+        setupShopControls();
+        shopControlsInitialized = true;
+      }
       if (!interactionsInitialized) {
         setupInteractions();
         populateRouteStations();
@@ -4358,14 +4449,248 @@
     updateIntelMarkers();
   }
 
+  /* ───────────────────────────────────────────────────────────────────
+     🛍 ห้างร้าน แบรนด์ และ "ร้านที่อยู่ในอาคาร" ทั่วประเทศ
+     ข้อมูล: bkk-brands-data.js (Google Maps + รายชื่อสาขาทางการของเมเจอร์)
+     ทุกจุดใช้พิกัดจริง — ร้านที่อยู่ในรัศมี 160 ม. จากอาคารหลักถูกผูกเป็นผู้เช่า (field h)
+     ─────────────────────────────────────────────────────────────────── */
+  var SHOP_TYPES = {
+    mall:   { label: "ห้าง/ศูนย์การค้า", ico: "store",         tone: "mall" },
+    cinema: { label: "โรงภาพยนตร์",      ico: "clapperboard",  tone: "cinema" },
+    bigbox: { label: "ค้าปลีกขนาดใหญ่",  ico: "shopping-cart", tone: "bigbox" },
+    fnb:    { label: "ร้านอาหาร/คาเฟ่",  ico: "coffee",        tone: "fnb" }
+  };
+  var SHOP_FORMAT = { hyper: "ไฮเปอร์มาร์เก็ต", super: "ซูเปอร์มาร์เก็ต", mini: "ร้านสะดวกซื้อ", wholesale: "ค้าส่ง", home: "วัสดุ/ของแต่งบ้าน" };
+  var _shopBrandFilterOn = false;   // true เมื่อผู้ใช้เลือกแบรนด์อย่างน้อยหนึ่งตัว
+  var _shopTenants = null;          // index อาคาร -> [ร้านข้างใน]
+  var _shopBuilt = false;
+
+  function shopTenantIndex() {
+    if (_shopTenants) return _shopTenants;
+    _shopTenants = {};
+    var P = (window.BKK_BRANDS && window.BKK_BRANDS.places) || [];
+    for (var i = 0; i < P.length; i++) {
+      var h = P[i].h;
+      if (h === undefined || h === null) continue;
+      (_shopTenants[h] = _shopTenants[h] || []).push(P[i]);
+    }
+    return _shopTenants;
+  }
+
+  function createShopMarkers() {
+    if (_shopBuilt || !STATE.map || !window.BKK_BRANDS) return;
+    _shopBuilt = true;
+
+    var P = window.BKK_BRANDS.places || [];
+    var TEN = shopTenantIndex();
+
+    /* หมุดที่ทับกันจะถูกตัดตามลำดับที่ใส่เข้าไป (มาก่อนได้อยู่) — เรียงให้อาคารหลักมาก่อน
+       ไม่งั้นห้างจะโดนร้านที่อยู่ข้างในตัวเองบัง */
+    var PRI = { mall: 0, cinema: 1, bigbox: 2, fnb: 3 };
+    var order = [];
+    for (var k = 0; k < P.length; k++) order.push(k);
+    order.sort(function (x, y) {
+      var d = (PRI[P[x].t] === undefined ? 9 : PRI[P[x].t]) - (PRI[P[y].t] === undefined ? 9 : PRI[P[y].t]);
+      if (d) return d;
+      return (P[y].rc || 0) - (P[x].rc || 0);
+    });
+
+    for (var oi = 0; oi < order.length; oi++) {
+      var i = order[oi];
+      var p = P[i];
+      var conf = SHOP_TYPES[p.t];
+      if (!conf || !p.la || !p.lo) continue;
+
+      var tenants = TEN[i] || [];
+      var el = document.createElement("div");
+      el.className = "poi-intel-marker marker-" + conf.tone + (tenants.length ? " has-tenants" : "");
+      el.innerHTML = '<span class="poi-ico">' + MDICO(conf.ico) + '</span>' +
+                     '<span class="poi-label">' + escapeHTML(p.n) + '</span>' +
+                     (tenants.length ? '<span class="tenant-count">' + tenants.length + ' ร้าน</span>' : '');
+
+      (function (place, idx) {
+        el.addEventListener("click", function (e) {
+          e.stopPropagation();
+          showShopCard(place, idx);
+          safeFly(STATE.map, { center: [place.lo, place.la], zoom: zoomAtLeast(16.4), pitch: 52, duration: 1400 });
+        });
+      })(p, i);
+
+      STATE.intelMarkers.push({
+        data: p, coords: [p.lo, p.la],
+        layer: "shops", sub: p.t, bsub: p.b, asub: null,
+        marker: null, el: el
+      });
+    }
+  }
+
+  function escapeHTML(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  /* การ์ดรายละเอียด — นี่คือส่วน "ข้อมูลในอาคาร" ที่ลิสต์แบรนด์ที่อยู่ข้างในให้ดู */
+  function showShopCard(p, idx) {
+    hideShopCard();
+    var TEN = shopTenantIndex();
+    var tenants = (TEN[idx] || []).slice().sort(function (a, b) { return (b.rc || 0) - (a.rc || 0); });
+    var conf = SHOP_TYPES[p.t] || {};
+    var B = (window.BKK_BRANDS && window.BKK_BRANDS.brands) || {};
+
+    var card = document.createElement("div");
+    card.className = "brand-card glass-card";
+    card.id = "brandCard";
+
+    var html = '<button type="button" class="bc-close" id="bcClose" title="ปิด">' + MDICO("circle-x") + '</button>';
+    html += '<h3>' + escapeHTML(p.n) + '</h3>';
+    html += '<div class="bc-meta">' +
+            '<span class="bc-tag" style="color:var(--bc-tone)">' + escapeHTML(conf.label || p.t) + '</span>' +
+            (B[p.b] ? escapeHTML(B[p.b]) : "") +
+            (p.f && SHOP_FORMAT[p.f] ? " · " + SHOP_FORMAT[p.f] : "") +
+            '</div>';
+
+    if (p.r) {
+      html += '<div class="bc-row">' + MDICO("star") + '<div><b>' + p.r + '</b> / 5' +
+              (p.rc ? ' <span style="opacity:.7">(' + p.rc.toLocaleString("th-TH") + ' รีวิว)</span>' : '') + '</div></div>';
+    }
+    if (p.c)  html += '<div class="bc-row">' + MDICO("gem") + '<div>' + escapeHTML(p.c) + '</div></div>';
+    if (p.fl) html += '<div class="bc-row">' + MDICO("layers") + '<div>ชั้น ' + escapeHTML(p.fl) + '</div></div>';
+    if (p.a)  html += '<div class="bc-row">' + MDICO("map-pin") + '<div>' + escapeHTML(p.a) + '</div></div>';
+    html += '<div class="bc-row">' + MDICO("map") + '<div>' + (p.d ? "เขต" + escapeHTML(p.d) + " กรุงเทพฯ" : "นอกกรุงเทพฯ") + '</div></div>';
+
+    if (p.h !== undefined && p.h !== null && (window.BKK_BRANDS.places[p.h])) {
+      var host = window.BKK_BRANDS.places[p.h];
+      html += '<div class="bc-row">' + MDICO("building-2") + '<div>อยู่ใน <b>' + escapeHTML(host.n) + '</b>' +
+              (p.hd != null ? ' <span style="opacity:.65">(~' + p.hd + ' ม.)</span>' : '') + '</div></div>';
+    }
+
+    if (tenants.length) {
+      html += '<div class="bc-sec">' + MDICO("store") + ' แบรนด์/ร้านในอาคารนี้ (' + tenants.length + ')</div>';
+      for (var i = 0; i < tenants.length; i++) {
+        var t = tenants[i];
+        var right = t.fl ? ("ชั้น " + t.fl) : (t.r ? (t.r + "★") : (SHOP_TYPES[t.t] ? SHOP_TYPES[t.t].label : ""));
+        html += '<div class="bc-tenant"><b>' + escapeHTML(t.n) + '</b><span>' + escapeHTML(right) + '</span></div>';
+      }
+    }
+
+    if (p.g) {
+      html += '<div class="bc-sec" style="border:0; padding-top:8px;">' +
+              '<a class="bc-gmap" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' +
+              encodeURIComponent(p.n) + '&query_place_id=' + encodeURIComponent(p.g) + '">เปิดใน Google Maps →</a></div>';
+    }
+
+    card.innerHTML = html;
+    card.style.setProperty("--bc-tone", ({ mall: "#A855F7", cinema: "#F43F5E", bigbox: "#14B8A6", fnb: "#FBBF24" })[p.t] || "#94A3B8");
+    document.body.appendChild(card);
+    var close = card.querySelector("#bcClose");
+    if (close) close.addEventListener("click", hideShopCard);
+  }
+
+  function hideShopCard() {
+    var old = document.getElementById("brandCard");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+  }
+
+  /* ชิปแบรนด์สร้างจากข้อมูลจริง เพื่อไม่ต้องมานั่งไล่แก้ HTML ทุกครั้งที่ชุดข้อมูลเปลี่ยน */
+  function buildShopBrandChips() {
+    var wrap = $("#brandNameChips");
+    if (!wrap || !window.BKK_BRANDS) return;
+    var B = window.BKK_BRANDS.brands || {};
+    var counts = {};
+    (window.BKK_BRANDS.places || []).forEach(function (p) { counts[p.b] = (counts[p.b] || 0) + 1; });
+    var keys = Object.keys(B).sort(function (a, b) { return (counts[b] || 0) - (counts[a] || 0); });
+
+    var html = '<button type="button" class="brand-chip active" data-shopbrand="all">ทุกแบรนด์</button>';
+    keys.forEach(function (k) {
+      html += '<button type="button" class="brand-chip" data-shopbrand="' + k + '">' +
+              escapeHTML(B[k]) + ' <span style="opacity:.55">' + (counts[k] || 0) + '</span></button>';
+    });
+    wrap.innerHTML = html;
+
+    wrap.querySelectorAll("[data-shopbrand]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-shopbrand");
+        if (key === "all") {
+          STATE.activeShopBrands = {};
+          _shopBrandFilterOn = false;
+          wrap.querySelectorAll("[data-shopbrand]").forEach(function (b) {
+            b.classList.toggle("active", b.getAttribute("data-shopbrand") === "all");
+          });
+        } else {
+          if (STATE.activeShopBrands[key]) delete STATE.activeShopBrands[key];
+          else STATE.activeShopBrands[key] = true;
+          _shopBrandFilterOn = Object.keys(STATE.activeShopBrands).length > 0;
+          btn.classList.toggle("active", !!STATE.activeShopBrands[key]);
+          var allBtn = wrap.querySelector('[data-shopbrand="all"]');
+          if (allBtn) allBtn.classList.toggle("active", !_shopBrandFilterOn);
+        }
+        updateIntelMarkers(true);
+        updateShopCountLine();
+      });
+    });
+  }
+
+  function updateShopCountLine() {
+    var line = $("#brandCountLine");
+    if (!line || !window.BKK_BRANDS) return;
+    if (!STATE.layers.shops) { line.textContent = "ชั้นห้างร้านปิดอยู่"; return; }
+    var n = 0;
+    (window.BKK_BRANDS.places || []).forEach(function (p) {
+      if (!STATE.activeShopTypes[p.t]) return;
+      if (_shopBrandFilterOn && !STATE.activeShopBrands[p.b]) return;
+      n++;
+    });
+    var m = window.BKK_BRANDS.meta || {};
+    line.textContent = "แสดง " + n.toLocaleString("th-TH") + " แห่ง จากทั้งหมด " +
+                       (m.total || 0).toLocaleString("th-TH") + " แห่งทั่วประเทศ · หมุดขึ้นเมื่อซูมตั้งแต่ระดับ 12";
+  }
+
+  function setupShopControls() {
+    if (!window.BKK_BRANDS) return;
+
+    $("#brandTypeChips") && $("#brandTypeChips").querySelectorAll("[data-btype]").forEach(function (btn) {
+      var t = btn.getAttribute("data-btype");
+      STATE.activeShopTypes[t] = btn.classList.contains("active");
+      btn.addEventListener("click", function () {
+        STATE.activeShopTypes[t] = !STATE.activeShopTypes[t];
+        btn.classList.toggle("active", STATE.activeShopTypes[t]);
+        if (STATE.layers.shops) { createShopMarkers(); updateIntelMarkers(true); }
+        updateShopCountLine();
+      });
+    });
+
+    buildShopBrandChips();
+
+    var toggle = $("#btnBrandsToggle");
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        STATE.layers.shops = !STATE.layers.shops;
+        toggle.classList.toggle("active", STATE.layers.shops);
+        toggle.innerHTML = '<span><svg class="mdico"><use href="#i-shopping-basket"></use></svg></span> ' +
+                           (STATE.layers.shops ? "ปิดชั้นห้างร้าน" : "เปิดชั้นห้างร้าน");
+        if (STATE.layers.shops) createShopMarkers();
+        else hideShopCard();
+        updateIntelMarkers(true);
+        updateShopCountLine();
+      });
+    }
+    updateShopCountLine();
+  }
+
   /* Below this zoom the markers collapse to an icon dot — 150 labels do not fit a city view */
   var INTEL_COMPACT_ZOOM = 14.6;
   var _intelCompact = null;
   var _intelCullAt = 0;
 
-  /* ผูกหมุดเข้าแผนที่ครั้งแรกที่มันได้แสดงจริง — ชั้นที่ผู้ใช้ไม่เปิดจะไม่กินแรงคำนวณต่อเฟรมเลย */
-  function ensureIntelMarker(m) {
+  /* ผูกหมุดเข้าแผนที่ครั้งแรกที่มันได้แสดงจริง — ชั้นที่ผู้ใช้ไม่เปิดจะไม่กินแรงคำนวณต่อเฟรมเลย
+     ชั้น shops กระจายทั่วประเทศ ถ้าผูกทุกจุดที่ "ผ่านตัวกรอง" จะได้ maplibregl.Marker หลายพันตัว
+     ที่คำนวณตำแหน่งใหม่ทุกเฟรมทั้งที่อยู่นอกจอ จึงผูกเฉพาะจุดที่อยู่ในกรอบแผนที่จริง ๆ */
+  function ensureIntelMarker(m, bounds) {
     if (m.marker || !STATE.map) return;
+    if (m.layer === "shops" && bounds) {
+      var lng = m.coords[0], lat = m.coords[1];
+      if (lng < bounds.w || lng > bounds.e || lat < bounds.s || lat > bounds.n) return;
+    }
     m.marker = new maplibregl.Marker({ element: m.el, anchor: "bottom" })
       .setLngLat(m.coords)
       .addTo(STATE.map);
@@ -4387,6 +4712,14 @@
         m.w = 0;                                   // size changed — measure again
       });
     }
+
+    /* กรอบแผนที่ (เผื่อขอบ 25%) ใช้ตัดสินว่าจะผูกหมุดชั้น shops เข้าแผนที่หรือยัง */
+    var attachBox = null;
+    try {
+      var _b = STATE.map.getBounds();
+      var _pl = (_b.getEast() - _b.getWest()) * 0.25, _pt = (_b.getNorth() - _b.getSouth()) * 0.25;
+      attachBox = { w: _b.getWest() - _pl, e: _b.getEast() + _pl, s: _b.getSouth() - _pt, n: _b.getNorth() + _pt };
+    } catch (e) { attachBox = null; }
 
     STATE.intelMarkers.forEach(function(m) {
       var allowed = true;
@@ -4411,11 +4744,17 @@
       else if (m.layer === "centres" && !STATE.layers.centres) allowed = false;
       else if (m.layer === "sport" && !STATE.layers.sport) allowed = false;
       else if (m.layer === "residences" && !STATE.layers.residences) allowed = false;
+      else if (m.layer === "shops") {
+        /* ชั้นนี้มีหมุดกว่า 4,600 จุดทั่วประเทศ จึงกรองสองชั้น: ประเภทอาคาร แล้วค่อยแบรนด์
+           (ไม่เลือกแบรนด์ไว้เลย = ไม่กรองแบรนด์ ให้เห็นทุกแบรนด์ในประเภทที่เปิด) */
+        if (!STATE.layers.shops || !STATE.activeShopTypes[m.sub]) allowed = false;
+        else if (_shopBrandFilterOn && !STATE.activeShopBrands[m.bsub]) allowed = false;
+      }
 
       if (zoom < 12.0) allowed = false;
 
       m.allowed = allowed;
-      if (allowed) ensureIntelMarker(m);
+      if (allowed) ensureIntelMarker(m, attachBox);
       else m.el.style.display = "none";
     });
 
@@ -4441,8 +4780,25 @@
     var count = 0;
     var maxCount = 40;
 
+    /* ชั้นห้างร้านมีหมุดทั่วประเทศหลายพันจุด การ project() ทุกจุดทุกเฟรมกินแรงเปล่า
+       จึงตัดด้วยกรอบ lng/lat ของวิวพอร์ตก่อน (เทียบตัวเลขล้วน) แล้วค่อย project เฉพาะที่รอด */
+    var vb = null;
+    try { vb = STATE.map.getBounds(); } catch (e) { vb = null; }
+    var padLng = 0, padLat = 0;
+    if (vb) {
+      padLng = (vb.getEast() - vb.getWest()) * 0.25;
+      padLat = (vb.getNorth() - vb.getSouth()) * 0.25;
+    }
+
     STATE.intelMarkers.forEach(function(m) {
       if (!m.allowed) { m.culled = false; m.el.style.display = "none"; return; }
+      if (vb) {
+        var lng = m.coords[0], lat = m.coords[1];
+        if (lng < vb.getWest() - padLng || lng > vb.getEast() + padLng ||
+            lat < vb.getSouth() - padLat || lat > vb.getNorth() + padLat) {
+          m.culled = true; m.el.style.display = "none"; return;
+        }
+      }
       var pt = STATE.map.project(m.coords);
       if (pt.x < -40 || pt.x > vpW + 40 || pt.y < -40 || pt.y > vpH + 40) {
         m.culled = true;
