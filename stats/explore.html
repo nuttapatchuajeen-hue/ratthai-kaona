@@ -32357,7 +32357,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       function paintBase(img){
         var cv=document.createElement("canvas"); cv.width=MAPW; cv.height=MAPH;
         var g=cv.getContext("2d");
-        var hasWorld=(typeof WORLD!=="undefined" && WORLD && window.d3);
+        var hasWorld=(typeof WORLD!=="undefined" && WORLD && WORLD.features && WORLD.features.length && window.d3);
+        var LANDF=hasWorld ? WORLD.features : [];      // รูปทวีป — ชุดเดียวกับที่ลูกโลกสายพานใช้ (ตัวแปรชื่อนี้ของอีกฟังก์ชัน เอื้อมมาไม่ถึง)
         var proj, path;
         if(hasWorld){
           proj=d3.geoEquirectangular().translate([MAPW/2,MAPH/2]).scale(MAPW/(2*Math.PI));
