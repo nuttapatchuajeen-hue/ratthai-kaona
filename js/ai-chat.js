@@ -208,6 +208,34 @@
     ".mdai-typing i:nth-child(1){background:#00E5FF}.mdai-typing i:nth-child(2){background:#3B82F6;animation-delay:.15s}.mdai-typing i:nth-child(3){background:#A855F7;animation-delay:.3s}",
     "@keyframes mdai-b{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}",
 
+    // แถบ "กำลังคิด… / คิดอยู่ X วินาที" (กางดูเหตุผลจากบล็อก <think> ของโมเดล)
+    ".mdai-think{align-self:flex-start;display:flex;flex-direction:column;max-width:92%;margin-bottom:-4px}",
+    ".mdai-think-btn{display:inline-flex;align-items:center;gap:6px;width:fit-content;margin-left:-6px;padding:4px 6px;border:0;border-radius:8px;",
+    "background:transparent;color:var(--mdai-dim);font:inherit;font-size:12.5px;font-weight:600;cursor:default;transition:background-color .12s}",
+    '.mdai-think[data-ready="1"] .mdai-think-btn{cursor:pointer}',
+    '.mdai-think[data-ready="1"] .mdai-think-btn:hover{background:var(--mdai-surface2)}',
+    ".mdai-think-btn svg{flex:0 0 auto}",
+    ".mdai-think-spark{width:15px;height:15px;color:var(--mdai-accent2)}",
+    ".mdai-think-chev{width:13px;height:13px;opacity:.7;transition:transform .3s cubic-bezier(.23,1,.32,1)}",
+    '.mdai-think[data-open="1"] .mdai-think-chev{transform:rotate(180deg)}',
+
+    // ตัวหนังสือเหลือบแสงระหว่างรอคำตอบ
+    ".mdai-think-live{background:linear-gradient(90deg,var(--mdai-dim) 35%,var(--mdai-text) 50%,var(--mdai-dim) 65%);background-size:200% 100%;",
+    "-webkit-background-clip:text;background-clip:text;color:transparent;animation:mdai-shimmer 1.4s linear infinite}",
+    "@keyframes mdai-shimmer{0%{background-position:150%}100%{background-position:-50%}}",
+    ".mdai-think-done{animation:mdai-fade-in .35s ease-out both}",
+    "@keyframes mdai-fade-in{from{opacity:0}to{opacity:1}}",
+
+    // เนื้อหาเหตุผลที่กางออก
+    ".mdai-think-body{display:grid;grid-template-rows:0fr;opacity:0;",
+    "transition:grid-template-rows .4s cubic-bezier(.23,1,.32,1),opacity .4s cubic-bezier(.23,1,.32,1)}",
+    '.mdai-think[data-open="1"] .mdai-think-body{grid-template-rows:1fr;opacity:1}',
+    ".mdai-think-body>div{overflow:hidden}",
+    ".mdai-think-text{margin:2px 0 0 7px;padding:4px 0 4px 14px;border-left:1px solid var(--mdai-border);",
+    "font-size:12.5px;line-height:1.7;color:var(--mdai-dim);white-space:pre-wrap;word-wrap:break-word}",
+    '.mdai-think[data-open="1"] .mdai-think-text{animation:mdai-fade-up .32s cubic-bezier(.23,1,.32,1) both}',
+    "@keyframes mdai-fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}",
+
     // ช่องพิมพ์ = การ์ดมน มีแถบเครื่องมืออยู่ในตัว
     "#mdai-form{padding:12px;background:var(--mdai-surface)}",
     "#mdai-composer{position:relative;box-sizing:border-box;padding:10px 12px 8px;border:2px solid var(--mdai-border);border-radius:24px;background:var(--mdai-surface2);",
@@ -259,7 +287,7 @@
     "#mdai-send:disabled{opacity:.5;cursor:not-allowed;transform:none}",
     "#mdai-send svg{width:18px;height:18px}",
     "@media(max-width:480px){#mdai-panel{right:10px;left:10px;width:auto;height:76vh}}",
-    "@media(prefers-reduced-motion:reduce){#mdai-fab-slot,#mdai-fab,#mdai-panel,#mdai-fab-slot.mdai-anim{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before,.mdai-hint-cursor,#mdai-ph span,#mdai-mmenu.mdai-open{animation:none}#mdai-composer,#mdai-send,#mdai-mtrigger svg{transition:none}}",
+    "@media(prefers-reduced-motion:reduce){#mdai-fab-slot,#mdai-fab,#mdai-panel,#mdai-fab-slot.mdai-anim{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before,.mdai-hint-cursor,#mdai-ph span,#mdai-mmenu.mdai-open,.mdai-think-live,.mdai-think-done,.mdai-think-text{animation:none}.mdai-think-live{color:var(--mdai-dim);-webkit-text-fill-color:currentColor}.mdai-think-body{transition:none}#mdai-composer,#mdai-send,#mdai-mtrigger svg{transition:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
@@ -802,6 +830,69 @@
     return b;
   }
 
+  // แยกเหตุผลในบล็อก <think>…</think> ออกจากคำตอบ (ThaiLLM ส่งมาแบบนี้)
+  function splitThink(raw) {
+    var think = "";
+    var text = String(raw || "").replace(
+      /<think>([\s\S]*?)(<\/think>|$)/g,
+      function (_m, inner) {
+        think += inner;
+        return "";
+      }
+    );
+    return { think: think.trim(), text: text };
+  }
+
+  var ICO_SPARK =
+    '<svg class="mdai-think-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>';
+  var ICO_CHEV_SM =
+    '<svg class="mdai-think-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M6 9l6 6 6-6"/></svg>';
+
+  var thinkStart = 0;
+
+  function showThinking() {
+    thinkStart = Date.now();
+    var msgs = document.getElementById("mdai-msgs");
+    var box = document.createElement("div");
+    box.className = "mdai-think";
+    box.id = "mdai-think-row";
+    box.setAttribute("data-open", "0");
+    box.innerHTML =
+      '<button type="button" class="mdai-think-btn" aria-expanded="false">' +
+      ICO_SPARK +
+      '<span class="mdai-think-label mdai-think-live">กำลังคิด…</span></button>' +
+      '<div class="mdai-think-body"><div><div class="mdai-think-text"></div></div></div>';
+    msgs.appendChild(box);
+  }
+
+  // จบการคิด: ถ้าไม่มีเหตุผลให้โชว์ ก็เอาแถบออกไปเลย
+  function settleThinking(think) {
+    var box = document.getElementById("mdai-think-row");
+    if (!box) return;
+    if (!think) {
+      box.remove();
+      return;
+    }
+    var secs = Math.max(1, Math.round((Date.now() - thinkStart) / 1000));
+    var label = box.querySelector(".mdai-think-label");
+    label.className = "mdai-think-label mdai-think-done";
+    label.textContent = "คิดอยู่ " + secs + " วินาที";
+
+    var btn = box.querySelector(".mdai-think-btn");
+    btn.insertAdjacentHTML("beforeend", ICO_CHEV_SM);
+    box.querySelector(".mdai-think-text").textContent = think;
+    box.id = "";
+    box.setAttribute("data-ready", "1");
+    btn.addEventListener("click", function () {
+      var open = box.getAttribute("data-open") === "1";
+      box.setAttribute("data-open", open ? "0" : "1");
+      btn.setAttribute("aria-expanded", open ? "false" : "true");
+    });
+  }
+
   function showTyping() {
     var msgs = document.getElementById("mdai-msgs");
     var row = document.createElement("div");
@@ -838,6 +929,7 @@
 
     busy = true;
     document.getElementById("mdai-send").disabled = true;
+    showThinking();
     showTyping();
 
     fetch(PROXY_URL, {
@@ -857,14 +949,17 @@
       })
       .then(function (data) {
         hideTyping();
-        var reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-        reply = (reply || "").replace(/<think>[\s\S]*?(<\/think>|$)/g, "");
-        reply = reply.trim() || "ขออภัย ไม่ได้รับคำตอบครับ";
+        var msg = (data.choices && data.choices[0] && data.choices[0].message) || {};
+        var split = splitThink(msg.content);
+        // บางค่ายส่งเหตุผลมาเป็นฟิลด์แยกแทนที่จะฝังใน <think>
+        settleThinking(split.think || String(msg.reasoning_content || "").trim());
+        var reply = split.text.trim() || "ขออภัย ไม่ได้รับคำตอบครับ";
         messages.push({ role: "assistant", content: reply });
         addBubble("ai", reply);
       })
       .catch(function (err) {
         hideTyping();
+        settleThinking("");
         addBubble("ai", "เกิดข้อผิดพลาด: " + err.message, true);
       })
       .finally(function () {
