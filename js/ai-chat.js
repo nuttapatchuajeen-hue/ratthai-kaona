@@ -45,16 +45,37 @@
     try { localStorage.setItem(MODEL_KEY, v); } catch (err) {}
   }
 
-  function modelOptions() {
+  function modelLabel() {
+    for (var i = 0; i < MODELS.length; i++) {
+      if (MODELS[i].id === model) return MODELS[i].label;
+    }
+    return MODELS[0].label;
+  }
+
+  var ICO_CHECK =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" ' +
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+
+  function modelMenuHtml() {
     var out = "";
     for (var i = 0; i < MODELS.length; i++) {
       out +=
-        '<option value="' + MODELS[i].id + '"' +
-        (MODELS[i].id === model ? " selected" : "") +
-        ">" + MODELS[i].label + "</option>";
+        '<button type="button" role="option" data-id="' + MODELS[i].id + '" ' +
+        'aria-selected="' + (MODELS[i].id === model ? "true" : "false") + '">' +
+        "<i>" + MODELS[i].label + "</i>" + ICO_CHECK + "</button>";
     }
     return out;
   }
+
+  // ---- ข้อความ placeholder ที่หมุนสลับในช่องพิมพ์ ----
+  var PLACEHOLDERS = [
+    "พิมพ์คำถาม เช่น ครม., ส.ส., กระทรวง…",
+    "ครม. ชุดปัจจุบันมีใครบ้าง?",
+    "ส.ส. เขตนี้เป็นของพรรคอะไร?",
+    "กระทรวงไหนดูแลเรื่องนี้?",
+    "ขอสถิติงบประมาณล่าสุด",
+  ];
+  var phSync = null; // build() จะกำหนดให้ ใช้ซิงก์ placeholder หลังส่งข้อความ
 
   // ---- ประวัติการสนทนา (อยู่ในหน่วยความจำ รีโหลดแล้วเริ่มใหม่) ----
   var messages = [{ role: "system", content: SYSTEM_PROMPT }];
@@ -165,12 +186,6 @@
     "#mdai-close{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:var(--mdai-on-accent);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}",
     "#mdai-close:hover{background:rgba(255,255,255,.32)}",
 
-    // แถบเลือกโมเดล (ใต้หัวแชต)
-    "#mdai-tools{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--mdai-surface);border-bottom:1px solid var(--mdai-border)}",
-    "#mdai-tools label{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--mdai-dim);letter-spacing:.01em}",
-    "#mdai-model{flex:1;min-width:0;padding:5px 8px;border-radius:8px;border:1px solid var(--mdai-border);background:var(--mdai-surface2);color:var(--mdai-text);font-family:inherit;font-size:12px;line-height:1.3;cursor:pointer}",
-    "#mdai-model:hover{border-color:var(--mdai-accent2)}",
-    "#mdai-model:focus-visible{outline:2px solid var(--mdai-accent2);outline-offset:1px}",
 
     // กล่องข้อความ
     "#mdai-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--mdai-surface2)}",
@@ -193,17 +208,58 @@
     ".mdai-typing i:nth-child(1){background:#00E5FF}.mdai-typing i:nth-child(2){background:#3B82F6;animation-delay:.15s}.mdai-typing i:nth-child(3){background:#A855F7;animation-delay:.3s}",
     "@keyframes mdai-b{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}",
 
-    // ช่องพิมพ์
-    "#mdai-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--mdai-border);background:var(--mdai-surface)}",
-    "#mdai-input{flex:1;resize:none;border:1px solid var(--mdai-border);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;",
-    "background:var(--mdai-surface2);color:var(--mdai-text);max-height:110px;outline:none}",
-    "#mdai-input:focus{border-color:var(--mdai-accent)}",
-    "#mdai-send{border:none;border-radius:12px;width:44px;cursor:pointer;color:var(--mdai-on-accent);background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));display:grid;place-items:center;box-shadow:0 0 14px -3px var(--mdai-accent2);transition:box-shadow .18s,transform .12s}",
-    "#mdai-send:hover{box-shadow:0 0 20px -2px var(--mdai-accent2);transform:translateY(-1px)}",
-    "#mdai-send:disabled{opacity:.5;cursor:not-allowed}",
-    "#mdai-send svg{width:20px;height:20px}",
+    // ช่องพิมพ์ = การ์ดมน มีแถบเครื่องมืออยู่ในตัว
+    "#mdai-form{padding:12px;background:var(--mdai-surface)}",
+    "#mdai-composer{position:relative;box-sizing:border-box;padding:10px 12px 8px;border:2px solid var(--mdai-border);border-radius:24px;background:var(--mdai-surface2);",
+    "transition:border-color .2s cubic-bezier(.2,0,0,1),box-shadow .28s cubic-bezier(.2,0,0,1)}",
+    "#mdai-composer.mdai-focus{border-color:var(--mdai-accent2);box-shadow:0 2px 8px rgba(8,8,8,.06),0 16px 40px -14px rgba(0,181,214,.5)}",
+
+    // ช่องพิมพ์ + ป้าย placeholder ที่หมุนสลับ
+    "#mdai-field{position:relative;min-height:26px}",
+    "#mdai-ph{position:absolute;left:2px;right:2px;top:0;height:26px;overflow:hidden;pointer-events:none}",
+    "#mdai-ph span{display:block;font-size:14px;line-height:26px;color:var(--mdai-dim);opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    "#mdai-ph span.mdai-ph-in{animation:mdai-ph-in .34s cubic-bezier(.2,0,0,1)}",
+    "#mdai-ph span.mdai-ph-out{animation:mdai-ph-out .34s cubic-bezier(.2,0,0,1) forwards}",
+    "@keyframes mdai-ph-in{from{opacity:0;transform:translateY(6px);filter:blur(4px)}to{opacity:.75;transform:none;filter:blur(0)}}",
+    "@keyframes mdai-ph-out{from{opacity:.75;transform:none;filter:blur(0)}to{opacity:0;transform:translateY(-6px);filter:blur(4px)}}",
+    "#mdai-input{display:block;box-sizing:border-box;width:100%;resize:none;border:0;background:transparent;padding:0 2px;font:inherit;font-size:14px;line-height:26px;",
+    "color:var(--mdai-text);max-height:110px;outline:none}",
+
+    // แถบเครื่องมือด้านล่างในกล่องพิมพ์
+    "#mdai-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--mdai-border)}",
+    "#mdai-mwrap{flex:1;min-width:0}",
+    "#mdai-mtrigger{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:32px;padding:4px 8px;border:0;border-radius:10px;background:transparent;",
+    "color:var(--mdai-dim);font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .2s,color .2s}",
+    '#mdai-mtrigger:hover,#mdai-mtrigger[aria-expanded="true"]{background:var(--mdai-surface);color:var(--mdai-text)}',
+    "#mdai-mtrigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    "#mdai-mtrigger svg{width:13px;height:13px;flex:0 0 auto;opacity:.6;transition:transform .2s cubic-bezier(.2,0,0,1)}",
+    '#mdai-mtrigger[aria-expanded="true"] svg{transform:rotate(180deg)}',
+
+    // เมนูเลือกโมเดล — ยึดกับ #mdai-composer (mwrap ตั้งใจไม่ใส่ position) จะได้ลอยเหนือการ์ดทั้งใบ ไม่บังช่องพิมพ์
+    "#mdai-mmenu{position:absolute;left:0;bottom:calc(100% + 18px);z-index:20;display:none;min-width:210px;max-width:min(280px,calc(100vw - 64px));",
+    "padding:6px;border:2px solid var(--mdai-border);border-radius:16px;background:var(--mdai-surface);transform-origin:bottom left;",
+    "box-shadow:0 8px 30px -8px rgba(8,8,8,.3),0 2px 8px -2px rgba(8,8,8,.12)}",
+    "#mdai-mmenu.mdai-open{display:block;animation:mdai-menu-in .2s cubic-bezier(.2,0,0,1)}",
+    "@keyframes mdai-menu-in{from{opacity:0;transform:translateY(6px) scale(.96);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}",
+    "#mdai-mmenu button{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;padding:8px 10px;border:0;border-radius:11px;background:transparent;",
+    "color:var(--mdai-dim);font:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .15s,color .15s}",
+    '#mdai-mmenu button:hover,#mdai-mmenu button[aria-selected="true"]{background:var(--mdai-surface2);color:var(--mdai-text)}',
+    "#mdai-mmenu button i{flex:1;min-width:0;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    "#mdai-mmenu button svg{width:14px;height:14px;flex:0 0 auto;color:var(--mdai-accent2);opacity:0;transform:scale(.25);",
+    "transition:opacity .2s,transform .2s cubic-bezier(.2,0,0,1)}",
+    '#mdai-mmenu button[aria-selected="true"] svg{opacity:1;transform:none}',
+
+    // ปุ่มส่งวงกลม
+    "#mdai-send{flex:0 0 auto;width:40px;height:40px;border:none;border-radius:50%;cursor:pointer;color:var(--mdai-on-accent);display:grid;place-items:center;",
+    "background:linear-gradient(180deg,var(--mdai-accent2),var(--mdai-accent));",
+    "box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 14px -3px var(--mdai-accent2);",
+    "transition:box-shadow .2s,transform .18s cubic-bezier(.2,0,0,1)}",
+    "#mdai-send:hover{transform:scale(1.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 4px rgba(0,229,255,.12),0 0 22px -2px var(--mdai-accent2)}",
+    "#mdai-send:active{transform:scale(.94)}",
+    "#mdai-send:disabled{opacity:.5;cursor:not-allowed;transform:none}",
+    "#mdai-send svg{width:18px;height:18px}",
     "@media(max-width:480px){#mdai-panel{right:10px;left:10px;width:auto;height:76vh}}",
-    "@media(prefers-reduced-motion:reduce){#mdai-fab-slot,#mdai-fab,#mdai-panel,#mdai-fab-slot.mdai-anim{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before,.mdai-hint-cursor{animation:none}}",
+    "@media(prefers-reduced-motion:reduce){#mdai-fab-slot,#mdai-fab,#mdai-panel,#mdai-fab-slot.mdai-anim{transition:none}.mdai-typing i,#mdai-panel.mdai-show,#mdai-panel::before,#mdai-head::before,.mdai-hint-cursor,#mdai-ph span,#mdai-mmenu.mdai-open{animation:none}#mdai-composer,#mdai-send,#mdai-mtrigger svg{transition:none}}",
   ].join("");
 
   // ---------- สร้าง DOM ----------
@@ -262,12 +318,18 @@
         '<div id="mdai-head"><span class="mdai-dot"></span><div><b>ผู้ช่วย AI ข้อมูลรัฐ</b>' +
         "<span>ถามเรื่องโครงสร้างรัฐ ครม. ส.ส. และสถิติ</span></div>" +
         '<button id="mdai-close" aria-label="ปิด">×</button></div>' +
-        '<div id="mdai-tools"><label for="mdai-model">โมเดล</label>' +
-        '<select id="mdai-model" aria-label="เลือกโมเดล AI">' + modelOptions() + "</select></div>" +
         '<div id="mdai-msgs"></div>' +
-        '<form id="mdai-form"><textarea id="mdai-input" rows="1" placeholder="พิมพ์คำถาม เช่น ครม., ส.ส., กระทรวง…" autocomplete="off"></textarea>' +
+        '<form id="mdai-form"><div id="mdai-composer">' +
+        '<div id="mdai-field"><div id="mdai-ph" aria-hidden="true"><span></span></div>' +
+        '<textarea id="mdai-input" rows="1" aria-label="พิมพ์คำถาม" autocomplete="off"></textarea></div>' +
+        '<div id="mdai-bar"><div id="mdai-mwrap">' +
+        '<button type="button" id="mdai-mtrigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="mdai-mmenu">' +
+        '<span id="mdai-mlabel"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>' +
+        '<div id="mdai-mmenu" role="listbox" aria-label="เลือกโมเดล AI"></div></div>' +
         '<button id="mdai-send" type="submit" aria-label="ส่ง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button></form>' +
+        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>' +
+        "</div></div></form>" +
         "</div>"
     );
 
@@ -532,13 +594,75 @@
     });
 
     panel.querySelector("#mdai-close").addEventListener("click", close);
-    var modelSel = panel.querySelector("#mdai-model");
-    if (modelSel) {
-      modelSel.value = model;
-      modelSel.addEventListener("change", function () {
-        saveModel(modelSel.value);
-      });
+
+    // ---- เมนูเลือกโมเดล (ทำเอง ไม่ใช้ <select> ของระบบ) ----
+    var mTrigger = panel.querySelector("#mdai-mtrigger");
+    var mMenu = panel.querySelector("#mdai-mmenu");
+    var mLabel = panel.querySelector("#mdai-mlabel");
+    mMenu.innerHTML = modelMenuHtml();
+    mLabel.textContent = modelLabel();
+
+    function menuOpen() {
+      return mMenu.classList.contains("mdai-open");
     }
+    function closeMenu() {
+      mMenu.classList.remove("mdai-open");
+      mTrigger.setAttribute("aria-expanded", "false");
+    }
+    function paintMenu() {
+      mLabel.textContent = modelLabel();
+      var btns = mMenu.querySelectorAll("button");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].setAttribute(
+          "aria-selected",
+          btns[i].getAttribute("data-id") === model ? "true" : "false"
+        );
+      }
+    }
+
+    mTrigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (menuOpen()) closeMenu();
+      else {
+        mMenu.classList.add("mdai-open");
+        mTrigger.setAttribute("aria-expanded", "true");
+      }
+    });
+    mMenu.addEventListener("click", function (e) {
+      var btn = e.target.closest ? e.target.closest("button[data-id]") : null;
+      if (!btn) return;
+      saveModel(btn.getAttribute("data-id"));
+      paintMenu();
+      closeMenu();
+      mTrigger.focus();
+    });
+    document.addEventListener("click", function (e) {
+      if (!menuOpen()) return;
+      if (!mMenu.contains(e.target) && !mTrigger.contains(e.target)) closeMenu();
+    });
+
+    // ---- placeholder หมุนสลับ (โชว์เฉพาะตอนช่องว่างและไม่ได้โฟกัส) ----
+    var phBox = panel.querySelector("#mdai-ph");
+    var phSpan = phBox.firstChild;
+    var phIdx = 0;
+    phSpan.textContent = PLACEHOLDERS[0];
+
+    phSync = function () {
+      var box = document.getElementById("mdai-input");
+      var show = !!box && !box.value && document.activeElement !== box;
+      phBox.style.display = show ? "" : "none";
+    };
+    phSync();
+
+    setInterval(function () {
+      if (!opened || phBox.style.display === "none" || PLACEHOLDERS.length < 2) return;
+      phSpan.className = "mdai-ph-out";
+      setTimeout(function () {
+        phIdx = (phIdx + 1) % PLACEHOLDERS.length;
+        phSpan.textContent = PLACEHOLDERS[phIdx];
+        phSpan.className = "mdai-ph-in";
+      }, 340);
+    }, 3600);
     var form = panel.querySelector("#mdai-form");
     var input = panel.querySelector("#mdai-input");
     form.addEventListener("submit", function (e) {
@@ -554,9 +678,27 @@
     input.addEventListener("input", function () {
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 110) + "px";
+      phSync();
     });
+
+    var composer = panel.querySelector("#mdai-composer");
+    input.addEventListener("focus", function () {
+      composer.classList.add("mdai-focus");
+      phSync();
+    });
+    input.addEventListener("blur", function () {
+      composer.classList.remove("mdai-focus");
+      phSync();
+    });
+
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && opened) close();
+      if (e.key !== "Escape" || !opened) return;
+      if (menuOpen()) {
+        closeMenu();
+        mTrigger.focus();
+        return;
+      }
+      close();
     });
 
     // ข้อความต้อนรับ + ชิปคำถามตัวอย่างในกล่องแชต
@@ -690,6 +832,7 @@
     var input = document.getElementById("mdai-input");
     input.value = "";
     input.style.height = "auto";
+    if (phSync) phSync();
     addBubble("me", text);
     messages.push({ role: "user", content: text });
 
