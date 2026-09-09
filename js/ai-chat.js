@@ -22,6 +22,40 @@
   var MAX_TOKENS = 1024;
   var TEMPERATURE = 0.2;
 
+  // ---- โมเดล AI ที่เลือกได้ในแผงแชต (id ต้องตรงกับ MODEL_CONFIGS ฝั่ง proxy) ----
+  // "" = ไม่ส่ง model ไปเลย ให้ proxy เลือกให้ (พฤติกรรมเดิม)
+  var MODELS = [
+    { id: "", label: "อัตโนมัติ (ตามเซิร์ฟเวอร์)" },
+    { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+    { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)" },
+    { id: "openthaigpt-thaillm-8b-instruct-v7.2", label: "ThaiLLM 8B (ไทย)" },
+  ];
+  var MODEL_KEY = "mdai-model-v1";
+  var model = readModel();
+
+  function readModel() {
+    var v = "";
+    try { v = localStorage.getItem(MODEL_KEY) || ""; } catch (err) { v = ""; }
+    for (var i = 0; i < MODELS.length; i++) if (MODELS[i].id === v) return v;
+    return "";
+  }
+
+  function saveModel(v) {
+    model = v;
+    try { localStorage.setItem(MODEL_KEY, v); } catch (err) {}
+  }
+
+  function modelOptions() {
+    var out = "";
+    for (var i = 0; i < MODELS.length; i++) {
+      out +=
+        '<option value="' + MODELS[i].id + '"' +
+        (MODELS[i].id === model ? " selected" : "") +
+        ">" + MODELS[i].label + "</option>";
+    }
+    return out;
+  }
+
   // ---- ประวัติการสนทนา (อยู่ในหน่วยความจำ รีโหลดแล้วเริ่มใหม่) ----
   var messages = [{ role: "system", content: SYSTEM_PROMPT }];
   var busy = false;
@@ -131,6 +165,13 @@
     "#mdai-close{margin-left:auto;background:rgba(255,255,255,.18);border:none;color:var(--mdai-on-accent);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}",
     "#mdai-close:hover{background:rgba(255,255,255,.32)}",
 
+    // แถบเลือกโมเดล (ใต้หัวแชต)
+    "#mdai-tools{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--mdai-surface);border-bottom:1px solid var(--mdai-border)}",
+    "#mdai-tools label{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--mdai-dim);letter-spacing:.01em}",
+    "#mdai-model{flex:1;min-width:0;padding:5px 8px;border-radius:8px;border:1px solid var(--mdai-border);background:var(--mdai-surface2);color:var(--mdai-text);font-family:inherit;font-size:12px;line-height:1.3;cursor:pointer}",
+    "#mdai-model:hover{border-color:var(--mdai-accent2)}",
+    "#mdai-model:focus-visible{outline:2px solid var(--mdai-accent2);outline-offset:1px}",
+
     // กล่องข้อความ
     "#mdai-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--mdai-surface2)}",
     ".mdai-row{display:flex;max-width:85%}",
@@ -221,6 +262,8 @@
         '<div id="mdai-head"><span class="mdai-dot"></span><div><b>ผู้ช่วย AI ข้อมูลรัฐ</b>' +
         "<span>ถามเรื่องโครงสร้างรัฐ ครม. ส.ส. และสถิติ</span></div>" +
         '<button id="mdai-close" aria-label="ปิด">×</button></div>' +
+        '<div id="mdai-tools"><label for="mdai-model">โมเดล</label>' +
+        '<select id="mdai-model" aria-label="เลือกโมเดล AI">' + modelOptions() + "</select></div>" +
         '<div id="mdai-msgs"></div>' +
         '<form id="mdai-form"><textarea id="mdai-input" rows="1" placeholder="พิมพ์คำถาม เช่น ครม., ส.ส., กระทรวง…" autocomplete="off"></textarea>' +
         '<button id="mdai-send" type="submit" aria-label="ส่ง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -489,6 +532,13 @@
     });
 
     panel.querySelector("#mdai-close").addEventListener("click", close);
+    var modelSel = panel.querySelector("#mdai-model");
+    if (modelSel) {
+      modelSel.value = model;
+      modelSel.addEventListener("change", function () {
+        saveModel(modelSel.value);
+      });
+    }
     var form = panel.querySelector("#mdai-form");
     var input = panel.querySelector("#mdai-input");
     form.addEventListener("submit", function (e) {
@@ -650,7 +700,11 @@
     fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: messages, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }),
+      body: JSON.stringify(
+        model
+          ? { messages: messages, model: model, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
+          : { messages: messages, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
+      ),
     })
       .then(function (r) {
         return r.json().then(function (data) {
