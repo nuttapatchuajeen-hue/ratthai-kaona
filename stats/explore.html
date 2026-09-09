@@ -416,6 +416,24 @@
   /* พื้นที่กด 44px ตามเกณฑ์สัมผัส แต่รางยังบางเท่าเดิม (content-box: height=ราง, padding=พื้นที่กด) */
   .tl-slider{flex:1;accent-color:var(--green);height:6px;cursor:pointer;min-width:120px;box-sizing:content-box;padding:19px 0;background:transparent}
   @media(max-width:640px){ .tl-maps.cmp{grid-template-columns:1fr} }
+  /* ---------- แผงจำลองสึนามิ (สมการน้ำตื้น + WebGL) ----------
+     ตั้งชื่อขึ้นต้น tsu- กันชนกับคลาสอื่น · แคนวาส 2 ชั้นซ้อนกัน:
+     ชั้นล่าง = สนามคลื่นจาก WebGL · ชั้นบน = เส้นชายฝั่ง หมุด และป้ายต่าง ๆ วาดด้วย 2D */
+  .tsu-map{position:relative;width:100%;aspect-ratio:2160/793;min-height:260px;border-radius:14px;overflow:hidden;background:var(--paper-2);border:1px solid var(--rule);cursor:crosshair;touch-action:none}
+  .tsu-map canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .tsu-map canvas#tsuOv{pointer-events:none}
+  .tsu-map.dragging{cursor:grabbing}
+  .tsu-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
+    background:var(--paper-2);color:var(--ink-soft);font-size:14px;font-weight:600;z-index:3}
+  .tsu-state.err{color:var(--red,#c0392b)}
+  .tsu-state[hidden]{display:none}
+  .tsu-tip{position:absolute;z-index:4;pointer-events:none;transform:translate(10px,-50%);background:var(--paper);border:1px solid var(--rule-strong);
+    border-radius:9px;padding:6px 9px;font-size:12px;line-height:1.5;color:var(--ink-2);box-shadow:0 6px 20px rgba(0,0,0,.16);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .tsu-mag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-soft)}
+  .tsu-mag b{font-family:"Archivo",sans-serif;color:var(--green);min-width:30px;font-variant-numeric:tabular-nums}
+  .tsu-mag input{width:104px;accent-color:var(--green);cursor:pointer}
+  .tsu-legend-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:12px;color:var(--ink-soft)}
+  .tsu-legend-row .sw{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid var(--rule);vertical-align:-1px;margin-right:4px}
   /* ---------- แผง CO₂ 1 ปีของโลก (คลิป NASA + แผนที่ CarbonTracker) ----------
      ตั้งชื่อขึ้นต้น co2- กันชนกับคลาสอื่น · ตัวแผนที่มีสไตล์ของตัวเองอยู่ใน co2-map.js */
   .co2-chart{width:100%;min-height:320px;overflow-x:auto}
@@ -6483,6 +6501,150 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+
+    <!-- ============ ศูนย์ข้อมูลโลก · สึนามิ (จำลองด้วยสมการน้ำตื้นจริง) ============
+         ที่มาของหัวข้อ: คลิปจำลองสึนามิของ NOAA/PTWC ที่ให้คลื่นวิ่งข้ามมหาสมุทรพร้อมแถบสีความสูงคลื่น
+         แต่แผงนี้ไม่ใช่คลิป — คำนวณสดในเครื่องผู้ใช้จากสมการน้ำตื้นเชิงเส้นบนพิกัดทรงกลม
+         ต้นกำเนิดคลื่นใช้สูตร Okada (1985) · พื้นทะเลจาก climate-data/build-bathymetry.mjs
+         เอนจิน: tsunami-sim.js (window.TsunamiSim) — เร่งด้วย WebGL2 ถ้าเครื่องรองรับ -->
+    <section class="tabpane" id="pane-world-tsunami" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-waves"></use></svg> สึนามิ — จำลองคลื่นด้วยฟิสิกส์จริง</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-zap"></use></svg> ขนาดแผ่นดินไหว · <span id="tsuKName">—</span></div>
+          <div class="k-num" id="tsuKMw">—<span class="u">Mw</span></div>
+          <div class="k-sub" id="tsuKFault">—</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-mountain"></use></svg> พื้นทะเลยกตัวสูงสุด</div>
+          <div class="k-num" id="tsuKUplift">—<span class="u">ม.</span></div>
+          <div class="k-sub">คำนวณจากสูตร Okada (1985) — การยกตัวของผิวโลกจากรอยเลื่อนในครึ่งปริภูมิยืดหยุ่น</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-droplets"></use></svg> ปริมาตรน้ำที่ถูกยกขึ้น</div>
+          <div class="k-num" id="tsuKVol">—<span class="u">กม.³</span></div>
+          <div class="k-sub">พลังงานทั้งหมดของสึนามิมาจากก้อนน้ำนี้ — โทโฮกุ 2554 อยู่ราว 300–500 กม.³</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-timer"></use></svg> เวลาจำลองที่ผ่านไป</div>
+          <div class="k-num" id="tsuKTime">0<span class="u">ชม.</span></div>
+          <div class="k-sub" id="tsuKGrid">—</div>
+        </div>
+      </div>
+
+      <div class="card full" id="tsuCard">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-map"></use></svg> แผนที่คลื่นสึนามิ — คำนวณสดในเครื่องคุณ</h2>
+          <span class="tag">กดจุดไหนก็ได้</span>
+        </div>
+        <p class="sub">เลือก <b>เหตุการณ์</b> แล้วกด <b><svg class='mdico'><use href='#i-play'></use></svg> เล่น</b> เพื่อดูคลื่นวิ่งข้ามมหาสมุทร · หรือ <b>คลิกลงบนทะเลตรงไหนก็ได้</b> เพื่อวางแผ่นดินไหวของคุณเองตรงนั้น แล้วปรับขนาดด้วยแถบเลื่อน<br>
+        <b>สลับ “สิ่งที่แสดง”</b> ระหว่างคลื่น ณ ขณะนั้น · ความสูงคลื่นสูงสุดที่แต่ละจุดเคยเจอ (แบบเดียวกับแถบสีชายฝั่งในคลิป NOAA) · และเส้นเวลาที่คลื่นเดินทางไปถึง · ลากเพื่อเลื่อนแผนที่ · หมุนล้อเพื่อซูม</p>
+        <div class="tl-toolbar">
+          <select id="tsuScene"></select>
+          <select id="tsuMode">
+            <option value="0" selected>แสดง: คลื่น ณ ขณะนั้น</option>
+            <option value="1">แสดง: ความสูงคลื่นสูงสุดสะสม</option>
+            <option value="2">แสดง: เวลาที่คลื่นเดินทางถึง</option>
+          </select>
+          <select id="tsuSpeed">
+            <option value="900">ความเร็ว ช้า (1 วิ = 15 นาที)</option>
+            <option value="3600" selected>ความเร็ว ปกติ (1 วิ = 1 ชม.)</option>
+            <option value="14400">ความเร็ว เร็ว (1 วิ = 4 ชม.)</option>
+            <option value="43200">ความเร็ว เร็วสุด (1 วิ = 12 ชม.)</option>
+          </select>
+          <label class="tsu-mag">ขนาด <b id="tsuMagLab">9.1</b>
+            <input type="range" id="tsuMag" min="7.5" max="9.6" step="0.1" value="9.1" />
+          </label>
+          <button class="tl-btn" id="tsuReset" title="ตั้งต้นใหม่ที่เวลา 0">↺ ตั้งต้นใหม่</button>
+          <button class="tl-btn" id="tsuFit" title="ย่อกลับให้เห็นทั้งโลก">⤢ เต็มแผนที่</button>
+          <button class="tl-btn" id="tsuFs" title="ดูแผนที่เต็มจอ ไม่มีเมนูหรือไซด์บาร์บัง">⛶ เต็มจอ</button>
+          <span class="tl-year-lab" id="tsuEngine" style="min-width:auto;color:var(--ink-soft);font-size:12px"></span>
+        </div>
+        <div id="tsuMap" class="tsu-map">
+          <canvas id="tsuGL"></canvas>
+          <canvas id="tsuOv"></canvas>
+          <div class="tsu-state" id="tsuState">กำลังโหลดแผนที่ความลึกท้องทะเล…</div>
+          <div class="tsu-tip" id="tsuTip" hidden></div>
+        </div>
+        <div class="tl-legend" id="tsuLegend"></div>
+        <div class="tl-player">
+          <button class="tl-play" id="tsuPlay" aria-label="เล่น/หยุด"><svg class="mdico"><use href="#i-play"></use></svg></button>
+          <span class="tl-year-lab" id="tsuTimeLab" style="min-width:132px">0 ชม. 00 น.</span>
+          <input type="range" class="tl-slider" id="tsuSlider" min="0" max="86400" value="0" step="60" />
+        </div>
+        <div class="src">
+          พื้นทะเล: <a href="https://coastwatch.pfeg.noaa.gov/erddap/griddap/etopo180.html" target="_blank" rel="noopener">NOAA NCEI ETOPO1 ผ่าน ERDDAP ↗</a>
+          (กริด 10 ลิปดา ≈ 18 กม. ที่เส้นศูนย์สูตร · ตัดที่ ±66°) ·
+          เส้นชายฝั่งจาก <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> (Natural Earth 110m) ·
+          ค่าพารามิเตอร์รอยเลื่อนของเหตุการณ์จริงอ้างอิงแค็ตตาล็อกของ <a href="https://earthquake.usgs.gov/earthquakes/browse/significant.php" target="_blank" rel="noopener">USGS</a> ·
+          <b>เป็นสื่อการเรียนรู้ ไม่ใช่ระบบเตือนภัย</b> — การเตือนภัยจริงเป็นหน้าที่ของ <a href="https://www.ndwc.go.th/" target="_blank" rel="noopener">ศูนย์เตือนภัยพิบัติแห่งชาติ</a> และ <a href="https://www.tsunami.gov/" target="_blank" rel="noopener">PTWC</a>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-anchor"></use></svg> ทุ่นวัดคลื่นจำลอง — ระดับน้ำที่แต่ละเมืองตามเวลา</h2>
+          <span class="tag">คำนวณสดพร้อมแผนที่</span>
+        </div>
+        <p class="sub">เส้นแต่ละเส้นคือระดับน้ำที่จุดนั้นเปลี่ยนไปตามเวลา เหมือนที่ทุ่น DART กลางมหาสมุทรวัดได้จริง · สังเกตว่าคลื่นลูกแรกมักเป็น<b>น้ำลด</b>ก่อน แล้วค่อยตามด้วยยอดคลื่น — นั่นคือสัญญาณเตือนตามธรรมชาติที่คนบนชายหาดควรรู้จัก</p>
+        <div class="plot" id="tsuGauge"><div class="state-msg">กดเล่นเพื่อเริ่มบันทึก</div></div>
+        <div class="src">ค่าที่แสดงเป็น<b>ความสูงคลื่นในน้ำลึกนอกฝั่ง</b> ยังไม่ใช่ความสูงตอนซัดขึ้นหาด ซึ่งมักสูงกว่าหลายเท่าเมื่อคลื่นวิ่งเข้าที่ตื้น (กฎของกรีน: ความสูง ∝ ความลึก<sup>−1/4</sup>)</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-clock"></use></svg> เวลาที่คลื่นเดินทางไปถึงแต่ละเมือง</h2>
+          <span class="tag">เทียบกับที่บันทึกจริง</span>
+        </div>
+        <div class="tbl-wrap"><table class="dataTbl" id="tsuArrTbl">
+          <thead><tr><th>จุด</th><th class="num">คลื่นถึงเมื่อ</th><th class="num">ความสูงสูงสุด (น้ำลึก)</th><th class="num">ระยะทาง</th></tr></thead>
+          <tbody><tr><td colspan="4" class="state-msg">ยังไม่ได้เริ่มจำลอง</td></tr></tbody>
+        </table></div>
+        <div class="src">“คลื่นถึงเมื่อ” นับจากวินาทีที่ระดับน้ำขยับเกิน 5 ซม. ซึ่งเป็นคลื่นลูกหน้าสุดที่ยังเล็กมาก — คลื่นลูกที่ทำลายล้างจริงมักตามมาทีหลังอีกหลายสิบนาที</div>
+      </div>
+
+      <div class="card full gt-notes">
+        <div class="gt-two-col">
+          <div>
+            <h3>แม่นแค่ไหน — ตรวจกับของจริงแล้ว</h3>
+            <p>ทดสอบด้วยการใส่ค่ารอยเลื่อนของเหตุการณ์จริง แล้วเทียบเวลาที่คลื่นไปถึงกับที่บันทึกไว้จริง:</p>
+            <div class="tbl-wrap"><table class="dataTbl">
+              <thead><tr><th>เส้นทาง</th><th class="num">แบบจำลองนี้</th><th class="num">บันทึกจริง</th></tr></thead>
+              <tbody>
+                <tr><td>สุมาตรา 2547 → ศรีลังกาตะวันออก</td><td class="num">1 ชม. 30 น.</td><td class="num">~1 ชม. 40 น.</td></tr>
+                <tr><td>สุมาตรา 2547 → โคลัมโบ</td><td class="num">2 ชม. 11 น.</td><td class="num">~2 ชม.</td></tr>
+                <tr><td>สุมาตรา 2547 → มัลดีฟส์</td><td class="num">3 ชม. 20 น.</td><td class="num">~3 ชม. 30 น.</td></tr>
+                <tr><td>สุมาตรา 2547 → โซมาเลีย</td><td class="num">7 ชม. 29 น.</td><td class="num">~7 ชม.</td></tr>
+                <tr><td>โทโฮกุ 2554 → มิดเวย์</td><td class="num">4 ชม. 27 น.</td><td class="num">~4 ชม.</td></tr>
+                <tr><td>โทโฮกุ 2554 → ฮาวาย</td><td class="num">7 ชม. 29 น.</td><td class="num">~7 ชม. 20 น.</td></tr>
+                <tr><td>โทโฮกุ 2554 → แคลิฟอร์เนีย</td><td class="num">9 ชม. 13 น.</td><td class="num">~9 ชม. 45 น.</td></tr>
+                <tr><td>โทโฮกุ 2554 → ชิลี (17,000 กม.)</td><td class="num">21 ชม. 44 น.</td><td class="num">~21–22 ชม.</td></tr>
+              </tbody>
+            </table></div>
+            <p>ทุกแถวคือค่าที่แผงนี้คำนวณจริงบนกริดชุดเดียวกับที่คุณกำลังเล่นอยู่ · สูตร Okada เองก็ตรวจกับตัวอย่างตัวเลขในเปเปอร์ต้นฉบับปี 1985 ได้ตรงถึง 4 หลักนัยสำคัญ · ส่วนต้นกำเนิดคลื่นโทโฮกุที่คำนวณได้คือพื้นทะเลยกตัว <b>+7.0 ม.</b> และยกน้ำขึ้น <b>383 กม.³</b> ซึ่งอยู่ในช่วงที่วัดได้จริง (ยกตัว 7–10 ม. ใกล้ร่องลึก)</p>
+          </div>
+          <div>
+            <h3>สิ่งที่แบบจำลองนี้<u>ทำไม่ได้</u></h3>
+            <ul>
+              <li><b>ความสูงคลื่นตอนซัดขึ้นฝั่ง</b> — ต้องใช้กริดซ้อนละเอียดระดับสิบเมตรและสมการแบบไม่เชิงเส้น ที่นี่ช่องกริดกว้าง 18 กม. อ่าวและแหลมทั้งหมดจึงหายไป ตัวเลขริมฝั่งใช้ดูแนวโน้มได้ แต่ห้ามใช้วางแผนอพยพ</li>
+              <li><b>เวลาคลื่นถึงจุดที่อยู่ใกล้ต้นกำเนิดมาก</b> — ยิ่งใกล้ยิ่งคลาดเคลื่อน เช่นฉากสุมาตราแผงนี้ให้คลื่นถึงภูเก็ต 42 นาที ขณะที่คลื่นลูกที่ทำลายล้างจริงมาถึงราว 1 ชม. 50 น. สาเหตุมี 2 อย่าง: เกณฑ์ 5 ซม. จับ<b>คลื่นลูกหน้าสุดที่ยังเล็กมาก</b> ไม่ใช่ลูกใหญ่ และรอยเลื่อนสี่เหลี่ยมผืนเดียวในแบบจำลองวางขอบไว้ใกล้ฝั่งอันดามันกว่าการเลื่อนจริงซึ่งกระจุกอยู่ทางเหนือ · <b>ส่วนระยะไกลข้ามมหาสมุทรกลับแม่นมาก</b> ตามตารางซ้ายมือ</li>
+              <li><b>น้ำท่วมบนบก</b> — สมการเชิงเส้นให้คลื่นวิ่งขึ้นแผ่นดินไม่ได้ ที่ตื้นกว่า 20 ม. จึงถือเป็นกำแพงสะท้อน</li>
+              <li><b>การกระจายการเลื่อนจริง</b> — ที่นี่ใช้รอยเลื่อนสี่เหลี่ยมผืนเดียวที่เรียวลงตามขอบ ส่วนงานวิจัยจริงแบ่งเป็นร้อยช่องแล้วหาค่าการเลื่อนแต่ละช่องจากข้อมูลคลื่นไหวสะเทือน</li>
+              <li><b>คลื่นกระจายตัวตามความถี่ (dispersion)</b> — สมการน้ำตื้นถือว่าทุกความยาวคลื่นวิ่งเร็วเท่ากัน ซึ่งคลาดเคลื่อนขึ้นเมื่อเดินทางไกลมาก</li>
+              <li><b>สึนามิจากดินถล่มใต้ทะเลหรืออุกกาบาต</b> — ต้นกำเนิดในแผงนี้เป็นแผ่นดินไหวรอยเลื่อนย้อนอย่างเดียว</li>
+            </ul>
+            <h3>ทำงานยังไง</h3>
+            <ul>
+              <li>แก้สมการน้ำตื้นเชิงเส้นบนพิกัดทรงกลมด้วยวิธี leapfrog บนกริดเหลื่อม Arakawa C — แกนเดียวกับโมเดล MOST ที่ NOAA ใช้จริง</li>
+              <li>ขนาดก้าวเวลาถูกบังคับด้วยเงื่อนไข CFL: Δt &lt; Δx / √(2gh) — คำนวณจากช่องที่บีบที่สุดในกริดทั้งใบ</li>
+              <li>ทั้งหมดรันบนการ์ดจอผ่าน WebGL2 (สถานะน้ำเก็บเป็นพื้นผิวทศนิยม 32 บิต) ถ้าเครื่องไม่รองรับจะสลับไปคำนวณด้วย CPU บนกริดหยาบกว่าโดยอัตโนมัติ</li>
+              <li>ขอบเหนือ–ใต้มีชั้นดูดซับ ไม่งั้นคลื่นจะสะท้อนกลับเข้ามาเป็นริ้วปลอมทั่วมหาสมุทร</li>
+            </ul>
+          </div>
+        </div>
+        <div class="src">จัดทำเพื่อการศึกษาและนำเสนอ ไม่ใช่เอกสารราชการและไม่ใช่ระบบเตือนภัย · ข้อมูล ETOPO1 และผลงานของ NOAA ที่อ้างถึงเป็นสาธารณสมบัติ (public domain) ตามนโยบายของหน่วยงาน</div>
+      </div>
+    </section>
     <!-- ============ การคลังภาครัฐ · หนี้สาธารณะ ============ -->
     <section class="tabpane" id="pane-fiscal-debt" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-landmark"></use></svg> หนี้สาธารณะ</h2></div>
@@ -10389,6 +10551,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="climate-map.js"></script>
   <!-- เอนจินแผนที่ CO₂ ไล่วัน (แผง "CO₂ 1 ปีของโลก") -->
   <script src="co2-map.js"></script>
+  <!-- เอนจินจำลองสึนามิ (แผง "สึนามิ — จำลองคลื่นด้วยฟิสิกส์จริง") -->
+  <script src="tsunami-sim.js"></script>
   <!-- ป้อนค่าผิวน้ำทะเลจริงจากกริดชุดเดียวกันให้ลูกโลก ENSO (ต้องมาหลัง climate-map.js) -->
   <script src="enso-sst.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
@@ -12706,7 +12870,603 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       co2mLoad();
     }
 
-    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    /* ===== แผง "สึนามิ — จำลองคลื่นด้วยฟิสิกส์จริง" =====
+       ใช้เอนจิน tsunami-sim.js (window.TsunamiSim) — แก้สมการน้ำตื้นเชิงเส้นสด ๆ ในเครื่องผู้ใช้
+       เร่งด้วย WebGL2 ถ้าเครื่องรองรับพื้นผิวทศนิยม ถ้าไม่รองรับจะถอยไปคำนวณด้วย CPU
+       บนกริดหยาบกว่า 2 เท่าโดยอัตโนมัติ (สมการชุดเดียวกันเป๊ะ)
+       เดินด้วย requestAnimationFrame เพราะต้องวาดทุกเฟรมอยู่แล้ว และหยุดเองเมื่อออกจากแผง ===== */
+    var tsu = { ready:false, loading:false, err:null, gpu:false,
+                grid:null, eng:null, src:null, scene:null, mw:9.1, custom:null,
+                mode:0, speed:3600, playing:false, raf:null, lastT:0,
+                view:null, world:null, proj:null, cells:null, series:null,
+                lastProbe:-1, lastLab:-1, drag:null, wired:false, seeking:false };
+
+    var TSU_MAXT = 24 * 3600;          // จำลองสูงสุด 24 ชั่วโมง — พอให้คลื่นข้ามแปซิฟิกจนสุด
+
+    function tsuGridPos(lat, lon){
+      var G = tsu.grid;
+      var j = Math.floor((G.lat0 - lat) / G.step);
+      var i = Math.floor((lon + 180) / G.step);
+      i = ((i % G.nx) + G.nx) % G.nx;
+      return { i:i, j:j };
+    }
+    /* หาช่อง "ที่เป็นน้ำและลึกที่สุด" ใกล้ ๆ พิกัดที่ขอ — จุดตรวจตามเมืองมักตกบนบกพอดี */
+    function tsuWetNear(lat, lon, rad){
+      var G = tsu.grid, c = tsuGridPos(lat, lon), best = null;
+      for (var dj = -rad; dj <= rad; dj++) for (var di = -rad; di <= rad; di++){
+        var j = c.j + dj; if (j < 0 || j >= G.ny) continue;
+        var i = ((c.i + di) % G.nx + G.nx) % G.nx, h = G.h[j * G.nx + i];
+        if (h < TsunamiSim.HMIN) continue;
+        var d2 = dj*dj + di*di;
+        if (!best || d2 < best.d2 || (d2 === best.d2 && h > best.h)) best = { i:i, j:j, h:h, d2:d2 };
+      }
+      return best || { i:-1, j:-1, h:0 };
+    }
+    /* ค่ายกตัวเริ่มต้น ณ ช่องหนึ่ง — ใช้แยกว่าจุดตรวจนั้น "อยู่ในเขตต้นกำเนิด" หรือไม่ */
+    function tsuSrcEtaAt(cell){
+      var s = tsu.src, G = tsu.grid;
+      if (!s || !cell || cell.i < 0) return 0;
+      var jj = cell.j - s.j0; if (jj < 0 || jj >= s.h) return 0;
+      var ii = ((cell.i - s.i0) % G.nx + G.nx) % G.nx; if (ii >= s.w) return 0;
+      return s.uz[jj * s.w + ii];
+    }
+    function tsuGreatCircle(la1, lo1, la2, lo2){
+      var p = Math.PI/180, a = 0.5 - Math.cos((la2-la1)*p)/2 +
+              Math.cos(la1*p)*Math.cos(la2*p)*(1-Math.cos((lo2-lo1)*p))/2;
+      return 12742 * Math.asin(Math.sqrt(Math.max(0, a)));
+    }
+
+    /* ---------- มุมมอง (แพน/ซูม) ---------- */
+    function tsuFit(){
+      var G = tsu.grid, cv = $("#tsuGL");
+      var ar = cv.width / cv.height;
+      var w = G.nx, h = w / ar;
+      if (h > G.ny) { h = G.ny; w = h * ar; }
+      tsu.view = { x0:(G.nx - w)/2, y0:(G.ny - h)/2, w:w, h:h };
+    }
+    function tsuClampView(){
+      var G = tsu.grid, v = tsu.view;
+      if (v.h > G.ny) { var s = G.ny / v.h; v.h = G.ny; v.w *= s; }
+      if (v.y0 < 0) v.y0 = 0;
+      if (v.y0 + v.h > G.ny) v.y0 = G.ny - v.h;
+    }
+    /* โปรเจกชันของ d3 ที่ "ตรงเป๊ะ" กับที่เชดเดอร์วาด — ใช้ของ d3 เพราะมันตัดขอบ
+       ที่เส้นเปลี่ยนวันให้ถูกต้อง ถ้าแปลงพิกัดเองรัสเซียกับฟิจิจะลากพาดทั้งจอ */
+    function tsuProjection(){
+      var G = tsu.grid, v = tsu.view, cv = $("#tsuGL");
+      var W = cv.width, H = cv.height;
+      var s = 180 * W / (Math.PI * G.step * v.w);
+      var tx = (180 / G.step - v.x0) * W / v.w;
+      var ty = (G.lat0 / G.step - v.y0) * H / v.h;
+      return d3.geoEquirectangular().scale(s).translate([tx, ty]).precision(0.4);
+    }
+
+    /* ---------- วาดชั้นบน: เส้นชายฝั่ง หมุด ป้าย ---------- */
+    function tsuDrawOverlay(){
+      var cv = $("#tsuOv"); if (!cv || !tsu.grid) return;
+      var g = cv.getContext("2d"), W = cv.width, H = cv.height;
+      g.clearRect(0, 0, W, H);
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      var proj = tsu.proj = tsuProjection();
+      var path = d3.geoPath(proj, g);
+
+      if (tsu.world){
+        g.lineJoin = "round";
+        g.strokeStyle = dark ? "rgba(255,255,255,.42)" : "rgba(20,28,38,.52)";
+        g.lineWidth = Math.max(0.6, W / 1800);
+        g.beginPath(); path(tsu.world.land); g.stroke();
+        g.strokeStyle = dark ? "rgba(255,255,255,.16)" : "rgba(20,28,38,.18)";
+        g.lineWidth = Math.max(0.4, W / 2600);
+        g.beginPath(); path(tsu.world.borders); g.stroke();
+      }
+
+      var dpr = W / cv.clientWidth;
+      /* จุดตรวจวัด */
+      g.font = (11 * dpr) + "px 'IBM Plex Sans Thai', system-ui, sans-serif";
+      g.textBaseline = "middle";
+      for (var k = 0; k < TsunamiSim.GAUGES.length; k++){
+        var G2 = TsunamiSim.GAUGES[k], p = proj([G2.lon, G2.lat]);
+        if (!p || p[0] < -20 || p[0] > W + 20 || p[1] < -20 || p[1] > H + 20) continue;
+        g.beginPath(); g.arc(p[0], p[1], 3.2 * dpr, 0, 6.284);
+        g.fillStyle = "#ffffff"; g.fill();
+        g.lineWidth = 1.6 * dpr; g.strokeStyle = "#1b3a5c"; g.stroke();
+        g.fillStyle = dark ? "rgba(255,255,255,.92)" : "rgba(12,20,30,.92)";
+        g.strokeStyle = dark ? "rgba(0,0,0,.72)" : "rgba(255,255,255,.85)";
+        g.lineWidth = 3 * dpr;
+        g.strokeText(G2.name, p[0] + 6 * dpr, p[1]);
+        g.fillText(G2.name, p[0] + 6 * dpr, p[1]);
+      }
+      /* ศูนย์กลางแผ่นดินไหว */
+      if (tsu.scene){
+        var e = proj([tsu.scene.lon, tsu.scene.lat]);
+        if (e){
+          g.beginPath(); g.arc(e[0], e[1], 7 * dpr, 0, 6.284);
+          g.strokeStyle = "#e0301e"; g.lineWidth = 2.2 * dpr; g.stroke();
+          g.beginPath(); g.moveTo(e[0] - 11 * dpr, e[1]); g.lineTo(e[0] + 11 * dpr, e[1]);
+          g.moveTo(e[0], e[1] - 11 * dpr); g.lineTo(e[0], e[1] + 11 * dpr);
+          g.lineWidth = 1.4 * dpr; g.stroke();
+        }
+      }
+    }
+
+    function tsuResize(){
+      var box = $("#tsuMap"); if (!box || !tsu.grid) return;
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var cw = Math.min(Math.round(w * dpr), 2600), ch = Math.round(cw * h / w);
+      var a = $("#tsuGL"), b = $("#tsuOv");
+      if (a.width !== cw || a.height !== ch){
+        a.width = cw; a.height = ch; b.width = cw; b.height = ch;
+        if (tsu.view){                                  // รักษาจุดกึ่งกลางเดิมไว้ตอนเปลี่ยนขนาด
+          var cx = tsu.view.x0 + tsu.view.w/2, cy = tsu.view.y0 + tsu.view.h/2;
+          tsu.view.w = tsu.view.h * (cw/ch);
+          tsu.view.x0 = cx - tsu.view.w/2; tsu.view.y0 = cy - tsu.view.h/2;
+          tsuClampView();
+        } else tsuFit();
+      }
+      tsuPaint();
+    }
+
+    function tsuPaint(){
+      if (!tsu.eng || !tsu.view) return;
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      if (tsu.gpu) tsu.eng.draw(tsu.view, tsu.mode, 1, TSU_MAXT/3600, dark);
+      else tsuPaintCpu(dark);
+      tsuDrawOverlay();
+    }
+    /* วาดฝั่ง CPU — ระบายลงแคนวาสทีละพิกเซลผ่าน ImageData (เส้นทางสำรอง) */
+    function tsuPaintCpu(dark){
+      var cv = $("#tsuGL"), g = cv.getContext("2d"), G = tsu.grid, v = tsu.view;
+      var W = cv.width, H = cv.height;
+      if (!tsu._img || tsu._img.width !== W || tsu._img.height !== H) tsu._img = g.createImageData(W, H);
+      var img = tsu._img, px = img.data, E = tsu.eng;
+      var sc = d3.scaleLinear().domain(TsunamiSim.STOPS.map(function(s){return s[0];}))
+                 .range(TsunamiSim.STOPS.map(function(s){return s[1];})).clamp(true);
+      var LUT = [], q;
+      for (q = 0; q < 256; q++){ var c = d3.rgb(sc(-1.2 + 2.4*q/255)); LUT.push([c.r,c.g,c.b]); }
+      for (var y = 0; y < H; y++){
+        var gy = v.y0 + (y + 0.5) / H * v.h, j = Math.floor(gy);
+        for (var x = 0; x < W; x++){
+          var gx = v.x0 + (x + 0.5) / W * v.w;
+          var i = ((Math.floor(gx) % G.nx) + G.nx) % G.nx, o = (y*W + x)*4;
+          px[o+3] = 255;
+          if (j < 0 || j >= G.ny){ px[o]=px[o+1]=px[o+2]=0; px[o+3]=0; continue; }
+          var p = j*G.nx + i, h = G.h[p];
+          if (h < 20){
+            var t = Math.min(1, Math.max(0, -h)/3000);
+            px[o]   = (dark?26:(0.24+0.38*t)*255)|0;
+            px[o+1] = (dark?33:(0.30+0.28*t)*255)|0;
+            px[o+2] = (dark?41:(0.22+0.30*t)*255)|0;
+            continue;
+          }
+          var dep = Math.min(1, h/6000), f = dark?0.55:1;
+          var r0 = (0.42 + (0.10-0.42)*dep)*255*f, g0 = (0.58 + (0.18-0.58)*dep)*255*f, b0 = (0.70 + (0.34-0.70)*dep)*255*f;
+          var val = tsu.mode === 1 ? E.amax[p] : (tsu.mode === 2 ? (E.tarr[p] < 0 ? NaN : E.tarr[p]/3600/(TSU_MAXT/3600)) : E.eta[p]);
+          if (tsu.mode === 2){
+            if (isNaN(val)){ px[o]=r0|0; px[o+1]=g0|0; px[o+2]=b0|0; continue; }
+            var cc = d3.rgb(d3.interpolateTurbo ? d3.interpolateTurbo(val) : sc(val*2-1));
+            px[o]=cc.r; px[o+1]=cc.g; px[o+2]=cc.b; continue;
+          }
+          var idx = Math.max(0, Math.min(255, Math.round((val/1.2*0.5 + 0.5)*255)));
+          var a = Math.min(1, Math.abs(val)*3.2), L = LUT[idx];
+          px[o]   = (r0 + (L[0]-r0)*a)|0;
+          px[o+1] = (g0 + (L[1]-g0)*a)|0;
+          px[o+2] = (b0 + (L[2]-b0)*a)|0;
+        }
+      }
+      g.putImageData(img, 0, 0);
+    }
+
+    /* ---------- ตั้งฉากใหม่ ---------- */
+    function tsuSetScene(sc){
+      if (!tsu.eng) return;
+      tsu.scene = sc;
+      tsu.src = TsunamiSim.buildSource(tsu.grid, sc);
+      tsu.eng.reset(tsu.src);
+      tsu.series = TsunamiSim.GAUGES.map(function(){ return []; });
+      tsu.atSource = tsu.cells.map(function(c){ return Math.abs(tsuSrcEtaAt(c)) > 0.05; });
+      tsu.lastProbe = -1; tsu.lastLab = -1;
+      var F = tsu.src;
+      setTxt("#tsuKName", sc.name.split("·")[0].trim());
+      setTxt("#tsuKMw", sc.mw.toFixed(1));
+      var el = $("#tsuKMw"); if (el) el.innerHTML = sc.mw.toFixed(1) + '<span class="u">Mw</span>';
+      setTxt("#tsuKFault", "รอยเลื่อน " + Math.round(F.L) + " × " + Math.round(F.W) +
+             " กม. · เลื่อนเฉลี่ย " + F.D.toFixed(1) + " ม. (สูงสุด " + Math.round(F.peakSlip) + " ม.)");
+      var u = $("#tsuKUplift"); if (u) u.innerHTML = "+" + F.peak.toFixed(2) + '<span class="u">ม.</span>';
+      var w = $("#tsuKVol"); if (w) w.innerHTML = Math.round(F.volume) + '<span class="u">กม.³</span>';
+      tsuUpdateTime();
+      tsuArrTable();
+      tsuGaugeChart();
+      tsuPaint();
+    }
+    function tsuSceneFromUi(){
+      var id = $("#tsuScene") ? $("#tsuScene").value : "tohoku";
+      var base = null;
+      for (var k = 0; k < TsunamiSim.SCENES.length; k++) if (TsunamiSim.SCENES[k].id === id) base = TsunamiSim.SCENES[k];
+      if (id === "custom" && tsu.custom) base = tsu.custom;
+      if (!base) base = TsunamiSim.SCENES[0];
+      var sc = Object.assign({}, base);
+      sc.mw = tsu.mw;
+      if (base.L && Math.abs(base.mw - tsu.mw) > 0.05){ delete sc.L; delete sc.W; }  // ขนาดเปลี่ยน ใช้สูตรมาตราส่วนแทน
+      return sc;
+    }
+
+    /* ---------- เดินเวลา ---------- */
+    function tsuSetPlaying(p){
+      tsu.playing = p;
+      var b = $("#tsuPlay");
+      if (b) b.innerHTML = '<svg class="mdico"><use href="#' + (p ? "i-pause" : "i-play") + '"></use></svg>';
+      if (p){ tsu.lastT = 0; if (!tsu.raf) tsu.raf = requestAnimationFrame(tsuLoop); }
+    }
+    function tsuLoop(){
+      tsu.raf = null;
+      if (!tsu.eng || paneHidden($("#tsuMap"))){ tsu.playing = false; return; }
+      if (tsu.playing){
+        var now = performance.now();
+        var dtReal = tsu.lastT ? Math.min((now - tsu.lastT)/1000, 0.25) : 1/60;
+        tsu.lastT = now;
+        var want = dtReal * tsu.speed;
+        var n = Math.max(1, Math.min(400, Math.round(want / tsu.eng.dt)));
+        if (tsu.eng.t + n*tsu.eng.dt > TSU_MAXT){
+          n = Math.max(0, Math.floor((TSU_MAXT - tsu.eng.t) / tsu.eng.dt));
+          if (n === 0) tsuSetPlaying(false);
+        }
+        if (n > 0) tsu.eng.step(n);
+        tsuAfterStep();
+      }
+      tsuPaint();
+      if (tsu.playing) tsu.raf = requestAnimationFrame(tsuLoop);
+    }
+    function tsuAfterStep(){
+      var t = tsu.eng.t;
+      /* อ่านค่าที่จุดตรวจทุก 5 นาทีของเวลาจำลอง — อ่านถี่กว่านี้ GPU จะสะดุดเพราะ readPixels */
+      if (tsu.lastProbe < 0 || t - tsu.lastProbe >= 300){
+        tsu.lastProbe = t;
+        var r = tsu.eng.probe(tsu.cells);
+        for (var k = 0; k < r.length; k++) if (r[k]) tsu.series[k].push([t, r[k].eta, r[k].amax, r[k].arrive]);
+        tsuGaugeChart();
+        tsuArrTable();
+      }
+      tsuUpdateTime();
+    }
+    function tsuUpdateTime(){
+      var t = tsu.eng ? tsu.eng.t : 0;
+      var lab = Math.floor(t / 60);
+      if (lab === tsu.lastLab) return;
+      tsu.lastLab = lab;
+      setTxt("#tsuTimeLab", TsunamiSim.fmtHM(t));
+      var k = $("#tsuKTime");
+      if (k) k.innerHTML = (t/3600).toFixed(1) + '<span class="u">ชม.</span>';
+      var sl = $("#tsuSlider");
+      if (sl && document.activeElement !== sl && !tsu.seeking) sl.value = String(Math.round(t));
+    }
+    /* เลื่อนไปเวลาที่ต้องการ — เดินหน้าได้เลย แต่ถ้าย้อนกลับต้องตั้งต้นแล้วเดินใหม่ */
+    function tsuSeek(target){
+      if (!tsu.eng) return;
+      var st = $("#tsuState");
+      if (target < tsu.eng.t) tsu.eng.reset(tsu.src);
+      var need = Math.floor((target - tsu.eng.t) / tsu.eng.dt);
+      if (need <= 0){ tsuUpdateTime(); tsuPaint(); return; }
+      if (need > 250 && st){ st.hidden = false; st.textContent = "กำลังคำนวณย้อนไปยังเวลาที่เลือก…"; }
+      /* แบ่งเป็นก้อนแล้วคืนคิวให้เบราว์เซอร์ ไม่งั้นหน้าค้างตอนกระโดดไกล ๆ
+         ใช้ setTimeout ไม่ใช่ rAF เพราะ rAF หยุดเดินเมื่อแท็บถูกซ่อน แล้วการค้นหาจะค้างคาไว้ */
+      var run = function(){
+        var chunk = Math.min(need, 1500);
+        tsu.eng.step(chunk); need -= chunk;
+        if (need > 0){ tsuPaint(); setTimeout(run, 0); return; }
+        if (st) st.hidden = true;
+        tsu.lastProbe = -1; tsu.series = TsunamiSim.GAUGES.map(function(){ return []; });
+        tsuAfterStep(); tsuPaint();
+      };
+      run();
+    }
+
+    /* ---------- ตารางเวลาคลื่นถึง ---------- */
+    function tsuArrTable(){
+      var tb = $("#tsuArrTbl"); if (!tb || !tsu.scene) return;
+      var body = tb.querySelector("tbody"), rows = [];
+      for (var k = 0; k < TsunamiSim.GAUGES.length; k++){
+        var g = TsunamiSim.GAUGES[k], s = tsu.series[k];
+        var last = s.length ? s[s.length-1] : null;
+        var dist = tsuGreatCircle(tsu.scene.lat, tsu.scene.lon, g.lat, g.lon);
+        rows.push({ name:g.name, arr:last ? last[3] : -1, amax:last ? last[2] : 0, dist:dist,
+                    atSrc:!!(tsu.atSource && tsu.atSource[k]) });
+      }
+      rows.sort(function(a,b){
+        var x = a.arr < 0 ? 1e9 : a.arr, y = b.arr < 0 ? 1e9 : b.arr;
+        return x - y || a.dist - b.dist;
+      });
+      body.innerHTML = rows.map(function(r){
+        return "<tr" + (r.arr >= 0 && r.amax >= 0.5 ? ' class="hl"' : "") + "><td>" + r.name + "</td>" +
+               '<td class="num">' + (r.atSrc ? "อยู่ในเขตต้นกำเนิด" : (r.arr >= 0 ? TsunamiSim.fmtHM(r.arr) : "—")) + "</td>" +
+               '<td class="num">' + (r.amax >= 0.005 ? r.amax.toFixed(2) + " ม." : "—") + "</td>" +
+               '<td class="num">' + Math.round(r.dist).toLocaleString("th-TH") + " กม.</td></tr>";
+      }).join("");
+    }
+
+    /* ---------- กราฟทุ่นวัดคลื่น ---------- */
+    function tsuGaugeChart(){
+      var box = $("#tsuGauge"); if (!box || !tsu.series) return;
+      var live = [];
+      for (var k = 0; k < tsu.series.length; k++)
+        if (tsu.series[k].length > 2 && tsu.series[k][tsu.series[k].length-1][2] > 0.02)
+          live.push({ name:TsunamiSim.GAUGES[k].name, data:tsu.series[k], i:k });
+      if (!live.length){ box.innerHTML = '<div class="state-msg">กดเล่นเพื่อเริ่มบันทึก</div>'; return; }
+      live.sort(function(a,b){ return b.data[b.data.length-1][2] - a.data[a.data.length-1][2]; });
+      live = live.slice(0, 5);
+
+      var W = box.clientWidth || 640, H = 300, m = { t:14, r:14, b:30, l:52 };
+      var dark = document.documentElement.getAttribute("data-theme") === "dark";
+      var maxT = Math.max(600, tsu.eng.t);
+      var maxY = 0.05;
+      live.forEach(function(L){ L.data.forEach(function(p){ maxY = Math.max(maxY, Math.abs(p[1])); }); });
+      var x = d3.scaleLinear().domain([0, maxT/3600]).range([m.l, W - m.r]);
+      var y = d3.scaleLinear().domain([-maxY*1.1, maxY*1.1]).range([H - m.b, m.t]);
+      var pal = ["#e0301e", "#f2870f", "#25b78d", "#1163bd", "#c2185b"];
+      var svg = ['<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" role="img">'];
+      svg.push('<line x1="' + m.l + '" y1="' + y(0) + '" x2="' + (W-m.r) + '" y2="' + y(0) +
+               '" stroke="' + (dark?"rgba(255,255,255,.28)":"rgba(0,0,0,.24)") + '" stroke-width="1"/>');
+      y.ticks(5).forEach(function(v){
+        svg.push('<line x1="' + m.l + '" y1="' + y(v) + '" x2="' + (W-m.r) + '" y2="' + y(v) +
+                 '" stroke="' + (dark?"rgba(255,255,255,.08)":"rgba(0,0,0,.07)") + '"/>' +
+                 '<text x="' + (m.l-7) + '" y="' + (y(v)+4) + '" text-anchor="end" font-size="11" fill="' +
+                 (dark?"#9fb0c0":"#6b7785") + '">' + v.toFixed(2) + '</text>');
+      });
+      x.ticks(6).forEach(function(v){
+        svg.push('<text x="' + x(v) + '" y="' + (H-10) + '" text-anchor="middle" font-size="11" fill="' +
+                 (dark?"#9fb0c0":"#6b7785") + '">' + v.toFixed(0) + ' ชม.</text>');
+      });
+      live.forEach(function(L, n){
+        var d = L.data.map(function(p, q){ return (q?"L":"M") + x(p[0]/3600).toFixed(1) + " " + y(p[1]).toFixed(1); }).join(" ");
+        svg.push('<path d="' + d + '" fill="none" stroke="' + pal[n%pal.length] + '" stroke-width="1.8" stroke-linejoin="round"/>');
+      });
+      svg.push('<text x="' + m.l + '" y="' + (m.t-2) + '" font-size="11" fill="' + (dark?"#9fb0c0":"#6b7785") + '">ระดับน้ำ (เมตร)</text>');
+      svg.push("</svg>");
+      var legend = '<div class="tsu-legend-row" style="margin-top:6px">' + live.map(function(L, n){
+        return '<span><i class="sw" style="background:' + pal[n%pal.length] + '"></i>' + L.name + "</span>";
+      }).join("") + "</div>";
+      box.innerHTML = svg.join("") + legend;
+    }
+
+    /* ---------- แถบสี ---------- */
+    function tsuLegend(){
+      var el = $("#tsuLegend"); if (!el) return;
+      if (tsu.mode === 2){
+        el.innerHTML = '<div style="height:13px;border-radius:999px;border:1px solid var(--rule);' +
+          'background:linear-gradient(90deg,#3b1f6e,#1d5fa8,#12a08c,#8fc43c,#f3aa15,#d8342a)"></div>' +
+          '<div class="tsu-legend-row" style="justify-content:space-between;margin-top:5px">' +
+          "<span>0 ชม.</span><span>6</span><span>12</span><span>18</span><span>24 ชม.</span></div>" +
+          '<div class="tsu-legend-row" style="margin-top:4px">เส้นแบ่งแต่ละแถบ = 1 ชั่วโมง — อ่านแบบเดียวกับแผนภูมิเวลาเดินทางของสึนามิที่ศูนย์เตือนภัยใช้จริง</div>';
+        return;
+      }
+      var lo = tsu.mode === 1 ? 0 : -1.2, hi = 1.2;
+      el.innerHTML = '<div style="height:13px;border-radius:999px;border:1px solid var(--rule);background:' +
+        TsunamiSim.gradientCss(lo, hi) + '"></div>' +
+        '<div class="tsu-legend-row" style="justify-content:space-between;margin-top:5px">' +
+        (tsu.mode === 1
+          ? "<span>0</span><span>0.3</span><span>0.6</span><span>0.9</span><span>1.2 ม. ขึ้นไป</span>"
+          : "<span>−1.2 ม. (น้ำลด)</span><span>−0.5</span><span>0</span><span>+0.5</span><span>+1.2 ม. ขึ้นไป</span>") +
+        "</div>" +
+        '<div class="tsu-legend-row" style="margin-top:4px">' +
+        (tsu.mode === 1
+          ? "ความสูงคลื่นสูงสุดที่แต่ละจุดเคยเจอตลอดการจำลอง — แถบสีตามชายฝั่งคือรอยที่คลื่นทิ้งไว้ แบบเดียวกับในคลิปของ NOAA"
+          : "ความสูงคลื่นในทะเลลึก ณ ขณะนั้น — กลางมหาสมุทรสึนามิสูงไม่ถึงเมตร แต่ยาวเป็นร้อยกิโลเมตร เรือกลางทะเลจึงแทบไม่รู้สึก") +
+        "</div>";
+    }
+
+    /* ---------- ผูกเหตุการณ์ ---------- */
+    function tsuWire(){
+      if (tsu.wired) return; tsu.wired = true;
+      var sel = $("#tsuScene");
+      if (sel){
+        sel.innerHTML = TsunamiSim.SCENES.map(function(s){
+          return '<option value="' + s.id + '">' + s.name + "</option>";
+        }).join("") + '<option value="custom">— จุดที่คุณคลิกเอง —</option>';
+        sel.addEventListener("change", function(){
+          if (sel.value === "custom" && !tsu.custom){ sel.value = tsu.scene ? tsu.scene.id : "tohoku"; return; }
+          var base = null;
+          for (var k = 0; k < TsunamiSim.SCENES.length; k++) if (TsunamiSim.SCENES[k].id === sel.value) base = TsunamiSim.SCENES[k];
+          if (base){ tsu.mw = base.mw; var m = $("#tsuMag"); if (m) m.value = String(base.mw); setTxt("#tsuMagLab", base.mw.toFixed(1)); }
+          tsuSetPlaying(false); tsuSetScene(tsuSceneFromUi());
+        });
+      }
+      var mag = $("#tsuMag");
+      if (mag) mag.addEventListener("input", function(){
+        tsu.mw = +mag.value; setTxt("#tsuMagLab", tsu.mw.toFixed(1));
+        clearTimeout(tsu._magT);
+        tsu._magT = setTimeout(function(){ tsuSetPlaying(false); tsuSetScene(tsuSceneFromUi()); }, 180);
+      });
+      var mode = $("#tsuMode");
+      if (mode) mode.addEventListener("change", function(){ tsu.mode = +mode.value; tsuLegend(); tsuPaint(); });
+      var sp = $("#tsuSpeed");
+      if (sp) sp.addEventListener("change", function(){ tsu.speed = +sp.value; });
+      var pl = $("#tsuPlay");
+      if (pl) pl.addEventListener("click", function(){ tsuSetPlaying(!tsu.playing); });
+      var rs = $("#tsuReset");
+      if (rs) rs.addEventListener("click", function(){ tsuSetPlaying(false); tsuSetScene(tsuSceneFromUi()); });
+      var ft = $("#tsuFit");
+      if (ft) ft.addEventListener("click", function(){ tsuFit(); tsuPaint(); });
+      var sl = $("#tsuSlider");
+      if (sl){
+        sl.max = String(TSU_MAXT);
+        sl.addEventListener("input", function(){ tsu.seeking = true; setTxt("#tsuTimeLab", TsunamiSim.fmtHM(+sl.value)); });
+        sl.addEventListener("change", function(){ tsu.seeking = false; tsuSetPlaying(false); tsuSeek(+sl.value); });
+      }
+      /* เต็มจอ — ใช้ Fullscreen API ของเบราว์เซอร์แบบเดียวกับแผง CO₂ */
+      var fsb = $("#tsuFs"), card = $("#tsuCard");
+      if (fsb && card) fsb.addEventListener("click", function(){
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (card.requestFullscreen) card.requestFullscreen();
+      });
+      document.addEventListener("fullscreenchange", function(){
+        var on = document.fullscreenElement === $("#tsuCard");
+        var b = $("#tsuFs");
+        if (b){ b.textContent = on ? "⛶ ออกจากเต็มจอ" : "⛶ เต็มจอ"; b.classList.toggle("on", on); }
+        if (tsu.ready) afterPaint(tsuResize);
+      });
+
+      /* แพน ซูม และคลิกวางแผ่นดินไหว */
+      var box = $("#tsuMap");
+      if (box){
+        box.addEventListener("pointerdown", function(e){
+          if (e.button !== 0) return;
+          box.setPointerCapture(e.pointerId);
+          tsu.drag = { x:e.clientX, y:e.clientY, x0:tsu.view.x0, y0:tsu.view.y0, moved:0 };
+        });
+        box.addEventListener("pointermove", function(e){
+          if (!tsu.drag){ tsuHover(e); return; }
+          var r = box.getBoundingClientRect();
+          var dx = (e.clientX - tsu.drag.x) / r.width * tsu.view.w;
+          var dy = (e.clientY - tsu.drag.y) / r.height * tsu.view.h;
+          tsu.drag.moved += Math.abs(dx) + Math.abs(dy);
+          tsu.view.x0 = tsu.drag.x0 - dx; tsu.view.y0 = tsu.drag.y0 - dy;
+          tsuClampView(); box.classList.add("dragging");
+          if (!tsu.playing) tsuPaint();
+        });
+        box.addEventListener("pointerup", function(e){
+          var d = tsu.drag; tsu.drag = null; box.classList.remove("dragging");
+          if (!d || d.moved > 6) return;
+          tsuClickAt(e);
+        });
+        box.addEventListener("pointerleave", function(){ var t = $("#tsuTip"); if (t) t.hidden = true; });
+        box.addEventListener("wheel", function(e){
+          e.preventDefault();
+          var r = box.getBoundingClientRect();
+          var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+          var gx = tsu.view.x0 + fx*tsu.view.w, gy = tsu.view.y0 + fy*tsu.view.h;
+          var k = e.deltaY > 0 ? 1.18 : 1/1.18;
+          var G = tsu.grid;
+          var nw = Math.max(G.nx/60, Math.min(G.nx, tsu.view.w * k));
+          tsu.view.h = tsu.view.h * (nw / tsu.view.w); tsu.view.w = nw;
+          tsu.view.x0 = gx - fx*tsu.view.w; tsu.view.y0 = gy - fy*tsu.view.h;
+          tsuClampView();
+          if (!tsu.playing) tsuPaint();
+        }, { passive:false });
+      }
+      /* เลย์เอาต์ของแผงยังไม่นิ่งตอนเปิดครั้งแรก ถ้าไม่เฝ้าดูขนาดจริง แคนวาสจะถูกตั้งขนาด
+         ตามความกว้างชั่วคราวแล้วภาพเบลอค้างอยู่อย่างนั้น */
+      if (window.ResizeObserver && box){
+        new ResizeObserver(function(){
+          clearTimeout(tsu._rzT);
+          tsu._rzT = setTimeout(function(){ if (tsu.ready) tsuResize(); }, 120);
+        }).observe(box);
+      }
+      new MutationObserver(function(){ tsuLegend(); tsuGaugeChart(); tsuPaint(); })
+        .observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
+    }
+
+    function tsuLatLonAt(e){
+      var box = $("#tsuMap"), r = box.getBoundingClientRect(), G = tsu.grid;
+      var gx = tsu.view.x0 + (e.clientX - r.left)/r.width * tsu.view.w;
+      var gy = tsu.view.y0 + (e.clientY - r.top)/r.height * tsu.view.h;
+      var lat = G.lat0 - (gy + 0.5) * G.step;
+      var lon = -180 + ((gx % G.nx + G.nx) % G.nx + 0.5) * G.step;
+      return { lat:lat, lon:lon, i:Math.floor(((gx % G.nx) + G.nx) % G.nx), j:Math.floor(gy) };
+    }
+    function tsuHover(e){
+      var tip = $("#tsuTip"); if (!tip || !tsu.grid) return;
+      var p = tsuLatLonAt(e), G = tsu.grid;
+      if (p.j < 0 || p.j >= G.ny){ tip.hidden = true; return; }
+      var h = G.h[p.j*G.nx + p.i];
+      var box = $("#tsuMap"), r = box.getBoundingClientRect();
+      tip.style.left = (e.clientX - r.left) + "px";
+      tip.style.top  = (e.clientY - r.top) + "px";
+      var txt = p.lat.toFixed(1) + "°" + (p.lat >= 0 ? "N" : "S") + " " +
+                Math.abs(p.lon).toFixed(1) + "°" + (p.lon >= 0 ? "E" : "W");
+      if (h >= TsunamiSim.HMIN){
+        txt += " · ลึก " + Math.round(h).toLocaleString("th-TH") + " ม. · คลื่นวิ่ง " +
+               Math.round(Math.sqrt(9.81*h)*3.6) + " กม./ชม.";
+        if (!tsu.gpu && tsu.eng){
+          var q = tsu.eng.eta[p.j*G.nx + p.i];
+          txt += " · ระดับน้ำ " + (q >= 0 ? "+" : "") + q.toFixed(2) + " ม.";
+        }
+      } else txt += " · แผ่นดิน (สูง " + Math.round(Math.max(0,-h)) + " ม.)";
+      tip.textContent = txt;
+      tip.hidden = false;
+    }
+    function tsuClickAt(e){
+      var p = tsuLatLonAt(e), G = tsu.grid;
+      if (p.j < 0 || p.j >= G.ny) return;
+      if (G.h[p.j*G.nx + p.i] < TsunamiSim.HMIN){
+        var st = $("#tsuState");
+        if (st){ st.hidden = false; st.textContent = "ตรงนั้นเป็นแผ่นดิน — ลองคลิกลงบนทะเลดูครับ";
+                 setTimeout(function(){ st.hidden = true; }, 1400); }
+        return;
+      }
+      /* แนววางตัวรอยเลื่อนเดาจากทิศที่ "ทะเลลึกที่สุด" อยู่ ให้คลื่นพุ่งออกทะเลเป็นหลัก
+         เหมือนรอยเลื่อนมุดตัวจริงที่วางตัวขนานกับร่องลึก */
+      var best = 0, bestD = -1;
+      for (var a = 0; a < 12; a++){
+        var th = a*30*Math.PI/180, s = 0;
+        for (var q = 3; q <= 10; q++){
+          var jj = Math.round(p.j - Math.cos(th)*q), ii = Math.round(p.i + Math.sin(th)*q);
+          if (jj < 0 || jj >= G.ny) continue;
+          ii = ((ii % G.nx) + G.nx) % G.nx;
+          s += Math.max(0, G.h[jj*G.nx + ii]);
+        }
+        if (s > bestD){ bestD = s; best = a*30; }
+      }
+      tsu.custom = { id:"custom", name:"จุดที่คุณเลือก · " + p.lat.toFixed(1) + "°, " + p.lon.toFixed(1) + "°",
+                     lat:p.lat, lon:p.lon, mw:tsu.mw, strike:(best + 90) % 360, dip:14, rake:90, dtop:6,
+                     note:"ฉากสมมติที่คุณวางเอง" };
+      var sel = $("#tsuScene"); if (sel) sel.value = "custom";
+      tsuSetPlaying(false);
+      tsuSetScene(tsuSceneFromUi());
+    }
+
+    /* ---------- โหลดครั้งแรก ---------- */
+    function tsuLoad(){
+      if (tsu.loading || tsu.ready) return;
+      tsu.loading = true;
+      var st = $("#tsuState");
+      Promise.all([
+        TsunamiSim.load(),
+        fetch("climate-data/countries-110m.json").then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+      ]).then(function(a){
+        var topo = a[1];
+        if (topo && window.topojson){
+          tsu.world = { land: topojson.feature(topo, topo.objects.countries),
+                        borders: topojson.mesh(topo, topo.objects.countries, function(x, y){ return x !== y; }) };
+        }
+        var cv = $("#tsuGL");
+        var gl = TsunamiSim.probeGL(cv);
+        tsu.gpu = !!gl;
+        tsu.grid = TsunamiSim.makeGrid(tsu.gpu ? 1 : 2);
+        tsu.eng = tsu.gpu ? new TsunamiSim.GpuEngine(gl, tsu.grid) : new TsunamiSim.CpuEngine(tsu.grid);
+        tsu.cells = TsunamiSim.GAUGES.map(function(g){ return tsuWetNear(g.lat, g.lon, 4); });
+        setTxt("#tsuEngine", (tsu.gpu ? "เร่งด้วยการ์ดจอ (WebGL2)" : "คำนวณด้วย CPU — กริดหยาบลง 2 เท่า") +
+                             " · ก้าวเวลา " + tsu.eng.dt + " วิ");
+        setTxt("#tsuKGrid", "กริด " + tsu.grid.nx + "×" + tsu.grid.ny + " ช่อง (" +
+                            Math.round(tsu.grid.step*60) + " ลิปดา ≈ " +
+                            Math.round(111*tsu.grid.step) + " กม.)");
+        tsu.ready = true; tsu.loading = false;
+        if (st) st.hidden = true;
+        tsuWire();
+        tsuResize();
+        tsuFit();
+        tsuLegend();
+        var base = TsunamiSim.SCENES[0];
+        tsu.mw = base.mw;
+        var m = $("#tsuMag"); if (m) m.value = String(base.mw);
+        setTxt("#tsuMagLab", base.mw.toFixed(1));
+        tsuSetScene(tsuSceneFromUi());
+      }).catch(function(e){
+        tsu.loading = false; tsu.err = e;
+        if (st){ st.hidden = false; st.className = "tsu-state err";
+                 st.textContent = "เปิดแผงจำลองสึนามิไม่ได้: " + (e && e.message ? e.message : e); }
+      });
+    }
+
+    function renderTsunami(){
+      var box = $("#tsuMap"); if (!box || !window.TsunamiSim) return;
+      if (paneHidden(box)){ if (tsu.playing) tsuSetPlaying(false); return; }   // ออกจากแผงแล้วให้หยุดเดินเวลา
+      if (tsu.ready){ tsuResize(); tsuGaugeChart(); return; }
+      if (tsu.loading || tsu.err) return;
+      tsuLoad();
+    }
+
+    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderTsunami(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:

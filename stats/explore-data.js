@@ -1380,7 +1380,8 @@ var NAV = [
           { pane:"world-coral", ico:"<svg class='mdico'><use href='#i-shell'></use></svg>", label:"ปะการังฟอกขาวโลก (NOAA 3D)", existing:true },
           { pane:"world-current", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"กระแสน้ำมหาสมุทรโลก 3D", existing:true },
           { pane:"world-thc", ico:"<svg class='mdico'><use href='#i-refresh-cw'></use></svg>", label:"สายพานยักษ์มหาสมุทร (Thermohaline)", existing:true },
-          { pane:"world-quake", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"แผ่นดินไหว (ไล่เวลา)", existing:true }
+          { pane:"world-quake", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"แผ่นดินไหว (ไล่เวลา)", existing:true },
+          { pane:"world-tsunami", ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"สึนามิ — จำลองคลื่นด้วยฟิสิกส์จริง", existing:true }
       ]},
       { id:"math", ico:"<svg class='mdico'><use href='#i-calculator'></use></svg>", label:"คณิตศาสตร์ & โมเดลจำลอง", subs:[
           { pane:"math-lab",        ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"ห้องทดลอง 2D/3D & โจทย์คณิต", existing:true },
