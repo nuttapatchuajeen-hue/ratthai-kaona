@@ -857,6 +857,34 @@
   .thc-leg-line i.dotm{width:10px;height:10px;border-radius:50%}
   @media (max-width:560px){ .thc-info{width:auto;right:14px} }
 
+  /* ---- 🪨 ทวีปเลื่อน (Continental Drift) — ลูกโลกไล่เวลา 540 ล้านปี ---- */
+  .drift-stage{height:clamp(480px,64vw,720px);background:#020a12}
+  .drift-read{position:absolute;left:16px;bottom:16px;z-index:12;background:rgba(4,16,26,.84);border:1px solid rgba(255,255,255,.11);border-radius:12px;padding:10px 15px 11px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);pointer-events:none}
+  .drift-read .age{font-size:27px;font-weight:800;color:#eafcff;line-height:1.02;font-variant-numeric:tabular-nums;letter-spacing:-.4px}
+  .drift-read .age small{font-size:12.5px;font-weight:600;color:#8fb3c6;margin-left:7px;letter-spacing:0}
+  .drift-read .era{margin-top:6px;font-size:12px;color:#cbe6f2;display:flex;align-items:center;gap:7px}
+  .drift-read .era i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+  .drift-read .note{margin-top:3px;font-size:11px;color:#7fa2b5}
+  .drift-legend{width:176px}
+  .drift-leg-line{display:flex;align-items:center;gap:7px;font-size:11px;color:#a9c8d8;margin-top:6px}
+  .drift-leg-line i{width:13px;height:13px;border-radius:3px;flex:0 0 auto}
+  .drift-leg-line i.pin{border-radius:50%;width:11px;height:11px;box-shadow:0 0 0 2px rgba(255,255,255,.65)}
+  .drift-leg-line i.dash{height:0;width:22px;border-top:2px dashed #ffd28a;border-radius:0}
+  /* แถบเลื่อนเวลา + ริบบิ้นยุคทางธรณีวิทยา */
+  .drift-time{margin-top:16px}
+  .drift-time input[type=range]{width:100%;accent-color:var(--green)}
+  .drift-eras{display:flex;height:24px;border-radius:7px;overflow:hidden;border:1px solid var(--rule);margin-top:7px;cursor:pointer}
+  .drift-eras b{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:600;color:#fff;overflow:hidden;white-space:nowrap;border-right:1px solid rgba(255,255,255,.25);transition:filter .15s}
+  .drift-eras b:last-child{border-right:0}
+  .drift-eras b:hover{filter:brightness(1.16)}
+  .drift-eras b.on{box-shadow:inset 0 0 0 2px rgba(255,255,255,.9)}
+  .drift-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-soft);margin-top:4px;font-variant-numeric:tabular-nums}
+  .drift-jump{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .drift-jump button{background:var(--paper-2);border:1px solid var(--rule);border-radius:999px;padding:4px 12px;font-family:inherit;font-size:11.5px;color:var(--ink-soft);cursor:pointer}
+  .drift-jump button:hover{border-color:var(--green);color:var(--green)}
+  .drift-jump button.on{background:var(--green);border-color:var(--green);color:#fff}
+  @media (max-width:560px){ .drift-read .age{font-size:21px} .drift-read{left:12px;bottom:12px;padding:8px 12px} }
+
   /* เครื่องมือ "น้ำแบบไหนถึงจะจม" */
   .thc-den{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:22px;align-items:stretch;margin-top:6px}
   @media (max-width:760px){ .thc-den{grid-template-columns:1fr} }
@@ -6453,6 +6481,125 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     </section>
 
     <!-- ============ ศูนย์ข้อมูลโลก · แผ่นดินไหว (ไล่ตามเวลา · USGS สด) ============ -->
+    <section class="tabpane" id="pane-world-drift" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-layers"></use></svg> ทวีปเลื่อน 540 ล้านปี (Continental Drift)</h2></div>
+      <div class="kpis">
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-arrow-right-left"></use></svg> แผ่นเปลือกโลกเคลื่อนที่เร็วแค่ไหน</div>
+          <div class="k-num">2–10<span class="u">ซม./ปี</span></div>
+          <div class="k-sub">พอ ๆ กับ<b>ความเร็วที่เล็บมือคุณงอก</b> — ช้าจนไม่มีใครรู้สึก แต่คูณด้วยเวลาหลายร้อยล้านปีแล้วมันพาทวีปข้ามโลกได้ทั้งใบ · มหาสมุทรแอตแลนติกกว้างขึ้นราวปีละ 2.5 ซม.</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-globe"></use></svg> มหาทวีปพันเจียมีอยู่จริงช่วง</div>
+          <div class="k-num">335–175<span class="u">ล้านปีก่อน</span></div>
+          <div class="k-sub">ช่วงที่แผ่นดินเกือบทั้งโลกเชื่อมเป็นก้อนเดียว เดินจากขั้วโลกใต้ถึงเส้นศูนย์สูตรได้โดยไม่ต้องข้ามทะเล — เลื่อนแถบเวลาไปที่ราว 250 ล้านปีก่อนจะเห็นชัดที่สุด</div>
+        </div>
+        <div class="kpi">
+          <div class="k-top"><svg class="mdico"><use href="#i-map-pin"></use></svg> แผ่นดินไทยเคยอยู่ใต้สุดที่</div>
+          <div class="k-num">24°<span class="u">ใต้</span></div>
+          <div class="k-sub">จุดใต้สุดอยู่ที่ราว <b>290 ล้านปีก่อน</b> — แผ่นดินที่วันนี้คือประเทศไทยอยู่<b>ซีกโลกใต้</b> ติดขอบมหาทวีปกอนด์วานา ละติจูดเดียวกับออสเตรเลียตะวันตกในปัจจุบัน</div>
+        </div>
+        <div class="kpi accent">
+          <div class="k-top"><svg class="mdico"><use href="#i-footprints"></use></svg> ทวีปที่เดินทางไกลที่สุด</div>
+          <div class="k-num">อินเดีย<span class="u">~29,800 กม.</span></div>
+          <div class="k-sub">ระยะทางสะสมของจุดกลางอนุทวีปอินเดียตลอด 540 ล้านปีตามโมเดลชุดนี้ — ยาวกว่าเส้นรอบโลกทั้งเส้น (40,075 กม.) สามในสี่ และจบด้วยการ<b>พุ่งชนเอเชียจนดันหิมาลัยขึ้นมา</b> · ออสเตรเลียตามมาติด ๆ ที่ 29,500 กม.</div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-globe"></use></svg> ลูกโลกไล่เวลา — ลากหมุนได้ กดเล่นแล้วดูทวีปเดินทาง</h2>
+          <span class="tag">ข้อมูลจริงจาก GPlates</span>
+        </div>
+        <p class="sub">นี่<b>ไม่ใช่ภาพวาดจากจินตนาการ</b> — เส้นชายฝั่งทุกเส้นคำนวณจากโมเดลการหมุนแผ่นเปลือกโลก <b>PALEOMAP</b> ของ Christopher Scotese ที่นักธรณีวิทยาใช้กันจริง โดยย้อนการหมุนของแต่ละแผ่นกลับไปทีละยุคจากข้อมูลแม่เหล็กบรรพกาล (paleomagnetism) แนวสันเขากลางสมุทร และซากดึกดำบรรพ์ · <b style="color:#ff6b4a">หมุดส้ม</b> คือตำแหน่งแผ่นดินไทย · <b style="color:#ffd28a">เส้นประ</b> คือร่องรอยที่มันเคยผ่านมา</p>
+        <p class="sub">ลากเพื่อหมุนโลก · สกอลล์เพื่อซูม · กดชื่อยุคบนแถบสีใต้ลูกโลกเพื่อกระโดดไปยุคนั้นทันที</p>
+
+        <div class="oc-stage drift-stage" id="driftStage">
+          <div class="sat-loading" id="driftLoading"><div class="spin"></div><span>กำลังโหลดรูปร่างโลกยุคโบราณ…</span></div>
+          <div class="sat-drag"><svg class="mdico"><use href="#i-mouse"></use></svg> ลากเพื่อหมุน · สกอลล์เพื่อซูม</div>
+          <div class="oc-controls">
+            <button class="oc-btn" id="driftPlay" type="button"><svg class="mdico"><use href="#i-play"></use></svg> เล่นย้อนเวลา</button>
+            <label class="oc-slider"><span>ความเร็ว</span><input type="range" id="driftSpeed" min="50" max="700" step="10" value="150"></label>
+            <span class="oc-sep"></span>
+            <button class="oc-btn" id="driftMode" type="button"><svg class="mdico"><use href="#i-map"></use></svg> ดูแบบแผนที่แบน</button>
+            <span class="oc-sep"></span>
+            <label class="oc-chk"><input type="checkbox" id="driftModern"><i class="oc-dot" style="background:#cfe6ff"></i> พรมแดนปัจจุบัน</label>
+            <label class="oc-chk"><input type="checkbox" id="driftLabels" checked><i class="oc-dot" style="background:#ffffff"></i> ชื่อทวีป</label>
+            <label class="oc-chk"><input type="checkbox" id="driftTrail" checked><i class="oc-dot" style="background:#ffd28a"></i> ร่องรอยไทย</label>
+            <span class="oc-sep"></span>
+            <button class="oc-btn" id="driftHome" type="button"><svg class="mdico"><use href="#i-compass"></use></svg> มุมมองเริ่มต้น</button>
+          </div>
+          <div class="oc-legend drift-legend">
+            <div class="oc-leg-title">อ่านลูกโลกนี้</div>
+            <div class="drift-leg-line"><i style="background:#c8b48a"></i> แผ่นดิน</div>
+            <div class="drift-leg-line"><i style="background:#0e2c44"></i> ทะเลและมหาสมุทร</div>
+            <div class="drift-leg-line"><i class="pin" style="background:#ff6b4a"></i> แผ่นดินไทย</div>
+            <div class="drift-leg-line"><i class="dash"></i> เส้นทางที่ไทยผ่านมา</div>
+          </div>
+          <div class="drift-read" id="driftRead">
+            <div class="age"><span id="driftAge">ปัจจุบัน</span><small id="driftAgeU"></small></div>
+            <div class="era"><i id="driftEraDot"></i><span id="driftEra">ควอเทอร์นารี</span></div>
+            <div class="note" id="driftNote">แผ่นดินไทยอยู่ที่ละติจูด 15.0° เหนือ</div>
+          </div>
+        </div>
+
+        <div class="drift-time">
+          <input type="range" id="driftSlider" min="0" max="32" step="1" value="0" aria-label="เลื่อนเวลาย้อนหลัง">
+          <div class="drift-eras" id="driftEras"></div>
+          <div class="drift-scale"><span>ปัจจุบัน</span><span>135</span><span>270</span><span>405</span><span>540 ล้านปีก่อน</span></div>
+          <div class="drift-jump" id="driftJump"></div>
+        </div>
+
+        <div class="src">รูปร่างชายฝั่งย้อนหลังคำนวณโดย <a href="https://gws.gplates.org/" target="_blank" rel="noopener">GPlates Web Service ↗</a> จากโมเดลการหมุนแผ่นเปลือกโลก <b>PALEOMAP</b> — <a href="https://www.earthbyte.org/paleomap-paleoatlas-for-gplates/" target="_blank" rel="noopener">Scotese, C.R. (2016), PALEOMAP PaleoAtlas for GPlates, EarthByte ↗</a> สัญญาอนุญาต <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC-BY 4.0 ↗</a> · <b>สืบค้นเมื่อ 10 ก.ย. 2569</b> เก็บไว้ที่ <code>paleo-drift.js</code> เพราะต้นทางตอบช้าและไม่เปิด CORS ให้ยิงตรงจากเบราว์เซอร์ · เก็บไว้ <b>109 ช่วงเวลา ห่างกันช่วงละ 5 ล้านปี</b> ตลอด 0–540 ล้านปีก่อน — ยังเป็นการฉายทีละภาพนิ่งอยู่ดี ไม่ใช่การคำนวณต่อเนื่องทุกเสี้ยววินาที แต่ถี่พอให้ทวีปดู<b>ไหลไปเป็นเนื้อเดียว</b>เวลากดเล่น · ลดจำนวนจุดด้วยวิธี Douglas–Peucker และตัดเกาะที่เล็กกว่า 1.2° ออก เพื่อให้ไฟล์เล็กพอสำหรับมือถือ · แนวคิดหน้าตาลูกโลกไล่เวลาได้จากโน้ตบุ๊ก <a href="https://observablehq.com/@neocarto/continental-drift" target="_blank" rel="noopener">Continental drift โดย Nicolas Lambert ↗</a> · เส้นพรมแดนปัจจุบันจาก <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> (Natural Earth 110m) · <b>ยิ่งย้อนไกลยิ่งไม่แน่นอน</b> — ตำแหน่งช่วง 0–200 ล้านปีก่อนคลาดเคลื่อนระดับไม่กี่ร้อยกิโลเมตร แต่เกิน 400 ล้านปีก่อนนักวิจัยแต่ละกลุ่มยังให้คำตอบต่างกันได้มาก โดยเฉพาะค่าลองจิจูดซึ่งข้อมูลแม่เหล็กบรรพกาลบอกไม่ได้เลย</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-map-pin"></use></svg> การเดินทางของแผ่นดินไทย — จากซีกโลกใต้ขึ้นมาเป็นเขตร้อน</h2><span class="tag">คำนวณจากโมเดลชุดเดียวกัน</span></div>
+        <p class="sub">เส้นนี้คือละติจูดของจุดกลางที่ราบภาคกลาง (ราว 100.5°E 15°N ในวันนี้) ย้อนกลับไปทีละยุค · จะเห็นว่าเมื่อ <b>260–320 ล้านปีก่อน</b> แผ่นดินนี้อยู่ในซีกโลกใต้ราว 20 องศาใต้ ซึ่งตอนนั้นอยู่ริมมหาทวีป<b>กอนด์วานา</b> — แล้วค่อย ๆ ลอยขึ้นเหนือข้ามเส้นศูนย์สูตรเมื่อราว 250 ล้านปีก่อน ไปชนกับแผ่นดินจีนใต้ จนกลายเป็นผืนเดียวกับเอเชียตะวันออกเฉียงใต้อย่างทุกวันนี้</p>
+        <div class="plot" id="driftThLat"><div class="state-msg">กำลังคำนวณ…</div></div>
+        <div class="src">คำนวณในเครื่องคุณจากไฟล์ <code>paleo-drift.js</code> ชุดเดียวกับลูกโลกด้านบน โดยส่งพิกัดปัจจุบันของจุดอ้างอิงเข้าโมเดล PALEOMAP แล้วอ่านค่ากลับทีละยุค · เส้นนี้แทน<b>แผ่นเปลือกโลกที่รองรับประเทศไทย</b> (แผ่นชานไทย–อินโดจีน) ไม่ใช่ตัวประเทศไทย ซึ่งเพิ่งมีรูปร่างอย่างที่เห็นในไม่กี่ล้านปีหลังนี้เอง · <b>ข้อควรระวัง:</b> ช่วงก่อน 400 ล้านปีก่อน โมเดล PALEOMAP วางแผ่นนี้ไว้ในซีกโลกเหนือ ซึ่ง<b>ต่างจากงานวิจัยส่วนใหญ่</b>ที่วางไว้ริมกอนด์วานาในซีกโลกใต้ (Metcalfe 2013 · Burrett et al. 2014) — หางเส้นช่วงนั้นจึงควรอ่านเป็นคำตอบของโมเดลนี้เท่านั้น ส่วนช่วง 0–300 ล้านปีก่อนซึ่งเป็นใจความหลักของหัวข้อนี้ สอดคล้องกับงานวิจัยกระแสหลัก</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-footprints"></use></svg> ทวีปไหนเดินทางไกลที่สุดใน 540 ล้านปี</h2><span class="tag">คำนวณสด</span></div>
+        <p class="sub">วัดจากจุดอ้างอิงหนึ่งจุดต่อทวีป โดยบวกระยะทางวงกลมใหญ่ระหว่างตำแหน่งของทุกช่วงเวลาที่เก็บไว้ต่อกัน — <b>ระยะทางสะสม</b> จึงมากกว่าระยะทางเส้นตรงจากจุดเริ่มถึงจุดจบเสมอ เพราะทวีปไม่ได้วิ่งเป็นเส้นตรง แต่วนไปวนมาตามการรวมและการแตกตัวของมหาทวีป</p>
+        <div class="plot" id="driftTravel"><div class="state-msg">กำลังคำนวณ…</div></div>
+        <div class="src">คำนวณในเครื่องคุณจากตำแหน่งจุดอ้างอิง 10 จุดที่ย้อนด้วยโมเดล PALEOMAP · <b>เป็นค่าประมาณคร่าว ๆ</b> เพราะใช้จุดเดียวแทนทั้งทวีป และเก็บข้อมูลทุก 5 ล้านปีเท่านั้น ระยะจริงย่อมมากกว่านี้เล็กน้อย · ภาพรวมที่ได้ตรงกับที่ตำราธรณีวิทยาบอกไว้ คือกลุ่มที่เคยอยู่กอนด์วานา (อินเดีย ออสเตรเลีย แอนตาร์กติกา) เดินทางไกลกว่ากลุ่มลอเรเซียทางเหนือ</div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-hourglass"></use></svg> เกิดอะไรขึ้นบ้างระหว่างทาง — 6 หมุดสำคัญ</h2><span class="tag">คำอธิบาย</span></div>
+        <p class="sub">กดปุ่มยุคใต้ลูกโลกด้านบนเพื่อกระโดดไปดูภาพของแต่ละช่วงได้เลย</p>
+        <div class="es-row">
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-waves"></use></svg> 540 ล้านปีก่อน · แคมเบรียน</div>
+            <div class="es-foot" style="display:block;line-height:1.65">แผ่นดินส่วนใหญ่กระจุกอยู่ซีกโลกใต้เป็นมหาทวีป<b>กอนด์วานา</b> ส่วนทวีปทางเหนือยังเป็นผืนเล็กผืนน้อยแยกกันอยู่ · เป็นยุคที่สิ่งมีชีวิตมีเปลือกแข็งเพิ่มจำนวนขึ้นมาอย่างรวดเร็วในทะเล (Cambrian explosion)</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-sprout"></use></svg> 400 ล้านปีก่อน · ดีโวเนียน</div>
+            <div class="es-foot" style="display:block;line-height:1.65">ลอเรนเชีย (อเมริกาเหนือ) ชนกับบอลติกา (ยุโรปเหนือ) เกิดเทือกเขาคาลิโดเนียน ที่วันนี้เหลือร่องรอยเป็นภูเขาในสกอตแลนด์กับนอร์เวย์ · พืชขึ้นบกจนกลายเป็นป่าผืนแรกของโลก</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-globe"></use></svg> 250 ล้านปีก่อน · ไทรแอสซิก</div>
+            <div class="es-foot" style="display:block;line-height:1.65"><b>พันเจียเต็มรูป</b> — แผ่นดินเกือบทั้งโลกเป็นก้อนเดียวรูปตัว C ล้อมทะเลเททิสเอาไว้ · ก่อนหน้านั้นไม่นานคือการสูญพันธุ์ครั้งใหญ่ที่สุดในประวัติศาสตร์โลก สิ่งมีชีวิตในทะเลหายไปราว 90%</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-scissors"></use></svg> 175 ล้านปีก่อน · จูแรสซิก</div>
+            <div class="es-foot" style="display:block;line-height:1.65">พันเจียเริ่มแตกออก รอยแยกค่อย ๆ เปิดกลายเป็น<b>มหาสมุทรแอตแลนติก</b> ที่ยังกว้างขึ้นเรื่อย ๆ จนถึงวันนี้ · ส่วนแผ่นดินไทยตอนนั้นขึ้นมาอยู่เหนือเส้นศูนย์สูตรแล้ว และเชื่อมติดกับเอเชียเรียบร้อย</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-rocket"></use></svg> 66 ล้านปีก่อน · สิ้นครีเทเชียส</div>
+            <div class="es-foot" style="display:block;line-height:1.65">อุกกาบาตชิกซูลูบพุ่งชนคาบสมุทรยูกาตัง ไดโนเสาร์ที่ไม่ใช่นกสูญพันธุ์ · ตอนนั้นอินเดียยังเป็นเกาะโดดเดี่ยวกลางมหาสมุทร กำลังวิ่งขึ้นเหนือด้วยความเร็วสูงผิดปกติ</div>
+          </div>
+          <div class="es-cell">
+            <div class="es-top"><svg class="mdico"><use href="#i-mountain-snow"></use></svg> 50 ล้านปีก่อน–ปัจจุบัน</div>
+            <div class="es-foot" style="display:block;line-height:1.65">อินเดียชนเอเชีย ดัน<b>เทือกเขาหิมาลัยกับที่ราบสูงทิเบต</b>ขึ้นมา — แรงบีบจากการชนครั้งนั้นยังส่งผลถึงไทยทุกวันนี้ ทั้งการเอียงตัวของแอ่งเจ้าพระยาและรอยเลื่อนมีพลังทางภาคเหนือกับภาคตะวันตก</div>
+          </div>
+        </div>
+        <div class="src">ลำดับเหตุการณ์และอายุตามมาตราธรณีกาลสากล <a href="https://stratigraphy.org/chart" target="_blank" rel="noopener">International Chronostratigraphic Chart (ICS) ↗</a> · เรื่องแผ่นชานไทย–อินโดจีนแยกตัวจากกอนด์วานาแล้วมาชนกันเป็นแผ่นดินไทย อ้างอิงงานสังเคราะห์ธรณีวิทยาภูมิภาคของ <a href="https://www.dmr.go.th/" target="_blank" rel="noopener">กรมทรัพยากรธรณี ↗</a> และ Metcalfe, I. (2013), <i>Journal of Asian Earth Sciences</i></div>
+      </div>
+    </section>
+
     <section class="tabpane" id="pane-world-quake" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ศูนย์ข้อมูลโลก</span><h2 class="ph-title"><svg class="mdico"><use href="#i-zap"></use></svg> แผ่นดินไหว (ไล่เวลา)</h2></div>
       <div class="kpis">
@@ -13466,7 +13613,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       tsuLoad();
     }
 
-    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderTsunami(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderDrift(); renderTsunami(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
@@ -33743,6 +33890,431 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       }, {rootMargin:"200px"}).observe(stage);
     }
 
+    /* ================= 🪨 ทวีปเลื่อน 540 ล้านปี (Continental Drift) =================
+       ลูกโลก/แผนที่ไล่เวลา วาดด้วย canvas 2D + d3-geo ที่หน้านี้โหลดไว้อยู่แล้ว (ไม่ต้องพึ่ง three.js)
+       รูปร่างชายฝั่งย้อนหลังอ่านจาก paleo-drift.js ซึ่งอบไว้ล่วงหน้าจาก GPlates Web Service
+       โมเดล PALEOMAP (Scotese 2016, CC-BY 4.0) — ดูรายละเอียดที่หัวไฟล์นั้น
+
+       ทำไมต้องโหลดทีหลัง: ไฟล์ข้อมูลราว 2 MB (บีบแล้วเหลือ ~660 KB) ถ้าใส่เป็น <script> ตรง ๆ จะถ่วงทุกหัวข้อในหน้านี้
+       ทั้งที่คนส่วนใหญ่ไม่ได้เปิดดูหัวข้อนี้ จึงยิงโหลดตอน IntersectionObserver เห็นพาเนลเท่านั้น
+       (ใช้ loadScriptOnce ตัวเดียวกับที่พาเนล three.js ใช้ — เรียกซ้ำได้ ไม่โหลดซ้ำ)
+
+       ⚠️ ข้อควรระวังตอนแก้:
+       · ทิศทางวนของวงรอบถูกจัดมาให้ถูกกติกา GeoJSON ตั้งแต่ตอนอบไฟล์แล้ว ถ้าไปสร้างวงรอบเพิ่มเอง
+         โดยไม่เช็ก d3.geoArea ลูกโลกจะระบายกลับด้าน (ทั้งใบเป็นสีแผ่นดิน)
+       · วาดทุกวงรอบลง path เดียวแล้วค่อย fill ครั้งเดียว — d3.geoPath ที่ผูก context ไม่เรียก
+         beginPath() ให้เอง จึงสะสมเส้นทางต่อกันได้ และเร็วกว่า fill ทีละวง 300 เท่า
+       · การเดินหน้าเฟรมใช้ setInterval ไม่ใช่ rAF เพราะแท็บที่ถูกซ่อน rAF จะหยุด แล้วเวลาจะค้าง
+         (บทเรียนเดียวกับกราฟนับเลขในหน้าไทม์ไลน์เลือกตั้ง) */
+
+    /* มาตราธรณีกาลสากล ICS — ชื่อยุคภาษาไทย + สีประจำยุคตามมาตรฐาน CGMW ที่แผนที่ธรณีทั่วโลกใช้ */
+    var DRIFT_ERAS = [
+      { n:"ควอเทอร์นารี",    a:0,   b:2.6, c:"#F9F97F" },
+      { n:"นีโอจีน",         a:2.6, b:23,  c:"#FFE619" },
+      { n:"พาลีโอจีน",       a:23,  b:66,  c:"#FD9A52" },
+      { n:"ครีเทเชียส",      a:66,  b:145, c:"#7FC64E" },
+      { n:"จูแรสซิก",        a:145, b:201, c:"#34B2C9" },
+      { n:"ไทรแอสซิก",       a:201, b:252, c:"#812B92" },
+      { n:"เพอร์เมียน",      a:252, b:299, c:"#F04028" },
+      { n:"คาร์บอนิเฟอรัส",  a:299, b:359, c:"#67A599" },
+      { n:"ดีโวเนียน",       a:359, b:419, c:"#CB8C37" },
+      { n:"ไซลูเรียน",       a:419, b:444, c:"#B3E1B6" },
+      { n:"ออร์โดวิเชียน",   a:444, b:485, c:"#009270" },
+      { n:"แคมเบรียน",       a:485, b:540, c:"#7FA056" }
+    ];
+    function driftEraOf(age){
+      for(var i=0;i<DRIFT_ERAS.length;i++){ if(age < DRIFT_ERAS[i].b) return DRIFT_ERAS[i]; }
+      return DRIFT_ERAS[DRIFT_ERAS.length-1];
+    }
+    /* ระยะทางวงกลมใหญ่บนผิวโลก (กม.) — ใช้ทั้งกราฟ "ทวีปไหนเดินทางไกลที่สุด" และคำอธิบายหมุดไทย */
+    function driftGC(p, q){
+      if(!p || !q) return 0;
+      var R=6371, r=Math.PI/180;
+      var dLat=(q[1]-p[1])*r, dLon=(q[0]-p[0])*r;
+      var h=Math.sin(dLat/2)*Math.sin(dLat/2)
+          + Math.cos(p[1]*r)*Math.cos(q[1]*r)*Math.sin(dLon/2)*Math.sin(dLon/2);
+      return 2*R*Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+
+
+    function setupDriftGlobe(){
+      var stage=document.getElementById("driftStage");
+      if(!stage || !window.d3) return;
+
+      var started=false, ready=false, visible=false;
+      var cv=null, ctx=null, W=0, H=0, DPR=1;
+      var AGES=[], idx=0, TH=9;                 // TH = ลำดับของจุดอ้างอิง "ไทย" ใน PALEO.anchorNames
+      var rot=[-100,-14], zoom=1, mode="globe";
+      var playing=false, timer=0, drawReq=0;
+      var world=null;                            // เส้นพรมแดนปัจจุบัน (topojson mesh)
+      var GRAT=null, EQ=null, TRAIL=null;
+      var opt={ modern:false, labels:true, trail:true };
+      var LAND="#c8b48a", SEA="#0e2c44", PIN="#ff6b4a", TRAILC="#ffd28a";
+
+      function $i(id){ return document.getElementById(id); }
+
+      /* ---------- โปรเจกชัน ---------- */
+      function makeProj(){
+        var p;
+        if(mode==="globe"){
+          p=d3.geoOrthographic().rotate([rot[0], rot[1], 0]).clipAngle(90)
+             .translate([W/2, H/2]).scale(Math.min(W,H)/2.16*zoom);
+        }else{
+          p=d3.geoEqualEarth().rotate([rot[0], 0, 0]);
+          p.fitExtent([[14,14],[W-14,H-14]], {type:"Sphere"});
+          p.scale(p.scale()*zoom).translate([W/2, H/2]);
+        }
+        return p;
+      }
+      // จุดนี้อยู่ด้านที่หันเข้าหาเราไหม (โหมดลูกโลกเท่านั้น — แผนที่แบนเห็นหมดอยู่แล้ว)
+      function facing(pt){
+        if(mode!=="globe") return true;
+        return d3.geoDistance(pt, [-rot[0], -rot[1]]) < Math.PI/2 - 0.02;
+      }
+
+      /* ---------- วาด ---------- */
+      function paintLabel(x, y, text, color, bold){
+        ctx.font=(bold?"700 ":"600 ")+(bold?12.5:11.5)+'px "IBM Plex Sans Thai", system-ui, sans-serif';
+        var w=ctx.measureText(text).width, pad=5, h=17;
+        ctx.fillStyle="rgba(3,12,20,.68)";
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(x-w/2-pad, y-h/2, w+pad*2, h, 5);
+        else ctx.rect(x-w/2-pad, y-h/2, w+pad*2, h);
+        ctx.fill();
+        ctx.fillStyle=color; ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(text, x, y+0.5);
+      }
+
+      function draw(){
+        drawReq=0;
+        if(!ctx || !ready || !W || !H) return;
+        var P=window.PALEO, age=AGES[idx];
+        var proj=makeProj(), path=d3.geoPath(proj, ctx);
+
+        ctx.setTransform(DPR,0,0,DPR,0,0);
+        ctx.clearRect(0,0,W,H);
+
+        ctx.beginPath(); path({type:"Sphere"}); ctx.fillStyle=SEA; ctx.fill();
+        ctx.beginPath(); path(GRAT); ctx.strokeStyle="rgba(255,255,255,.075)"; ctx.lineWidth=.6; ctx.stroke();
+        ctx.beginPath(); path(EQ);   ctx.strokeStyle="rgba(120,205,245,.34)"; ctx.lineWidth=1; ctx.stroke();
+
+        var rings=P.rings(age);
+        ctx.beginPath();
+        for(var i=0;i<rings.length;i++) path(rings[i]);
+        ctx.fillStyle=LAND; ctx.fill();
+        ctx.strokeStyle="rgba(58,44,24,.5)"; ctx.lineWidth=.5; ctx.stroke();
+
+        if(opt.modern && world){
+          ctx.beginPath(); path(world);
+          ctx.strokeStyle="rgba(207,230,255,.40)"; ctx.lineWidth=.7; ctx.stroke();
+        }
+
+        ctx.beginPath(); path({type:"Sphere"});
+        ctx.strokeStyle="rgba(150,205,240,.35)"; ctx.lineWidth=1; ctx.stroke();
+
+        if(opt.trail && TRAIL){
+          ctx.save(); ctx.setLineDash([4,4]);
+          ctx.beginPath(); path(TRAIL);
+          ctx.strokeStyle="rgba(255,210,138,.75)"; ctx.lineWidth=1.4; ctx.stroke();
+          ctx.restore();
+        }
+
+        // ชื่อทวีป — วาดจากจุดอ้างอิงที่ย้อนตำแหน่งมาแล้ว จึงเลื่อนตามแผ่นไปเอง
+        var pos=P.anchors[age]||[];
+        if(opt.labels){
+          for(var k=0;k<pos.length;k++){
+            if(k===TH || !pos[k] || !facing(pos[k])) continue;
+            var q=proj(pos[k]); if(!q) continue;
+            paintLabel(q[0], q[1], P.anchorNames[k], "rgba(238,246,252,.94)", false);
+          }
+        }
+        // หมุดไทย — เด่นสุดเสมอ วาดท้ายสุดให้ทับทุกอย่าง
+        var th=pos[TH];
+        if(th && facing(th)){
+          var t=proj(th);
+          if(t){
+            ctx.beginPath(); ctx.arc(t[0], t[1], 6.5, 0, 6.2832);
+            ctx.fillStyle=PIN; ctx.fill();
+            ctx.lineWidth=2; ctx.strokeStyle="rgba(255,255,255,.9)"; ctx.stroke();
+            if(opt.labels) paintLabel(t[0], t[1]-19, "แผ่นดินไทย", "#ffd9cd", true);
+          }
+        }
+      }
+      function redraw(){ if(!drawReq) drawReq=requestAnimationFrame(draw); }
+
+      /* ---------- ตัวเลขและป้ายกำกับใต้ลูกโลก ---------- */
+      function syncRead(){
+        var P=window.PALEO, age=AGES[idx], era=driftEraOf(age), th=(P.anchors[age]||[])[TH];
+        $i("driftAge").textContent = age===0 ? "ปัจจุบัน" : age.toLocaleString("th-TH");
+        $i("driftAgeU").textContent = age===0 ? "" : "ล้านปีก่อน";
+        $i("driftEra").textContent = era.n;
+        $i("driftEraDot").style.background = era.c;
+        $i("driftNote").textContent = th
+          ? "แผ่นดินไทยอยู่ที่ละติจูด "+Math.abs(th[1]).toFixed(1)+"° "+(th[1]>=0?"เหนือ":"ใต้")
+          : "ไม่มีข้อมูลตำแหน่งแผ่นดินไทยในยุคนี้";
+        var sl=$i("driftSlider"); if(sl && +sl.value!==idx) sl.value=idx;
+        var eras=$i("driftEras");
+        if(eras) Array.prototype.forEach.call(eras.children, function(b){
+          b.classList.toggle("on", b.getAttribute("data-era")===era.n);
+        });
+        var jump=$i("driftJump");
+        if(jump) Array.prototype.forEach.call(jump.children, function(b){
+          b.classList.toggle("on", +b.getAttribute("data-i")===idx);
+        });
+      }
+      function goto(i){
+        idx=Math.max(0, Math.min(AGES.length-1, i|0));
+        syncRead(); redraw();
+      }
+      // หาเฟรมที่ใกล้อายุที่ขอที่สุด (ปุ่มยุคขอ 250 แต่เรามีแค่ 240 กับ 260)
+      function gotoAge(age){
+        var best=0, bd=1e9;
+        for(var i=0;i<AGES.length;i++){ var d=Math.abs(AGES[i]-age); if(d<bd){ bd=d; best=i; } }
+        goto(best);
+      }
+
+      /* ---------- เล่น/หยุด ---------- */
+      function setPlay(on){
+        playing=on;
+        clearInterval(timer); timer=0;
+        var btn=$i("driftPlay");
+        if(btn) btn.innerHTML = on
+          ? '<svg class="mdico"><use href="#i-pause"></use></svg> หยุด'
+          : '<svg class="mdico"><use href="#i-play"></use></svg> เล่นย้อนเวลา';
+        if(!on) return;
+        var ms=+($i("driftSpeed")||{}).value || 150;
+        timer=setInterval(function(){
+          if(!visible) return;                        // เลื่อนออกนอกจอแล้วให้หยุดนิ่ง ไม่กินซีพียูฟรี
+          goto(idx+1 >= AGES.length ? 0 : idx+1);
+        }, ms);
+      }
+
+      /* ---------- ขนาด ---------- */
+      function resize(){
+        var r=stage.getBoundingClientRect();
+        if(!r.width || !r.height) return;
+        DPR=Math.min(2, window.devicePixelRatio||1);
+        W=Math.round(r.width); H=Math.round(r.height);
+        cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+        cv.style.width=W+"px"; cv.style.height=H+"px";
+        fitEraLabels();
+        redraw();
+      }
+
+      /* ---------- ต่อสายปุ่มต่าง ๆ ---------- */
+      function wire(){
+        var sl=$i("driftSlider");
+        if(sl){ sl.max=AGES.length-1; sl.addEventListener("input", function(){ setPlay(false); goto(+sl.value); }); }
+
+        var eras=$i("driftEras");
+        if(eras){
+          var span=540, html="";
+          DRIFT_ERAS.forEach(function(e){
+            html+='<b data-era="'+e.n+'" data-age="'+((e.a+e.b)/2)+'" title="'+e.n+' · '+e.a+'–'+e.b+' ล้านปีก่อน"'
+                + ' style="flex:'+((e.b-e.a)/span).toFixed(4)+' 1 0;min-width:10px;background:'+e.c+';color:'+driftInk(e.c)+'">'
+                + e.n+'</b>';
+          });
+          eras.innerHTML=html;
+          fitEraLabels();
+          eras.addEventListener("click", function(ev){
+            var b=ev.target.closest("b"); if(!b) return;
+            setPlay(false); gotoAge(+b.getAttribute("data-age"));
+          });
+        }
+
+        var jump=$i("driftJump");
+        if(jump){
+          var PRESET=[[0,"ปัจจุบัน"],[50,"50 ล้านปี"],[100,"100 ล้านปี"],[180,"พันเจียเริ่มแตก"],
+                      [260,"พันเจียเต็มรูป"],[380,"ดีโวเนียน"],[540,"แคมเบรียน"]];
+          jump.innerHTML=PRESET.map(function(p){
+            var best=0, bd=1e9;
+            for(var i=0;i<AGES.length;i++){ var d=Math.abs(AGES[i]-p[0]); if(d<bd){ bd=d; best=i; } }
+            return '<button type="button" data-i="'+best+'">'+p[1]+'</button>';
+          }).join("");
+          jump.addEventListener("click", function(ev){
+            var b=ev.target.closest("button"); if(!b) return;
+            setPlay(false); goto(+b.getAttribute("data-i"));
+          });
+        }
+
+        var play=$i("driftPlay"); if(play) play.addEventListener("click", function(){ setPlay(!playing); });
+        var spd=$i("driftSpeed"); if(spd) spd.addEventListener("input", function(){ if(playing) setPlay(true); });
+
+        var md=$i("driftMode");
+        if(md) md.addEventListener("click", function(){
+          mode = mode==="globe" ? "flat" : "globe";
+          md.innerHTML = mode==="globe"
+            ? '<svg class="mdico"><use href="#i-map"></use></svg> ดูแบบแผนที่แบน'
+            : '<svg class="mdico"><use href="#i-globe"></use></svg> ดูแบบลูกโลก';
+          zoom=1; redraw();
+        });
+
+        var home=$i("driftHome");
+        if(home) home.addEventListener("click", function(){ rot=[-100,-14]; zoom=1; redraw(); });
+
+        [["driftModern","modern"],["driftLabels","labels"],["driftTrail","trail"]].forEach(function(p){
+          var c=$i(p[0]); if(!c) return;
+          c.addEventListener("change", function(){
+            opt[p[1]]=c.checked;
+            if(p[1]==="modern" && c.checked && !world) loadWorld();
+            redraw();
+          });
+        });
+
+        // ลากหมุน / ซูม
+        var dragging=false, lx=0, ly=0;
+        cv.addEventListener("pointerdown", function(e){
+          dragging=true; lx=e.clientX; ly=e.clientY;
+          try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+        });
+        cv.addEventListener("pointermove", function(e){
+          if(!dragging) return;
+          var k=0.32/Math.max(.4, zoom);
+          rot[0]+=(e.clientX-lx)*k;
+          if(mode==="globe") rot[1]=Math.max(-89, Math.min(89, rot[1]-(e.clientY-ly)*k));
+          lx=e.clientX; ly=e.clientY; redraw();
+        });
+        function stop(e){ dragging=false; try{ cv.releasePointerCapture(e.pointerId); }catch(err){} }
+        cv.addEventListener("pointerup", stop);
+        cv.addEventListener("pointercancel", stop);
+        cv.addEventListener("wheel", function(e){
+          e.preventDefault();
+          zoom=Math.max(.7, Math.min(6, zoom*(e.deltaY<0?1.12:1/1.12)));
+          redraw();
+        }, {passive:false});
+      }
+      /* แถบยุคกว้างตามสัดส่วนเวลาจริง ยุคใหม่ ๆ จึงบางมาก (ควอเทอร์นารีกินแค่ 0.5% ของ 540 ล้านปี)
+         ถ้าปล่อยชื่อไว้จะโดนตัดกลางคำอ่านไม่รู้เรื่อง — ช่องที่แคบกว่า 46 พิกเซลจึงเอาตัวหนังสือออก
+         แต่ยังชี้เมาส์อ่านชื่อเต็มจาก title ได้ และกดกระโดดยุคได้เหมือนเดิม */
+      function fitEraLabels(){
+        var eras=$i("driftEras"); if(!eras) return;
+        Array.prototype.forEach.call(eras.children, function(b){
+          if(!b.getAttribute("data-full")) b.setAttribute("data-full", b.textContent);
+          var w=b.getBoundingClientRect().width;
+          if(!w) return;                                  // พาเนลยังถูกซ่อนอยู่ ค่อยวัดใหม่ตอน resize
+          b.textContent = w < 46 ? "" : b.getAttribute("data-full");
+        });
+      }
+      // สีตัวอักษรบนแถบยุค: สีเข้มถ้าพื้นสว่าง (ยุคสีเหลืองอ่านไม่ออกถ้าใช้ตัวขาว)
+      function driftInk(hex){
+        var r=parseInt(hex.substr(1,2),16), g=parseInt(hex.substr(3,2),16), b=parseInt(hex.substr(5,2),16);
+        return (0.299*r+0.587*g+0.114*b) > 150 ? "#20303c" : "#ffffff";
+      }
+
+      function loadWorld(){
+        if(world || !window.topojson) return;
+        d3.json("climate-data/countries-110m.json").then(function(t){
+          if(!t) return;
+          world=topojson.mesh(t, t.objects.countries, function(a,b){ return a!==b; });
+          redraw();
+        })["catch"](function(){});
+      }
+
+      function init(){
+        if(started) return; started=true;
+        cv=document.createElement("canvas"); stage.appendChild(cv);
+        ctx=cv.getContext("2d");
+        loadScriptOnce("paleo-drift.js").then(function(){
+          var P=window.PALEO;
+          if(!P) throw new Error("ไม่พบข้อมูล PALEO");
+          AGES=P.ages.slice();
+          TH=P.anchorNames.indexOf("ไทย"); if(TH<0) TH=P.anchorNames.length-1;
+          GRAT=d3.geoGraticule10();
+          var eq=[]; for(var l=-180;l<=180;l+=5) eq.push([l,0]);
+          EQ={type:"LineString", coordinates:eq};
+          var tr=[]; AGES.forEach(function(a){ var p=(P.anchors[a]||[])[TH]; if(p) tr.push(p); });
+          TRAIL=tr.length>1 ? {type:"LineString", coordinates:tr} : null;
+          ready=true;
+          wire(); resize(); syncRead(); draw();
+          var ld=$i("driftLoading"); if(ld && ld.parentNode) ld.parentNode.removeChild(ld);
+          renderDrift();                       // กราฟสองอันข้างล่างรอข้อมูลชุดนี้อยู่
+        })["catch"](function(err){
+          console.error("drift globe:", err);
+          var ld=$i("driftLoading");
+          if(ld) ld.innerHTML='<span style="color:var(--red)">โหลดข้อมูลทวีปเลื่อนไม่สำเร็จ<br><small>'+((err&&err.message)||"")+'</small></span>';
+        });
+      }
+
+      var rz; window.addEventListener("resize", function(){ clearTimeout(rz); rz=setTimeout(resize, 180); });
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          visible=e.isIntersecting;
+          if(visible && !started) init();
+          else if(visible && ready) resize();
+        });
+      }, {rootMargin:"200px"}).observe(stage);
+    }
+
+    /* ===== กราฟสองอันของหัวข้อทวีปเลื่อน — วาดได้ต่อเมื่อ paleo-drift.js โหลดมาแล้ว ===== */
+    function renderDrift(){
+      var P=window.PALEO; if(!P || !window.Plot) return;
+      var ink=cssVar("--ink"), inkSoft=cssVar("--ink-soft"), green=cssVar("--green"), red=cssVar("--red");
+      var TH=P.anchorNames.indexOf("ไทย"); if(TH<0) TH=P.anchorNames.length-1;
+
+      var box=$("#driftThLat");
+      if(box && !paneHidden(box)){
+        var rows=[];
+        P.ages.forEach(function(a){
+          var p=(P.anchors[a]||[])[TH];
+          if(p) rows.push({ age:a, lat:p[1], lon:p[0] });
+        });
+        var W=Math.max(300, box.clientWidth||760);
+        var fig=plotT({
+          width:W, height:300, marginLeft:64, marginRight:22, marginTop:14, marginBottom:42,
+          style: baseStyle(ink, FONT_W),
+          x:{ label:"ล้านปีก่อน →", domain:[0,540], grid:true, tickFormat:"d" },
+          y:{ label:"ละติจูด (องศา · บวก = เหนือ)", domain:[-40,60], grid:true,
+              tickFormat:function(v){ return v===0 ? "0 (ศูนย์สูตร)" : (v>0? v+"°N" : (-v)+"°S"); } },
+          marks:[
+            Plot.areaY(rows, { x:"age", y1:0, y2:"lat", fill:green, fillOpacity:.14, curve:"catmull-rom" }),
+            Plot.ruleY([0], { stroke:inkSoft, strokeOpacity:.55, strokeDasharray:"4 4" }),
+            Plot.lineY(rows, { x:"age", y:"lat", stroke:green, strokeWidth:2.4, curve:"catmull-rom" }),
+            Plot.dot(rows, { x:"age", y:"lat", r:2.8, fill:green,
+              title:function(d){ return (d.age===0?"ปัจจุบัน":d.age+" ล้านปีก่อน")+"\nละติจูด "
+                + Math.abs(d.lat).toFixed(1)+"° "+(d.lat>=0?"เหนือ":"ใต้")
+                + "\nลองจิจูด "+d.lon.toFixed(1)+"°"; } }),
+            Plot.dot(rows.filter(function(d){ return d.age===0; }), { x:"age", y:"lat", r:5.5, fill:red }),
+            Plot.text([{x:300,y:-30,t:"ซีกโลกใต้ — ริมมหาทวีปกอนด์วานา"}], { x:"x", y:"y", text:"t",
+              fill:inkSoft, fontSize:11.5, fontWeight:600 }),
+            Plot.text([{x:185,y:50,t:"ซีกโลกเหนือ — เขตร้อนอย่างทุกวันนี้"}], { x:"x", y:"y", text:"t",
+              fill:inkSoft, fontSize:11.5, fontWeight:600 })
+          ]
+        });
+        injectPlot(box, fig);
+      }
+
+      var box2=$("#driftTravel");
+      if(box2 && !paneHidden(box2)){
+        var trav=P.anchorNames.map(function(name, k){
+          var sum=0, prev=null;
+          P.ages.forEach(function(a){
+            var p=(P.anchors[a]||[])[k];
+            if(p){ if(prev) sum+=driftGC(prev,p); prev=p; }
+          });
+          return { name:name, km:Math.round(sum) };
+        }).sort(function(a,b){ return b.km-a.km; });
+        var W2=Math.max(300, box2.clientWidth||760);
+        var fig2=plotT({
+          width:W2, height:300, marginLeft:104, marginRight:78, marginTop:10, marginBottom:34,
+          style: baseStyle(ink, FONT_W),
+          x:{ label:"ระยะทางสะสม (กม.)", grid:true, tickSize:0, tickFormat:function(v){ return (v/1000)+"k"; } },
+          y:{ label:null },
+          marks:[
+            Plot.barX(trav, { x:"km", y:"name", sort:{y:"-x"}, rx:3,
+              fill:function(d){ return d.name==="ไทย" ? red : green; }, fillOpacity:.85 }),
+            Plot.text(trav, { x:"km", y:"name", textAnchor:"start", dx:5, fill:inkSoft, fontWeight:600, fontSize:11,
+              text:function(d){ return d.km.toLocaleString("th-TH")+" กม."; } }),
+            Plot.ruleX([0], { stroke:inkSoft, strokeOpacity:.4 })
+          ]
+        });
+        owidBarMount("#driftTravel", fig2, {
+          rows: trav.map(function(d){ return { k:d.name, v:d.km }; }),
+          nameLabel:"ทวีป / แผ่นดิน", valueLabel:"ระยะทางสะสม (กม.)",
+          valueFmt:function(v){ return v.toLocaleString("th-TH")+" กม."; }
+        });
+      }
+    }
+
     /* ================= ความหนาแน่นน้ำทะเล (UNESCO EOS-80 ที่ความดันผิวน้ำ) =================
        Millero & Poisson (1981) — สูตรเดียวกับที่ตำราสมุทรศาสตร์ใช้ ไม่ใช่ค่าประมาณคร่าว ๆ */
     function thcRho(T,S){
@@ -34119,6 +34691,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       setupCoralGlobe();
       setupCurrentGlobe();
       setupThcGlobe();
+      setupDriftGlobe();
       setupThcDensity();
       setupPopLandscape();
       setupTradeGlobe();
