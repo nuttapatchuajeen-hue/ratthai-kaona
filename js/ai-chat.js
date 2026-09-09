@@ -26,8 +26,10 @@
   // ตัวแรกคือค่าเริ่มต้น — ระบุชื่อรุ่นจริงไปเลย ไม่ใช้ "อัตโนมัติ" ที่ไม่บอกว่าได้ตัวไหน
   var MODELS = [
     { id: "openthaigpt-thaillm-8b-instruct-v7.2", label: "ThaiLLM 8B (ไทย)" },
-    { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-    { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)" },
+    // soon = proxy ที่รันอยู่ยังไม่รู้จักรุ่นนี้ (กดแล้วจะได้ ThaiLLM ตอบแทนเงียบ ๆ)
+    // ปลดธงนี้ออกได้เมื่อ deploy md-ai-proxy รุ่นใหม่ขึ้นไปแล้ว
+    { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash", soon: true },
+    { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)", soon: true },
   ];
   var MODEL_KEY = "mdai-model-v1";
   var model = readModel();
@@ -35,7 +37,9 @@
   function readModel() {
     var v = "";
     try { v = localStorage.getItem(MODEL_KEY) || ""; } catch (err) { v = ""; }
-    for (var i = 0; i < MODELS.length; i++) if (MODELS[i].id === v) return v;
+    for (var i = 0; i < MODELS.length; i++) {
+      if (MODELS[i].id === v && !MODELS[i].soon) return v;
+    }
     return MODELS[0].id;
   }
 
@@ -60,8 +64,10 @@
     for (var i = 0; i < MODELS.length; i++) {
       out +=
         '<button type="button" role="option" data-id="' + MODELS[i].id + '" ' +
+        (MODELS[i].soon ? 'disabled aria-disabled="true" ' : "") +
         'aria-selected="' + (MODELS[i].id === model ? "true" : "false") + '">' +
-        "<i>" + MODELS[i].label + "</i>" + ICO_CHECK + "</button>";
+        "<i>" + MODELS[i].label + (MODELS[i].soon ? " (ยังไม่พร้อม)" : "") + "</i>" +
+        ICO_CHECK + "</button>";
     }
     return out;
   }
@@ -271,6 +277,7 @@
     "#mdai-mmenu button{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;padding:8px 10px;border:0;border-radius:11px;background:transparent;",
     "color:var(--mdai-dim);font:inherit;font-size:13px;font-weight:500;text-align:left;cursor:pointer;transition:background-color .15s,color .15s}",
     '#mdai-mmenu button:hover,#mdai-mmenu button[aria-selected="true"]{background:var(--mdai-surface2);color:var(--mdai-text)}',
+    "#mdai-mmenu button[disabled]{opacity:.45;cursor:not-allowed;background:transparent;color:var(--mdai-dim)}",
     "#mdai-mmenu button i{flex:1;min-width:0;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
     "#mdai-mmenu button svg{width:14px;height:14px;flex:0 0 auto;color:var(--mdai-accent2);opacity:0;transform:scale(.25);",
     "transition:opacity .2s,transform .2s cubic-bezier(.2,0,0,1)}",
