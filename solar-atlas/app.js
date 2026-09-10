@@ -18,7 +18,7 @@ const S = {
   focus: 'earth',
   orbits: true, labels: true, moons: true, belt: true, kuiper: true, oort: true,
   stars: true, galaxy: true, grid: false, trails: false,
-  asteroids: true, comets: true, dwarfs: true, craft: true,
+  asteroids: true, comets: true, dwarfs: true, craft: true, figures: true, deep: true, exo: true,
   enlarge: false,
   measureA: 'earth', measureB: 'mars'
 };
@@ -28,7 +28,7 @@ const L = () => UI[S.lang];
 const LY = 9.4607304726e12;        // กิโลเมตรต่อหนึ่งปีแสง
 const GAL_U = 0.001;               // 1 หน่วยในฉากกาแล็กซี = 1,000 ปีแสง
 const SUN_R_GAL = 26.0;            // ดวงอาทิตย์ห่างใจกลางทางช้างเผือก 26,000 ปีแสง
-const MAX_DIST = 260000 * LY;      // ซูมออกได้ไกลสุด: มองทางช้างเผือกจากภายนอก
+const MAX_DIST = 150000e6 * LY;    // ซูมออกได้ไกลสุด: เห็นขอบเอกภพที่สังเกตได้ทั้งวง
 const log10 = Math.log10 || (x => Math.log(x) / Math.LN10);
 const step01 = (a, b, v) => { const t = Math.max(0, Math.min(1, (v - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -224,13 +224,23 @@ function initScene() {
   skyCam = new THREE.PerspectiveCamera(48, 1, 1, 4000);
   skyCam.up.set(0, 0, 1);
 
+  // ฉากดาวฤกษ์จริง: 1 หน่วย = 1 ปีแสง กล้องยืนที่ตำแหน่งจริงเทียบดวงอาทิตย์
+  starScene = new THREE.Scene();
+  starCam = new THREE.PerspectiveCamera(48, 1, 1e-4, 24000);
+  starCam.up.set(0, 0, 1);
+
   sunLight = new THREE.PointLight(0xfff3e0, 2.1, 0, 0);
   scene.add(sunLight);
   scene.add(new THREE.AmbientLight(0x2a3550, 0.5));
 
   labelLayer = $('#labels');
   buildSky();
+  buildRealStars();
+  buildConstellations();
   buildGalaxy();
+  buildGalaxyMarks();
+  buildDeep();
+  buildExo();
   buildGrid();
   buildBelt();
   resize();
@@ -1004,16 +1014,24 @@ function updateScene() {
   const dly = camState.dist / LY;
   const f = step01(log10(5), log10(3200), log10(Math.max(1e-12, dly)));
   const px = Math.min(2, (innerHeight / 900) * (renderer.getPixelRatio() || 1));
-  starFade = S.stars ? 1 - f : 0;
-  galFade = S.galaxy ? f : 0;
+  starFade = S.stars ? (1 - f) * 0.5 : 0;      // ดาวสุ่มเหลือไว้เป็นฝุ่นดาวพื้นหลังเท่านั้น
+  starFadeR = S.stars ? 1 - f : 0;            // ดาวฤกษ์จริงเป็นตัวหลักแล้ว
+  // พ้นกาแล็กซีไปแล้ว แบบจำลองแขนกังหันไม่มีความหมาย ปล่อยให้ฉากไกลรับช่วงต่อ
+  const galOut = 1 - step01(log10(0.3), log10(4), log10(Math.max(1e-12, dly / 1e6)));
+  galFade = S.galaxy ? f * galOut : 0;
   const st = skyScene.getObjectByName('stars');
   st.visible = starFade > 0.01;
   st.material.uniforms.scale.value = px;
   st.material.uniforms.fade.value = starFade;
   galPts.material.uniforms.scale.value = px * 1.7;
   galPts.material.uniforms.fade.value = galFade;
-  galGlow.material.opacity = galFade * 0.85;
-  galDisc.material.uniforms.fade.value = galFade;
+  // จานแบนดูดีเมื่อมองจากนอกกาแล็กซีเท่านั้น ใกล้กว่านั้นขอบแผ่นจะเป็นรอยตัดขวางจอ
+  const discFade = step01(log10(150), log10(2600), log10(Math.max(1e-12, dly)));
+  galGlow.material.opacity = galFade * 0.85 * discFade;
+  galDisc.material.uniforms.fade.value = galFade * discFade;
+  starPts.visible = starFadeR > 0.01;
+  starPts.material.uniforms.scale.value = px * 1.2;
+  starPts.material.uniforms.fade.value = starFadeR;
 }
 
 /* วัตถุเล็กมี 33 ดวง ถ้าโชว์หมดทุกระยะมองจะรกจนอ่านไม่ได้
@@ -1106,6 +1124,7 @@ function defaultDist(id) {
 }
 
 function setFocus(id, instant) {
+  starSel = -1; exoSel = -1;
   if (id === S.focus && !trans.on) { camState.dist = defaultDist(id); return; }
   if (instant) {
     S.focus = id; camState.dist = defaultDist(id); trans.on = false;
@@ -1140,6 +1159,8 @@ function applyCamera() {
   galCam.near = Math.max(0.004, dg * 0.02);
   galCam.far = Math.max(2000, dg * 40);
   galCam.updateProjectionMatrix();
+  updateStarCam();
+  updateDeepCam();
 }
 
 function initControls() {
@@ -1194,7 +1215,10 @@ function ladderDist(k) {
     case 3: return 120 * AU;
     case 4: return 90000 * AU;
     case 5: return 70 * LY;
-    default: return 125000 * LY;
+    case 6: return 125000 * LY;
+    case 7: return 12e6 * LY;          // กลุ่มท้องถิ่น
+    case 8: return 700e6 * LY;         // กระจุกและกลุ่มกระจุกกาแล็กซี
+    default: return 120000e6 * LY;     // เอกภพที่สังเกตได้ทั้งใบ
   }
 }
 function gotoScale(k) {
@@ -1204,6 +1228,7 @@ function gotoScale(k) {
   if (k === 2 || k === 3) camState.el = Math.max(camState.el, 0.42);
   // ขั้นกาแล็กซี: หันกล้องไปทางขั้วเหนือของทางช้างเผือก จะได้เห็นแขนกังหันเต็มใบ
   if (k === 6) { camState.az = Math.PI; camState.el = 0.90; }
+  if (k >= 7) { camState.el = Math.max(camState.el, 0.35); }
 }
 
 /* ── ป้ายชื่อ ──────────────────────────────────────────────────────── */
@@ -1267,6 +1292,7 @@ function pickAt(cx, cy) {
     if (d < bestD) { bestD = d; best = rec.def.id; }
   }
   if (best) setFocus(best);
+  else if (!pickExo(cx, cy)) pickStar(cx, cy);
 }
 
 /* ── ท้องฟ้าจากจุดที่ยืนอยู่บนโลก ────────────────────────────────────────
@@ -1530,6 +1556,867 @@ function scanEvents(fromMs, days) {
   return out;
 }
 
+/* ── ดาวฤกษ์จริงรอบดวงอาทิตย์ ──────────────────────────────────────────
+   วาดในฉากของตัวเอง (starScene) ที่ 1 หน่วย = 1 ปีแสง โดยวางกล้องไว้ที่
+   ตำแหน่งจริงของผู้ชมเทียบดวงอาทิตย์ วิธีเดียวกับฉากกาแล็กซี — ทำให้
+   ตัวเลขที่เข้า GPU ไม่บานปลาย และได้ "พารัลแลกซ์จริง" คือพอบินออกไป
+   ไม่กี่ปีแสง ดาวใกล้จะเลื่อนแซงดาวไกล รูปกลุ่มดาวจะค่อย ๆ บิดเบี้ยว
+   ความสว่างคำนวณในเชเดอร์จากความสว่างสัมบูรณ์ + ระยะถึงกล้อง จึงหรี่/สว่าง
+   ตามจริงเมื่อเข้าใกล้หรือถอยห่าง                                         */
+const PC_PER_LY = 1 / 3.2615638;
+const SUN_ABSMAG = 4.83;
+let starScene, starCam, starPts, starFadeR = 1;
+const starLabels = [];
+let starSel = -1;                       // ดาวที่กำลังเลือกดูข้อมูล (−1 = ไม่ได้เลือก)
+
+function buildRealStars() {
+  const n = STARS.length + 1;                       // +1 = ดวงอาทิตย์ (มองจากนอกระบบ)
+  const pos = new Float32Array(n * 3);
+  const col = new Float32Array(n * 3);
+  const amag = new Float32Array(n);
+  const c = new THREE.Color();
+  for (let i = 0; i < STARS.length; i++) {
+    const s = STARS[i];
+    pos[i * 3] = s.x; pos[i * 3 + 1] = s.y; pos[i * 3 + 2] = s.z;
+    c.setHex(SP_TINT[s.c] || 0xffd9a0);
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    amag[i] = starAbsMag(s);
+  }
+  // ดวงอาทิตย์เอง: จากระยะ 10 ปีแสงจะเห็นเป็นดาวธรรมดาดวงหนึ่งเท่านั้น
+  const k = STARS.length;
+  pos[k * 3] = pos[k * 3 + 1] = pos[k * 3 + 2] = 0;
+  c.setHex(SP_TINT.G);
+  col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b;
+  amag[k] = SUN_ABSMAG;
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo.setAttribute('absMag', new THREE.BufferAttribute(amag, 1));
+  starPts = new THREE.Points(geo, realStarMaterial());
+  starPts.frustumCulled = false;
+  starScene.add(starPts);
+}
+
+/* ความสว่างสัมบูรณ์: ความสว่างที่จะเห็นถ้าดาวดวงนั้นอยู่ห่าง 10 พาร์เซก */
+function starAbsMag(s) {
+  const V = s.V == null ? 17 : s.V;
+  return V + 5 - 5 * Math.log10(Math.max(1e-4, s.d * PC_PER_LY));
+}
+
+/* ความสว่างปรากฏเมื่อมองจากระยะ r ปีแสง (ใช้ทั้งกับป้ายชื่อและการคลิก) */
+function starAppMag(absMag, rLy) {
+  return absMag - 5 + 5 * Math.log10(Math.max(1e-4, rLy * PC_PER_LY));
+}
+
+function realStarMaterial() {
+  if (!starSprite) starMaterial();                  // ให้สร้างสไปรต์ร่วมกันไว้ก่อน
+  return new THREE.ShaderMaterial({
+    uniforms: { map: { value: starSprite }, scale: { value: 1 }, fade: { value: 1 } },
+    vertexShader: `attribute float absMag; varying vec3 vC; varying float vB;
+      uniform float scale;
+      void main(){
+        vC = color;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        float dLy = max(0.05, length(mv.xyz));
+        float dPc = dLy * 0.30660139;
+        float m = absMag - 5.0 + 5.0 * (log(dPc) / 2.302585093);
+        // อันดับความสว่างเป็นสเกลลอการิทึมอยู่แล้ว ไล่ขนาดกับความเข้มตามอันดับตรง ๆ
+        // จะได้ภาพใกล้เคียงที่ตาเห็น: อันดับ 6.5 คือขีดจำกัดตาเปล่า อันดับติดลบคือดาวเด่น
+        float t = clamp((6.6 - m) / 3.0, 0.0, 3.4);
+        gl_PointSize = clamp(scale * (0.9 + 4.4 * t), 0.7, 30.0);
+        vB = clamp((7.2 - m) / 5.6, 0.03, 1.0);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `uniform sampler2D map; uniform float fade; varying vec3 vC; varying float vB;
+      void main(){
+        vec4 t = texture2D(map, gl_PointCoord);
+        gl_FragColor = vec4(vC, 1.0) * t * (vB * fade);
+      }`,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true
+  });
+}
+
+/* ตำแหน่งจริงของกล้องเทียบดวงอาทิตย์ (หน่วยปีแสง) */
+const starEye = new THREE.Vector3();
+function starCameraPos(out) {
+  out.set(
+    (origin.x + camera.position.x * KMU) / LY,
+    (origin.y + camera.position.y * KMU) / LY,
+    (origin.z + camera.position.z * KMU) / LY
+  );
+  return out;
+}
+
+function updateStarCam() {
+  starCameraPos(starEye);
+  starCam.position.copy(starEye);
+  starCam.quaternion.copy(camera.quaternion);
+  const d = Math.max(1e-4, camState.dist / LY);
+  starCam.near = Math.max(1e-5, d * 1e-4);
+  starCam.far = Math.max(24000, d * 60);
+  starCam.aspect = camera.aspect;
+  starCam.updateProjectionMatrix();
+}
+
+/* ── ป้ายชื่อดาว ────────────────────────────────────────────────────────
+   ป้ายมีจำนวนจำกัด เลือกให้ดาวที่ "สว่างที่สุดเมื่อมองจากตรงนี้" ก่อน
+   พอบินออกไปไกล ๆ ดาวที่เคยจางจะกลายเป็นดาวเด่นแทน ป้ายก็สลับตามเอง   */
+const STAR_LABELS = 22;
+function buildStarLabels() {
+  for (let i = 0; i < STAR_LABELS; i++) {
+    const node = el('button', 'lbl star');
+    node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
+    node.hidden = true;
+    node.addEventListener('click', ev => {
+      ev.stopPropagation();
+      if (node._si != null) selectStar(node._si);
+    });
+    labelLayer.appendChild(node);
+    starLabels.push(node);
+  }
+}
+
+const _sv = new THREE.Vector3();
+function updateStarLabels() {
+  const W = innerWidth, H = innerHeight;
+  if (!S.stars || starFadeR < 0.05) {
+    for (const n of starLabels) n.hidden = true;
+    return;
+  }
+  const cand = [];
+  for (let i = 0; i < STARS.length; i++) {
+    const s = STARS[i];
+    if (!s.th && !s.named2) {
+      if (!/^[A-Za-z’' .-]+$/.test(s.n)) continue;      // ข้ามดาวที่มีแต่รหัสแคตาล็อก
+      s.named2 = true;
+    }
+    const r = Math.hypot(s.x - starEye.x, s.y - starEye.y, s.z - starEye.z);
+    const m = starAppMag(starAbsMag(s), r);
+    if (m > 4.4) continue;                                   // จางเกินกว่าจะเขียนชื่อ
+    _sv.set(s.x, s.y, s.z).project(starCam);
+    if (_sv.z > 1 || Math.abs(_sv.x) > 1.05 || Math.abs(_sv.y) > 1.05) continue;
+    cand.push({ i, m, x: (_sv.x * 0.5 + 0.5) * W, y: (-_sv.y * 0.5 + 0.5) * H });
+  }
+  cand.sort((a, b) => a.m - b.m);
+  if (starSel >= 0 && !cand.some(c => c.i === starSel)) {     // ดวงที่เลือกไว้ต้องเห็นเสมอ
+    const s = STARS[starSel];
+    _sv.set(s.x, s.y, s.z).project(starCam);
+    if (_sv.z <= 1) cand.unshift({ i: starSel, m: -99, x: (_sv.x * 0.5 + 0.5) * W, y: (-_sv.y * 0.5 + 0.5) * H });
+  }
+  const used = [];
+  let k = 0;
+  for (const c of cand) {
+    if (k >= STAR_LABELS) break;
+    // กันป้ายทับกันเอง
+    if (used.some(u => Math.abs(u.x - c.x) < 88 && Math.abs(u.y - c.y) < 15)) continue;
+    used.push(c);
+    const node = starLabels[k++];
+    const s = STARS[c.i];
+    node._si = c.i;
+    node.hidden = false;
+    node.style.left = c.x.toFixed(1) + 'px';
+    node.style.top = (c.y - 13).toFixed(1) + 'px';
+    node.style.color = '#' + (SP_TINT[s.c] || 0xffd9a0).toString(16).padStart(6, '0');
+    node.querySelector('.nm').textContent = (S.lang === 'th' && s.th) ? s.th : s.n;
+    node.classList.toggle('on', c.i === starSel);
+    node.style.opacity = String(Math.max(0.3, Math.min(1, (4.6 - c.m) / 3)) * starFadeR);
+  }
+  for (; k < STAR_LABELS; k++) starLabels[k].hidden = true;
+}
+
+/* คลิกที่ว่าง ๆ แล้วโดนดาวดวงไหน */
+function pickStar(cx, cy) {
+  if (!S.stars || starFadeR < 0.05) return false;
+  let best = -1, bestD = 16;
+  for (let i = 0; i < STARS.length; i++) {
+    const s = STARS[i];
+    const r = Math.hypot(s.x - starEye.x, s.y - starEye.y, s.z - starEye.z);
+    if (starAppMag(starAbsMag(s), r) > 6.5) continue;
+    _sv.set(s.x, s.y, s.z).project(starCam);
+    if (_sv.z > 1) continue;
+    const x = (_sv.x * 0.5 + 0.5) * innerWidth, y = (-_sv.y * 0.5 + 0.5) * innerHeight;
+    const d = Math.hypot(x - cx, y - cy);
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  if (best < 0) return false;
+  selectStar(best);
+  return true;
+}
+
+function selectStar(i) {
+  starSel = i; exoSel = -1;
+  syncCrumb();
+  renderInfo();
+}
+
+/* หันกล้องไปทางดาวดวงนั้น (กล้องยังโคจรรอบเป้าหมายเดิม แค่หันหน้าไปอีกทาง) */
+function aimAtStar(i) {
+  const s = STARS[i];
+  const dx = s.x - starEye.x, dy = s.y - starEye.y, dz = s.z - starEye.z;
+  const r = Math.hypot(dx, dy, dz) || 1;
+  camState.az = Math.atan2(-dy / r, -dx / r);
+  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+}
+
+/* ── แผงข้อมูลของดาว ─────────────────────────────────────────────────── */
+function renderStarInfo() {
+  const t = L(), s = STARS[starSel], pane = $('#pane-info');
+  pane.innerHTML = '';
+  const hex = '#' + (SP_TINT[s.c] || 0xffd9a0).toString(16).padStart(6, '0');
+
+  const head = el('div', 'sec');
+  const hd = el('div', 'obj-head');
+  const sw = el('div', 'obj-swatch');
+  sw.style.setProperty('--glow', hex);
+  sw.style.background = `radial-gradient(circle at 42% 38%, ${hex}, rgba(10,15,24,.95) 68%)`;
+  const ti = el('div', 'obj-title');
+  ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
+  ti.querySelector('h2').textContent = (S.lang === 'th' && s.th) ? s.th : s.n;
+  ti.querySelector('.kind em').style.background = hex;
+  ti.querySelector('.kind span').textContent =
+    t.kind.star + ' · ' + ((SP_CLASS[s.c] || { th: '', en: '' })[S.lang] || '');
+  hd.append(sw, ti);
+  head.appendChild(hd);
+  if (s.de) {
+    const p = el('p', 'desc');
+    p.textContent = s.de[S.lang];
+    head.appendChild(p);
+  }
+  pane.appendChild(head);
+
+  const rNow = Math.hypot(s.x - starEye.x, s.y - starEye.y, s.z - starEye.z);
+  const abs = starAbsMag(s);
+  const rows = [
+    [t.stDist, `${nf(s.d, s.d < 100 ? 2 : 0)}<u>${t.ly}</u>`],
+    [t.stFromHere, `${nf(rNow, rNow < 100 ? 2 : 0)}<u>${t.ly}</u>`]
+  ];
+  if (s.V != null) rows.push([t.stMagApp, `${nf(starAppMag(abs, rNow), 2)}`]);
+  rows.push([t.stMagAbs, `${nf(abs, 2)}`]);
+  // ความสว่างจริงเทียบดวงอาทิตย์ จากผลต่างความสว่างสัมบูรณ์
+  rows.push([t.stLum, `${fmtLum(Math.pow(10, (SUN_ABSMAG - abs) / 2.5))}<u>${t.timesSun}</u>`]);
+  if (s.sp) rows.push([t.stSpec, s.sp]);
+  rows.push([t.stNaked, starAppMag(abs, rNow) < 6.0 ? t.yes : t.no]);
+
+  const phys = el('div', 'sec');
+  phys.innerHTML = `<h3>${t.secStar}</h3><dl class="readout">` +
+    rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
+
+  // แสงที่เห็นตอนนี้ออกเดินทางมาตั้งแต่เมื่อไร
+  const leftYear = new Date(S.time).getFullYear() - Math.round(s.d);
+  const note = el('div', 'note');
+  note.innerHTML = `<span></span><p></p>`;
+  note.querySelector('span').textContent = t.stLight;
+  note.querySelector('p').textContent = t.stLightNote
+    .replace('{ly}', nf(s.d, s.d < 100 ? 1 : 0))
+    // ปีไม่ใส่เครื่องหมายคั่นหลักพัน
+    .replace('{year}', S.lang === 'th' ? (leftYear + 543) + ' (พ.ศ.)' : String(leftYear));
+  phys.appendChild(note);
+
+  // ถ้าเดินทางด้วยความเร็วของวอยเอเจอร์ 1 จะใช้เวลาเท่าไร
+  const yrs = s.d * 9.4607304726e12 / 16.92 / 3.15576e7;
+  const note2 = el('div', 'note');
+  note2.innerHTML = `<span></span><p></p>`;
+  note2.querySelector('span').textContent = t.stTravel;
+  note2.querySelector('p').textContent = t.stTravelNote.replace('{yr}', nf(Math.round(yrs / 1000) * 1000));
+  phys.appendChild(note2);
+  pane.appendChild(phys);
+
+  const act = el('div', 'sec');
+  const b1 = el('button', 'chip');
+  b1.textContent = t.stAim;
+  b1.addEventListener('click', () => aimAtStar(starSel));
+  const b2 = el('button', 'chip');
+  b2.textContent = t.stBack;
+  b2.addEventListener('click', () => { starSel = -1; syncCrumb(); renderInfo(); });
+  const chips = el('div', 'chips');
+  chips.append(b1, b2);
+  act.appendChild(chips);
+  pane.appendChild(act);
+}
+
+function fmtLum(x) {
+  if (x >= 1000) return nf(Math.round(x / 100) * 100);
+  if (x >= 10) return nf(x, 0);
+  if (x >= 0.1) return nf(x, 2);
+  return x.toExponential(1).replace('e-', ' × 10⁻');
+}
+
+/* ── เส้นกลุ่มดาว ────────────────────────────────────────────────────────
+   ลากเส้นเชื่อมดาวจริงในฉากเดียวกับดาว (starScene) จุดปลายเส้นคือตำแหน่งดาวจริง
+   ไม่ใช่รูปที่แปะไว้บนทรงกลมท้องฟ้า — พอบินออกจากดวงอาทิตย์ เส้นจะยืดและ
+   รูปกลุ่มดาวจะบิดเบี้ยวไปเองตามจริง                                          */
+let consLines = null;
+const consLabels = [];
+const CONS_LABELS = 16;
+
+function buildConstellations() {
+  const segs = [];
+  for (const c of CONSTELLATIONS) {
+    for (let i = 0; i < c.s.length; i += 2) segs.push(c.s[i], c.s[i + 1]);
+  }
+  const pos = new Float32Array(segs.length * 3);
+  for (let i = 0; i < segs.length; i++) {
+    const s = STARS[segs[i]];
+    pos[i * 3] = s.x; pos[i * 3 + 1] = s.y; pos[i * 3 + 2] = s.z;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  consLines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({
+    color: 0x6f93c9, transparent: true, opacity: 0.22, depthWrite: false }));
+  consLines.frustumCulled = false;
+  starScene.add(consLines);
+}
+
+function buildConsLabels() {
+  for (let i = 0; i < CONS_LABELS; i++) {
+    const node = el('button', 'lbl cons');
+    node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
+    node.hidden = true;
+    node.addEventListener('click', ev => {
+      ev.stopPropagation();
+      if (node._ci != null) aimAtCons(node._ci);
+    });
+    labelLayer.appendChild(node);
+    consLabels.push(node);
+  }
+}
+
+function aimAtCons(i) {
+  const c = CONSTELLATIONS[i];
+  const dx = c.x - starEye.x, dy = c.y - starEye.y, dz = c.z - starEye.z;
+  const r = Math.hypot(dx, dy, dz) || 1;
+  camState.az = Math.atan2(-dy / r, -dx / r);
+  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+}
+
+const _cv = new THREE.Vector3();
+function updateConstellations() {
+  const on = S.figures && starFadeR > 0.05;
+  if (consLines) {
+    consLines.visible = on;
+    // ยิ่งบินออกไปไกล รูปกลุ่มดาวยิ่งไม่มีความหมาย จึงค่อย ๆ จางลงตามระยะ
+    const fadeOut = 1 - Math.min(1, Math.max(0, (camState.dist / LY - 8) / 90));
+    consLines.material.opacity = 0.24 * starFadeR * fadeOut;
+    if (consLines.material.opacity < 0.012) consLines.visible = false;
+  }
+  if (!on || !consLines.visible) {
+    for (const n of consLabels) n.hidden = true;
+    return;
+  }
+  const W = innerWidth, H = innerHeight;
+  const cand = [];
+  for (let i = 0; i < CONSTELLATIONS.length; i++) {
+    const c = CONSTELLATIONS[i];
+    _cv.set(c.x, c.y, c.z).project(starCam);
+    if (_cv.z > 1 || Math.abs(_cv.x) > 0.96 || Math.abs(_cv.y) > 0.94) continue;
+    cand.push({ i, b: c.b, x: (_cv.x * 0.5 + 0.5) * W, y: (-_cv.y * 0.5 + 0.5) * H });
+  }
+  cand.sort((a, b) => a.b - b.b);
+  const used = [];
+  let k = 0;
+  for (const c of cand) {
+    if (k >= CONS_LABELS) break;
+    if (used.some(u => Math.abs(u.x - c.x) < 120 && Math.abs(u.y - c.y) < 26)) continue;
+    used.push(c);
+    const node = consLabels[k++];
+    const C = CONSTELLATIONS[c.i];
+    node._ci = c.i;
+    node.hidden = false;
+    node.style.left = c.x.toFixed(1) + 'px';
+    node.style.top = c.y.toFixed(1) + 'px';
+    node.querySelector('.nm').textContent = S.lang === 'th' ? C.th : C.la;
+    node.style.opacity = String(0.75 * starFadeR * (consLines.material.opacity / 0.24));
+  }
+  for (; k < CONS_LABELS; k++) consLabels[k].hidden = true;
+}
+
+/* ── ป้ายบอกตำแหน่งในกาแล็กซี ─────────────────────────────────────────
+   ฉากกาแล็กซีเป็นแบบจำลองเชิงศิลป์: จานเอ็กซ์โพเนนเชียล + ดุมกลาง + แขนกังหัน
+   ลอการิทึม 4 แขน (pitch 0.235) แต่ "ตำแหน่งของเรา" เป็นค่าจริง คือดวงอาทิตย์
+   อยู่ห่างใจกลาง 26,000 ปีแสง — และเมื่อไล่รัศมีที่แขนตัดผ่านแนวเดียวกับดวงอาทิตย์
+   จะได้ราว 9,600 · 13,900 · 20,100 · 29,200 ปีแสง ซึ่งเรียงตรงกับโครงสร้างจริง
+   (นอร์มา → สคูตัม–เซนทอรัส → ซาจิตทาเรียส–คารินา → ดวงอาทิตย์ → เพอร์ซิอัส)
+   จึงติดชื่อแขนตามลำดับนั้นได้ โดยระบุไว้ชัดว่ารูปร่างเป็นแบบจำลอง ไม่ใช่แผนที่สำรวจ */
+const GAL_PITCH = 0.235;
+const galMarks = [];
+const galMarkNodes = [];
+
+function buildGalaxyMarks() {
+  // r ที่แขนแต่ละเส้นตัดผ่านแนวอะซิมุทของดวงอาทิตย์ (th = π ในพิกัดของกลุ่มกาแล็กซี)
+  const at = (rSun, dth) => {
+    const th = Math.PI + dth;
+    const r = rSun * Math.exp(GAL_PITCH * dth);
+    return { r, th };
+  };
+  const marks = [
+    { key: 'gCentre', r: 0, th: 0, big: true },
+    { key: 'gNorma', ...at(9.63, -2.0) },
+    { key: 'gScutum', ...at(13.9, 2.0) },
+    { key: 'gSagittarius', ...at(20.15, -1.0) },
+    { key: 'gPerseus', ...at(29.2, 1.0) },
+    { key: 'gSun', r: SUN_R_GAL, th: Math.PI, big: true }
+  ];
+  const P = new THREE.Vector3(
+    Math.cos(29.81 * DEG) * Math.cos(180.02 * DEG),
+    Math.cos(29.81 * DEG) * Math.sin(180.02 * DEG),
+    Math.sin(29.81 * DEG));
+  const C = new THREE.Vector3(
+    Math.cos(-5.54 * DEG) * Math.cos(266.84 * DEG),
+    Math.cos(-5.54 * DEG) * Math.sin(266.84 * DEG),
+    Math.sin(-5.54 * DEG));
+  C.addScaledVector(P, -C.dot(P)).normalize();
+  const Q = new THREE.Vector3().crossVectors(P, C).normalize();
+  for (const m of marks) {
+    const x = m.r * Math.cos(m.th), y = m.r * Math.sin(m.th);
+    galMarks.push({
+      key: m.key, big: !!m.big,
+      v: new THREE.Vector3().addScaledVector(C, x).addScaledVector(Q, y)
+    });
+  }
+
+  // วงโคจรของดวงอาทิตย์รอบใจกลางกาแล็กซี (รอบละราว 230 ล้านปี)
+  const pts = [];
+  for (let i = 0; i <= 180; i++) {
+    const a = i / 180 * Math.PI * 2;
+    pts.push(new THREE.Vector3()
+      .addScaledVector(C, SUN_R_GAL * Math.cos(a))
+      .addScaledVector(Q, SUN_R_GAL * Math.sin(a)));
+  }
+  const ring = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color: 0xffb454, transparent: true, opacity: 0.2, depthWrite: false }));
+  ring.frustumCulled = false;
+  galScene.add(ring);
+  galSunRing = ring;
+
+  for (let i = 0; i < galMarks.length; i++) {
+    const node = el('button', 'lbl gal' + (galMarks[i].big ? ' big' : ''));
+    node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
+    node.hidden = true;
+    labelLayer.appendChild(node);
+    galMarkNodes.push(node);
+  }
+}
+
+let galSunRing = null;
+const _gv = new THREE.Vector3();
+function updateGalaxyMarks() {
+  const t = L();
+  const show = S.galaxy && galFade > 0.12;
+  if (galSunRing) {
+    galSunRing.visible = show;
+    galSunRing.material.opacity = 0.22 * galFade;
+  }
+  if (!show) {
+    for (const n of galMarkNodes) n.hidden = true;
+    return;
+  }
+  const W = innerWidth, H = innerHeight;
+  for (let i = 0; i < galMarks.length; i++) {
+    const m = galMarks[i], node = galMarkNodes[i];
+    _gv.copy(m.v).project(galCam);
+    if (_gv.z > 1 || Math.abs(_gv.x) > 1 || Math.abs(_gv.y) > 1) { node.hidden = true; continue; }
+    node.hidden = false;
+    node.style.left = ((_gv.x * 0.5 + 0.5) * W).toFixed(1) + 'px';
+    node.style.top = ((-_gv.y * 0.5 + 0.5) * H).toFixed(1) + 'px';
+    node.querySelector('.nm').textContent = t[m.key];
+    node.style.opacity = String(Math.min(1, galFade * 1.5));
+  }
+}
+
+/* ── ไกลกว่าทางช้างเผือก ────────────────────────────────────────────────
+   ฉากที่ห้า: 1 หน่วย = 1 ล้านปีแสง มีกาแล็กซีเพื่อนบ้าน กระจุกกาแล็กซี
+   และทรงกลมขอบเอกภพที่สังเกตได้ (รัศมี 46,500 ล้านปีแสง)
+   กล้องอยู่ที่ตำแหน่งจริงของผู้ชม (ทางช้างเผือกอยู่ที่จุดกำเนิด)               */
+const MLY = 1e6;                      // ปีแสงต่อหนึ่งหน่วยของฉากนี้
+const OBS_RADIUS = 46500;             // รัศมีเอกภพที่สังเกตได้ (ล้านปีแสง)
+let deepScene, deepCam, deepFade = 0, obsShell = null;
+const deepNodes = [];
+const deepSprites = [];
+
+function deepGlowTex() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d');
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,252,240,.95)');
+  gr.addColorStop(0.18, 'rgba(226,232,246,.55)');
+  gr.addColorStop(0.48, 'rgba(150,175,220,.16)');
+  gr.addColorStop(1, 'rgba(120,150,200,0)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c);
+}
+
+function buildDeep() {
+  deepScene = new THREE.Scene();
+  deepCam = new THREE.PerspectiveCamera(48, 1, 1e-4, 4e6);
+  deepCam.up.set(0, 0, 1);
+  const tex = deepGlowTex();
+
+  // ทางช้างเผือกเอง อยู่ที่จุดกำเนิดของฉากนี้
+  const all = [{ th: null, en: null, x: 0, y: 0, z: 0, r: 10, home: true }].concat(DEEP);
+  for (const o of all) {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 }));
+    sp.position.set(o.x, o.y, o.z);
+    deepScene.add(sp);
+    deepSprites.push({ sp, o });
+    const node = el('button', 'lbl deep' + (o.home || o.r >= 14 ? ' big' : ''));
+    node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
+    node.hidden = true;
+    node._deep = o;
+    node.addEventListener('click', ev => { ev.stopPropagation(); aimAtDeep(o); });
+    labelLayer.appendChild(node);
+    deepNodes.push(node);
+  }
+
+  const obsNode = el('button', 'lbl deep big');
+  obsNode.id = 'obsLabel';
+  obsNode.innerHTML = '<span class="ring"></span><span class="nm"></span>';
+  obsNode.hidden = true;
+  labelLayer.appendChild(obsNode);
+
+  // ขอบเอกภพที่สังเกตได้: ทรงกลมโปร่งบางที่ล้อมทุกอย่างไว้
+  obsShell = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.SphereGeometry(OBS_RADIUS, 36, 18), 1),
+    new THREE.LineBasicMaterial({ color: 0x4a6f9c, transparent: true, opacity: 0, depthWrite: false }));
+  obsShell.frustumCulled = false;
+  deepScene.add(obsShell);
+}
+
+function aimAtDeep(o) {
+  const p = deepEye;
+  const dx = o.x - p.x, dy = o.y - p.y, dz = o.z - p.z;
+  const r = Math.hypot(dx, dy, dz) || 1;
+  camState.az = Math.atan2(-dy / r, -dx / r);
+  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+}
+
+const deepEye = new THREE.Vector3();
+function updateDeepCam() {
+  // ผู้ชมอยู่ห่างจากดวงอาทิตย์เท่าไร แปลงเป็นหน่วยล้านปีแสง
+  starCameraPos(deepEye);
+  deepEye.multiplyScalar(1 / MLY);
+  deepCam.position.copy(deepEye);
+  deepCam.quaternion.copy(camera.quaternion);
+  const d = Math.max(1e-6, camState.dist / LY / MLY);
+  deepCam.near = Math.max(1e-6, d * 1e-4);
+  deepCam.far = Math.max(2e5, d * 80);
+  deepCam.aspect = camera.aspect;
+  deepCam.updateProjectionMatrix();
+}
+
+const _dv = new THREE.Vector3();
+function updateDeep() {
+  const dMly = camState.dist / LY / MLY;
+  // เริ่มเห็นเพื่อนบ้านตอนออกพ้นทางช้างเผือก (ราวห้าหมื่นปีแสง) และเต็มที่ที่หนึ่งล้านปีแสง
+  deepFade = S.deep ? step01(log10(0.05), log10(1.2), log10(Math.max(1e-12, dMly))) : 0;
+  const on = deepFade > 0.01;
+  const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
+  for (const { sp, o } of deepSprites) {
+    if (!on) { sp.visible = false; continue; }
+    sp.visible = true;
+    const camDist = Math.max(1e-9, sp.position.distanceTo(deepCam.position));
+    // ขนาดที่ใช้วาดคือ r × หนึ่งหมื่นปีแสง แต่ไม่ให้เล็กกว่า 14 พิกเซลบนจอ
+    let size = o.r * 0.01;
+    size = Math.max(size, 18 * camDist / fovK);
+    sp.scale.setScalar(size);
+    sp.material.opacity = deepFade * (o.home ? 0.85 : 0.7);
+  }
+  if (obsShell) {
+    // ขอบเอกภพโผล่เฉพาะตอนที่ถอยออกมาไกลพอจะเห็นทั้งวง
+    const sh = step01(log10(800), log10(20000), log10(Math.max(1e-12, dMly)));
+    obsShell.visible = on && sh > 0.01;
+    obsShell.material.opacity = 0.3 * sh;
+    const node = $('#obsLabel');
+    if (node) {
+      if (!obsShell.visible) node.hidden = true;
+      else {
+        _dv.set(0, 0, OBS_RADIUS).project(deepCam);
+        if (_dv.z > 1 || Math.abs(_dv.x) > 1 || Math.abs(_dv.y) > 1) node.hidden = true;
+        else {
+          node.hidden = false;
+          node.style.left = ((_dv.x * 0.5 + 0.5) * innerWidth).toFixed(1) + 'px';
+          node.style.top = ((-_dv.y * 0.5 + 0.5) * innerHeight).toFixed(1) + 'px';
+          node.querySelector('.nm').textContent = L().obsEdge;
+          node.style.opacity = String(sh);
+        }
+      }
+    }
+  }
+  if (!on) { for (const n of deepNodes) n.hidden = true; return; }
+
+  const W = innerWidth, H = innerHeight;
+  const t = L();
+  const used = [];
+  for (let i = 0; i < deepNodes.length; i++) {
+    const node = deepNodes[i], o = deepSprites[i].o;
+    _dv.set(o.x, o.y, o.z).project(deepCam);
+    if (_dv.z > 1 || Math.abs(_dv.x) > 1 || Math.abs(_dv.y) > 1) { node.hidden = true; continue; }
+    const x = (_dv.x * 0.5 + 0.5) * W, y = (-_dv.y * 0.5 + 0.5) * H;
+    if (used.some(u => Math.abs(u.x - x) < 110 && Math.abs(u.y - y) < 16)) { node.hidden = true; continue; }
+    used.push({ x, y });
+    node.hidden = false;
+    node.style.left = x.toFixed(1) + 'px';
+    node.style.top = y.toFixed(1) + 'px';
+    node.querySelector('.nm').textContent = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
+    node.style.opacity = String(deepFade);
+  }
+}
+
+/* ── ดาวเคราะห์นอกระบบ ──────────────────────────────────────────────────
+   ดาวแม่วาดเป็น "วงแหวนเล็ก" ซ้อนอยู่ในฉากดาวฤกษ์ (พิกัดเดียวกัน หน่วยปีแสง)
+   จึงอ่านได้ว่าเป็นเครื่องหมายกำกับว่าดาวดวงนี้มีดาวเคราะห์ ไม่ใช่ดาวอีกดวง
+   กดแล้วได้ "แผนผังระบบ" ที่วางดาวเคราะห์บนแกนลอการิทึมพร้อมแถบเขตอาศัยได้
+   และแถวเทียบกับระบบสุริยะของเราไว้ข้างล่าง                                 */
+let exoPts = null, exoSel = -1;
+const exoLabels = [];
+const EXO_LABELS = 12;
+
+function exoRingTex() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.strokeStyle = 'rgba(120,240,200,.95)';
+  g.lineWidth = 5;
+  g.beginPath(); g.arc(32, 32, 20, 0, 6.2832); g.stroke();
+  g.strokeStyle = 'rgba(120,240,200,.28)';
+  g.lineWidth = 9;
+  g.beginPath(); g.arc(32, 32, 20, 0, 6.2832); g.stroke();
+  return new THREE.CanvasTexture(c);
+}
+
+function buildExo() {
+  const pos = new Float32Array(EXO.length * 3);
+  for (let i = 0; i < EXO.length; i++) {
+    pos[i * 3] = EXO[i].x; pos[i * 3 + 1] = EXO[i].y; pos[i * 3 + 2] = EXO[i].z;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  exoPts = new THREE.Points(geo, new THREE.ShaderMaterial({
+    uniforms: { map: { value: exoRingTex() }, scale: { value: 1 }, fade: { value: 0 } },
+    vertexShader: `uniform float scale;
+      void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0);
+        gl_PointSize = clamp(scale * 9.0, 5.0, 22.0);
+        gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform sampler2D map; uniform float fade;
+      void main(){ vec4 t = texture2D(map, gl_PointCoord); gl_FragColor = t * fade; }`,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+  }));
+  exoPts.frustumCulled = false;
+  starScene.add(exoPts);
+
+  for (let i = 0; i < EXO_LABELS; i++) {
+    const node = el('button', 'lbl exo');
+    node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
+    node.hidden = true;
+    node.addEventListener('click', ev => { ev.stopPropagation(); if (node._ei != null) selectExo(node._ei); });
+    labelLayer.appendChild(node);
+    exoLabels.push(node);
+  }
+}
+
+function exoName(h) { return h.alt || h.n; }
+
+const _ev = new THREE.Vector3();
+function updateExo() {
+  const on = S.exo && starFadeR > 0.05;
+  if (exoPts) {
+    exoPts.visible = on;
+    exoPts.material.uniforms.fade.value = starFadeR * 0.9;
+    exoPts.material.uniforms.scale.value = Math.min(2, (innerHeight / 900) * (renderer.getPixelRatio() || 1));
+  }
+  if (!on) { for (const n of exoLabels) n.hidden = true; return; }
+  const W = innerWidth, H = innerHeight;
+  const cand = [];
+  for (let i = 0; i < EXO.length; i++) {
+    const h = EXO[i];
+    _ev.set(h.x, h.y, h.z).project(starCam);
+    if (_ev.z > 1 || Math.abs(_ev.x) > 1 || Math.abs(_ev.y) > 1) continue;
+    // เรียงความสำคัญ: ดาวเคราะห์เยอะก่อน แล้วค่อยใกล้ก่อน
+    cand.push({ i, k: -h.p.length * 100 + h.d, x: (_ev.x * 0.5 + 0.5) * W, y: (-_ev.y * 0.5 + 0.5) * H });
+  }
+  cand.sort((a, b) => a.k - b.k);
+  if (exoSel >= 0 && !cand.some(c => c.i === exoSel)) {
+    const h = EXO[exoSel];
+    _ev.set(h.x, h.y, h.z).project(starCam);
+    if (_ev.z <= 1) cand.unshift({ i: exoSel, k: -1e9, x: (_ev.x * 0.5 + 0.5) * W, y: (-_ev.y * 0.5 + 0.5) * H });
+  }
+  const used = [];
+  let k = 0;
+  for (const c of cand) {
+    if (k >= EXO_LABELS) break;
+    if (used.some(u => Math.abs(u.x - c.x) < 100 && Math.abs(u.y - c.y) < 15)) continue;
+    used.push(c);
+    const node = exoLabels[k++];
+    node._ei = c.i;
+    node.hidden = false;
+    node.style.left = c.x.toFixed(1) + 'px';
+    node.style.top = (c.y + 13).toFixed(1) + 'px';
+    node.querySelector('.nm').textContent = exoName(EXO[c.i]) + ' · ' + EXO[c.i].p.length;
+    node.classList.toggle('on', c.i === exoSel);
+    node.style.opacity = String(starFadeR);
+  }
+  for (; k < EXO_LABELS; k++) exoLabels[k].hidden = true;
+}
+
+function pickExo(cx, cy) {
+  if (!S.exo || starFadeR < 0.05) return false;
+  let best = -1, bestD = 16;
+  for (let i = 0; i < EXO.length; i++) {
+    const h = EXO[i];
+    _ev.set(h.x, h.y, h.z).project(starCam);
+    if (_ev.z > 1) continue;
+    const x = (_ev.x * 0.5 + 0.5) * innerWidth, y = (-_ev.y * 0.5 + 0.5) * innerHeight;
+    const d = Math.hypot(x - cx, y - cy);
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  if (best < 0) return false;
+  selectExo(best);
+  return true;
+}
+
+function selectExo(i) {
+  exoSel = i;
+  starSel = -1;
+  syncCrumb();
+  renderInfo();
+}
+
+function aimAtExo(i) {
+  const h = EXO[i];
+  const dx = h.x - starEye.x, dy = h.y - starEye.y, dz = h.z - starEye.z;
+  const r = Math.hypot(dx, dy, dz) || 1;
+  camState.az = Math.atan2(-dy / r, -dx / r);
+  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+}
+
+/* กำลังส่องสว่างของดาวแม่ เทียบดวงอาทิตย์ */
+function exoLum(h) {
+  if (h.lum != null) return Math.pow(10, h.lum);
+  if (h.sr != null && h.teff != null) return h.sr * h.sr * Math.pow(h.teff / 5772, 4);
+  return null;
+}
+
+/* แผนผังระบบ: แกนนอนเป็นลอการิทึมของระยะจากดาวแม่ */
+function exoChart(h) {
+  const t = L();
+  const W = 292, H = 132, pad = 16;
+  const As = h.p.map(p => p.a).filter(a => a != null && a > 0);
+  const lo = Math.min(0.008, As.length ? Math.min(...As) / 2 : 0.01);
+  const hi = Math.max(2.2, As.length ? Math.max(...As) * 1.8 : 3);
+  const L0 = Math.log10(lo), L1 = Math.log10(hi);
+  const X = a => pad + (Math.log10(Math.max(a, lo)) - L0) / (L1 - L0) * (W - 2 * pad);
+  const yStar = 52, ySol = 104;
+  let s = `<svg class="exochart" viewBox="0 0 ${W} ${H}" role="img">`;
+
+  // เขตที่น้ำอาจเป็นของเหลวได้
+  const lum = exoLum(h);
+  if (lum) {
+    const hin = 0.95 * Math.sqrt(lum), hout = 1.37 * Math.sqrt(lum);
+    if (hout > lo && hin < hi) {
+      const x0 = X(Math.max(hin, lo)), x1 = X(Math.min(hout, hi));
+      s += `<rect x="${x0.toFixed(1)}" y="${yStar - 22}" width="${Math.max(1.5, x1 - x0).toFixed(1)}" height="44" class="hz"/>`;
+      s += `<text x="${((x0 + x1) / 2).toFixed(1)}" y="${yStar - 27}" class="hzt" text-anchor="middle">${t.exoHZ}</text>`;
+    }
+  }
+  // แกนของระบบนี้
+  s += `<line x1="${pad}" y1="${yStar}" x2="${W - pad}" y2="${yStar}" class="axis"/>`;
+  for (const tick of [0.01, 0.1, 1, 10]) {
+    if (tick < lo || tick > hi) continue;
+    s += `<line x1="${X(tick).toFixed(1)}" y1="${yStar - 5}" x2="${X(tick).toFixed(1)}" y2="${yStar + 5}" class="axis"/>`;
+    s += `<text x="${X(tick).toFixed(1)}" y="${yStar + 16}" class="tick" text-anchor="middle">${tick} AU</text>`;
+  }
+  s += `<circle cx="${pad - 6}" cy="${yStar}" r="4.5" class="host"/>`;
+  for (const p of h.p) {
+    if (p.a == null) continue;
+    const r = p.re ? Math.max(2.2, Math.min(8.5, 2.3 * Math.pow(p.re, 0.42))) : 3;
+    const cls = p.re == null ? 'pl' : p.re < 1.6 ? 'pl rocky' : p.re < 4 ? 'pl mid' : 'pl giant';
+    s += `<circle cx="${X(p.a).toFixed(1)}" cy="${yStar}" r="${r.toFixed(1)}" class="${cls}"><title>${p.n}</title></circle>`;
+    s += `<text x="${X(p.a).toFixed(1)}" y="${yStar - r - 4}" class="pn" text-anchor="middle">${p.n}</text>`;
+  }
+  // แถวเทียบกับระบบสุริยะ
+  s += `<line x1="${pad}" y1="${ySol}" x2="${W - pad}" y2="${ySol}" class="axis dim"/>`;
+  s += `<text x="${pad}" y="${ySol + 17}" class="tick">${t.exoOurs}</text>`;
+  for (const [nm, a, r] of [['☿', 0.387, 2.4], ['♀', 0.723, 3], ['⊕', 1, 3.1], ['♂', 1.524, 2.6], ['♃', 5.204, 6.5]]) {
+    if (a < lo || a > hi) continue;
+    s += `<circle cx="${X(a).toFixed(1)}" cy="${ySol}" r="${r}" class="pl sol"/>`;
+    s += `<text x="${X(a).toFixed(1)}" y="${ySol - r - 4}" class="pn" text-anchor="middle">${nm}</text>`;
+  }
+  s += `</svg>`;
+  return s;
+}
+
+function renderExoInfo() {
+  const t = L(), h = EXO[exoSel], pane = $('#pane-info');
+  pane.innerHTML = '';
+
+  const head = el('div', 'sec');
+  const hd = el('div', 'obj-head');
+  const sw = el('div', 'obj-swatch');
+  sw.style.setProperty('--glow', '#78f0c8');
+  sw.style.background = 'radial-gradient(circle at 42% 38%, #ffe6a8, rgba(10,15,24,.95) 70%)';
+  const ti = el('div', 'obj-title');
+  ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
+  ti.querySelector('h2').textContent = exoName(h);
+  ti.querySelector('.kind em').style.background = '#78f0c8';
+  ti.querySelector('.kind span').textContent = t.exoSystem + ' · ' + h.p.length + ' ' + t.exoPlanets;
+  hd.append(sw, ti);
+  head.appendChild(hd);
+  if (h.de) {
+    const p = el('p', 'desc');
+    p.textContent = h.de[S.lang];
+    head.appendChild(p);
+  }
+  pane.appendChild(head);
+
+  const chart = el('div', 'sec');
+  chart.innerHTML = `<h3>${t.exoChart}</h3>` + exoChart(h) +
+    `<p class="desc" style="font-size:11.5px">${t.exoChartNote}</p>`;
+  pane.appendChild(chart);
+
+  const rows = [[t.stDist, `${nf(h.d, h.d < 100 ? 2 : 0)}<u>${t.ly}</u>`]];
+  if (h.sp) rows.push([t.stSpec, h.sp]);
+  if (h.teff != null) rows.push([t.exoTeff, `${nf(h.teff, 0)}<u>K</u>`]);
+  const lum = exoLum(h);
+  if (lum != null) rows.push([t.stLum, `${fmtLum(lum)}<u>${t.timesSun}</u>`]);
+  if (h.sm != null) rows.push([t.exoSmass, `${nf(h.sm, 2)}<u>${t.timesSun}</u>`]);
+  const star = el('div', 'sec');
+  star.innerHTML = `<h3>${t.exoHost}</h3><dl class="readout">` +
+    rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
+  pane.appendChild(star);
+
+  const tab = el('div', 'sec');
+  let html = `<h3>${t.exoList}</h3><div class="exotab">`;
+  for (const p of h.p) {
+    const bits = [];
+    if (p.a != null) bits.push(nf(p.a, p.a < 0.1 ? 3 : 2) + ' AU');
+    if (p.per != null) bits.push(nf(p.per, p.per < 10 ? 2 : 0) + ' ' + t.day);
+    if (p.re != null) bits.push(nf(p.re, 2) + ' R⊕');
+    if (p.me != null) bits.push(nf(p.me, p.me < 10 ? 2 : 0) + ' M⊕');
+    if (p.t != null) bits.push(nf(p.t, 0) + ' K');
+    html += `<div class="exorow"><b>${p.n}</b><span>${bits.join(' · ')}</span>` +
+            `<small>${p.y ? p.y + (p.m ? ' · ' + p.m : '') : ''}</small></div>`;
+  }
+  html += `</div>`;
+  tab.innerHTML = html;
+  pane.appendChild(tab);
+
+  const act = el('div', 'sec');
+  const chips = el('div', 'chips');
+  const b1 = el('button', 'chip');
+  b1.textContent = t.stAim;
+  b1.addEventListener('click', () => aimAtExo(exoSel));
+  const b2 = el('button', 'chip');
+  b2.textContent = t.stBack;
+  b2.addEventListener('click', () => { exoSel = -1; syncCrumb(); renderInfo(); });
+  chips.append(b1, b2);
+  act.appendChild(chips);
+  pane.appendChild(act);
+}
+
 /* ══ รูปแบบตัวเลข ════════════════════════════════════════════════════ */
 const nf = (v, d) => v.toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US',
   { minimumFractionDigits: d == null ? 0 : d, maximumFractionDigits: d == null ? 0 : d });
@@ -1549,6 +2436,8 @@ function fmtSpan(km) {
   if (au < 0.02) return nf(km / 1e6, 2) + (S.lang === 'th' ? ' ล้าน กม.' : ' M km');
   if (au < 9000) return nf(au, au < 10 ? 2 : 0) + ' ' + t.au;
   const ly = km / LY;
+  if (ly >= 1e9) return nf(ly / 1e9, ly < 1e10 ? 1 : 0) + ' ' + t.gly;
+  if (ly >= 1e6) return nf(ly / 1e6, ly < 1e7 ? 1 : 0) + ' ' + t.mly;
   return nf(ly, ly < 10 ? 2 : 0) + ' ' + t.ly;
 }
 function fmtLight(km) {
@@ -1589,6 +2478,20 @@ function fmtPeriod(days) {
 
 /* ══ ส่วนติดต่อผู้ใช้ ════════════════════════════════════════════════ */
 function syncCrumb() {
+  if (exoSel >= 0) {
+    const h = EXO[exoSel], t0 = L();
+    $('#crumb').innerHTML = '<i>▸</i><b></b><i>·</i><span></span>';
+    $('#crumb b').textContent = exoName(h);
+    $('#crumb span').textContent = t0.exoSystem;
+    return;
+  }
+  if (starSel >= 0) {
+    const s = STARS[starSel], t0 = L();
+    $('#crumb').innerHTML = '<i>▸</i><b></b><i>·</i><span></span>';
+    $('#crumb b').textContent = (S.lang === 'th' && s.th) ? s.th : s.n;
+    $('#crumb span').textContent = t0.kind.star;
+    return;
+  }
   const rec = REG[trans.on ? trans.to : S.focus];
   const t = L();
   const kind = rec.isMoon ? t.kind.moon : t.kind[rec.def.kind];
@@ -1598,6 +2501,8 @@ function syncCrumb() {
 }
 
 function renderInfo() {
+  if (exoSel >= 0) return renderExoInfo();
+  if (starSel >= 0) return renderStarInfo();
   const t = L();
   const id = trans.on ? trans.to : S.focus;
   const rec = REG[id], def = rec.def;
@@ -1828,7 +2733,7 @@ function renderView() {
     ['orbits', t.vOrbits], ['labels', t.vLabels], ['moons', t.vMoons],
     ['belt', t.vBelt], ['kuiper', t.vKuiper], ['oort', t.vOort],
     ['craft', t.vCraft], ['asteroids', t.vAsteroids], ['comets', t.vComets], ['dwarfs', t.vDwarfs],
-    ['stars', t.vStars], ['galaxy', t.vGalaxy], ['grid', t.vGrid], ['trails', t.vTrails]
+    ['stars', t.vStars], ['figures', t.vFigures], ['exo', t.vExo], ['galaxy', t.vGalaxy], ['deep', t.vDeep], ['grid', t.vGrid], ['trails', t.vTrails]
   ];
   const show = el('div', 'sec');
   show.innerHTML = `<h3>${t.vShow}</h3>`;
@@ -1856,6 +2761,14 @@ function renderView() {
   sn.style.fontSize = '12px';
   sn.textContent = t.smallNote;
   show.appendChild(sn);
+  const cn = el('p', 'desc');
+  cn.style.fontSize = '11.5px';
+  cn.textContent = t.consNote;
+  show.appendChild(cn);
+  const gn = el('p', 'desc');
+  gn.style.fontSize = '11.5px';
+  gn.textContent = t.galNote;
+  show.appendChild(gn);
   pane.appendChild(show);
 
   const size = el('div', 'sec');
@@ -2218,6 +3131,82 @@ function renderFind(filter) {
   ];
   body.innerHTML = '';
   let any = false;
+  // ดาวฤกษ์อยู่คนละทะเบียนกับวัตถุในระบบสุริยะ จึงทำเป็นหมวดของตัวเอง
+  const stHits = [];
+  for (let i = 0; i < STARS.length; i++) {
+    const s = STARS[i];
+    if (!s.th && !/^[A-Za-z’' .-]+$/.test(s.n)) continue;
+    if (q && !(s.n.toLowerCase().includes(q) || (s.th || '').toLowerCase().includes(q))) continue;
+    stHits.push(i);
+    if (stHits.length > 40) break;
+  }
+  const exHits = [];
+  for (let i = 0; i < EXO.length; i++) {
+    const h = EXO[i];
+    if (q && !exoName(h).toLowerCase().includes(q) && !h.n.toLowerCase().includes(q)) continue;
+    exHits.push(i);
+    if (exHits.length > 30) break;
+  }
+  if (exHits.length) {
+    any = true;
+    const g = el('div', 'group', '<h4>' + t.gExo + '</h4>');
+    const grid = el('div', 'hits');
+    for (const i of exHits) {
+      const h = EXO[i];
+      const b = el('button', 'hit', '<em style="color:#78f0c8;background:#78f0c8"></em><span></span>');
+      const sp = b.querySelector('span');
+      sp.innerHTML = '<b></b><small></small>';
+      sp.querySelector('b').textContent = exoName(h);
+      sp.querySelector('small').textContent = h.p.length + ' ' + t.exoPlanets + ' · ' + nf(h.d, h.d < 100 ? 1 : 0) + ' ' + t.ly;
+      b.addEventListener('click', () => { selectExo(i); aimAtExo(i); closeSheets(); });
+      grid.appendChild(b);
+    }
+    g.appendChild(grid);
+    body.appendChild(g);
+  }
+  const cnHits = [];
+  for (let i = 0; i < CONSTELLATIONS.length; i++) {
+    const c = CONSTELLATIONS[i];
+    if (q && !(c.la.toLowerCase().includes(q) || c.th.toLowerCase().includes(q) || c.ab.toLowerCase() === q)) continue;
+    cnHits.push(i);
+    if (cnHits.length > 24) break;
+  }
+  if (cnHits.length) {
+    any = true;
+    const g = el('div', 'group', '<h4>' + t.gCons + '</h4>');
+    const grid = el('div', 'hits');
+    for (const i of cnHits) {
+      const c = CONSTELLATIONS[i];
+      const b = el('button', 'hit', '<em style="color:#8fb4e8;background:#8fb4e8"></em><span></span>');
+      const sp = b.querySelector('span');
+      sp.innerHTML = '<b></b><small></small>';
+      sp.querySelector('b').textContent = S.lang === 'th' ? c.th : c.la;
+      sp.querySelector('small').textContent = S.lang === 'th' ? c.la : c.th;
+      b.addEventListener('click', () => { aimAtCons(i); closeSheets(); });
+      grid.appendChild(b);
+    }
+    g.appendChild(grid);
+    body.appendChild(g);
+  }
+  if (stHits.length) {
+    any = true;
+    const g = el('div', 'group', '<h4>' + t.gStars + '</h4>');
+    const grid = el('div', 'hits');
+    for (const i of stHits) {
+      const s = STARS[i];
+      const hex = '#' + (SP_TINT[s.c] || 0xffd9a0).toString(16).padStart(6, '0');
+      const b = el('button', 'hit',
+        '<em style="color:' + hex + ';background:' + hex + '"></em><span></span>');
+      const sp = b.querySelector('span');
+      sp.innerHTML = '<b></b><small></small>';
+      sp.querySelector('b').textContent = (S.lang === 'th' && s.th) ? s.th : s.n;
+      sp.querySelector('small').textContent = nf(s.d, s.d < 100 ? 1 : 0) + ' ' + t.ly;
+      b.addEventListener('click', () => { selectStar(i); aimAtStar(i); closeSheets(); });
+      grid.appendChild(b);
+    }
+    g.appendChild(grid);
+    body.appendChild(g);
+  }
   for (const [title, ids] of groups) {
     const hits = ids.filter(match);
     if (!hits.length) continue;
@@ -2285,9 +3274,9 @@ function toast(msg) {
    รูปแบบ  #/earth?t=2026-09-10T15:45Z&d=39500&a=0.900,0.420
    ค่าที่ยังเป็นค่าเริ่มต้นจะไม่ถูกเขียนลงลิงก์ ลิงก์จึงสั้นเท่าที่สั้นได้     */
 const LAYER_KEYS = ['orbits', 'labels', 'moons', 'belt', 'kuiper', 'oort', 'stars', 'galaxy', 'grid', 'trails',
-                    'asteroids', 'comets', 'dwarfs', 'craft'];
+                    'asteroids', 'comets', 'dwarfs', 'craft', 'figures', 'deep', 'exo'];
 const LAYER_DEF = { orbits: 1, labels: 1, moons: 1, belt: 1, kuiper: 1, oort: 1, stars: 1, galaxy: 1, grid: 0, trails: 0,
-                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1 };
+                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1 };
 let hashDist = 0;
 
 function buildHash() {
@@ -2425,7 +3414,29 @@ function drawLabelsOnto(g, k) {
     g.shadowBlur = 0; g.shadowOffsetY = 0;
     g.globalAlpha = 1;
   }
+  drawStarLabelsOnto(g, k);
   try { g.letterSpacing = '0px'; } catch (e) {}
+}
+
+/* ป้ายชื่อดาวฤกษ์อยู่คนละชุดกับป้ายวัตถุในระบบสุริยะ ต้องวาดลงภาพแยก */
+function drawStarLabelsOnto(g, k) {
+  g.textBaseline = 'middle';
+  g.textAlign = 'center';
+  for (const node of starLabels.concat(consLabels, galMarkNodes, deepNodes)) {
+    if (node.hidden) continue;
+    const cx = parseFloat(node.style.left) * k, cy = parseFloat(node.style.top) * k;
+    if (!isFinite(cx) || !isFinite(cy)) continue;
+    const size = 9.5 * k;
+    g.font = `400 ${size.toFixed(2)}px "IBM Plex Mono", ui-monospace, monospace`;
+    try { g.letterSpacing = (size * 0.1).toFixed(2) + 'px'; } catch (e) {}
+    g.globalAlpha = Math.max(0.25, Math.min(1, parseFloat(node.style.opacity) || 1));
+    g.fillStyle = node.style.color || '#e8eef7';
+    g.shadowColor = '#000'; g.shadowBlur = 6 * k;
+    g.fillText(node.querySelector('.nm').textContent, cx, cy);
+    g.shadowBlur = 0;
+    g.globalAlpha = 1;
+  }
+  g.textAlign = 'left';
 }
 
 function drawStampOnto(g, k, W, H) {
@@ -2667,6 +3678,11 @@ function loop(now) {
   updateTrails();
   applyCamera();
   updateLabels();
+  updateStarLabels();
+  updateConstellations();
+  updateGalaxyMarks();
+  updateDeep();
+  updateExo();
   renderFrame();
 
   liveT += dt;
@@ -2684,8 +3700,10 @@ function loop(now) {
 /* วาดสามชั้นเรียงจากไกลไปใกล้ — แยกออกมาเพื่อให้ปุ่มบันทึกภาพเรียกซ้ำได้ */
 function renderFrame() {
   renderer.clear();
+  if (deepFade > 0.01) renderer.render(deepScene, deepCam);
   if (galFade > 0.01) renderer.render(galScene, galCam);
   if (starFade > 0.01) renderer.render(skyScene, skyCam);
+  if (starFadeR > 0.01) renderer.render(starScene, starCam);
   renderer.clearDepth();
   renderer.render(scene, camera);
 }
@@ -2721,6 +3739,8 @@ async function boot() {
 
   buildAll();
   buildLabels();
+  buildStarLabels();
+  buildConsLabels();
   initControls();
   initUI();
   applyLang();

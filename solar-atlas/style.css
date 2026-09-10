@@ -47,6 +47,57 @@ button{background:none; border:0; cursor:pointer; padding:0}
 /* วัตถุขนาดเล็ก: ป้ายชื่อเล็กลงหนึ่งขั้นเพื่อไม่ให้แย่งสายตาจากดาวเคราะห์ */
 .lbl.small .nm{font-size:9.5px; color:var(--ink-2); letter-spacing:.06em}
 .lbl.small .ring{width:8px; height:8px; border-width:1px}
+/* ระบบดาวเคราะห์นอกระบบ */
+.lbl.exo{padding:1px 7px}
+.lbl.exo .ring{display:none}
+.lbl.exo .nm{font-size:9px; letter-spacing:.08em; color:#78f0c8; text-transform:none}
+.lbl.exo.on .nm{color:var(--amber)}
+.exochart{width:100%; display:block; margin:2px 0 8px}
+.exochart .axis{stroke:var(--line-2); stroke-width:1}
+.exochart .axis.dim{stroke:var(--line)}
+.exochart .hz{fill:rgba(84,224,182,.16); stroke:rgba(84,224,182,.42); stroke-width:.7}
+.exochart .hzt{font-family:var(--mono); font-size:6.5px; fill:var(--live); letter-spacing:.06em}
+.exochart .tick{font-family:var(--mono); font-size:6.5px; fill:var(--muted)}
+.exochart .pn{font-family:var(--mono); font-size:6.5px; fill:var(--ink-2)}
+.exochart .host{fill:#ffd88a}
+.exochart .pl{fill:#9fb6d4}
+.exochart .pl.rocky{fill:#7fd7a8}
+.exochart .pl.mid{fill:#7fc4e8}
+.exochart .pl.giant{fill:#e8b878}
+.exochart .pl.sol{fill:none; stroke:var(--muted); stroke-width:1}
+.exotab{display:flex; flex-direction:column}
+.exorow{padding:6px 0; border-top:1px solid rgba(122,152,192,.09)}
+.exorow:first-child{border-top:0}
+.exorow b{font-weight:500; font-size:12.5px; color:var(--ink); margin-right:7px}
+.exorow span{font-family:var(--mono); font-size:11px; color:var(--ink-2)}
+.exorow small{display:block; font-family:var(--mono); font-size:9.5px; color:var(--muted)}
+
+/* กาแล็กซีเพื่อนบ้าน */
+.lbl.deep{padding:2px 8px}
+.lbl.deep .ring{width:5px; height:5px; border-color:rgba(200,220,255,.6); box-shadow:none}
+.lbl.deep .nm{font-size:9px; letter-spacing:.12em; color:#c6d6ee; text-transform:none}
+.lbl.deep.big .ring{width:8px; height:8px; border-color:#dbe7fb}
+.lbl.deep.big .nm{font-size:10.5px; color:#eaf1ff}
+.lbl.deep:hover .nm{color:var(--amber)}
+
+/* ป้ายในกาแล็กซี: บอกแขนกังหันและตำแหน่งของเรา */
+.lbl.gal{padding:2px 8px}
+.lbl.gal .ring{width:6px; height:6px; border-color:rgba(255,255,255,.5); box-shadow:none}
+.lbl.gal .nm{font-size:9px; letter-spacing:.16em; color:#c8d6ea; text-transform:none}
+.lbl.gal.big .ring{width:9px; height:9px; border-color:var(--amber); box-shadow:0 0 8px var(--amber)}
+.lbl.gal.big .nm{color:var(--amber); font-size:10px}
+
+/* กลุ่มดาว: ตัวหนังสือจาง ๆ วางกลางกลุ่ม ไม่มีเครื่องหมายนำหน้า */
+.lbl.cons{padding:2px 8px}
+.lbl.cons .ring{display:none}
+.lbl.cons .nm{font-size:9px; letter-spacing:.24em; color:#9fc0ea; font-weight:400}
+.lbl.cons:hover .nm{color:var(--amber)}
+
+/* ดาวฤกษ์: ไม่มีวงกลมนำหน้า เพราะตัวดาวเองคือจุดสว่างอยู่แล้ว */
+.lbl.star{padding:2px 7px}
+.lbl.star .ring{display:none}
+.lbl.star .nm{font-size:9.5px; letter-spacing:.1em; color:inherit; opacity:.95}
+
 /* ยานอวกาศ: เครื่องหมายเป็นสี่เหลี่ยมมุมมน บอกว่าไม่ใช่วัตถุธรรมชาติ */
 .lbl.craft .nm{font-size:10px; color:var(--ink); letter-spacing:.07em}
 .lbl.craft .ring{width:9px; height:9px; border-radius:2px; transform:rotate(45deg)}

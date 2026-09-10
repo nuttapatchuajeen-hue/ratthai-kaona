@@ -690,12 +690,20 @@ const UI = {
     lightTime:'แสงใช้เวลา', timesEarth:'เท่าของโลก',
     vCam:'มุมกล้อง', camNear:'เข้าใกล้', camSys:'ทั้งระบบ', camTop:'จากขั้วเหนือ', camEdge:'ระนาบสุริยวิถี',
     vScale:'มาตราส่วนมุมมอง', viewDist:'ระยะมอง', ly:'ปีแสง',
-    ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี'],
-    ladderNote:'ระบบสุริยะทั้งระบบกว้างไม่ถึงหนึ่งในพันของระยะที่กาแล็กซีกินพื้นที่ — ไล่ปุ่มลงมาทีละขั้นเพื่อดูว่าเล็กแค่ไหน',
+    ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี',
+            'กลุ่มท้องถิ่น','กระจุกกาแล็กซี','เอกภพที่สังเกตได้'],
+    mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · รัศมี 46,500 ล้านปีแสง', vDeep:'กาแล็กซีเพื่อนบ้าน', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)',
+    ladderNote:'ระบบสุริยะทั้งระบบกว้างไม่ถึงหนึ่งในพันของระยะที่กาแล็กซีกินพื้นที่ และกาแล็กซีทั้งใบก็เล็กกว่าเอกภพที่มองเห็นได้อีกหลายแสนเท่า — ไล่ปุ่มลงมาทีละขั้นเพื่อดูว่าเราเล็กแค่ไหน',
     vShow:'สิ่งที่แสดงในฉาก', vOrbits:'เส้นวงโคจร', vLabels:'ชื่อวัตถุ', vMoons:'ดวงจันทร์',
     vBelt:'แถบดาวเคราะห์น้อย', vKuiper:'แถบไคเปอร์', vOort:'เมฆออร์ต',
-    vStars:'ดาวฤกษ์พื้นหลัง', vGalaxy:'ทางช้างเผือก', vGrid:'ระนาบสุริยวิถี',
-    vTrails:'ร่องรอยการเคลื่อนที่ (T)',
+    vStars:'ดาวฤกษ์', vGalaxy:'ทางช้างเผือก', vGrid:'ระนาบสุริยวิถี',
+    vTrails:'ร่องรอยการเคลื่อนที่ (T)', vFigures:'เส้นกลุ่มดาว',
+    gCentre:'ใจกลางกาแล็กซี · หลุมดำ Sgr A*', gSun:'ดวงอาทิตย์อยู่ตรงนี้ · เดือยนายพราน',
+    gNorma:'แขนนอร์มา', gScutum:'แขนสคูตัม–เซนทอรัส',
+    gSagittarius:'แขนซาจิตทาเรียส–คารินา', gPerseus:'แขนเพอร์ซิอัส',
+    galNote:'รูปร่างของทางช้างเผือกในแผนที่นี้เป็นแบบจำลองเชิงศิลป์ (จานเอ็กซ์โพเนนเชียล + ดุมกลาง + แขนกังหันลอการิทึม 4 แขน) ไม่ใช่แผนที่จากการสำรวจ แต่ระยะจากดวงอาทิตย์ถึงใจกลาง 26,000 ปีแสง และลำดับของแขนที่เรียงเข้า-ออกจากตำแหน่งเรานั้นตรงกับที่วัดได้จริง',
+    gCons:'กลุ่มดาว',
+    consNote:'รูปลากเส้นกลุ่มดาวไม่ใช่มาตรฐานสากล สหพันธ์ดาราศาสตร์สากลกำหนดแค่ “ขอบเขต” บนท้องฟ้า ไม่ได้กำหนดว่าต้องลากเส้นเชื่อมดาวดวงไหน เส้นในแผนที่นี้จึงลากขึ้นเองอิงรูปที่ใช้กันทั่วไป และเส้นจะบิดเบี้ยวจริงเมื่อบินออกจากดวงอาทิตย์',
     vAsteroids:'ดาวเคราะห์น้อย', vComets:'ดาวหาง', vDwarfs:'ดาวเคราะห์แคระและวัตถุไกล',
     smallNote:'วัตถุจิ๋วจะโผล่ให้เห็นเมื่อระยะมองใกล้เคียงขนาดวงโคจรของมัน — ซูมเข้าออกแล้วชื่อจะสลับกันขึ้น',
     peri:'ระยะใกล้ดวงอาทิตย์สุด', apo:'ระยะไกลดวงอาทิตย์สุด', sbClass:'ประเภทวงโคจร',
@@ -704,6 +712,22 @@ const UI = {
     vInf:'ความเร็วสุดท้ายเมื่อพ้นระบบสุริยะ',
     gAsteroids:'ดาวเคราะห์น้อย', gDwarfs:'ดาวเคราะห์แคระและวัตถุพ้นดาวเนปจูน',
     gComets:'ดาวหางและวัตถุจากนอกระบบ', gCraft:'ยานอวกาศ',
+    secStar:'ข้อมูลดาวฤกษ์', gStars:'ดาวฤกษ์', gExo:'ระบบดาวเคราะห์นอกระบบ',
+    vExo:'ระบบดาวเคราะห์นอกระบบ', exoSystem:'ระบบดาวเคราะห์นอกระบบ', exoPlanets:'ดวง',
+    exoChart:'ผังระบบเทียบกับของเรา', exoHost:'ดาวแม่', exoList:'ดาวเคราะห์ในระบบนี้',
+    exoTeff:'อุณหภูมิผิวดาวแม่', exoSmass:'มวลดาวแม่', exoHZ:'เขตที่น้ำเป็นของเหลวได้',
+    exoOurs:'ของเรา',
+    exoChartNote:'แกนนอนเป็นสเกลลอการิทึมของระยะจากดาวแม่ ขนาดวงกลมไล่ตามรัศมีของดาวเคราะห์ แถวล่างคือระบบสุริยะของเราวางบนแกนเดียวกันเพื่อเทียบ · แถบเขียวคำนวณจากกำลังส่องสว่างของดาวแม่ เป็นระยะที่น้ำบนพื้นผิวอาจเป็นของเหลวได้ ไม่ได้แปลว่ามีสิ่งมีชีวิต',
+    stDist:'ระยะจากดวงอาทิตย์', stFromHere:'ระยะจากกล้องตอนนี้',
+    stMagApp:'ความสว่างที่เห็นจากตรงนี้', stMagAbs:'ความสว่างสัมบูรณ์',
+    stLum:'กำลังส่องสว่างจริง', timesSun:'เท่าของดวงอาทิตย์', stSpec:'ชนิดสเปกตรัม',
+    stNaked:'มองเห็นด้วยตาเปล่า', yes:'เห็นได้', no:'ไม่เห็น',
+    stLight:'แสงที่เห็นตอนนี้',
+    stLightNote:'แสงที่ตกถึงตาเราตอนนี้ออกจากดาวดวงนี้เมื่อ {ly} ปีก่อน คือราวปี {year} — สิ่งที่เห็นคืออดีตของมัน',
+    stTravel:'ถ้าจะเดินทางไปหา',
+    stTravelNote:'ด้วยความเร็วของยานวอยเอเจอร์ 1 (16.9 กม./วิ) ต้องใช้เวลาราว {yr} ปี',
+    stAim:'หันกล้องไปทางนี้', stBack:'กลับไปดูวัตถุที่เจาะจงอยู่',
+    starHint:'ซูมออกไปให้พ้นระบบสุริยะแล้วคลิกที่ดาวดวงไหนก็ได้ที่มีชื่อ',
     skyWhere:'จุดที่ยืนดู', skyHere:'ตำแหน่งของฉัน', skyMine:'ตำแหน่งของฉัน',
     skyNoGeo:'ขอตำแหน่งไม่สำเร็จ — เลือกเมืองจากรายการแทนได้',
     skyNow:'ท้องฟ้า ณ เวลาที่แสดง',
@@ -756,12 +780,20 @@ const UI = {
     lightTime:'Light takes', timesEarth:'× Earth',
     vCam:'Camera angle', camNear:'Close up', camSys:'Whole system', camTop:'North pole', camEdge:'Edge on',
     vScale:'View scale', viewDist:'View', ly:'ly',
-    ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy'],
-    ladderNote:'The whole solar system spans less than a thousandth of the galaxy — step down the list to feel how small it is.',
+    ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy',
+            'Local Group','Galaxy clusters','Observable universe'],
+    mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · radius 46,500 Mly', vDeep:'Neighbour galaxies', milkyWay:'Milky Way (you are here)',
+    ladderNote:'The whole solar system spans less than a thousandth of the galaxy, and the galaxy is smaller still against the observable universe by a factor of hundreds of thousands — step down the list to feel the scale.',
     vShow:'Scene layers', vOrbits:'Orbit paths', vLabels:'Labels', vMoons:'Moons',
     vBelt:'Asteroid belt', vKuiper:'Kuiper belt', vOort:'Oort cloud',
-    vStars:'Background stars', vGalaxy:'Milky Way', vGrid:'Ecliptic plane',
-    vTrails:'Motion trails (T)',
+    vStars:'Stars', vGalaxy:'Milky Way', vGrid:'Ecliptic plane',
+    vTrails:'Motion trails (T)', vFigures:'Constellation lines',
+    gCentre:'Galactic centre · Sgr A*', gSun:'You are here · Orion Spur',
+    gNorma:'Norma Arm', gScutum:'Scutum–Centaurus Arm',
+    gSagittarius:'Sagittarius–Carina Arm', gPerseus:'Perseus Arm',
+    galNote:'The Milky Way here is a stylised model — an exponential disc, a central bulge and four logarithmic spiral arms — not a survey map. But the Sun’s 26,000 light-year distance from the centre, and the order in which the arms fall inward and outward from us, match the measurements.',
+    gCons:'Constellations',
+    consNote:'Constellation stick figures are not standardised — the IAU defines only the boundaries on the sky, not which stars to join. The lines here were drawn for this atlas following common usage, and they distort for real as you fly away from the Sun.',
     vAsteroids:'Asteroids', vComets:'Comets', vDwarfs:'Dwarf planets & distant objects',
     smallNote:'Small bodies appear when the view distance is comparable to their own orbit — zoom in and out and different names take over.',
     peri:'Perihelion distance', apo:'Aphelion distance', sbClass:'Orbit class',
@@ -770,6 +802,22 @@ const UI = {
     vInf:'Final speed leaving the solar system',
     gAsteroids:'Asteroids', gDwarfs:'Dwarf planets & Trans-Neptunian objects',
     gComets:'Comets & interstellar objects', gCraft:'Spacecraft',
+    secStar:'Star data', gStars:'Stars', gExo:'Exoplanet systems',
+    vExo:'Exoplanet systems', exoSystem:'Exoplanet system', exoPlanets:'planets',
+    exoChart:'The system, next to ours', exoHost:'Host star', exoList:'Planets in this system',
+    exoTeff:'Host temperature', exoSmass:'Host mass', exoHZ:'liquid-water zone',
+    exoOurs:'ours',
+    exoChartNote:'The horizontal axis is a log scale of distance from the star, and circle size follows planet radius. The lower row is our own solar system on the same axis for comparison. The green band is computed from the host’s luminosity — it marks where surface water could stay liquid, not that anything lives there.',
+    stDist:'Distance from the Sun', stFromHere:'Distance from the camera',
+    stMagApp:'Apparent magnitude from here', stMagAbs:'Absolute magnitude',
+    stLum:'True luminosity', timesSun:'× the Sun', stSpec:'Spectral type',
+    stNaked:'Naked-eye visible', yes:'yes', no:'no',
+    stLight:'The light you see now',
+    stLightNote:'The light reaching you now left this star {ly} years ago, around the year {year} — you are looking at its past.',
+    stTravel:'Travelling there',
+    stTravelNote:'At Voyager 1’s speed (16.9 km/s) the trip would take about {yr} years.',
+    stAim:'Point the camera at it', stBack:'Back to the focused object',
+    starHint:'Zoom out past the solar system and click any named star',
     skyWhere:'Where you are standing', skyHere:'Use my location', skyMine:'My location',
     skyNoGeo:'Could not get your location — pick a city from the list instead',
     skyNow:'Sky at the displayed time',
@@ -821,8 +869,10 @@ const ABOUT = {
         ซึ่งเป็นโอเพนซอร์สสัญญาอนุญาต MIT และฟอนต์ IBM Plex สัญญาอนุญาต SIL Open Font License</li>
     <li><b>ตัวเลขคือข้อเท็จจริง</b> องค์ประกอบวงโคจรและข้อมูลกายภาพเป็นค่าที่วัดได้ทางวิทยาศาสตร์
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
-        ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL ที่เปิดให้ทุกคนใช้
-        โดยคัดลอกมาเก็บไว้ในไฟล์ครั้งเดียว ไม่ได้เรียกข้อมูลตอนเปิดหน้าเว็บ</li>
+        ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
+        วิถียานอวกาศจาก JPL Horizons ดาวฤกษ์และกาแล็กซีจากฐานข้อมูล SIMBAD ของ CDS
+        และดาวเคราะห์นอกระบบจากคลังข้อมูลของนาซา — ทั้งหมดเปิดให้ทุกคนใช้ และ
+        คัดลอกมาเก็บไว้ในไฟล์ครั้งเดียว ไม่ได้เรียกข้อมูลตอนเปิดหน้าเว็บ</li>
     <li><b>ไม่ใช้เครื่องหมายขององค์กรใด</b> ไม่มีโลโก้ ชื่อ หรือรูปแบบตราสัญลักษณ์ของหน่วยงานอวกาศใด ๆ
         ซึ่งมักได้รับความคุ้มครองแยกจากลิขสิทธิ์ในฐานะเครื่องหมายการค้า</li>
   </ul>
@@ -836,6 +886,18 @@ const ABOUT = {
   วันที่ดาวหางจะกลับมาใกล้ดวงอาทิตย์อาจคลาดจากที่ประกาศไว้ได้หลายเดือน ตัวอย่างเช่นฮัลเลย์
   ซึ่งของจริงจะกลับมาเดือนกรกฎาคม 2604 แต่แบบจำลองนี้ให้เดือนมกราคม 2605
   รูปร่างและระนาบของวงโคจรยังถูกต้อง — ที่คลาดคือ “ถึงเมื่อไร” ไม่ใช่ “ไปทางไหน”</p>
+
+  <h4>ออกไปไกลกว่าระบบสุริยะ</h4>
+  <p>บันไดมาตราส่วนมีสิบขั้น ไล่จากผิวดาวไปจนถึงขอบเอกภพที่สังเกตได้ ระหว่างทางมีดาวฤกษ์จริง
+  1,356 ดวง เส้นกลุ่มดาว 86 กลุ่ม ป้ายบอกแขนกังหันของทางช้างเผือกกับตำแหน่งของเราในนั้น
+  กาแล็กซีเพื่อนบ้าน 17 แห่ง และดาวเคราะห์นอกระบบ 646 ดวงใน 299 ระบบ
+  ที่กดดูผังเทียบกับระบบสุริยะของเราได้</p>
+
+  <h4>ดาวฤกษ์รอบตัวเป็นของจริง</h4>
+  <p>ดาวทุกดวงที่อยู่ใกล้กว่า 32.6 ปีแสง และดาวสว่างทั้งท้องฟ้ารวม 551 ดวง วางตามตำแหน่งสามมิติจริง
+  จากฐานข้อมูล SIMBAD ของ CDS ความสว่างคำนวณจากระยะถึงกล้อง ดาวจึงหรี่หรือสว่างขึ้นเมื่อเข้าใกล้
+  และเมื่อบินออกจากระบบสุริยะไปไม่กี่ปีแสง รูปกลุ่มดาวจะบิดเบี้ยวจริง เพราะดาวใกล้เลื่อนเร็วกว่าดาวไกล
+  คลิกที่ดาวดวงไหนก็ได้เพื่อดูข้อมูล</p>
 
   <h4>แท็บ “ท้องฟ้า”</h4>
   <p>เลือกจุดที่ยืนบนโลกแล้วดูว่าเวลาที่กำลังแสดงอยู่นั้น ดาวดวงไหนอยู่เหนือขอบฟ้าบ้าง
@@ -884,6 +946,18 @@ const ABOUT = {
   <p>Built on the standard J2000 approximate elements, good to arc-minutes between 1800 and 2050 — fine for
   teaching and presentation, not for flying a spacecraft. Moons use simplified ellipses in their parent’s
   equatorial plane. Body sizes are always true to scale unless “Enlarged” is switched on.</p>
+
+  <h4>Beyond the solar system</h4>
+  <p>The scale ladder now has ten rungs, from a planet’s surface out to the edge of the observable
+  universe. Along the way: 1,356 real stars, 86 constellation figures, labels for the Milky Way’s spiral
+  arms and our place in them, 17 neighbouring galaxies and clusters, and 646 exoplanets in 299 systems,
+  each with a chart placing it beside our own solar system.</p>
+
+  <h4>The stars around you are real</h4>
+  <p>Every star within 32.6 light-years plus every bright star in the sky — 551 in all — placed at true
+  three-dimensional positions from the CDS SIMBAD database. Brightness is computed from the distance to
+  the camera, so stars dim and brighten as you move, and flying a few light-years out visibly distorts the
+  constellations because nearby stars shift faster than distant ones. Click any star for its data.</p>
 
   <h4>The “Sky” tab</h4>
   <p>Pick a place on Earth and see which bodies are above the horizon at the displayed time, how high
