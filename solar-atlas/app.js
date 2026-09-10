@@ -19,6 +19,7 @@ const S = {
   orbits: true, labels: true, moons: true, belt: true, kuiper: true, oort: true,
   stars: true, galaxy: true, grid: false, trails: false,
   asteroids: true, comets: true, dwarfs: true, craft: true, figures: true, deep: true, exo: true,
+  shadows: true,
   enlarge: false,
   measureA: 'earth', measureB: 'mars'
 };
@@ -148,24 +149,145 @@ function craftPos(def, ms, out) {
   return out;
 }
 
-/* ดวงจันทร์ของโลก — สูตรความละเอียดต่ำมาตรฐาน คลาดเคลื่อนระดับลิปดา */
+/* ดวงจันทร์ของโลก — ทฤษฎี ELP-2000/82 ฉบับย่อของ Jean Meeus
+   (Astronomical Algorithms ฉบับที่ 2 บทที่ 47): 60 พจน์สำหรับลองจิจูดและระยะทาง
+   อีก 60 พจน์สำหรับละติจูด แม่นราว 10″ ในลองจิจูด และ 4″ ในละติจูด
+   ผลของสูตรอ้างกับวิษุวัตเฉลี่ย "ของวันนั้น" แต่ดาวเคราะห์ทุกดวงในแผนที่อ้างกรอบ J2000
+   จึงต้องหมุนกลับด้วยการหมุนควง (precession) ก่อนใช้ — ถ้าไม่หมุน ปี 2570 จะคลาดกัน 0.38°
+   ซึ่งเท่ากับดวงจันทร์เดินราว 40 นาที เงาสุริยุปราคาจะเลื่อนไปทั้งทวีป
+   ตัวเลขตรวจกับตัวอย่าง 47.a ของ Meeus และกับ JPL Horizons แล้ว                          */
+
+/* ต่อแถว: D, M, M′, F, Σl (หน่วย 10⁻⁶ องศา), Σr (หน่วย เมตร) */
+const MOON_LR = [
+  0, 0, 1, 0, 6288774, -20905355,    2, 0, -1, 0, 1274027, -3699111,
+  2, 0, 0, 0, 658314, -2955968,      0, 0, 2, 0, 213618, -569925,
+  0, 1, 0, 0, -185116, 48888,        0, 0, 0, 2, -114332, -3149,
+  2, 0, -2, 0, 58793, 246158,        2, -1, -1, 0, 57066, -152138,
+  2, 0, 1, 0, 53322, -170733,        2, -1, 0, 0, 45758, -204586,
+  0, 1, -1, 0, -40923, -129620,      1, 0, 0, 0, -34720, 108743,
+  0, 1, 1, 0, -30383, 104755,        2, 0, 0, -2, 15327, 10321,
+  0, 0, 1, 2, -12528, 0,             0, 0, 1, -2, 10980, 79661,
+  4, 0, -1, 0, 10675, -34782,        0, 0, 3, 0, 10034, -23210,
+  4, 0, -2, 0, 8548, -21636,         2, 1, -1, 0, -7888, 24208,
+  2, 1, 0, 0, -6766, 30824,          1, 0, -1, 0, -5163, -8379,
+  1, 1, 0, 0, 4987, -16675,          2, -1, 1, 0, 4036, -12831,
+  2, 0, 2, 0, 3994, -10445,          4, 0, 0, 0, 3861, -11650,
+  2, 0, -3, 0, 3665, 14403,          0, 1, -2, 0, -2689, -7003,
+  2, 0, -1, 2, -2602, 0,             2, -1, -2, 0, 2390, 10056,
+  1, 0, 1, 0, -2348, 6322,           2, -2, 0, 0, 2236, -9884,
+  0, 1, 2, 0, -2120, 5751,           0, 2, 0, 0, -2069, 0,
+  2, -2, -1, 0, 2048, -4950,         2, 0, 1, -2, -1773, 4130,
+  2, 0, 0, 2, -1595, 0,              4, -1, -1, 0, 1215, -3958,
+  0, 0, 2, 2, -1110, 0,              3, 0, -1, 0, -892, 3258,
+  2, 1, 1, 0, -810, 2616,            4, -1, -2, 0, 759, -1897,
+  0, 2, -1, 0, -713, -2117,          2, 2, -1, 0, -700, 2354,
+  2, 1, -2, 0, 691, 0,               2, -1, 0, -2, 596, 0,
+  4, 0, 1, 0, 549, -1423,            0, 0, 4, 0, 537, -1117,
+  4, -1, 0, 0, 520, -1571,           1, 0, -2, 0, -487, -1739,
+  2, 1, 0, -2, -399, 0,              0, 0, 2, -2, -381, -4421,
+  1, 1, 1, 0, 351, 0,                3, 0, -2, 0, -340, 0,
+  4, 0, -3, 0, 330, 0,               2, -1, 2, 0, 327, 0,
+  0, 2, 1, 0, -323, 1165,            1, 1, -1, 0, 299, 0,
+  2, 0, 3, 0, 294, 0,                2, 0, -1, -2, 0, 8752
+];
+
+/* ต่อแถว: D, M, M′, F, Σb (หน่วย 10⁻⁶ องศา) */
+const MOON_B = [
+  0, 0, 0, 1, 5128122,    0, 0, 1, 1, 280602,     0, 0, 1, -1, 277693,
+  2, 0, 0, -1, 173237,    2, 0, -1, 1, 55413,     2, 0, -1, -1, 46271,
+  2, 0, 0, 1, 32573,      0, 0, 2, 1, 17198,      2, 0, 1, -1, 9266,
+  0, 0, 2, -1, 8822,      2, -1, 0, -1, 8216,     2, 0, -2, -1, 4324,
+  2, 0, 1, 1, 4200,       2, 1, 0, -1, -3359,     2, -1, -1, 1, 2463,
+  2, -1, 0, 1, 2211,      2, -1, -1, -1, 2065,    0, 1, -1, -1, -1870,
+  4, 0, -1, -1, 1828,     0, 1, 0, 1, -1794,      0, 0, 0, 3, -1749,
+  0, 1, -1, 1, -1565,     1, 0, 0, 1, -1491,      0, 1, 1, 1, -1475,
+  0, 1, 1, -1, -1410,     0, 1, 0, -1, -1344,     1, 0, 0, -1, -1335,
+  0, 0, 3, 1, 1107,       4, 0, 0, -1, 1021,      4, 0, -1, 1, 833,
+  0, 0, 1, -3, 777,       4, 0, -2, 1, 671,       2, 0, 0, -3, 607,
+  2, 0, 2, -1, 596,       2, -1, 1, -1, 491,      2, 0, -2, 1, -451,
+  0, 0, 3, -1, 439,       2, 0, 2, 1, 422,        2, 0, -3, -1, 421,
+  2, 1, -1, 1, -366,      2, 1, 0, 1, -351,       4, 0, 0, 1, 331,
+  2, -1, 1, 1, 315,       2, -2, 0, -1, 302,      0, 0, 1, 3, -283,
+  2, 1, 1, -1, -229,      1, 1, 0, -1, 223,       1, 1, 0, 1, 223,
+  0, 1, -2, -1, -220,     2, 1, -1, -1, -220,     1, 0, 1, 1, -185,
+  2, -1, -2, -1, 181,     0, 1, 2, 1, -177,       4, 0, -2, -1, 176,
+  4, -1, -1, -1, 166,     1, 0, 1, -1, -164,      4, 0, 1, -1, 132,
+  1, 0, -1, -1, -119,     4, -1, 0, -1, 115,      2, -2, 0, 1, 107
+];
+
+/* ΔT = TT − UT (วินาที) — นาฬิกาปรมาณูเดินเร็วกว่าการหมุนของโลก
+   ดวงจันทร์เดินราว 1 กม./วินาที ถ้าไม่ชดเชย 69 วินาที เงาจะคลาดราว 70 กม.
+   ค่า 1950–2025 จากการวัดจริง (IERS) หลังจากนั้นเป็นการประมาณ ก่อนหน้าใช้สูตรระยะยาวของ Espenak–Meeus */
+const DELTA_T = [1950, 29.1, 1955, 31.1, 1960, 33.2, 1965, 35.7, 1970, 40.2, 1975, 45.5, 1980, 50.5,
+                 1985, 54.3, 1990, 56.9, 1995, 60.8, 2000, 63.8, 2005, 64.7, 2010, 66.1, 2015, 67.6,
+                 2020, 69.4, 2025, 69.2];
+function deltaT(ms) {
+  const y = 2000 + days(ms) / 365.25;
+  const n = DELTA_T.length;
+  if (y <= DELTA_T[0]) { const u = (y - 1820) / 100; return -20 + 32 * u * u - 4.98; }
+  if (y >= DELTA_T[n - 2]) { const k = y - DELTA_T[n - 2]; return DELTA_T[n - 1] + 0.3 * k + 0.004 * k * k; }
+  for (let i = 0; i < n - 2; i += 2) {
+    if (y < DELTA_T[i + 2]) {
+      const f = (y - DELTA_T[i]) / (DELTA_T[i + 2] - DELTA_T[i]);
+      return DELTA_T[i + 1] + (DELTA_T[i + 3] - DELTA_T[i + 1]) * f;
+    }
+  }
+  return DELTA_T[n - 1];
+}
+
+/* T = ศตวรรษจูเลียนนับจาก J2000 ในเวลา TT → ลองจิจูด/ละติจูด (เรเดียน) กับวิษุวัตของวันนั้น + ระยะ (กม.) */
+function moonEclDate(T) {
+  const T2 = T * T, T3 = T2 * T, T4 = T3 * T;
+  const Lp = (218.3164477 + 481267.88123421 * T - 0.0015786 * T2 + T3 / 538841 - T4 / 65194000) * DEG;
+  const D  = (297.8501921 + 445267.1114034 * T - 0.0018819 * T2 + T3 / 545868 - T4 / 113065000) * DEG;
+  const M  = (357.5291092 + 35999.0502909 * T - 0.0001536 * T2 + T3 / 24490000) * DEG;
+  const Mp = (134.9633964 + 477198.8675055 * T + 0.0087414 * T2 + T3 / 69699 - T4 / 14712000) * DEG;
+  const F  = (93.2720950 + 483202.0175233 * T - 0.0036539 * T2 - T3 / 3526000 + T4 / 863310000) * DEG;
+  const A1 = (119.75 + 131.849 * T) * DEG;
+  const A2 = (53.09 + 479264.290 * T) * DEG;
+  const A3 = (313.45 + 481266.484 * T) * DEG;
+  const E = 1 - 0.002516 * T - 0.0000074 * T2;
+  const ecc = [1, E, E * E];                   // พจน์ที่มี M ต้องคูณ E ตามจำนวนเท่าของ M
+  let sl = 0, sr = 0, sb = 0;
+  for (let i = 0; i < MOON_LR.length; i += 6) {
+    const m = MOON_LR[i + 1];
+    const a = MOON_LR[i] * D + m * M + MOON_LR[i + 2] * Mp + MOON_LR[i + 3] * F;
+    const e = ecc[m < 0 ? -m : m];
+    sl += MOON_LR[i + 4] * e * Math.sin(a);
+    sr += MOON_LR[i + 5] * e * Math.cos(a);
+  }
+  for (let i = 0; i < MOON_B.length; i += 5) {
+    const m = MOON_B[i + 1];
+    const a = MOON_B[i] * D + m * M + MOON_B[i + 2] * Mp + MOON_B[i + 3] * F;
+    sb += MOON_B[i + 4] * ecc[m < 0 ? -m : m] * Math.sin(a);
+  }
+  sl += 3958 * Math.sin(A1) + 1962 * Math.sin(Lp - F) + 318 * Math.sin(A2);
+  sb += -2235 * Math.sin(Lp) + 382 * Math.sin(A3) + 175 * Math.sin(A1 - F) + 175 * Math.sin(A1 + F)
+      + 127 * Math.sin(Lp - Mp) - 115 * Math.sin(Lp + Mp);
+  return { lon: Lp + sl * 1e-6 * DEG, lat: sb * 1e-6 * DEG, r: 385000.56 + sr / 1000, sl, sb, sr };
+}
+
+/* หมุนพิกัดสุริยวิถีจากวิษุวัตของวันนั้น (T) กลับไปกรอบ J2000 — Meeus สมการ 21.5–21.6
+   โดยตั้งยุคเริ่ม = วันนั้น และช่วงเวลา t = −T                                         */
+const ARCSEC = DEG / 3600;
+function eclDateToJ2000(lon, lat, T) {
+  const t = -T, TT = T * T;
+  const eta = ((47.0029 - 0.06603 * T + 0.000598 * TT) * t + (-0.03302 + 0.000598 * T) * t * t + 0.00006 * t * t * t) * ARCSEC;
+  const Pi = 174.876384 * DEG + (3289.4789 * T + 0.60622 * TT - (869.8089 + 0.50491 * T) * t + 0.03536 * t * t) * ARCSEC;
+  const p = ((5029.0966 + 2.22226 * T - 0.000042 * TT) * t + (1.11113 - 0.000042 * T) * t * t - 0.000006 * t * t * t) * ARCSEC;
+  const ce = Math.cos(eta), se = Math.sin(eta), cb = Math.cos(lat), sb = Math.sin(lat);
+  const s = Math.sin(Pi - lon), c = Math.cos(Pi - lon);
+  return [p + Pi - Math.atan2(ce * cb * s - se * sb, cb * c), Math.asin(ce * sb + se * cb * s)];
+}
+
 function lunarPos(ms, out) {
-  const d = days(ms);
-  const Lp = (218.316 + 13.176396 * d) * DEG;
-  const M  = (134.963 + 13.064993 * d) * DEG;
-  const Ms = (357.529 + 0.98560028 * d) * DEG;
-  const F  = (93.272 + 13.229350 * d) * DEG;
-  const D  = (297.850 + 12.190749 * d) * DEG;
-  const lon = Lp + (6.289 * Math.sin(M) - 1.274 * Math.sin(2 * D - M) + 0.658 * Math.sin(2 * D)
-            + 0.214 * Math.sin(2 * M) - 0.186 * Math.sin(Ms) - 0.114 * Math.sin(2 * F)) * DEG;
-  const lat = (5.128 * Math.sin(F) + 0.281 * Math.sin(M + F) - 0.278 * Math.sin(F - M)
-            - 0.173 * Math.sin(F - 2 * D)) * DEG;
-  const r = 385001 - 20905 * Math.cos(M) - 3699 * Math.cos(2 * D - M)
-          - 2956 * Math.cos(2 * D) - 570 * Math.cos(2 * M);
+  const T = (days(ms) + deltaT(ms) / 86400) / 36525;
+  const m = moonEclDate(T);
+  const [lon, lat] = eclDateToJ2000(m.lon, m.lat, T);
   const cb = Math.cos(lat);
-  out.x = r * cb * Math.cos(lon);
-  out.y = r * cb * Math.sin(lon);
-  out.z = r * Math.sin(lat);
+  out.x = m.r * cb * Math.cos(lon);
+  out.y = m.r * cb * Math.sin(lon);
+  out.z = m.r * Math.sin(lat);
   return out;
 }
 
@@ -195,7 +317,7 @@ function satellitePos(m, ms, out) {
 }
 
 /* ══ ฉาก 3 มิติ ══════════════════════════════════════════════════════ */
-let renderer, scene, camera, skyScene, skyCam, sunLight, labelLayer;
+let renderer, scene, camera, skyScene, skyCam, sunLight, craftLight, labelLayer;
 let starFade = 1, galFade = 0;
 const origin = { x: 0, y: 0, z: 0 };          // จุดกำเนิดฉาก = ตำแหน่งเป้าหมาย (กม.)
 const camState = { dist: 0, az: 0.9, el: 0.42, tDist: 0 };
@@ -231,6 +353,10 @@ function initScene() {
 
   sunLight = new THREE.PointLight(0xfff3e0, 2.1, 0, 0);
   scene.add(sunLight);
+  // ไฟนุ่ม ๆ จากทางกล้อง เปิดเฉพาะตอนเข้าไปดูยานใกล้ ๆ ไม่งั้นด้านที่หันหนีดวงอาทิตย์จะมืดสนิท
+  craftLight = new THREE.DirectionalLight(0xdfe8f5, 0);
+  scene.add(craftLight);
+  scene.add(craftLight.target);
   scene.add(new THREE.AmbientLight(0x2a3550, 0.5));
 
   labelLayer = $('#labels');
@@ -694,6 +820,7 @@ function makeBody(def, isMoon) {
   const small = !!def.el;
   const geo = new THREE.SphereGeometry(1, small ? 24 : (isMoon ? 40 : 64), small ? 16 : (isMoon ? 24 : 40));
   const map = small ? texShared(def._tex) : tex(def._tex);
+  def._map = map;                       // เก็บไว้สลับตอนวาดฉบับเต็ม
   let mat;
   if (def.id === 'sun') {
     mat = new THREE.MeshBasicMaterial({ map });
@@ -869,15 +996,13 @@ function refreshOrbit(rec, ms) {
   const seg = rec.lineSeg, arr = rec.line.geometry.attributes.position.array;
   if (rec.isMoon) {
     const m = rec.def;
-    if (m.ecl) {                                  // ดวงจันทร์ของโลก: วงโคจรโดยประมาณ
-      const d = days(ms);
-      const node = (125.08 - 0.0529539 * d) * DEG, inc = m.inc * DEG;
+    if (m.ecl) {                                  // ดวงจันทร์ของโลก: เส้นทางจริงตลอดหนึ่งเดือนดาราคติ
+      const P = 27.321661 * 86400000, q = {};    // ครึ่งเดือนก่อน–หลังเวลาปัจจุบัน ดวงจันทร์จึงอยู่บนเส้นพอดี
       for (let i = 0; i <= seg; i++) {
-        const a = i / seg * 2 * Math.PI;
-        const x = Math.cos(a) * m.a, y = Math.sin(a) * m.a * Math.cos(inc), z = Math.sin(a) * m.a * Math.sin(inc);
-        arr[i * 3] = (x * Math.cos(node) - y * Math.sin(node)) / KMU;
-        arr[i * 3 + 1] = (x * Math.sin(node) + y * Math.cos(node)) / KMU;
-        arr[i * 3 + 2] = z / KMU;
+        lunarPos(ms + (i / seg - 0.5) * P, q);
+        arr[i * 3] = q.x / KMU;
+        arr[i * 3 + 1] = q.y / KMU;
+        arr[i * 3 + 2] = q.z / KMU;
       }
     } else {
       const ci = Math.cos(m.inc * DEG), si = Math.sin(m.inc * DEG);
@@ -996,13 +1121,22 @@ function updateScene() {
       // วงรีของวัตถุเล็กไม่เปลี่ยนตามเวลา วาดครั้งเดียวพอ ส่วนวงโคจรไฮเพอร์โบลา
       // เป็นเส้นเปิดที่ต้องยืดตามตัววัตถุซึ่งวิ่งออกไปเรื่อย ๆ
       const openPath = def.el && def.el.e >= 1;
-      if ((!def.el || openPath) && Math.abs(S.time - rec.lineT) > (rec.isMoon ? 3.15e10 : 1.6e11)) refreshOrbit(rec, S.time);
+      if ((!def.el || openPath) && Math.abs(S.time - rec.lineT) > (def.ecl ? 1.7e8 : rec.isMoon ? 3.15e10 : 1.6e11)) refreshOrbit(rec, S.time);
       rec.line.visible = S.orbits && (rec.craft ? shown : def.el ? smallLineShown(rec) : shown);
     }
     rec.holder.visible = shown;
   }
   updateComets();
+  updateShadows();
   toScene(worldOf('sun'), sunLight.position);
+  // ไฟส่องยาน: แรงขึ้นเมื่อเข้าใกล้ ดับสนิทเมื่อถอยออกไปไกลกว่าราวหนึ่งกิโลเมตร
+  const fo = REG[trans.on ? trans.to : S.focus];
+  if (fo && fo.craft) {
+    const k = 1 - step01(-1, 0.3, log10(Math.max(1e-9, camState.dist)));
+    craftLight.intensity = 1.35 * k;
+    craftLight.position.copy(camera.position).multiplyScalar(1.4);
+    craftLight.target.position.set(0, 0, 0);
+  } else craftLight.intensity = 0;
   gridGroup.visible = S.grid && camState.dist < 900 * AU;
   gridGroup.position.set(-origin.x / KMU, -origin.y / KMU, -origin.z / KMU);
   belt.pts.visible = S.belt && camState.dist < 4000 * AU;
@@ -1125,6 +1259,7 @@ function defaultDist(id) {
 
 function setFocus(id, instant) {
   starSel = -1; exoSel = -1;
+  if (REG[id] && REG[id].craft) requestCraftModel(id);      // โมเดลจริงโหลดตอนนี้
   if (id === S.focus && !trans.on) { camState.dist = defaultDist(id); return; }
   if (instant) {
     S.focus = id; camState.dist = defaultDist(id); trans.on = false;
@@ -1142,7 +1277,7 @@ function setFocus(id, instant) {
 
 const camDir = new THREE.Vector3();
 function applyCamera() {
-  const d = Math.max(1e-4, camState.dist / KMU);
+  const d = Math.max(1e-9, camState.dist / KMU);   // 1e-9 หน่วย = 1 มิลลิเมตร
   const ce = Math.cos(camState.el);
   camera.position.set(d * ce * Math.cos(camState.az), d * ce * Math.sin(camState.az), d * Math.sin(camState.el));
   camera.near = Math.max(1e-9, d * 2e-4);      // 1e-9 หน่วย ≈ 1 มิลลิเมตร
@@ -1260,6 +1395,7 @@ function updateLabels() {
     if (!S.labels || (rec.isMoon && !S.moons)) { node.hidden = true; continue; }
     if (rec.def.el && !rec.holder.visible) { node.hidden = true; continue; }
     if (wide && rec.def.id !== 'sun') { node.hidden = true; continue; }
+    if (rec.def.id === 'sun' && galFade > 0.5) { node.hidden = true; continue; }
     toScene(rec.world, projV);
     const camDist = projV.distanceTo(camera.position);
     projV.project(camera);
@@ -1274,8 +1410,11 @@ function updateLabels() {
       if (sep < 24) { node.hidden = true; continue; }
     }
     node.hidden = false;
-    node.style.left = ((projV.x * 0.5 + 0.5) * W).toFixed(1) + 'px';
-    node.style.top = ((-projV.y * 0.5 + 0.5) * H - Math.max(11, rpx + 13)).toFixed(1) + 'px';
+    const lx = (projV.x * 0.5 + 0.5) * W, ly = (-projV.y * 0.5 + 0.5) * H - Math.max(11, rpx + 13);
+    node.style.left = lx.toFixed(1) + 'px';
+    node.style.top = ly.toFixed(1) + 'px';
+    labelBoxes.push(lx, ly, labelWidth(rec.def.nm[S.lang], 7.6) / 2 + 9, 11);
+    if (rpx > 14) labelBoxes.push(lx, (-projV.y * 0.5 + 0.5) * H, rpx, rpx);   // จานดาวบังดาวฤกษ์ข้างหลัง
     node.classList.toggle('on', rec.def.id === focus);
     node.classList.toggle('dim', rpx < 0.7 && rec.def.id !== focus);
     rec.labelRing.style.display = rpx > 16 ? 'none' : '';
@@ -1311,6 +1450,26 @@ function gmstDeg(ms) { return norm360(280.46061837 + 360.98564736629 * days(ms))
 const _e = V(), _o = V(), _m = V();
 function earthAt(ms) { return planetPos('earth', ms, _e); }
 
+/* เมทริกซ์หมุนควงพิกัดศูนย์สูตร J2000 → วิษุวัตของวันนั้น (IAU 1976, Meeus สมการ 21.2–21.3)
+   เวลาดาราคติวัดจากวิษุวัตของวันนั้น แต่ทั้งแผนที่อ้างกรอบ J2000 ถ้าไม่หมุน ปี 2570 จะคลาด 0.38°
+   (เวลาขึ้น–ตกคลาดราว 1–2 นาที) · หมุนควงวันละ 0.14″ จึงคิดใหม่วันละครั้งพอ              */
+const _prec = { day: NaN, m: new Float64Array(9) };
+function precessMatrix(ms) {
+  const dd = Math.floor(days(ms));
+  if (dd === _prec.day) return _prec.m;
+  _prec.day = dd;
+  const t = dd / 36525, t2 = t * t, t3 = t2 * t;
+  const zeta = (2306.2181 * t + 0.30188 * t2 + 0.017998 * t3) * ARCSEC;
+  const zz = (2306.2181 * t + 1.09468 * t2 + 0.018203 * t3) * ARCSEC;
+  const th = (2004.3109 * t - 0.42665 * t2 - 0.041833 * t3) * ARCSEC;
+  const cz = Math.cos(zeta), sz = Math.sin(zeta), cZ = Math.cos(zz), sZ = Math.sin(zz);
+  const ct = Math.cos(th), st = Math.sin(th), m = _prec.m;
+  m[0] = cZ * ct * cz - sZ * sz;  m[1] = -cZ * ct * sz - sZ * cz;  m[2] = -cZ * st;
+  m[3] = sZ * ct * cz + cZ * sz;  m[4] = -sZ * ct * sz + cZ * cz;  m[5] = -sZ * st;
+  m[6] = st * cz;                 m[7] = -st * sz;                 m[8] = ct;
+  return m;
+}
+
 /* วัตถุอยู่ตรงไหนบนท้องฟ้าของผู้สังเกต
    vec = ตำแหน่งวัตถุในพิกัดสุริยวิถี (กม.) · lat/lon = องศา (ตะวันออกเป็นบวก) */
 function horizonOf(vec, ms, lat, lon, out) {
@@ -1319,6 +1478,9 @@ function horizonOf(vec, ms, lat, lon, out) {
   const x0 = vec.x - e.x, y0 = vec.y - e.y, z0 = vec.z - e.z;
   const ce = Math.cos(OBLIQ), se = Math.sin(OBLIQ);
   let x = x0, y = y0 * ce - z0 * se, z = y0 * se + z0 * ce;
+  const P = precessMatrix(ms);
+  const xq = P[0] * x + P[1] * y + P[2] * z, yq = P[3] * x + P[4] * y + P[5] * z;
+  z = P[6] * x + P[7] * y + P[8] * z; x = xq; y = yq;
   const lst = norm360(gmstDeg(ms) + lon) * DEG;
   const la = lat * DEG, cla = Math.cos(la), sla = Math.sin(la);
   // ย้ายจุดอ้างอิงจากใจกลางโลกมาที่ตัวผู้สังเกตบนผิวโลก
@@ -1451,6 +1613,28 @@ function bisect(f, t0, t1) {
 /* เฟสของดวงจันทร์: d = 0 คือจันทร์ดับ, 180 คือจันทร์เต็มดวง */
 function phaseDiff(ms, target) { return norm180(moonPhaseAngle(ms).d - target); }
 
+/* อุปราคาเกิดจริงไหม: หาเวลาที่ดวงจันทร์เข้าใกล้ดวงอาทิตย์ (หรือจุดตรงข้ามดวงอาทิตย์) ที่สุดในช่วง ±4 ชม.
+   แล้วเทียบกับขนาดจานและกรวยเงาของคืนนั้นจริง ๆ (แนวทาง Meeus บทที่ 54)
+   · สุริยุปราคา: มีสักจุดบนผิวโลกที่เห็นจานซ้อนกัน → ระยะ < พารัลแลกซ์จันทร์ − พารัลแลกซ์ดวงอาทิตย์ + รัศมีจานทั้งสอง
+   · จันทรุปราคา: ดวงจันทร์แตะเงามืดของโลก (ขยาย 2% เผื่อบรรยากาศ) ไม่นับเงามัวที่ตาแทบมองไม่ออก */
+const _ecm = V();
+function eclipseHappens(tm, kind) {
+  const sep = ms => { const d = sepDeg('sun', 'moon', ms); return kind === 'new' ? d : 180 - d; };
+  let a = tm - 4 * 3600000, b = tm + 4 * 3600000;
+  for (let i = 0; i < 36; i++) {                     // ค้นแบบอัตราส่วนทอง
+    const m1 = b - (b - a) * 0.618, m2 = a + (b - a) * 0.618;
+    if (sep(m1) < sep(m2)) b = m2; else a = m1;
+  }
+  const t = (a + b) / 2, d = sep(t);
+  const e = earthAt(t), rs = Math.hypot(e.x, e.y, e.z);
+  lunarPos(t, _ecm);
+  const rm = Math.hypot(_ecm.x, _ecm.y, _ecm.z);
+  const pm = Math.asin(EARTH_R / rm) / DEG, ps = Math.asin(EARTH_R / rs) / DEG;
+  const sm = Math.asin(REG.moon.def.radius / rm) / DEG, ss = Math.asin(REG.sun.def.radius / rs) / DEG;
+  if (kind === 'new') return d < pm - ps + sm + ss;
+  return d < 1.02 * (pm - ss + ps) + sm;
+}
+
 function scanEvents(fromMs, days) {
   const out = [];
   const STEP = 6 * 3600000;
@@ -1466,8 +1650,8 @@ function scanEvents(fromMs, days) {
       if (prev < 0 && cur >= 0 && cur - prev < 90) {
         const tm = bisect(x => phaseDiff(x, target), t - STEP, t);
         const lat = Math.abs(moonPhaseAngle(tm).lat);
-        // ดวงจันทร์ต้องอยู่ใกล้ระนาบสุริยวิถีพอ เงาถึงจะพาดถึงกัน
-        const ecl = kind === 'new' ? (lat < 1.25) : (lat < 0.95);
+        // ดวงจันทร์ต้องอยู่ใกล้ระนาบสุริยวิถีพอ เงาถึงจะพาดถึงกัน — กรองหยาบด้วยละติจูด แล้วคิดกรวยเงาจริง
+        const ecl = lat < 1.7 && eclipseHappens(tm, kind);
         out.push({
           t: tm,
           type: ecl ? (kind === 'new' ? 'eclipseSun' : 'eclipseMoon') : (kind === 'new' ? 'newMoon' : 'fullMoon'),
@@ -1684,6 +1868,7 @@ function updateStarLabels() {
     for (const n of starLabels) n.hidden = true;
     return;
   }
+  const farOut = camState.dist / LY > 20;
   const cand = [];
   for (let i = 0; i < STARS.length; i++) {
     const s = STARS[i];
@@ -1691,6 +1876,7 @@ function updateStarLabels() {
       if (!/^[A-Za-z’' .-]+$/.test(s.n)) continue;      // ข้ามดาวที่มีแต่รหัสแคตาล็อก
       s.named2 = true;
     }
+    if (farOut && !s.th && bayerOf(s)) continue;            // ออกไปไกลแล้ว ป้ายรหัสดาวมีแต่รก
     const r = Math.hypot(s.x - starEye.x, s.y - starEye.y, s.z - starEye.z);
     const m = starAppMag(starAbsMag(s), r);
     if (m > 4.4) continue;                                   // จางเกินกว่าจะเขียนชื่อ
@@ -1704,21 +1890,22 @@ function updateStarLabels() {
     _sv.set(s.x, s.y, s.z).project(starCam);
     if (_sv.z <= 1) cand.unshift({ i: starSel, m: -99, x: (_sv.x * 0.5 + 0.5) * W, y: (-_sv.y * 0.5 + 0.5) * H });
   }
-  const used = [];
   let k = 0;
   for (const c of cand) {
     if (k >= STAR_LABELS) break;
-    // กันป้ายทับกันเอง
-    if (used.some(u => Math.abs(u.x - c.x) < 88 && Math.abs(u.y - c.y) < 15)) continue;
-    used.push(c);
-    const node = starLabels[k++];
     const s = STARS[c.i];
+    const bay = !(S.lang === 'th' && s.th) && bayerOf(s);
+    const txt = (S.lang === 'th' && s.th) ? s.th : (bay || s.n);
+    // กันป้ายทับกันเอง และทับป้ายของระบบอื่นที่จองที่ไว้ก่อน
+    if (!claimLabel(c.x, c.y - 13, labelWidth(txt, 6.7), 17)) continue;
+    const node = starLabels[k++];
     node._si = c.i;
     node.hidden = false;
     node.style.left = c.x.toFixed(1) + 'px';
     node.style.top = (c.y - 13).toFixed(1) + 'px';
     node.style.color = '#' + (SP_TINT[s.c] || 0xffd9a0).toString(16).padStart(6, '0');
-    node.querySelector('.nm').textContent = (S.lang === 'th' && s.th) ? s.th : s.n;
+    node.querySelector('.nm').textContent = txt;
+    node.classList.toggle('bay', !!bay);
     node.classList.toggle('on', c.i === starSel);
     node.style.opacity = String(Math.max(0.3, Math.min(1, (4.6 - c.m) / 3)) * starFadeR);
   }
@@ -1842,13 +2029,48 @@ function fmtLum(x) {
   return x.toExponential(1).replace('e-', ' × 10⁻');
 }
 
+/* ── กันป้ายต่างระบบวางทับกัน ─────────────────────────────────────────────
+   ป้ายวัตถุ ป้ายกาแล็กซี ป้ายกลุ่มดาว และป้ายดาวฤกษ์ ต่างคนต่างคำนวณ จึงเคยซ้อนกันกลางจอ
+   ทุกเฟรมล้างรายการกล่องครั้งเดียว แล้วให้แต่ละระบบ "จองที่" ตามลำดับความสำคัญ
+   กล่องเก็บเป็น [x กลาง, y กลาง, ครึ่งกว้าง, ครึ่งสูง] เรียงต่อกันในอาร์เรย์เดียว       */
+const labelBoxes = [];
+function resetLabelBoxes() { labelBoxes.length = 0; }
+function labelWidth(txt, perChar) { return 18 + txt.length * perChar; }
+function claimLabel(x, y, w, h) {
+  const hw = w / 2, hh = h / 2;
+  for (let i = 0; i < labelBoxes.length; i += 4) {
+    if (Math.abs(labelBoxes[i] - x) < hw + labelBoxes[i + 2] &&
+        Math.abs(labelBoxes[i + 1] - y) < hh + labelBoxes[i + 3]) return false;
+  }
+  labelBoxes.push(x, y, hw, hh);
+  return true;
+}
+
+/* ชื่อดาวที่มีแต่รหัสไบเออร์จาก SIMBAD ("gam Lup") → อักษรกรีกแบบที่นักดาราศาสตร์เขียน ("γ Lup") */
+const GREEK = { alf: 'α', bet: 'β', gam: 'γ', del: 'δ', eps: 'ε', zet: 'ζ', eta: 'η', tet: 'θ',
+  iot: 'ι', kap: 'κ', lam: 'λ', mu: 'μ', nu: 'ν', ksi: 'ξ', omi: 'ο', pi: 'π', rho: 'ρ',
+  sig: 'σ', tau: 'τ', ups: 'υ', phi: 'φ', chi: 'χ', psi: 'ψ', ome: 'ω' };
+function bayerOf(s) {
+  if (s._bay === undefined) {
+    // ตัวย่อกลุ่มดาวมีตัวใหญ่ปน (TrA, CMa) · ดาวบางดวงใช้อักษรละตินแทนกรีก (d Cen)
+    const m = /^([a-z]{1,3})\.?\s+([A-Z][A-Za-z]{2})$/.exec(s.n);
+    s._bay = m ? (GREEK[m[1]] || m[1]) + ' ' + m[2] : null;
+  }
+  return s._bay;
+}
+
 /* ── เส้นกลุ่มดาว ────────────────────────────────────────────────────────
    ลากเส้นเชื่อมดาวจริงในฉากเดียวกับดาว (starScene) จุดปลายเส้นคือตำแหน่งดาวจริง
    ไม่ใช่รูปที่แปะไว้บนทรงกลมท้องฟ้า — พอบินออกจากดวงอาทิตย์ เส้นจะยืดและ
-   รูปกลุ่มดาวจะบิดเบี้ยวไปเองตามจริง                                          */
-let consLines = null;
+   รูปกลุ่มดาวจะบิดเบี้ยวไปเองตามจริง
+   มองจากนอกระบบสุริยะจึงเห็นแบบเดียวกับ NASA Eyes: เส้นสีฟ้าพุ่งกระจายรอบดวงอาทิตย์
+   เพราะดาวในกลุ่มเดียวกันอยู่ห่างเราต่างกันเป็นร้อยปีแสง ส่วนที่อยู่ใกล้กล้องจะสว่างกว่า
+   ส่วนที่ลึกเข้าไปด้านหลัง เส้นคงอยู่จนดาวจริงจางหายตอนเข้าสู่ฉากกาแล็กซี             */
+let consLines = null, consBase = null;
+const consLast = { x: NaN, y: NaN, z: NaN, o: NaN };
 const consLabels = [];
-const CONS_LABELS = 16;
+const CONS_LABELS = 30;
+const CONS_RGB = [0.33, 0.62, 1.0];
 
 function buildConstellations() {
   const segs = [];
@@ -1860,12 +2082,31 @@ function buildConstellations() {
     const s = STARS[segs[i]];
     pos[i * 3] = s.x; pos[i * 3 + 1] = s.y; pos[i * 3 + 2] = s.z;
   }
+  consBase = pos;
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
   consLines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({
-    color: 0x6f93c9, transparent: true, opacity: 0.22, depthWrite: false }));
+    vertexColors: true, transparent: true, opacity: 0.24, depthWrite: false, depthTest: false,
+    blending: THREE.AdditiveBlending }));
   consLines.frustumCulled = false;
   starScene.add(consLines);
+}
+
+/* ความสว่างรายจุด: ใกล้กล้องสว่าง ลึกเข้าไปจางลง (คิดใหม่เฉพาะตอนกล้องขยับ) */
+function shadeConsLines(out, dly) {
+  if (consLast.x === starEye.x && consLast.y === starEye.y && consLast.z === starEye.z &&
+      Math.abs(consLast.o - out) < 0.002) return;
+  consLast.x = starEye.x; consLast.y = starEye.y; consLast.z = starEye.z; consLast.o = out;
+  const col = consLines.geometry.attributes.color, a = col.array, p = consBase;
+  const ref = Math.max(3, dly);
+  for (let i = 0; i < a.length; i += 3) {
+    const dv = Math.hypot(p[i] - starEye.x, p[i + 1] - starEye.y, p[i + 2] - starEye.z);
+    const near = Math.min(1, 1.35 / (1 + 0.45 * dv / ref));
+    const k = 1 - out + out * near;
+    a[i] = CONS_RGB[0] * k; a[i + 1] = CONS_RGB[1] * k; a[i + 2] = CONS_RGB[2] * k;
+  }
+  col.needsUpdate = true;
 }
 
 function buildConsLabels() {
@@ -1892,19 +2133,22 @@ function aimAtCons(i) {
 
 const _cv = new THREE.Vector3();
 function updateConstellations() {
-  const on = S.figures && starFadeR > 0.05;
+  const dly = camState.dist / LY;
+  // 0 = อยู่ในระบบสุริยะ เห็นเป็นรูปบนท้องฟ้า · 1 = ออกมามองจากข้างนอก เห็นเป็นโครงสามมิติ
+  const out = step01(log10(0.05), log10(3), log10(Math.max(1e-12, dly)));
+  const reach = Math.min(1, starFadeR * 1.6);
+  const on = S.figures && reach > 0.03;
   if (consLines) {
     consLines.visible = on;
-    // ยิ่งบินออกไปไกล รูปกลุ่มดาวยิ่งไม่มีความหมาย จึงค่อย ๆ จางลงตามระยะ
-    const fadeOut = 1 - Math.min(1, Math.max(0, (camState.dist / LY - 8) / 90));
-    consLines.material.opacity = 0.24 * starFadeR * fadeOut;
-    if (consLines.material.opacity < 0.012) consLines.visible = false;
+    consLines.material.opacity = (0.24 + 0.61 * out) * reach;
+    if (on) shadeConsLines(out, dly);
   }
-  if (!on || !consLines.visible) {
+  if (!on) {
     for (const n of consLabels) n.hidden = true;
     return;
   }
   const W = innerWidth, H = innerHeight;
+  const far = out > 0.5, th = S.lang === 'th';
   const cand = [];
   for (let i = 0; i < CONSTELLATIONS.length; i++) {
     const c = CONSTELLATIONS[i];
@@ -1913,22 +2157,34 @@ function updateConstellations() {
     cand.push({ i, b: c.b, x: (_cv.x * 0.5 + 0.5) * W, y: (-_cv.y * 0.5 + 0.5) * H });
   }
   cand.sort((a, b) => a.b - b.b);
-  const used = [];
+  const limit = far ? CONS_LABELS : 16;
+  const perChar = far ? (th ? 6.4 : 11.2) : (th ? 5.2 : 7.2);
+  const alpha = String((0.62 + 0.3 * out) * reach);
   let k = 0;
   for (const c of cand) {
-    if (k >= CONS_LABELS) break;
-    if (used.some(u => Math.abs(u.x - c.x) < 120 && Math.abs(u.y - c.y) < 26)) continue;
-    used.push(c);
-    const node = consLabels[k++];
+    if (k >= limit) break;
     const C = CONSTELLATIONS[c.i];
+    const txt = th ? C.th : C.la;
+    if (!claimLabel(c.x, c.y, labelWidth(txt, perChar), far ? 22 : 16)) continue;
+    const node = consLabels[k++];
     node._ci = c.i;
     node.hidden = false;
+    node.classList.toggle('far', far);
+    node.classList.toggle('th', th);
     node.style.left = c.x.toFixed(1) + 'px';
     node.style.top = c.y.toFixed(1) + 'px';
-    node.querySelector('.nm').textContent = S.lang === 'th' ? C.th : C.la;
-    node.style.opacity = String(0.75 * starFadeR * (consLines.material.opacity / 0.24));
+    const nm = node.querySelector('.nm');
+    if (nm.textContent !== txt) nm.textContent = txt;
+    node.style.opacity = alpha;
   }
   for (; k < CONS_LABELS; k++) consLabels[k].hidden = true;
+}
+
+/* ลำดับการจองที่ของป้าย: ในระบบสุริยะให้ชื่อดาวฤกษ์มาก่อน
+   ออกมานอกระบบแล้วให้ชื่อกลุ่มดาวมาก่อน (แบบ Eyes) */
+function updateSkyLabels() {
+  if (camState.dist / LY > 0.3) { updateConstellations(); updateStarLabels(); }
+  else { updateStarLabels(); updateConstellations(); }
 }
 
 /* ── ป้ายบอกตำแหน่งในกาแล็กซี ─────────────────────────────────────────
@@ -2006,7 +2262,8 @@ function updateGalaxyMarks() {
   const show = S.galaxy && galFade > 0.12;
   if (galSunRing) {
     galSunRing.visible = show;
-    galSunRing.material.opacity = 0.22 * galFade;
+    // วงนี้ผ่านตัวเราพอดี มองจากใกล้ ๆ จึงกลายเป็นเส้นตรงพาดทั้งจอ ให้โผล่เมื่อถอยไกลจนเห็นเป็นวง
+    galSunRing.material.opacity = 0.22 * galFade * step01(log10(800), log10(5000), log10(Math.max(1e-12, camState.dist / LY)));
   }
   if (!show) {
     for (const n of galMarkNodes) n.hidden = true;
@@ -2017,9 +2274,11 @@ function updateGalaxyMarks() {
     const m = galMarks[i], node = galMarkNodes[i];
     _gv.copy(m.v).project(galCam);
     if (_gv.z > 1 || Math.abs(_gv.x) > 1 || Math.abs(_gv.y) > 1) { node.hidden = true; continue; }
+    const gx = (_gv.x * 0.5 + 0.5) * W, gy = (-_gv.y * 0.5 + 0.5) * H;
+    if (!claimLabel(gx, gy, labelWidth(t[m.key], 7.6) + 14, 18)) { node.hidden = true; continue; }
     node.hidden = false;
-    node.style.left = ((_gv.x * 0.5 + 0.5) * W).toFixed(1) + 'px';
-    node.style.top = ((-_gv.y * 0.5 + 0.5) * H).toFixed(1) + 'px';
+    node.style.left = gx.toFixed(1) + 'px';
+    node.style.top = gy.toFixed(1) + 'px';
     node.querySelector('.nm').textContent = t[m.key];
     node.style.opacity = String(Math.min(1, galFade * 1.5));
   }
@@ -2244,18 +2503,17 @@ function updateExo() {
     _ev.set(h.x, h.y, h.z).project(starCam);
     if (_ev.z <= 1) cand.unshift({ i: exoSel, k: -1e9, x: (_ev.x * 0.5 + 0.5) * W, y: (-_ev.y * 0.5 + 0.5) * H });
   }
-  const used = [];
   let k = 0;
   for (const c of cand) {
     if (k >= EXO_LABELS) break;
-    if (used.some(u => Math.abs(u.x - c.x) < 100 && Math.abs(u.y - c.y) < 15)) continue;
-    used.push(c);
+    const txt = exoName(EXO[c.i]) + ' · ' + EXO[c.i].p.length;
+    if (!claimLabel(c.x, c.y + 13, labelWidth(txt, 5.9), 14)) continue;
     const node = exoLabels[k++];
     node._ei = c.i;
     node.hidden = false;
     node.style.left = c.x.toFixed(1) + 'px';
     node.style.top = (c.y + 13).toFixed(1) + 'px';
-    node.querySelector('.nm').textContent = exoName(EXO[c.i]) + ' · ' + EXO[c.i].p.length;
+    node.querySelector('.nm').textContent = txt;
     node.classList.toggle('on', c.i === exoSel);
     node.style.opacity = String(starFadeR);
   }
@@ -2417,6 +2675,220 @@ function renderExoInfo() {
   pane.appendChild(act);
 }
 
+/* ── โมเดลยานจากไฟล์ glTF ของ NASA ────────────────────────────────────
+   ยานสามลำมีโมเดลสามมิติที่ NASA เผยแพร่ให้ใช้ได้ (ดู models/README.md)
+   โหลด "เมื่อผู้ใช้เจาะจงยานลำนั้น" เท่านั้น ไม่ได้โหลดตอนเปิดหน้า
+   ระหว่างรอ (หรือถ้าโหลดไม่ได้) ใช้โมเดลที่ปั้นด้วยโค้ดไปก่อน — ไฟล์เดียวจบ
+   ที่ไม่มีโฟลเดอร์ models/ จึงยังทำงานได้ตามปกติ
+   ไฟล์ต้นทางวางแกนกันคนละแบบ จึงต้องจัดกึ่งกลาง ปรับมาตราส่วนตามขนาดจริง
+   และหมุนให้ด้านที่ต้อง "หันเข้าหาเป้าหมาย" ชี้ไปทาง +Z เหมือนโมเดลที่ปั้นเอง */
+const HALF_PI = Math.PI / 2;
+const GLTF_SRC = {
+  // ค่าการหมุนหาจากการลองวางจริง: หมุนแล้วด้านที่ต้องหันเข้าเป้าหมาย (จานสื่อสาร
+  // หรือโล่กันความร้อน) ต้องมาอยู่ทาง +Z เหมือนโมเดลที่ปั้นเอง
+  voyager1:    { file: 'models/voyager.glb',      rot: [-HALF_PI, 0, 0] },
+  voyager2:    { file: 'models/voyager.glb',      rot: [-HALF_PI, 0, 0] },
+  newhorizons: { file: 'models/new-horizons.glb', rot: [-HALF_PI, 0, 0] },
+  parker:      { file: 'models/parker.glb',       rot: [Math.PI, 0, 0] }
+};
+const gltfCache = {};          // ไฟล์ → Promise ของฉากที่โหลดแล้ว
+let gltfLoader = null, gltfLoaderTried = false;
+
+function ensureGltfLoader() {
+  if (gltfLoaderTried) return Promise.resolve(gltfLoader);
+  gltfLoaderTried = true;
+  return new Promise(resolve => {
+    if (THREE.GLTFLoader) { gltfLoader = new THREE.GLTFLoader(); return resolve(gltfLoader); }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+    s.onload = () => { gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader() : null; resolve(gltfLoader); };
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+}
+
+/* จัดโมเดลให้อยู่กึ่งกลาง ขนาดเท่าของจริง และหันหน้าถูกทาง */
+function fitCraftModel(obj, def, rot) {
+  const g = new THREE.Group();
+  const inner = new THREE.Group();
+  inner.add(obj);
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = new THREE.Vector3(), ctr = new THREE.Vector3();
+  box.getSize(size); box.getCenter(ctr);
+  obj.position.sub(ctr);                                   // ย้ายจุดกึ่งกลางมาที่ศูนย์
+  const longest = Math.max(size.x, size.y, size.z) || 1;
+  inner.scale.setScalar(def.span / longest);               // โมเดลของเราใช้หน่วยเมตร
+  if (rot) inner.rotation.set(rot[0], rot[1], rot[2]);
+  g.add(inner);
+  obj.traverse(o => {
+    if (!o.isMesh) return;
+    o.frustumCulled = false;
+    const m = o.material;
+    if (m && m.map) m.map.encoding = THREE.sRGBEncoding;
+    if (m && m.emissive) m.emissiveIntensity = 0.35;
+  });
+  return g;
+}
+
+/* เรียกตอนที่ยานลำนี้กลายเป็นเป้าหมาย */
+function requestCraftModel(id) {
+  const src = GLTF_SRC[id];
+  const rec = REG[id];
+  if (!src || !rec || rec.gltfDone) return;
+  rec.gltfDone = true;                                     // ขอครั้งเดียวพอ
+  ensureGltfLoader().then(loader => {
+    if (!loader) return;
+    if (!gltfCache[src.file]) {
+      gltfCache[src.file] = new Promise((res, rej) =>
+        loader.load(src.file, gltf => res(gltf.scene), undefined, rej));
+    }
+    gltfCache[src.file].then(scene => {
+      const model = fitCraftModel(scene.clone(true), rec.def, src.rot);
+      rec.spin.remove(rec.mesh);
+      rec.spin.add(model);
+      rec.mesh = model;
+      rec.usingGltf = true;
+      if ((trans.on ? trans.to : S.focus) === id) renderInfo();
+    }).catch(() => { rec.gltfDone = false; });              // โหลดไม่ได้ก็ใช้ของเดิมต่อไป
+  });
+}
+
+/* ── เงาที่ทอดลงบนดาวจริง ─────────────────────────────────────────────
+   สามอย่างที่คำนวณในเชเดอร์ ไม่ได้ใช้ shadow map (ซึ่งรับช่วงมาตราส่วน
+   ตั้งแต่เมตรถึงพันล้านกิโลเมตรไม่ไหว):
+     1. เงาวงแหวนทาบลงบนตัวดาว — แถบมืดพาดดาวเสาร์ที่ทุกคนจำได้
+     2. เงาตัวดาวทาบลงบนวงแหวน — ส่วนของวงแหวนที่ลับหลังดาวจะมืดลง
+     3. เงาดวงจันทร์ทาบลงบนดาวแม่ — คือสุริยุปราคาเมื่อมองจากอวกาศ
+   ทุกอย่างคิดในพิกัดของตัวดาวเอง โดยใช้ "รัศมีดาว" เป็นหน่วย ทำให้ตัวเลข
+   ในเชเดอร์อยู่ราว ๆ 1 เสมอ ไม่ว่าดาวจะใหญ่แค่ไหน                        */
+const MAX_SHADOW_MOONS = 4;
+
+function injectShadowShader(mat, hasRing) {
+  mat.userData.sh = {
+    uSunL:   { value: new THREE.Vector3(1, 0, 0) },
+    uRing:   { value: new THREE.Vector2(hasRing ? hasRing[0] : 0, hasRing ? hasRing[1] : 0) },
+    uMoons:  { value: Array.from({ length: MAX_SHADOW_MOONS }, () => new THREE.Vector4(0, 0, 0, 0)) },
+    uMoonN:  { value: 0 },
+    uSunA:   { value: 0.0047 }               // รัศมีเชิงมุมของดวงอาทิตย์เมื่อมองจากดาวดวงนี้ (เรเดียน)
+  };
+  mat.onBeforeCompile = shader => {
+    Object.assign(shader.uniforms, mat.userData.sh);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vPosL;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPosL = position;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+        varying vec3 vPosL;
+        uniform vec3 uSunL;
+        uniform vec2 uRing;
+        uniform vec4 uMoons[${MAX_SHADOW_MOONS}];
+        uniform int uMoonN;
+        uniform float uSunA;`)
+      .replace('#include <tonemapping_fragment>', `
+        float shade = 1.0;
+        if (uRing.y > 0.0 && abs(uSunL.y) > 0.0001) {
+          float t = -vPosL.y / uSunL.y;                 // เดินจากผิวดาวไปหาดวงอาทิตย์ จนตัดระนาบวงแหวน
+          if (t > 0.0) {
+            vec3 q = vPosL + uSunL * t;
+            float r = length(q.xz);
+            float edge = smoothstep(0.0, 0.06, min(r - uRing.x, uRing.y - r));
+            if (r > uRing.x && r < uRing.y) shade *= mix(1.0, 0.30, edge);
+          }
+        }
+        for (int i = 0; i < ${MAX_SHADOW_MOONS}; i++) {
+          if (i >= uMoonN) break;
+          vec3 m = uMoons[i].xyz;
+          float rad = uMoons[i].w;
+          float tm = dot(m - vPosL, uSunL);             // ดวงจันทร์ต้องอยู่ "ระหว่าง" จุดนี้กับดวงอาทิตย์
+          if (tm > 0.0) {
+            float d = length((vPosL + uSunL * tm) - m);
+            // ดวงอาทิตย์ไม่ใช่จุด เงาจึงบานออกตามระยะ: ขอบเงามัว = รัศมีจันทร์ + ระยะ × รัศมีเชิงมุมดวงอาทิตย์
+            float spread = tm * uSunA;
+            float umb = rad - spread, pen = rad + spread;
+            float core = umb > 0.0 ? 0.05 : 1.0 - 0.94 * clamp((rad * rad) / max(spread * spread, 1e-12), 0.0, 1.0);
+            shade *= mix(core, 1.0, smoothstep(max(umb, 0.0), pen, d));
+          }
+        }
+        gl_FragColor.rgb *= shade;
+        #include <tonemapping_fragment>`);
+  };
+  mat.needsUpdate = true;
+}
+
+/* วงแหวน: ส่วนที่ลับหลังดาวต้องมืดลง */
+function injectRingShadow(mat, Rscene) {
+  mat.userData.sh = {
+    uSunL: { value: new THREE.Vector3(1, 0, 0) },
+    uPr:   { value: Rscene }                      // รัศมีดาวในหน่วยฉาก ใช้แปลงพิกัดวงแหวนให้เป็นหน่วยรัศมีดาว
+  };
+  mat.onBeforeCompile = shader => {
+    Object.assign(shader.uniforms, mat.userData.sh);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vRingP;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvRingP = position;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vRingP;\nuniform vec3 uSunL;\nuniform float uPr;')
+      .replace('#include <tonemapping_fragment>', `
+        vec3 rp = vec3(vRingP.x, 0.0, vRingP.y) / uPr;  // RingGeometry อยู่ระนาบ XY จึงสลับแกน แล้วหารด้วยรัศมีดาว
+        float tp = dot(-rp, uSunL);
+        if (tp > 0.0) {
+          float d = length(rp + uSunL * tp);
+          gl_FragColor.rgb *= mix(0.18, 1.0, smoothstep(0.94, 1.06, d));
+        }
+        #include <tonemapping_fragment>`);
+  };
+  mat.needsUpdate = true;
+}
+
+/* อัปเดตทิศดวงอาทิตย์และตำแหน่งดวงจันทร์ (หน่วย = รัศมีดาว) ทุกเฟรม */
+const _sw = new THREE.Vector3(), _sq = new THREE.Quaternion(), _mv = new THREE.Vector3();
+function updateShadows() {
+  if (!S.shadows) return;
+  for (const rec of shadowRecs) {
+    const sh = rec.mesh.material.userData.sh;
+    if (!sh) continue;
+    const w = rec.world;
+    _sw.set(-w.x, -w.y, -w.z).normalize();               // ดวงอาทิตย์อยู่ที่จุดกำเนิดของพิกัดโลก
+    rec.spin.getWorldQuaternion(_sq).invert();
+    _sw.applyQuaternion(_sq);
+    sh.uSunL.value.copy(_sw);
+    sh.uSunA.value = REG.sun.def.radius / Math.max(1, Math.hypot(w.x, w.y, w.z));
+    if (rec.ringMat && rec.ringMat.userData.sh) rec.ringMat.userData.sh.uSunL.value.copy(_sw);
+
+    let n = 0;
+    const Rkm = rec.def.radius * ((S.enlarge && rec.def.id !== 'sun') ? 25 : 1);
+    for (const mid of rec.shadowMoons) {
+      if (n >= MAX_SHADOW_MOONS) break;
+      const mw = worldOf(mid), md = REG[mid].def;
+      _mv.set(mw.x - w.x, mw.y - w.y, mw.z - w.z).multiplyScalar(1 / Rkm).applyQuaternion(_sq);
+      sh.uMoons.value[n].set(_mv.x, _mv.y, _mv.z, md.radius / Rkm);
+      n++;
+    }
+    sh.uMoonN.value = S.moons ? n : 0;
+    if (rec.clouds && rec.clouds.material.userData.sh) {
+      const cs = rec.clouds.material.userData.sh;
+      cs.uSunL.value.copy(sh.uSunL.value); cs.uSunA.value = sh.uSunA.value; cs.uMoonN.value = sh.uMoonN.value;
+      for (let i = 0; i < MAX_SHADOW_MOONS; i++) cs.uMoons.value[i].copy(sh.uMoons.value[i]);
+    }
+  }
+}
+
+const shadowRecs = [];
+function setupShadows() {
+  for (const b of BODIES) {
+    if (b.id === 'sun') continue;
+    const rec = REG[b.id];
+    const ring = RINGS[b.id];
+    const moons = MOONS.filter(m => m.parent === b.id).map(m => m.id).slice(0, MAX_SHADOW_MOONS);
+    if (!ring && !moons.length) continue;
+    injectShadowShader(rec.mesh.material, ring ? [ring.in, ring.out] : null);
+    if (rec.clouds) injectShadowShader(rec.clouds.material, null);   // ชั้นเมฆก็ต้องมืดตามเงาดวงจันทร์
+    if (rec.ring) { injectRingShadow(rec.ring.material, rec.R); rec.ringMat = rec.ring.material; }
+    rec.shadowMoons = moons;
+    shadowRecs.push(rec);
+  }
+}
+
 /* ══ รูปแบบตัวเลข ════════════════════════════════════════════════════ */
 const nf = (v, d) => v.toLocaleString(S.lang === 'th' ? 'th-TH' : 'en-US',
   { minimumFractionDigits: d == null ? 0 : d, maximumFractionDigits: d == null ? 0 : d });
@@ -2540,6 +3012,7 @@ function renderInfo() {
     rows.push([t.craftSpan, `${nf(def.span, 0)}<u>${t.metre} · ${t.rApprox}</u>`]);
     rows.push([t.launch, fmtDate(Date.parse(def.launch + 'T00:00Z'))]);
     rows.push([t.status, def.status[S.lang]]);
+    if (rec.usingGltf) rows.push([t.model, t.modelNasa]);
   } else {
     rows.push([t.radius, `${nf(def.radius, def.radius < 100 ? (def.radius < 1 ? 3 : 1) : 0)}<u>${t.km}${def.rEst ? ' · ' + t.rApprox : ''}</u>`]);
   }
@@ -2575,6 +3048,14 @@ function renderInfo() {
     n2.querySelector('span').textContent = t.sbClass;
     n2.querySelector('p').textContent = t.l2note;
     phys.appendChild(n2);
+  }
+  // ยานที่ยังจุดเครื่องอยู่: บอกให้ชัดว่าวิถีตรงเฉพาะช่วงใกล้ยุคของข้อมูล
+  if (def.powered) {
+    const pw = el('div', 'note');
+    pw.innerHTML = `<span></span><p></p>`;
+    pw.querySelector('span').textContent = t.poweredTitle;
+    pw.querySelector('p').textContent = t.poweredNote.replace('{d}', fmtJD(def.epoch));
+    phys.appendChild(pw);
   }
   if (def.origin) {
     const note = el('div', 'note');
@@ -2732,7 +3213,7 @@ function renderView() {
   const toggles = [
     ['orbits', t.vOrbits], ['labels', t.vLabels], ['moons', t.vMoons],
     ['belt', t.vBelt], ['kuiper', t.vKuiper], ['oort', t.vOort],
-    ['craft', t.vCraft], ['asteroids', t.vAsteroids], ['comets', t.vComets], ['dwarfs', t.vDwarfs],
+    ['shadows', t.vShadows], ['craft', t.vCraft], ['asteroids', t.vAsteroids], ['comets', t.vComets], ['dwarfs', t.vDwarfs],
     ['stars', t.vStars], ['figures', t.vFigures], ['exo', t.vExo], ['galaxy', t.vGalaxy], ['deep', t.vDeep], ['grid', t.vGrid], ['trails', t.vTrails]
   ];
   const show = el('div', 'sec');
@@ -3274,9 +3755,9 @@ function toast(msg) {
    รูปแบบ  #/earth?t=2026-09-10T15:45Z&d=39500&a=0.900,0.420
    ค่าที่ยังเป็นค่าเริ่มต้นจะไม่ถูกเขียนลงลิงก์ ลิงก์จึงสั้นเท่าที่สั้นได้     */
 const LAYER_KEYS = ['orbits', 'labels', 'moons', 'belt', 'kuiper', 'oort', 'stars', 'galaxy', 'grid', 'trails',
-                    'asteroids', 'comets', 'dwarfs', 'craft', 'figures', 'deep', 'exo'];
+                    'asteroids', 'comets', 'dwarfs', 'craft', 'figures', 'deep', 'exo', 'shadows'];
 const LAYER_DEF = { orbits: 1, labels: 1, moons: 1, belt: 1, kuiper: 1, oort: 1, stars: 1, galaxy: 1, grid: 0, trails: 0,
-                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1 };
+                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1, shadows: 1 };
 let hashDist = 0;
 
 function buildHash() {
@@ -3426,13 +3907,15 @@ function drawStarLabelsOnto(g, k) {
     if (node.hidden) continue;
     const cx = parseFloat(node.style.left) * k, cy = parseFloat(node.style.top) * k;
     if (!isFinite(cx) || !isFinite(cy)) continue;
-    const size = 9.5 * k;
+    const far = node.classList.contains('far'), th = node.classList.contains('th');
+    const size = (far ? (th ? 12.5 : 12) : 9.5) * k;
     g.font = `400 ${size.toFixed(2)}px "IBM Plex Mono", ui-monospace, monospace`;
-    try { g.letterSpacing = (size * 0.1).toFixed(2) + 'px'; } catch (e) {}
+    try { g.letterSpacing = (size * (far && !th ? 0.34 : 0.1)).toFixed(2) + 'px'; } catch (e) {}
     g.globalAlpha = Math.max(0.25, Math.min(1, parseFloat(node.style.opacity) || 1));
-    g.fillStyle = node.style.color || '#e8eef7';
+    g.fillStyle = far ? '#5d9ee8' : (node.style.color || '#e8eef7');
     g.shadowColor = '#000'; g.shadowBlur = 6 * k;
-    g.fillText(node.querySelector('.nm').textContent, cx, cy);
+    const tx = node.querySelector('.nm').textContent;
+    g.fillText(far && !th ? tx.toUpperCase() : tx, cx, cy);
     g.shadowBlur = 0;
     g.globalAlpha = 1;
   }
@@ -3547,14 +4030,20 @@ function initUI() {
 const TEXSIZE = { big: [896, 448], mid: [640, 320], small: [512, 256], moon: [320, 160], tiny: [160, 80] };
 const BIG = ['earth', 'jupiter'], MID = ['mars', 'saturn', 'mercury', 'venus'];
 
-function textureJobs() {
+/* q = ตัวหารความละเอียด (4 = ฉบับย่อสำหรับโชว์ก่อน, 1 = ฉบับเต็ม) */
+function texSizeOf(id, q) {
+  const s = BIG.includes(id) ? TEXSIZE.big : MID.includes(id) ? TEXSIZE.mid : TEXSIZE.small;
+  return [Math.max(64, Math.round(s[0] / q)), Math.max(32, Math.round(s[1] / q))];
+}
+
+function textureJobs(q) {
+  q = q || 1;
   const jobs = [];
-  const size = id => BIG.includes(id) ? TEXSIZE.big : MID.includes(id) ? TEXSIZE.mid : TEXSIZE.small;
   for (const b of BODIES) {
     jobs.push({ label: b.nm, run: () => {
-      const [w, h] = size(b.id);
+      const [w, h] = texSizeOf(b.id, q);
       b._tex = PAINTERS[b.id](w, h);
-      if (b.id === 'earth') b._clouds = PAINTERS.earthClouds(384, 192);
+      if (b.id === 'earth') b._clouds = PAINTERS.earthClouds(Math.round(384 / q), Math.round(192 / q));
     }});
   }
   const tints = {
@@ -3563,7 +4052,8 @@ function textureJobs() {
   };
   for (const m of MOONS) {
     jobs.push({ label: m.nm, run: () => {
-      const [w, h] = (m.radius < 50 ? TEXSIZE.tiny : TEXSIZE.moon);
+      const base = (m.radius < 50 ? TEXSIZE.tiny : TEXSIZE.moon);
+      const [w, h] = [Math.max(48, Math.round(base[0] / q)), Math.max(24, Math.round(base[1] / q))];
       m._tex = PAINTERS[m.id]
         ? PAINTERS[m.id](w, h)
         : PAINTERS.rocky(w, h, tints[m.id] || [140, 132, 124], m.radius < 50 ? 150 : 260);
@@ -3571,11 +4061,12 @@ function textureJobs() {
   }
   jobs.push({ label: { th:'วัตถุขนาดเล็ก', en:'Small bodies' }, run: () => {
     // พื้นผิวร่วมสี่แบบ: หินสว่าง · หินคาร์บอนคล้ำ · น้ำแข็ง · นิวเคลียสดาวหาง
+    const R = (w, h, tint, n) => PAINTERS.rocky(Math.max(64, Math.round(w / q)), Math.max(32, Math.round(h / q)), tint, n);
     const shared = {
-      rock: PAINTERS.rocky(256, 128, [150, 142, 132], 240),
-      dark: PAINTERS.rocky(256, 128, [74, 70, 66], 240),
-      ice:  PAINTERS.rocky(256, 128, [206, 200, 192], 170),
-      nuc:  PAINTERS.rocky(192, 96, [66, 62, 60], 130)
+      rock: R(256, 128, [150, 142, 132], 240),
+      dark: R(256, 128, [74, 70, 66], 240),
+      ice:  R(256, 128, [206, 200, 192], 170),
+      nuc:  R(192, 96, [66, 62, 60], 130)
     };
     for (const s of SMALL) {
       const lum = ((s.color >> 16 & 255) * 0.3 + (s.color >> 8 & 255) * 0.6 + (s.color & 255) * 0.1) / 255;
@@ -3585,6 +4076,62 @@ function textureJobs() {
     }
   }});
   return jobs;
+}
+
+/* วาดฉบับเต็มทับลงผ้าใบเดิม แล้วบอก GPU ให้อัปโหลดใหม่
+   (ใช้ผ้าใบใบเดิมเพื่อไม่ต้องไล่เปลี่ยน material ของทุกวัตถุที่ใช้ร่วมกัน) */
+function upgradeCanvas(oldCv, newCv, tex) {
+  oldCv.width = newCv.width;
+  oldCv.height = newCv.height;
+  oldCv.getContext('2d').drawImage(newCv, 0, 0);
+  if (tex) tex.needsUpdate = true;
+}
+
+async function refineTextures() {
+  const step = () => yieldToPaint();
+  for (const b of BODIES) {
+    const [w, h] = texSizeOf(b.id, 1);
+    if (b._tex.width >= w) continue;
+    upgradeCanvas(b._tex, PAINTERS[b.id](w, h), b._map);
+    if (b.id === 'earth' && b._clouds && REG.earth.clouds) {
+      upgradeCanvas(b._clouds, PAINTERS.earthClouds(384, 192), REG.earth.clouds.material.map);
+    }
+    b._disc = discPreview(b._tex, 96);
+    b._discURL = b._disc.toDataURL('image/png');
+    await step();
+  }
+  for (const m of MOONS) {
+    const base = (m.radius < 50 ? TEXSIZE.tiny : TEXSIZE.moon);
+    if (m._tex.width >= base[0]) continue;
+    const tints = {
+      phobos: [128, 116, 104], deimos: [140, 128, 116], rhea: [200, 196, 188],
+      titania: [162, 152, 144], oberon: [140, 130, 124], triton: [206, 198, 188], charon: [150, 142, 134]
+    };
+    const neo = PAINTERS[m.id] ? PAINTERS[m.id](base[0], base[1])
+      : PAINTERS.rocky(base[0], base[1], tints[m.id] || [140, 132, 124], m.radius < 50 ? 150 : 260);
+    upgradeCanvas(m._tex, neo, m._map);
+    m._disc = discPreview(m._tex, 96);
+    m._discURL = m._disc.toDataURL('image/png');
+    await step();
+  }
+  // วัตถุขนาดเล็กใช้ผ้าใบร่วมกันสี่ผืน อัปเกรดผ้าใบก็อัปเกรดครบทุกดวงพร้อมกัน
+  const specs = [
+    [[256, 128, [150, 142, 132], 240], s => s.kind === 'asteroid' && lum(s) >= 0.35],
+    [[256, 128, [74, 70, 66], 240],    s => s.kind === 'asteroid' && lum(s) < 0.35],
+    [[256, 128, [206, 200, 192], 170], s => s.kind === 'tno' || s.kind === 'dwarf'],
+    [[192, 96, [66, 62, 60], 130],     s => s.kind === 'comet' || s.kind === 'ism']
+  ];
+  function lum(s) {
+    return ((s.color >> 16 & 255) * 0.3 + (s.color >> 8 & 255) * 0.6 + (s.color & 255) * 0.1) / 255;
+  }
+  for (const [args, pick] of specs) {
+    const one = SMALL.find(pick);
+    if (!one || one._tex.width >= args[0]) continue;
+    upgradeCanvas(one._tex, PAINTERS.rocky(args[0], args[1], args[2], args[3]), texCache.get(one._tex));
+    for (const s of SMALL) if (pick(s)) { s._disc = discPreview(s._tex, 96); s._discURL = s._disc.toDataURL('image/png'); }
+    await step();
+  }
+  if (!$('#pane-info').hidden) renderInfo();
 }
 
 function prepareData() {
@@ -3635,7 +4182,7 @@ function buildAll() {
     c._discURL = c._disc.toDataURL('image/png');
     if (c.special !== 'l2') {                  // ลำที่อยู่ L2 ไม่วาดวงโคจร เพราะมันเกาะไปกับโลก
       orbitLine(REG[c.id]);
-      REG[c.id].line.material.opacity = 0.34;
+      REG[c.id].line.material.opacity = c.powered ? 0.2 : 0.34;
     }
     trailLine(REG[c.id]);
   }
@@ -3656,6 +4203,7 @@ function buildAll() {
     trailLine(REG[m.id]);
   }
   updatePositions(S.time);
+  setupShadows();
   for (const id in REG) if (REG[id].line) refreshOrbit(REG[id], S.time);
 }
 
@@ -3677,10 +4225,10 @@ function loop(now) {
   updateScene();
   updateTrails();
   applyCamera();
+  resetLabelBoxes();
   updateLabels();
-  updateStarLabels();
-  updateConstellations();
   updateGalaxyMarks();
+  updateSkyLabels();
   updateDeep();
   updateExo();
   renderFrame();
@@ -3728,7 +4276,7 @@ async function boot() {
   initScene();
   prepareData();
   readHash();                       // ลิงก์ที่แชร์มากำหนดภาษา เวลา เป้าหมาย และกล้อง
-  const jobs = textureJobs();
+  const jobs = textureJobs(4);      // รอบแรกวาดฉบับย่อ ให้ฉากขึ้นเร็วที่สุด
   for (let i = 0; i < jobs.length; i++) {
     await step(i, jobs.length, jobs[i].label[S.lang]);
     jobs[i].run();
@@ -3751,6 +4299,8 @@ async function boot() {
   requestAnimationFrame(loop);
   setTimeout(() => { $('#loading').classList.add('gone'); }, 220);
   setTimeout(() => { $('#loading').remove(); }, 1200);
+  // ฉากขึ้นแล้ว — ค่อยวาดพื้นผิวฉบับเต็มทับทีละผืนอยู่เบื้องหลัง
+  setTimeout(() => { refineTextures(); }, 400);
   setTimeout(() => { const h = $('#hint'); if (h) h.style.opacity = '0'; }, 9000);
 }
 

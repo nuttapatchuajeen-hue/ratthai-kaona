@@ -535,6 +535,166 @@ const SMALL = [
           en:'Named for the ATLAS survey telescopes that detected it in July 2025'},
   desc:{th:'วัตถุจากนอกระบบสุริยะดวงที่สาม พบเมื่อกลางปี 2568 พุ่งเข้ามาด้วยความเร็วสูงและวงโคจรเกือบสวนทางกับระนาบดาวเคราะห์ ผ่านจุดใกล้ดวงอาทิตย์ที่สุดปลายปีเดียวกัน จากนั้นก็ออกจากระบบสุริยะไปโดยไม่กลับมาอีก',
         en:'The third known interstellar object, caught in mid-2025 racing in on a path almost exactly counter to the plane of the planets. It rounded the Sun late that year and is now leaving the solar system for good.'}
+},
+{
+  id:'dinkinesh', kind:'asteroid', layer:'asteroids', color:0x9a8e80, glow:'#9a8e80',
+  nm:{th:'ดินคินเนช', en:'Dinkinesh'}, sb:'152830 Dinkinesh (1999 VD57)', cls:'Main-belt Asteroid',
+  el:{a:2.19176875, e:0.112681714, i:2.093117, om:21.352705, w:66.916371, tp:2461103.025723, n:0.3037469869}, epoch:2461200.5,
+  radius:0.3595, mass:4.9443e+11, gravity:0.000255, rotH:52.67, aAU:2.19177, q:1.9448, ad:2.4387, orbitDays:1185.2,
+  origin:{th:'ดินคิเนช ภาษาอัมฮาริก แปลว่า “เธอช่างน่าอัศจรรย์” — ชื่อฟอสซิลลูซีในเอธิโอเปีย',
+          en:'“Dinkinesh” is Amharic for “you are marvellous” — the Ethiopian name for the Lucy fossil'},
+  desc:{th:'ดาวเคราะห์น้อยดวงแรกที่ยานลูซีบินผ่านเมื่อปี 2566 ตอนแรกคิดว่าเป็นก้อนเดียว แต่ภาพที่ส่งกลับมาเผยว่ามีดวงจันทร์เล็ก ๆ ที่ตัวมันเองเป็นก้อนสองก้อนติดกัน ซึ่งไม่เคยพบมาก่อน',
+        en:'The first asteroid Lucy flew past, in 2023. Expected to be a single rock, it turned out to have a small moon that is itself two lobes stuck together — a configuration never seen before.'}
+},
+{
+  id:'eurybates', kind:'asteroid', layer:'asteroids', color:0x6e6a66, glow:'#6e6a66',
+  nm:{th:'ยูริเบตีส', en:'Eurybates'}, sb:'3548 Eurybates (1973 SO)', cls:'Jupiter Trojan',
+  el:{a:5.21737162, e:0.090598672, i:8.051473, om:43.558728, w:28.699682, tp:2459680.040793, n:0.0827039814}, epoch:2461200.5,
+  radius:31.9425, rotH:8.711, aAU:5.21737, q:4.74468, ad:5.6901, orbitDays:4352.87,
+  origin:{th:'ยูริเบตีส ผู้ประกาศข่าวของกษัตริย์อากาเมมนอนในมหากาพย์อีเลียด',
+          en:'Eurybates, herald to Agamemnon in the Iliad'},
+  desc:{th:'ดาวเคราะห์น้อยโทรจันของดาวพฤหัสบดี เป้าหมายของยานลูซี น่าจะเป็นเศษที่เหลือจากการชนครั้งใหญ่ และมีดวงจันทร์จิ๋วชื่อเควตาโคจรรอบ',
+        en:'A Jupiter Trojan on Lucy’s tour, thought to be a fragment from a large collision, with a tiny moon named Queta.'}
+},
+{
+  id:'polymele', kind:'asteroid', layer:'asteroids', color:0x7a6e64, glow:'#7a6e64',
+  nm:{th:'พอลิมีลี', en:'Polymele'}, sb:'15094 Polymele (1999 WB2)', cls:'Jupiter Trojan',
+  el:{a:5.19151413, e:0.095922458, i:12.977352, om:50.331057, w:5.865299, tp:2459479.21508, n:0.0833226383}, epoch:2461200.5,
+  radius:10.5375, rotH:5.8607, aAU:5.19151, q:4.69353, ad:5.6895, orbitDays:4320.55,
+  origin:{th:'พอลิมีลี นางไม้ในตำนานกรีก',
+          en:'Polymele, a nymph of Greek myth'},
+  desc:{th:'ดาวเคราะห์น้อยที่มีชื่อเรียกอย่างเป็นทางการ ดูค่าวงโคจรและขนาดได้จากตารางข้างล่าง',
+        en:'A formally named asteroid — its orbit and size are in the table below.'}
+},
+{
+  id:'leucus', kind:'asteroid', layer:'asteroids', color:0x8a7060, glow:'#8a7060',
+  nm:{th:'ลูคัส', en:'Leucus'}, sb:'11351 Leucus (1997 TS25)', cls:'Jupiter Trojan',
+  el:{a:5.31238283, e:0.064957898, i:11.543417, om:251.079934, w:162.404839, tp:2459471.550179, n:0.080495208}, epoch:2461200.5,
+  radius:17.0775, rotH:445.924, aAU:5.31238, q:4.9673, ad:5.6575, orbitDays:4472.32,
+  origin:{th:'ลูคัส สหายของโอดิสเซียส',
+          en:'Leucus, a companion of Odysseus'},
+  desc:{th:'โทรจันที่หมุนรอบตัวเองช้ามาก รอบหนึ่งกินเวลากว่า 445 ชั่วโมง หรือราว 19 วัน ซึ่งช้าที่สุดในบรรดาเป้าหมายของยานลูซี',
+        en:'A Trojan that turns once every 445 hours — about nineteen days — the slowest rotator among Lucy’s targets.'}
+},
+{
+  id:'orus', kind:'asteroid', layer:'asteroids', color:0x6a625a, glow:'#6a625a',
+  nm:{th:'ออรัส', en:'Orus'}, sb:'21900 Orus (1999 VQ10)', cls:'Jupiter Trojan',
+  el:{a:5.12337424, e:0.036725406, i:8.46858, om:258.550443, w:182.788493, tp:2460060.104653, n:0.0849904157}, epoch:2461200.5,
+  radius:25.405, rotH:13.45, aAU:5.12337, q:4.93522, ad:5.3115, orbitDays:4235.77,
+  origin:{th:'ออรัส นักรบกรีกในสงครามกรุงทรอย',
+          en:'Orus, a Greek warrior at Troy'},
+  desc:{th:'ดาวเคราะห์น้อยที่มีชื่อเรียกอย่างเป็นทางการ ดูค่าวงโคจรและขนาดได้จากตารางข้างล่าง',
+        en:'A formally named asteroid — its orbit and size are in the table below.'}
+},
+{
+  id:'patroclus', kind:'asteroid', layer:'asteroids', color:0x76706a, glow:'#76706a',
+  nm:{th:'แพโทรคลัส', en:'Patroclus'}, sb:'617 Patroclus (A906 UL)', cls:'Jupiter Trojan',
+  el:{a:5.20597517, e:0.139146792, i:22.063591, om:44.349688, w:308.837728, tp:2460493.360075, n:0.0829757019}, epoch:2461200.5,
+  radius:70.181, rotH:102.8, aAU:5.20598, q:4.48158, ad:5.9304, orbitDays:4338.62,
+  origin:{th:'แพโทรคลัส สหายสนิทของอคิลลีส',
+          en:'Patroclus, the close companion of Achilles'},
+  desc:{th:'ระบบโทรจันคู่ที่สองก้อนขนาดพอ ๆ กันโคจรรอบกัน (อีกก้อนชื่อเมโนเทียส) เป็นเป้าหมายสุดท้ายของยานลูซีในปี 2576',
+        en:'A binary Trojan of two nearly equal bodies orbiting each other — the companion is Menoetius — and Lucy’s final target, in 2033.'}
+},
+{
+  id:'borrelly', kind:'comet', layer:'comets', color:0x9fd0cc, glow:'#9fd0cc',
+  nm:{th:'บอร์เรลลี (19P)', en:'Borrelly (19P)'}, sb:'19P/Borrelly', cls:'Jupiter-family Comet',
+  el:{a:3.60696135, e:0.637905167, i:29.317423, om:74.298103, w:351.863257, tp:2459612.267126, n:0.1438771549}, epoch:2459286.5,
+  radius:2.4, aAU:3.60696, q:1.30606, ad:5.9079, orbitDays:2502.13, active:true,
+  origin:{th:'อัลฟงส์ บอร์เรลลี ผู้ค้นพบในปี 1904',
+          en:'Alphonse Borrelly, who found it in 1904'},
+  desc:{th:'ยานดีปสเปซ 1 บินผ่านเมื่อปี 2544 ได้ภาพนิวเคลียสรูปกระดูกไก่ที่ผิวดำสนิทและแห้งผาก ไม่มีน้ำแข็งให้เห็นบนพื้นผิวเลย',
+        en:'Deep Space 1 flew past in 2001 and returned images of a bowling-pin nucleus, pitch black and bone dry, with no surface ice visible at all.'}
+},
+{
+  id:'wild2', kind:'comet', layer:'comets', color:0xa8d8d0, glow:'#a8d8d0',
+  nm:{th:'ไวลด์ 2 (81P)', en:'Wild 2 (81P)'}, sb:'81P/Wild 2', cls:'Jupiter-family Comet',
+  el:{a:3.44974558, e:0.537398907, i:3.237004, om:136.110221, w:41.725231, tp:2459929.28458, n:0.1538237782}, epoch:2458808.5,
+  radius:2, aAU:3.44975, q:1.59586, ad:5.3036, orbitDays:2340.34, active:true,
+  origin:{th:'เพาล์ ไวลด์ ผู้ค้นพบในปี 1978',
+          en:'Paul Wild, who discovered it in 1978'},
+  desc:{th:'ยานสตาร์ดัสต์บินผ่านเมื่อปี 2547 แล้วเก็บฝุ่นจากหางกลับมาถึงโลกในปี 2549 เป็นตัวอย่างจากดาวหางชุดแรกที่มนุษย์ได้จับต้อง ในฝุ่นพบแร่ที่ก่อตัวได้เฉพาะที่อุณหภูมิสูงมาก แปลว่าวัสดุจากใกล้ดวงอาทิตย์ถูกพัดออกไปไกลถึงขอบระบบ',
+        en:'Stardust flew through its tail in 2004 and brought the dust home in 2006 — the first cometary samples ever held. They contained minerals that form only at very high temperature, showing material from near the Sun was flung to the system’s edge.'}
+},
+{
+  id:'tempel1', kind:'comet', layer:'comets', color:0x9cccc4, glow:'#9cccc4',
+  nm:{th:'เทมเพล 1 (9P)', en:'Tempel 1 (9P)'}, sb:'9P/Tempel 1', cls:'Jupiter-family Comet',
+  el:{a:3.14613376, e:0.509702833, i:10.473428, om:68.753575, w:179.197275, tp:2457603.070725, n:0.1766193571}, epoch:2457470.5,
+  radius:3, rotH:40.7, aAU:3.14613, q:1.54254, ad:4.7497, orbitDays:2038.28, active:true,
+  origin:{th:'วิลเฮลม์ เทมเพล ผู้ค้นพบในปี 1867',
+          en:'Wilhelm Tempel, who discovered it in 1867'},
+  desc:{th:'ดาวหางดวงเดียวที่มนุษย์ยิงอะไรใส่โดยตั้งใจ ยานดีปอิมแพกต์ปล่อยลูกทองแดงหนัก 370 กิโลกรัมพุ่งชนเมื่อปี 2548 เพื่อดูว่าข้างในเป็นอะไร ฝุ่นที่ฟุ้งออกมาละเอียดกว่าที่ทุกคนคาดมาก',
+        en:'The only comet humans have deliberately hit: in 2005 Deep Impact drove a 370 kg copper slug into it to see what lay inside. The plume was far finer-grained than anyone expected.'}
+},
+{
+  id:'midas', kind:'asteroid', layer:'asteroids', color:0x8c8074, glow:'#8c8074',
+  nm:{th:'ไมดาส', en:'Midas'}, sb:'1981 Midas (1973 EA)', cls:'Apollo',
+  el:{a:1.77623187, e:0.650431447, i:39.82206, om:356.788994, w:267.845261, tp:2460843.507025, n:0.4163461828}, epoch:2461200.5,
+  radius:1.7, rotH:5.22, aAU:1.77623, q:0.62091, ad:2.9315, orbitDays:864.67,
+  origin:{th:'ไมดาส กษัตริย์ในตำนานที่แตะอะไรก็กลายเป็นทอง',
+          en:'King Midas, whose touch turned things to gold'},
+  desc:{th:'ดาวเคราะห์น้อยที่มีชื่อเรียกอย่างเป็นทางการ ดูค่าวงโคจรและขนาดได้จากตารางข้างล่าง',
+        en:'A formally named asteroid — its orbit and size are in the table below.'}
+},
+{
+  id:'adonis', kind:'asteroid', layer:'asteroids', color:0x94867a, glow:'#94867a',
+  nm:{th:'อะโดนิส', en:'Adonis'}, sb:'2101 Adonis (1936 CA)', cls:'Apollo',
+  el:{a:1.87378368, e:0.764120991, i:1.31999, om:349.405216, w:43.705078, tp:2460936.774088, n:0.3842597498}, epoch:2461200.5,
+  radius:0.3, aAU:1.87378, q:0.44199, ad:3.3056, orbitDays:936.87,
+  origin:{th:'อะโดนิส ชายหนุ่มรูปงามในตำนานกรีก',
+          en:'Adonis, the beautiful youth of Greek myth'},
+  desc:{th:'ดาวเคราะห์น้อยที่มีชื่อเรียกอย่างเป็นทางการ ดูค่าวงโคจรและขนาดได้จากตารางข้างล่าง',
+        en:'A formally named asteroid — its orbit and size are in the table below.'}
+},
+{
+  id:'hermes', kind:'asteroid', layer:'asteroids', color:0x8a7e72, glow:'#8a7e72',
+  nm:{th:'เฮอร์มีส', en:'Hermes'}, sb:'69230 Hermes (1937 UB)', cls:'Apollo',
+  el:{a:1.65509278, e:0.623931662, i:6.067204, om:34.034033, w:92.931104, tp:2461552.397425, n:0.4628822818}, epoch:2461200.5,
+  radius:1, rEst:true, rotH:13.894, aAU:1.65509, q:0.62243, ad:2.6878, orbitDays:777.74,
+  origin:{th:'เฮอร์มีส เทพผู้สื่อสารของกรีก',
+          en:'Hermes, messenger of the Greek gods'},
+  desc:{th:'ค้นพบเมื่อปี 2480 ตอนเฉียดโลกใกล้กว่าดวงจันทร์สองเท่า แล้ว “หาย” ไปนานถึง 66 ปี เพราะสังเกตได้ไม่นานพอจะคำนวณวงโคจร กลับมาพบใหม่ในปี 2546 และพบว่าเป็นก้อนคู่',
+        en:'Found in 1937 as it passed twice the Moon’s distance, then lost for 66 years because it was not tracked long enough to pin down its orbit. Recovered in 2003 — and found to be a binary.'}
+},
+{
+  id:'braille', kind:'asteroid', layer:'asteroids', color:0x7e746a, glow:'#7e746a',
+  nm:{th:'เบรลล์', en:'Braille'}, sb:'9969 Braille (1992 KD)', cls:'Mars-crossing Asteroid',
+  el:{a:2.33948434, e:0.434070017, i:29.020962, om:241.899069, w:356.109344, tp:2460555.372249, n:0.2754380019}, epoch:2461200.5,
+  radius:1, rEst:true, rotH:226.4, aAU:2.33948, q:1.32398, ad:3.355, orbitDays:1307.01,
+  origin:{th:'หลุยส์ เบรลล์ ผู้คิดค้นอักษรเบรลล์',
+          en:'Louis Braille, inventor of the raised-dot alphabet'},
+  desc:{th:'ยานดีปสเปซ 1 บินผ่านเมื่อปี 2542 เป็นการทดสอบระบบนำทางอัตโนมัติ แต่พลาดเป้าไปไกลกว่าแผน จึงได้ภาพเพียงไม่กี่ภาพและเบลอ',
+        en:'Deep Space 1 flew by in 1999 to test autonomous navigation, but missed by far more than planned — only a few blurred frames came back.'}
+},
+{
+  id:'icarus', kind:'asteroid', layer:'asteroids', color:0xa08a70, glow:'#a08a70',
+  nm:{th:'อิคารัส', en:'Icarus'}, sb:'1566 Icarus (1949 MA)', cls:'Apollo',
+  el:{a:1.07799421, e:0.827018851, i:22.80164, om:87.948565, w:31.444394, tp:2461235.495781, n:0.8806015185}, epoch:2461200.5,
+  radius:0.5, rotH:2.2726, aAU:1.07799, q:0.18647, ad:1.9695, orbitDays:408.81,
+  origin:{th:'อิคารัส ผู้บินเข้าใกล้ดวงอาทิตย์จนปีกขี้ผึ้งละลาย',
+          en:'Icarus, who flew too near the Sun and lost his wax wings'},
+  desc:{th:'โคจรเข้าใกล้ดวงอาทิตย์กว่าดาวพุธเสียอีก ผิวร้อนถึงราว 600 องศาเซลเซียสทุกครั้งที่ผ่านจุดใกล้สุด สมชื่อที่ตั้งให้',
+        en:'It swings closer to the Sun than Mercury does, and its surface reaches some 600 °C at every perihelion — living up to its name.'}
+},
+{
+  id:'phaethon', kind:'asteroid', layer:'asteroids', color:0x8fa0b0, glow:'#8fa0b0',
+  nm:{th:'เฟธอน', en:'Phaethon'}, sb:'3200 Phaethon (1983 TB)', cls:'Apollo',
+  el:{a:1.27146462, e:0.889672284, i:22.310527, om:265.098806, w:322.300168, tp:2461285.616438, n:0.687460348}, epoch:2461200.5,
+  radius:3.125, rotH:3.604, aAU:1.27146, q:0.14028, ad:2.4027, orbitDays:523.67,
+  origin:{th:'เฟธอน บุตรของเทพสุริยะผู้ขับรถม้าพระอาทิตย์จนเกือบเผาโลก',
+          en:'Phaethon, son of the sun god, who nearly burned the world driving the solar chariot'},
+  desc:{th:'จัดเป็นดาวเคราะห์น้อยแต่ทำตัวเหมือนดาวหาง — เป็นต้นตอของฝนดาวตกเจมินิดส์ในเดือนธันวาคม ซึ่งปกติแล้วฝนดาวตกต้องมาจากดาวหาง ทุกครั้งที่เข้าใกล้ดวงอาทิตย์ผิวจะร้อนจนแตกและปล่อยฝุ่นออกมา',
+        en:'Classified as an asteroid but behaving like a comet: it is the source of December’s Geminid meteors, which normally require a comet. Each close pass bakes its surface until it cracks and sheds dust.'}
+},
+{
+  id:'geographos', kind:'asteroid', layer:'asteroids', color:0x998d80, glow:'#998d80',
+  nm:{th:'จีโอกราฟอส', en:'Geographos'}, sb:'1620 Geographos (1951 RA)', cls:'Apollo',
+  el:{a:1.24580362, e:0.335517778, i:13.336755, om:337.134866, w:277.029068, tp:2461208.006242, n:0.7088097613}, epoch:2461200.5,
+  radius:1.28, rotH:5.22204, aAU:1.2458, q:0.82781, ad:1.6638, orbitDays:507.89,
+  origin:{th:'ตั้งเป็นเกียรติแก่สมาคมภูมิศาสตร์แห่งชาติสหรัฐ',
+          en:'Named for the National Geographic Society'},
+  desc:{th:'ก้อนหินที่ยาวเรียวที่สุดก้อนหนึ่งเท่าที่รู้จัก ยาวกว่ากว้างราวสองเท่าครึ่ง เรดาร์เผยรูปร่างเหมือนซิการ์',
+        en:'One of the most elongated bodies known — about two and a half times longer than it is wide, shaped like a cigar in radar images.'}
 }
 ];
 
@@ -630,6 +790,42 @@ const CRAFT = [
           en:'James E. Webb, who ran NASA through the Apollo era'},
   desc:{th:'กล้องอินฟราเรดที่ใหญ่ที่สุดในอวกาศ ไม่ได้โคจรรอบโลกแต่ไปอยู่แถวจุดสมดุลแรงโน้มถ่วง L2 ห่างจากโลกออกไปทางตรงข้ามดวงอาทิตย์ราวหนึ่งล้านห้าแสนกิโลเมตร ม่านกันแดดห้าชั้นขนาดเท่าสนามเทนนิสกั้นแสงและความร้อนไว้ ทำให้กระจกทองด้านหลังเย็นถึงราวลบ 233 องศาเซลเซียส ซึ่งจำเป็นสำหรับการมองแสงอินฟราเรดจากกาแล็กซีแรก ๆ ของเอกภพ',
         en:'The largest infrared telescope in space. It does not orbit Earth but keeps station near the L2 balance point, about 1.5 million km further from the Sun than we are. A five-layer sunshield the size of a tennis court holds back the light and heat so the gold mirrors behind it can sit at about −233 °C — cold enough to see the infrared glow of the universe’s first galaxies.'}
+},
+{
+  id:'lucy', kind:'craft', layer:'craft', craft:true, model:'nh', point:'earth',
+  color:0xd8c8a8, glow:'#d8c8a8',
+  nm:{th:'ลูซี', en:'Lucy'}, span:14, mass:1550, launch:'2021-10-16',
+  el:{a:3.3541777, e:0.713440977, i:4.42033, om:261.230753, w:160.417039, tp:2460642.99761, n:0.1604445511}, epoch:2461284.5,
+  q:0.96117, powered:true, aAU:3.35418, ad:5.74719, orbitDays:2243.77,
+  status:{th:'กำลังเดินทาง', en:'in transit'},
+  origin:{th:'ตั้งตามฟอสซิลลูซี บรรพบุรุษมนุษย์ที่พบในเอธิโอเปีย',
+          en:'Named for the Lucy hominin fossil found in Ethiopia'},
+  desc:{th:'ยานลำแรกที่ไปสำรวจดาวเคราะห์น้อยโทรจันของดาวพฤหัสบดี ซึ่งเป็นเศษที่เหลือจากยุคก่อตัวของระบบสุริยะที่ติดค้างอยู่ในจุดสมดุลแรงโน้มถ่วงมาสี่พันล้านปี แผนการบินยาว 12 ปี แวะดาวเคราะห์น้อยแปดดวง โดยต้องกลับมาเหวี่ยงตัวกับโลกถึงสามครั้ง',
+        en:'The first mission to Jupiter’s Trojan asteroids — leftovers from the solar system’s formation, trapped at gravitational balance points for four billion years. A twelve-year tour of eight asteroids that swings back past Earth three times for gravity assists.'}
+},
+{
+  id:'psychesc', kind:'craft', layer:'craft', craft:true, model:'parker', point:'sun',
+  color:0xc0c8d0, glow:'#c0c8d0',
+  nm:{th:'ยานไซคี', en:'Psyche spacecraft'}, span:25, mass:2747, launch:'2023-10-13',
+  el:{a:2.07840222, e:0.331852116, i:2.62361, om:160.078512, w:221.896411, tp:2461196.611383, n:0.3289346904}, epoch:2461284.5,
+  q:1.38868, powered:true, aAU:2.0784, ad:2.76812, orbitDays:1094.44,
+  status:{th:'กำลังเดินทาง', en:'in transit'},
+  origin:{th:'ตั้งตามดาวเคราะห์น้อยไซคีที่มันกำลังมุ่งไป',
+          en:'Named for asteroid 16 Psyche, its destination'},
+  desc:{th:'ยานที่มุ่งไปดาวเคราะห์น้อยโลหะไซคี ขับเคลื่อนด้วยเครื่องยนต์ไอออนที่ให้แรงขับเบามากแต่ทำงานต่อเนื่องเป็นปี ๆ ต้องแวะเหวี่ยงตัวกับดาวอังคารในปี 2569 และจะถึงเป้าหมายในปี 2572',
+        en:'On its way to the metal asteroid Psyche, driven by ion thrusters that push very gently but run for years. It swings past Mars in 2026 and arrives in 2029.'}
+},
+{
+  id:'clipper', kind:'craft', layer:'craft', craft:true, model:'parker', point:'sun',
+  color:0xb8c4d4, glow:'#b8c4d4',
+  nm:{th:'ยูโรปาคลิปเปอร์', en:'Europa Clipper'}, span:30, mass:6065, launch:'2024-10-14',
+  el:{a:1.59908392, e:0.475412976, i:2.04653, om:71.432293, w:302.400439, tp:2461337.078016, n:0.4874130912}, epoch:2461284.5,
+  q:0.83886, powered:true, aAU:1.59908, ad:2.35931, orbitDays:738.59,
+  status:{th:'กำลังเดินทาง', en:'in transit'},
+  origin:{th:'ตั้งตามยูโรปา ดวงจันทร์น้ำแข็งของดาวพฤหัสบดีที่เป็นเป้าหมาย',
+          en:'Named for Europa, the icy Jovian moon it will study'},
+  desc:{th:'ยานสำรวจดาวเคราะห์ที่ใหญ่ที่สุดที่นาซาเคยสร้าง แผงโซลาร์กางออกกว้างกว่าสนามบาสเกตบอล มุ่งไปดูว่ามหาสมุทรใต้เปลือกน้ำแข็งของยูโรปาเอื้อต่อสิ่งมีชีวิตหรือไม่ ต้องเหวี่ยงตัวกับดาวอังคารและโลกก่อน จะถึงดาวพฤหัสบดีในปี 2573',
+        en:'The largest planetary spacecraft NASA has built — its solar wings span more than a basketball court. It will judge whether the ocean under Europa’s ice could support life, arriving at Jupiter in 2030 after gravity assists at Mars and Earth.'}
 }
 ];
 
@@ -697,7 +893,7 @@ const UI = {
     vShow:'สิ่งที่แสดงในฉาก', vOrbits:'เส้นวงโคจร', vLabels:'ชื่อวัตถุ', vMoons:'ดวงจันทร์',
     vBelt:'แถบดาวเคราะห์น้อย', vKuiper:'แถบไคเปอร์', vOort:'เมฆออร์ต',
     vStars:'ดาวฤกษ์', vGalaxy:'ทางช้างเผือก', vGrid:'ระนาบสุริยวิถี',
-    vTrails:'ร่องรอยการเคลื่อนที่ (T)', vFigures:'เส้นกลุ่มดาว',
+    vTrails:'ร่องรอยการเคลื่อนที่ (T)', vFigures:'เส้นกลุ่มดาว', vShadows:'เงาทอดบนดาว',
     gCentre:'ใจกลางกาแล็กซี · หลุมดำ Sgr A*', gSun:'ดวงอาทิตย์อยู่ตรงนี้ · เดือยนายพราน',
     gNorma:'แขนนอร์มา', gScutum:'แขนสคูตัม–เซนทอรัส',
     gSagittarius:'แขนซาจิตทาเรียส–คารินา', gPerseus:'แขนเพอร์ซิอัส',
@@ -751,10 +947,13 @@ const UI = {
     evAboveHere:'ช่วงนั้นอยู่เหนือขอบฟ้าที่จุดสังเกต', evBelowHere:'ช่วงนั้นอยู่ใต้ขอบฟ้าที่จุดสังเกต',
     vCraft:'ยานอวกาศ', launch:'วันปล่อยยาน', status:'สถานะ', craftSpan:'ขนาดตัวยาน',
     lightRT:'สัญญาณวิทยุไป-กลับ', metre:'ม.',
+    model:'โมเดลสามมิติ', modelNasa:'ไฟล์ที่ NASA เผยแพร่',
+    poweredTitle:'ความแม่นของวิถี',
+    poweredNote:'ยานลำนี้ยังจุดเครื่องยนต์และยังต้องเหวี่ยงตัวกับดาวเคราะห์อีกหลายครั้ง แผนที่นี้คำนวณจากวิถีที่วัดได้ ณ วันที่ {d} แบบสองวัตถุ จึงตรงเฉพาะช่วงใกล้วันนั้น ถ้าไล่เวลาออกไปไกลกว่านั้น ตำแหน่งจะเริ่มเพี้ยนทันทีที่มันเร่งเครื่องหรือเฉียดดาวเคราะห์',
     l2note:'ตำแหน่งของกล้องนี้คำนวณจากจุดสมดุล L2 ของระบบดวงอาทิตย์–โลกโดยตรง (ห่างจากโลก 1.5 ล้านกิโลเมตรไปด้านตรงข้ามดวงอาทิตย์ บวกวงโคจรรอบจุดนั้น) ไม่ได้ใช้วงโคจรรอบดวงอาทิตย์ เพราะของจริงเกาะกลุ่มไปกับโลกตลอด',
     vSize:'ขนาดของดาว', sizeReal:'ตามจริง', sizeBig:'ขยายให้เห็น',
     sizeNote:'ตามจริง: ดาวเคราะห์จะเล็กจนเกือบมองไม่เห็นเมื่อดูทั้งระบบ — เพราะระยะห่างจริงมันมากขนาดนั้น',
-    now:'ตอนนี้', frame:'จัดกล้อง', live:'สด', paused:'หยุด',
+    now:'ตอนนี้', frame:'จัดกล้อง', live:'สด', paused:'หยุด', sharpening:'กำลังเก็บรายละเอียดพื้นผิว',
     au:'AU', km:'กม.', kms:'กม./วิ', hr:'ชม.', day:'วัน', yr:'ปี', deg:'°', min:'นาที', sec:'วินาที',
     hint:'ลากเพื่อหมุน · เลื่อนล้อเพื่อซูม · คลิกชื่อวัตถุเพื่อเจาะจง',
     gPlanets:'ดาวเคราะห์', gOther:'ดาวฤกษ์และดาวเคราะห์แคระ', gMoons:'ดวงจันทร์', noHit:'ไม่พบวัตถุที่ค้นหา'
@@ -787,7 +986,7 @@ const UI = {
     vShow:'Scene layers', vOrbits:'Orbit paths', vLabels:'Labels', vMoons:'Moons',
     vBelt:'Asteroid belt', vKuiper:'Kuiper belt', vOort:'Oort cloud',
     vStars:'Stars', vGalaxy:'Milky Way', vGrid:'Ecliptic plane',
-    vTrails:'Motion trails (T)', vFigures:'Constellation lines',
+    vTrails:'Motion trails (T)', vFigures:'Constellation lines', vShadows:'Shadows on planets',
     gCentre:'Galactic centre · Sgr A*', gSun:'You are here · Orion Spur',
     gNorma:'Norma Arm', gScutum:'Scutum–Centaurus Arm',
     gSagittarius:'Sagittarius–Carina Arm', gPerseus:'Perseus Arm',
@@ -841,10 +1040,13 @@ const UI = {
     evAboveHere:'above the horizon where you are', evBelowHere:'below the horizon where you are',
     vCraft:'Spacecraft', launch:'Launched', status:'Status', craftSpan:'Spacecraft size',
     lightRT:'Round-trip signal', metre:'m',
+    model:'3D model', modelNasa:'published by NASA',
+    poweredTitle:'How accurate this path is',
+    poweredNote:'This craft is still under thrust and still has gravity assists ahead. The atlas propagates the trajectory measured on {d} as a two-body orbit, so it is right near that date only — it drifts as soon as the engine fires or it swings past a planet.',
     l2note:'This telescope is placed from the Sun–Earth L2 balance point directly — 1.5 million km beyond Earth on the anti-Sun side, plus its loop around that point — rather than from a heliocentric orbit, because in reality it travels with Earth indefinitely.',
     vSize:'Body size', sizeReal:'True scale', sizeBig:'Enlarged',
     sizeNote:'At true scale the planets are nearly invisible from a system-wide view — that is how far apart they really are.',
-    now:'Now', frame:'Reframe', live:'Live', paused:'Paused',
+    now:'Now', frame:'Reframe', live:'Live', paused:'Paused', sharpening:'sharpening surfaces',
     au:'AU', km:'km', kms:'km/s', hr:'h', day:'d', yr:'yr', deg:'°', min:'min', sec:'s',
     hint:'Drag to orbit · scroll to zoom · click a label to target',
     gPlanets:'Planets', gOther:'Star & dwarf planet', gMoons:'Moons', noHit:'Nothing matched'
@@ -867,6 +1069,9 @@ const ABOUT = {
         ของกาแล็กซี ซึ่งเป็นจุดที่แอปดาราศาสตร์ส่วนใหญ่ต้องไปหยิบไฟล์ภาพของคนอื่นมาใช้</li>
     <li><b>ไม่มีโค้ดที่คัดลอกมา</b> เขียนขึ้นใหม่ทั้งหมด ใช้เพียงไลบรารี <code>three.js</code>
         ซึ่งเป็นโอเพนซอร์สสัญญาอนุญาต MIT และฟอนต์ IBM Plex สัญญาอนุญาต SIL Open Font License</li>
+    <li><b>โมเดลยานสามแบบเป็นไฟล์ที่ NASA เผยแพร่</b> วอยเอเจอร์ นิวฮอไรซันส์ และพาร์เกอร์ โซลาร์ โพรบ
+        มาจากหน้า 3D Resources ของ NASA (เครดิต NASA Visualization Technology Applications and Development) ย่อขนาดก่อนใช้
+        และโหลดเฉพาะตอนเจาะจงยานลำนั้น ลำอื่นยังปั้นด้วยโค้ดเหมือนเดิม</li>
     <li><b>ตัวเลขคือข้อเท็จจริง</b> องค์ประกอบวงโคจรและข้อมูลกายภาพเป็นค่าที่วัดได้ทางวิทยาศาสตร์
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
         ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
@@ -879,8 +1084,11 @@ const ABOUT = {
 
   <h4>ความแม่นยำ</h4>
   <p>ใช้องค์ประกอบวงโคจรโดยประมาณยุค J2000 ให้ความคลาดเคลื่อนระดับลิปดาในช่วงปี ค.ศ. 1800–2050
-  เหมาะกับการเรียนรู้และการนำเสนอ แต่ไม่เหมาะกับงานนำทางยานอวกาศ ตำแหน่งดวงจันทร์เป็นวงโคจรวงรีอย่างง่าย
+  เหมาะกับการเรียนรู้และการนำเสนอ แต่ไม่เหมาะกับงานนำทางยานอวกาศ ดวงจันทร์ของดาวเคราะห์อื่นเป็นวงโคจรวงรีอย่างง่าย
   รอบระนาบศูนย์สูตรของดาวแม่ ส่วนขนาดของดาวแสดงตามจริงเสมอ ยกเว้นเมื่อเปิดโหมด “ขยายให้เห็น”</p>
+  <p>ดวงจันทร์ของโลกใช้ทฤษฎีของ Meeus (ELP-2000/82 ฉบับย่อ 120 พจน์) หมุนกลับกรอบ J2000
+  และชดเชยเวลา ΔT แล้ว เทียบกับ JPL Horizons คลาดเพียง 3–8 กิโลเมตร เงาสุริยุปราคาจึงตกลงบนโลกถูกที่
+  ค่า gamma ของสุริยุปราคาเต็มดวงปี 2569–2571 คลาดจากของ NASA ไม่เกิน 0.002</p>
   <p>วัตถุขนาดเล็กคำนวณจากองค์ประกอบวงโคจร “ยุคเดียว” แบบสองวัตถุ คือคิดแค่แรงดึงของดวงอาทิตย์
   ไม่ได้คิดแรงกวนจากดาวพฤหัสบดี ตำแหน่งช่วงใกล้ยุคขององค์ประกอบจึงแม่น แต่ถ้าไล่เวลาออกไปหลายสิบปี
   วันที่ดาวหางจะกลับมาใกล้ดวงอาทิตย์อาจคลาดจากที่ประกาศไว้ได้หลายเดือน ตัวอย่างเช่นฮัลเลย์
@@ -894,7 +1102,7 @@ const ABOUT = {
   ที่กดดูผังเทียบกับระบบสุริยะของเราได้</p>
 
   <h4>ดาวฤกษ์รอบตัวเป็นของจริง</h4>
-  <p>ดาวทุกดวงที่อยู่ใกล้กว่า 32.6 ปีแสง และดาวสว่างทั้งท้องฟ้ารวม 551 ดวง วางตามตำแหน่งสามมิติจริง
+  <p>ดาวทุกดวงที่อยู่ใกล้กว่า 32.6 ปีแสง ดาวสว่างทั้งท้องฟ้า และดาวที่ใช้ลากรูปกลุ่มดาว รวม 1,356 ดวง วางตามตำแหน่งสามมิติจริง
   จากฐานข้อมูล SIMBAD ของ CDS ความสว่างคำนวณจากระยะถึงกล้อง ดาวจึงหรี่หรือสว่างขึ้นเมื่อเข้าใกล้
   และเมื่อบินออกจากระบบสุริยะไปไม่กี่ปีแสง รูปกลุ่มดาวจะบิดเบี้ยวจริง เพราะดาวใกล้เลื่อนเร็วกว่าดาวไกล
   คลิกที่ดาวดวงไหนก็ได้เพื่อดูข้อมูล</p>
@@ -902,14 +1110,27 @@ const ABOUT = {
   <h4>แท็บ “ท้องฟ้า”</h4>
   <p>เลือกจุดที่ยืนบนโลกแล้วดูว่าเวลาที่กำลังแสดงอยู่นั้น ดาวดวงไหนอยู่เหนือขอบฟ้าบ้าง
   สูงเท่าไร ทิศไหน พร้อมเวลาดวงอาทิตย์-ดวงจันทร์ขึ้นและตก และปฏิทินเหตุการณ์ 400 วันข้างหน้า
-  ทั้งหมดไล่คำนวณจากตำแหน่งจริงในแผนที่นี้ ไม่ได้เปิดตารางสำเร็จรูป จึงอาจคลาดจาก
-  ประกาศทางการได้ราวหนึ่งถึงสองชั่วโมง และไม่ได้บอกว่าอุปราคาแต่ละครั้งเป็นชนิดไหน</p>
+  ทั้งหมดไล่คำนวณจากตำแหน่งจริงในแผนที่นี้ ไม่ได้เปิดตารางสำเร็จรูป อุปราคาตัดสินจากขนาดจาน
+  และกรวยเงาของคืนนั้นจริง (จันทรุปราคานับเฉพาะครั้งที่ดวงจันทร์แตะเงามืด) เวลาที่แสดงคือจังหวะจันทร์ดับหรือเพ็ญ
+  ซึ่งห่างจากช่วงบดบังมากที่สุดไม่เกินราวสิบนาที และยังไม่ได้บอกว่าอุปราคาแต่ละครั้งเป็นชนิดไหน</p>
 
   <h4>ยานอวกาศในแผนที่นี้</h4>
-  <p>เจ็ดลำที่ดับเครื่องยนต์แล้วและบินตามแรงโน้มถ่วงล้วน ๆ วิถีจึงคำนวณล่วงหน้าได้แม่น
-  ห้าลำแรกกำลังหลุดพ้นระบบสุริยะไปตลอด ส่วนกล้องเจมส์ เว็บบ์ คำนวณจากจุดสมดุล L2 ของ
-  ระบบดวงอาทิตย์–โลกโดยตรง ตัวยานปั้นขึ้นด้วยรูปทรงพื้นฐานในโค้ด ไม่มีไฟล์โมเดลจากที่ใด
-  และจะขยายให้พอมองเห็นเมื่อดูจากไกล แต่กลับไปเท่าขนาดจริงเมื่อซูมเข้าไปประชิด</p>
+  <p>สิบลำ เจ็ดลำดับเครื่องยนต์แล้วและบินตามแรงโน้มถ่วงล้วน ๆ วิถีจึงคำนวณล่วงหน้าได้แม่น
+  ห้าลำในนั้นกำลังหลุดพ้นระบบสุริยะไปตลอด ส่วนกล้องเจมส์ เว็บบ์ คำนวณจากจุดสมดุล L2 ของ
+  ระบบดวงอาทิตย์–โลกโดยตรง อีกสามลำ คือ ลูซี ไซคี และยูโรปาคลิปเปอร์ ยังจุดเครื่องและยังต้องเหวี่ยงตัว
+  กับดาวเคราะห์ วิถีจึงตรงเฉพาะช่วงใกล้วันที่วัดมา แผงข้อมูลของสามลำนี้บอกไว้ชัด</p>
+  <p>วอยเอเจอร์ นิวฮอไรซันส์ และพาร์เกอร์ ใช้โมเดลสามมิติที่ NASA เผยแพร่ ลำอื่นปั้นด้วยรูปทรงพื้นฐานในโค้ด
+  ทุกลำจะขยายให้พอมองเห็นเมื่อดูจากไกล แต่กลับไปเท่าขนาดจริงเมื่อซูมเข้าไปประชิด</p>
+
+  <h4>เงาบนดาวและอุปราคาจากอวกาศ</h4>
+  <p>คำนวณในเชเดอร์ทุกเฟรม ได้แก่ เงาวงแหวนที่พาดบนตัวดาวเสาร์ เงาดาวเสาร์ที่ทาบลงบนวงแหวน และเงาดวงจันทร์
+  ที่ทาบลงบนดาวแม่ โดยเงามัวบานออกตามขนาดจริงของดวงอาทิตย์เมื่อมองจากดาวดวงนั้น
+  ลองไล่เวลาไปวันที่ 2 ส.ค. 2570 ราว 17:07 น. แล้วมองโลก จะเห็นเงาของสุริยุปราคาเต็มดวงพาดผ่าน</p>
+
+  <h4>กลุ่มดาวเมื่อมองจากข้างนอก</h4>
+  <p>เส้นกลุ่มดาวลากถึงตำแหน่งสามมิติของดาวจริง บินออกไปหลายสิบถึงหลายร้อยปีแสงแล้วหันกลับมา
+  จะเห็นเส้นพุ่งกระจายรอบดวงอาทิตย์ เพราะดาวในกลุ่มเดียวกันอยู่ห่างเราต่างกันมาก
+  รูปที่เราคุ้นเคยเป็นแค่มุมมองจากตรงที่เรายืนเท่านั้น</p>
 
   <h4>การควบคุม</h4>
   <ul>
@@ -935,6 +1156,9 @@ const ABOUT = {
         photograph or painting of the galaxy — the exact asset most astronomy apps have to borrow.</li>
     <li><b>No copied code.</b> Written from scratch, using only <code>three.js</code> (MIT licence) and the
         IBM Plex typefaces (SIL Open Font License).</li>
+    <li><b>Three spacecraft models are NASA files.</b> Voyager, New Horizons and Parker Solar Probe use the
+        3-D models NASA publishes on its 3D Resources page (credit NASA Visualization Technology Applications and Development), reduced in size and loaded only
+        when you target that craft. The others are still built from shapes in code.</li>
     <li><b>Numbers are facts.</b> Orbital elements and physical data are measurements, not creative works.
         All descriptive text here was written fresh. Asteroid and comet numbers come from JPL’s public
         Small-Body Database, copied into a file once rather than fetched when the page opens.</li>
@@ -944,8 +1168,11 @@ const ABOUT = {
 
   <h4>Accuracy</h4>
   <p>Built on the standard J2000 approximate elements, good to arc-minutes between 1800 and 2050 — fine for
-  teaching and presentation, not for flying a spacecraft. Moons use simplified ellipses in their parent’s
-  equatorial plane. Body sizes are always true to scale unless “Enlarged” is switched on.</p>
+  teaching and presentation, not for flying a spacecraft. Moons of other planets use simplified ellipses in
+  their parent’s equatorial plane. Body sizes are always true to scale unless “Enlarged” is switched on.</p>
+  <p>Earth’s Moon follows Meeus’s abridged ELP-2000/82 theory (120 terms), rotated back to J2000 and
+  corrected for ΔT. Against JPL Horizons it is within 3–8 km, so eclipse shadows land in the right place:
+  the gamma values of the 2026–2028 total solar eclipses are within 0.002 of NASA’s.</p>
 
   <h4>Beyond the solar system</h4>
   <p>The scale ladder now has ten rungs, from a planet’s surface out to the edge of the observable
@@ -954,7 +1181,8 @@ const ABOUT = {
   each with a chart placing it beside our own solar system.</p>
 
   <h4>The stars around you are real</h4>
-  <p>Every star within 32.6 light-years plus every bright star in the sky — 551 in all — placed at true
+  <p>Every star within 32.6 light-years, every bright star in the sky and the stars that draw the
+  constellation figures — 1,356 in all — placed at true
   three-dimensional positions from the CDS SIMBAD database. Brightness is computed from the distance to
   the camera, so stars dim and brighten as you move, and flying a few light-years out visibly distorts the
   constellations because nearby stars shift faster than distant ones. Click any star for its data.</p>
@@ -963,13 +1191,28 @@ const ABOUT = {
   <p>Pick a place on Earth and see which bodies are above the horizon at the displayed time, how high
   and in which direction, along with sunrise, sunset, moonrise, moonset and a calendar of the next
   400 days of sky events. All of it is scanned from the positions in this atlas rather than read from a
-  published table, so times can be an hour or two off and the type of each eclipse is not identified.</p>
+  published table. Eclipses are decided from that night’s real disc sizes and shadow cone (lunar eclipses
+  count only when the Moon touches the umbra). The time shown is the moment of new or full moon, within about
+  ten minutes of greatest eclipse, and the type of each eclipse is not identified yet.</p>
 
   <h4>Spacecraft in this atlas</h4>
-  <p>Seven craft whose engines are done and which now coast on gravity alone, so their paths can be
-  computed far ahead. Five are leaving the solar system for good; the James Webb telescope is placed
-  from the Sun–Earth L2 point directly. The models are built from basic shapes in code — no model files
-  from anywhere — and are enlarged enough to spot from far away, returning to true size as you close in.</p>
+  <p>Ten craft. Seven have finished with their engines and coast on gravity alone, so their paths can be
+  computed far ahead; five of those are leaving the solar system for good, and the James Webb telescope is
+  placed from the Sun–Earth L2 point directly. Lucy, Psyche and Europa Clipper are still under thrust with
+  gravity assists ahead, so their paths are right only near the date they were measured — their info
+  panels say so.</p>
+  <p>Voyager, New Horizons and Parker use NASA’s published 3-D models; the rest are built from basic shapes
+  in code. Every craft is enlarged enough to spot from far away and returns to true size as you close in.</p>
+
+  <h4>Shadows and eclipses from space</h4>
+  <p>Computed in the shader every frame: the rings’ shadow across Saturn, Saturn’s shadow on its rings, and
+  moons’ shadows on their planets, with the penumbra widening to match the Sun’s true size as seen from that
+  planet. Set the date to 2 August 2027 around 10:07 UTC and look at Earth to watch a total eclipse cross it.</p>
+
+  <h4>Constellations from outside</h4>
+  <p>Constellation lines run to the true 3-D positions of their stars. Fly tens or hundreds of light-years
+  out and look back, and the lines burst outward around the Sun, because stars in one constellation lie at
+  very different distances — the familiar figures are only the view from where we stand.</p>
 
   <h4>Controls</h4>
   <ul>

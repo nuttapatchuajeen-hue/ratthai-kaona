@@ -92,11 +92,17 @@ button{background:none; border:0; cursor:pointer; padding:0}
 .lbl.cons .ring{display:none}
 .lbl.cons .nm{font-size:9px; letter-spacing:.24em; color:#9fc0ea; font-weight:400}
 .lbl.cons:hover .nm{color:var(--amber)}
+/* มองจากนอกระบบสุริยะ: ชื่อกลุ่มดาวใหญ่ขึ้น เว้นระยะกว้างแบบ Eyes */
+.lbl.cons.far .nm{font-size:12px; letter-spacing:.34em; color:#5d9ee8}
+.lbl.cons.far.th .nm{font-size:12.5px; letter-spacing:.1em}
+.lbl.cons.far:hover .nm{color:var(--amber)}
 
 /* ดาวฤกษ์: ไม่มีวงกลมนำหน้า เพราะตัวดาวเองคือจุดสว่างอยู่แล้ว */
 .lbl.star{padding:2px 7px}
 .lbl.star .ring{display:none}
 .lbl.star .nm{font-size:9.5px; letter-spacing:.1em; color:inherit; opacity:.95}
+/* ดาวที่มีแต่ชื่อไบเออร์ (γ Lup): อักษรกรีกต้องเป็นตัวเล็ก ห้ามแปลงเป็นตัวใหญ่ */
+.lbl.star.bay .nm{text-transform:none; letter-spacing:.04em}
 
 /* ยานอวกาศ: เครื่องหมายเป็นสี่เหลี่ยมมุมมน บอกว่าไม่ใช่วัตถุธรรมชาติ */
 .lbl.craft .nm{font-size:10px; color:var(--ink); letter-spacing:.07em}
