@@ -21,8 +21,8 @@ window.INTRO_YOUTUBE = {
   '2539':  { id:'NlVsqCH8s_k', party:'ความหวังใหม่', title:'เพลงพรรคความหวังใหม่ (พ.ศ. 2535–2539)', artist:'พรรคความหวังใหม่',              url:'https://youtu.be/NlVsqCH8s_k' },
   '2535b': { id:'_XHP2_m3T1I', party:'ประชาธิปัตย์', title:'ประชาธิปัตย์มาแล้ว',                   artist:'พรรคประชาธิปัตย์',               url:'https://youtu.be/_XHP2_m3T1I' },
   '2529':  { id:'_XHP2_m3T1I', party:'ประชาธิปัตย์', title:'ประชาธิปัตย์มาแล้ว',                   artist:'พรรคประชาธิปัตย์',               url:'https://youtu.be/_XHP2_m3T1I' },
-  '2526':  { id:'lcxJxVxkMxo', party:'กิจสังคม',     title:'หัวหน้าและเลขาธิการพรรคกิจสังคม',      artist:'พรรคกิจสังคม',                   url:'https://youtu.be/lcxJxVxkMxo' },
-  '2522':  { id:'lcxJxVxkMxo', party:'กิจสังคม',     title:'หัวหน้าและเลขาธิการพรรคกิจสังคม',      artist:'พรรคกิจสังคม',                   url:'https://youtu.be/lcxJxVxkMxo' },
+  '2526':  { id:'8QR5luaPW20', party:'กิจสังคม',     title:'เพลงประจำพรรคกิจสังคม',      artist:'พรรคกิจสังคม',                   url:'https://youtu.be/8QR5luaPW20' },
+  '2522':  { id:'8QR5luaPW20', party:'กิจสังคม',     title:'เพลงประจำพรรคกิจสังคม',      artist:'พรรคกิจสังคม',                   url:'https://youtu.be/8QR5luaPW20' },
   '2512':  { id:'Qv_SY27Uh5U', party:'สหประชาไทย',   title:'มาร์ชสหประชาไทย',                      artist:'พรรคสหประชาไทย',                 url:'https://youtu.be/Qv_SY27Uh5U' },
   '2500':  { id:'UFdzBThGxbc', party:'เสรีมนังคศิลา', title:'เสรีมนังคศิลา (มาร์ช) · Thai Patriotic Song', artist:'พรรคเสรีมนังคศิลา',       url:'https://youtu.be/UFdzBThGxbc' }
 };
