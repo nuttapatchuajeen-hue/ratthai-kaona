@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>แผนที่ระบบสุริยะ</title>
+<meta name="description" content="แผนที่ระบบสุริยะแบบ 3 มิติ คำนวณตำแหน่งดาวเคราะห์ตามเวลาจริงจากองค์ประกอบวงโคจรเคปเลอร์ พื้นผิวทั้งหมดสร้างด้วยโค้ด ไม่ใช้ไฟล์ภาพจากที่ใด">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <div id="labels"></div>
+</div>
+
+<header id="topbar">
+  <div class="brand"><span class="mark"></span><b>แผนที่ระบบสุริยะ</b><span class="sub">Solar Atlas</span></div>
+  <nav class="crumb" id="crumb" aria-live="polite"></nav>
+  <div class="top-actions">
+    <button class="tbtn" id="btnFind" title="ค้นหาวัตถุ (F)">
+      <svg viewBox="0 0 20 20"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 17 17"/></svg><span>ค้นหา</span>
+    </button>
+    <button class="tbtn" id="btnLang" title="สลับภาษา">EN</button>
+    <button class="tbtn" id="btnAbout" title="เกี่ยวกับ / ลิขสิทธิ์">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5M10 6.4v.1"/></svg>
+    </button>
+  </div>
+</header>
+
+<aside id="rail">
+  <div class="tabs" role="tablist">
+    <button role="tab" class="on" data-tab="info">ข้อมูล</button>
+    <button role="tab" data-tab="tools">เครื่องมือ</button>
+    <button role="tab" data-tab="view">มุมมอง</button>
+  </div>
+  <button id="railToggle" title="ย่อ/ขยายแผง">‹</button>
+  <div class="panes">
+    <section class="pane" id="pane-info"></section>
+    <section class="pane" id="pane-tools" hidden></section>
+    <section class="pane" id="pane-view" hidden></section>
+  </div>
+</aside>
+
+<div id="console">
+  <div class="crow">
+    <div class="transport">
+      <button id="slower" title="ช้าลง (←)"><svg viewBox="0 0 16 16"><path d="M14 3v10L8.5 8zM7 3v10L1.5 8z"/></svg></button>
+      <button class="play" id="play" title="เล่น / หยุด (เว้นวรรค)"></button>
+      <button id="faster" title="เร็วขึ้น (→)"><svg viewBox="0 0 16 16"><path d="M2 3v10l5.5-5zM9 3v10l5.5-5z"/></svg></button>
+    </div>
+    <div class="clock">
+      <span class="d num" id="cDate">—</span>
+      <span class="t num" id="cTime">—</span>
+    </div>
+    <div class="live-dot" id="liveDot"><i></i><span>สด</span></div>
+    <div class="rate"><b id="rateVal">—</b><span id="rateUnit">อัตรา</span></div>
+  </div>
+  <input type="range" id="scrub" min="-9" max="9" step="1" value="0" aria-label="อัตราเร็วของเวลา">
+  <div class="crow" style="gap:8px">
+    <input type="date" id="jump" aria-label="กระโดดไปยังวันที่">
+    <button class="ghost" id="btnNow">ตอนนี้</button>
+    <span class="viewdist"><em id="viewLbl">ระยะมอง</em><b class="num" id="scaleTxt">—</b></span>
+    <button class="ghost" id="btnFrame" style="margin-left:auto">จัดกล้อง</button>
+  </div>
+</div>
+
+<div id="rrail">
+  <button id="zin" title="ซูมเข้า"><svg viewBox="0 0 20 20"><path d="M10 5.5v9M5.5 10h9"/></svg></button>
+  <button id="zout" title="ซูมออก"><svg viewBox="0 0 20 20"><path d="M5.5 10h9"/></svg></button>
+  <button id="topView" title="มองจากขั้วเหนือ"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="10" rx="7.5" ry="7.5"/><circle cx="10" cy="10" r="2" fill="currentColor" stroke="none"/></svg></button>
+  <button id="tglLbl" class="on" title="ชื่อวัตถุ"><svg viewBox="0 0 20 20"><path d="M3 6h14M3 10h9M3 14h11"/></svg></button>
+  <button id="tglOrb" class="on" title="เส้นวงโคจร"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="10" rx="8" ry="4.4"/><circle cx="10" cy="10" r="1.6" fill="currentColor" stroke="none"/></svg></button>
+  <button id="full" title="เต็มจอ"><svg viewBox="0 0 20 20"><path d="M3 7V3h4M17 7V3h-4M3 13v4h4M17 13v4h-4"/></svg></button>
+</div>
+
+<p id="hint">ลากเพื่อหมุน · เลื่อนล้อเพื่อซูม · คลิกชื่อวัตถุเพื่อเจาะจง</p>
+
+<div class="overlay" id="findSheet" hidden>
+  <div class="sheet">
+    <header><input id="q" placeholder="ค้นหาดาวเคราะห์ ดวงจันทร์…" autocomplete="off"><button class="ghost" data-close>ปิด</button></header>
+    <div class="body" id="findBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="aboutSheet" hidden>
+  <div class="sheet">
+    <header><h3 id="aboutTitle">เกี่ยวกับแผนที่นี้</h3><button class="ghost" data-close>ปิด</button></header>
+    <div class="body prose" id="aboutBody"></div>
+  </div>
+</div>
+
+<div id="loading">
+  <div class="orbit"></div>
+  <div class="bar"><i id="loadBar"></i></div>
+  <p id="loadTxt">กำลังเริ่มระบบ</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="data.js"></script>
+<script src="textures.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
