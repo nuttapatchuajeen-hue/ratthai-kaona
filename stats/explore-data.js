@@ -1356,6 +1356,7 @@ var SOLAR_WIND_BARS = [
 var NAV = [
       { id:"solar", ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ระบบสุริยะ", subs:[
           { pane:"solar-orrery",   ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"แบบจำลอง 3 มิติ (3D Orrery)", existing:true },
+          { pane:"solar-atlas",    ico:"<svg class='mdico'><use href='#i-compass'></use></svg>",  label:"แผนที่ 3 มิติ ซูมผิวดาวถึงทางช้างเผือก (Solar Atlas)", existing:true },
           { pane:"solar-spacetime",ico:"<svg class='mdico'><use href='#i-waves'></use></svg>", label:"กาลอวกาศ & หลุมแรงโน้มถ่วง (Spacetime)", existing:true },
           { pane:"solar-magneto",  ico:"<svg class='mdico'><use href='#i-shield'></use></svg>", label:"สนามแม่เหล็ก & เกราะลมสุริยะ (Magnetosphere)", existing:true },
           { pane:"solar-sun",      ico:"<svg class='mdico'><use href='#i-sun'></use></svg>", label:"ดวงอาทิตย์ (The Sun)", existing:true },

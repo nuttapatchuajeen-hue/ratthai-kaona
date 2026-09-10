@@ -24,6 +24,15 @@
     <button class="tbtn" id="btnFind" title="ค้นหาวัตถุ (F)">
       <svg viewBox="0 0 20 20"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 17 17"/></svg><span>ค้นหา</span>
     </button>
+    <a class="tbtn" id="btnHome" href="../hub/index.html" title="กลับหน้าหลัก รัฐไทยก้าวหน้า">
+      <svg viewBox="0 0 20 20"><path d="M3.2 9.2 10 3.6l6.8 5.6"/><path d="M5 8.6v7.8h10V8.6"/></svg><span>หน้าหลัก</span>
+    </a>
+    <button class="tbtn" id="btnShare" title="คัดลอกลิงก์ของมุมมองนี้ (L)">
+      <svg viewBox="0 0 20 20"><path d="M7.7 11.1l4.6-2.2M7.7 8.9l4.6 2.2"/><circle cx="14" cy="5.2" r="2.2"/><circle cx="6" cy="10" r="2.2"/><circle cx="14" cy="14.8" r="2.2"/></svg><span>แชร์</span>
+    </button>
+    <button class="tbtn" id="btnShot" title="บันทึกภาพหน้าจอเป็นไฟล์ PNG (P)">
+      <svg viewBox="0 0 20 20"><path d="M2.6 6.6h3.2l1.3-2h5.8l1.3 2h3.2v9.8H2.6z"/><circle cx="10" cy="11.5" r="3.1"/></svg>
+    </button>
     <button class="tbtn" id="btnLang" title="สลับภาษา">EN</button>
     <button class="tbtn" id="btnAbout" title="เกี่ยวกับ / ลิขสิทธิ์">
       <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5M10 6.4v.1"/></svg>
@@ -36,12 +45,14 @@
     <button role="tab" class="on" data-tab="info">ข้อมูล</button>
     <button role="tab" data-tab="tools">เครื่องมือ</button>
     <button role="tab" data-tab="view">มุมมอง</button>
+    <button role="tab" data-tab="sky">ท้องฟ้า</button>
   </div>
   <button id="railToggle" title="ย่อ/ขยายแผง">‹</button>
   <div class="panes">
     <section class="pane" id="pane-info"></section>
     <section class="pane" id="pane-tools" hidden></section>
     <section class="pane" id="pane-view" hidden></section>
+    <section class="pane" id="pane-sky" hidden></section>
   </div>
 </aside>
 
@@ -79,6 +90,8 @@
 
 <p id="hint">ลากเพื่อหมุน · เลื่อนล้อเพื่อซูม · คลิกชื่อวัตถุเพื่อเจาะจง</p>
 
+<div id="toast" hidden></div>
+
 <div class="overlay" id="findSheet" hidden>
   <div class="sheet">
     <header><input id="q" placeholder="ค้นหาดาวเคราะห์ ดวงจันทร์…" autocomplete="off"><button class="ghost" data-close>ปิด</button></header>
@@ -100,6 +113,23 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- md:site-only:start — ผูกกับเว็บแม่ · build-standalone.js จะตัดบล็อกนี้ออก -->
+<script>
+/* เสียงคลิกและเครื่องเล่นเพลงพื้นหลังของเว็บแม่
+   โหลดเฉพาะตอนเปิดเป็นหน้าเดี่ยว — ถ้าถูกฝังเป็น iframe อยู่ในหน้าอื่น
+   หน้านั้นมีเครื่องเล่นของตัวเองแล้ว โหลดซ้ำจะได้เพลงสองชั้นทับกัน */
+(function () {
+  if (window.top !== window.self) return;
+  ['../js/cyber-sfx.js', '../js/cyber-audio.js'].forEach(function (src) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.defer = true;
+    s.onerror = function () {};        // ก๊อปโฟลเดอร์นี้ไปวางที่อื่นก็ยังทำงานได้ตามปกติ
+    document.head.appendChild(s);
+  });
+})();
+</script>
+<!-- md:site-only:end -->
 <script src="data.js"></script>
 <script src="textures.js"></script>
 <script src="app.js"></script>

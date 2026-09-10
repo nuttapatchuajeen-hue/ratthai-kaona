@@ -1409,7 +1409,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
           </a>
         </nav>
         <div class="side-sec">
-          <div class="side-label"><span>หมวดหมู่ข้อมูล</span><span class="sl-badge">122 หัวข้อ</span></div>
+          <div class="side-label"><span>หมวดหมู่ข้อมูล</span><span class="sl-badge">147 หัวข้อ</span></div>
           <div class="nav-search">
             <svg class="ns-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
             <input type="search" id="navSearch" placeholder="ค้นหาหัวข้อ…" aria-label="ค้นหาหัวข้อในหน้านี้" autocomplete="off" spellcheck="false">
@@ -1477,6 +1477,49 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         <div class="card">
           <div class="card-head"><h2><svg class="mdico"><use href="#i-rocket"></use></svg> ดาวหางฮัลเลย์ 3D</h2><span class="tag">Physics Tail Vector</span></div>
           <p class="sub">แกนน้ำแข็ง Nucleus + หมอก Coma เรืองแสง พร้อมหางไอออนสีน้ำเงินครามที่หันหนีออกจากดวงอาทิตย์ตามเวกเตอร์ลมสุริยะตลอดวงโคจร</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 01b. ระบบสุริยะ · แผนที่ 3 มิติ ซูมจากผิวดาวถึงทางช้างเผือก (Solar Atlas 3D) ============ -->
+    <section class="tabpane" id="pane-solar-atlas" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">ระบบสุริยะ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-compass"></use></svg> แผนที่ระบบสุริยะ 3 มิติ ซูมจากผิวดาวถึงทางช้างเผือก (Solar Atlas 3D)</h2></div>
+      
+      <div class="card full">
+        <div class="card-head">
+          <h2><svg class="mdico"><use href="#i-compass"></use></svg> สำรวจระบบสุริยะระดับดาราจักร — ซูมลึกจากผิวดาวเคราะห์สู่ทางช้างเผือก</h2>
+          <span class="tag">WebGL · Three.js · Procedural Noise · Multiscale</span>
+        </div>
+        <p class="sub">แบบจำลองระบบสุริยะ 3 มิติเต็มรูปแบบ (Solar Atlas) คำนวณตำแหน่งดาวเคราะห์ตามเวลาจริงด้วยองค์ประกอบวงโคจรเคปเลอร์ (Keplerian Elements) พื้นผิวดาวเคราะห์และดวงจันทร์สังเคราะห์ด้วย Procedural 3D Perlin Noise ไร้รอยต่อ พร้อมเทคนิค Dynamic Origin สลับ 3 Scene ซ้อนกันเพื่อรองรับมาตราส่วน 14 หลัก ตั้งแต่ระดับกิโลเมตรบนผิวดาวไปจนถึงเกลียวแขนของทางช้างเผือก (Milky Way Galaxy)</p>
+        
+        <a class="bkkcity-go" href="../solar-atlas/index.html" target="_blank" rel="noopener" style="margin-bottom:14px;">
+          <span class="ico">🌌</span>
+          <span class="tx">
+            <b>เปิดแผนที่ระบบสุริยะ 3 มิติ (Solar Atlas) เต็มหน้าจอ (Fullscreen Edition)</b>
+            <small>ซูมอิสระ 7 ระดับสเกล (ผิวดาว → กาแล็กซี) · คอนโซลเวลา Time Warp ปรับเร่ง/ย้อนเวลาสด · แผงข้อมูลวัตถุ · ค้นหาดาวเคราะห์ &amp; ดวงจันทร์ · รองรับ 2 ภาษา (ไทย/EN)</small>
+          </span>
+          <span class="arw">เปิดเต็มจอ ↗</span>
+        </a>
+
+        <div style="position:relative; width:100%; height:640px; border-radius:14px; overflow:hidden; border:1px solid var(--rule-strong); background:#05070c; box-shadow:0 14px 40px rgba(0,0,0,0.65);">
+          <iframe src="../solar-atlas/index.html" style="width:100%; height:100%; border:none; display:block;" title="แผนที่ระบบสุริยะ 3 มิติ Solar Atlas ซูมจากผิวดาวถึงทางช้างเผือก" loading="lazy"></iframe>
+        </div>
+
+        <div class="src">เทคโนโลยี: Three.js r128 + 3D Perlin Noise Procedural Shader + Keplerian Orbit Math · พัฒนาใหม่ทั้งหมดโดยอิสระสำหรับโครงการรัฐไทยก้าวหน้า</div>
+      </div>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> มาตราส่วน 14 หลัก (Multiscale)</h2><span class="tag">3 Scene Graphs</span></div>
+          <p class="sub">ก้าวข้ามขีดจำกัด Float 32 บิตของ GPU ด้วยการย้ายจุดกำเนิดพิกัดตามกล้อง (Dynamic Origin) และผสานฉาก 3 ชั้น: ระบบสุริยะจริง ท้องฟ้าย่านดวงอาทิตย์ และจานดาราจักรทางช้างเผือก</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-sparkles"></use></svg> พื้นผิวสังเคราะห์ Procedural 3D</h2><span class="tag">Perlin Noise</span></div>
+          <p class="sub">คำนวณ Perlin Noise 3 มิติบนเวกเตอร์ทิศทางทรงกลมสดตอนเปิดหน้าเว็บ ไร้รอยต่อและไม่ยืดที่ขั้ว พร้อมสูตรระบายสีเฉพาะดวง: ลายพายุพฤหัสบดี หลุมอุกกาบาตดาวพุธ และรอยแตกน้ำแข็งยูโรปา</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-clock"></use></svg> คำนวณวงโคจรเคปเลอร์สด</h2><span class="tag">J2000 Ephemeris</span></div>
+          <p class="sub">แก้สมการเคปเลอร์ E − e·sin E = M ด้วยวิธีนิวตัน (Newton-Raphson) 8 รอบจากองค์ประกอบวงโคจรยุค J2000 แม่นยำตามปฏิทินจริง ค.ศ. 1800–2050 พร้อมแถบ Time Scrub เล่น/หยุด/ถอยหลัง</p>
         </div>
       </div>
     </section>
@@ -30372,6 +30415,11 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
     function buildNav(){
       var host = $("#sideNav"); if(!host) return;
+      var badge = $(".side-sec .sl-badge");
+      if(badge){
+        var total = NAV.reduce(function(acc, g){ return acc + g.subs.length; }, 0);
+        badge.textContent = total + " หัวข้อ";
+      }
       var content = $(".content");
       var frag = document.createDocumentFragment();
       NAV.forEach(function(g){
