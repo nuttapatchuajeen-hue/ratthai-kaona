@@ -1107,7 +1107,8 @@ function updateScene() {
     if (rec.ring) rec.ring.scale.setScalar(scale);
     if (rec.glow) rec.glow.scale.setScalar(rec.R * 7);
     const rotH = def.rotH != null ? def.rotH : (def.period != null ? def.period * 24 : null);
-    if (!rec.craft) {
+    if (id === 'earth') earthOrient(S.time, rec.spin.quaternion);
+    else if (!rec.craft) {
       rec.spin.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rec.axis);
       if (rotH) rec.spin.rotateY((2 * Math.PI * d / (rotH / 24)) % (2 * Math.PI));
     }
@@ -1468,6 +1469,26 @@ function precessMatrix(ms) {
   m[3] = sZ * ct * cz + cZ * sz;  m[4] = -sZ * ct * sz + cZ * cz;  m[5] = -sZ * st;
   m[6] = st * cz;                 m[7] = -st * sz;                 m[8] = ct;
   return m;
+}
+
+/* การหันของโลกในฉาก — ขั้วเหนือชี้ตามแกนหมุนจริง และเมริเดียนกรีนิชหันตามเวลาดาราคติ
+   พื้นผิวโลก (textures.js) วางลองจิจูด 0° ไว้กลางภาพ ซึ่ง SphereGeometry หันไปทาง +X ของตัวเอง
+   และตะวันออก 90° ไปทาง −Z จึงประกอบแกนทั้งสามตรง ๆ แทนการเอียงแกนแล้วหมุนแบบดาวดวงอื่น
+   ผลคือกลางวัน–กลางคืนบนโลกตรงกับเวลาจริง และเงาสุริยุปราคาตกลงบนประเทศที่ถูกต้อง       */
+const _gX = new THREE.Vector3(), _gY = new THREE.Vector3(), _gZ = new THREE.Vector3(), _gM = new THREE.Matrix4();
+function earthOrient(ms, q) {
+  const P = precessMatrix(ms), g = gmstDeg(ms) * DEG;
+  const ce = Math.cos(OBLIQ), se = Math.sin(OBLIQ);
+  // เวกเตอร์ในกรอบศูนย์สูตรของวันนั้น → J2000 (ทรานสโพสของ P) → สุริยวิถี J2000
+  const put = (v, a, b, c) => {
+    const x = P[0] * a + P[3] * b + P[6] * c, y = P[1] * a + P[4] * b + P[7] * c, z = P[2] * a + P[5] * b + P[8] * c;
+    return v.set(x, y * ce + z * se, -y * se + z * ce);
+  };
+  const cg = Math.cos(g), sg = Math.sin(g);
+  put(_gX, cg, sg, 0);                         // ลองจิจูด 0° บนเส้นศูนย์สูตร
+  put(_gY, 0, 0, 1);                           // ขั้วเหนือ
+  put(_gZ, sg, -cg, 0);                        // ลองจิจูด 90° ตะวันตก
+  return q.setFromRotationMatrix(_gM.makeBasis(_gX, _gY, _gZ));
 }
 
 /* วัตถุอยู่ตรงไหนบนท้องฟ้าของผู้สังเกต
@@ -4048,6 +4069,7 @@ function initUI() {
 /* ══ ลำดับการโหลด ════════════════════════════════════════════════════ */
 const TEXSIZE = { big: [896, 448], mid: [640, 320], small: [512, 256], moon: [320, 160], tiny: [160, 80] };
 const BIG = ['earth', 'jupiter'], MID = ['mars', 'saturn', 'mercury', 'venus'];
+const DISC_LON = { earth: (100 + 180) / 360 * 2 * Math.PI };   // แผ่นกลมของโลกหันเอเชียตะวันออกเฉียงใต้เข้าหาผู้ดู
 
 /* q = ตัวหารความละเอียด (4 = ฉบับย่อสำหรับโชว์ก่อน, 1 = ฉบับเต็ม) */
 function texSizeOf(id, q) {
@@ -4115,7 +4137,7 @@ async function refineTextures() {
     if (b.id === 'earth' && b._clouds && REG.earth.clouds) {
       upgradeCanvas(b._clouds, PAINTERS.earthClouds(384, 192), REG.earth.clouds.material.map);
     }
-    b._disc = discPreview(b._tex, 96);
+    b._disc = discPreview(b._tex, 96, DISC_LON[b.id]);
     b._discURL = b._disc.toDataURL('image/png');
     await step();
   }
@@ -4191,7 +4213,7 @@ function prepareData() {
 function buildAll() {
   for (const b of BODIES) {
     REG[b.id] = makeBody(b, false);
-    b._disc = discPreview(b._tex, 96);
+    b._disc = discPreview(b._tex, 96, DISC_LON[b.id]);
     b._discURL = b._disc.toDataURL('image/png');
     if (b.id !== 'sun') { orbitLine(REG[b.id]); trailLine(REG[b.id]); }
   }

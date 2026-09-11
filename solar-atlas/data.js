@@ -69,7 +69,7 @@ const BODIES = [
 {
   id:'earth', kind:'planet', color:0x4a9be0, glow:'#4a9be0',
   nm:{th:'โลก', en:'Earth'},
-  radius:6371.0, mass:5.972e24, gravity:9.81, rotH:23.9345, tilt:23.44, axisNode:0,
+  radius:6371.0, mass:5.972e24, gravity:9.81, rotH:23.9345, tilt:23.44, axisNode:90,
   moons:1, temp:'15 °C', tempEn:'15 °C', orbitDays:365.256, aAU:1.000,
   origin:{th:'“โลก” จากภาษาบาลี-สันสกฤต โลก/loka แปลว่าโลกหรือภพ', en:'The only planet not named for a god — from Old English eorþe, “ground”'},
   desc:{
@@ -1064,7 +1064,8 @@ const ABOUT = {
   <h4>เรื่องลิขสิทธิ์ — ทำไมชุดนี้ปลอดภัย</h4>
   <ul>
     <li><b>ไม่มีไฟล์ภาพจากภายนอกเลย</b> พื้นผิวดาวทุกดวง วงแหวน ดวงอาทิตย์ และดาวฤกษ์พื้นหลัง
-        ถูกวาดขึ้นด้วยโค้ด (procedural noise) ตอนเปิดหน้าเว็บ จึงไม่มีภาพถ่ายของใครมาเกี่ยวข้อง</li>
+        ถูกวาดขึ้นด้วยโค้ด (procedural noise) ตอนเปิดหน้าเว็บ จึงไม่มีภาพถ่ายของใครมาเกี่ยวข้อง
+        ส่วนทวีปบนโลกวาดจากเส้นขอบแผ่นดินของ Natural Earth ซึ่งเป็นข้อมูลแผนที่สาธารณสมบัติ</li>
     <li><b>ทางช้างเผือกก็ปั่นขึ้นเอง</b> แขนกังหันเกิดจากสูตรเกลียวลอการิทึม ไม่ใช่ภาพถ่ายหรือภาพวาด
         ของกาแล็กซี ซึ่งเป็นจุดที่แอปดาราศาสตร์ส่วนใหญ่ต้องไปหยิบไฟล์ภาพของคนอื่นมาใช้</li>
     <li><b>ไม่มีโค้ดที่คัดลอกมา</b> เขียนขึ้นใหม่ทั้งหมด ใช้เพียงไลบรารี <code>three.js</code>
@@ -1152,7 +1153,8 @@ const ABOUT = {
   <h4>On copyright — why this set is safe to ship</h4>
   <ul>
     <li><b>No external image files at all.</b> Every planet surface, the rings, the Sun and the background
-        stars are drawn in code with procedural noise when the page loads. No one’s photograph is involved.</li>
+        stars are drawn in code with procedural noise when the page loads. No one’s photograph is involved.
+        Earth’s continents are drawn from Natural Earth coastlines, which are public-domain map data.</li>
     <li><b>The Milky Way is generated too.</b> Its arms come from a logarithmic spiral formula, not from a
         photograph or painting of the galaxy — the exact asset most astronomy apps have to borrow.</li>
     <li><b>No copied code.</b> Written from scratch, using only <code>three.js</code> (MIT licence) and the
