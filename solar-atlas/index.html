@@ -47,7 +47,9 @@
     <button role="tab" data-tab="view">มุมมอง</button>
     <button role="tab" data-tab="sky">ท้องฟ้า</button>
   </div>
-  <button id="railToggle" title="ย่อ/ขยายแผง">‹</button>
+  <button id="railToggle" title="ย่อ/ขยายแผง" aria-label="ย่อ/ขยายแผง">
+    <svg viewBox="0 0 16 16"><path d="M4 6l4 4 4-4"/></svg>
+  </button>
   <div class="panes">
     <section class="pane" id="pane-info"></section>
     <section class="pane" id="pane-tools" hidden></section>
@@ -69,6 +71,9 @@
     </div>
     <div class="live-dot" id="liveDot"><i></i><span>สด</span></div>
     <div class="rate"><b id="rateVal">—</b><span id="rateUnit">อัตรา</span></div>
+    <button id="consoleToggle" title="ย่อ/ขยายแถบเวลา" aria-label="ย่อ/ขยายแถบเวลา">
+      <svg viewBox="0 0 16 16"><path d="M4 10l4-4 4 4"/></svg>
+    </button>
   </div>
   <input type="range" id="scrub" min="-9" max="9" step="1" value="0" aria-label="อัตราเร็วของเวลา">
   <div class="crow" style="gap:8px">

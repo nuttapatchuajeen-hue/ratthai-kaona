@@ -19,7 +19,7 @@ const S = {
   orbits: true, labels: true, moons: true, belt: true, kuiper: true, oort: true,
   stars: true, galaxy: true, grid: false, trails: false,
   asteroids: true, comets: true, dwarfs: true, craft: true, figures: true, deep: true, exo: true,
-  shadows: true,
+  shadows: true, cosmic: true, cmb: true, ism: true, darkmatter: true,
   enlarge: false,
   measureA: 'earth', measureB: 'mars'
 };
@@ -548,6 +548,7 @@ function updateBelts() {
    วาดในฉากของตัวเองที่ย่อมาตราส่วนลง (1 หน่วย = 1,000 ปีแสง)
    ทำให้ระยะระดับแสนปีแสงอยู่ในช่วงที่ตัวเลข float รับไหว                */
 let galScene, galCam, galPts, galGlow, galDisc, galSunPos;
+let galDust = null, galHii = null, galHalo = null;
 function buildGalaxy() {
   galScene = new THREE.Scene();
   galCam = new THREE.PerspectiveCamera(48, 1, 0.02, 6000);
@@ -651,6 +652,81 @@ function buildGalaxy() {
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
   }));
   group.add(galDisc);
+
+  /* สสารระหว่างดาว (ISM)
+     · ฝุ่น: จุดมืดเกาะขอบด้านในของแขนกังหัน ผสมแบบ "ลบแสง" (ReverseSubtract) จึงกินแสงดาวข้างหลังจริง ๆ
+       ลบฟ้ามากกว่าแดงเล็กน้อย แสงที่ลอดผ่านจึงออกแดง — แบบเดียวกับที่ฝุ่นทำกับแสงดาวจริง
+     · ก๊าซไฮโดรเจนเรืองแสง (บริเวณ HII): ก้อนสีชมพูตามแขน ที่ดาวมวลมากเพิ่งเกิดกระตุ้นให้ก๊าซเรืองแสง */
+  {
+    let sd = 424242;
+    const rn = () => ((sd = (sd * 1103515245 + 12345) & 0x7fffffff), sd / 0x7fffffff);
+    const gs = () => (rn() + rn() + rn() + rn() - 2) * 0.75;
+    const ND = 34000, NH = 1500;
+    const dp = new Float32Array(ND * 3), ds = new Float32Array(ND), da = new Float32Array(ND);
+    for (let k = 0; k < ND; k++) {
+      const r = 2.6 + Math.pow(rn(), 0.85) * 38;
+      const arm = (rn() * ARMS) | 0;
+      const th = Math.log(r / 2.2) / PITCH + arm * (2 * Math.PI / ARMS) - 0.16 + gs() * (0.05 + 0.5 / (r + 3));
+      dp[k * 3] = r * Math.cos(th); dp[k * 3 + 1] = r * Math.sin(th); dp[k * 3 + 2] = gs() * 0.12;
+      ds[k] = 2.3 + rn() * 3.3;
+      da[k] = (0.028 + 0.066 * rn()) * Math.exp(-r / 34);
+    }
+    const hp = new Float32Array(NH * 3), hs = new Float32Array(NH), ha = new Float32Array(NH);
+    for (let k = 0; k < NH; k++) {
+      const r = 3.5 + Math.pow(rn(), 0.9) * 34;
+      const arm = (rn() * ARMS) | 0;
+      const th = Math.log(r / 2.2) / PITCH + arm * (2 * Math.PI / ARMS) + gs() * (0.04 + 0.45 / (r + 3));
+      hp[k * 3] = r * Math.cos(th); hp[k * 3 + 1] = r * Math.sin(th); hp[k * 3 + 2] = gs() * 0.08;
+      hs[k] = 2.2 + rn() * 4.5;
+      ha[k] = 0.35 + 0.6 * rn();
+    }
+    const pointsMat = (fragBody, blend) => new THREE.ShaderMaterial({
+      uniforms: { fade: { value: 0 }, scale: { value: 1 } },
+      vertexShader: `attribute float size; attribute float alpha; uniform float scale; uniform float fade; varying float vA;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * scale; vA = alpha * fade; gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `varying float vA; void main(){ float q = length(gl_PointCoord - 0.5); if (q > 0.5) discard; ${fragBody} }`,
+      transparent: true, depthWrite: false, depthTest: false, ...blend
+    });
+    const mkPts = (p, s, a, mat, order) => {
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+      g.setAttribute('size', new THREE.BufferAttribute(s, 1));
+      g.setAttribute('alpha', new THREE.BufferAttribute(a, 1));
+      const pts = new THREE.Points(g, mat);
+      pts.frustumCulled = false;
+      pts.renderOrder = order;
+      group.add(pts);
+      return pts;
+    };
+    galDust = mkPts(dp, ds, da, pointsMat(
+      'float a = smoothstep(0.5, 0.0, q) * vA; gl_FragColor = vec4(vec3(0.42, 0.5, 0.62) * a, a);',
+      { blending: THREE.CustomBlending, blendEquation: THREE.ReverseSubtractEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor }), 5);
+    galHii = mkPts(hp, hs, ha, pointsMat(
+      'float a = exp(-q * q * 14.0) * vA; gl_FragColor = vec4(vec3(1.0, 0.34, 0.52) * a, 1.0);',
+      { blending: THREE.AdditiveBlending }), 6);
+  }
+
+  /* ฮาโลสสารมืด: ทรงกลมรัศมีราว 650,000 ปีแสง (หน่วยฉาก 1 = 1,000 ปีแสง) ห่อทั้งกาแล็กซี
+     ความเข้มตามความหนาแน่นที่ทอดยาวบนแนวสายตา (โพรไฟล์คล้าย NFW ที่ฉายลงบนภาพ รัศมีลักษณะ 65,000 ปีแสง)
+     สีม่วงเป็นสีสมมุติตามธรรมเนียมภาพสสารมืด — ของจริงไม่เปล่งแสง มองไม่เห็น */
+  galHalo = new THREE.Mesh(new THREE.SphereGeometry(650, 64, 32), new THREE.ShaderMaterial({
+    uniforms: { fade: { value: 0 }, rs: { value: 65.0 }, camPos: { value: new THREE.Vector3() } },
+    vertexShader: `varying vec3 vW;
+      void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: `uniform float fade; uniform float rs; uniform vec3 camPos; varying vec3 vW;
+      void main(){
+        vec3 dir = normalize(vW - camPos);
+        float t = dot(-camPos, dir);
+        float b = length(-camPos - dir * t);
+        float I = pow(1.0 + (b * b) / (rs * rs), -0.85);
+        gl_FragColor = vec4(vec3(0.42, 0.30, 0.95) * I * fade, 1.0);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, side: THREE.BackSide, blending: THREE.AdditiveBlending
+  }));
+  galHalo.renderOrder = -5;
+  galHalo.frustumCulled = false;
+  group.add(galHalo);
 }
 
 /* ══ สร้างวัตถุ ══════════════════════════════════════════════════════ */
@@ -1085,10 +1161,18 @@ function updateOrigin(dt) {
     trans.t = Math.min(1, trans.t + dt / trans.dur);
     const e = trans.t < 0.5 ? 4 * trans.t ** 3 : 1 - Math.pow(-2 * trans.t + 2, 3) / 2;
     const A = worldOf(trans.from), B = worldOf(trans.to);
-    origin.x = A.x + (B.x - A.x) * e;
-    origin.y = A.y + (B.y - A.y) * e;
-    origin.z = A.z + (B.z - A.z) * e;
-    camState.dist = Math.exp(Math.log(trans.d0) + (Math.log(trans.d1) - Math.log(trans.d0)) * e);
+    let eo = e, w = 0;
+    if (trans.peak > 0) {
+      // บินข้ามหลายปีแสง: ช่วงแรกถอยกล้องออก (เป้ายังไม่ขยับ) · ช่วงกลางเลื่อนข้ามไปขณะมองจากไกล · ช่วงท้ายพุ่งเข้าหาเป้า
+      const u = Math.min(1, Math.max(0, (trans.t - 0.22) / 0.56));
+      eo = u < 0.5 ? 4 * u ** 3 : 1 - Math.pow(-2 * u + 2, 3) / 2;
+      w = step01(0, 0.24, trans.t) * (1 - step01(0.76, 1, trans.t));
+    }
+    origin.x = A.x + (B.x - A.x) * eo;
+    origin.y = A.y + (B.y - A.y) * eo;
+    origin.z = A.z + (B.z - A.z) * eo;
+    const lg = Math.log(trans.d0) + (Math.log(trans.d1) - Math.log(trans.d0)) * e;
+    camState.dist = Math.exp(w > 0 ? lg + (Math.log(trans.peak) - lg) * w : lg);
     if (trans.t >= 1) { trans.on = false; S.focus = trans.to; syncCrumb(); }
   } else {
     const w = worldOf(S.focus);
@@ -1102,19 +1186,21 @@ function updateScene() {
     const rec = REG[id], def = rec.def;
     toScene(rec.world, rec.holder.position);
     const scale = (S.enlarge && id !== 'sun') ? 25 : 1;
-    if (!rec.craft) rec.mesh.scale.setScalar(rec.R * scale);
+    if (!rec.craft && !rec.far) rec.mesh.scale.setScalar(rec.R * scale);
     if (rec.clouds) rec.clouds.scale.setScalar(rec.R * scale * 1.012);
     if (rec.ring) rec.ring.scale.setScalar(scale);
     if (rec.glow) rec.glow.scale.setScalar(rec.R * 7);
     const rotH = def.rotH != null ? def.rotH : (def.period != null ? def.period * 24 : null);
-    if (!rec.craft) {
+    if (!rec.craft && !rec.far) {
       rec.spin.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rec.axis);
       if (rotH) rec.spin.rotateY((2 * Math.PI * d / (rotH / 24)) % (2 * Math.PI));
     }
     const shown = rec.craft ? craftShown(rec)
+                : rec.far ? farShown(rec)
                 : def.el ? smallShown(rec)
                 : (!rec.isMoon || S.moons);
     if (rec.craft && shown) craftPose(rec);
+    if (rec.far && shown) farPose(rec);
     if (rec.line) {
       const pw = rec.parent ? worldOf(rec.parent) : ZERO;
       toScene(pw, rec.line.position);
@@ -1137,21 +1223,24 @@ function updateScene() {
     craftLight.position.copy(camera.position).multiplyScalar(1.4);
     craftLight.target.position.set(0, 0, 0);
   } else craftLight.intensity = 0;
-  gridGroup.visible = S.grid && camState.dist < 900 * AU;
+  const atHome = !(fo && fo.far);                // ไปดูหลุมดำ/ซากซูเปอร์โนวาอยู่: ของในระบบสุริยะไม่เกี่ยวแล้ว
+  gridGroup.visible = S.grid && atHome && camState.dist < 900 * AU;
   gridGroup.position.set(-origin.x / KMU, -origin.y / KMU, -origin.z / KMU);
-  belt.pts.visible = S.belt && camState.dist < 4000 * AU;
-  kuiper.pts.visible = S.kuiper && camState.dist < 4000 * AU;
-  oort.visible = S.oort && camState.dist > 20 * AU && camState.dist < 24 * LY;
+  belt.pts.visible = S.belt && atHome && camState.dist < 4000 * AU;
+  kuiper.pts.visible = S.kuiper && atHome && camState.dist < 4000 * AU;
+  oort.visible = S.oort && atHome && camState.dist > 20 * AU && camState.dist < 24 * LY;
   updateBelts();
 
   // ไล่สลับ: ท้องฟ้าที่มองจากย่านดวงอาทิตย์ ⇄ ทางช้างเผือกทั้งใบ
   const dly = camState.dist / LY;
-  const f = step01(log10(5), log10(3200), log10(Math.max(1e-12, dly)));
+  // ใช้ระยะของตัวกล้องจากดวงอาทิตย์ด้วย — ไปดูหลุมดำใจกลางกาแล็กซี ฉากหลังต้องเป็นกาแล็กซีแม้กล้องจะอยู่ชิดเป้า
+  const dEye = Math.max(dly, eyeLy());
+  const f = step01(log10(5), log10(3200), log10(Math.max(1e-12, dEye)));
   const px = Math.min(2, (innerHeight / 900) * (renderer.getPixelRatio() || 1));
   starFade = S.stars ? (1 - f) * 0.5 : 0;      // ดาวสุ่มเหลือไว้เป็นฝุ่นดาวพื้นหลังเท่านั้น
   starFadeR = S.stars ? 1 - f : 0;            // ดาวฤกษ์จริงเป็นตัวหลักแล้ว
   // พ้นกาแล็กซีไปแล้ว แบบจำลองแขนกังหันไม่มีความหมาย ปล่อยให้ฉากไกลรับช่วงต่อ
-  const galOut = 1 - step01(log10(0.3), log10(4), log10(Math.max(1e-12, dly / 1e6)));
+  const galOut = 1 - step01(log10(0.3), log10(4), log10(Math.max(1e-12, dEye / 1e6)));
   galFade = S.galaxy ? f * galOut : 0;
   const st = skyScene.getObjectByName('stars');
   st.visible = starFade > 0.01;
@@ -1162,6 +1251,20 @@ function updateScene() {
   // จานแบนดูดีเมื่อมองจากนอกกาแล็กซีเท่านั้น ใกล้กว่านั้นขอบแผ่นจะเป็นรอยตัดขวางจอ
   const discFade = step01(log10(150), log10(2600), log10(Math.max(1e-12, dly)));
   galGlow.material.opacity = galFade * 0.85 * discFade;
+  if (galDust) {
+    const im = S.ism ? galFade : 0;
+    galDust.visible = galHii.visible = im > 0.01;
+    galDust.material.uniforms.fade.value = im;
+    galDust.material.uniforms.scale.value = px * 1.7;
+    galHii.material.uniforms.fade.value = im;
+    galHii.material.uniforms.scale.value = px * 1.7;
+  }
+  if (galHalo) {
+    // ในกาแล็กซีจาง ๆ พอให้รู้ว่าอยู่ในฮาโล พอถอยออกไปจนเห็นทั้งฮาโลค่อยเข้มขึ้น
+    const hf = S.darkmatter ? galFade * (0.1 + 0.45 * step01(log10(6e4), log10(6e5), log10(Math.max(1e-12, dly)))) : 0;
+    galHalo.visible = hf > 0.004;
+    galHalo.material.uniforms.fade.value = hf;
+  }
   galDisc.material.uniforms.fade.value = galFade * discFade;
   starPts.visible = starFadeR > 0.01;
   starPts.material.uniforms.scale.value = px * 1.2;
@@ -1249,17 +1352,18 @@ function updateComets() {
 /* ══ กล้อง ═══════════════════════════════════════════════════════════ */
 function focusRadius(id) {
   const r = REG[id].def.radius;
-  return r * (S.enlarge && id !== 'sun' ? 25 : 1);
+  return r * (S.enlarge && id !== 'sun' && !REG[id].far ? 25 : 1);
 }
 function defaultDist(id) {
   const rec = REG[id];
-  if (rec && rec.craft) return rec.def.span * 1.6e-3;   // ขนาดตัวยาน (เมตร) → กิโลเมตร × 1.6
+  if (rec && (rec.craft || rec.far)) return rec.def.span * 1.6e-3;   // ขนาดตัวยาน (เมตร) → กิโลเมตร × 1.6
   return focusRadius(id) * (id === 'sun' ? 9 : 6.2);
 }
 
 function setFocus(id, instant) {
-  starSel = -1; exoSel = -1;
-  if (REG[id] && REG[id].craft) requestCraftModel(id);      // โมเดลจริงโหลดตอนนี้
+  starSel = -1; exoSel = -1; deepSel = -1;
+  if (REG[id] && REG[id].craft) requestCraftModel(id);
+  if (REG[id] && REG[id].far) requestFarModel(id);      // โมเดลจริงโหลดตอนนี้
   if (id === S.focus && !trans.on) { camState.dist = defaultDist(id); return; }
   if (instant) {
     S.focus = id; camState.dist = defaultDist(id); trans.on = false;
@@ -1270,6 +1374,11 @@ function setFocus(id, instant) {
     trans.d1 = defaultDist(id);
     const sep = dist(worldOf(trans.from), worldOf(id));
     trans.dur = Math.min(2.6, 0.9 + Math.log10(1 + sep / 1e6) * 0.42);
+    trans.peak = 0;
+    if (sep > 0.5 * LY) {
+      trans.peak = Math.max(sep * 0.55, trans.d0, trans.d1);
+      trans.dur = Math.min(6, 3 + Math.log10(1 + sep / LY) * 0.5);
+    }
   }
   syncCrumb();
   renderInfo();
@@ -1288,8 +1397,9 @@ function applyCamera() {
 
   // กล้องของฉากกาแล็กซี: ทิศเดียวกัน แต่ยืนอยู่ที่ตำแหน่งดวงอาทิตย์ในกาแล็กซี
   const dg = (camState.dist / LY) * GAL_U;
-  camDir.copy(camera.position).normalize();
-  galCam.position.copy(galSunPos).addScaledVector(camDir, dg);
+  // ตำแหน่งจริงของกล้องเทียบดวงอาทิตย์ (ปีแสง) — ไปดูหลุมดำใจกลางกาแล็กซี กล้องในฉากนี้ก็ต้องตามไปอยู่ตรงนั้นด้วย
+  starCameraPos(camDir);
+  galCam.position.copy(galSunPos).addScaledVector(camDir, GAL_U);
   galCam.quaternion.copy(camera.quaternion);
   galCam.near = Math.max(0.004, dg * 0.02);
   galCam.far = Math.max(2000, dg * 40);
@@ -1371,7 +1481,7 @@ const labelRecs = [];
 function buildLabels() {
   for (const id of ORDER) {
     const rec = REG[id];
-    const node = el('button', 'lbl' + (rec.isMoon ? ' moon' : rec.def.craft ? ' craft' : (rec.def.el ? ' small' : '')));
+    const node = el('button', 'lbl' + (rec.isMoon ? ' moon' : rec.def.craft ? ' craft' : rec.far ? ' bhn' : (rec.def.el ? ' small' : '')));
     node.style.color = '#' + rec.def.color.toString(16).padStart(6, '0');
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.querySelector('.nm').textContent = rec.def.nm[S.lang];
@@ -1390,12 +1500,14 @@ function updateLabels() {
   const focus = trans.on ? trans.to : S.focus;
   const fovK = H / (2 * Math.tan(camera.fov * DEG / 2));
   const wide = camState.dist > 2600 * AU;      // ไกลจนดาวเคราะห์ทั้งระบบทับกันเป็นจุดเดียว
+  const farFoc = !!(REG[focus] && REG[focus].far);   // ไปดูของไกลอยู่: ป้ายในระบบสุริยะไม่เกี่ยว
   for (const rec of labelRecs) {
     const node = rec.label;
+    if (rec.far) continue;                       // ป้ายหลุมดำ/ซากซูเปอร์โนวา จัดใน updateFarLabels
     if (!S.labels || (rec.isMoon && !S.moons)) { node.hidden = true; continue; }
     if (rec.def.el && !rec.holder.visible) { node.hidden = true; continue; }
-    if (wide && rec.def.id !== 'sun') { node.hidden = true; continue; }
-    if (rec.def.id === 'sun' && galFade > 0.5) { node.hidden = true; continue; }
+    if ((wide || farFoc) && rec.def.id !== 'sun') { node.hidden = true; continue; }
+    if (rec.def.id === 'sun' && (galFade > 0.5 || deepFade > 0.3)) { node.hidden = true; continue; }
     toScene(rec.world, projV);
     const camDist = projV.distanceTo(camera.position);
     projV.project(camera);
@@ -1431,7 +1543,7 @@ function pickAt(cx, cy) {
     if (d < bestD) { bestD = d; best = rec.def.id; }
   }
   if (best) setFocus(best);
-  else if (!pickExo(cx, cy)) pickStar(cx, cy);
+  else if (!pickExo(cx, cy) && !pickDeep(cx, cy)) pickStar(cx, cy);
 }
 
 /* ── ท้องฟ้าจากจุดที่ยืนอยู่บนโลก ────────────────────────────────────────
@@ -1932,7 +2044,7 @@ function pickStar(cx, cy) {
 }
 
 function selectStar(i) {
-  starSel = i; exoSel = -1;
+  starSel = i; exoSel = -1; deepSel = -1;
   syncCrumb();
   renderInfo();
 }
@@ -2230,6 +2342,7 @@ function buildGalaxyMarks() {
       v: new THREE.Vector3().addScaledVector(C, x).addScaledVector(Q, y)
     });
   }
+  galMarks.push({ key: 'gHalo', big: false, v: P.clone().multiplyScalar(230) });   // ป้ายฮาโลสสารมืด ลอยเหนือระนาบกาแล็กซี
 
   // วงโคจรของดวงอาทิตย์รอบใจกลางกาแล็กซี (รอบละราว 230 ล้านปี)
   const pts = [];
@@ -2251,6 +2364,7 @@ function buildGalaxyMarks() {
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
     labelLayer.appendChild(node);
+    node.addEventListener('click', ev => { ev.stopPropagation(); selectDeep(0); });   // กดป้ายในกาแล็กซี = ดูข้อมูลทางช้างเผือก
     galMarkNodes.push(node);
   }
 }
@@ -2259,6 +2373,7 @@ let galSunRing = null;
 const _gv = new THREE.Vector3();
 function updateGalaxyMarks() {
   const t = L();
+  if (galHalo) galHalo.material.uniforms.camPos.value.copy(galCam.position);
   const show = S.galaxy && galFade > 0.12;
   if (galSunRing) {
     galSunRing.visible = show;
@@ -2272,8 +2387,9 @@ function updateGalaxyMarks() {
   const W = innerWidth, H = innerHeight;
   for (let i = 0; i < galMarks.length; i++) {
     const m = galMarks[i], node = galMarkNodes[i];
+    if (m.key === 'gHalo' && (!galHalo || galHalo.material.uniforms.fade.value < 0.08)) { node.hidden = true; continue; }
     _gv.copy(m.v).project(galCam);
-    if (_gv.z > 1 || Math.abs(_gv.x) > 1 || Math.abs(_gv.y) > 1) { node.hidden = true; continue; }
+    if (_gv.z > 1 || _gv.z < -1 || Math.abs(_gv.x) > 1 || Math.abs(_gv.y) > 1) { node.hidden = true; continue; }
     const gx = (_gv.x * 0.5 + 0.5) * W, gy = (-_gv.y * 0.5 + 0.5) * H;
     if (!claimLabel(gx, gy, labelWidth(t[m.key], 7.6) + 14, 18)) { node.hidden = true; continue; }
     node.hidden = false;
@@ -2285,14 +2401,30 @@ function updateGalaxyMarks() {
 }
 
 /* ── ไกลกว่าทางช้างเผือก ────────────────────────────────────────────────
-   ฉากที่ห้า: 1 หน่วย = 1 ล้านปีแสง มีกาแล็กซีเพื่อนบ้าน กระจุกกาแล็กซี
-   และทรงกลมขอบเอกภพที่สังเกตได้ (รัศมี 46,500 ล้านปีแสง)
-   กล้องอยู่ที่ตำแหน่งจริงของผู้ชม (ทางช้างเผือกอยู่ที่จุดกำเนิด)               */
+   ฉากที่ห้า: 1 หน่วย = 1 ล้านปีแสง ในพิกัดสุริยวิถี · กล้องยืนที่ตำแหน่งจริงของผู้ชม
+   · กาแล็กซีมีชื่อ (deep.js) — ภาพปั้นตามชนิดด้วยโค้ด ขนาดตามเส้นผ่านศูนย์กลางจริง
+     จานของกาแล็กซีกังหันวางเอียงในสามมิติ ตามมุมแกนยาวบนท้องฟ้าและอัตราส่วนแกนที่วัดได้
+   · แผนที่กาแล็กซีจริง 43,439 แห่งจาก 2MASS Redshift Survey (cosmic.js โหลดตอนซูมออกไกลครั้งแรก)
+   · ขอบเอกภพที่สังเกตได้ เคลือบด้วยแผนที่รังสีไมโครเวฟพื้นหลังจากข้อมูล WMAP ของ NASA (cmb.jpg)       */
 const MLY = 1e6;                      // ปีแสงต่อหนึ่งหน่วยของฉากนี้
 const OBS_RADIUS = 46500;             // รัศมีเอกภพที่สังเกตได้ (ล้านปีแสง)
 let deepScene, deepCam, deepFade = 0, obsShell = null;
+let cosmicPts = null, cosmicState = 0, cmbState = 0;
 const deepNodes = [];
 const deepSprites = [];
+const deepHalos = [];
+let deepSel = -1;                     // ลำดับใน deepSprites ที่กำลังดูข้อมูล (0 = ทางช้างเผือก · −1 = ไม่ได้เลือก)
+
+/* แกนของทางช้างเผือกในพิกัดสุริยวิถี: C = ทิศใจกลาง · Q = ทิศ l = 90° · P = ขั้วเหนือกาแล็กซี */
+function galBasis() {
+  const P = new THREE.Vector3(Math.cos(29.81 * DEG) * Math.cos(180.02 * DEG),
+    Math.cos(29.81 * DEG) * Math.sin(180.02 * DEG), Math.sin(29.81 * DEG));
+  const C = new THREE.Vector3(Math.cos(-5.54 * DEG) * Math.cos(266.84 * DEG),
+    Math.cos(-5.54 * DEG) * Math.sin(266.84 * DEG), Math.sin(-5.54 * DEG));
+  C.addScaledVector(P, -C.dot(P)).normalize();
+  const Q = new THREE.Vector3().crossVectors(P, C).normalize();
+  return { P, C, Q };
+}
 
 function deepGlowTex() {
   const c = document.createElement('canvas');
@@ -2308,27 +2440,151 @@ function deepGlowTex() {
   return new THREE.CanvasTexture(c);
 }
 
+/* ภาพกาแล็กซีตามชนิด — ปั้นจากสูตร ไม่ใช่ภาพถ่าย · เก็บผ้าใบไว้ใช้ทำรูปในแผงข้อมูลด้วย */
+const GAL_TEX = {};
+function galaxyTex(type) {
+  if (GAL_TEX[type]) return GAL_TEX[type];
+  const N = 256, c = document.createElement('canvas');
+  c.width = c.height = N;
+  const g = c.getContext('2d'), img = g.createImageData(N, N), d = img.data;
+  let seed = 977 + type.length * 7919;
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff), seed / 0x7fffffff);
+  const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+  const blobs = [];
+  const nBlob = type === 'irregular' ? 46 : type === 'cluster' ? 70 : type === 'ring' ? 36 : 0;
+  for (let k = 0; k < nBlob; k++) {
+    const a = rnd() * Math.PI * 2;
+    const rr = type === 'ring' ? 0.62 + (rnd() - 0.5) * 0.08 : Math.pow(rnd(), 0.7) * 0.75;
+    blobs.push([Math.cos(a) * rr * (type === 'irregular' ? 1.0 : 1), Math.sin(a) * rr * (type === 'irregular' ? 0.7 : 1),
+      0.03 + rnd() * (type === 'cluster' ? 0.05 : 0.07), 0.4 + rnd() * 0.8, rnd()]);
+  }
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const u = (x + 0.5) / N * 2 - 1, v = (y + 0.5) / N * 2 - 1;
+    const r = Math.hypot(u, v), th = Math.atan2(v, u);
+    let R = 0, G = 0, B = 0;
+    const add = (i, cr, cg, cb) => { R += i * cr; G += i * cg; B += i * cb; };
+    const edge = 1 - sm(0.82, 1.0, r);
+    if (type === 'spiral' || type === 'barred') {
+      const bulge = Math.exp(-((r / 0.13) ** 2)) * 1.25;
+      const disc = Math.exp(-r / 0.3);
+      const r0 = type === 'barred' ? 0.28 : 0.06;
+      const ph = th - Math.log(Math.max(r, r0) / r0) / 0.30;
+      const arm = Math.pow(0.5 + 0.5 * Math.cos(2 * ph), 3);
+      const amt = sm(type === 'barred' ? 0.24 : 0.08, 0.32, r) * (1 - sm(0.7, 0.98, r));
+      const dust = 1 - 0.6 * Math.pow(0.5 + 0.5 * Math.cos(2 * (ph + 0.42)), 8) * amt;
+      const knot = hash(Math.floor(u * 60), Math.floor(v * 60)) > 0.985 ? arm * amt * 1.3 : 0;
+      add(disc * (0.22 + 1.05 * arm * amt) * dust * edge, 0.70, 0.80, 1.0);
+      add(knot * edge, 1.0, 0.45, 0.62);
+      add(bulge, 1.0, 0.90, 0.72);
+      if (type === 'barred') add(Math.exp(-((u / 0.34) ** 2) - (v / 0.06) ** 2) * 0.85, 1.0, 0.88, 0.70);
+    } else if (type === 'elliptical') {
+      const I = Math.min(1.6, 0.05 * Math.exp(-7.67 * (Math.pow(Math.max(r, 0.004) / 0.42, 0.25) - 1)));
+      add(I * edge, 1.0, 0.86, 0.66);
+    } else if (type === 'lenticular') {
+      add(Math.exp(-((r / 0.15) ** 2)) * 1.2, 1.0, 0.9, 0.74);
+      add(Math.exp(-r / 0.26) * 0.42 * edge * (1 - 0.35 * Math.exp(-(((r - 0.42) / 0.05) ** 2))), 0.95, 0.9, 0.84);
+    } else if (type === 'irregular') {
+      add(Math.exp(-Math.hypot(u, v * 1.4) / 0.3) * 0.28 * edge, 0.72, 0.8, 1.0);
+      for (const [bx, by, bs, bi, bc] of blobs) {
+        const q = Math.exp(-((u - bx) ** 2 + (v - by) ** 2) / (bs * bs)) * bi * 0.8;
+        if (bc > 0.8) add(q, 1.0, 0.5, 0.66); else add(q, 0.66, 0.78, 1.0);
+      }
+    } else if (type === 'dwarf') {
+      add(Math.exp(-((r / 0.42) ** 2)) * 0.62 * edge, 0.95, 0.9, 0.8);
+    } else if (type === 'ring') {
+      add(Math.exp(-((r / 0.13) ** 2)) * 1.15, 1.0, 0.86, 0.6);
+      add(Math.exp(-(((r - 0.62) / 0.07) ** 2)) * 0.75 * edge, 0.62, 0.78, 1.0);
+      for (const [bx, by, bs, bi] of blobs) add(Math.exp(-((u - bx) ** 2 + (v - by) ** 2) / (bs * bs * 0.4)) * bi * 0.5, 0.7, 0.82, 1.0);
+    } else if (type === 'merger') {
+      for (const [cx, cy, sgn] of [[-0.22, -0.06, 1], [0.24, 0.08, -1]]) {
+        const du = u - cx, dv = v - cy, rc = Math.hypot(du, dv), tc = Math.atan2(dv, du);
+        add(Math.exp(-((rc / 0.1) ** 2)) * 1.1, 1.0, 0.9, 0.74);
+        add(Math.exp(-rc / 0.16) * 0.45, 0.8, 0.84, 1.0);
+        let dph = (tc - sgn * Math.log(Math.max(rc, 0.08) / 0.08) / 0.55) % (Math.PI * 2);
+        if (dph < -Math.PI) dph += Math.PI * 2; else if (dph > Math.PI) dph -= Math.PI * 2;
+        add(Math.exp(-(dph * dph) / 0.06) * sm(0.1, 0.3, rc) * (1 - sm(0.55, 0.95, rc)) * 0.6 * edge, 0.7, 0.8, 1.0);
+      }
+    } else if (type === 'quasar') {
+      add(Math.exp(-((r / 0.035) ** 2)) * 2.2 + Math.exp(-r / 0.13) * 0.35, 0.8, 0.95, 1.0);
+      add((Math.exp(-Math.abs(u) / 0.012) * Math.exp(-Math.abs(v) / 0.4) + Math.exp(-Math.abs(v) / 0.012) * Math.exp(-Math.abs(u) / 0.4)) * 0.45 * edge, 0.8, 0.95, 1.0);
+    } else if (type === 'distant') {
+      add(Math.exp(-((r / 0.22) ** 2)) * 1.0 + Math.exp(-r / 0.3) * 0.2 * edge, 1.0, 0.5, 0.36);
+    } else {                                                         // กระจุกกาแล็กซี
+      add(Math.exp(-r / 0.35) * 0.22 * edge, 0.95, 0.9, 0.82);
+      for (const [bx, by, bs, bi] of blobs) add(Math.exp(-((u - bx) ** 2 + (v - by) ** 2) / (bs * bs * 0.25)) * bi, 1.0, 0.88, 0.7);
+    }
+    const i = (y * N + x) * 4;
+    d[i] = Math.min(255, R * 255); d[i + 1] = Math.min(255, G * 255); d[i + 2] = Math.min(255, B * 255); d[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  GAL_TEX[type] = t;
+  return t;
+}
+
+/* จานกาแล็กซีเอียงในสามมิติ: แกนยาวตามมุมบนท้องฟ้า (pa) · มุมเอียงจากอัตราส่วนแกน (ar = cos i) */
+const FLAT_TYPES = new Set(['spiral', 'barred', 'lenticular', 'ring', 'irregular', 'merger']);
+function discQuat(o, north) {
+  const l = new THREE.Vector3(o.x, o.y, o.z).normalize();
+  const n = north.clone().addScaledVector(l, -north.dot(l)).normalize();     // ทิศเหนือบนท้องฟ้า ณ ตำแหน่งนั้น
+  const e = new THREE.Vector3().crossVectors(n, l);                          // ทิศตะวันออก
+  const pa = (o.pa || 0) * DEG, inc = Math.acos(Math.max(0.12, Math.min(1, o.ar || 1)));
+  const m = n.clone().multiplyScalar(Math.cos(pa)).addScaledVector(e, Math.sin(pa));
+  const s = n.clone().multiplyScalar(-Math.sin(pa)).addScaledVector(e, Math.cos(pa));
+  const nrm = l.clone().multiplyScalar(Math.cos(inc)).addScaledVector(s, Math.sin(inc));
+  const v = new THREE.Vector3().crossVectors(nrm, m);
+  return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(m, v, nrm));
+}
+
 function buildDeep() {
   deepScene = new THREE.Scene();
   deepCam = new THREE.PerspectiveCamera(48, 1, 1e-4, 4e6);
   deepCam.up.set(0, 0, 1);
-  const tex = deepGlowTex();
+  const GB = galBasis();
+  const north = new THREE.Vector3(0, Math.sin(OBLIQ), Math.cos(OBLIQ));      // ขั้วฟ้าเหนือในพิกัดสุริยวิถี
+  const plane = new THREE.PlaneGeometry(1, 1);
 
-  // ทางช้างเผือกเอง อยู่ที่จุดกำเนิดของฉากนี้
-  const all = [{ th: null, en: null, x: 0, y: 0, z: 0, r: 10, home: true }].concat(DEEP);
+  // ทางช้างเผือกเอง อยู่ที่จุดกำเนิดของฉากนี้ วางจานตามระนาบกาแล็กซีจริง
+  const home = { th: null, en: null, x: 0, y: 0, z: 0, dly: 100000, t: 'barred', home: true };
+  const all = [home].concat(DEEP);
   for (const o of all) {
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 }));
-    sp.position.set(o.x, o.y, o.z);
-    deepScene.add(sp);
-    deepSprites.push({ sp, o });
-    const node = el('button', 'lbl deep' + (o.home || o.r >= 14 ? ' big' : ''));
+    const flat = o.home || FLAT_TYPES.has(o.t);
+    const matOpt = { map: galaxyTex(o.home ? 'barred' : o.t), transparent: true, blending: THREE.AdditiveBlending,
+      depthWrite: false, depthTest: false, opacity: 0 };
+    let obj;
+    if (flat) {
+      obj = new THREE.Mesh(plane, new THREE.MeshBasicMaterial(Object.assign(matOpt, { side: THREE.DoubleSide })));
+      if (o.home) obj.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(GB.C, GB.Q, GB.P));
+      else obj.quaternion.copy(discQuat(o, north));
+    } else {
+      obj = new THREE.Sprite(new THREE.SpriteMaterial(matOpt));
+    }
+    obj.position.set(o.x, o.y, o.z);
+    obj.frustumCulled = false;
+    deepScene.add(obj);
+    deepSprites.push({ sp: obj, o });
+    const idx = deepSprites.length - 1;
+    const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' ? ' big' : ''));
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
-    node._deep = o;
-    node.addEventListener('click', ev => { ev.stopPropagation(); aimAtDeep(o); });
+    node.addEventListener('click', ev => { ev.stopPropagation(); selectDeep(idx); aimAtDeep(o); });
     labelLayer.appendChild(node);
     deepNodes.push(node);
+  }
+
+  // ฮาโลสสารมืดของทางช้างเผือกและแอนดรอเมดา (สีม่วงสมมุติ) กว้างราว 1.3 และ 1.6 ล้านปีแสง — ขอบเกือบแตะกัน
+  const haloTex = new THREE.CanvasTexture(glowTexture([[0, 'rgba(150,110,255,.5)'], [0.35, 'rgba(120,90,240,.2)'],
+    [0.75, 'rgba(100,80,220,.05)'], [1, 'rgba(90,70,200,0)']], 128));
+  for (const o of all) {
+    if (!(o.home || o.id === 'm31')) continue;
+    const hs = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, opacity: 0 }));
+    hs.position.set(o.x, o.y, o.z);
+    hs.scale.setScalar(o.home ? 1.3 : 1.6);
+    hs.frustumCulled = false;
+    deepScene.add(hs);
+    deepHalos.push(hs);
   }
 
   const obsNode = el('button', 'lbl deep big');
@@ -2337,12 +2593,88 @@ function buildDeep() {
   obsNode.hidden = true;
   labelLayer.appendChild(obsNode);
 
-  // ขอบเอกภพที่สังเกตได้: ทรงกลมโปร่งบางที่ล้อมทุกอย่างไว้
-  obsShell = new THREE.LineSegments(
-    new THREE.EdgesGeometry(new THREE.SphereGeometry(OBS_RADIUS, 36, 18), 1),
-    new THREE.LineBasicMaterial({ color: 0x4a6f9c, transparent: true, opacity: 0, depthWrite: false }));
+  // ขอบเอกภพที่สังเกตได้: ทรงกลมเคลือบแผนที่รังสีไมโครเวฟพื้นหลัง
+  // ภาพเก็บเป็นพิกัดกาแล็กซี (u = l/360, v = b) จึงแปลงทิศในเชเดอร์ด้วยแกน C Q P
+  obsShell = new THREE.Mesh(new THREE.SphereGeometry(OBS_RADIUS, 96, 48), new THREE.ShaderMaterial({
+    uniforms: { map: { value: null }, opacity: { value: 0 }, uHas: { value: 0 },
+      uC: { value: GB.C }, uQ: { value: GB.Q }, uP: { value: GB.P } },
+    vertexShader: `varying vec3 vDir;
+      void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform sampler2D map; uniform float opacity; uniform float uHas;
+      uniform vec3 uC; uniform vec3 uQ; uniform vec3 uP; varying vec3 vDir;
+      void main(){
+        vec3 d = normalize(vDir);
+        float l = atan(dot(uQ, d), dot(uC, d));
+        float b = asin(clamp(dot(uP, d), -1.0, 1.0));
+        vec2 uv = vec2(fract(l / 6.2831853), 0.5 + b / 3.1415927);
+        gl_FragColor = vec4(texture2D(map, uv).rgb * uHas, opacity * uHas);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, side: THREE.BackSide
+  }));
+  obsShell.renderOrder = -10;
   obsShell.frustumCulled = false;
+  obsShell.visible = false;
   deepScene.add(obsShell);
+}
+
+function loadCmb() {
+  cmbState = 1;
+  new THREE.TextureLoader().load('cmb.jpg', tx => {
+    tx.minFilter = THREE.LinearFilter;        // ไม่ใช้ mipmap — ไม่งั้นรอยต่อ l = 0/360 จะเป็นเส้น
+    tx.generateMipmaps = false;
+    tx.wrapS = THREE.RepeatWrapping;
+    obsShell.material.uniforms.map.value = tx;
+    obsShell.material.uniforms.uHas.value = 1;
+    cmbState = 2;
+  }, undefined, () => { cmbState = -1; });
+}
+
+/* แผนที่กาแล็กซี 2MRS: จุดละกาแล็กซี สีตามชนิด ขนาดตามความสว่างจริง */
+function loadCosmic() {
+  cosmicState = 1;
+  addScript('cosmic.js').then(ok => {
+    const CM = window.COSMIC;
+    if (!ok || !CM) { cosmicState = -1; return; }
+    const dec = s => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+    const p8 = dec(CM.pos), cls = dec(CM.cls), mag = dec(CM.mag);
+    const p16 = new Int16Array(p8.buffer, 0, CM.n * 3);
+    const pos = new Float32Array(CM.n * 3), col = new Float32Array(CM.n * 3), lum = new Float32Array(CM.n);
+    // ไม่ทราบชนิด · รี · เลนส์ · กังหัน · ไร้รูปร่าง · เควซาร์
+    const PAL = [[0.84, 0.86, 0.92], [1.0, 0.78, 0.55], [1.0, 0.87, 0.7], [0.62, 0.76, 1.0], [0.55, 0.7, 1.0], [0.5, 1.0, 0.95]];
+    for (let i = 0; i < CM.n; i++) {
+      pos[i * 3] = p16[i * 3] * CM.scale; pos[i * 3 + 1] = p16[i * 3 + 1] * CM.scale; pos[i * 3 + 2] = p16[i * 3 + 2] * CM.scale;
+      const k = PAL[cls[i]] || PAL[0];
+      col[i * 3] = k[0]; col[i * 3 + 1] = k[1]; col[i * 3 + 2] = k[2];
+      lum[i] = Math.pow(10, -0.4 * (mag[i] / 25 - 27 + 24));          // เทียบกาแล็กซีที่ M_K = −24
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
+    cosmicPts = new THREE.Points(geo, new THREE.ShaderMaterial({
+      uniforms: { fade: { value: 0 }, scale: { value: 1 } },
+      vertexShader: `attribute float lum; attribute vec3 color; uniform float fade; uniform float scale;
+        varying vec3 vCol; varying float vA;
+        void main(){
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          float s = scale * sqrt(lum) * 900.0 / max(-mv.z, 0.5);
+          gl_PointSize = clamp(s, 1.3, 6.5);
+          vA = fade * clamp(s / 2.0, 0.28, 1.0);
+          vCol = color;
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `varying vec3 vCol; varying float vA;
+        void main(){
+          float q = length(gl_PointCoord - 0.5);
+          if (q > 0.5) discard;
+          gl_FragColor = vec4(vCol * smoothstep(0.5, 0.05, q) * vA, 1.0);
+        }`,
+      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+    }));
+    cosmicPts.frustumCulled = false;
+    deepScene.add(cosmicPts);
+    cosmicState = 2;
+  });
 }
 
 function aimAtDeep(o) {
@@ -2351,6 +2683,27 @@ function aimAtDeep(o) {
   const r = Math.hypot(dx, dy, dz) || 1;
   camState.az = Math.atan2(-dy / r, -dx / r);
   camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+}
+
+function selectDeep(i) {
+  deepSel = i; starSel = -1; exoSel = -1;
+  syncCrumb();
+  renderInfo();
+}
+
+function pickDeep(cx, cy) {
+  if (!S.deep || deepFade < 0.05) return false;
+  let best = -1, bestD = 18;
+  for (let i = 0; i < deepSprites.length; i++) {
+    const o = deepSprites[i].o;
+    _dv.set(o.x, o.y, o.z).project(deepCam);
+    if (_dv.z > 1) continue;
+    const d = Math.hypot((_dv.x * 0.5 + 0.5) * innerWidth - cx, (-_dv.y * 0.5 + 0.5) * innerHeight - cy);
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  if (best < 0) return false;
+  selectDeep(best);
+  return true;
 }
 
 const deepEye = new THREE.Vector3();
@@ -2369,60 +2722,595 @@ function updateDeepCam() {
 
 const _dv = new THREE.Vector3();
 function updateDeep() {
-  const dMly = camState.dist / LY / MLY;
+  const dMly = Math.max(camState.dist / LY, eyeLy()) / MLY;   // ไปดู M87* ก็เห็นกระจุกกาแล็กซีหญิงสาวรอบตัว
+  const ld = log10(Math.max(1e-12, dMly));
   // เริ่มเห็นเพื่อนบ้านตอนออกพ้นทางช้างเผือก (ราวห้าหมื่นปีแสง) และเต็มที่ที่หนึ่งล้านปีแสง
-  deepFade = S.deep ? step01(log10(0.05), log10(1.2), log10(Math.max(1e-12, dMly))) : 0;
+  deepFade = S.deep ? step01(log10(0.05), log10(1.2), ld) : 0;
   const on = deepFade > 0.01;
   const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
+  const homeFade = step01(log10(0.4), log10(3), ld);        // ทางช้างเผือกละเอียดในฉากกาแล็กซีจางไปก่อน แล้วค่อยเป็นภาพนี้
   for (const { sp, o } of deepSprites) {
     if (!on) { sp.visible = false; continue; }
     sp.visible = true;
     const camDist = Math.max(1e-9, sp.position.distanceTo(deepCam.position));
-    // ขนาดที่ใช้วาดคือ r × หนึ่งหมื่นปีแสง แต่ไม่ให้เล็กกว่า 14 พิกเซลบนจอ
-    let size = o.r * 0.01;
-    size = Math.max(size, 18 * camDist / fovK);
-    sp.scale.setScalar(size);
-    sp.material.opacity = deepFade * (o.home ? 0.85 : 0.7);
+    const minPx = o.t === 'quasar' || o.t === 'distant' ? 9 : o.t === 'dwarf' ? 11 : 16;
+    const real = (o.dly || 3000) / MLY;
+    if (camDist < real * 0.6) { sp.visible = false; continue; }   // กล้องอยู่ในกาแล็กซีนั้นเอง
+    sp.scale.setScalar(Math.max(real, minPx * camDist / fovK));
+    // เล็กกว่าขนาดขั้นต่ำบนจอ = ดูไม่ออกว่าหน้าตาอย่างไร จึงหรี่ลง (เควซาร์/กาแล็กซียุคแรกเป็นเครื่องหมาย ไม่หรี่มาก)
+    const floor = o.home ? 0.35 : (o.t === 'quasar' || o.t === 'distant') ? 0.7 : 0.14;
+    const res = Math.min(1, Math.max(floor, (real / camDist * fovK) / minPx));
+    sp.material.opacity = (o.home ? deepFade * homeFade * 0.9 : deepFade * (o.t === 'dwarf' ? 0.6 : 0.85)) * res;
   }
+
+  for (const hs of deepHalos) {
+    hs.visible = on && S.darkmatter;
+    hs.material.opacity = deepFade * 0.55 * step01(log10(0.25), log10(1.5), ld);
+  }
+
+  // แผนที่กาแล็กซี 2MRS
+  if (S.cosmic && on && cosmicState === 0 && dMly > 8) loadCosmic();
+  if (cosmicPts) {
+    const cf = S.cosmic ? deepFade * step01(log10(15), log10(250), ld) : 0;
+    cosmicPts.visible = cf > 0.01;
+    cosmicPts.material.uniforms.fade.value = cf;
+    cosmicPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
+
+  // ขอบเอกภพที่สังเกตได้ + รังสีไมโครเวฟพื้นหลัง
   if (obsShell) {
-    // ขอบเอกภพโผล่เฉพาะตอนที่ถอยออกมาไกลพอจะเห็นทั้งวง
-    const sh = step01(log10(800), log10(20000), log10(Math.max(1e-12, dMly)));
-    obsShell.visible = on && sh > 0.01;
-    obsShell.material.opacity = 0.3 * sh;
+    const sh = step01(log10(800), log10(20000), ld);
+    if (S.cmb && on && sh > 0.01 && cmbState === 0) loadCmb();
+    const u = obsShell.material.uniforms;
+    u.opacity.value = S.cmb ? 0.95 * sh * deepFade : 0;
+    obsShell.visible = on && u.opacity.value > 0.004 && u.uHas.value > 0;
+    obsShell.material.side = deepEye.length() < OBS_RADIUS ? THREE.BackSide : THREE.FrontSide;
     const node = $('#obsLabel');
     if (node) {
-      if (!obsShell.visible) node.hidden = true;
+      if (!on || sh < 0.01) node.hidden = true;
       else {
         _dv.set(0, 0, OBS_RADIUS).project(deepCam);
         if (_dv.z > 1 || Math.abs(_dv.x) > 1 || Math.abs(_dv.y) > 1) node.hidden = true;
         else {
-          node.hidden = false;
-          node.style.left = ((_dv.x * 0.5 + 0.5) * innerWidth).toFixed(1) + 'px';
-          node.style.top = ((-_dv.y * 0.5 + 0.5) * innerHeight).toFixed(1) + 'px';
+          const x = (_dv.x * 0.5 + 0.5) * innerWidth, y = (-_dv.y * 0.5 + 0.5) * innerHeight;
+          node.hidden = !claimLabel(x, y, labelWidth(L().obsEdge, 6.4) + 14, 18);
+          node.style.left = x.toFixed(1) + 'px';
+          node.style.top = y.toFixed(1) + 'px';
           node.querySelector('.nm').textContent = L().obsEdge;
           node.style.opacity = String(sh);
         }
       }
     }
   }
-  if (!on) { for (const n of deepNodes) n.hidden = true; return; }
+  if (!on || deepFade < 0.3) { for (const n of deepNodes) n.hidden = true; return; }
 
-  const W = innerWidth, H = innerHeight;
-  const t = L();
-  const used = [];
+  // ป้ายชื่อ: เรียงความสำคัญ (ที่เลือกอยู่ · ทางช้างเผือก · มีคำบรรยาย · ใหญ่บนจอ) แล้วจองที่ร่วมกับป้ายอื่น
+  const W = innerWidth, H = innerHeight, t = L();
+  const cand = [];
   for (let i = 0; i < deepNodes.length; i++) {
-    const node = deepNodes[i], o = deepSprites[i].o;
+    const o = deepSprites[i].o;
     _dv.set(o.x, o.y, o.z).project(deepCam);
-    if (_dv.z > 1 || Math.abs(_dv.x) > 1 || Math.abs(_dv.y) > 1) { node.hidden = true; continue; }
-    const x = (_dv.x * 0.5 + 0.5) * W, y = (-_dv.y * 0.5 + 0.5) * H;
-    if (used.some(u => Math.abs(u.x - x) < 110 && Math.abs(u.y - y) < 16)) { node.hidden = true; continue; }
-    used.push({ x, y });
-    node.hidden = false;
-    node.style.left = x.toFixed(1) + 'px';
-    node.style.top = y.toFixed(1) + 'px';
-    node.querySelector('.nm').textContent = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
-    node.style.opacity = String(deepFade);
+    if (_dv.z > 1 || Math.abs(_dv.x) > 0.98 || Math.abs(_dv.y) > 0.96) continue;
+    const camDist = Math.max(1e-9, deepSprites[i].sp.position.distanceTo(deepCam.position));
+    if (camDist < ((o.dly || 3000) / MLY) * 0.6) continue;
+    const px = ((o.dly || 3000) / MLY) / camDist * fovK;
+    const score = (i === deepSel ? 1e9 : 0) + (o.home ? 1e8 : 0) + (o.de ? 2000 : 0) + (o.t === 'cluster' ? 800 : 0) + px;
+    cand.push({ i, x: (_dv.x * 0.5 + 0.5) * W, y: (-_dv.y * 0.5 + 0.5) * H, score });
   }
+  cand.sort((a, b) => b.score - a.score);
+  const vis = new Uint8Array(deepNodes.length);
+  let shown = 0;
+  for (const c of cand) {
+    if (shown >= 36) break;
+    const o = deepSprites[c.i].o, node = deepNodes[c.i];
+    const txt = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
+    if (!claimLabel(c.x, c.y, labelWidth(txt, 6.4) + 12, 16)) continue;
+    vis[c.i] = 1; shown++;
+    node.hidden = false;
+    node.style.left = c.x.toFixed(1) + 'px';
+    node.style.top = c.y.toFixed(1) + 'px';
+    const nm = node.querySelector('.nm');
+    if (nm.textContent !== txt) nm.textContent = txt;
+    node.classList.toggle('on', c.i === deepSel);
+    node.style.opacity = String(o.home ? Math.max(deepFade * homeFade, 0.35 * deepFade) : deepFade);
+  }
+  for (let i = 0; i < deepNodes.length; i++) if (!vis[i]) deepNodes[i].hidden = true;
+}
+
+/* ── แผงข้อมูลกาแล็กซี ── */
+const DEEP_COL = { spiral: '#9fc0ff', barred: '#a8c4ff', lenticular: '#f2dcb8', elliptical: '#ffd49a', irregular: '#8fb4ff',
+  dwarf: '#d8d2c4', ring: '#9fd0ff', merger: '#c8b8ff', quasar: '#7ff0ff', distant: '#ff9a7a', cluster: '#e8d8b8' };
+const UNIVERSE_AGE_GYR = 13.79;                      // Planck 2018: 13.787 ± 0.020
+const escHtml2 = s => String(s).replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]));
+function fmtLy(ly) {
+  const t = L();
+  if (ly >= 1e9) return `${nf(ly / 1e9, 2)}<u>${t.gly}</u>`;
+  if (ly >= 1e6) return `${nf(ly / 1e6, ly >= 1e8 ? 0 : ly >= 1e7 ? 1 : 2)}<u>${t.mly}</u>`;
+  return `${nf(ly, 0)}<u>${t.ly}</u>`;
+}
+function fmtYears(gyr) {
+  const t = L();
+  return gyr >= 1 ? `${nf(gyr, 2)}<u>${t.gyr}</u>` : `${nf(gyr * 1000, 0)}<u>${t.myr}</u>`;
+}
+
+function renderDeepInfo() {
+  const t = L(), o = deepSprites[deepSel].o, pane = $('#pane-info');
+  pane.innerHTML = '';
+  const type = o.home ? 'barred' : o.t;
+  const col = DEEP_COL[type] || '#cfd8e8';
+
+  const head = el('div', 'sec');
+  const hd = el('div', 'obj-head');
+  const sw = el('div', 'obj-swatch');
+  sw.style.setProperty('--glow', col);
+  sw.style.background = `#04060a url(${galaxyTex(type).image.toDataURL('image/png')}) center/cover`;
+  const ti = el('div', 'obj-title');
+  ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
+  ti.querySelector('h2').textContent = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
+  ti.querySelector('.kind em').style.background = col;
+  ti.querySelector('.kind span').textContent = t.galType[type] + (o.g && t.galGroup[o.g] ? ' · ' + t.galGroup[o.g] : '');
+  hd.append(sw, ti);
+  head.appendChild(hd);
+  const desc = o.home ? t.mwDesc : (o.de ? o.de[S.lang] : '');
+  if (desc) { const p = el('p', 'desc'); p.textContent = desc; head.appendChild(p); }
+  pane.appendChild(head);
+
+  const hereMly = Math.hypot(o.x - deepEye.x, o.y - deepEye.y, o.z - deepEye.z);
+  const rows = [];
+  if (!o.home) rows.push([t.stDist, fmtLy(o.mly * MLY)]);
+  rows.push([t.stFromHere, fmtLy(hereMly * MLY)]);
+  if (o.dly) rows.push([t.galDiam, (o.home ? '~' : '') + fmtLy(o.dly)]);
+  if (o.m) rows.push([t.galMorph, escHtml2(o.m)]);
+  if (o.zr != null) {
+    rows.push([t.galZ, nf(o.zr, o.zr < 1 ? 4 : 2)]);
+    rows.push([t.galLookback, fmtYears(o.lb)]);
+    rows.push([t.galAgeThen, fmtYears(Math.max(0.01, UNIVERSE_AGE_GYR - o.lb))]);
+  }
+  const sec = el('div', 'sec');
+  sec.innerHTML = `<h3>${t.secGalaxy}</h3><dl class="readout">` + rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
+  if (!o.home) {
+    const note = el('div', 'note');
+    note.innerHTML = '<span></span><p></p>';
+    if (o.zr != null) {
+      note.querySelector('span').textContent = t.galComovTitle;
+      note.querySelector('p').textContent = t.galComovNote;
+    } else {
+      note.querySelector('span').textContent = t.galLightTitle;
+      // ระยะใกล้ ๆ แสงเดินทางมาเกือบเท่าระยะ (หน่วยปีแสง = ปี) · th: "2.5 ล้านปีก่อน" / "163,000 ปีก่อน"
+      const n = o.mly >= 1 ? nf(o.mly, o.mly >= 100 ? 0 : 1) + (S.lang === 'th' ? ' ล้าน' : ' million')
+                           : nf(o.mly * MLY, 0) + (S.lang === 'th' ? ' ' : '');
+      note.querySelector('p').textContent = t.galLightNote.replace('{n}', n);
+    }
+    sec.appendChild(note);
+  }
+  const act = el('div', 'chips');
+  const aim = el('button', 'chip', t.galAim);
+  aim.addEventListener('click', () => aimAtDeep(o));
+  act.appendChild(aim);
+  // หลุมดำ/ซากซูเปอร์โนวาในกาแล็กซีนี้ — บินไปดูได้
+  const farId = o.home ? 'sgra' : o.id === 'm87' ? 'm87bh' : o.id === 'lmc' ? 'sn1987a' : null;
+  if (farId && REG[farId]) {
+    const go = el('button', 'chip');
+    go.textContent = t.farGo.replace('{n}', REG[farId].def.nm[S.lang]);
+    go.addEventListener('click', () => setFocus(farId));
+    act.appendChild(go);
+  }
+  sec.appendChild(act);
+  pane.appendChild(sec);
+  if (o.home) mwExtraSections(pane);
+}
+
+/* ── ทางช้างเผือก: มวลส่วนใหญ่มองไม่เห็น ─────────────────────────────────
+   แผงข้อมูลเสริมเมื่อเลือกทางช้างเผือก: สัดส่วนมวล + กราฟความเร็วการหมุนรอบใจกลาง
+   ตัวเลขประมาณจาก Licquia & Newman 2015 (ดาว 6.1×10¹⁰) · Kalberla & Kerp 2009 (ก๊าซ ~1×10¹⁰)
+   Cautun et al. 2020 (มวลรวม ~1.1×10¹²) · ความเร็ววัดจริงอิง Eilers et al. 2019 (229 กม./วิ ที่ดวงอาทิตย์)
+   เส้น "ถ้ามีแต่สสารที่มองเห็น" เป็นค่าประมาณเพื่อการเปรียบเทียบ ไม่ใช่ค่าวัด                          */
+const SUP_DIGITS = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+function fmtSolar(m) {
+  const e = Math.floor(Math.log10(m)), mant = m / Math.pow(10, e);
+  return `${nf(mant, 1)} × 10${String(e).split('').map(ch => SUP_DIGITS[+ch]).join('')}<u>${L().timesSun}</u>`;
+}
+
+function mwExtraSections(pane) {
+  const t = L();
+  const parts = [[t.mwDark, 1.0e12, '#8a6cff'], [t.mwStars, 6.1e10, '#ffd49a'], [t.mwGas, 1.0e10, '#ff7aa8']];
+  const total = parts.reduce((a, p) => a + p[1], 0);
+  let x = 0, bars = '';
+  for (const [, m, col] of parts) {
+    const w = m / total * 100;
+    bars += `<rect x="${x.toFixed(3)}" y="0" width="${w.toFixed(3)}" height="10" fill="${col}"/>`;
+    x += w;
+  }
+  const mass = el('div', 'sec');
+  mass.innerHTML = `<h3>${t.mwMassTitle}</h3>
+    <svg viewBox="0 0 100 10" preserveAspectRatio="none" style="width:100%;height:12px;display:block;border-radius:3px;margin:4px 0 8px">${bars}</svg>
+    <dl class="readout">` + parts.map(([nm, m, col]) =>
+      `<dt><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${col};margin-right:6px"></i>${nm}</dt>` +
+      `<dd>${fmtSolar(m)} · ${nf(m / total * 100, m / total < 0.02 ? 1 : 0)}%</dd>`).join('') +
+    `</dl><p class="desc" style="font-size:11.5px">${t.mwMassNote}</p>`;
+  pane.appendChild(mass);
+
+  const W = 300, H = 178, X0 = 34, Y0 = 150, XS = (W - X0 - 12) / 80, YS = (Y0 - 14) / 300;
+  const P = pts => pts.map(([r, v]) => `${(X0 + r * XS).toFixed(1)},${(Y0 - v * YS).toFixed(1)}`).join(' ');
+  const obs = [[1, 170], [2, 200], [4, 215], [6, 222], [10, 228], [15, 230], [20, 230], [26.7, 229], [35, 225], [45, 219], [60, 212], [80, 201]];
+  const vis = [[1, 170], [2, 200], [4, 215], [6, 222], [10, 224], [15, 214], [20, 200], [26.7, 185], [35, 168], [45, 150], [60, 132], [80, 115]];
+  let grid = '';
+  for (const v of [0, 100, 200, 300]) grid += `<line x1="${X0}" x2="${W - 12}" y1="${(Y0 - v * YS).toFixed(1)}" y2="${(Y0 - v * YS).toFixed(1)}" stroke="#223246" stroke-width="0.6"/><text x="${X0 - 5}" y="${(Y0 - v * YS + 3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#7f90a8">${v}</text>`;
+  for (const r of [0, 20, 40, 60, 80]) grid += `<text x="${(X0 + r * XS).toFixed(1)}" y="${Y0 + 12}" text-anchor="middle" font-size="8.5" fill="#7f90a8">${r}</text>`;
+  const sx = (X0 + 26.7 * XS).toFixed(1), sy = (Y0 - 229 * YS).toFixed(1);
+  const chart = el('div', 'sec');
+  chart.innerHTML = `<h3>${t.mwRotTitle}</h3>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${grid}
+      <polyline points="${P(vis)}" fill="none" stroke="#7fb0ff" stroke-width="1.6" stroke-dasharray="4 3"/>
+      <polyline points="${P(obs)}" fill="none" stroke="#ffb454" stroke-width="2.2"/>
+      <circle cx="${sx}" cy="${sy}" r="3.6" fill="#ffb454"/>
+      <text x="${sx}" y="${(+sy - 8).toFixed(1)}" text-anchor="middle" font-size="8.5" fill="#ffd49a">${t.mwSun}</text>
+      <text x="${W - 12}" y="${H - 2}" text-anchor="end" font-size="8.5" fill="#7f90a8">${t.mwAxisR}</text>
+      <text x="4" y="10" font-size="8.5" fill="#7f90a8">${t.mwAxisV}</text>
+    </svg>
+    <div class="chips" style="margin:6px 0 2px">
+      <span class="chip" style="pointer-events:none"><em style="background:#ffb454"></em>${t.mwObs}</span>
+      <span class="chip" style="pointer-events:none"><em style="background:#7fb0ff"></em>${t.mwVis}</span>
+    </div>
+    <p class="desc" style="font-size:11.5px">${t.mwRotNote}</p>`;
+  pane.appendChild(chart);
+}
+
+/* ── หลุมดำและซากซูเปอร์โนวา: เป้าหมายที่บินไปดูได้ ─────────────────────
+   อยู่ในทะเบียนเดียวกับดาวเคราะห์ (REG) แต่ตำแหน่งคงที่ในพิกัดสุริยวิถี (กม.) ห่างไปหลายพันถึงหลายสิบล้านปีแสง
+   ระบบเลื่อนจุดกำเนิดของฉากทำให้ตัวเลขที่เข้า GPU ยังเล็กอยู่แม้ห่างขนาดนั้น (double มีความละเอียดพอ)
+   · หลุมดำ: วาดในเชเดอร์บนแผ่นที่หันเข้ากล้องเสมอ — เงาหลุมดำ (รัศมี √27/2 Rs) วงแหวนโฟตอน
+     และจานพอกพูนมวล (เฉพาะดวงที่กำลังกลืนก๊าซ) ด้านหลังของจานถูกแรงโน้มถ่วงดัดแสงให้โค้งข้ามเหนือและใต้เงา
+     ด้านที่หมุนเข้าหาผู้ชมสว่างกว่า (Doppler beaming) — ภาพเชิงคุณภาพ ไม่ใช่การจำลองรังสีตามสัมพัทธภาพเต็มรูป
+   · ซากซูเปอร์โนวา: โมเดลสามมิติที่ NASA เผยแพร่ ขยายเท่าขนาดจริง (เนบิวลาปู 11 ปีแสง · วงแหวน SN 1987A 1.3 ปีแสง)
+   · ฉากหลังอิงระยะของ "ตัวกล้อง" จากดวงอาทิตย์ (eyeLy) ไม่ใช่ระยะมอง — ไปถึงใจกลางกาแล็กซีจึงเห็นกาแล็กซีรอบตัว */
+const farRecs = [];
+const _eye = { x: 0, y: 0, z: 0 };
+
+/* ตำแหน่งจริงของกล้องในพิกัดสุริยวิถี (กม.) คิดจากสถานะกล้องโดยตรง ใช้ได้ก่อน applyCamera */
+function eyeWorld(out) {
+  const ce = Math.cos(camState.el), d = camState.dist;
+  out.x = origin.x + d * ce * Math.cos(camState.az);
+  out.y = origin.y + d * ce * Math.sin(camState.az);
+  out.z = origin.z + d * Math.sin(camState.el);
+  return out;
+}
+function eyeLy() {
+  eyeWorld(_eye);
+  return Math.hypot(_eye.x, _eye.y, _eye.z) / LY;
+}
+
+/* ขั้วฟ้าเหนือในพิกัดสุริยวิถี */
+function celNorth() { return new THREE.Vector3(0, Math.sin(OBLIQ), Math.cos(OBLIQ)); }
+
+/* หันภาพเข้าหาโลก ทิศเหนือขึ้นบน ตะวันออกไปทางซ้าย แบบภาพถ่ายดาราศาสตร์ */
+function skyQuat(w) {
+  const l = new THREE.Vector3(w.x, w.y, w.z).normalize();
+  const nn = celNorth();
+  const n = nn.addScaledVector(l, -nn.dot(l)).normalize();
+  const e = new THREE.Vector3().crossVectors(n, l);
+  return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(e.negate(), n, l.negate()));
+}
+
+function farPrepare() {
+  const ce = Math.cos(OBLIQ), se = Math.sin(OBLIQ);
+  for (const f of FAR) {
+    ORDER.push(f.id);
+    f.far = true;
+    f.nm = { th: f.th, en: f.en };
+    f.kind = f.t;
+    f.color = f.t === 'bh' ? 0xffb070 : 0x9fd0ff;
+    f.glow = f.t === 'bh' ? '#ffb070' : '#9fd0ff';
+    f.desc = f.de || { th: '', en: '' };
+    if (f.t === 'bh') {
+      f.rs = 2.953 * f.mass;                        // รัศมีชวาร์สชิลด์ (กม.) = 2GM/c²
+      f.span = f.rs * (f.acc ? 30 : 9) * 1000;      // ความกว้างของแผ่นภาพ (เมตร)
+      f.radius = f.rs * 4;                          // กม. — ซูมเข้าได้จนเงาเกือบเต็มจอ
+    } else {
+      f.span = f.size * LY * 1000;                  // แสงฟุ้ง = ขนาดเนบิวลาทั้งก้อน
+      f.radius = f.size * LY * 0.3;
+      // โมเดลเนบิวลาปูของ NASA คือโครงสร้างที่เห็นในรังสีเอกซ์ ซึ่งกว้างราว 40% ของเนบิวลาในแสงปกติ (Chandra)
+      if (f.id === 'crab') f.modelFrac = 0.4;
+    }
+    f.tilt = 0; f.axisNode = 0;
+    // RA/Dec (J2000) → พิกัดสุริยวิถี ห่างจากดวงอาทิตย์ตามระยะจริง
+    const ra = f.ra * DEG, de = f.dec * DEG, d = f.dly * LY;
+    const x = Math.cos(de) * Math.cos(ra), y = Math.cos(de) * Math.sin(ra), z = Math.sin(de);
+    f._world = { x: x * d, y: (y * ce + z * se) * d, z: (-y * se + z * ce) * d };
+  }
+}
+
+const farMinPx = def => def.t === 'bh' ? (def.acc ? 64 : 30) : 44;   // ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล
+
+function blackHoleMaterial(def) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uExt: { value: def.acc ? 30 : 9 }, uAcc: { value: def.acc ? 1 : 0 },
+      uIncl: { value: (def.incl || 0) * DEG }, uTime: { value: 0 } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform float uExt; uniform float uAcc; uniform float uIncl; uniform float uTime; varying vec2 vUv;
+      void main(){
+        vec2 p = (vUv - 0.5) * uExt;                       // หน่วย = รัศมีชวาร์สชิลด์
+        float r = length(p);
+        const float SH = 2.598;                            // ขอบเงา √27/2
+        float inShadow = 1.0 - smoothstep(SH - 0.07, SH + 0.07, r);
+        float ring = exp(-pow((r - 2.64) / 0.075, 2.0));   // วงแหวนโฟตอน
+        vec3 col = vec3(0.0);
+        float alpha = 0.0;
+        if (uAcc > 0.5) {
+          float ci = max(cos(uIncl), 0.12), si = sin(uIncl);
+          float yd = p.y / ci;
+          float rd = length(vec2(p.x, yd));                // รัศมีบนจาน
+          float near = step(p.y, 0.0);                     // ครึ่งล่าง = ด้านใกล้ผู้ชม ทับหน้าเงาได้
+          float disk = smoothstep(2.7, 3.3, rd) * (1.0 - smoothstep(8.5, 13.5, rd));
+          float temp = 1.0 / (0.55 + rd * 0.17);
+          float dop = 1.0 + 0.8 * si * clamp(p.x / max(rd, 0.001), -1.0, 1.0);
+          float swirl = 0.78 + 0.22 * sin(atan(yd, p.x) * 3.0 - uTime * 0.7 + rd * 1.5);
+          float direct = disk * temp * dop * swirl;
+          direct *= mix(1.0 - inShadow, 1.0, near);        // ด้านไกลที่อยู่หลังเงาถูกบัง
+          float band = smoothstep(2.75, 3.1, r) * (1.0 - smoothstep(5.0, 8.0, r));
+          float lens = band * (0.3 + 0.7 * abs(p.y) / max(r, 0.001)) / (0.6 + r * 0.22)
+                     * (1.0 + 0.5 * si * clamp(p.x / max(r, 0.001), -1.0, 1.0));
+          vec3 hot = vec3(1.0, 0.93, 0.78), warm = vec3(1.0, 0.52, 0.16);
+          vec3 dc = mix(warm, hot, clamp(temp * 1.25 - 0.35, 0.0, 1.0));
+          col = dc * (direct * 1.5 + lens * 0.95) + vec3(1.0, 0.86, 0.62) * ring * 1.3;
+          float glow = clamp(max(max(direct, lens), ring) * 1.6, 0.0, 1.0);
+          alpha = max(inShadow * (1.0 - near * clamp(direct * 2.0, 0.0, 1.0)), glow);
+        } else {
+          float halo = exp(-max(r - 2.6, 0.0) * 1.8) * step(2.6, r) * 0.3;   // แสงดาวข้างหลังที่ถูกเลนส์รวม
+          col = vec3(0.82, 0.88, 1.0) * (ring * 0.8 + halo * 0.35);
+          alpha = max(inShadow, clamp(ring * 0.9 + halo, 0.0, 1.0));
+        }
+        float edge = 1.0 - smoothstep(0.4, 0.5, max(abs(vUv.x - 0.5), abs(vUv.y - 0.5)));
+        gl_FragColor = vec4(col * edge, alpha * edge);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide
+  });
+}
+
+function makeFar(def) {
+  const holder = new THREE.Group();
+  const spin = new THREE.Group();
+  holder.add(spin);
+  let mesh;
+  if (def.t === 'bh') {
+    mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), blackHoleMaterial(def));
+  } else {
+    // แสงฟุ้งรอบซาก · ระหว่างรอโมเดลของ NASA ก็เป็นตัวแทนไปก่อน
+    mesh = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: new THREE.CanvasTexture(glowTexture(def.id === 'crab'
+        ? [[0, 'rgba(210,232,255,.85)'], [0.3, 'rgba(140,190,255,.35)'], [0.7, 'rgba(110,160,240,.08)'], [1, 'rgba(90,140,220,0)']]
+        : [[0, 'rgba(255,220,200,.7)'], [0.3, 'rgba(255,160,130,.3)'], [0.7, 'rgba(220,120,110,.06)'], [1, 'rgba(200,100,100,0)']], 128)),
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
+  }
+  mesh.scale.setScalar(def.span);
+  mesh.renderOrder = 20;
+  mesh.frustumCulled = false;
+  spin.add(mesh);
+  scene.add(holder);
+  const rec = {
+    def, isMoon: false, far: true, holder, spin, mesh,
+    R: def.radius / KMU, world: { x: def._world.x, y: def._world.y, z: def._world.z }, parent: null,
+    axis: new THREE.Vector3(0, 0, 1)
+  };
+  if (def.id === 'sn1987a') {
+    // วงแหวนเอียง 42.85° จากแนวสายตา แกนยาวห่างทิศตะวันตก 6.24° (ภาพกล้องฮับเบิล 1994–2022) — จากโลกจึงเห็นเป็นวงรีแบบในภาพถ่าย
+    rec.fixedQuat = discQuat({ x: def._world.x, y: def._world.y, z: def._world.z, pa: 83.76, ar: Math.cos(42.85 * DEG) }, celNorth());
+  } else if (def.t !== 'bh') {
+    rec.fixedQuat = skyQuat(def._world);
+  }
+  if (def.t !== 'bh') {
+    // ตัวแทนที่ซ่อนไว้: ให้วัสดุของโมเดลถูกคอมไพล์ตั้งแต่หน้าโหลด โมเดลมาถึงระหว่างบินจะได้ไม่สะดุด
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(9), 3));
+    const M = nebulaMats();
+    for (const m of def.id === 'crab' ? [M.rim] : [M.flatRed]) {
+      const d = new THREE.Mesh(g, m);
+      d.visible = false;
+      holder.add(d);
+    }
+  }
+  return rec;
+}
+
+
+/* ภาพวงกลมเล็กในแผงข้อมูล */
+function farDisc(def, size) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d'), m = size / 2;
+  if (def.t === 'bh') {
+    const gr = g.createRadialGradient(m, m, size * 0.12, m, m, m);
+    gr.addColorStop(0, '#000'); gr.addColorStop(0.28, '#000');
+    gr.addColorStop(0.34, 'rgba(255,214,150,1)'); gr.addColorStop(0.5, 'rgba(255,140,50,.55)'); gr.addColorStop(1, 'rgba(255,120,40,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  } else {
+    const gr = g.createRadialGradient(m, m, 0, m, m, m);
+    gr.addColorStop(0, 'rgba(230,240,255,1)'); gr.addColorStop(0.35, 'rgba(120,180,255,.65)'); gr.addColorStop(1, 'rgba(80,120,220,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  }
+  return c;
+}
+
+function farShown(rec) {
+  if (rec.def.id === (trans.on ? trans.to : S.focus)) return true;
+  // ใกล้พอให้ขนาดจริงบนจอเกินราว 2–3 พิกเซล (ไม่เกิน 400 เท่าของขนาด · span เป็นเมตร)
+  eyeWorld(_eye);
+  return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
+}
+
+function farPose(rec) {
+  const def = rec.def;
+  const camDist = Math.max(1e-12, rec.holder.position.distanceTo(camera.position));
+  const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
+  // ขนาดจริงเมื่อเข้าใกล้ · จากไกลขยายให้เห็นเป็นเครื่องหมาย (หน่วยของ spin: 1 เมตร = 1e-6 หน่วยฉาก)
+  rec.spin.scale.setScalar(Math.max(1e-6, farMinPx(def) * camDist / (fovK * def.span)));
+  if (def.t === 'bh') {
+    rec.spin.quaternion.copy(camera.quaternion);
+    rec.mesh.material.uniforms.uTime.value = performance.now() / 1000;
+  } else if (rec.fixedQuat) {
+    rec.spin.quaternion.copy(rec.fixedQuat);
+  }
+}
+
+/* โมเดลของ NASA เป็นไฟล์สำหรับพิมพ์สามมิติ (สีเดียว) — วาดให้เรืองแสงแบบโปร่ง
+   เนบิวลาปูมีทิศผิว จึงให้ขอบที่ผิวเอียงหนีสายตาสว่างกว่า เห็นโครงสร้างเป็นชั้น ๆ */
+let nebMats = null;
+function nebulaMats() {
+  if (nebMats) return nebMats;
+  nebMats = {
+    rim: new THREE.ShaderMaterial({
+      uniforms: { uCol: { value: new THREE.Color(0x6fa8ff) } },
+      vertexShader: `varying vec3 vN; varying vec3 vV;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = -mv.xyz; vN = normalMatrix * normal; gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform vec3 uCol; varying vec3 vN; varying vec3 vV;
+        void main(){ float f = 1.0 - abs(dot(normalize(vN), normalize(vV))); gl_FragColor = vec4(uCol * (0.03 + 0.2 * f * f), 1.0); }`,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, side: THREE.DoubleSide
+    }),
+    flatBlue: new THREE.MeshBasicMaterial({ color: 0x6fa8ff, transparent: true, opacity: 0.12,
+      blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, side: THREE.DoubleSide }),
+    flatRed: new THREE.MeshBasicMaterial({ color: 0xff7050, transparent: true, opacity: 0.3,
+      blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, side: THREE.DoubleSide })
+  };
+  return nebMats;
+}
+
+function nebulaLook(model, def) {
+  const crab = def.id === 'crab', M = nebulaMats();
+  model.traverse(o => {
+    if (!o.isMesh) return;
+    o.material = crab ? (o.geometry.attributes.normal ? M.rim : M.flatBlue) : M.flatRed;
+    o.renderOrder = 21;
+    o.frustumCulled = false;
+  });
+  if (!crab) return null;
+  // พัลซาร์ใจกลาง: ดาวนิวตรอนหมุนรอบตัวเอง 30 รอบต่อวินาที เป็นแหล่งพลังงานของทั้งเนบิวลา
+  const p = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: new THREE.CanvasTexture(glowTexture([[0, 'rgba(255,255,255,1)'], [0.18, 'rgba(215,235,255,.65)'], [1, 'rgba(160,200,255,0)']], 64)),
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
+  p.scale.setScalar(def.span * 0.03);
+  p.renderOrder = 22;
+  return p;
+}
+
+/* โหลดโมเดลตอนที่กลายเป็นเป้าหมาย (ใช้ตัวโหลด glTF + Draco ชุดเดียวกับยานอวกาศ) */
+function requestFarModel(id) {
+  const rec = REG[id];
+  if (!rec || !rec.def.model || rec.gltfDone) return;
+  rec.gltfDone = true;
+  ensureGltfLoader().then(loader => {
+    if (!loader) { rec.gltfDone = false; return; }
+    const file = rec.def.model;
+    if (!gltfCache[file]) gltfCache[file] = new Promise((res, rej) => loader.load(file, g => res(g.scene), undefined, rej));
+    gltfCache[file].then(sc => {
+      const model = fitCraftModel(sc, { span: rec.def.span * (rec.def.modelFrac || 1) }, null);
+      const extra = nebulaLook(model, rec.def);
+      if (extra) model.add(extra);
+      rec.spin.add(model);
+      rec.model = model;
+      rec.mesh.material.opacity = 0.45;             // แสงฟุ้งเดิมเหลือเป็นเรืองรอบ ๆ
+      if ((trans.on ? trans.to : S.focus) === id) renderInfo();
+    }).catch(() => { rec.gltfDone = false; });
+  });
+}
+
+/* ภาพของหลุมดำ/ซากซูเปอร์โนวาที่อยู่บนจอบังป้ายอื่น — จองที่ไว้ก่อนป้ายในกาแล็กซี กลุ่มดาว และชื่อกาแล็กซี */
+function reserveFarImages() {
+  const W = innerWidth, H = innerHeight;
+  const fovK = H / (2 * Math.tan(camera.fov * DEG / 2));
+  for (const rec of farRecs) {
+    rec.scr = null;
+    if (!rec.holder.visible) continue;
+    toScene(rec.world, projV);
+    const camDist = projV.distanceTo(camera.position);
+    projV.project(camera);
+    if (projV.z > 1 || projV.z < -1) continue;
+    const def = rec.def;
+    const wpx = Math.max(farMinPx(def), def.span * 1e-6 / Math.max(1e-12, camDist) * fovK);
+    const half = wpx * (def.t === 'bh' ? (def.acc ? 0.43 : 0.3) : def.modelFrac ? def.modelFrac / 2 : 0.5);
+    const cx = (projV.x * 0.5 + 0.5) * W, cy = (-projV.y * 0.5 + 0.5) * H;
+    if (Math.abs(cx - W / 2) < W && Math.abs(cy - H / 2) < H) labelBoxes.push(cx, cy, Math.min(half, W), Math.min(half, H));
+    rec.scr = { off: Math.min(half, H * 0.32) + 12 };
+  }
+}
+
+/* ป้ายชื่อ: โผล่เมื่อเป็นเป้าหมาย · อยู่ใกล้ · หรือกำลังดูทั้งกาแล็กซี (เฉพาะที่อยู่ในทางช้างเผือกและเมฆแมกเจลแลน)
+   จองที่ต่อจากป้ายในกาแล็กซี จะได้ไม่ทับชื่อแขนกังหันกับตำแหน่งดวงอาทิตย์ */
+function updateFarLabels() {
+  const W = innerWidth, H = innerHeight, focus = trans.on ? trans.to : S.focus;
+  const galView = galFade > 0.35 && deepFade < 0.5;
+  for (const rec of farRecs) {
+    const node = rec.label, def = rec.def, isF = def.id === focus;
+    if (!node) continue;
+    if (!S.labels || !(isF || rec.holder.visible || (galView && def.dly < 2e5))) { node.hidden = true; continue; }
+    toScene(rec.world, projV).project(camera);
+    if (projV.z > 1 || projV.z < -1 || Math.abs(projV.x) > 1.1 || Math.abs(projV.y) > 1.1) { node.hidden = true; continue; }
+    const off = rec.scr ? rec.scr.off : 11;
+    const lx = (projV.x * 0.5 + 0.5) * W, ly = (-projV.y * 0.5 + 0.5) * H - off;
+    const w = labelWidth(def.nm[S.lang], 6.6) + 10;
+    if (isF) labelBoxes.push(lx, ly, w / 2, 9);
+    else if (!claimLabel(lx, ly, w, 18)) { node.hidden = true; continue; }
+    node.hidden = false;
+    node.style.left = lx.toFixed(1) + 'px';
+    node.style.top = ly.toFixed(1) + 'px';
+    node.classList.toggle('on', isF);
+    rec.labelRing.style.display = rec.holder.visible ? 'none' : '';
+  }
+}
+
+/* ── แผงข้อมูล ── */
+function renderFarInfo(rec) {
+  const t = L(), def = rec.def, pane = $('#pane-info');
+  pane.innerHTML = '';
+  const head = el('div', 'sec');
+  const hd = el('div', 'obj-head');
+  const sw = el('div', 'obj-swatch');
+  sw.style.setProperty('--glow', def.glow);
+  const img = el('img');
+  img.src = def._discURL; img.alt = '';
+  img.style.cssText = 'width:100%;height:100%;display:block';
+  sw.appendChild(img);
+  const ti = el('div', 'obj-title');
+  ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
+  ti.querySelector('h2').textContent = def.nm[S.lang];
+  ti.querySelector('.kind em').style.background = def.glow;
+  ti.querySelector('.kind span').textContent = t.kind[def.kind];
+  hd.append(sw, ti);
+  head.appendChild(hd);
+  if (def.desc[S.lang]) { const p = el('p', 'desc'); p.textContent = def.desc[S.lang]; head.appendChild(p); }
+  pane.appendChild(head);
+
+  eyeWorld(_eye);
+  const hereKm = Math.hypot(def._world.x - _eye.x, def._world.y - _eye.y, def._world.z - _eye.z);
+  const rows = [[t.stDist, fmtLy(def.dly)], [t.stFromHere, hereKm >= LY ? fmtLy(hereKm / LY) : fmtKm(hereKm)]];
+  if (def.t === 'bh') {
+    rows.push([t.bhMass, def.mass < 1000 ? `${nf(def.mass, 1)}<u>${t.timesSun}</u>` : fmtSolar(def.mass)]);
+    rows.push([t.bhRs, fmtKm(def.rs)]);
+    // ขนาดเชิงมุมของเงาเมื่อมองจากโลก = 2 × 2.598 Rs ÷ ระยะ → ไมโครพิลิปดา
+    const muas = 2 * 2.598 * def.rs / (def.dly * LY) * 206264.806e6;
+    rows.push([t.bhShadow, `${muas >= 1 ? nf(muas, 1) : muas >= 0.001 ? nf(muas, 4) : muas.toExponential(1)}<u>${t.muas}</u>`]);
+    rows.push([t.bhAcc, def.acc ? t.bhAccYes : t.bhAccNo]);
+  } else {
+    rows.push([t.nebSize, `${nf(def.size, def.size < 10 ? 1 : 0)}<u>${t.ly}</u>`]);
+    rows.push([t.modelSrc, t.modelNasa]);
+  }
+  rows.push([t.refSrc, escHtml2(def.ref || '')]);
+  const sec = el('div', 'sec');
+  sec.innerHTML = `<h3>${def.t === 'bh' ? t.secBh : t.secNeb}</h3><dl class="readout">` +
+    rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
+  const addNote = (title, text) => {
+    const note = el('div', 'note');
+    note.innerHTML = '<span></span><p></p>';
+    note.querySelector('span').textContent = title;
+    note.querySelector('p').textContent = text;
+    sec.appendChild(note);
+  };
+  if (def.t === 'bh') addNote(t.bhNoteTitle, t.bhNote);
+  const n = def.dly >= 1e6 ? nf(def.dly / 1e6, 1) + (S.lang === 'th' ? ' ล้าน' : ' million')
+                           : nf(def.dly, 0) + (S.lang === 'th' ? ' ' : '');
+  addNote(t.galLightTitle, t.galLightNote.replace('{n}', n));
+  if (def.t !== 'bh') addNote(t.modelSrc, t['nebNote_' + def.id] || t.nebNote);
+  pane.appendChild(sec);
 }
 
 /* ── ดาวเคราะห์นอกระบบ ──────────────────────────────────────────────────
@@ -2538,7 +3426,7 @@ function pickExo(cx, cy) {
 
 function selectExo(i) {
   exoSel = i;
-  starSel = -1;
+  starSel = -1; deepSel = -1;
   syncCrumb();
   renderInfo();
 }
@@ -2969,6 +3857,13 @@ function fmtPeriod(days) {
 
 /* ══ ส่วนติดต่อผู้ใช้ ════════════════════════════════════════════════ */
 function syncCrumb() {
+  if (deepSel >= 0) {
+    const o = deepSprites[deepSel].o, t0 = L();
+    $('#crumb').innerHTML = '<i>▸</i><b></b><i>·</i><span></span>';
+    $('#crumb b').textContent = o.home ? t0.milkyWay : (S.lang === 'th' ? o.th : o.en);
+    $('#crumb span').textContent = t0.galType[o.home ? 'barred' : o.t];
+    return;
+  }
   if (exoSel >= 0) {
     const h = EXO[exoSel], t0 = L();
     $('#crumb').innerHTML = '<i>▸</i><b></b><i>·</i><span></span>';
@@ -2992,8 +3887,11 @@ function syncCrumb() {
 }
 
 function renderInfo() {
+  if (deepSel >= 0) return renderDeepInfo();
   if (exoSel >= 0) return renderExoInfo();
   if (starSel >= 0) return renderStarInfo();
+  const frec = REG[trans.on ? trans.to : S.focus];
+  if (frec && frec.far) return renderFarInfo(frec);
   const t = L();
   const id = trans.on ? trans.to : S.focus;
   const rec = REG[id], def = rec.def;
@@ -3160,6 +4058,7 @@ function renderTools() {
   for (const sel of ['#mA', '#mB']) {
     const s = $(sel);
     for (const id of ORDER) {
+      if (REG[id].far) continue;                 // วัดระยะเฉพาะในระบบสุริยะ
       const o = el('option'); o.value = id; o.textContent = REG[id].def.nm[S.lang];
       s.appendChild(o);
     }
@@ -3175,7 +4074,9 @@ function updateTools() {
   const t = L(), box = $('#cmpBox');
   if (!box) return;
   const id = trans.on ? trans.to : S.focus;
-  const a = REG[id].def, b = REG[id === 'earth' ? 'sun' : 'earth'].def;
+  const a0 = REG[id].def, b = REG[id === 'earth' ? 'sun' : 'earth'].def;
+  // หลุมดำเทียบขนาดขอบฟ้าเหตุการณ์ · ซากซูเปอร์โนวาเทียบครึ่งหนึ่งของความกว้าง
+  const a = a0.far ? Object.assign({}, a0, { radius: a0.t === 'bh' ? a0.rs : a0.size * LY / 2 }) : a0;
   const big = Math.max(a.radius, b.radius), MAXPX = 86;
   box.innerHTML = '';
   for (const d of [a, b]) {
@@ -3233,7 +4134,7 @@ function renderView() {
     ['orbits', t.vOrbits], ['labels', t.vLabels], ['moons', t.vMoons],
     ['belt', t.vBelt], ['kuiper', t.vKuiper], ['oort', t.vOort],
     ['shadows', t.vShadows], ['craft', t.vCraft], ['asteroids', t.vAsteroids], ['comets', t.vComets], ['dwarfs', t.vDwarfs],
-    ['stars', t.vStars], ['figures', t.vFigures], ['exo', t.vExo], ['galaxy', t.vGalaxy], ['deep', t.vDeep], ['grid', t.vGrid], ['trails', t.vTrails]
+    ['stars', t.vStars], ['figures', t.vFigures], ['exo', t.vExo], ['galaxy', t.vGalaxy], ['ism', t.vIsm], ['darkmatter', t.vDark], ['deep', t.vDeep], ['cosmic', t.vCosmic], ['cmb', t.vCmb], ['grid', t.vGrid], ['trails', t.vTrails]
   ];
   const show = el('div', 'sec');
   show.innerHTML = `<h3>${t.vShow}</h3>`;
@@ -3625,6 +4526,7 @@ function renderFind(filter) {
     [t.gOther, BODIES.filter(b => b.kind !== 'planet').map(b => b.id)],
     [t.gMoons, MOONS.map(m => m.id)],
     [t.gCraft, CRAFT.map(c => c.id)],
+    [t.gFar, FAR.map(f => f.id)],
     [t.gDwarfs, SMALL.filter(s => s.layer === 'dwarfs').map(s => s.id)],
     [t.gAsteroids, SMALL.filter(s => s.layer === 'asteroids').map(s => s.id)],
     [t.gComets, SMALL.filter(s => s.layer === 'comets').map(s => s.id)]
@@ -3659,6 +4561,29 @@ function renderFind(filter) {
       sp.querySelector('b').textContent = exoName(h);
       sp.querySelector('small').textContent = h.p.length + ' ' + t.exoPlanets + ' · ' + nf(h.d, h.d < 100 ? 1 : 0) + ' ' + t.ly;
       b.addEventListener('click', () => { selectExo(i); aimAtExo(i); closeSheets(); });
+      grid.appendChild(b);
+    }
+    g.appendChild(grid);
+    body.appendChild(g);
+  }
+  // กาแล็กซีและกระจุกกาแล็กซี (ลำดับ 0 คือทางช้างเผือกเอง ข้ามไป)
+  const dpHits = [];
+  for (let i = 1; i < deepSprites.length; i++) {
+    const o = deepSprites[i].o;
+    if (q && !(o.en.toLowerCase().includes(q) || o.th.toLowerCase().includes(q) || String(o.m || '').toLowerCase().includes(q))) continue;
+    dpHits.push(i);
+    if (dpHits.length > 40) break;
+  }
+  if (dpHits.length) {
+    any = true;
+    const g = el('div', 'group', '<h4>' + t.gGalaxies + '</h4>');
+    const grid = el('div', 'hits');
+    for (const i of dpHits) {
+      const o = deepSprites[i].o, col = DEEP_COL[o.t] || '#cfd8e8';
+      const b = el('button', 'hit', '<em style="color:' + col + ';background:' + col + '"></em><span><b></b><small></small></span>');
+      b.querySelector('b').textContent = S.lang === 'th' ? o.th : o.en;
+      b.querySelector('small').textContent = t.galType[o.t] + ' · ' + fmtLy(o.mly * MLY).replace(/<\/?u>/g, ' ').replace(/\s+/g, ' ').trim();
+      b.addEventListener('click', () => { selectDeep(i); aimAtDeep(o); closeSheets(); });
       grid.appendChild(b);
     }
     g.appendChild(grid);
@@ -3754,6 +4679,8 @@ function applyLang() {
   for (const rec of labelRecs) rec.labelName.textContent = rec.def.nm[S.lang];
   syncCrumb(); syncConsole(); renderInfo(); renderTools(); renderView(); renderFind($('#q').value);
   if (!$('#pane-sky').hidden) renderSky(); else $('#pane-sky').innerHTML = '';
+  updateRailToggle();
+  updateConsoleToggle();
 }
 
 /* ── กล่องแจ้งเตือนชั่วคราว ─────────────────────────────────────────── */
@@ -3774,9 +4701,9 @@ function toast(msg) {
    รูปแบบ  #/earth?t=2026-09-10T15:45Z&d=39500&a=0.900,0.420
    ค่าที่ยังเป็นค่าเริ่มต้นจะไม่ถูกเขียนลงลิงก์ ลิงก์จึงสั้นเท่าที่สั้นได้     */
 const LAYER_KEYS = ['orbits', 'labels', 'moons', 'belt', 'kuiper', 'oort', 'stars', 'galaxy', 'grid', 'trails',
-                    'asteroids', 'comets', 'dwarfs', 'craft', 'figures', 'deep', 'exo', 'shadows'];
+                    'asteroids', 'comets', 'dwarfs', 'craft', 'figures', 'deep', 'exo', 'shadows', 'cosmic', 'cmb', 'ism', 'darkmatter'];
 const LAYER_DEF = { orbits: 1, labels: 1, moons: 1, belt: 1, kuiper: 1, oort: 1, stars: 1, galaxy: 1, grid: 0, trails: 0,
-                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1, shadows: 1 };
+                    asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1, shadows: 1, cosmic: 1, cmb: 1, ism: 1, darkmatter: 1 };
 let hashDist = 0;
 
 function buildHash() {
@@ -3959,19 +4886,102 @@ function drawStampOnto(g, k, W, H) {
   g.restore();
 }
 
+function updateRailToggle() {
+  const r = $('#rail');
+  if (!r) return;
+  const closed = r.classList.contains('closed');
+  const isMobile = window.innerWidth <= 900;
+  const btn = $('#railToggle');
+  if (btn) {
+    btn.setAttribute('aria-expanded', String(!closed));
+    if (S.lang === 'en') {
+      btn.title = closed ? (isMobile ? 'Expand panel' : 'Expand panel (›)') : (isMobile ? 'Collapse panel' : 'Collapse panel (‹)');
+    } else {
+      btn.title = closed ? (isMobile ? 'ขยายแผง' : 'ขยายแผง (›)') : (isMobile ? 'ย่อแผง' : 'ย่อแผง (‹)');
+    }
+  }
+}
+
+function updateConsoleToggle() {
+  const c = $('#console');
+  const btn = $('#consoleToggle');
+  if (!c || !btn) return;
+  const isCol = c.classList.contains('collapsed');
+  btn.setAttribute('aria-expanded', String(!isCol));
+  if (S.lang === 'en') {
+    btn.title = isCol ? 'Expand time controls' : 'Collapse time controls';
+  } else {
+    btn.title = isCol ? 'ขยายแถบเวลา' : 'ย่อแถบเวลา';
+  }
+}
+
 /* ── ผูกปุ่มทั้งหมด ────────────────────────────────────────────────── */
 function initUI() {
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    const r = $('#rail');
+    const isClosed = r.classList.contains('closed');
+    const wasActive = b.classList.contains('on');
+
+    if (wasActive && !isClosed && window.innerWidth <= 900) {
+      r.classList.add('closed');
+      updateRailToggle();
+      return;
+    }
+
     document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
     for (const k of ['info', 'tools', 'view', 'sky']) $('#pane-' + k).hidden = (k !== b.dataset.tab);
     if (b.dataset.tab === 'sky' && !$('#skyList')) renderSky();
-    $('#rail').classList.remove('closed');
+    r.classList.remove('closed');
+    updateRailToggle();
   }));
-  $('#railToggle').addEventListener('click', () => {
-    const r = $('#rail');
-    r.classList.toggle('closed');
-    $('#railToggle').textContent = r.classList.contains('closed') ? '›' : '‹';
-  });
+
+  const rToggle = $('#railToggle');
+  if (rToggle) {
+    rToggle.addEventListener('click', () => {
+      const r = $('#rail');
+      r.classList.toggle('closed');
+      updateRailToggle();
+    });
+  }
+
+  // ปัดขึ้น/ลงบนแถบแท็บเพื่อกาง/ย่อแผงบนมือถือ
+  let touchStartY = 0;
+  let touchStartX = 0;
+  const tabsEl = $('.tabs');
+  if (tabsEl) {
+    tabsEl.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    tabsEl.addEventListener('touchend', e => {
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+      if (Math.abs(deltaY) > 30 && Math.abs(deltaY) > deltaX) {
+        const r = $('#rail');
+        if (deltaY > 0 && !r.classList.contains('closed')) {
+          r.classList.add('closed');
+          updateRailToggle();
+        } else if (deltaY < 0 && r.classList.contains('closed')) {
+          r.classList.remove('closed');
+          updateRailToggle();
+        }
+      }
+    }, { passive: true });
+  }
+
+  // ปุ่มย่อ/ขยายแถบเวลาบนมือถือ
+  const cToggle = $('#consoleToggle');
+  if (cToggle) {
+    cToggle.addEventListener('click', () => {
+      const c = $('#console');
+      c.classList.toggle('collapsed');
+      updateConsoleToggle();
+    });
+  }
+
+  updateRailToggle();
+  updateConsoleToggle();
+  addEventListener('resize', updateRailToggle);
   $('#play').addEventListener('click', () => { S.playing = !S.playing; syncConsole(); });
   $('#slower').addEventListener('click', () => setRate(S.sign * S.rateIdx - 1));
   $('#faster').addEventListener('click', () => setRate(S.sign * S.rateIdx + 1));
@@ -4177,6 +5187,7 @@ function prepareData() {
     // ระยะมองที่ควรเห็นวัตถุนี้: อ้างจากขนาดวงโคจร (ไฮเพอร์โบลาใช้ระยะใกล้สุด)
     s._ref = (s.el.e < 1 ? s.aAU : s.q) * AU;
   }
+  farPrepare();
   let seed = 1;
   for (const m of MOONS) {
     m._basis = bases[m.parent];
@@ -4221,6 +5232,12 @@ function buildAll() {
     orbitLine(REG[m.id]);
     trailLine(REG[m.id]);
   }
+  for (const f of FAR) {
+    REG[f.id] = makeFar(f);
+    farRecs.push(REG[f.id]);
+    f._disc = farDisc(f, 96);
+    f._discURL = f._disc.toDataURL('image/png');
+  }
   updatePositions(S.time);
   setupShadows();
   for (const id in REG) if (REG[id].line) refreshOrbit(REG[id], S.time);
@@ -4246,7 +5263,9 @@ function loop(now) {
   applyCamera();
   resetLabelBoxes();
   updateLabels();
+  reserveFarImages();
   updateGalaxyMarks();
+  updateFarLabels();
   updateSkyLabels();
   updateDeep();
   updateExo();
@@ -4315,6 +5334,22 @@ async function boot() {
   setFocus(S.focus, true);
   if (hashDist) camState.dist = Math.max(focusRadius(S.focus) * 1.22, Math.min(MAX_DIST, hashDist));
   syncConsole();
+  // คอมไพล์เชเดอร์ของทุกฉากไว้ก่อน (รวมวัตถุที่ยังซ่อนอยู่) — ไม่งั้นจะไปค้างตอนซูมออกไปดูกาแล็กซีหรือบินไปหาหลุมดำครั้งแรก
+  txt.textContent = S.lang === 'th' ? 'กำลังเตรียมกราฟิก' : 'Preparing graphics';
+  applyCamera();
+  for (const [sc, cam] of [[scene, camera], [skyScene, skyCam], [starScene, starCam], [galScene, galCam], [deepScene, deepCam]]) {
+    await yieldToPaint();
+    renderer.compile(sc, cam);
+  }
+  // วาดมุมมองทั้งกาแล็กซีหนึ่งเฟรมไว้ใต้หน้าโหลด พื้นผิวของฉากไกลจะขึ้นการ์ดจอไว้ก่อน แล้วค่อยคืนกล้อง
+  {
+    const keep = [camState.dist, camState.az, camState.el];
+    camState.dist = 125000 * LY; camState.az = Math.PI; camState.el = 0.9;
+    updateOrigin(0); updateScene(); applyCamera(); updateDeep(); renderFrame();
+    [camState.dist, camState.az, camState.el] = keep;
+    updateOrigin(0); updateScene(); applyCamera(); updateDeep();
+    await yieldToPaint();
+  }
   requestAnimationFrame(loop);
   setTimeout(() => { $('#loading').classList.add('gone'); }, 220);
   setTimeout(() => { $('#loading').remove(); }, 1200);

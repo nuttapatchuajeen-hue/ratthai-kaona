@@ -874,7 +874,7 @@ const UI = {
     shot:'บันทึกภาพ', shotTip:'บันทึกภาพหน้าจอเป็นไฟล์ PNG (P)', shotOk:'บันทึกภาพเป็นไฟล์ PNG แล้ว',
     kind:{ star:'ดาวฤกษ์', planet:'ดาวเคราะห์', dwarf:'ดาวเคราะห์แคระ', moon:'ดวงจันทร์',
            asteroid:'ดาวเคราะห์น้อย', comet:'ดาวหาง', tno:'วัตถุพ้นดาวเนปจูน', ism:'วัตถุจากนอกระบบสุริยะ',
-           craft:'ยานอวกาศ' },
+           craft:'ยานอวกาศ', bh:'หลุมดำ', nebula:'ซากซูเปอร์โนวา' },
     secDesc:'คำอธิบาย', secLive:'ค่าตามเวลาที่แสดง', secPhys:'ข้อมูลกายภาพ', secMoons:'บริวารในแผนที่นี้',
     dSun:'ระยะจากดวงอาทิตย์', dEarth:'ระยะจากโลก', light:'แสงเดินทางถึงโลก', speed:'ความเร็วในวงโคจร',
     phase:'ส่วนสว่างที่เห็นจากโลก', dParent:'ระยะจากดาวแม่',
@@ -888,7 +888,25 @@ const UI = {
     vScale:'มาตราส่วนมุมมอง', viewDist:'ระยะมอง', ly:'ปีแสง',
     ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี',
             'กลุ่มท้องถิ่น','กระจุกกาแล็กซี','เอกภพที่สังเกตได้'],
-    mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · รัศมี 46,500 ล้านปีแสง', vDeep:'กาแล็กซีเพื่อนบ้าน', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)',
+    mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · แสงเก่าที่สุด 13,800 ล้านปี', vDeep:'กาแล็กซีมีชื่อ', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)',
+    vCosmic:'แผนที่กาแล็กซี 2MRS', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
+    galType:{ spiral:'กาแล็กซีกังหัน', barred:'กาแล็กซีกังหันมีคาน', lenticular:'กาแล็กซีรูปเลนส์', elliptical:'กาแล็กซีรี',
+      irregular:'กาแล็กซีไร้รูปทรง', dwarf:'กาแล็กซีแคระ', ring:'กาแล็กซีวงแหวน', merger:'กาแล็กซีกำลังชนกัน',
+      quasar:'เควซาร์', distant:'กาแล็กซียุคแรกของเอกภพ', cluster:'กระจุกกาแล็กซี' },
+    galGroup:{ lg:'กลุ่มท้องถิ่น', near:'นอกกลุ่มท้องถิ่น', far:'ไกลมาก', cluster:'โครงสร้างขนาดใหญ่' },
+    galDiam:'เส้นผ่านศูนย์กลาง', galMorph:'รหัสชนิด (ฮับเบิล)', galZ:'เรดชิฟต์ z', galLookback:'แสงเดินทางมานาน',
+    galAgeThen:'อายุเอกภพตอนแสงออกเดินทาง', gyr:'พันล้านปี', myr:'ล้านปี',
+    secGalaxy:'ข้อมูลกาแล็กซี', galAim:'หันกล้องไปดู', gGalaxies:'กาแล็กซีและกระจุกกาแล็กซี',
+    galComovTitle:'ระยะของวัตถุที่ไกลมาก',
+    galComovNote:'ระยะที่แสดงคือระยะ ณ ปัจจุบัน (ระยะโคมูฟวิง) ซึ่งไกลกว่าระยะที่แสงเดินทางมามาก เพราะเอกภพขยายตัวตลอดทางที่แสงเดินทาง คำนวณตามแบบจำลองเอกภพ Planck 2018',
+    galLightTitle:'แสงที่เห็นตอนนี้', galLightNote:'ออกเดินทางจากที่นั่นเมื่อราว {n}ปีก่อน — เรากำลังเห็นอดีตของมัน',
+    mwMassTitle:'มวลของทางช้างเผือก', mwDark:'สสารมืด', mwStars:'ดาวฤกษ์', mwGas:'ก๊าซและฝุ่นระหว่างดาว',
+    mwMassNote:'ตัวเลขประมาณจากงานวิจัยหลายชิ้น มวลรวมราว 1.1 × 10¹² เท่าดวงอาทิตย์ สิ่งที่มองเห็นได้ทั้งหมดรวมกันยังไม่ถึงหนึ่งในสิบของมวลกาแล็กซี ส่วนก๊าซและฝุ่นระหว่างดาวมีราว 15% ของมวลที่มองเห็น และเป็นวัตถุดิบของดาวรุ่นถัดไป',
+    mwRotTitle:'ความเร็วการหมุนรอบใจกลาง', mwObs:'วัดจริง', mwVis:'ถ้ามีแต่สสารที่มองเห็น (โดยประมาณ)',
+    mwSun:'ดวงอาทิตย์ 229 กม./วิ', mwAxisR:'ระยะจากใจกลาง (พันปีแสง)', mwAxisV:'กม./วิ',
+    mwRotNote:'ดาวรอบนอกของกาแล็กซีโคจรเร็วพอ ๆ กับดาวด้านใน ทั้งที่ถ้ามีแต่มวลที่มองเห็น ยิ่งไกลต้องยิ่งช้า (เส้นประ) เวรา รูบิน วัดสิ่งนี้ในกาแล็กซีจำนวนมากช่วงทศวรรษ 1970 จนเป็นหลักฐานสำคัญว่ามีมวลที่มองไม่เห็นห่อหุ้มกาแล็กซีอยู่ คือฮาโลสสารมืดที่แสดงเป็นสีม่วงในฉาก (ของจริงไม่เปล่งแสง)',
+    gHalo:'ฮาโลสสารมืด · ราว 9 ใน 10 ของมวลกาแล็กซี',
+    mwDesc:'กาแล็กซีกังหันมีคานที่เราอยู่ กว้างราวหนึ่งแสนปีแสง มีดาวฤกษ์ราว 1–4 แสนล้านดวง ดวงอาทิตย์อยู่ห่างใจกลางราว 26,000 ปีแสง และโคจรรอบใจกลางหนึ่งรอบใช้เวลาราว 230 ล้านปี',
     ladderNote:'ระบบสุริยะทั้งระบบกว้างไม่ถึงหนึ่งในพันของระยะที่กาแล็กซีกินพื้นที่ และกาแล็กซีทั้งใบก็เล็กกว่าเอกภพที่มองเห็นได้อีกหลายแสนเท่า — ไล่ปุ่มลงมาทีละขั้นเพื่อดูว่าเราเล็กแค่ไหน',
     vShow:'สิ่งที่แสดงในฉาก', vOrbits:'เส้นวงโคจร', vLabels:'ชื่อวัตถุ', vMoons:'ดวงจันทร์',
     vBelt:'แถบดาวเคราะห์น้อย', vKuiper:'แถบไคเปอร์', vOort:'เมฆออร์ต',
@@ -908,6 +926,15 @@ const UI = {
     vInf:'ความเร็วสุดท้ายเมื่อพ้นระบบสุริยะ',
     gAsteroids:'ดาวเคราะห์น้อย', gDwarfs:'ดาวเคราะห์แคระและวัตถุพ้นดาวเนปจูน',
     gComets:'ดาวหางและวัตถุจากนอกระบบ', gCraft:'ยานอวกาศ',
+    gFar:'หลุมดำและซากซูเปอร์โนวา', secBh:'ข้อมูลหลุมดำ', secNeb:'ข้อมูลซากซูเปอร์โนวา',
+    bhMass:'มวล', bhRs:'รัศมีขอบฟ้าเหตุการณ์ (ชวาร์สชิลด์)', bhShadow:'ขนาดเงาเมื่อมองจากโลก', muas:'ไมโครพิลิปดา',
+    bhAcc:'จานพอกพูนมวล', bhAccYes:'มี · กำลังกลืนก๊าซ', bhAccNo:'ไม่มี · หลุมดำเงียบ',
+    nebSize:'ความกว้าง', modelSrc:'โมเดลสามมิติ', modelNasa:'NASA', refSrc:'อ้างอิง', farGo:'บินไปดู {n}',
+    bhNoteTitle:'ภาพนี้วาดอย่างไร',
+    bhNote:'เงาดำตรงกลางมีรัศมีราว 2.6 เท่าของรัศมีชวาร์สชิลด์ ใหญ่กว่าขอบฟ้าเหตุการณ์ เพราะแรงโน้มถ่วงดัดแสงที่ผ่านใกล้ ๆ ให้ตกลงไป วงแหวนบางรอบเงาคือแสงที่วนรอบหลุมดำก่อนหลุดออกมา หลุมดำที่กำลังกลืนก๊าซมีจานก๊าซร้อน ด้านหลังของจานถูกดัดแสงให้เห็นโค้งข้ามเหนือและใต้เงา และด้านที่หมุนเข้าหาเราสว่างกว่า ส่วนหลุมดำเงียบแทบมองไม่เห็นเลย — เป็นภาพวาดเชิงคุณภาพตามหลักฟิสิกส์ ไม่ใช่ภาพถ่าย ขนาดตามมวลจริง',
+    nebNote:'โมเดลสามมิติจาก NASA ขยายเท่าขนาดจริง วาดให้เรืองแสงแบบโปร่งแทนผิวทึบ ทิศที่หันเป็นค่าประมาณ',
+    nebNote_crab:'โมเดลสามมิติจาก NASA คือโครงสร้างที่กล้องจันทราเห็นในรังสีเอกซ์ ได้แก่จานวงแหวนกับลำอนุภาคที่พุ่งออกจากพัลซาร์ใจกลาง กว้างราว 40% ของเนบิวลาที่เห็นในแสงปกติ ส่วนแสงฟุ้งรอบนอกแทนเนบิวลาทั้งก้อน วาดให้เรืองแสงแบบโปร่ง ทิศที่หันเป็นค่าประมาณ',
+    nebNote_sn1987a:'โมเดลสามมิติจาก NASA คือวงแหวนก๊าซที่ดาวปล่อยออกมาราวสองหมื่นปีก่อนระเบิด คลื่นกระแทกจากการระเบิดชนวงแหวนจนเกิดจุดสว่างรอบวง วางเอียง 43° จากแนวสายตาตามค่าวัดจากภาพกล้องฮับเบิล',
     secStar:'ข้อมูลดาวฤกษ์', gStars:'ดาวฤกษ์', gExo:'ระบบดาวเคราะห์นอกระบบ',
     vExo:'ระบบดาวเคราะห์นอกระบบ', exoSystem:'ระบบดาวเคราะห์นอกระบบ', exoPlanets:'ดวง',
     exoChart:'ผังระบบเทียบกับของเรา', exoHost:'ดาวแม่', exoList:'ดาวเคราะห์ในระบบนี้',
@@ -967,7 +994,7 @@ const UI = {
     shot:'Snapshot', shotTip:'Save the view as a PNG file (P)', shotOk:'Saved as a PNG file',
     kind:{ star:'Star', planet:'Planet', dwarf:'Dwarf planet', moon:'Moon',
            asteroid:'Asteroid', comet:'Comet', tno:'Trans-Neptunian object', ism:'Interstellar object',
-           craft:'Spacecraft' },
+           craft:'Spacecraft', bh:'Black hole', nebula:'Supernova remnant' },
     secDesc:'Description', secLive:'Live values', secPhys:'Physical data', secMoons:'Moons in this atlas',
     dSun:'Distance from Sun', dEarth:'Distance from Earth', light:'Light travel to Earth', speed:'Orbital speed',
     phase:'Illuminated from Earth', dParent:'Distance from parent',
@@ -981,7 +1008,25 @@ const UI = {
     vScale:'View scale', viewDist:'View', ly:'ly',
     ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy',
             'Local Group','Galaxy clusters','Observable universe'],
-    mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · radius 46,500 Mly', vDeep:'Neighbour galaxies', milkyWay:'Milky Way (you are here)',
+    mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · the oldest light, 13.8 billion years', vDeep:'Named galaxies', milkyWay:'Milky Way (you are here)',
+    vCosmic:'2MRS galaxy map', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
+    galType:{ spiral:'Spiral galaxy', barred:'Barred spiral galaxy', lenticular:'Lenticular galaxy', elliptical:'Elliptical galaxy',
+      irregular:'Irregular galaxy', dwarf:'Dwarf galaxy', ring:'Ring galaxy', merger:'Merging galaxies',
+      quasar:'Quasar', distant:'Early-universe galaxy', cluster:'Galaxy cluster' },
+    galGroup:{ lg:'Local Group', near:'Beyond the Local Group', far:'Very distant', cluster:'Large-scale structure' },
+    galDiam:'Diameter', galMorph:'Hubble type', galZ:'Redshift z', galLookback:'Light travel time',
+    galAgeThen:'Age of the universe when the light left', gyr:'billion yr', myr:'million yr',
+    secGalaxy:'Galaxy data', galAim:'Point the camera', gGalaxies:'Galaxies and clusters',
+    galComovTitle:'Distance to very far objects',
+    galComovNote:'The distance shown is where the object is now (comoving distance) — far beyond how far its light travelled, because the universe kept expanding while the light was on its way. Computed with the Planck 2018 cosmology.',
+    galLightTitle:'The light you see now', galLightNote:'left there about {n} years ago — you are seeing its past.',
+    mwMassTitle:'Mass of the Milky Way', mwDark:'Dark matter', mwStars:'Stars', mwGas:'Interstellar gas and dust',
+    mwMassNote:'Rounded figures from several studies; the total is about 1.1 × 10¹² solar masses. Everything we can see adds up to less than a tenth of the galaxy’s mass. Interstellar gas and dust make up about 15% of the visible mass — the raw material for the next generations of stars.',
+    mwRotTitle:'Rotation speed around the centre', mwObs:'Measured', mwVis:'If only visible matter (approx.)',
+    mwSun:'Sun 229 km/s', mwAxisR:'Distance from centre (thousand ly)', mwAxisV:'km/s',
+    mwRotNote:'Stars in the outer galaxy orbit about as fast as stars further in, although with only the visible mass they should slow down with distance (dashed line). Vera Rubin measured this in many galaxies in the 1970s, and it became key evidence for invisible mass wrapped around every galaxy — the dark-matter halo drawn in purple here (the real thing gives off no light).',
+    gHalo:'Dark-matter halo · about 9/10 of the galaxy’s mass',
+    mwDesc:'The barred spiral galaxy we live in, about a hundred thousand light-years across with 100–400 billion stars. The Sun sits about 26,000 light-years from the centre and takes some 230 million years to orbit it once.',
     ladderNote:'The whole solar system spans less than a thousandth of the galaxy, and the galaxy is smaller still against the observable universe by a factor of hundreds of thousands — step down the list to feel the scale.',
     vShow:'Scene layers', vOrbits:'Orbit paths', vLabels:'Labels', vMoons:'Moons',
     vBelt:'Asteroid belt', vKuiper:'Kuiper belt', vOort:'Oort cloud',
@@ -1001,6 +1046,15 @@ const UI = {
     vInf:'Final speed leaving the solar system',
     gAsteroids:'Asteroids', gDwarfs:'Dwarf planets & Trans-Neptunian objects',
     gComets:'Comets & interstellar objects', gCraft:'Spacecraft',
+    gFar:'Black holes & supernova remnants', secBh:'Black hole data', secNeb:'Supernova remnant data',
+    bhMass:'Mass', bhRs:'Event-horizon (Schwarzschild) radius', bhShadow:'Shadow size seen from Earth', muas:'µas',
+    bhAcc:'Accretion disc', bhAccYes:'yes · feeding on gas', bhAccNo:'none · a quiet black hole',
+    nebSize:'Width', modelSrc:'3D model', modelNasa:'NASA', refSrc:'Reference', farGo:'Fly to {n}',
+    bhNoteTitle:'How this is drawn',
+    bhNote:'The dark centre has a radius of about 2.6 Schwarzschild radii — larger than the event horizon, because gravity bends passing light into the hole. The thin ring around it is light that circled the hole before escaping. A feeding black hole has a hot gas disc: its far side is bent into view above and below the shadow, and the side turning towards us is brighter. A quiet black hole is almost invisible. A qualitative drawing based on the physics, not a photograph; sizes follow the real mass.',
+    nebNote:'NASA 3D model scaled to the real size and drawn as a translucent glow instead of a solid surface. The orientation is approximate.',
+    nebNote_crab:'The NASA 3D model is the structure Chandra sees in X-rays — the ringed disc and the jets fired from the central pulsar — about 40% the size of the nebula in visible light; the soft outer glow stands for the whole nebula. Drawn as a translucent glow; the orientation is approximate.',
+    nebNote_sn1987a:'The NASA 3D model is the ring of gas the star shed about 20,000 years before it exploded; the blast wave has since lit hot spots all around it. Tilted 43° to our line of sight, as measured in Hubble images.',
     secStar:'Star data', gStars:'Stars', gExo:'Exoplanet systems',
     vExo:'Exoplanet systems', exoSystem:'Exoplanet system', exoPlanets:'planets',
     exoChart:'The system, next to ours', exoHost:'Host star', exoList:'Planets in this system',
@@ -1063,8 +1117,9 @@ const ABOUT = {
 
   <h4>เรื่องลิขสิทธิ์ — ทำไมชุดนี้ปลอดภัย</h4>
   <ul>
-    <li><b>ไม่มีไฟล์ภาพจากภายนอกเลย</b> พื้นผิวดาวทุกดวง วงแหวน ดวงอาทิตย์ และดาวฤกษ์พื้นหลัง
-        ถูกวาดขึ้นด้วยโค้ด (procedural noise) ตอนเปิดหน้าเว็บ จึงไม่มีภาพถ่ายของใครมาเกี่ยวข้อง</li>
+    <li><b>ไม่มีภาพถ่ายจากภายนอกเลย</b> พื้นผิวดาวทุกดวง วงแหวน ดวงอาทิตย์ ดาวฤกษ์พื้นหลัง ภาพกาแล็กซี และหลุมดำ
+        ถูกวาดขึ้นด้วยโค้ดตอนเปิดหน้าเว็บ จึงไม่มีภาพถ่ายของใครมาเกี่ยวข้อง
+        แม้แต่แผนที่รังสีไมโครเวฟพื้นหลังก็วาดเองจากข้อมูลดิบ WMAP ของ NASA</li>
     <li><b>ทางช้างเผือกก็ปั่นขึ้นเอง</b> แขนกังหันเกิดจากสูตรเกลียวลอการิทึม ไม่ใช่ภาพถ่ายหรือภาพวาด
         ของกาแล็กซี ซึ่งเป็นจุดที่แอปดาราศาสตร์ส่วนใหญ่ต้องไปหยิบไฟล์ภาพของคนอื่นมาใช้</li>
     <li><b>ไม่มีโค้ดที่คัดลอกมา</b> เขียนขึ้นใหม่ทั้งหมด ใช้เพียงไลบรารี <code>three.js</code>
@@ -1072,11 +1127,12 @@ const ABOUT = {
     <li><b>โมเดลยานเป็นไฟล์ที่ NASA เผยแพร่</b> วอยเอเจอร์ ไพโอเนียร์ นิวฮอไรซันส์ พาร์เกอร์ เจมส์ เว็บบ์
         และยูโรปาคลิปเปอร์ ใช้โมเดลจากหน้า 3D Resources ของ NASA (เครดิต NASA และ NASA Visualization Technology
         Applications and Development) บีบขนาดก่อนใช้และโหลดเฉพาะตอนเจาะจงยานลำนั้น
-        ส่วนลูซีกับไซคี NASA ไม่มีโมเดลให้ จึงยังปั้นด้วยโค้ด</li>
+        ส่วนลูซีกับไซคี NASA ไม่มีโมเดลให้ จึงยังปั้นด้วยโค้ด โมเดลเนบิวลาปูกับวงแหวนซูเปอร์โนวา 1987A ก็มาจากหน้าเดียวกัน</li>
     <li><b>ตัวเลขคือข้อเท็จจริง</b> องค์ประกอบวงโคจรและข้อมูลกายภาพเป็นค่าที่วัดได้ทางวิทยาศาสตร์
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
         ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
         วิถียานอวกาศจาก JPL Horizons ดาวฤกษ์และกาแล็กซีจากฐานข้อมูล SIMBAD ของ CDS
+        แผนที่กาแล็กซีจากแค็ตตาล็อก 2MASS Redshift Survey
         และดาวเคราะห์นอกระบบจากคลังข้อมูลของนาซา — ทั้งหมดเปิดให้ทุกคนใช้ และ
         คัดลอกมาเก็บไว้ในไฟล์ครั้งเดียว ไม่ได้เรียกข้อมูลตอนเปิดหน้าเว็บ</li>
     <li><b>ไม่ใช้เครื่องหมายขององค์กรใด</b> ไม่มีโลโก้ ชื่อ หรือรูปแบบตราสัญลักษณ์ของหน่วยงานอวกาศใด ๆ
@@ -1099,7 +1155,8 @@ const ABOUT = {
   <h4>ออกไปไกลกว่าระบบสุริยะ</h4>
   <p>บันไดมาตราส่วนมีสิบขั้น ไล่จากผิวดาวไปจนถึงขอบเอกภพที่สังเกตได้ ระหว่างทางมีดาวฤกษ์จริง
   1,356 ดวง เส้นกลุ่มดาว 86 กลุ่ม ป้ายบอกแขนกังหันของทางช้างเผือกกับตำแหน่งของเราในนั้น
-  กาแล็กซีเพื่อนบ้าน 17 แห่ง และดาวเคราะห์นอกระบบ 646 ดวงใน 299 ระบบ
+  กาแล็กซีมีชื่อ 106 แห่ง แผนที่กาแล็กซีจริง 43,439 แห่ง หลุมดำ 7 แห่ง ซากซูเปอร์โนวา 2 แห่ง
+  และดาวเคราะห์นอกระบบ 646 ดวงใน 299 ระบบ
   ที่กดดูผังเทียบกับระบบสุริยะของเราได้</p>
 
   <h4>ดาวฤกษ์รอบตัวเป็นของจริง</h4>
@@ -1133,6 +1190,25 @@ const ABOUT = {
   จะเห็นเส้นพุ่งกระจายรอบดวงอาทิตย์ เพราะดาวในกลุ่มเดียวกันอยู่ห่างเราต่างกันมาก
   รูปที่เราคุ้นเคยเป็นแค่มุมมองจากตรงที่เรายืนเท่านั้น</p>
 
+  <h4>กาแล็กซีและขอบเอกภพ</h4>
+  <p>กาแล็กซีมีชื่อ 106 แห่งวางตามระยะที่วัดจริงจาก SIMBAD จานของกาแล็กซีกังหันเอียงตามที่เห็นบนท้องฟ้า
+  วัตถุไกลมากบอกระยะโคมูฟวิง เวลาที่แสงเดินทาง และอายุเอกภพตอนแสงออกเดินทาง (ค่าจักรวาลวิทยา Planck 2018)
+  ซูมออกเกินแปดล้านปีแสงจะเห็นแผนที่กาแล็กซีจริง 43,439 แห่งจาก 2MASS Redshift Survey เรียงเป็นใยเอกภพ
+  และที่ขอบเอกภพที่สังเกตได้ (รัศมี 46,500 ล้านปีแสง) คือรังสีไมโครเวฟพื้นหลังจากข้อมูล WMAP 9 ปี
+  แสงเก่าที่สุด ซึ่งออกเดินทางเมื่อราว 13,800 ล้านปีก่อน ตอนเอกภพอายุราว 380,000 ปี</p>
+
+  <h4>สสารระหว่างดาวและสสารมืด</h4>
+  <p>ในทางช้างเผือกมีแนวฝุ่นที่กินแสงดาวข้างหลังจนออกแดง และก้อนก๊าซไฮโดรเจนสีชมพูที่ดาวเกิดใหม่กระตุ้นให้เรืองแสง
+  รอบกาแล็กซีคือฮาโลสสารมืดรัศมีราว 650,000 ปีแสง ซึ่งมีมวลราวเก้าในสิบของทั้งกาแล็กซี
+  (สีม่วงเป็นสีสมมุติ ของจริงมองไม่เห็น) กดป้ายในฉากกาแล็กซีเพื่อดูสัดส่วนมวลและกราฟความเร็วการหมุน
+  ซึ่งเป็นหลักฐานว่าสสารมืดมีอยู่จริง</p>
+
+  <h4>หลุมดำและซากซูเปอร์โนวา</h4>
+  <p>บินไปดูหลุมดำได้ 7 แห่ง ตั้งแต่ M87* กับ Sgr A* ที่กล้อง EHT ถ่ายภาพได้ ไปจนถึงหลุมดำเงียบที่ใกล้โลกที่สุดอย่าง Gaia BH1
+  ภาพหลุมดำวาดในเชเดอร์ตามหลักฟิสิกส์ (เงา วงแหวนโฟตอน และจานก๊าซที่ถูกแรงโน้มถ่วงดัดแสง) ขนาดตามมวลจริง
+  แต่เป็นภาพเชิงคุณภาพ ไม่ใช่ภาพถ่าย ส่วนเนบิวลาปูกับวงแหวนซูเปอร์โนวา 1987A ใช้โมเดลสามมิติจาก NASA ตามขนาดจริง
+  ระหว่างบินข้ามหลายพันปีแสง กล้องจะถอยออกให้เห็นทางทั้งหมดก่อน แล้วค่อยพุ่งเข้าหาเป้า</p>
+
   <h4>การควบคุม</h4>
   <ul>
     <li>ลากเมาส์ = หมุนกล้อง · ล้อเลื่อน = ซูม · คลิกชื่อวัตถุ = เปลี่ยนเป้าหมาย</li>
@@ -1151,8 +1227,9 @@ const ABOUT = {
 
   <h4>On copyright — why this set is safe to ship</h4>
   <ul>
-    <li><b>No external image files at all.</b> Every planet surface, the rings, the Sun and the background
-        stars are drawn in code with procedural noise when the page loads. No one’s photograph is involved.</li>
+    <li><b>No outside photographs at all.</b> Every planet surface, the rings, the Sun, the background
+        stars, the galaxies and the black holes are drawn in code when the page loads. No one’s photograph is
+        involved — even the cosmic microwave background map was drawn here from NASA’s raw WMAP data.</li>
     <li><b>The Milky Way is generated too.</b> Its arms come from a logarithmic spiral formula, not from a
         photograph or painting of the galaxy — the exact asset most astronomy apps have to borrow.</li>
     <li><b>No copied code.</b> Written from scratch, using only <code>three.js</code> (MIT licence) and the
@@ -1160,10 +1237,12 @@ const ABOUT = {
     <li><b>Spacecraft models are NASA files.</b> Voyager, Pioneer, New Horizons, Parker Solar Probe, James Webb
         and Europa Clipper use 3-D models from NASA’s 3D Resources page (credit NASA and NASA Visualization
         Technology Applications and Development), compressed and loaded only when you target that craft.
-        NASA publishes no models of Lucy or Psyche, so those two are still built from shapes in code.</li>
+        NASA publishes no models of Lucy or Psyche, so those two are still built from shapes in code.
+        The Crab Nebula and SN 1987A ring models come from the same NASA page.</li>
     <li><b>Numbers are facts.</b> Orbital elements and physical data are measurements, not creative works.
         All descriptive text here was written fresh. Asteroid and comet numbers come from JPL’s public
-        Small-Body Database, copied into a file once rather than fetched when the page opens.</li>
+        Small-Body Database; stars and galaxies come from CDS SIMBAD and the galaxy map from the 2MASS
+        Redshift Survey — all copied into files once rather than fetched when the page opens.</li>
     <li><b>No agency marks.</b> No space-agency logo, name or insignia appears — those are protected as
         trademarks quite separately from copyright.</li>
   </ul>
@@ -1179,7 +1258,8 @@ const ABOUT = {
   <h4>Beyond the solar system</h4>
   <p>The scale ladder now has ten rungs, from a planet’s surface out to the edge of the observable
   universe. Along the way: 1,356 real stars, 86 constellation figures, labels for the Milky Way’s spiral
-  arms and our place in them, 17 neighbouring galaxies and clusters, and 646 exoplanets in 299 systems,
+  arms and our place in them, 106 named galaxies, a map of 43,439 real galaxies, 7 black holes,
+  2 supernova remnants and 646 exoplanets in 299 systems,
   each with a chart placing it beside our own solar system.</p>
 
   <h4>The stars around you are real</h4>
@@ -1215,6 +1295,28 @@ const ABOUT = {
   <p>Constellation lines run to the true 3-D positions of their stars. Fly tens or hundreds of light-years
   out and look back, and the lines burst outward around the Sun, because stars in one constellation lie at
   very different distances — the familiar figures are only the view from where we stand.</p>
+
+  <h4>Galaxies and the edge of the universe</h4>
+  <p>106 named galaxies sit at distances measured in SIMBAD, with spiral discs tilted the way we see them on
+  the sky. The most distant ones show comoving distance, light-travel time and the age of the universe when
+  the light set out (Planck 2018 cosmology). Zoom out past eight million light-years to see 43,439 real
+  galaxies from the 2MASS Redshift Survey tracing the cosmic web, and at the edge of the observable universe
+  (46.5 billion light-years) the cosmic microwave background from nine years of WMAP data — the oldest light,
+  which set out about 13.8 billion years ago, when the universe was some 380,000 years old.</p>
+
+  <h4>Interstellar matter and dark matter</h4>
+  <p>The Milky Way carries dust lanes that dim and redden the starlight behind them, and pink clouds of
+  hydrogen lit up by newborn stars. Around it lies a dark-matter halo some 650,000 light-years in radius,
+  holding about nine tenths of the galaxy’s mass (the purple is only a stand-in colour; the real thing is
+  invisible). Click a label in the galaxy view for the mass breakdown and the rotation curve — the evidence
+  that dark matter is there.</p>
+
+  <h4>Black holes and supernova remnants</h4>
+  <p>Fly to seven black holes, from M87* and Sgr A*, imaged by the Event Horizon Telescope, to Gaia BH1, the
+  nearest known quiet one. They are drawn in a shader from the physics — shadow, photon ring and a gas disc
+  bent by gravity — at their true sizes, but as a qualitative picture rather than a photograph. The Crab
+  Nebula and the SN 1987A ring use NASA 3-D models at real scale. On a trip of thousands of light-years the
+  camera first pulls back to show the whole route, then dives in to the target.</p>
 
   <h4>Controls</h4>
   <ul>
