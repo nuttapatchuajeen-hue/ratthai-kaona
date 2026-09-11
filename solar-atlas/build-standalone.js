@@ -27,7 +27,7 @@ const cssTag = '<link rel="stylesheet" href="style.css">';
 once(html, cssTag, cssTag);
 html = html.replace(cssTag, '<style>\n' + read('style.css') + '\n</style>');
 
-for (const f of ['data.js', 'stars.js', 'constellations.js', 'deep.js', 'exo.js', 'textures.js', 'app.js']) {
+for (const f of ['data.js', 'stars.js', 'constellations.js', 'deep.js', 'exo.js', 'earth-land.js', 'textures.js', 'app.js']) {
   const tag = `<script src="${f}"></script>`;
   once(html, tag, tag);
   html = html.replace(tag, '<script>\n' + read(f) + '\n</script>');

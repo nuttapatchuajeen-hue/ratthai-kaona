@@ -69,7 +69,7 @@ const BODIES = [
 {
   id:'earth', kind:'planet', color:0x4a9be0, glow:'#4a9be0',
   nm:{th:'โลก', en:'Earth'},
-  radius:6371.0, mass:5.972e24, gravity:9.81, rotH:23.9345, tilt:23.44, axisNode:0,
+  radius:6371.0, mass:5.972e24, gravity:9.81, rotH:23.9345, tilt:23.44, axisNode:90,
   moons:1, temp:'15 °C', tempEn:'15 °C', orbitDays:365.256, aAU:1.000,
   origin:{th:'“โลก” จากภาษาบาลี-สันสกฤต โลก/loka แปลว่าโลกหรือภพ', en:'The only planet not named for a god — from Old English eorþe, “ground”'},
   desc:{
@@ -1119,7 +1119,8 @@ const ABOUT = {
   <ul>
     <li><b>ไม่มีภาพถ่ายจากภายนอกเลย</b> พื้นผิวดาวทุกดวง วงแหวน ดวงอาทิตย์ ดาวฤกษ์พื้นหลัง ภาพกาแล็กซี และหลุมดำ
         ถูกวาดขึ้นด้วยโค้ดตอนเปิดหน้าเว็บ จึงไม่มีภาพถ่ายของใครมาเกี่ยวข้อง
-        แม้แต่แผนที่รังสีไมโครเวฟพื้นหลังก็วาดเองจากข้อมูลดิบ WMAP ของ NASA</li>
+        ทวีปบนโลกวาดจากเส้นขอบแผ่นดินของ Natural Earth ซึ่งเป็นข้อมูลแผนที่สาธารณสมบัติ
+        และแผนที่รังสีไมโครเวฟพื้นหลังก็วาดเองจากข้อมูลดิบ WMAP ของ NASA</li>
     <li><b>ทางช้างเผือกก็ปั่นขึ้นเอง</b> แขนกังหันเกิดจากสูตรเกลียวลอการิทึม ไม่ใช่ภาพถ่ายหรือภาพวาด
         ของกาแล็กซี ซึ่งเป็นจุดที่แอปดาราศาสตร์ส่วนใหญ่ต้องไปหยิบไฟล์ภาพของคนอื่นมาใช้</li>
     <li><b>ไม่มีโค้ดที่คัดลอกมา</b> เขียนขึ้นใหม่ทั้งหมด ใช้เพียงไลบรารี <code>three.js</code>
@@ -1229,7 +1230,8 @@ const ABOUT = {
   <ul>
     <li><b>No outside photographs at all.</b> Every planet surface, the rings, the Sun, the background
         stars, the galaxies and the black holes are drawn in code when the page loads. No one’s photograph is
-        involved — even the cosmic microwave background map was drawn here from NASA’s raw WMAP data.</li>
+        involved: Earth’s continents come from Natural Earth coastlines (public-domain map data), and the cosmic
+        microwave background map was drawn here from NASA’s raw WMAP data.</li>
     <li><b>The Milky Way is generated too.</b> Its arms come from a logarithmic spiral formula, not from a
         photograph or painting of the galaxy — the exact asset most astronomy apps have to borrow.</li>
     <li><b>No copied code.</b> Written from scratch, using only <code>three.js</code> (MIT licence) and the
