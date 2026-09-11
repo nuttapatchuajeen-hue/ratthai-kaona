@@ -1069,9 +1069,10 @@ const ABOUT = {
         ของกาแล็กซี ซึ่งเป็นจุดที่แอปดาราศาสตร์ส่วนใหญ่ต้องไปหยิบไฟล์ภาพของคนอื่นมาใช้</li>
     <li><b>ไม่มีโค้ดที่คัดลอกมา</b> เขียนขึ้นใหม่ทั้งหมด ใช้เพียงไลบรารี <code>three.js</code>
         ซึ่งเป็นโอเพนซอร์สสัญญาอนุญาต MIT และฟอนต์ IBM Plex สัญญาอนุญาต SIL Open Font License</li>
-    <li><b>โมเดลยานสามแบบเป็นไฟล์ที่ NASA เผยแพร่</b> วอยเอเจอร์ นิวฮอไรซันส์ และพาร์เกอร์ โซลาร์ โพรบ
-        มาจากหน้า 3D Resources ของ NASA (เครดิต NASA Visualization Technology Applications and Development) ย่อขนาดก่อนใช้
-        และโหลดเฉพาะตอนเจาะจงยานลำนั้น ลำอื่นยังปั้นด้วยโค้ดเหมือนเดิม</li>
+    <li><b>โมเดลยานเป็นไฟล์ที่ NASA เผยแพร่</b> วอยเอเจอร์ ไพโอเนียร์ นิวฮอไรซันส์ พาร์เกอร์ เจมส์ เว็บบ์
+        และยูโรปาคลิปเปอร์ ใช้โมเดลจากหน้า 3D Resources ของ NASA (เครดิต NASA และ NASA Visualization Technology
+        Applications and Development) บีบขนาดก่อนใช้และโหลดเฉพาะตอนเจาะจงยานลำนั้น
+        ส่วนลูซีกับไซคี NASA ไม่มีโมเดลให้ จึงยังปั้นด้วยโค้ด</li>
     <li><b>ตัวเลขคือข้อเท็จจริง</b> องค์ประกอบวงโคจรและข้อมูลกายภาพเป็นค่าที่วัดได้ทางวิทยาศาสตร์
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
         ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
@@ -1119,7 +1120,7 @@ const ABOUT = {
   ห้าลำในนั้นกำลังหลุดพ้นระบบสุริยะไปตลอด ส่วนกล้องเจมส์ เว็บบ์ คำนวณจากจุดสมดุล L2 ของ
   ระบบดวงอาทิตย์–โลกโดยตรง อีกสามลำ คือ ลูซี ไซคี และยูโรปาคลิปเปอร์ ยังจุดเครื่องและยังต้องเหวี่ยงตัว
   กับดาวเคราะห์ วิถีจึงตรงเฉพาะช่วงใกล้วันที่วัดมา แผงข้อมูลของสามลำนี้บอกไว้ชัด</p>
-  <p>วอยเอเจอร์ นิวฮอไรซันส์ และพาร์เกอร์ ใช้โมเดลสามมิติที่ NASA เผยแพร่ ลำอื่นปั้นด้วยรูปทรงพื้นฐานในโค้ด
+  <p>ทุกลำยกเว้นลูซีกับไซคีใช้โมเดลสามมิติที่ NASA เผยแพร่ สองลำนั้นปั้นด้วยรูปทรงพื้นฐานในโค้ด
   ทุกลำจะขยายให้พอมองเห็นเมื่อดูจากไกล แต่กลับไปเท่าขนาดจริงเมื่อซูมเข้าไปประชิด</p>
 
   <h4>เงาบนดาวและอุปราคาจากอวกาศ</h4>
@@ -1156,9 +1157,10 @@ const ABOUT = {
         photograph or painting of the galaxy — the exact asset most astronomy apps have to borrow.</li>
     <li><b>No copied code.</b> Written from scratch, using only <code>three.js</code> (MIT licence) and the
         IBM Plex typefaces (SIL Open Font License).</li>
-    <li><b>Three spacecraft models are NASA files.</b> Voyager, New Horizons and Parker Solar Probe use the
-        3-D models NASA publishes on its 3D Resources page (credit NASA Visualization Technology Applications and Development), reduced in size and loaded only
-        when you target that craft. The others are still built from shapes in code.</li>
+    <li><b>Spacecraft models are NASA files.</b> Voyager, Pioneer, New Horizons, Parker Solar Probe, James Webb
+        and Europa Clipper use 3-D models from NASA’s 3D Resources page (credit NASA and NASA Visualization
+        Technology Applications and Development), compressed and loaded only when you target that craft.
+        NASA publishes no models of Lucy or Psyche, so those two are still built from shapes in code.</li>
     <li><b>Numbers are facts.</b> Orbital elements and physical data are measurements, not creative works.
         All descriptive text here was written fresh. Asteroid and comet numbers come from JPL’s public
         Small-Body Database, copied into a file once rather than fetched when the page opens.</li>
@@ -1201,8 +1203,8 @@ const ABOUT = {
   placed from the Sun–Earth L2 point directly. Lucy, Psyche and Europa Clipper are still under thrust with
   gravity assists ahead, so their paths are right only near the date they were measured — their info
   panels say so.</p>
-  <p>Voyager, New Horizons and Parker use NASA’s published 3-D models; the rest are built from basic shapes
-  in code. Every craft is enlarged enough to spot from far away and returns to true size as you close in.</p>
+  <p>Every craft except Lucy and Psyche uses NASA’s published 3-D model; those two are built from basic
+  shapes in code. Every craft is enlarged enough to spot from far away and returns to true size as you close in.</p>
 
   <h4>Shadows and eclipses from space</h4>
   <p>Computed in the shader every frame: the rings’ shadow across Saturn, Saturn’s shadow on its rings, and

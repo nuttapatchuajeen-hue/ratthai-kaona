@@ -2686,25 +2686,44 @@ const HALF_PI = Math.PI / 2;
 const GLTF_SRC = {
   // ค่าการหมุนหาจากการลองวางจริง: หมุนแล้วด้านที่ต้องหันเข้าเป้าหมาย (จานสื่อสาร
   // หรือโล่กันความร้อน) ต้องมาอยู่ทาง +Z เหมือนโมเดลที่ปั้นเอง
+  // รอบ 16 ตรวจซ้ำทุกไฟล์: ทิศเฉลี่ยของผิว (NORMAL) + ตำแหน่งจานเทียบตัวยาน + ภาพที่มองจากทิศเป้าหมายตรง ๆ
   voyager1:    { file: 'models/voyager.glb',      rot: [-HALF_PI, 0, 0] },
   voyager2:    { file: 'models/voyager.glb',      rot: [-HALF_PI, 0, 0] },
-  newhorizons: { file: 'models/new-horizons.glb', rot: [-HALF_PI, 0, 0] },
-  parker:      { file: 'models/parker.glb',       rot: [Math.PI, 0, 0] }
+  newhorizons: { file: 'models/new-horizons.glb', rot: [HALF_PI, 0, 0] },    // จานอยู่ด้าน +Y ของไฟล์
+  parker:      { file: 'models/parker.glb',       rot: [Math.PI, 0, 0] },
+  pioneer10:   { file: 'models/pioneer.glb',      rot: [Math.PI, 0, 0] }, // จานหัน −Z · 10 กับ 11 หน้าตาเหมือนกัน ใช้ไฟล์เดียว
+  pioneer11:   { file: 'models/pioneer.glb',      rot: [Math.PI, 0, 0] },
+  jwst:        { file: 'models/jwst.glb',         rot: [-HALF_PI, 0, 0] },
+  clipper:     { file: 'models/europa-clipper.glb', rot: [0, 0, 0] }     // ผิวแผงโซลาร์หัน +Z อยู่แล้ว
 };
 const gltfCache = {};          // ไฟล์ → Promise ของฉากที่โหลดแล้ว
 let gltfLoader = null, gltfLoaderTried = false;
 
-function ensureGltfLoader() {
-  if (gltfLoaderTried) return Promise.resolve(gltfLoader);
-  gltfLoaderTried = true;
-  return new Promise(resolve => {
-    if (THREE.GLTFLoader) { gltfLoader = new THREE.GLTFLoader(); return resolve(gltfLoader); }
+const THREE_EX = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/';
+function addScript(src) {
+  return new Promise(res => {
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
-    s.onload = () => { gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader() : null; resolve(gltfLoader); };
-    s.onerror = () => resolve(null);
+    s.src = src;
+    s.onload = () => res(true);
+    s.onerror = () => res(false);
     document.head.appendChild(s);
   });
+}
+
+let gltfLoaderP = null;
+function ensureGltfLoader() {
+  // ทุกคนรอ Promise ตัวเดียวกัน: เลือกยานหลายลำติดกันระหว่างที่ตัวโหลดยังมาไม่ถึง ทุกลำต้องได้โมเดล
+  if (gltfLoaderP) return gltfLoaderP;
+  gltfLoaderTried = true;
+  return (gltfLoaderP = (THREE.GLTFLoader ? Promise.resolve(true) : addScript(THREE_EX + 'loaders/GLTFLoader.js'))
+    .then(ok => (ok && !THREE.DRACOLoader ? addScript(THREE_EX + 'loaders/DRACOLoader.js') : ok))
+    .then(() => {
+      if (!THREE.GLTFLoader) return (gltfLoader = null);
+      gltfLoader = new THREE.GLTFLoader();
+      // ไฟล์โมเดลทุกไฟล์บีบแบบ Draco (เล็กลง 5–25 เท่า) ตัวถอดรหัส (~350 KB) โหลดจาก CDN เดียวกันตอนใช้ครั้งแรก
+      if (THREE.DRACOLoader) gltfLoader.setDRACOLoader(new THREE.DRACOLoader().setDecoderPath(THREE_EX + 'libs/draco/'));
+      return gltfLoader;
+    }));
 }
 
 /* จัดโมเดลให้อยู่กึ่งกลาง ขนาดเท่าของจริง และหันหน้าถูกทาง */
@@ -2737,7 +2756,7 @@ function requestCraftModel(id) {
   if (!src || !rec || rec.gltfDone) return;
   rec.gltfDone = true;                                     // ขอครั้งเดียวพอ
   ensureGltfLoader().then(loader => {
-    if (!loader) return;
+    if (!loader) { rec.gltfDone = false; return; }        // ไม่มีตัวโหลด (ออฟไลน์) — ปล่อยให้ขอใหม่ได้
     if (!gltfCache[src.file]) {
       gltfCache[src.file] = new Promise((res, rej) =>
         loader.load(src.file, gltf => res(gltf.scene), undefined, rej));
