@@ -199,6 +199,14 @@
     ".mdai-bubble{padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}",
     ".me .mdai-bubble{background:linear-gradient(135deg,var(--mdai-accent),var(--mdai-accent2));color:var(--mdai-on-accent);border-bottom-right-radius:4px;box-shadow:0 4px 16px -6px rgba(0,181,214,.6)}",
     ".ai .mdai-bubble{background:var(--mdai-surface);color:var(--mdai-text);border:1px solid var(--mdai-border);border-bottom-left-radius:4px}",
+
+    // markdown ในคำตอบ (Gemini ตอบมาเป็น **ตัวหนา** / `โค้ด` / ลิงก์)
+    ".mdai-bubble strong{font-weight:700}",
+    ".mdai-bubble em{font-style:italic}",
+    ".mdai-bubble code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;",
+    "padding:1px 5px;border-radius:5px;background:var(--mdai-surface2);border:1px solid var(--mdai-border)}",
+    ".mdai-bubble a{color:var(--mdai-accent2);text-decoration:underline;text-underline-offset:2px}",
+    ".me .mdai-bubble a,.me .mdai-bubble code{color:inherit}",
     ".ai .mdai-bubble.err{border-color:#d7263d;color:#d7263d}",
 
     // ชิปคำถามตัวอย่าง (Suggestion Chips)
@@ -817,6 +825,80 @@
     if (window._mdai_startTypewriter) window._mdai_startTypewriter(500);
   }
 
+  // ---- markdown เบา ๆ สำหรับคำตอบของโมเดล ----
+  // สร้างด้วย createElement/textContent ล้วน ไม่ใช้ innerHTML กับข้อความจากโมเดล
+  // รองรับ: `โค้ด` · **ตัวหนา** · *ตัวเอียง* · [ข้อความ](ลิงก์) · หัวข้อ # · รายการ - / *
+  var MD_INLINE =
+    /`([^`\n]+)`|\*\*([^\n]+?)\*\*|__([^\n]+?)__|\[([^\]\n]+)\]\(([^)\s]+)\)|\*([^*\n]+?)\*|_([^_\n]+?)_/g;
+
+  function mdInline(text, parent, depth) {
+    var re = new RegExp(MD_INLINE.source, "g");
+    var last = 0;
+    var m;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) {
+        parent.appendChild(document.createTextNode(text.slice(last, m.index)));
+      }
+      if (m[1] !== undefined) {
+        var code = document.createElement("code");
+        code.textContent = m[1];
+        parent.appendChild(code);
+      } else if (m[2] !== undefined || m[3] !== undefined) {
+        var strong = document.createElement("strong");
+        mdFill(strong, m[2] !== undefined ? m[2] : m[3], depth);
+        parent.appendChild(strong);
+      } else if (m[4] !== undefined) {
+        // ยอมเฉพาะ http/https — กัน javascript: และ data: ที่โมเดลอาจแต่งขึ้นมา
+        if (/^https?:\/\//i.test(m[5])) {
+          var a = document.createElement("a");
+          a.href = m[5];
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = m[4];
+          parent.appendChild(a);
+        } else {
+          parent.appendChild(document.createTextNode(m[0]));
+        }
+      } else {
+        var em = document.createElement("em");
+        mdFill(em, m[6] !== undefined ? m[6] : m[7], depth);
+        parent.appendChild(em);
+      }
+      last = re.lastIndex;
+    }
+    if (last < text.length) {
+      parent.appendChild(document.createTextNode(text.slice(last)));
+    }
+  }
+
+  // กันวนไม่จบถ้าเจอเครื่องหมายซ้อนกันแปลก ๆ
+  function mdFill(parent, text, depth) {
+    if ((depth || 0) >= 4) parent.appendChild(document.createTextNode(text));
+    else mdInline(text, parent, (depth || 0) + 1);
+  }
+
+  function mdRender(text) {
+    var frag = document.createDocumentFragment();
+    var lines = String(text).split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      var head = /^\s{0,3}(#{1,6})\s+(.*)$/.exec(line);
+      if (head) {
+        var h = document.createElement("strong");
+        mdFill(h, head[2], 0);
+        frag.appendChild(h);
+      } else {
+        var bullet = /^(\s*)[*+-]\s+(.*)$/.exec(line);
+        if (bullet) line = bullet[1] + "• " + bullet[2];
+        else if (/^\s*([-*_])\1{2,}\s*$/.test(line)) line = ""; // เส้นคั่น ---
+        mdFill(frag, line, 0);
+      }
+      // กล่องแชตเป็น white-space:pre-wrap อยู่แล้ว ใส่ \n กลับไปตรง ๆ ได้
+      if (i < lines.length - 1) frag.appendChild(document.createTextNode("\n"));
+    }
+    return frag;
+  }
+
   function addBubble(who, text, isErr, icon) {
     var msgs = document.getElementById("mdai-msgs");
     var row = document.createElement("div");
@@ -829,7 +911,8 @@
       b.appendChild(ic);
       b.appendChild(document.createTextNode(" "));
     }
-    b.appendChild(document.createTextNode(text));
+    if (who !== "me" && !isErr) b.appendChild(mdRender(text));
+    else b.appendChild(document.createTextNode(text));
     row.appendChild(b);
     msgs.appendChild(row);
     msgs.scrollTop = msgs.scrollHeight;
