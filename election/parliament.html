@@ -487,6 +487,7 @@ mdSyncToggle();
 <!-- ข้อมูลแยกตามปีเลือกตั้ง — year-switch.js ฉีด parliament-25xx.js (ห้ามใส่ defer/async) -->
 <script>window.EYEARSET='parliament';</script>
 <script src="year-switch.js"></script>
+<script src="index-photos.js"></script>
 <script>
 'use strict';
 const D = window.PDATA, PM = D.partyMeta;
@@ -552,8 +553,28 @@ function svMembers(){
 const MEMBERS = { mp: mpMembers(), sv: svMembers() };
 MEMBERS.joint = MEMBERS.mp.concat(MEMBERS.sv);   // สว. ต่อท้าย = ฝั่งขวามือประธาน (ตามข้อบังคับประชุมร่วม)
 
+const bareName = s => (s || '').replace(/^(นางสาว|นาง|นาย|ว่าที่ร้อยตรีหญิง|ว่าที่ร้อยตรี|ว่าที่|ดร\.|ผศ\.|รศ\.|ศ\.|พล[^ ]*|พ\.[^ ]*|ร\.[^ ]*|น\.[^ ]*|จ\.[^ ]*)\s*/, '').replace(/\s+/g, ' ').trim();
+let photoBare = null;
+function photoOf(name) {
+  if (!name) return null;
+  const P = window.PHOTOS || {};
+  if (P[name]) return P[name];
+  if (!photoBare) {
+    photoBare = {};
+    Object.keys(P).forEach(k => {
+      const b = bareName(k);
+      if (!(b in photoBare)) photoBare[b] = P[k];
+    });
+  }
+  return photoBare[bareName(name)] || (D.photos && D.photos[name]) || null;
+}
+
 const memberColor = m => m.kind === 'sv' ? svColor() : colorOf(m.code);
-const memberPhoto = m => m.kind === 'sv' ? ('senators/' + pad3(m.no) + '.jpg') : (D.photos[m.name] ? 'photos/' + D.photos[m.name] : null);
+const memberPhoto = m => {
+  if (m.kind === 'sv') return 'senators/' + pad3(m.no) + '.jpg';
+  const ph = photoOf(m.name);
+  return ph ? 'photos/' + encodeURIComponent(ph) : null;
+};
 const memberMeta = m => m.kind === 'sv' ? `สว. ลำดับที่ ${m.no}` :
   m.kind === 'list' ? `${shortOf(m.code)} · บัญชีรายชื่อ #${m.no}` : `${shortOf(m.code)} · ${m.prov} เขต ${m.no}`;
 
@@ -1280,7 +1301,8 @@ function renderSim(){
   const mkCard = (blk, role, gold) => {
     if(!blk) return `<div class="pcx"><div class="av" style="background:var(--line-2)">–</div><div class="tx"><div class="r">${role}</div><div class="n" style="color:var(--muted)">ยังไม่ได้เลือก</div></div></div>`;
     const h = headOf(blk.code), col = colorOf(blk.code);
-    const ph = h && D.photos[h.name] ? 'photos/' + D.photos[h.name] : null;
+    const phName = h ? photoOf(h.name) : null;
+    const ph = phName ? 'photos/' + encodeURIComponent(phName) : null;
     return `<div class="pcx${gold ? ' gold' : ''}">
       ${ph ? `<img src="${ph}" alt="" loading="lazy" data-col="${col}" data-ini="${h ? initialOf(h.name) : '?'}">`
            : `<div class="av" style="background:${col}">${h ? initialOf(h.name) : '?'}</div>`}
