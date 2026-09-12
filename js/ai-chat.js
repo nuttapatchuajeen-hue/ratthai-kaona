@@ -26,10 +26,10 @@
   // ตัวแรกคือค่าเริ่มต้น — ระบุชื่อรุ่นจริงไปเลย ไม่ใช้ "อัตโนมัติ" ที่ไม่บอกว่าได้ตัวไหน
   var MODELS = [
     { id: "openthaigpt-thaillm-8b-instruct-v7.2", label: "ThaiLLM 8B (ไทย)" },
-    // soon = proxy ที่รันอยู่ยังไม่รู้จักรุ่นนี้ (กดแล้วจะได้ ThaiLLM ตอบแทนเงียบ ๆ)
-    // ปลดธงนี้ออกได้เมื่อ deploy md-ai-proxy รุ่นใหม่ขึ้นไปแล้ว
-    { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash", soon: true },
-    { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)", soon: true },
+    // ติด soon: true ให้รุ่นที่ proxy ยังใช้ไม่ได้ — จะขึ้น "(ยังไม่พร้อม)" และกดไม่ได้
+    // (Gemini 2.5 Flash ถูก Google ปลดระวาง 404 แล้ว 12 ก.ย. 69 → ใช้ 3.6 แทน)
+    { id: "gemini-3.6-flash", label: "Gemini 3.6 Flash" },
+    { id: "gemini-flash-latest", label: "Gemini Flash (ล่าสุด)" },
   ];
   var MODEL_KEY = "mdai-model-v1";
   var model = readModel();
