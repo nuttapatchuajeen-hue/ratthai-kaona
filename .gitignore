@@ -31,3 +31,7 @@ hub/images/creator-nook-original.png
 # ไฟล์ที่ Python สร้างเองตอนรันสคริปต์เตรียมข้อมูล ไม่ต้องเก็บเข้า git
 __pycache__/
 *.pyc
+
+# ticket/spec ที่ agent skills สร้าง (issue tracker แบบ local markdown)
+# repo นี้เป็น public — ไม่ต้องการให้เนื้อหา ticket ขึ้น GitHub
+.scratch/
