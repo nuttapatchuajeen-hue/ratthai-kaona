@@ -7827,7 +7827,7 @@ function farPrepare() {
 }
 
 // ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล — หลุมดำแบบคำนวณจริงต้องเล็ก ไม่งั้นค้างเป็นก้อนใหญ่ตอนซูมออก
-const farMinPx = def => def.t === 'bh' ? (def.kerr ? 22 : def.acc ? 64 : 30) : 44;
+const farMinPx = def => def.t === 'bh' ? (def.kerr ? 0 : def.acc ? 64 : 30) : 44;
 
 function blackHoleMaterial(def) {
   return new THREE.ShaderMaterial({
@@ -8459,7 +8459,10 @@ function farDisc(def, size) {
 }
 
 function farShown(rec) {
-  if (rec.def.id === (trans.on ? trans.to : S.focus)) return true;
+  // หลุมดำที่คำนวณเส้นทางแสงจริงไม่ถูกขยายเป็นเครื่องหมายขนาดคงที่อีกแล้ว
+  // มองจากไกลจึงต้องไม่เห็นตัวมัน แม้จะกำลังเพ่งอยู่ก็ตาม (ของจริงเล็กเกินกว่าจะเห็นจากระยะนั้นมาก)
+  // ปล่อยให้ป้ายชื่อกับวงกลมบอกตำแหน่ง (labelRing) ทำหน้าที่แทน แล้วค่อยโผล่เมื่อเข้าใกล้จริง ๆ
+  if (rec.def.id === (trans.on ? trans.to : S.focus) && !rec.def.kerr) return true;
   // ใกล้พอให้ขนาดจริงบนจอเกินราว 2–3 พิกเซล (ไม่เกิน 400 เท่าของขนาด · span เป็นเมตร)
   eyeWorld(_eye);
   return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
