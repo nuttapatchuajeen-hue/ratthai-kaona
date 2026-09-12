@@ -15,14 +15,100 @@
 :root{ --ryes:#00A65A; --rno:#E5484D; --rab:#B4C3CF; --ryes-deep:#067D46; --rno-deep:#C03338 }
 html[data-theme="dark"]{ --rab:#54718A }
 
-/* ---- hero: วงแหวน + คำถาม ---- */
-.refhero{display:grid;grid-template-columns:minmax(280px,420px) minmax(0,1fr);gap:34px;align-items:center}
-.ringwrap{position:relative;max-width:400px;margin:0 auto;width:100%}
-.ringwrap svg.ring{width:100%;height:auto;display:block}
-.ringinner{position:absolute;inset:11%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;pointer-events:none}
-.ringinner .monu{width:72%;max-width:215px;height:auto}
-.ringinner .qk{font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--green);letter-spacing:.02em}
-.ringinner .q{font-family:'Kanit';font-weight:600;font-size:clamp(.86rem,2.1vw,1.05rem);line-height:1.4;color:var(--ink)}
+/* ---- hero: มาตรวัดครึ่งวงกลม (Semi-Circle Gauge) + คำถาม ---- */
+.refhero{display:grid;grid-template-columns:minmax(300px,430px) minmax(0,1fr);gap:32px;align-items:center}
+.gaugewrap{position:relative;max-width:400px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center}
+.gaugebox{position:relative;width:100%;display:flex;flex-direction:column;align-items:center}
+svg.refgauge{width:100%;height:auto;display:block;overflow:visible}
+svg.refgauge path.gseg{cursor:pointer;transition:filter .15s}
+svg.refgauge path.gseg:hover{filter:brightness(1.1)}
+
+.thresh-pill{
+  position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--card);border:1px solid var(--line-2);
+  padding:2px 10px;border-radius:999px;
+  font-family:'Kanit';font-size:.72rem;font-weight:600;color:var(--muted);
+  box-shadow:var(--shadow);z-index:10;
+  transition:border-color .35s, color .35s, box-shadow .35s;
+  white-space:nowrap;
+}
+.thresh-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;transition:background .35s}
+.thresh-pill.active{border-color:var(--ryes);color:var(--ryes-deep);box-shadow:0 0 14px rgba(0,166,90,.3)}
+.thresh-pill.active .dot{background:var(--ryes)}
+html[data-theme="dark"] .thresh-pill.active{color:#3FD68F;border-color:rgba(0,166,90,.65);box-shadow:0 0 16px rgba(0,229,140,.25)}
+
+.gauge-center{
+  position:absolute;bottom:6px;left:0;right:0;
+  display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;z-index:5;
+}
+.g-monu{
+  width:56%;max-width:180px;height:auto;
+  filter:drop-shadow(0 6px 16px rgba(0,166,90,.18));
+  transition:transform .4s ease;
+  position:relative;z-index:2;
+}
+html[data-theme="dark"] .g-monu{
+  filter:drop-shadow(0 8px 26px rgba(0,166,90,.3));
+}
+
+/* แสงออร่าหายใจหลังอนุสาวรีย์ */
+.g-aura{
+  position:absolute;bottom:24px;width:175px;height:110px;
+  border-radius:50%;background:radial-gradient(ellipse at center, rgba(0,166,90,.34) 0%, rgba(0,229,140,.16) 48%, transparent 75%);
+  filter:blur(16px);pointer-events:none;z-index:1;
+  animation:auraBreathe 3.6s ease-in-out infinite;
+}
+@keyframes auraBreathe{
+  0%,100%{transform:scale(0.92);opacity:.45}
+  50%{transform:scale(1.16);opacity:.9}
+}
+html[data-theme="dark"] .g-aura{
+  background:radial-gradient(ellipse at center, rgba(0,229,140,.4) 0%, rgba(0,166,90,.2) 50%, transparent 75%);
+  filter:blur(20px);
+}
+
+/* คลื่นระลอกโซนาร์ตอนข้าม 50% */
+.g-ripple{
+  opacity:0;pointer-events:none;transform-origin:170px 20px;
+}
+.g-ripple.play{
+  animation:sonarRipple 1.2s cubic-bezier(0,.2,.8,1) forwards;
+}
+@keyframes sonarRipple{
+  0%{r:4;opacity:0.95;stroke-width:2.8}
+  100%{r:28;opacity:0;stroke-width:0.5}
+}
+
+.verdict-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,166,90,.12);border:1.5px solid var(--ryes);
+  color:var(--ryes-deep);border-radius:999px;
+  padding:5px 14px;margin-top:-6px;
+  font-family:'Kanit';font-size:.84rem;font-weight:600;
+  box-shadow:0 4px 14px -3px rgba(0,166,90,.3);
+  opacity:0;transform:translateY(8px) scale(.94);
+  transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1);
+  pointer-events:auto;position:relative;z-index:3;
+}
+.verdict-chip.show{opacity:1;transform:translateY(0) scale(1)}
+html[data-theme="dark"] .verdict-chip{
+  background:rgba(0,166,90,.2);color:#3FD68F;border-color:#00A65A;
+}
+.verdict-chip svg{flex:0 0 auto;stroke-width:2.8}
+
+.g-needle{
+  transform-origin:170px 168px;
+  transition:transform 1.35s cubic-bezier(.18,.9,.22,1.15);
+}
+
+.gauge-qbox{
+  width:100%;margin-top:14px;padding-top:12px;
+  border-top:1px dashed var(--line-2);text-align:center;
+}
+.gauge-qbox .qk{font-family:'Kanit';font-weight:500;font-size:.76rem;color:var(--green);letter-spacing:.04em;text-transform:uppercase}
+.gauge-qbox .q{font-family:'Kanit';font-weight:600;font-size:clamp(.88rem,2vw,1.02rem);line-height:1.45;color:var(--ink);margin-top:3px}
 .heroR .hkick{font-family:'Kanit';font-weight:500;font-size:.78rem;letter-spacing:.1em;color:var(--orange-deep);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .heroR .hkick .live{display:inline-flex;align-items:center;gap:6px;background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);font-size:.72rem;letter-spacing:0;text-transform:none}
 .heroR .hkick .live i{width:8px;height:8px;border-radius:50%;background:var(--rno);display:inline-block;animation:blink 1.6s infinite}
@@ -49,14 +135,39 @@ html[data-theme="dark"] .tnfill{background:var(--green)}
 .turnout .sub{margin-top:8px;font-size:.8rem;color:var(--muted)}
 
 /* ---- แถบรายภาค ---- */
-.regbars{display:flex;flex-direction:column;gap:13px}
-.regrow{display:grid;grid-template-columns:172px minmax(0,1fr);gap:14px;align-items:center}
+.regbars{display:flex;flex-direction:column;gap:11px}
+.regrow{
+  display:grid;grid-template-columns:172px minmax(0,1fr);gap:14px;align-items:center;
+  padding:6px 10px;border-radius:12px;transition:background .16s, transform .16s;
+}
+.regrow:hover{background:var(--orange-soft);transform:translateX(4px)}
 .regrow .rn{font-family:'Kanit';font-weight:500;font-size:.95rem;text-align:left}
 .regrow .rn small{display:block;font-family:'Sarabun';font-size:.7rem;color:var(--muted)}
-.rtrack{display:flex;gap:4px;height:30px}
-.rseg{height:100%;border-radius:7px;display:flex;align-items:center;padding:0 9px;color:#fff;font-family:'Kanit';font-weight:600;font-size:.82rem;min-width:0;overflow:hidden;white-space:nowrap;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
-.rseg.y{background:var(--ryes)} .rseg.n{background:var(--rno)} .rseg.a{background:var(--rab);color:var(--ink-2)}
+.rtrack{
+  position:relative;display:flex;gap:4px;height:32px;background:var(--wash);
+  border-radius:9px;padding:2px;overflow:hidden;border:1px solid var(--line);
+}
+/* ขีดเกณฑ์ผ่าน 50% บนแถบภาค */
+.rtrack::after{
+  content:'';position:absolute;left:50%;top:0;bottom:0;width:1.5px;
+  background:rgba(255,255,255,.5);z-index:4;pointer-events:none;
+  box-shadow:0 0 3px rgba(0,0,0,.4);
+}
+html[data-theme="dark"] .rtrack::after{
+  background:rgba(255,255,255,.65);box-shadow:0 0 4px rgba(0,0,0,.7);
+}
+.rseg{
+  height:100%;border-radius:7px;display:flex;align-items:center;padding:0 9px;
+  color:#fff;font-family:'Kanit';font-weight:600;font-size:.82rem;min-width:0;
+  overflow:hidden;white-space:nowrap;width:0;
+  transition:width .9s cubic-bezier(.2,.8,.2,1), filter .15s;
+}
+.rseg.y{background:var(--ryes)}
+.rseg.n{background:var(--rno)}
+.rseg.a{background:var(--rab);color:var(--ink-2)}
 html[data-theme="dark"] .rseg.a{color:#DCE8F0}
+.regrow:hover .rseg.y{filter:brightness(1.08)}
+.regrow:hover .rseg.n{filter:brightness(1.08)}
 .regnote{margin-top:16px;padding-top:13px;border-top:1px dashed var(--line-2);font-size:.78rem;color:var(--muted)}
 
 /* ---- แผนที่ ---- */
@@ -119,16 +230,33 @@ html[data-theme="dark"] .dsrc.real{color:#3FD68F}
 .tbl-head,.trow{display:grid;grid-template-columns:38px minmax(130px,200px) minmax(0,1fr) 150px;gap:14px;align-items:center}
 .tbl-head{padding:0 12px 10px;font-size:.74rem;color:var(--muted);font-weight:600}
 .tbl-head .num-h{text-align:right}
-.trow{padding:9px 12px;border-radius:12px;cursor:pointer;transition:background .12s}
-.trow:hover{background:var(--orange-soft)}
+.trow{
+  padding:9px 12px;border-radius:12px;cursor:pointer;
+  transition:background .15s, transform .15s, box-shadow .15s;
+}
+.trow:hover{
+  background:var(--orange-soft);
+  transform:translateX(4px);
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
 .trow .rk{font-family:'Kanit';font-weight:600;color:var(--muted);text-align:center;font-size:.9rem}
 .trow .pv-n{min-width:0}
 .trow .pv-n .nm{font-weight:600;font-size:.93rem;display:flex;align-items:center;gap:6px}
 .trow .pv-n .nm .star{color:#E8A33D;font-size:.78rem}
 .trow .pv-n small{display:block;font-size:.7rem;color:var(--muted)}
-.ttrack{display:flex;gap:3px;height:18px}
-.tseg{height:100%;border-radius:5px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.ttrack{
+  position:relative;display:flex;gap:3px;height:18px;background:var(--wash);
+  border-radius:6px;overflow:hidden;border:1px solid var(--line);
+}
+/* ขีดกึ่งกลาง 50% บนแถบจังหวัด */
+.ttrack::after{
+  content:'';position:absolute;left:50%;top:0;bottom:0;width:1.2px;
+  background:rgba(255,255,255,.38);z-index:3;pointer-events:none;
+}
+.tseg{height:100%;border-radius:5px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1), filter .15s}
 .tseg.y{background:var(--ryes)} .tseg.n{background:var(--rno)} .tseg.a{background:var(--rab)}
+.trow:hover .tseg.y{filter:brightness(1.08)}
+.trow:hover .tseg.n{filter:brightness(1.08)}
 .trow .nums{text-align:right;font-family:'Kanit';white-space:nowrap}
 .trow .nums .gy{color:var(--ryes);font-weight:700;font-size:.98rem}
 .trow .nums .rd{color:var(--rno);font-weight:600;font-size:.86rem;margin-left:8px}
@@ -147,6 +275,7 @@ html[data-theme="dark"] .dsrc.real{color:#3FD68F}
 }
 @media(max-width:860px){
   .refhero{grid-template-columns:1fr;gap:22px}
+  .gaugewrap{max-width:350px}
   .maplay{grid-template-columns:1fr}
   .mapdetail{position:static}
   .regrow{grid-template-columns:1fr;gap:5px}
@@ -221,12 +350,60 @@ mdSyncToggle();
       <p>ผลการออกเสียงประชามติว่าสมควรมีรัฐธรรมนูญฉบับใหม่หรือไม่ — นับครบทุกหน่วย อย่างไม่เป็นทางการ</p>
     </div>
     <div class="panelbox refhero">
-      <div class="ringwrap">
-        <svg class="ring" viewBox="0 0 360 360" id="ringsvg" aria-hidden="true"></svg>
-        <div class="ringinner">
-          <img class="monu" src="images/constitution-2569.png" alt="อนุสาวรีย์ประชาธิปไตย — รัฐธรรมนูญ 2569" width="480" height="320">
-          <span class="qk">คำถามประชามติ</span>
-          <span class="q">ท่านเห็นชอบว่าสมควร<br>มีรัฐธรรมนูญ<br>ฉบับใหม่หรือไม่?</span>
+      <div class="gaugewrap">
+        <div class="gaugebox">
+          <div class="thresh-pill" id="threshpill">
+            <span class="dot"></span>
+            <span>เกณฑ์ผ่าน 50%</span>
+          </div>
+          <svg class="refgauge" viewBox="0 0 340 210" id="gaugesvg" aria-hidden="true">
+            <!-- Background Arc Track -->
+            <path d="M 44 168 A 126 126 0 0 1 296 168" fill="none" stroke="var(--wash)" stroke-width="16" stroke-linecap="round" />
+            <path d="M 44 168 A 126 126 0 0 1 296 168" fill="none" stroke="var(--line-2)" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+
+            <!-- 50% Threshold Line & Pin & Ripple -->
+            <line class="g-tick50" x1="170" y1="22" x2="170" y2="48" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="3 2" opacity="0.65"/>
+            <circle class="g-pin50" cx="170" cy="20" r="3.5" fill="var(--ink)"/>
+            <circle id="gripple" class="g-ripple" cx="170" cy="20" r="4" fill="none" stroke="var(--ryes)" stroke-width="2"/>
+
+            <!-- Arc Segments (populated / animated by JS) -->
+            <!-- Yes segment (Green) -->
+            <path id="garcyes" class="gseg" d="M 44 168 A 126 126 0 0 1 296 168"
+                  fill="none" stroke="var(--ryes)" stroke-width="17" stroke-linecap="round"
+                  pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="0"
+                  style="transition: stroke-dasharray 1.3s cubic-bezier(.2,.8,.2,1);" />
+
+            <!-- Abstain segment (Gray) -->
+            <path id="garcab" class="gseg" d="M 44 168 A 126 126 0 0 1 296 168"
+                  fill="none" stroke="var(--rab)" stroke-width="17"
+                  pathLength="100" stroke-dasharray="0 100"
+                  style="opacity:0; transition: opacity .5s ease .6s;" />
+
+            <!-- No segment (Red) -->
+            <path id="garcno" class="gseg" d="M 44 168 A 126 126 0 0 1 296 168"
+                  fill="none" stroke="var(--rno)" stroke-width="17" stroke-linecap="round"
+                  pathLength="100" stroke-dasharray="0 100"
+                  style="opacity:0; transition: opacity .5s ease .75s;" />
+
+            <!-- Gauge Needle -->
+            <g id="gneedle" class="g-needle">
+              <line x1="170" y1="168" x2="52" y2="168" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" opacity="0.85"/>
+              <circle cx="52" cy="168" r="4.5" fill="var(--ryes)" stroke="var(--card)" stroke-width="1.8"/>
+              <circle cx="170" cy="168" r="5.5" fill="var(--ink)"/>
+            </g>
+          </svg>
+          <div class="gauge-center">
+            <div class="g-aura" aria-hidden="true"></div>
+            <img class="g-monu" src="images/constitution-2569.png" alt="อนุสาวรีย์ประชาธิปไตย — รัฐธรรมนูญ 2569" width="480" height="320">
+            <div class="verdict-chip" id="verdictchip">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>มติมหาชน: <b>เห็นชอบ (<span id="verdictpct">0.00%</span>)</b></span>
+            </div>
+          </div>
+        </div>
+        <div class="gauge-qbox">
+          <span class="qk">คำถามประชามติ · 14 กุมภาพันธ์ 2569</span>
+          <div class="q">“ท่านเห็นชอบว่าสมควรมีรัฐธรรมนูญฉบับใหม่หรือไม่?”</div>
         </div>
       </div>
       <div class="heroR">
@@ -352,40 +529,103 @@ mdSyncToggle();
   document.getElementById('tnsub').innerHTML=`บัตรเสีย <b class="num">${fmt(T.invalid)}</b> ใบ (${(T.invalid/ballots*100).toFixed(1)}% ของบัตรที่ใช้ทั้งหมด)`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{document.getElementById('tnfill').style.width=tnPct.toFixed(1)+'%';}));
 
-  /* ---------- วงแหวนรอบอนุสาวรีย์ ---------- */
+  /* ---------- มาตรวัดครึ่งวงกลม (Gauge) + แอนิเมชัน ---------- */
   (function(){
-    const svg=document.getElementById('ringsvg'), gap=1.4, scale=(100-3*gap)/100;
-    const segs=[[pYes,CY],[pNo,CN],[pAb,CA]];
-    [[168,17,1],[148,6,.85]].forEach(([r,w,op])=>{
-      let off=0;
-      segs.forEach(([pc,col])=>{
-        const len=pc*scale;
-        const c=document.createElementNS(NS,'circle');
-        c.setAttribute('cx',180);c.setAttribute('cy',180);c.setAttribute('r',r);
-        c.setAttribute('fill','none');c.setAttribute('stroke',col);c.setAttribute('stroke-width',w);
-        c.setAttribute('pathLength',100);c.setAttribute('stroke-dasharray',`${len} ${100-len}`);
-        c.setAttribute('stroke-dashoffset',-off);c.setAttribute('opacity',op);
-        c.setAttribute('transform','rotate(-90 180 180)');
-        svg.appendChild(c); off+=len+gap;
+    const garcYes = document.getElementById('garcyes');
+    const garcAb  = document.getElementById('garcab');
+    const garcNo  = document.getElementById('garcno');
+    const needle  = document.getElementById('gneedle');
+    const thresh  = document.getElementById('threshpill');
+    const verdict = document.getElementById('verdictchip');
+    const vPct    = document.getElementById('verdictpct');
+    const rip     = document.getElementById('gripple');
+    if(!garcYes || !needle) return;
+
+    // คำนวณความยาวสัดส่วนบน pathLength=100 พร้อมเว้นระยะเล็กน้อย
+    const gap = 0.8;
+    const scale = (100 - 2 * gap) / 100;
+    const lYes = pYes * scale;
+    const lAb  = pAb * scale;
+    const lNo  = pNo * scale;
+
+    const offAb = -(lYes + gap);
+    const offNo = -(lYes + gap + lAb + gap);
+
+    garcYes.setAttribute('title', `เห็นชอบ ${pYes.toFixed(2)}% (${fmt(T.yes)} เสียง)`);
+    garcAb.setAttribute('title', `ไม่แสดงความคิดเห็น ${pAb.toFixed(2)}% (${fmt(T.ab)} เสียง)`);
+    garcNo.setAttribute('title', `ไม่เห็นชอบ ${pNo.toFixed(2)}% (${fmt(T.no)} เสียง)`);
+
+    garcAb.setAttribute('stroke-dasharray', `${lAb} 100`);
+    garcAb.setAttribute('stroke-dashoffset', offAb);
+
+    garcNo.setAttribute('stroke-dasharray', `${lNo} 100`);
+    garcNo.setAttribute('stroke-dashoffset', offNo);
+
+    // Interactive Hover บนแถบเกจจ์
+    [garcYes, garcAb, garcNo].forEach(seg => {
+      if(!seg) return;
+      seg.addEventListener('mouseenter', () => {
+        seg.style.strokeWidth = '21';
+        seg.style.filter = 'drop-shadow(0 0 6px currentColor) brightness(1.15)';
+      });
+      seg.addEventListener('mouseleave', () => {
+        seg.style.strokeWidth = '17';
+        seg.style.filter = '';
       });
     });
+
+    // ทริกเกอร์แอนิเมชันเกจจ์กวาดและเข็มชี้
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      // 1. เกจจ์สีเขียวพุ่งข้าม 50% ไปแตะ 60.16%
+      garcYes.style.strokeDasharray = `${lYes} 100`;
+
+      // 2. เข็มหมุนกวาดตามแถบ (0% = 0deg, 50% = 90deg, 100% = 180deg)
+      const targetDeg = pYes * 1.8;
+      needle.style.transform = `rotate(${targetDeg}deg)`;
+
+      // 3. แถบเทาและแดงค่อยๆ เฟดเข้ามารองรับ
+      garcAb.style.opacity = '0.9';
+      garcNo.style.opacity = '1';
+
+      // 4. จังหวะเข็มวิ่งผ่าน 50% (~700ms) ให้ไฟเกณฑ์ 50% สว่างวาบ และคลื่นโซนาร์กระจาย
+      setTimeout(() => {
+        if(thresh) thresh.classList.add('active');
+        if(rip) rip.classList.add('play');
+      }, 700);
+
+      // 5. จังหวะเข็มหยุดเข้าที่ (~950ms) ให้ชิปผลลัพธ์มติมหาชน Pop-in และนับตัวเลขวิ่ง
+      setTimeout(() => {
+        if(verdict) verdict.classList.add('show');
+        if(vPct){
+          const t0 = performance.now(), duration = 650;
+          (function countStep(t){
+            const p = Math.min(1, (t - t0) / duration);
+            const e = 1 - Math.pow(1 - p, 3);
+            vPct.textContent = (pYes * e).toFixed(2) + '%';
+            if(p < 1) requestAnimationFrame(countStep);
+            else vPct.textContent = pYes.toFixed(2) + '%';
+          })(t0);
+        }
+      }, 950);
+    }));
   })();
 
-  /* ---------- แถบรายภาค ---------- */
+  /* ---------- แถบรายภาค (Staggered Cascade Animation) ---------- */
   const REGORDER=['N','S','C','E','W','NE'];
   const bkk=P['กรุงเทพมหานคร'];
   const regRows=REGORDER.map(k=>({name:RG[k].name,sub:`${RG[k].provs.length} จังหวัด · ${RG[k].zones} เขต`,yes:RG[k].yes,no:RG[k].no,ab:RG[k].ab}));
   regRows.push({name:'กรุงเทพมหานคร',sub:'นับรวมในภาคกลาง',yes:bkk.yes,no:bkk.no,ab:bkk.ab});
   regRows.push({name:'นอกราชอาณาจักร',sub:'ทุกประเทศรวมกัน',yes:R.abroad.yes,no:R.abroad.no,ab:R.abroad.ab});
   const rb=document.getElementById('regbars');
-  regRows.forEach(g=>{
+  regRows.forEach((g, idx)=>{
     const b=tot(g), y=pcOf(g.yes,b), n=pcOf(g.no,b), a=pcOf(g.ab,b);
     const row=document.createElement('div'); row.className='regrow';
+    const delay = idx * 75;
     row.innerHTML=`<div class="rn">${g.name}<small>${g.sub}</small></div>
-      <div class="rtrack" title="เห็นชอบ ${fmt(g.yes)} · ไม่เห็นชอบ ${fmt(g.no)} · ไม่แสดงความคิดเห็น ${fmt(g.ab)}">
-        <div class="rseg y" data-w="${y}">${y.toFixed(1)}%</div>
-        <div class="rseg n" data-w="${n}">${n.toFixed(1)}%</div>
-        <div class="rseg a" data-w="${a}"></div>
+      <div class="rtrack" title="เห็นชอบ ${fmt(g.yes)} (${y.toFixed(1)}%) · ไม่เห็นชอบ ${fmt(g.no)} (${n.toFixed(1)}%) · ไม่แสดงความคิดเห็น ${fmt(g.ab)} (${a.toFixed(1)}%)">
+        <div class="rseg y" data-w="${y}" style="transition-delay:${delay}ms">${y.toFixed(1)}%</div>
+        <div class="rseg n" data-w="${n}" style="transition-delay:${delay+35}ms">${n.toFixed(1)}%</div>
+        <div class="rseg a" data-w="${a}" style="transition-delay:${delay+70}ms"></div>
       </div>`;
     rb.appendChild(row);
   });
@@ -547,7 +787,15 @@ mdSyncToggle();
         <div class="nums"><span class="gy">${r.y.toFixed(1)}%</span><span class="rd">${r.no.toFixed(1)}%</span><small>${fmt(r.o.yes)} / ${fmt(r.o.no)}</small></div>
       </div>`;}).join('');
     tfoot.textContent=`แสดง ${rows.length} จาก 77 จังหวัด · ★ ตัวเลขจริงจาก iLaw · จังหวัดอื่นเป็นประมาณการให้ผลรวมรายภาคตรงรายงานจริง`;
-    const apply=()=>trows.querySelectorAll('.tseg').forEach(s=>s.style.width=s.dataset.w+'%');
+    const apply=()=>{
+      trows.querySelectorAll('.trow').forEach((row, i)=>{
+        const delay = Math.min(i * 24, 450);
+        row.querySelectorAll('.tseg').forEach((s, si)=>{
+          s.style.transitionDelay = (delay + si * 18) + 'ms';
+          s.style.width = s.dataset.w + '%';
+        });
+      });
+    };
     if(firstRender){firstRender=false;requestAnimationFrame(()=>requestAnimationFrame(apply));}
     else apply();
     trows.querySelectorAll('.trow').forEach(row=>row.onclick=()=>{

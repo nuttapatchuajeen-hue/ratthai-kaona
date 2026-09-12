@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-<title>แหล่งที่มาและสัญญาอนุญาตของภาพ · รัฐไทยก้าวหน้า</title>
+<title>แหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด · รัฐไทยก้าวหน้า</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -92,6 +92,45 @@ html[data-theme="dark"] .lic.out{background:rgba(150,165,180,.13);color:#93a3b3;
 .cr-more:hover{color:var(--ink);border-color:var(--orange)}
 .cr-hidden{display:none}
 .cr-list + .cr-more{border-top-left-radius:0;border-top-right-radius:0}
+
+/* แถบเลือกหมวด */
+.cr-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 28px}
+.cr-tab{
+  padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--muted);font-family:'Kanit';font-size:.86rem;font-weight:500;
+  cursor:pointer;transition:all .15s ease;display:inline-flex;align-items:center;gap:6px;
+}
+.cr-tab:hover{background:var(--orange-soft);color:var(--ink)}
+.cr-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;border-color:var(--green)}
+
+/* การ์ดข้อมูลอ้างอิง */
+.cr-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:14px}
+.cr-card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;
+  transition:transform .15s, border-color .15s;
+}
+.cr-card:hover{transform:translateY(-2px);border-color:var(--line-2)}
+.cr-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cr-card-title{font-family:'Kanit';font-weight:600;font-size:1rem;color:var(--ink);line-height:1.25}
+.cr-card-org{font-size:.76rem;color:var(--muted);margin-top:3px}
+.cr-card-body{font-size:.82rem;color:var(--ink-2);line-height:1.55}
+.cr-card-body b{color:var(--ink)}
+.cr-card-foot{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.cr-card-link{
+  font-family:'Kanit';font-size:.75rem;font-weight:500;color:var(--green);
+  display:inline-flex;align-items:center;gap:4px;text-decoration:none;
+}
+.cr-card-link:hover{text-decoration:underline}
+.cr-tag{
+  font-family:'Sarabun';font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:6px;
+  background:var(--wash);color:var(--muted);border:1px solid var(--line);
+}
+.cr-card-lead{display:flex;align-items:center;gap:12px;min-width:0}
+.cr-card-icon{width:46px;height:46px;border-radius:10px;object-fit:contain;background:#fff;border:1px solid var(--line);padding:3px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.cr-card-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--paper);border:2px solid var(--line);flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.08)}
+.cr-hidden-cat{display:none !important}
 </style>
   <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
@@ -118,21 +157,982 @@ html[data-theme="dark"] .lic.out{background:rgba(150,165,180,.13);color:#93a3b3;
 <div class="cr-wrap">
 
   <div class="cr-head">
-    <div class="bt">แหล่งที่มาและสัญญาอนุญาตของภาพ
-      <small>ภาพในเว็บนี้ส่วนใหญ่มาจากวิกิมีเดียคอมมอนส์ ซึ่งใช้สัญญาอนุญาตแบบครีเอทีฟคอมมอนส์ —
-      เงื่อนไขหลักคือ<b>ต้องแสดงชื่อผู้สร้างสรรค์และสัญญาอนุญาตให้ผู้ชมเห็นได้</b> หน้านี้จึงมีไว้เพื่อการนั้น</small>
+    <div class="bt">แหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด
+      <small>รวบรวมแหล่งอ้างอิงข้อมูลทางวิชาการ สถิติการเลือกตั้ง โครงสร้างภาครัฐ โครงการอวกาศระดับ NASA และสัญญาอนุญาตทรัพย์สินทางปัญญาของทั้งเว็บไซต์ “รัฐไทยก้าวหน้า” และโปรเจกต์ทั้งหมด</small>
     </div>
   </div>
 
-  <div class="cr-stats" id="crStats"></div>
-
-  <div class="cr-note">
-    <b>หมายเหตุ</b> — รายการที่ขึ้นว่า <span class="lic unk" style="display:inline-block;vertical-align:middle">ยังไม่ยืนยัน</span>
-    คือภาพที่ยังสืบที่มาไม่ครบ ถือเป็นรายการที่ต้องตรวจสอบก่อนเผยแพร่ต่อ ไม่ใช่การอ้างว่าใช้ได้
-    · เว็บนี้จัดทำเพื่อการศึกษา ไม่ใช่เอกสารราชการ และไม่มีความเกี่ยวข้องกับพรรคการเมืองหรือหน่วยงานใด
+  <!-- แถบเลือกหมวดหมู่ -->
+  <div class="cr-tabs" id="crTabs">
+    <button type="button" class="cr-tab active" data-cat="all">ทั้งหมด</button>
+    <button type="button" class="cr-tab" data-cat="opendata">🔍 การหาข้อมูล & ชุดข้อมูลเปิด</button>
+    <button type="button" class="cr-tab" data-cat="ytdev">💡 ไอเดียพัฒนาเว็บ & ครีเอเตอร์ YT</button>
+    <button type="button" class="cr-tab" data-cat="climate">🌍 ศูนย์ข้อมูลโลก &amp; สภาพภูมิอากาศ (NASA Climate)</button>
+    <button type="button" class="cr-tab" data-cat="referendum">🗳️ ประชามติ 2569 (ล่าสุด)</button>
+    <button type="button" class="cr-tab" data-cat="election">🏛️ รัฐสภา & การเลือกตั้ง</button>
+    <button type="button" class="cr-tab" data-cat="gov">👑 ครม. & โครงสร้าง 20 กระทรวง</button>
+    <button type="button" class="cr-tab" data-cat="nasa">🛰️ อวกาศ & นาซา (NASA)</button>
+    <button type="button" class="cr-tab" data-cat="images">📸 สัญญาอนุญาตภาพถ่าย</button>
+    <button type="button" class="cr-tab" data-cat="libs">💻 โอเพนซอร์ส & ฟอนต์</button>
   </div>
 
-  <div id="crBody"><div class="cr-loading">กำลังโหลดข้อมูลเครดิต…</div></div>
+  <div class="cr-note" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <b>🗺️ ผังอ้างอิงการสืบค้นข้อมูลและแรงบันดาลใจพัฒนาเว็บ:</b>
+      รวบรวมหน่วยงานภาครัฐด้านความโปร่งใส ชุดข้อมูลเปิด สารานุกรม และครีเอเตอร์ YouTube สาย Web Development & Programming
+    </div>
+    <a href="credits_assets/dev_sources_reference.png" target="_blank" style="font-family:'Kanit';font-size:.82rem;color:var(--orange);font-weight:600;text-decoration:underline">ดูผังสรุปภาพรวมต้นฉบับ ↗</a>
+  </div>
+
+  <!-- 1. หมวดการหาข้อมูลและข้อมูลเปิดภาครัฐ (จากภาพอ้างอิง) -->
+  <div class="cr-sec cr-sec-data" data-cat="opendata">
+    <h2>🔍 การหาข้อมูล และชุดข้อมูลเปิดภาครัฐ (Open Data & Research)<span class="cnt">7 แหล่งข้อมูล</span></h2>
+    <p class="sub">แหล่งสืบค้นข้อมูลปฐมภูมิ ความโปร่งใส บัญชีข้อมูลภาครัฐ และสารานุกรมที่ใช้ในการรวบรวมข้อมูลทั่วทั้งเว็บไซต์</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_zero_tolerance.png" class="cr-card-icon" alt="สำนักงาน ป.ป.ช." />
+            <div>
+              <div class="cr-card-title">โครงการ Zero Tolerance คนไทยไม่ทนต่อการทุจริต</div>
+              <div class="cr-card-org">สำนักงาน ป.ป.ช. (NACC)</div>
+            </div>
+          </div>
+          <span class="lic">ข้อมูลสาธารณะ</span>
+        </div>
+        <div class="cr-card-body">
+          แนวทางการต่อต้านการทุจริต สถิติดัชนีการประเมินคุณธรรมและความโปร่งใส (ITA) บัญชีแสดงรายการทรัพย์สินและหนี้สินของผู้ดำรงตำแหน่งทางการเมือง และฐานข้อมูลคดีทุจริต
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">ป.ป.ช. / nacc.go.th</span>
+          <a class="cr-card-link" href="https://www.nacc.go.th/" target="_blank" rel="noopener">เว็บไซต์สำนักงาน ป.ป.ช. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_wikipedia.png" class="cr-card-icon" alt="วิกิพีเดีย สารานุกรมเสรี" />
+            <div>
+              <div class="cr-card-title">วิกิพีเดีย สารานุกรมเสรีภาษาไทย</div>
+              <div class="cr-card-org">มูลนิธิวิกิมีเดีย (Wikimedia Foundation)</div>
+            </div>
+          </div>
+          <span class="lic">CC BY-SA 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          ฐานข้อมูลสารานุกรมเสรี ประวัติศาสตร์การเมืองไทย ไทม์ไลน์การเลือกตั้ง 2476-2569 ประวัติบุคคลสำคัญ อดีตนายกรัฐมนตรี คณะรัฐมนตรี และข้อมูลพรรคการเมืองในอดีต
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">th.wikipedia.org</span>
+          <a class="cr-card-link" href="https://th.wikipedia.org/" target="_blank" rel="noopener">วิกิพีเดียภาษาไทย ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_gdcatalog.png" class="cr-card-icon" alt="GD Catalog" />
+            <div>
+              <div class="cr-card-title">ระบบบัญชีข้อมูลภาครัฐ (GD Catalog)</div>
+              <div class="cr-card-org">สถาบันข้อมูลขนาดใหญ่ (BDI) / data.go.th</div>
+            </div>
+          </div>
+          <span class="lic">Open Gov Data</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบสารบัญและบัญชีรายการชุดข้อมูลเปิดภาครัฐ (Government Data Catalog) รวบรวมชุดข้อมูลจากหน่วยงานรัฐไทยเพื่อการสืบค้น วิเคราะห์ และเชื่อมโยงข้อมูลสู่สาธารณะ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">gdcatalog.go.th</span>
+          <a class="cr-card-link" href="https://gdcatalog.go.th/" target="_blank" rel="noopener">ระบบบัญชีข้อมูลภาครัฐ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_dga.png" class="cr-card-icon" alt="DGA" />
+            <div>
+              <div class="cr-card-title">สำนักงานพัฒนารัฐบาลดิจิทัล (DGA)</div>
+              <div class="cr-card-org">สพร. (องค์การมหาชน)</div>
+            </div>
+          </div>
+          <span class="lic">มาตรฐานภาครัฐ</span>
+        </div>
+        <div class="cr-card-body">
+          ศูนย์กลางการพัฒนารัฐบาลดิจิทัลของไทย ผู้กำหนดกรอบมาตรฐานการจัดทำและเปิดเผยชุดข้อมูลดิจิทัลภาครัฐ (Open Government Data Standard) และระบบบริการรัฐแบบดิจิทัล
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">dga.or.th</span>
+          <a class="cr-card-link" href="https://www.dga.or.th/" target="_blank" rel="noopener">เว็บไซต์ DGA ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_act_ai.png" class="cr-card-icon" alt="ACT Ai Open Data Center" />
+            <div>
+              <div class="cr-card-title">ACT Ai Open Data Center</div>
+              <div class="cr-card-org">องค์กรต่อต้านคอร์รัปชัน (ประเทศไทย)</div>
+            </div>
+          </div>
+          <span class="lic">Open Data</span>
+        </div>
+        <div class="cr-card-body">
+          ฐานข้อมูลเปิดเพื่อการต่อต้านคอร์รัปชัน เครื่องมือสืบค้นโครงการจัดซื้อจัดจ้างภาครัฐด้วยปัญญาประดิษฐ์ ตรวจสอบความเชื่อมโยงของสัญญา คู่สัญญา และการใช้งบประมาณแผ่นดิน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">actai.co</span>
+          <a class="cr-card-link" href="https://actai.co/" target="_blank" rel="noopener">ระบบ ACT Ai ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_thaigov.png" class="cr-card-icon" alt="รัฐบาลไทย" />
+            <div>
+              <div class="cr-card-title">เว็บไซต์ทำเนียบรัฐบาล (Royal Thai Government)</div>
+              <div class="cr-card-org">สำนักโฆษก สำนักเลขาธิการนายกรัฐมนตรี</div>
+            </div>
+          </div>
+          <span class="lic">ข้อมูลทางการ</span>
+        </div>
+        <div class="cr-card-body">
+          รายงานมติคณะรัฐมนตรีอย่างเป็นทางการ ประกาศและแถลงการณ์ของรัฐบาลไทย โครงสร้างฝ่ายบริหาร ข้อมูลภารกิจนายกรัฐมนตรีและรัฐมนตรีประจำกระทรวง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">thaigov.go.th</span>
+          <a class="cr-card-link" href="https://www.thaigov.go.th/" target="_blank" rel="noopener">ทำเนียบรัฐบาล ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/gov_simplemaps.png" class="cr-card-icon" alt="SimpleMaps" />
+            <div>
+              <div class="cr-card-title">แผนที่พิกัด 77 จังหวัดประเทศไทย (SimpleMaps)</div>
+              <div class="cr-card-org">SimpleMaps Thailand GIS Data</div>
+            </div>
+          </div>
+          <span class="lic">Attribution</span>
+        </div>
+        <div class="cr-card-body">
+          เวกเตอร์แผนที่ประเทศไทยระบบ SVG พิกัดและขอบเขตทางภูมิศาสตร์ 77 จังหวัด ใช้ในการเรนเดอร์แผนที่จำแนกสีผลการเลือกตั้งและผลประชามติ 2569 แบบตอบสนอง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">simplemaps.com</span>
+          <a class="cr-card-link" href="https://simplemaps.com/gis/country/th" target="_blank" rel="noopener">SimpleMaps Thailand ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. หมวดหาข้อมูลในการพัฒนาเว็บไซต์และไอเดีย YT (จากภาพอ้างอิง) -->
+  <div class="cr-sec cr-sec-data" data-cat="ytdev">
+    <h2>💡 หาข้อมูลในการพัฒนาเว็บไซต์และไอเดีย YT (Web Dev & Inspiration)<span class="cnt">8 ครีเอเตอร์และแหล่งไอเดีย</span></h2>
+    <p class="sub">ช่อง YouTube และครีเอเตอร์สายเทคโนโลยีที่ใช้เป็นแหล่งศึกษาความรู้ เทคนิคการเขียนโค้ด สถาปัตยกรรมเว็บ และไอเดียการพัฒนาเว็บไซต์</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_nasa_goddard.png" class="cr-card-avatar" alt="NASA Goddard" />
+            <div>
+              <div class="cr-card-title">NASA Goddard (ศูนย์การบินอวกาศก็อดเดิร์ด)</div>
+              <div class="cr-card-org">YouTube: @NASAGoddard · ผู้ติดตาม 1.7 ล้านคน</div>
+            </div>
+          </div>
+          <span class="lic">Verified YouTube Channel</span>
+        </div>
+        <div class="cr-card-body">
+          ช่องทางการของศูนย์ NASA Goddard Space Flight Center ต้นแบบวิดีโอแอนิเมชันวิทยาศาสตร์ สภาพภูมิอากาศโลก (Climate Visualizations), วิดีโออธิบายปรากฏการณ์ดาราศาสตร์ และแบบจำลองซูเปอร์คอมพิวเตอร์ที่ใช้อ้างอิงในเว็บ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">@NASAGoddard</span>
+          <a class="cr-card-link" href="https://www.youtube.com/@NASAGoddard" target="_blank" rel="noopener">ช่อง NASA Goddard ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_borntodev.png" class="cr-card-avatar" alt="BorntoDev" />
+            <div>
+              <div class="cr-card-title">BorntoDev (พี่เปิร์ธ พชร)</div>
+              <div class="cr-card-org">YouTube: @borntodev · สื่อการเรียนรู้โปรแกรมมิ่ง</div>
+            </div>
+          </div>
+          <span class="lic">YouTube Creator</span>
+        </div>
+        <div class="cr-card-body">
+          แหล่งศึกษาพื้นฐานวิทยาการคอมพิวเตอร์ การเขียนโปรแกรมสำหรับผู้เริ่มต้น ตรรกะ Logic, Web Fundamentals และการอัปเดตสาระเทคโนโลยีเพื่อแรงบันดาลใจนักพัฒนา
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">@borntodev</span>
+          <a class="cr-card-link" href="https://www.youtube.com/@borntodev" target="_blank" rel="noopener">ช่อง BorntoDev ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_boombignose.png" class="cr-card-avatar" alt="BoomBigNose" />
+            <div>
+              <div class="cr-card-title">BoomBigNose (คุณบูม)</div>
+              <div class="cr-card-org">YouTube: @BoomBigNose · AI Agents & Modern Dev</div>
+            </div>
+          </div>
+          <span class="lic">YouTube Creator</span>
+        </div>
+        <div class="cr-card-body">
+          เจาะลึกระบบ AI Agent Automation, Claude Code, Vibe Coding, n8n workflows และการประยุกต์ใช้โมเดล AI ช่วยเขียนโค้ดและสร้างสรรค์นวัตกรรมเว็บแบบก้าวกระโดด
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">@BoomBigNose</span>
+          <a class="cr-card-link" href="https://www.youtube.com/@BoomBigNose" target="_blank" rel="noopener">ช่อง BoomBigNose ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_patiphan_dev.png" class="cr-card-avatar" alt="Patiphan Dev" />
+            <div>
+              <div class="cr-card-title">Patiphan Dev (คุณปฏิภาณ เพ็งเภา)</div>
+              <div class="cr-card-org">YouTube: @patiphan-dev · Frontend Web Specialist</div>
+            </div>
+          </div>
+          <span class="lic">YouTube Creator</span>
+        </div>
+        <div class="cr-card-body">
+          คอร์สและการสอนพัฒนาเว็บไซต์ Frontend เชิงปฏิบัติ ตั้งแต่ HTML, Modern CSS, Responsive Design, Tailwind CSS, JavaScript ES6+ ไปจนถึง React และเทคนิคขึ้นโครงหน้าเว็บ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">@patiphan-dev</span>
+          <a class="cr-card-link" href="https://www.youtube.com/@patiphan-dev" target="_blank" rel="noopener">ช่อง Patiphan Dev ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_ultimate_python.png" class="cr-card-avatar" alt="Ultimate Python" />
+            <div>
+              <div class="cr-card-title">Ultimate Python</div>
+              <div class="cr-card-org">YouTube: @UltimatePython · Data & Automation</div>
+            </div>
+          </div>
+          <span class="lic">YouTube Creator</span>
+        </div>
+        <div class="cr-card-body">
+          เทคนิคการจัดการข้อมูล การทำ Data Cleaning, Data Wrangling, อัลกอริทึม และระบบอัตโนมัติ เพื่อนำชุดข้อมูลสถิติมหาศาลมาจัดระเบียบและแสดงผลบนแดชบอร์ด
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">@UltimatePython</span>
+          <a class="cr-card-link" href="https://www.youtube.com/@UltimatePython" target="_blank" rel="noopener">ช่อง Ultimate Python ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_dev_1.png" class="cr-card-avatar" alt="สถาปัตยกรรมและโครงสร้างเว็บ" />
+            <div>
+              <div class="cr-card-title">โครงสร้างสถาปัตยกรรมและ Component Design</div>
+              <div class="cr-card-org">YouTube Dev Ideas · ระบบโมดูลาร์และเลย์เอาต์</div>
+            </div>
+          </div>
+          <span class="lic">Dev Inspiration</span>
+        </div>
+        <div class="cr-card-body">
+          แนวคิดการจัดระเบียบโมดูลาร์เว็บ การแบ่งเลเยอร์ Component, CSS Grid/Flexbox ขั้นสูง และการวางโครงสร้างเว็บที่รองรับการขยายตัว (Scalable Frontend)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Web Architecture</span>
+          <a class="cr-card-link" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube Community ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_dev_3.png" class="cr-card-avatar" alt="Interactive Web & Creative Design" />
+            <div>
+              <div class="cr-card-title">ไอเดียการออกแบบ Interactive และลูกเล่น UI/UX</div>
+              <div class="cr-card-org">YouTube Creative Dev · การสร้างปฏิสัมพันธ์กับผู้ใช้</div>
+            </div>
+          </div>
+          <span class="lic">UX/UI Concepts</span>
+        </div>
+        <div class="cr-card-body">
+          เทคนิคการออกแบบ Micro-interactions, แอนิเมชันตอนเลื่อนหน้าจอ, การเน้นความคมชัดของข้อมูลสถิติ และการทำให้ผู้ใช้งานเข้าใจข้อมูลซับซ้อนได้อย่างเป็นธรรมชาติ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Creative Coding</span>
+          <a class="cr-card-link" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube Creative ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div class="cr-card-lead">
+            <img src="credits_assets/yt_dev_7.png" class="cr-card-avatar" alt="ตรรกะการแก้ปัญหาและแนวคิดพัฒนาเว็บ" />
+            <div>
+              <div class="cr-card-title">ตรรกะการคิดวิเคราะห์และการแก้ปัญหาเชิงลึก</div>
+              <div class="cr-card-org">YouTube Tech Mindset · Problem Solving & Logic</div>
+            </div>
+          </div>
+          <span class="lic">Dev Mindset</span>
+        </div>
+        <div class="cr-card-body">
+          แนวทางการวิเคราะห์บัก การจัดลำดับความสำคัญของฟีเจอร์ แนวคิดการเรียนรู้สิ่งใหม่ตลอดเวลา (Continuous Learning) และจิตวิญญาณแห่งการสร้างสรรค์โปรเจกต์
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Logic & Mindset</span>
+          <a class="cr-card-link" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube Tech ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. หมวดศูนย์ข้อมูลโลก & สภาพภูมิอากาศ (NASA GISTEMP, NOAA & World Data — จากหน้า stats/explore.html) -->
+  <div class="cr-sec cr-sec-data" data-cat="climate" id="climate">
+    <h2>🌍 ศูนย์ข้อมูลโลก สภาพภูมิอากาศ และสถิติวิทยาศาสตร์ (NASA &amp; World Climate Data)<span class="cnt">8 แหล่งข้อมูล + 4 ไอเดียเทคนิค</span></h2>
+    <p class="sub">ใช้ในหน้าศูนย์ข้อมูลโลก (stats/explore.html) — ขับเคลื่อนแผนที่โลกร้อน 1880–2025, แบบจำลอง CO₂, และการวิเคราะห์สภาพภูมิอากาศระดับโลก</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">NASA GISTEMP v4 (อุณหภูมิผิวโลก 1880–2025)</div>
+            <div class="cr-card-org">NASA Goddard Institute for Space Studies (GISS)</div>
+          </div>
+          <span class="lic">Public Domain / Open Data</span>
+        </div>
+        <div class="cr-card-body">
+          ไฟล์กริด <code>gistemp1200_GHCNv4_ERSSTv5.nc</code> ความละเอียด 2°×2° (180×90 จุด) รวบรวมข้อมูลส่วนต่างอุณหภูมิพื้นผิวโลกรายเดือนย้อนหลัง 146 ปี เทียบค่าเฉลี่ยฐาน ค.ศ. 1951–1980
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA GISS / GISTEMP</span>
+          <a class="cr-card-link" href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">NASA Goddard SVS (ภาพเคลื่อนไหวโลกร้อน 1880–2025)</div>
+            <div class="cr-card-org">NASA Scientific Visualization Studio (SVS)</div>
+          </div>
+          <span class="lic">Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          ชุดข้อมูลและแอนิเมชัน <i>Global Temperature Anomalies 1880–2025</i> และคลิปแบบจำลองบรรยากาศ <i>A Year in the Life of Earth's CO₂</i> แสดงการเคลื่อนที่ของก๊าซเรือนกระจกทั่วโลก
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA SVS / svs.gsfc.nasa.gov</span>
+          <a class="cr-card-link" href="https://svs.gsfc.nasa.gov/5607" target="_blank" rel="noopener">NASA Goddard SVS ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">NOAA ERSSTv5 &amp; ดัชนีปรากฏการณ์ ENSO</div>
+            <div class="cr-card-org">NOAA NCEI / Climate Prediction Center (CPC)</div>
+          </div>
+          <span class="lic">Open Science Data</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลอุณหภูมิผิวน้ำทะเล Extended Reconstructed Sea Surface Temperature และดัชนีชี้วัดเอลนีโญ/ลานีญา Niño 3.4, ONI (Oceanic Niño Index) และ RONI (Relative ONI)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NOAA NCEI &amp; CPC</span>
+          <a class="cr-card-link" href="https://www.ncei.noaa.gov/products/extended-reconstructed-sst" target="_blank" rel="noopener">NOAA ERSSTv5 ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">NOAA CarbonTracker CT2025 (ข้อมูล CO₂ จริง)</div>
+            <div class="cr-card-org">NOAA Global Monitoring Laboratory</div>
+          </div>
+          <span class="lic">Open Science Data</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบตรวจวัดและติดตามความเข้มข้นของก๊าซคาร์บอนไดออกไซด์ในชั้นบรรยากาศโลก (Atmospheric CO₂) จากสถานีตรวจวัดทั่วโลกเพื่อเทียบเคียงกับแบบจำลอง GEOS
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NOAA CarbonTracker</span>
+          <a class="cr-card-link" href="https://gml.noaa.gov/ccgg/carbontracker/" target="_blank" rel="noopener">NOAA GML ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">NSIDC (% การละลายน้ำแข็งขั้วโลก)</div>
+            <div class="cr-card-org">National Snow and Ice Data Center (USA)</div>
+          </div>
+          <span class="lic">Open Data</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติวัดขนาดและพื้นที่แผ่นน้ำแข็งทะเลในแถบอาร์กติก (Arctic) และแอนตาร์กติกา (Antarctic) ติดตามอัตราการละลายจากภาวะโลกร้อน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NSIDC Sea Ice Index</span>
+          <a class="cr-card-link" href="https://nsidc.org/data/seaice_index" target="_blank" rel="noopener">NSIDC Index ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">EM-DAT (ฐานข้อมูลภัยพิบัติธรรมชาติสากล)</div>
+            <div class="cr-card-org">Centre for Research on the Epidemiology of Disasters (CRED)</div>
+          </div>
+          <span class="lic">Open Access</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติบันทึกความถี่ ผลกระทบ มูลค่าความเสียหาย และจำนวนผู้ประสบภัยจากภัยพิบัติธรรมชาติทั่วโลก เช่น น้ำท่วม ภัยแล้ง พายุ และคลื่นความร้อน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">EM-DAT Disaster Database</span>
+          <a class="cr-card-link" href="https://www.emdat.be/" target="_blank" rel="noopener">เว็บไซต์ EM-DAT ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">Our World in Data (OWID) &amp; Global Carbon Project</div>
+            <div class="cr-card-org">University of Oxford / Global Carbon Project</div>
+          </div>
+          <span class="lic">CC BY 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลการปล่อยก๊าซเรือนกระจกรายประเทศ การเปลี่ยนผ่านสู่พลังงานหมุนเวียน แหล่งกำเนิดไฟฟ้า และการปล่อยคาร์บอนต่อหัวประชากร
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">OWID Climate Data</span>
+          <a class="cr-card-link" href="https://ourworldindata.org/climate-change" target="_blank" rel="noopener">Our World in Data ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">Natural Earth &amp; TopoJSON World Atlas</div>
+            <div class="cr-card-org">Natural Earth / Mike Bostock</div>
+          </div>
+          <span class="lic">Public Domain / ISC</span>
+        </div>
+        <div class="cr-card-body">
+          เส้นขอบเขตทวีปและพรมแดนประเทศความละเอียด 110m (countries-110m) ฉายภาพแบบ Equal Earth Projection เพื่อให้พื้นที่ทวีปไม่บิดเบือนสัดส่วน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">world-atlas / TopoJSON</span>
+          <a class="cr-card-link" href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas ↗</a>
+        </div>
+      </div>
+
+      <!-- การ์ดไอเดียและสถาปัตยกรรมเทคนิค -->
+      <div class="cr-card" style="border-left:3px solid var(--orange)">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">💡 ไอเดีย: Canvas 2D NetCDF Fast Grid Engine</div>
+            <div class="cr-card-org">เทคนิคการเรนเดอร์ใน stats/climate-map.js</div>
+          </div>
+          <span class="lic">Engineering Concept</span>
+        </div>
+        <div class="cr-card-body">
+          แปลงข้อมูลกริด NetCDF 180×90 จุดเป็นภาพแคนวาส 2 มิติความเร็วสูง ประมวลผลและไล่เฉดสีในฝั่งเบราว์เซอร์โดยตรง ลื่นไหลบนทุกอุปกรณ์และมือถือ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Architecture / Canvas 2D</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูตัวอย่างในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card" style="border-left:3px solid var(--orange)">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">💡 ไอเดีย: Live Time-Travel &amp; Dual-Year Compare</div>
+            <div class="cr-card-org">Interactive UI/UX สำหรับวิเคราะห์ 146 ปี</div>
+          </div>
+          <span class="lic">Interactive Design</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบสไลเดอร์ไทม์ไลน์ 1880–2025 ที่ซิงก์แผนที่โลก ตัวเลข KPI ค่าความร้อนขั้วโลก/ไทย และ Warming Stripes พร้อมโหมดเปรียบเทียบ 2 ยุคสมัยคู่ขนานซ้าย-ขวา
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Interactive Timeline</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูตัวอย่างในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card" style="border-left:3px solid var(--orange)">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">💡 ไอเดีย: Missing-Value Neighbor Interpolation</div>
+            <div class="cr-card-org">อัลกอริทึมเติมเต็มข้อมูลในอดีต (1880s)</div>
+          </div>
+          <span class="lic">Algorithm Concept</span>
+        </div>
+        <div class="cr-card-body">
+          จำลองช่องที่ขาดหายไปในอดีตด้วยค่าเฉลี่ยเชิงพื้นที่จากช่องข้างเคียงทีละวงรอบ (พร้อมขึ้นเครื่องหมาย ≈) และมีปุ่มเปิด/ปิดเพื่อความโปร่งใสของข้อมูลจริง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Spatial Interpolation</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูตัวอย่างในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card" style="border-left:3px solid var(--orange)">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">💡 ไอเดีย: 1-Byte Quantized NetCDF Compression</div>
+            <div class="cr-card-org">เทคนิคบีบอัดข้อมูลสภาพอากาศข้ามเครือข่าย</div>
+          </div>
+          <span class="lic">Optimization Concept</span>
+        </div>
+        <div class="cr-card-body">
+          จัดเก็บค่าส่วนต่างอุณหภูมิเป็นจำนวนเต็ม 1 ไบต์ (ละเอียด 0.1°C) ทำให้ไฟล์กริด 146 ปีมีขนาดเล็กเพียงไม่กี่เมกะไบต์ สามารถโหลดและเรนเดอร์ได้ในทันที
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Binary Compression</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูตัวอย่างในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 1. หมวดอวกาศ & NASA -->
+  <div class="cr-sec cr-sec-data" data-cat="nasa">
+    <h2>🛰️ โครงการอวกาศและดาราศาสตร์ (NASA & Space Resources)<span class="cnt">5 แหล่งข้อมูล</span></h2>
+    <p class="sub">ใช้ในแบบจำลองระบบสุริยะ 3 มิติ (Solar Atlas และ Solar System Orrery) — นำเข้าโมเดลและข้อมูลดิบดาราศาสตร์จากองค์การบริหารการบินและอวกาศแห่งชาติ สหรัฐอเมริกา (NASA)</p>
+    <div class="cr-grid">
+      
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">โมเดล 3 มิติยานอวกาศจริง 8 ลำ</div>
+            <div class="cr-card-org">NASA 3D Resources / NASA VTAD</div>
+          </div>
+          <span class="lic">Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          โมเดลไฟล์ .glb/.gltf ของยาน <b>Voyager 1, Voyager 2, Pioneer 10, Pioneer 11, New Horizons, Parker Solar Probe, James Webb Space Telescope, และ Europa Clipper</b> บีบอัดด้วย Draco เพื่อโหลดแบบเรียลไทม์บนเว็บ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">solar-atlas / models</span>
+          <a class="cr-card-link" href="https://nasa3d.arc.nasa.gov/" target="_blank" rel="noopener">หน้า 3D Resources ของ NASA ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">โมเดลซากซูเปอร์โนวา 3 มิติ</div>
+            <div class="cr-card-org">Chandra X-ray Observatory / Hubble Space Telescope</div>
+          </div>
+          <span class="lic">Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          โมเดล 3 มิติจากข้อมูลรังสีเอกซ์ของกล้องโทรทรรศน์จันทราและฮับเบิล ได้แก่ <b>เนบิวลาปู (Crab Nebula)</b> และ <b>วงแหวนซูเปอร์โนวา 1987A (SN 1987A)</b> แสดงสัดส่วนตามขนาดจริง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA / Chandra</span>
+          <a class="cr-card-link" href="https://chandra.si.edu/3dprint/" target="_blank" rel="noopener">Chandra 3D Printing ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">พิกัดวงโคจรวัตถุท้องฟ้า (Ephemeris)</div>
+            <div class="cr-card-org">NASA Jet Propulsion Laboratory (JPL)</div>
+          </div>
+          <span class="lic">Open Science Data</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบ <b>JPL Horizons System</b> ใช้คำนวณตำแหน่ง เวกเตอร์ความเร็ว และวงโคจรความแม่นยำสูงระดับอวกาศ ของดวงอาทิตย์ ดาวเคราะห์ 8 ดวง ดวงจันทร์บริวาร และยานสำรวจ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA JPL Horizons</span>
+          <a class="cr-card-link" href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noopener">JPL Horizons API ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แผนที่รังสีไมโครเวฟพื้นหลัง (CMB)</div>
+            <div class="cr-card-org">NASA / WMAP Science Team</div>
+          </div>
+          <span class="lic">Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          แผนที่คลื่นรังสีไมโครเวฟพื้นหลังจากเอกภพยุคแรก (Cosmic Microwave Background) สร้างจากข้อมูลดิบ <b>WMAP 9-Year ILC</b> แสดงภาพขอบเอกภพที่สังเกตได้
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">WMAP / Legacy Archive</span>
+          <a class="cr-card-link" href="https://map.gsfc.nasa.gov/" target="_blank" rel="noopener">NASA WMAP Project ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">คลังข้อมูลดาวเคราะห์นอกระบบ</div>
+            <div class="cr-card-org">NASA Exoplanet Science Institute / Caltech IPAC</div>
+          </div>
+          <span class="lic">Open Data</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลมวล ขนาด และคาบการโคจรของระบบดาวเคราะห์นอกระบบสุริยะ ที่ค้นพบโดยกล้องโทรทรรศน์อวกาศเคปเลอร์ (Kepler) และ TESS
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA Exoplanet Archive</span>
+          <a class="cr-card-link" href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank" rel="noopener">Exoplanet Archive ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. หมวดประชามติ 2569 -->
+  <div class="cr-sec cr-sec-data" data-cat="referendum">
+    <h2>🗳️ ประชามติรัฐธรรมนูญ 2569 (Referendum 2569 — ล่าสุด)<span class="cnt">3 แหล่งข้อมูล</span></h2>
+    <p class="sub">ใช้ในหน้าสรุปผลประชามติร่างรัฐธรรมนูญฉบับใหม่ 14 กุมภาพันธ์ 2569 (referendum.html)</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ผลคะแนนประชามติรวมและรายภูมิภาค</div>
+            <div class="cr-card-org">iLaw (โครงการอินเทอร์เน็ตเพื่อกฎหมายประชาชน)</div>
+          </div>
+          <span class="lic">ข้อมูลสาธารณะ</span>
+        </div>
+        <div class="cr-card-body">
+          ยอดรวมคะแนนเห็นชอบ (21,621,638 เสียง), ไม่เห็นชอบ (11,241,653 เสียง), ไม่แสดงความคิดเห็น (3,074,330 เสียง), ผลแยกตาม 6 ภูมิภาค + นอกราชอาณาจักร และ 5 จังหวัดที่มีผู้เห็นชอบสูงสุด
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">iLaw Data Center</span>
+          <a class="cr-card-link" href="https://www.ilaw.or.th/" target="_blank" rel="noopener">เว็บไซต์ iLaw ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">สถิติผู้มาใช้สิทธิและผลอย่างไม่เป็นทางการ</div>
+            <div class="cr-card-org">สำนักงานคณะกรรมการการเลือกตั้ง (กกต.)</div>
+          </div>
+          <span class="lic">ข้อมูลทางการ</span>
+        </div>
+        <div class="cr-card-body">
+          ตัวเลขผู้มีสิทธิออกเสียง (52,922,923 คน), ผู้มาใช้สิทธิ (36,870,473 คน หรือ 69.7%), บัตรเสีย (932,852 ใบ หรือ 2.5%) จากการรายงานผลนับครบ 100%
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">กกต. / ECT</span>
+          <a class="cr-card-link" href="https://www.ect.go.th/" target="_blank" rel="noopener">เว็บไซต์ กกต. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แผนที่พิกัดจังหวัดประเทศไทย (SVG GIS Map)</div>
+            <div class="cr-card-org">SimpleMaps Thailand</div>
+          </div>
+          <span class="lic">Free with Attribution</span>
+        </div>
+        <div class="cr-card-body">
+          โครงร่างเวกเตอร์ SVG รูปทรง 77 จังหวัดของประเทศไทย พิกัดทางภูมิศาสตร์ที่นำมาปรับแต่งระบบซูมแบบ Interactive และระบายสีตามผลมติ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">SimpleMaps / GIS</span>
+          <a class="cr-card-link" href="https://simplemaps.com/gis/country/th" target="_blank" rel="noopener">SimpleMaps Thailand GIS ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. หมวดการเลือกตั้งและรัฐสภา -->
+  <div class="cr-sec cr-sec-data" data-cat="election">
+    <h2>🏛️ รัฐสภา การเลือกตั้ง และประวัติศาสตร์การเมืองไทย<span class="cnt">6 แหล่งข้อมูล</span></h2>
+    <p class="sub">ใช้ในหน้าผลเลือกตั้ง ส.ส. รายเขต, บัญชีรายชื่อ, คะแนนพรรค, รัฐสภา, กรรมาธิการ, ผู้ว่าฯ กทม. และไทม์ไลน์ 2476-2569</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ข้อมูลผลการเลือกตั้ง ส.ส. และเขตเลือกตั้ง</div>
+            <div class="cr-card-org">สำนักงานคณะกรรมการการเลือกตั้ง (กกต.)</div>
+          </div>
+          <span class="lic">ข้อมูลทางการ</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติผลคะแนนการเลือกตั้ง ส.ส. ปี 2566, 2562 และในอดีต ข้อมูลการแบ่งเขตเลือกตั้ง 400 เขต และคะแนนระบบบัญชีรายชื่อพรรคการเมือง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">กกต.</span>
+          <a class="cr-card-link" href="https://www.ect.go.th/" target="_blank" rel="noopener">เว็บไซต์ กกต. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ฐานข้อมูลสมาชิกสภาผู้แทนราษฎร & กรรมาธิการ</div>
+            <div class="cr-card-org">สำนักงานเลขาธิการสภาผู้แทนราษฎร</div>
+          </div>
+          <span class="lic">ข้อมูลราชการ</span>
+        </div>
+        <div class="cr-card-body">
+          รายนาม ส.ส. 500 ท่าน คณะกรรมาธิการสามัญ 35 คณะ รายชื่อประธานกรรมาธิการ และประวัติการทำงานในฝ่ายนิติบัญญัติ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">parliament.go.th</span>
+          <a class="cr-card-link" href="https://www.parliament.go.th/" target="_blank" rel="noopener">รัฐสภาไทย ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ฐานข้อมูลสมาชิกวุฒิสภา (ส.ว.)</div>
+            <div class="cr-card-org">สำนักงานเลขาธิการวุฒิสภา</div>
+          </div>
+          <span class="lic">ข้อมูลราชการ</span>
+        </div>
+        <div class="cr-card-body">
+          รายนามสมาชิกวุฒิสภา 200 ท่านจากการคัดเลือกตามกลุ่มอาชีพ ประวัติและบทบาทในที่ประชุมรัฐสภา
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">senate.go.th</span>
+          <a class="cr-card-link" href="https://www.senate.go.th/" target="_blank" rel="noopener">วุฒิสภาไทย ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ฐานข้อมูลและแนวทางการนำเสนอผลเลือกตั้ง</div>
+            <div class="cr-card-org">Elect.in.th (Civic Tech Community)</div>
+          </div>
+          <span class="lic">Open Data / Creative Commons</span>
+        </div>
+        <div class="cr-card-body">
+          แนวคิดการจัดระเบียบข้อมูลสถิติการเลือกตั้งย้อนหลัง และเทคนิคการนำเสนอผลคะแนนผ่าน Data Visualization เพื่อการมีส่วนร่วมของประชาชน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Elect.in.th</span>
+          <a class="cr-card-link" href="https://elect.in.th/" target="_blank" rel="noopener">เว็บไซต์ Elect.in.th ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ประวัติศาสตร์รัฐธรรมนูญและการเมืองไทย 2476-2569</div>
+            <div class="cr-card-org">สถาบันพระปกเกล้า (KPI) / วิกิพีเดียภาษาไทย</div>
+          </div>
+          <span class="lic">CC BY-SA 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลเหตุการณ์สำคัญ การยุบสภา การรัฐประหาร และไทม์ไลน์การเลือกตั้ง 28 ครั้งในประวัติศาสตร์ไทย (timeline.html)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">KPI & Wikipedia</span>
+          <a class="cr-card-link" href="https://www.kpi.ac.th/" target="_blank" rel="noopener">สถาบันพระปกเกล้า ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">สถิติการเลือกตั้งผู้ว่าฯ กทม. และ ส.ก. ทุกยุคสมัย</div>
+            <div class="cr-card-org">ศาลาว่าการกรุงเทพมหานคร / กกต. ท้องถิ่น</div>
+          </div>
+          <span class="lic">ข้อมูลสาธารณะ</span>
+        </div>
+        <div class="cr-card-body">
+          ผลคะแนนการเลือกตั้งผู้ว่าราชการกรุงเทพมหานครตั้งแต่ปี 2518 ถึง 2565 รายชื่อผู้สมัครและคะแนน 50 เขต กทม. (bangkok.html)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">BMA / bangkok.go.th</span>
+          <a class="cr-card-link" href="https://www.bangkok.go.th/" target="_blank" rel="noopener">กทม. ทางการ ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. หมวด ครม. & โครงสร้างรัฐ -->
+  <div class="cr-sec cr-sec-data" data-cat="gov">
+    <h2>👑 ทำเนียบคณะรัฐมนตรี และโครงสร้าง 20 กระทรวง<span class="cnt">2 แหล่งข้อมูลหลัก</span></h2>
+    <p class="sub">ใช้ในหน้าชุดคณะรัฐมนตรี (cabinet/index.html) และแผนผังโครงสร้างรัฐไทย (structure.html)</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ทำเนียบคณะรัฐมนตรี คณะที่ 1 - 66 & ประกาศพระบรมราชโองการ</div>
+            <div class="cr-card-org">สำนักเลขาธิการคณะรัฐมนตรี (สลค.) / ราชกิจจานุเบกษา</div>
+          </div>
+          <span class="lic">เอกสารราชการ</span>
+        </div>
+        <div class="cr-card-body">
+          รายนามนายกรัฐมนตรี รองนายกรัฐมนตรี และรัฐมนตรีว่าการ/ช่วยว่าการ ทุกกระทรวง ตั้งแต่ พ.ศ. 2475 ถึงปัจจุบัน วันแต่งตั้ง วันสิ้นสุด และประกาศทางราชการ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">สลค. / ราชกิจจานุเบกษา</span>
+          <a class="cr-card-link" href="https://ratchakitcha.soc.go.th/" target="_blank" rel="noopener">ราชกิจจานุเบกษา ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แผนผังส่วนราชการ 20 กระทรวง ทบวง กรม</div>
+            <div class="cr-card-org">สำนักงาน ก.พ.ร. (OPDC)</div>
+          </div>
+          <span class="lic">พ.ร.บ. ปรับปรุงกระทรวงฯ</span>
+        </div>
+        <div class="cr-card-body">
+          โครงสร้างการแบ่งส่วนราชการตาม พ.ร.บ. ปรับปรุงกระทรวง ทบวง กรม พ.ศ. 2545 หน่วยงานระดับกรม รัฐวิสาหกิจ องค์การมหาชน และหน่วยงานอิสระตามรัฐธรรมนูญ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">ก.พ.ร. / opdc.go.th</span>
+          <a class="cr-card-link" href="https://www.opdc.go.th/" target="_blank" rel="noopener">สำนักงาน ก.พ.ร. ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 5. หมวดซอฟต์แวร์ & ฟอนต์ -->
+  <div class="cr-sec cr-sec-data" data-cat="libs">
+    <h2>💻 เทคโนโลยี ซอฟต์แวร์ และฟอนต์โอเพนซอร์ส<span class="cnt">5 ไลบรารี</span></h2>
+    <p class="sub">ชุดเครื่องมือและฟอนต์ที่ใช้ขับเคลื่อนระบบการแสดงผลแบบ Interactive ทั้งเว็บ</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">Three.js 3D WebGL Library</div>
+            <div class="cr-card-org">Mr.doob & Contributors</div>
+          </div>
+          <span class="lic">MIT License</span>
+        </div>
+        <div class="cr-card-body">
+          ไลบรารีเรนเดอร์กราฟิกสามมิติระดับสูงผ่าน WebGL ในโครงการ Solar Atlas และระบบสุริยะ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">threejs.org</span>
+          <a class="cr-card-link" href="https://threejs.org/" target="_blank" rel="noopener">Three.js ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">GSAP (GreenSock Animation Platform)</div>
+            <div class="cr-card-org">GreenSock, Inc.</div>
+          </div>
+          <span class="lic">Standard License</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบขับเคลื่อนแอนิเมชัน การเลื่อนไทม์ไลน์ และ Scrollytelling ในหน้า Hub และบทความนำเสนอ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">greensock.com</span>
+          <a class="cr-card-link" href="https://greensock.com/" target="_blank" rel="noopener">GreenSock ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">D3.js Data-Driven Documents</div>
+            <div class="cr-card-org">Mike Bostock & Contributors</div>
+          </div>
+          <span class="lic">ISC License</span>
+        </div>
+        <div class="cr-card-body">
+          เครื่องมือจัดการข้อมูลและคำนวณกราฟิกทางสถิติ แผนภาพรัฐสภา และผังโครงสร้าง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">d3js.org</span>
+          <a class="cr-card-link" href="https://d3js.org/" target="_blank" rel="noopener">D3.js ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">Lenis Smooth Scroll</div>
+            <div class="cr-card-org">Studio Freight / Darkroom Engineering</div>
+          </div>
+          <span class="lic">MIT License</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบเลื่อนหน้าจอที่นุ่มนวลเป็นธรรมชาติ สำหรับการอ่านเนื้อหาและเรื่องเล่าเชิงโต้ตอบ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">lenis.darkroom.engineering</span>
+          <a class="cr-card-link" href="https://github.com/darkroomengineering/lenis" target="_blank" rel="noopener">Lenis GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">Google Fonts (Kanit, Sarabun, Prompt, Rajdhani, IBM Plex Mono)</div>
+            <div class="cr-card-org">Cadson Demak / Google Fonts</div>
+          </div>
+          <span class="lic">SIL Open Font License 1.1</span>
+        </div>
+        <div class="cr-card-body">
+          ชุดฟอนต์ภาษาไทยและภาษาอังกฤษคุณภาพสูงที่ใช้เป็นมาตรฐานการจัดวางตัวอักษรของทั้งเว็บไซต์
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">fonts.google.com</span>
+          <a class="cr-card-link" href="https://fonts.google.com/" target="_blank" rel="noopener">Google Fonts ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 6. หมวดสัญญาอนุญาตภาพถ่าย (Dynamic Image Verification) -->
+  <div id="crImageSec" class="cr-sec" data-cat="images">
+    <h2>📸 สัญญาอนุญาตภาพถ่ายและเครื่องหมาย (Image & Logo Licenses)</h2>
+    <p class="sub">ภาพบุคคลส่วนใหญ่มาจากวิกิมีเดียคอมมอนส์ (Wikimedia Commons) ภายใต้สัญญาอนุญาตแบบครีเอทีฟคอมมอนส์ ส่วนโลโก้พรรคใช้ตามหลักการใช้งานโดยชอบธรรม (Fair Use) เพื่อการศึกษาและนำเสนอข้อมูลเท่านั้น</p>
+    
+    <div class="cr-stats" id="crStats"></div>
+
+    <div class="cr-note">
+      <b>หมายเหตุการตรวจสอบ</b> — รายการที่ขึ้นว่า <span class="lic unk" style="display:inline-block;vertical-align:middle">ยังไม่ยืนยัน</span>
+      คือภาพที่ยังสืบที่มาไม่ครบ ถือเป็นรายการที่ต้องตรวจสอบก่อนเผยแพร่ต่อ ไม่ใช่การอ้างว่าใช้ได้
+      · เว็บไซต์นี้จัดทำเพื่อประโยชน์สาธารณะและการศึกษา ไม่ใช่เอกสารราชการ และไม่มีความเกี่ยวข้องกับพรรคการเมืองหรือหน่วยงานใด
+    </div>
+
+    <div id="crBody"><div class="cr-loading">กำลังโหลดข้อมูลเครดิตภาพ…</div></div>
+  </div>
 
 </div>
 
@@ -317,6 +1317,24 @@ html[data-theme="dark"] .lic.out{background:rgba(150,165,180,.13);color:#93a3b3;
       <div class="cr-stat warn"><div class="n">${onSite - verified}</div><div class="l">ยังต้องตรวจสอบ</div></div>
       <div class="cr-stat"><div class="n">${removedCount}</div><div class="l">ถอดออกจากเว็บแล้ว</div></div>`;
   });
+
+  /* ---------- ตัวจัดการแท็บสลับหมวดหมู่ (Tabs Filter) ---------- */
+  const tabContainer = document.getElementById('crTabs');
+  if(tabContainer){
+    tabContainer.addEventListener('click', e => {
+      const btn = e.target.closest('.cr-tab');
+      if(!btn) return;
+      const cat = btn.dataset.cat;
+      tabContainer.querySelectorAll('.cr-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.cr-sec[data-cat]').forEach(sec => {
+        const secCat = sec.dataset.cat;
+        const match = (cat === 'all' || secCat === cat);
+        sec.classList.toggle('cr-hidden-cat', !match);
+      });
+    });
+  }
 })();
 </script>
 
