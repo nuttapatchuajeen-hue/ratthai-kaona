@@ -34938,6 +34938,33 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     }).observe(H, { attributes: true, attributeFilter: ["data-theme"] });
   })();
   </script>
+  <!-- แถบ ⓘ "ข้อมูล ณ …" + กล่องที่มาข้อมูล (ไฟล์กลาง js/data-notice.js · ต้นแบบจาก structure.html) -->
+  <script>
+  window.MD_DATA_NOTICE = {
+    key: 'md-explore-notice-dismissed',
+    after: '.topbar',
+    accent: 'var(--green)',
+    asof: 'ข้อมูลจากหลายแหล่ง — ดูที่มาใต้กราฟแต่ละอัน',
+    detail: ' · บางชุดดึงสดจากต้นทาง บางชุดเก็บไว้ในไฟล์ ปีล่าสุดของแต่ละกราฟขึ้นกับรอบเผยแพร่ของแหล่งนั้น',
+    sub: 'ศูนย์ข้อมูลโลก &amp; สิ่งแวดล้อม รวมกราฟจากหน่วยงานวิทยาศาสตร์และสถิติทั้งไทยและต่างประเทศ — จัดทำเพื่อการศึกษา',
+    warn: '<b>ที่มาของแต่ละกราฟระบุไว้ใต้กราฟนั้น</b><br>ภาพจำลองและแอนิเมชันเป็นการนำเสนอเชิงการศึกษา · เมื่อนำตัวเลขไปใช้ โปรดอ้างอิงแหล่งต้นทางโดยตรง',
+    sources: [
+      { t: 'Our World in Data', o: 'ชุดข้อมูลโลกด้านพลังงาน สิ่งแวดล้อม ประชากร และเศรษฐกิจ', u: 'https://ourworldindata.org' },
+      { t: 'NASA', o: 'GISS (GISTEMP v4) · Scientific Visualization Studio · Planetary Fact Sheet', u: 'https://www.nasa.gov' },
+      { t: 'NOAA', o: 'GML (CO₂ เมานาโลอา) · ERSSTv5 · CarbonTracker', u: 'https://www.noaa.gov' },
+      { t: 'HadCRUT5', o: 'Met Office Hadley Centre / UEA-CRU', u: 'https://www.metoffice.gov.uk/hadobs/hadcrut5/' },
+      { t: 'USGS Earthquake Hazards Program', o: 'ข้อมูลแผ่นดินไหว', u: 'https://earthquake.usgs.gov' },
+      { t: 'EM-DAT', o: 'ฐานข้อมูลภัยพิบัติ CRED / UCLouvain', u: 'https://www.emdat.be' },
+      { t: 'World Bank Open Data', o: 'ตัวชี้วัดเศรษฐกิจและสังคม', u: 'https://data.worldbank.org' },
+      { t: 'ธนาคารแห่งประเทศไทย', o: 'สถิติการเงินและเศรษฐกิจไทย', u: 'https://www.bot.or.th' },
+      { t: 'สำนักงานสถิติแห่งชาติ', o: 'สถิติประชากรและสังคมไทย', u: 'https://www.nso.go.th' },
+      { t: 'กรมอุตุนิยมวิทยา', o: 'ข้อมูลอากาศประเทศไทย', u: 'https://www.tmd.go.th' },
+      { t: 'กระทรวงพาณิชย์', o: 'สถิติการค้าระหว่างประเทศ', u: 'https://www.moc.go.th' }
+    ],
+    more: { href: '../election/credits.html#climate', label: 'ดูแหล่งที่มาข้อมูลและไอเดียทั้งหมด' }
+  };
+  </script>
+  <script src="../js/data-notice.js"></script>
   <script src="../js/cyber-sfx.js"></script>
   <script src="../js/cyber-audio.js"></script>
 </body>

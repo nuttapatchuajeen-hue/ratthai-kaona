@@ -1376,6 +1376,24 @@
   else scan();
 })();
 </script>
+<!-- แถบ ⓘ "ข้อมูล ณ …" + กล่องที่มาข้อมูล (ไฟล์กลาง js/data-notice.js · ต้นแบบจาก structure.html) -->
+<script>
+window.MD_DATA_NOTICE = {
+  key: 'md-stats-notice-dismissed',
+  after: '.topbar',
+  accent: 'var(--green)',
+  asof: 'ข้อมูลดึงสดจาก data.go.th และ World Bank',
+  detail: ' — รายการข้อมูลเปิดอัปเดตอัตโนมัติทุก 15 นาที · ตัวเลขเศรษฐกิจ/งบประมาณเป็นปีล่าสุดที่ World Bank เผยแพร่ ซึ่งอาจช้ากว่าปีปัจจุบัน',
+  sub: 'แดชบอร์ดนี้ใช้เฉพาะแหล่งข้อมูลเปิดสาธารณะ 2 แหล่ง ไม่ต้องใช้ API key และไม่มีการขูดข้อมูล (scraping)',
+  warn: '<b>ตัวเลขเป็นค่าล่าสุดที่แหล่งต้นทางเผยแพร่ ณ เวลาที่เปิดหน้า</b><br>ทุกชุดข้อมูลลิงก์กลับหน้าต้นทางบน data.go.th ให้ตรวจสอบได้ · เว็บนี้จัดทำอย่างอิสระ ไม่ใช่เว็บไซต์ทางการของหน่วยงานรัฐใด',
+  sources: [
+    { t: 'ข้อมูลเปิดภาครัฐ — สถิติชุดข้อมูล รายชื่อหน่วยงาน และชุดข้อมูลที่อัปเดตล่าสุด', o: 'data.go.th · สำนักงานพัฒนารัฐบาลดิจิทัล (สพร./DGA) · Open Government Data', u: 'https://data.go.th' },
+    { t: 'ตัวเลขเศรษฐกิจ-การคลังของประเทศไทย', o: 'World Bank Open Data', u: 'https://data.worldbank.org' }
+  ],
+  more: { href: '../election/credits.html#nationalstats', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' }
+};
+</script>
+<script src="../js/data-notice.js"></script>
 <script src="../js/theme-toggle-drag.js"></script>
 <script src="../js/ai-chat.js"></script>
 <script src="../js/cyber-sfx.js"></script>

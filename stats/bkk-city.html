@@ -6089,6 +6089,28 @@
   else initMap();
 })();
 </script>
+<!-- แถบ ⓘ "ข้อมูล ณ …" + กล่องที่มาข้อมูล (ไฟล์กลาง js/data-notice.js · ต้นแบบจาก structure.html) -->
+<script>
+window.MD_DATA_NOTICE = {
+  key: 'md-bkkcity-notice-dismissed',
+  after: 'body > .header',
+  accent: 'var(--accent)',
+  asof: 'ข้อมูลแผนที่ ณ กันยายน 2569',
+  detail: ' — ห้างร้าน/แบรนด์เก็บเมื่อ 9–10 ก.ย. 2569 · อาคาร 3 มิติจาก OpenStreetMap 3 ก.ย. 2569 · ร้านและโครงการเปลี่ยนแปลงได้ โปรดตรวจสอบก่อนนำไปอ้างอิง',
+  sub: 'แผนที่ 50 เขตกรุงเทพฯ บนแผนที่ถนนจริง พร้อมชั้นรถไฟฟ้า แลนด์มาร์ก ผังสี ศูนย์ข้อมูล และห้างร้านทั่วประเทศ — จัดทำเพื่อการศึกษา',
+  warn: '<b>มวลอาคารส่วนใหญ่เป็นปริมาตรจำลองจากขนาดที่ดิน ไม่ใช่แบบสถาปัตยกรรม</b><br>ศูนย์ข้อมูลวางบนพิกัดจริง แต่รอยอาคาร (ยกเว้น Telehouse) เป็นมวลจำลอง · ผังสีแสดง 22 โซนสำคัญอ้างอิงผังเมืองรวมกรุงเทพมหานคร — ใช้ตัดสินใจจริงโปรดตรวจสอบกับ กทม.',
+  sources: [
+    { t: 'แผนที่ฐาน (vector tiles)', o: 'OpenFreeMap · © OpenStreetMap contributors (ODbL)', u: 'https://openfreemap.org' },
+    { t: 'มวลอาคาร 3 มิติของแลนด์มาร์ก', o: 'OpenStreetMap ผ่าน Overpass API · ดึงข้อมูล 3 ก.ย. 2569 · ODbL', u: 'https://www.openstreetmap.org' },
+    { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
+    { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },
+    { t: 'ศูนย์ข้อมูล (Data Center)', o: 'พิกัด: PeeringDB + OpenStreetMap/Nominatim · สถิติผลกระทบ: กฟน., กปน., เครือข่าย JustPow, สำนักนายกฯ, BOI', u: 'https://www.peeringdb.com' },
+    { t: 'ผังสี กทม.', o: 'ผังเมืองรวมกรุงเทพมหานคร', u: 'https://www.bangkok.go.th' }
+  ],
+  more: { href: '../election/credits.html', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' }
+};
+</script>
+<script src="../js/data-notice.js"></script>
 <script src="../js/cyber-sfx.js"></script>
 <script src="../js/cyber-audio.js"></script>
 </body>
