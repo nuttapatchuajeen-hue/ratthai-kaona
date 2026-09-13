@@ -1323,25 +1323,22 @@ function smallLineShown(rec) {
   return camState.dist > def._ref * 0.45 && camState.dist < def._ref * 8;
 }
 
-/* ยานมีแค่ 7 ลำและเป็นของที่คนอยากเห็น จึงไม่ซ่อนตามระยะมองแบบวัตถุจิ๋ว
-   ซ่อนเฉพาะเมื่อซูมออกไปไกลกว่าตัวยานลำที่ไกลสุดเท่านั้น */
+/* ยานอวกาศ: แสดงโมเดลสามมิติตามสเกลจริง 1:1 (หน่วยของ spin: 1 เมตร = 1e-6 หน่วยฉาก)
+   เมื่อซูมเข้าจะขยายใหญ่ขึ้นตามจริง และเมื่อซูมออกจะเล็กลงตามระยะทางจริง
+   หากอยู่ไกลเกินระยะสายตามองเห็นตัวยานจริง ให้ป้ายชื่อและมาร์กเกอร์เพชรทำหน้าที่แทน */
 function craftShown(rec) {
   if (!S.craft) return false;
-  if (rec.def.id === (trans.on ? trans.to : S.focus)) return true;
-  return camState.dist < 1200 * AU;
+  eyeWorld(_eye);
+  const dKm = Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z);
+  return dKm < rec.def.span * 2.5;
 }
 
-/* ท่าของยาน: จานสื่อสารหันเข้าหาโลก (หรือโล่กันความร้อนหันเข้าหาดวงอาทิตย์)
-   และขนาด: ตัวจริงยาวไม่กี่เมตร ถ้าวาดตามจริงจะมองไม่เห็นเลยในทุกระยะ
-   จึงขยายให้กว้างราว 18 พิกเซลบนจอเสมอ แต่ไม่เล็กกว่าขนาดจริง
-   ผลคือซูมเข้าไปใกล้ ๆ จะได้เห็นยานขนาดเท่าของจริง */
+/* ท่าของยาน: จานสื่อสารหันเข้าหาโลก (หรือโล่กันความร้อนหันเข้าหาดวงอาทิตย์) */
 const cpDir = new THREE.Vector3(), cpZ = new THREE.Vector3(0, 0, 1);
 function craftPose(rec) {
   const def = rec.def;
-  const camDist = Math.max(1e-12, rec.holder.position.distanceTo(camera.position));
-  const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
   const TRUE = 1e-6;                                  // 1 เมตร = 1e-6 หน่วยฉาก
-  rec.spin.scale.setScalar(Math.max(TRUE, 18 * camDist / (fovK * def.span)));
+  rec.spin.scale.setScalar(TRUE);
   const tgt = def.point === 'sun' ? ZERO : worldOf('earth');
   cpDir.set(tgt.x - rec.world.x, tgt.y - rec.world.y, tgt.z - rec.world.z);
   if (cpDir.lengthSq() > 0) rec.spin.quaternion.setFromUnitVectors(cpZ, cpDir.normalize());
@@ -1359,32 +1356,43 @@ function updateComets() {
     const act = Math.max(0, Math.min(1, (3.6 - rAU) / 3.0));      // เริ่มคุกรุ่นราว 3.6 AU
     if (act < 0.02) { t.visible = c.visible = false; continue; }
     const camDist = Math.max(1e-6, rec.holder.position.distanceTo(camera.position));
-    // หัวฟุ้ง
+    // หัวฟุ้ง: สเกลตามขนาดจริงและย่อเล็กลงตามระยะทางกล้อง
     let comaR = (0.0008 + 0.006 * act) * AU / KMU;
-    comaR = Math.min(Math.max(comaR, 7 * camDist / fovK), camDist * 0.06);
-    c.visible = true;
-    c.scale.setScalar(comaR);
-    c.material.opacity = 0.35 + 0.5 * act;
-    // หาง
+    comaR = Math.min(comaR, camDist * 0.06);
+    const comaPx = comaR / camDist * fovK;
+    if (comaPx < 0.25) {
+      c.visible = false;
+    } else {
+      c.visible = true;
+      c.scale.setScalar(comaR);
+      c.material.opacity = (0.35 + 0.5 * act) * Math.min(1, comaPx / 1.5);
+    }
+    // หาง: สเกลตามความยาวจริงและย่อเล็กลงตามระยะทางกล้อง เมื่อไกลจนเล็กกว่าหนึ่งพิกเซลให้จางหาย
     let len = (0.02 + 0.30 * act * act) * AU / KMU;
-    len = Math.min(Math.max(len, 42 * camDist / fovK), camDist * 0.30);
-    tDir.set(rec.world.x, rec.world.y, rec.world.z).normalize();  // ออกจากดวงอาทิตย์
-    tUp.subVectors(camera.position, rec.holder.position).normalize();
-    tSide.crossVectors(tDir, tUp);
-    if (tSide.lengthSq() < 1e-10) tSide.set(0, 0, 1).cross(tDir);  // หางชี้ตรงเข้ากล้อง
-    tSide.normalize().multiplyScalar(len * 0.42);
-    tUp.crossVectors(tDir, tSide).normalize();
-    t.visible = true;
-    t.material.opacity = 0.30 + 0.55 * act;
-    t.matrix.makeBasis(tDir.clone().multiplyScalar(len), tSide, tUp);
-    t.matrix.setPosition(0, 0, 0);
-    t.matrixWorldNeedsUpdate = true;
+    len = Math.min(len, camDist * 0.30);
+    const tailPx = len / camDist * fovK;
+    if (tailPx < 0.6) {
+      t.visible = false;
+    } else {
+      tDir.set(rec.world.x, rec.world.y, rec.world.z).normalize();  // ออกจากดวงอาทิตย์
+      tUp.subVectors(camera.position, rec.holder.position).normalize();
+      tSide.crossVectors(tDir, tUp);
+      if (tSide.lengthSq() < 1e-10) tSide.set(0, 0, 1).cross(tDir);  // หางชี้ตรงเข้ากล้อง
+      tSide.normalize().multiplyScalar(len * 0.42);
+      tUp.crossVectors(tDir, tSide).normalize();
+      t.visible = true;
+      t.material.opacity = (0.30 + 0.55 * act) * Math.min(1, tailPx / 3);
+      t.matrix.makeBasis(tDir.clone().multiplyScalar(len), tSide, tUp);
+      t.matrix.setPosition(0, 0, 0);
+      t.matrixWorldNeedsUpdate = true;
+    }
   }
 }
 
 /* ══ กล้อง ═══════════════════════════════════════════════════════════ */
 function focusRadius(id) {
-  const r = REG[id].def.radius;
+  if (!REG[id] || !REG[id].def) return 1;
+  const r = REG[id].def.radius || (REG[id].def.span ? REG[id].def.span / 2000 : 1);
   return r * (S.enlarge && id !== 'sun' && !REG[id].far ? 25 : 1);
 }
 function defaultDist(id) {
@@ -2787,14 +2795,17 @@ function updateDeep() {
     if (!on) { sp.visible = false; continue; }
     sp.visible = true;
     const camDist = Math.max(1e-9, sp.position.distanceTo(deepCam.position));
-    const minPx = o.t === 'quasar' || o.t === 'distant' ? 9 : o.t === 'dwarf' ? 11 : 16;
+    const baseMinPx = o.t === 'quasar' || o.t === 'distant' ? 9 : o.t === 'dwarf' ? 11 : 16;
+    // เมื่อถอยออกไกลถึงระดับใยเอกภพ (พ้น 30 ล้านปีแสง) ค่อย ๆ ลดขนาดขั้นต่ำลง ให้จุดกาแล็กซี 2MRS รับช่วงต่อ
+    const cosmicTaper = 1 - step01(log10(30), log10(400), ld);
+    const minPx = baseMinPx * (o.home ? 1 : Math.max(0, cosmicTaper));
     const real = (o.dly || 3000) / MLY;
     if (camDist < real * 0.6) { sp.visible = false; continue; }   // กล้องอยู่ในกาแล็กซีนั้นเอง
     sp.scale.setScalar(Math.max(real, minPx * camDist / fovK));
     // เล็กกว่าขนาดขั้นต่ำบนจอ = ดูไม่ออกว่าหน้าตาอย่างไร จึงหรี่ลง (เควซาร์/กาแล็กซียุคแรกเป็นเครื่องหมาย ไม่หรี่มาก)
     const floor = o.home ? 0.35 : (o.t === 'quasar' || o.t === 'distant') ? 0.7 : 0.14;
-    const res = Math.min(1, Math.max(floor, (real / camDist * fovK) / minPx));
-    sp.material.opacity = (o.home ? deepFade * homeFade * 0.9 : deepFade * (o.t === 'dwarf' ? 0.6 : 0.85)) * res;
+    const res = minPx > 0.1 ? Math.min(1, Math.max(floor, (real / camDist * fovK) / minPx)) : Math.min(1, real / camDist * fovK / baseMinPx);
+    sp.material.opacity = (o.home ? deepFade * homeFade * 0.9 : deepFade * (o.t === 'dwarf' ? 0.6 : 0.85)) * res * (o.home ? 1 : Math.max(0.12, cosmicTaper));
   }
 
   for (const hs of deepHalos) {
@@ -3079,8 +3090,8 @@ function farPrepare() {
   }
 }
 
-// ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล — หลุมดำและพัลซาร์แบบคำนวณจริงต้องเล็ก ไม่งั้นค้างเป็นก้อนใหญ่ตอนซูมออก
-const farMinPx = def => def.t === 'bh' ? (def.kerr ? 0 : def.acc ? 64 : 30) : def.t === 'pulsar' ? 0 : 44;
+// ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล — วัตถุจริงต้องไม่ค้างเป็นก้อนใหญ่ตอนซูมออก ให้มาร์กเกอร์ระบุจุดแทน
+const farMinPx = def => 0;
 
 function blackHoleMaterial(def) {
   return new THREE.ShaderMaterial({
@@ -3969,11 +3980,9 @@ function farDisc(def, size) {
 }
 
 function farShown(rec) {
-  // หลุมดำและพัลซาร์ที่คำนวณโครงสร้างจริงไม่ถูกขยายเป็นเครื่องหมายขนาดคงที่อีกแล้ว
-  // มองจากไกลจึงต้องไม่เห็นตัวมัน แม้จะกำลังเพ่งอยู่ก็ตาม (ของจริงเล็กเกินกว่าจะเห็นจากระยะนั้นมาก)
-  // ปล่อยให้ป้ายชื่อกับวงกลมบอกตำแหน่ง (labelRing) ทำหน้าที่แทน แล้วค่อยโผล่เมื่อเข้าใกล้จริง ๆ
-  if (rec.def.id === (trans.on ? trans.to : S.focus) && !rec.def.kerr && rec.def.t !== 'pulsar') return true;
-  // ใกล้พอให้ขนาดจริงบนจอเกินราว 2–3 พิกเซล (ไม่เกิน 400 เท่าของขนาด · span เป็นเมตร)
+  // หลุมดำ พัลซาร์ และเนบิวลา ไม่ถูกขยายเป็นเครื่องหมายขนาดคงที่อีกแล้ว
+  // มองจากไกลจึงต้องไม่เห็นตัวมัน ปล่อยให้ป้ายชื่อกับวงกลมบอกตำแหน่ง (labelRing) ทำหน้าที่แทน
+  // วาดตัวโมเดลเฉพาะเมื่อเข้าใกล้จริง ๆ (ไม่เกิน 400 เท่าของขนาด · span เป็นเมตร)
   eyeWorld(_eye);
   return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
 }
@@ -4147,6 +4156,7 @@ function requestFarModel(id) {
       rec.spin.add(model);
       rec.model = model;
       rec.mesh.material.opacity = 0.45;             // แสงฟุ้งเดิมเหลือเป็นเรืองรอบ ๆ
+      if (typeof updateModelThumb === 'function') updateModelThumb(id);
       if ((trans.on ? trans.to : S.focus) === id) renderInfo();
     }).catch(() => { rec.gltfDone = false; });
   });
@@ -4205,8 +4215,10 @@ function renderFarInfo(rec) {
   const sw = el('div', 'obj-swatch');
   sw.style.setProperty('--glow', def.glow);
   const img = el('img');
-  img.src = def._discURL; img.alt = '';
-  img.style.cssText = 'width:100%;height:100%;display:block';
+  const thumbUrl = renderModelThumb(def.id) || def._discURL;
+  img.src = thumbUrl; img.alt = '';
+  img.setAttribute('data-thumb-id', def.id);
+  img.style.cssText = 'width:100%;height:100%;display:block;object-fit:contain';
   sw.appendChild(img);
   const ti = el('div', 'obj-title');
   ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
@@ -5036,8 +5048,10 @@ function renderInfo() {
   const sw = el('div', 'obj-swatch');
   sw.style.setProperty('--glow', def.glow || '#' + def.color.toString(16).padStart(6, '0'));
   const swImg = el('img');
-  swImg.src = def._discURL; swImg.alt = '';
-  swImg.style.cssText = 'width:100%;height:100%;display:block';
+  const thumbUrl = renderModelThumb(id) || def._discURL;
+  swImg.src = thumbUrl; swImg.alt = '';
+  swImg.setAttribute('data-thumb-id', id);
+  swImg.style.cssText = 'width:100%;height:100%;display:block;object-fit:contain';
   sw.appendChild(swImg);
   const ti = el('div', 'obj-title');
   ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
@@ -5659,8 +5673,8 @@ const MODEL_THUMB_CACHE = {};
 function initThumbRenderer() {
   if (thumbRenderer) return;
   const canvas = document.createElement('canvas');
-  canvas.width = 120;
-  canvas.height = 80;
+  canvas.width = 128;
+  canvas.height = 128;
   thumbRenderer = new THREE.WebGLRenderer({
     canvas,
     alpha: true,
@@ -5668,7 +5682,7 @@ function initThumbRenderer() {
     preserveDrawingBuffer: true
   });
   thumbRenderer.setPixelRatio(1);
-  thumbRenderer.setSize(120, 80, false);
+  thumbRenderer.setSize(128, 128, false);
   thumbRenderer.toneMapping = THREE.ACESFilmicToneMapping;
   thumbRenderer.toneMappingExposure = 1.25;
 
@@ -5684,7 +5698,7 @@ function initThumbRenderer() {
 
   thumbScene.add(new THREE.AmbientLight(0x283040, 0.4));
 
-  thumbCamera = new THREE.PerspectiveCamera(35, 120 / 80, 0.1, 100);
+  thumbCamera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 }
 
 function renderModelThumb(id) {
@@ -5703,8 +5717,20 @@ function renderModelThumb(id) {
       craftClone.rotation.set(0.32, -0.62, 0.18);
       group.add(craftClone);
     }
-  } else if (rec.far && rec.mesh && !rec.mesh.geometry) {
-    return def._discURL || null;
+  } else if (rec.far) {
+    if (rec.model) {
+      const farClone = rec.model.clone(true);
+      farClone.position.set(0, 0, 0);
+      farClone.rotation.set(0.25, -0.42, 0.15);
+      group.add(farClone);
+    } else if (rec.mesh && rec.mesh.geometry) {
+      const farClone = rec.mesh.clone(true);
+      farClone.position.set(0, 0, 0);
+      farClone.rotation.set(0.25, -0.42, 0.15);
+      group.add(farClone);
+    } else {
+      return def._discURL || null;
+    }
   } else if (rec.mesh && rec.mesh.geometry) {
     let mat;
     if (def.id === 'sun') {
@@ -5731,7 +5757,7 @@ function renderModelThumb(id) {
     const meshClone = new THREE.Mesh(rec.mesh.geometry.clone(), mat);
     meshClone.scale.set(1, 1, 1);
 
-    if (rec.rockGeo || (def && (def.kind === 'asteroid' || def.kind === 'comet' || def.kind === 'tno' || def.kind === 'dwarf'))) {
+    if (rec.rockGeo || rec.usingShape || (def && (def.kind === 'asteroid' || def.kind === 'comet' || def.kind === 'tno' || def.kind === 'dwarf'))) {
       meshClone.rotation.set(0.38, -0.72, 0.25);
     } else {
       meshClone.rotation.set(0.2, -0.3, 0);
@@ -5787,6 +5813,7 @@ function renderModelThumb(id) {
 
     const dataUrl = thumbRenderer.domElement.toDataURL('image/png');
     MODEL_THUMB_CACHE[id] = dataUrl;
+    if (rec && rec.def) rec.def._discURL = dataUrl;
     thumbScene.remove(group);
     return dataUrl;
   }
@@ -5799,10 +5826,41 @@ function updateModelThumb(id) {
   delete MODEL_THUMB_CACHE[id];
   const url = renderModelThumb(id);
   if (url) {
+    if (REG[id] && REG[id].def) REG[id].def._discURL = url;
     document.querySelectorAll(`img[data-thumb-id="${id}"]`).forEach(img => {
       img.src = url;
     });
   }
+}
+
+/* ทยอยโหลดโมเดล 3 มิติตามจริงทั้งหมดเบื้องหลัง เพื่อให้ทุกวัตถุมีรูปตามจริงทันที */
+function preloadAllShapes() {
+  ensureGltfLoader().then(loader => {
+    if (!loader) return;
+    const sKeys = Object.keys(SHAPE_SRC);
+    let sIdx = 0;
+    function nextShape() {
+      if (sIdx < sKeys.length) {
+        requestShapeModel(sKeys[sIdx++]);
+        setTimeout(nextShape, 25);
+      } else {
+        const cKeys = Object.keys(GLTF_SRC);
+        let cIdx = 0;
+        function nextCraft() {
+          if (cIdx < cKeys.length) {
+            requestCraftModel(cKeys[cIdx++]);
+            setTimeout(nextCraft, 35);
+          } else {
+            for (const rec of farRecs) {
+              if (rec.def && rec.def.model && !rec.gltfDone) requestFarModel(rec.def.id);
+            }
+          }
+        }
+        nextCraft();
+      }
+    }
+    nextShape();
+  });
 }
 
 /* ── ค้นหา ─────────────────────────────────────────────────────────── */
@@ -6482,7 +6540,7 @@ async function refineTextures() {
       upgradeCanvas(b._clouds, PAINTERS.earthClouds(384, 192), REG.earth.clouds.material.map);
     }
     b._disc = discPreview(b._tex, 96, DISC_LON[b.id]);
-    b._discURL = b._disc.toDataURL('image/png');
+    b._discURL = renderModelThumb(b.id) || b._disc.toDataURL('image/png');
     await step();
   }
   for (const m of MOONS) {
@@ -6497,7 +6555,7 @@ async function refineTextures() {
       : PAINTERS.rocky(base[0], base[1], tints[m.id] || [140, 132, 124], m.radius < 50 ? 150 : 260);
     upgradeCanvas(m._tex, neo, m._map);
     m._disc = discPreview(m._tex, 96);
-    m._discURL = m._disc.toDataURL('image/png');
+    m._discURL = renderModelThumb(m.id) || m._disc.toDataURL('image/png');
     await step();
   }
   // วัตถุขนาดเล็กใช้ผ้าใบร่วมกันสี่ผืน อัปเกรดผ้าใบก็อัปเกรดครบทุกดวงพร้อมกัน
@@ -6516,7 +6574,10 @@ async function refineTextures() {
     const one = SMALL.find(pick);
     if (!one || one._tex.width >= args[0]) continue;
     upgradeCanvas(one._tex, PAINTERS.rocky(args[0], args[1], args[2], args[3]), texCache.get(one._tex));
-    for (const s of SMALL) if (pick(s)) { s._disc = discPreview(s._tex, 96); s._discURL = s._disc.toDataURL('image/png'); }
+    for (const s of SMALL) if (pick(s)) {
+      s._disc = discPreview(s._tex, 96);
+      s._discURL = renderModelThumb(s.id) || s._disc.toDataURL('image/png');
+    }
     await step();
   }
   if (!$('#pane-info').hidden) renderInfo();
@@ -6601,6 +6662,13 @@ function buildAll() {
   updatePositions(S.time);
   setupShadows();
   for (const id in REG) if (REG[id].line) refreshOrbit(REG[id], S.time);
+  // ทยอยเรนเดอร์รูปโมเดล 3 มิติตามจริงไว้ล่วงหน้า
+  setTimeout(() => {
+    for (const b of BODIES) { const u = renderModelThumb(b.id); if (u) b._discURL = u; }
+    for (const m of MOONS) { const u = renderModelThumb(m.id); if (u) m._discURL = u; }
+    for (const s of SMALL) { const u = renderModelThumb(s.id); if (u) s._discURL = u; }
+    for (const c of CRAFT) { const u = renderModelThumb(c.id); if (u) c._discURL = u; }
+  }, 100);
 }
 
 let last = performance.now();
@@ -6729,6 +6797,7 @@ async function boot() {
   setTimeout(() => { $('#loading').remove(); }, 1200);
   // ฉากขึ้นแล้ว — ค่อยวาดพื้นผิวฉบับเต็มทับทีละผืนอยู่เบื้องหลัง
   setTimeout(() => { refineTextures(); }, 400);
+  setTimeout(() => { preloadAllShapes(); }, 600);
   setTimeout(() => { const h = $('#hint'); if (h) h.style.opacity = '0'; }, 9000);
 }
 

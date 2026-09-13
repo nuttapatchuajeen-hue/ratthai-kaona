@@ -1195,7 +1195,7 @@ const ABOUT = {
   ระบบดวงอาทิตย์–โลกโดยตรง อีกสามลำ คือ ลูซี ไซคี และยูโรปาคลิปเปอร์ ยังจุดเครื่องและยังต้องเหวี่ยงตัว
   กับดาวเคราะห์ วิถีจึงตรงเฉพาะช่วงใกล้วันที่วัดมา แผงข้อมูลของสามลำนี้บอกไว้ชัด</p>
   <p>ทุกลำยกเว้นลูซีกับไซคีใช้โมเดลสามมิติที่ NASA เผยแพร่ สองลำนั้นปั้นด้วยรูปทรงพื้นฐานในโค้ด
-  ทุกลำจะขยายให้พอมองเห็นเมื่อดูจากไกล แต่กลับไปเท่าขนาดจริงเมื่อซูมเข้าไปประชิด</p>
+  ทุกลำสร้างด้วยสเกล 3 มิติตามจริงเมื่อซูมเข้าไปประชิด และเมื่อมองจากไกลจะมีป้ายชื่อพร้อมสัญลักษณ์มาร์กเกอร์บอกตำแหน่งอย่างชัดเจน</p>
 
   <h4>เงาบนดาวและอุปราคาจากอวกาศ</h4>
   <p>คำนวณในเชเดอร์ทุกเฟรม ได้แก่ เงาวงแหวนที่พาดบนตัวดาวเสาร์ เงาดาวเสาร์ที่ทาบลงบนวงแหวน และเงาดวงจันทร์
@@ -1302,7 +1302,7 @@ const ABOUT = {
   gravity assists ahead, so their paths are right only near the date they were measured — their info
   panels say so.</p>
   <p>Every craft except Lucy and Psyche uses NASA’s published 3-D model; those two are built from basic
-  shapes in code. Every craft is enlarged enough to spot from far away and returns to true size as you close in.</p>
+  shapes in code. Every craft is built to true 3-D scale as you close in, with clear label markers indicating their positions from afar.</p>
 
   <h4>Shadows and eclipses from space</h4>
   <p>Computed in the shader every frame: the rings’ shadow across Saturn, Saturn’s shadow on its rings, and
