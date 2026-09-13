@@ -1038,53 +1038,171 @@ body {
   color: var(--accent-cyan);
 }
 
-/* ── INFINITE LOGO SLIDER ── */
+/* ── INFINITE LOGO SLIDER (3 CHANNELS - LOGOS ONLY) ── */
 .infinite-logo-slider {
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(to bottom, rgba(2,5,8,0.95), rgba(7,13,20,0.98));
-  padding: 6rem 0;
+  background: linear-gradient(to bottom, rgba(2,5,8,0.98), rgba(6,12,20,0.99) 50%, rgba(2,5,8,0.98));
+  padding: 4.2rem 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.slider-row {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Edge fade gradients */
+.slider-row::before,
+.slider-row::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  z-index: 2;
+  pointer-events: none;
+}
+.slider-row::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(2,5,8,1) 20%, transparent);
+}
+.slider-row::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(2,5,8,1) 20%, transparent);
 }
 
 .slider-track {
   display: flex;
-  gap: 2rem;
-  animation: infiniteSlide 30s linear infinite;
+  align-items: center;
+  width: max-content;
+  gap: 2.4rem;
+  animation: infiniteSlide 32s linear infinite;
   will-change: transform;
+}
+
+.slider-track.slider-reverse {
+  animation: infiniteSlideReverse 38s linear infinite;
+}
+
+.slider-track.track-ai {
+  animation-duration: 34s;
 }
 
 .slider-track:hover {
   animation-play-state: paused;
 }
 
+/* Common slider item link wrapper */
 .slider-item {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px;
-  height: 140px;
+  height: 86px;
+  width: 130px;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .slider-item:hover {
+  transform: translateY(-4px) scale(1.06);
+}
+
+/* Track 1: Direct Tech Stack logos */
+.slider-item > img {
+  max-height: 72px;
+  max-width: 96px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(0,229,255,0.22)) brightness(0.92);
+  transition: filter 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slider-item:hover > img {
+  filter: drop-shadow(0 0 28px rgba(0,229,255,0.7)) brightness(1.15);
   transform: scale(1.08);
 }
 
-.slider-item img {
-  height: clamp(80px, 12vh, 140px);
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(0,229,255,0.2)) brightness(0.9);
-  transition: filter 0.3s;
+/* Track 2: Thai Ministries Emblems (ตราสัญลักษณ์กระทรวงภาครัฐไทย - Pure Transparent Floating Logos) */
+.slider-item.ministry-item .slider-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.slider-item img:hover {
-  filter: drop-shadow(0 0 30px rgba(0,229,255,0.5)) brightness(1.1);
+.slider-item.ministry-item:hover .slider-thumb {
+  background: transparent;
+  box-shadow: none;
+}
+
+.slider-item.ministry-item .slider-thumb img {
+  max-height: 74px;
+  max-width: 94px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.38)) drop-shadow(0 3px 8px rgba(0,0,0,0.85));
+  transition: filter 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slider-item.ministry-item:hover .slider-thumb img {
+  filter: drop-shadow(0 0 26px rgba(255, 215, 0, 0.8)) drop-shadow(0 4px 12px rgba(0,0,0,0.95)) brightness(1.15);
+  transform: scale(1.08);
+}
+
+/* Track 3: AI Ecosystem Badges (โลโก้ AI - Pure Transparent Floating Logos) */
+.slider-item.ai-item .slider-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slider-item.ai-item:hover .slider-thumb {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.slider-item.ai-item .slider-thumb img {
+  max-height: 70px;
+  max-width: 90px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(0, 229, 255, 0.35));
+  transition: filter 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slider-item.ai-item:hover .slider-thumb img {
+  filter: drop-shadow(0 0 28px rgba(0, 229, 255, 0.85)) brightness(1.18);
+  transform: scale(1.08);
 }
 
 @keyframes infiniteSlide {
@@ -1093,6 +1211,57 @@ body {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes infiniteSlideReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .infinite-logo-slider {
+    padding: 2.8rem 0;
+    gap: 1.6rem;
+  }
+  .slider-row::before,
+  .slider-row::after {
+    width: 50px;
+  }
+  .slider-track {
+    gap: 1.5rem;
+  }
+  .slider-item {
+    width: 96px;
+    height: 68px;
+  }
+  .slider-item > img {
+    max-height: 52px;
+    max-width: 72px;
+  }
+  .slider-item.ministry-item .slider-thumb {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border-radius: 0;
+  }
+  .slider-item.ministry-item .slider-thumb img {
+    max-height: 52px;
+    max-width: 72px;
+  }
+  .slider-item.ai-item .slider-thumb {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border-radius: 0;
+  }
+  .slider-item.ai-item .slider-thumb img {
+    max-height: 48px;
+    max-width: 68px;
   }
 }
 

@@ -1108,3 +1108,382 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
     max-width: 75px;
   }
 }
+
+/* ── 5. MEDIA SOURCE MODE SWITCHER (BGM vs YOUTUBE) ── */
+.bgm-mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bgm-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--bgm-dim);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.bgm-mode-btn:hover {
+  color: var(--bgm-text);
+}
+
+.bgm-mode-btn.active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(59, 130, 246, 0.2));
+  color: var(--bgm-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.bgm-mode-btn.active.is-yt {
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.28), rgba(255, 100, 50, 0.22));
+  color: #FF5555;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.35);
+}
+
+/* ── 6. YOUTUBE SEARCH & FILTER SECTION ── */
+.bgm-yt-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.bgm-yt-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.bgm-yt-search-pill {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  background: #121212;
+  border: 1px solid #303030;
+  border-radius: 20px 0 0 20px;
+  padding: 0 10px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bgm-yt-search-pill:focus-within {
+  border-color: #1c62b9;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 4px rgba(28, 98, 185, 0.4);
+}
+
+.bgm-yt-search-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f1f1;
+  font-size: 0.78rem;
+  font-family: inherit;
+  padding: 4px 0;
+}
+
+.bgm-yt-search-input::placeholder {
+  color: #888888;
+  font-size: 0.74rem;
+}
+
+.bgm-yt-search-clear {
+  color: #888;
+  cursor: pointer;
+  display: none;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.bgm-yt-search-clear:hover {
+  color: #ffffff;
+}
+
+.bgm-yt-search-btn {
+  width: 44px;
+  height: 34px;
+  background: #222222;
+  border: 1px solid #303030;
+  border-left: none;
+  border-radius: 0 20px 20px 0;
+  color: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+
+.bgm-yt-search-btn:hover {
+  background: #2b2b2b;
+  color: #ffffff;
+}
+
+.bgm-yt-mic-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #222222;
+  border: none;
+  color: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.bgm-yt-mic-btn:hover {
+  background: #383838;
+  color: #ffffff;
+}
+
+.bgm-yt-mic-btn.is-listening {
+  background: #CC0000;
+  color: #ffffff;
+  animation: ytMicPulse 1.2s infinite alternate;
+}
+
+.bgm-yt-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bgm-yt-chips::-webkit-scrollbar { display: none; }
+
+.bgm-yt-chip {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.70rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #f1f1f1;
+  cursor: pointer;
+  transition: all 0.18s;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.bgm-yt-chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bgm-yt-chip.active {
+  background: #f1f1f1;
+  color: #0f0f0f;
+  font-weight: 600;
+}
+
+/* ── 7. YOUTUBE QUEUE ITEMS ── */
+.bgm-yt-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 9px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bgm-yt-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 68, 68, 0.35);
+  transform: translateX(2px);
+}
+
+.bgm-yt-item.is-active {
+  background: rgba(255, 68, 68, 0.14);
+  border-color: #FF5555;
+  box-shadow: 0 0 14px rgba(255, 68, 68, 0.25);
+}
+
+.bgm-yt-thumb-wrap {
+  position: relative;
+  width: 72px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0A1018;
+  flex-shrink: 0;
+}
+
+.bgm-yt-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bgm-yt-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #FFFFFF;
+}
+
+.bgm-yt-item:hover .bgm-yt-play-overlay,
+.bgm-yt-item.is-active .bgm-yt-play-overlay {
+  opacity: 1;
+}
+
+.bgm-yt-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bgm-yt-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bgm-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.bgm-yt-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.66rem;
+  color: var(--bgm-dim);
+}
+
+.bgm-yt-channel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+.bgm-yt-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 68, 68, 0.15);
+  color: #FF6666;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  flex-shrink: 0;
+}
+
+/* ── 8. LEFT PANEL VIDEO PLAYER SCREEN ── */
+.bgm-yt-player-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #020508;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 68, 68, 0.35);
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.18);
+  display: none;
+}
+
+.is-yt-active .bgm-yt-player-wrap {
+  display: block;
+}
+
+.is-yt-active .bgm-spectrum-wrap {
+  display: none !important;
+}
+
+.is-yt-active .bgm-progress-wrap,
+.is-yt-active .bgm-time-row {
+  display: none !important;
+}
+
+#bgmYtIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.bgm-yt-open-ext {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.62rem;
+  color: #FF5555;
+  border: 1px solid rgba(255, 68, 68, 0.35);
+  background: rgba(255, 68, 68, 0.08);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.bgm-yt-open-ext:hover {
+  background: #FF4444;
+  color: #FFFFFF;
+}
+
+/* Fallback card button */
+.bgm-yt-direct-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 68, 68, 0.12);
+  border: 1px dashed rgba(255, 68, 68, 0.4);
+  border-radius: 10px;
+  color: #FF6666;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bgm-yt-direct-play:hover {
+  background: rgba(255, 68, 68, 0.22);
+  border-color: #FF5555;
+}

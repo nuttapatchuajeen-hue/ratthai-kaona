@@ -208,6 +208,146 @@
     }
   ];
 
+  // ── รายการคลิป YouTube คัดสรรสำหรับค้นหาและเล่นทันที ──
+  var YT_VIDEOS = [
+    {
+      id: 'HuDH8-4Srpk',
+      title: 'รวมเพลงฮิต TikTok 2026 ฟังยาวๆ 🎧 เพราะพี่รักจริง • แผลใหม่ | เพลงดังฟังเพลินๆ',
+      channel: 'CorridosPesados · รวมเพลงฮิต',
+      category: 'music',
+      categoryLabel: 'เพลงฮิต',
+      thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg'
+    },
+    {
+      id: 'm8Yd1P6FEd8',
+      title: 'รวมเพลงลูกทุ่ง Cover เพราะๆ ไม่มีโฆษณา รบกวนเวลาฟังเพลง 💖 โคตรคิดถึง เพลงเพราะตลอดกาล',
+      channel: 'เพลงเพราะตลอดกาล',
+      category: 'music',
+      categoryLabel: 'เพลงเพราะ',
+      thumb: 'https://i.ytimg.com/vi/m8Yd1P6FEd8/hqdefault.jpg'
+    },
+    {
+      id: 'dGVm5Lw8cfA',
+      title: 'พี่เอ็ด 7 วิ - เงินทอนแลนด์ (Official MV เพลงสะท้อนสังคม)',
+      channel: 'พี่เอ็ด 7 วิ',
+      category: 'music',
+      categoryLabel: 'เพลงดัง',
+      thumb: 'https://i.ytimg.com/vi/dGVm5Lw8cfA/hqdefault.jpg'
+    },
+    {
+      id: '4xDzrJKXOOY',
+      title: 'synthwave radio 🌌 - chill synth / retro beats to relax (มิกซ์เพลง)',
+      channel: 'Lofi Girl - Synthwave',
+      category: 'mix',
+      categoryLabel: 'มิกซ์เพลง',
+      thumb: 'https://i.ytimg.com/vi/4xDzrJKXOOY/hqdefault.jpg'
+    },
+    {
+      id: 'F_B_kKvhYQk',
+      title: 'ถ่ายทอดสด การประชุมสภาผู้แทนราษฎร (รัฐสภาไทย)',
+      channel: 'TPchannel วิทยุและโทรทัศน์รัฐสภา',
+      category: 'live',
+      categoryLabel: 'ไลฟ์สด',
+      thumb: 'https://i.ytimg.com/vi/F_B_kKvhYQk/hqdefault.jpg'
+    },
+    {
+      id: '-5Lu0jS9U4U',
+      title: 'การดำเนินโครงการ OTOD Digital Durian 2568',
+      channel: 'depa Thailand',
+      category: 'tech',
+      categoryLabel: 'เทคโนโลยีภาครัฐ',
+      thumb: 'https://i.ytimg.com/vi/-5Lu0jS9U4U/hqdefault.jpg'
+    },
+    {
+      id: 'zQ9ZgU4H7m0',
+      title: 'เปิดตัวแพลตฟอร์มบริการดิจิทัลภาครัฐ DGA Thailand',
+      channel: 'DGA Thailand',
+      category: 'tech',
+      categoryLabel: 'รัฐบาลดิจิทัล',
+      thumb: 'https://i.ytimg.com/vi/zQ9ZgU4H7m0/hqdefault.jpg'
+    },
+    {
+      id: 'gC44L044gEs',
+      title: 'Thailand Smart City & Big Data Platform 2026',
+      channel: 'depa Thailand',
+      category: 'tech',
+      categoryLabel: 'สมาร์ตซิตี้',
+      thumb: 'https://i.ytimg.com/vi/gC44L044gEs/hqdefault.jpg'
+    },
+    {
+      id: 'hX0VjH-1a6E',
+      title: 'จับตานโยบายดิจิทัลและการปฏิรูปภาครัฐ — ข่าวค่ำ Thai PBS',
+      channel: 'Thai PBS News',
+      category: 'gov',
+      categoryLabel: 'ข่าวการเมือง',
+      thumb: 'https://i.ytimg.com/vi/hX0VjH-1a6E/hqdefault.jpg'
+    },
+    {
+      id: 'NybHckSEQBI',
+      title: 'สรุปการเมืองไทย และก้าวต่อไปของประชาธิปไตยดิจิทัล',
+      channel: 'workpointTODAY',
+      category: 'gov',
+      categoryLabel: 'การเมืองไทย',
+      thumb: 'https://i.ytimg.com/vi/NybHckSEQBI/hqdefault.jpg'
+    },
+    {
+      id: 'L_LUpnjgPso',
+      title: 'Claude 3.5 Sonnet & Computer Use — Anthropic AI Overview',
+      channel: 'Anthropic',
+      category: 'tech',
+      categoryLabel: 'ปัญญาประดิษฐ์ AI',
+      thumb: 'https://i.ytimg.com/vi/L_LUpnjgPso/hqdefault.jpg'
+    },
+    {
+      id: 'aircAruvnKk',
+      title: 'But what is a neural network? | Deep learning Chapter 1',
+      channel: '3Blue1Brown',
+      category: 'tech',
+      categoryLabel: 'AI & Data Science',
+      thumb: 'https://i.ytimg.com/vi/aircAruvnKk/hqdefault.jpg'
+    },
+    {
+      id: 'V1Pl8CzNzCw',
+      title: 'OpenAI GPT-4o Realtime Voice & Vision Demonstration',
+      channel: 'OpenAI Official',
+      category: 'tech',
+      categoryLabel: 'AI Innovation',
+      thumb: 'https://i.ytimg.com/vi/V1Pl8CzNzCw/hqdefault.jpg'
+    },
+    {
+      id: 'jfKfPfyJRdk',
+      title: 'lofi hip hop radio 📚 - beats to relax/study to',
+      channel: 'Lofi Girl',
+      category: 'music',
+      categoryLabel: 'Lo-Fi Chill',
+      thumb: 'https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg'
+    },
+    {
+      id: '1nue_3tUe48',
+      title: 'Cyberpunk 2077 Night City Ambient Mix — Futuristic Synth',
+      channel: 'Cyber Sounds',
+      category: 'mix',
+      categoryLabel: 'Cyberpunk BGM',
+      thumb: 'https://i.ytimg.com/vi/1nue_3tUe48/hqdefault.jpg'
+    },
+    {
+      id: 'uD4izuDMUQA',
+      title: 'เจาะลึกทิศทางเศรษฐกิจและเทคโนโลยีดิจิทัลไทย 2026',
+      channel: 'THE STANDARD WEALTH',
+      category: 'podcast',
+      categoryLabel: 'พอดแคสต์/สาระ',
+      thumb: 'https://i.ytimg.com/vi/uD4izuDMUQA/hqdefault.jpg'
+    },
+    {
+      id: '1fueZCTYkpA',
+      title: 'Mission To The Moon — การปรับตัวของภาครัฐในยุค AI First',
+      channel: 'Mission To The Moon',
+      category: 'podcast',
+      categoryLabel: 'สารคดีนวัตกรรม',
+      thumb: 'https://i.ytimg.com/vi/1fueZCTYkpA/hqdefault.jpg'
+    }
+  ];
+
   // ── ฟังก์ชันคำนวณ Path ──
   function getAudioBase() {
     var scripts = document.querySelectorAll('script[src*="cyber-audio.js"]');
@@ -288,6 +428,10 @@
   var prevVolume = currentVolume;
   var drawerOpen = false;
   var isTucked = savedTucked;
+  var currentMode = 'bgm'; // 'bgm' or 'yt'
+  var currentYtVideo = null;
+  var ytSearchQuery = '';
+  var ytSelectedCategory = 'all';
 
   // ── Audio Element ──
   var audio = new Audio();
@@ -323,6 +467,9 @@
   }
 
   function loadTrack(idx, startPos) {
+    if (currentMode === 'yt') {
+      switchToBgm();
+    }
     if (idx < 0) idx = TRACKS.length - 1;
     if (idx >= TRACKS.length) idx = 0;
     currentTrackIdx = idx;
@@ -363,11 +510,33 @@
   }
 
   function togglePlay() {
+    if (currentMode === 'yt') {
+      if (!dom.ytPlayerWrap || dom.ytPlayerWrap.style.display === 'none' || !dom.ytIframe.src) {
+        var filtered = getFilteredYtVideos();
+        var targetVid = currentYtVideo || (filtered.length > 0 ? filtered[0] : YT_VIDEOS[0]);
+        if (targetVid) playYtVideo(targetVid);
+      } else {
+        stopYtVideo();
+      }
+      return;
+    }
     if (audio.paused) playAudio();
     else pauseAudio();
   }
 
   function nextTrack() {
+    if (currentMode === 'yt') {
+      var filtered = getFilteredYtVideos();
+      if (filtered.length === 0) return;
+      var curId = currentYtVideo ? currentYtVideo.id : '';
+      var pos = -1;
+      for (var i = 0; i < filtered.length; i++) {
+        if (filtered[i].id === curId) { pos = i; break; }
+      }
+      var nextVid = (pos !== -1) ? filtered[(pos + 1) % filtered.length] : filtered[0];
+      playYtVideo(nextVid);
+      return;
+    }
     var wasPlaying = !audio.paused || isPlaying;
     var filtered = getFilteredTrackIndices(selectedCategory);
     var pos = filtered.indexOf(currentTrackIdx);
@@ -377,6 +546,18 @@
   }
 
   function prevTrack() {
+    if (currentMode === 'yt') {
+      var filtered = getFilteredYtVideos();
+      if (filtered.length === 0) return;
+      var curId = currentYtVideo ? currentYtVideo.id : '';
+      var pos = -1;
+      for (var i = 0; i < filtered.length; i++) {
+        if (filtered[i].id === curId) { pos = i; break; }
+      }
+      var prevVid = (pos !== -1) ? filtered[(pos - 1 + filtered.length) % filtered.length] : filtered[filtered.length - 1];
+      playYtVideo(prevVid);
+      return;
+    }
     var wasPlaying = !audio.paused || isPlaying;
     var filtered = getFilteredTrackIndices(selectedCategory);
     var pos = filtered.indexOf(currentTrackIdx);
@@ -391,6 +572,15 @@
     audio.volume = val;
     isMuted = (val === 0);
     localStorage.setItem('cyber-bgm-volume', val);
+    if (dom.ytIframe && dom.ytIframe.contentWindow) {
+      try {
+        dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'setVolume',
+          args: [val * 100]
+        }), '*');
+      } catch (e) {}
+    }
     updateUI();
   }
 
@@ -398,10 +588,28 @@
     if (isMuted || audio.volume === 0) {
       isMuted = false;
       setVolume(prevVolume > 0.05 ? prevVolume : 0.35);
+      if (dom.ytIframe && dom.ytIframe.contentWindow) {
+        try {
+          dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+            event: 'command',
+            func: 'unMute',
+            args: []
+          }), '*');
+        } catch (e) {}
+      }
     } else {
       prevVolume = audio.volume;
       isMuted = true;
       setVolume(0);
+      if (dom.ytIframe && dom.ytIframe.contentWindow) {
+        try {
+          dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+            event: 'command',
+            func: 'mute',
+            args: []
+          }), '*');
+        } catch (e) {}
+      }
     }
   }
 
@@ -504,6 +712,329 @@
     }
   }
 
+  // ── YOUTUBE LOGIC & STREAMING ──
+  function extractYtVideoId(val) {
+    if (!val || typeof val !== 'string') return null;
+    val = val.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(val)) return val;
+    var m = val.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/))([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function getFilteredYtVideos() {
+    var q = ytSearchQuery.toLowerCase().trim();
+    return YT_VIDEOS.filter(function (v) {
+      var matchCat = (ytSelectedCategory === 'all' || v.category === ytSelectedCategory);
+      if (!matchCat) return false;
+      if (!q) return true;
+      var matchTitle = (v.title || '').toLowerCase().indexOf(q) !== -1;
+      var matchChan = (v.channel || '').toLowerCase().indexOf(q) !== -1;
+      var matchCatLabel = (v.categoryLabel || '').toLowerCase().indexOf(q) !== -1;
+      return matchTitle || matchChan || matchCatLabel;
+    });
+  }
+
+  var searchDebounceTimer = null;
+  var isSearchingYt = false;
+
+  function getYtSearchUrl(query) {
+    var base = '';
+    if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
+      base = 'http://localhost:3333';
+    }
+    return base + '/api/yt-search?q=' + encodeURIComponent(query);
+  }
+
+  function renderYtNoResults(query, isError) {
+    if (!dom.ytQueueList) return;
+    if (isError) {
+      var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+      dom.ytQueueList.innerHTML = [
+        '<div style="padding:24px 16px;text-align:center;color:#7E97A8;">',
+        '  <div style="font-size:1.1rem;color:#FF5C1A;margin-bottom:6px;">⚠️ ไม่สามารถเชื่อมต่อกับระบบค้นหาได้</div>',
+        isLocal
+          ? '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;">กรุณาเปิดหน้าเว็บผ่าน <b>http://localhost:3333</b> เพื่อค้นหาคลิปสดจาก YouTube</div><a href="http://localhost:3333/hub/index.html" class="bgm-yt-chip active" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:6px 14px;background:#00E5FF;color:#05080E;font-weight:700;border-radius:8px;">🌐 เปิดที่ http://localhost:3333</a>'
+          : '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;">ระบบค้นหากำลังเชื่อมต่อใหม่ กรุณาลองค้นหาใหม่อีกครั้ง</div>',
+        '</div>'
+      ].join('');
+      return;
+    }
+    dom.ytQueueList.innerHTML = [
+      '<div style="padding:28px 16px;text-align:center;color:#7E97A8;">',
+      '  <div style="font-size:1.1rem;color:#FF5C1A;margin-bottom:6px;">⚠️ ไม่พบคลิปที่ตรงกัน</div>',
+      '  <div style="font-size:0.8rem;margin-bottom:12px;">ไม่พบผลลัพธ์สำหรับ &ldquo;' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '&rdquo;</div>',
+      '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-chip" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#00E5FF;border-color:rgba(0,229,255,0.4);padding:6px 14px;">',
+      '    เปิดค้นหาบน YouTube.com ↗',
+      '  </a>',
+      '</div>'
+    ].join('');
+  }
+
+  function performYtLiveSearch(query, autoPlayFirst) {
+    query = (query || '').trim();
+    if (!query) return;
+
+    if (dom.ytQueueList) {
+      dom.ytQueueList.innerHTML = [
+        '<div style="padding:32px 16px;text-align:center;color:#00E5FF;">',
+        '  <div style="font-size:1.6rem;margin-bottom:8px;">🔍</div>',
+        '  <div style="font-weight:700;font-size:0.9rem;">กำลังค้นหาคลิปบน YouTube...</div>',
+        '  <div style="font-size:0.75rem;color:#7E97A8;margin-top:4px;">&ldquo;' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '&rdquo;</div>',
+        '</div>'
+      ].join('');
+    }
+
+    isSearchingYt = true;
+    fetch(getYtSearchUrl(query))
+      .then(function (res) { return res.json(); })
+      .then(function (results) {
+        isSearchingYt = false;
+        if (Array.isArray(results) && results.length > 0) {
+          for (var i = results.length - 1; i >= 0; i--) {
+            var rv = results[i];
+            var existIdx = -1;
+            for (var j = 0; j < YT_VIDEOS.length; j++) {
+              if (YT_VIDEOS[j].id === rv.id) { existIdx = j; break; }
+            }
+            if (existIdx !== -1) {
+              YT_VIDEOS.splice(existIdx, 1);
+            }
+            YT_VIDEOS.unshift(rv);
+          }
+          renderYtQueue(results);
+          if (autoPlayFirst && results[0]) {
+            playYtVideo(results[0]);
+          }
+        } else {
+          renderYtNoResults(query, false);
+        }
+      })
+      .catch(function () {
+        isSearchingYt = false;
+        renderYtNoResults(query, true);
+      });
+  }
+
+  function renderYtQueue(customList) {
+    if (!dom.ytQueueList) return;
+    var filtered = customList || getFilteredYtVideos();
+    var q = ytSearchQuery.trim();
+
+    if (filtered.length === 0) {
+      if (q) {
+        dom.ytQueueList.innerHTML = [
+          '<div class="bgm-yt-direct-play" id="bgmYtDirectSearch">',
+          '  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>',
+          '  <div>',
+          '    <div style="font-weight:700;font-size:0.85rem;color:#00E5FF;">ค้นหาคลิปบน YouTube สด</div>',
+          '    <div style="font-size:0.75rem;color:#7E97A8;margin-top:2px;">คลิกเพื่อค้นหา &ldquo;' + q.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '&rdquo; ทันที</div>',
+          '  </div>',
+          '</div>'
+        ].join('');
+        var directBtn = document.getElementById('bgmYtDirectSearch');
+        if (directBtn) {
+          directBtn.addEventListener('click', function () {
+            performYtLiveSearch(q, true);
+          });
+        }
+      } else {
+        dom.ytQueueList.innerHTML = '<div style="padding:24px;text-align:center;color:#7E97A8;font-size:0.85rem;">ไม่พบคลิปในหมวดนี้</div>';
+      }
+      return;
+    }
+
+    var html = filtered.map(function (v) {
+      var isCurrent = currentYtVideo && currentYtVideo.id === v.id && dom.ytPlayerWrap && dom.ytPlayerWrap.style.display !== 'none';
+      var thumbUrl = v.thumb || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
+      return [
+        '<div class="bgm-yt-item ' + (isCurrent ? 'active' : '') + '" data-ytid="' + v.id + '">',
+        '  <div class="bgm-yt-thumb-wrap">',
+        '    <img class="bgm-yt-thumb" src="' + thumbUrl + '" alt="' + (v.title || '').replace(/"/g, '&quot;') + '" loading="lazy" />',
+        '    <div class="bgm-yt-thumb-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>',
+        '  </div>',
+        '  <div class="bgm-yt-info">',
+        '    <div class="bgm-yt-title" title="' + (v.title || '').replace(/"/g, '&quot;') + '">' + (v.title || '') + '</div>',
+        '    <div class="bgm-yt-sub">',
+        '      <span class="bgm-yt-channel">' + (v.channel || 'YouTube') + '</span>',
+        '      <span class="bgm-yt-tag">' + (v.categoryLabel || 'YT') + '</span>',
+        '    </div>',
+        '  </div>',
+        '</div>'
+      ].join('');
+    }).join('');
+
+    dom.ytQueueList.innerHTML = html;
+
+    var items = dom.ytQueueList.querySelectorAll('.bgm-yt-item');
+    items.forEach(function (item) {
+      item.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var ytid = item.getAttribute('data-ytid');
+        var vid = YT_VIDEOS.find(function (v) { return v.id === ytid; });
+        if (vid) {
+          playYtVideo(vid);
+        }
+      });
+    });
+  }
+
+  function playYtVideo(v) {
+    if (!v || !v.id) return;
+    pauseAudio();
+
+    currentMode = 'yt';
+    currentYtVideo = v;
+
+    if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
+    if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
+    if (dom.progressWrap) dom.progressWrap.style.display = 'none';
+
+    var embedOrigin = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
+      ? '&origin=' + encodeURIComponent(location.origin)
+      : '';
+    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1' + embedOrigin;
+
+    if (dom.ytIframe) {
+      dom.ytIframe.src = embedUrl;
+    }
+
+    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
+    if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
+    if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = v.channel;
+    if (dom.cardTrackCat) {
+      dom.cardTrackCat.textContent = v.categoryLabel || 'YouTube';
+      dom.cardTrackCat.style.borderColor = '#FF003360';
+      dom.cardTrackCat.style.color = '#FF4444';
+    }
+    if (dom.cardYear) dom.cardYear.textContent = 'YT';
+    if (dom.badgeHq) dom.badgeHq.textContent = 'HD';
+
+    if (dom.ytExtLink) {
+      dom.ytExtLink.style.display = 'inline-flex';
+      dom.ytExtLink.href = 'https://www.youtube.com/watch?v=' + v.id;
+    }
+
+    if (dom.pillName) dom.pillName.textContent = '🔴 ' + v.title;
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
+    if (dom.pill) dom.pill.classList.add('is-playing');
+    if (dom.slot) dom.slot.classList.add('is-playing');
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
+
+    renderYtQueue();
+  }
+
+  function stopYtVideo() {
+    if (dom.ytIframe) dom.ytIframe.src = '';
+    if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'none';
+    if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'block';
+    if (dom.progressWrap) dom.progressWrap.style.display = 'block';
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
+    if (dom.pill) dom.pill.classList.remove('is-playing');
+    if (dom.slot) dom.slot.classList.remove('is-playing');
+    renderYtQueue();
+  }
+
+  function handleYtInput(val, autoPlay) {
+    val = (val || '').trim();
+    if (!val) {
+      ytSearchQuery = '';
+      renderYtQueue();
+      return;
+    }
+
+    var id = extractYtVideoId(val);
+    if (id) {
+      var existing = YT_VIDEOS.find(function (v) { return v.id === id; });
+      if (existing) {
+        playYtVideo(existing);
+        return;
+      }
+      fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json')
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var newVid = {
+            id: id,
+            title: data.title || ('YouTube Video (' + id + ')'),
+            channel: data.author_name || 'YouTube',
+            category: 'custom',
+            categoryLabel: 'Custom Video',
+            thumb: data.thumbnail_url || ('https://i.ytimg.com/vi/' + id + '/hqdefault.jpg')
+          };
+          YT_VIDEOS.unshift(newVid);
+          renderYtQueue();
+          playYtVideo(newVid);
+        })
+        .catch(function () {
+          var newVid = {
+            id: id,
+            title: 'YouTube Video (' + id + ')',
+            channel: 'YouTube Video',
+            category: 'custom',
+            categoryLabel: 'YouTube',
+            thumb: 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'
+          };
+          YT_VIDEOS.unshift(newVid);
+          renderYtQueue();
+          playYtVideo(newVid);
+        });
+      return;
+    }
+
+    ytSearchQuery = val;
+    var filtered = getFilteredYtVideos();
+    renderYtQueue();
+
+    if (autoPlay) {
+      if (filtered.length > 0) {
+        playYtVideo(filtered[0]);
+      } else {
+        performYtLiveSearch(val, true);
+      }
+    } else {
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      if (filtered.length === 0 && val.length >= 2) {
+        searchDebounceTimer = setTimeout(function () {
+          performYtLiveSearch(val, false);
+        }, 500);
+      }
+    }
+  }
+
+  function switchToBgm() {
+    currentMode = 'bgm';
+    if (dom.btnModeBgm) dom.btnModeBgm.classList.add('active');
+    if (dom.btnModeYt) dom.btnModeYt.classList.remove('active');
+    if (dom.sectionBgm) dom.sectionBgm.style.display = 'block';
+    if (dom.sectionYt) dom.sectionYt.style.display = 'none';
+    if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'none';
+    if (dom.ytIframe) dom.ytIframe.src = '';
+    if (dom.ytExtLink) dom.ytExtLink.style.display = 'none';
+    if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'block';
+    if (dom.progressWrap) dom.progressWrap.style.display = 'block';
+    if (dom.panelTag) dom.panelTag.textContent = 'TH_AI_BGM · 48KHZ STEREO';
+    if (dom.badgeHq) dom.badgeHq.textContent = 'HQ';
+    updateUI();
+  }
+
+  function switchToYt() {
+    currentMode = 'yt';
+    if (dom.btnModeYt) dom.btnModeYt.classList.add('active');
+    if (dom.btnModeBgm) dom.btnModeBgm.classList.remove('active');
+    if (dom.sectionBgm) dom.sectionBgm.style.display = 'none';
+    if (dom.sectionYt) dom.sectionYt.style.display = 'block';
+    renderYtQueue();
+
+    if (currentYtVideo && dom.ytIframe && dom.ytIframe.src) {
+      if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
+      if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
+      if (dom.progressWrap) dom.progressWrap.style.display = 'none';
+      if (dom.ytExtLink) dom.ytExtLink.style.display = 'inline-flex';
+    }
+  }
+
   function buildDOM() {
     var cssHref = getCssPath();
     if (!document.querySelector('link[href*="cyber-audio.css"]')) {
@@ -562,7 +1093,7 @@
       '    <!-- LEFT PANEL: ANALYZER & PLAYER -->',
       '    <div class="bgm-left-panel">',
       '      <div class="bgm-panel-topbar">',
-      '        <span>TH_AI_BGM · 48KHZ STEREO</span>',
+      '        <span id="bgmPanelTag">TH_AI_BGM · 48KHZ STEREO</span>',
       '        <div class="bgm-led-group">',
       '          <div class="bgm-led-dot"></div>',
       '          <div class="bgm-led-dot"></div>',
@@ -571,6 +1102,10 @@
       '      <!-- Spectrum Visualizer -->',
       '      <div class="bgm-spectrum-wrap">',
       '        <canvas id="bgmSpectrumCanvas" width="340" height="110"></canvas>',
+      '      </div>',
+      '      <!-- YouTube Player Screen -->',
+      '      <div class="bgm-yt-player-wrap" id="bgmYtPlayerWrap" style="display:none;">',
+      '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
       '      </div>',
       '      <!-- Progress Bar -->',
       '      <div class="bgm-progress-wrap" id="bgmProgressWrap" title="คลิกเพื่อเลื่อนช่วงเพลง">',
@@ -585,9 +1120,12 @@
       '      <div class="bgm-title-row">',
       '        <div class="bgm-track-name" id="bgmCardTrackName">Cyber Pulse</div>',
       '        <div class="bgm-badges">',
-      '          <span class="bgm-badge-hq">HQ</span>',
+      '          <span class="bgm-badge-hq" id="bgmBadgeHq">HQ</span>',
       '          <span class="bgm-badge-cat" id="bgmCardCat">Cyber Synth</span>',
       '          <span class="bgm-badge-year" id="bgmCardYear">2026</span>',
+      '          <a class="bgm-yt-open-ext" id="bgmYtExtLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;" title="เปิดดูบน YouTube">',
+      '            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg> YT ↗',
+      '          </a>',
       '        </div>',
       '      </div>',
       '      <div class="bgm-track-genre" id="bgmCardTrackGenre">Thai GovTech AI · Cyber Synthwave</div>',
@@ -604,18 +1142,57 @@
       '        </div>',
       '      </div>',
       '    </div>',
-      '    <!-- RIGHT PANEL: PLAY QUEUE & CATEGORIES -->',
+      '    <!-- RIGHT PANEL: PLAY QUEUE & YOUTUBE SEARCH -->',
       '    <div class="bgm-right-panel">',
       '      <div class="bgm-queue-header">',
-      '        <div class="bgm-queue-title">Play queue</div>',
+      '        <div class="bgm-mode-switch">',
+      '          <button type="button" class="bgm-mode-btn active" id="bgmModeBtnBgm" title="โหมดเพลง AI BGM">',
+      '            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg> AI BGM',
+      '          </button>',
+      '          <button type="button" class="bgm-mode-btn is-yt" id="bgmModeBtnYt" title="โหมดค้นหาคลิป YouTube">',
+      '            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg> ค้นหาคลิป YT',
+      '          </button>',
+      '        </div>',
       '        <div class="bgm-queue-tools">',
       '          <button type="button" class="bgm-tool-btn" id="bgmBtnClose" title="ย่อหน้าต่าง">' + ICO_CLOSE + '</button>',
       '        </div>',
       '      </div>',
-      '      <!-- CATEGORY TABS -->',
-      '      <div class="bgm-category-tabs" id="bgmCatTabs">' + catTabsHtml + '</div>',
-      '      <button type="button" class="bgm-queue-playall" id="bgmBtnPlayFromStart">' + ICO_PLUS + ' เล่นเพลงทั้งหมดจากจุดเริ่มต้น</button>',
-      '      <div class="bgm-queue-list" id="bgmQueueList">' + queueItemsHtml + '</div>',
+      '      <!-- BGM SECTION (AI BGM TRACKS) -->',
+      '      <div class="bgm-section-wrap" id="bgmSectionWrap">',
+      '        <!-- CATEGORY TABS -->',
+      '        <div class="bgm-category-tabs" id="bgmCatTabs">' + catTabsHtml + '</div>',
+      '        <button type="button" class="bgm-queue-playall" id="bgmBtnPlayFromStart">' + ICO_PLUS + ' เล่นเพลงทั้งหมดจากจุดเริ่มต้น</button>',
+      '        <div class="bgm-queue-list" id="bgmQueueList">' + queueItemsHtml + '</div>',
+      '      </div>',
+      '      <!-- YOUTUBE SECTION (SEARCH & STREAM) -->',
+      '      <div class="bgm-yt-section" id="bgmYtSection" style="display:none;">',
+      '        <div class="bgm-yt-search-wrap">',
+      '          <div class="bgm-yt-search-pill">',
+      '            <input type="text" class="bgm-yt-search-input" id="bgmYtSearchInput" placeholder="ค้นหา" autocomplete="off" />',
+      '            <span class="bgm-yt-search-clear" id="bgmYtSearchClear" title="ล้าง">✕</span>',
+      '          </div>',
+      '          <button type="button" class="bgm-yt-search-btn" id="bgmYtSearchBtn" title="ค้นหาบน YouTube">',
+      '            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+      '          </button>',
+      '          <button type="button" class="bgm-yt-mic-btn" id="bgmYtMicBtn" title="ค้นหาด้วยเสียง">',
+      '            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>',
+      '          </button>',
+      '        </div>',
+      '        <!-- Quick Filter Chips (YouTube Official Chips) -->',
+      '        <div class="bgm-yt-chips" id="bgmYtChips">',
+      '          <button type="button" class="bgm-yt-chip active" data-ytcat="all" data-query="">ทั้งหมด</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="music" data-query="เพลง">เพลง</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="mix" data-query="มิกซ์">มิกซ์</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="live" data-query="ถ่ายทอดสด">ไลฟ์สด</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="podcast" data-query="พอดแคสต์">พอดแคสต์</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="game" data-query="เกม">เกม</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="latest" data-query="ข่าวล่าสุด">อัปโหลดล่าสุด</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="tech" data-query="เทคโนโลยี AI">เทคโนโลยี</button>',
+      '          <button type="button" class="bgm-yt-chip" data-ytcat="gov" data-query="การเมืองไทย สภา">การเมืองไทย</button>',
+      '        </div>',
+      '        <!-- YouTube Queue List -->',
+      '        <div class="bgm-queue-list" id="bgmYtQueueList"></div>',
+      '      </div>',
       '    </div>',
       '  </div>',
       '  <!-- FLOATING ROW WITH PILL & MINIMIZE BUTTON -->',
@@ -670,6 +1247,24 @@
     dom.queueItems = document.querySelectorAll('.bgm-queue-item');
     dom.canvas = document.getElementById('bgmSpectrumCanvas');
 
+    // YouTube DOM Elements
+    dom.btnModeBgm = document.getElementById('bgmModeBtnBgm');
+    dom.btnModeYt = document.getElementById('bgmModeBtnYt');
+    dom.sectionBgm = document.getElementById('bgmSectionWrap');
+    dom.sectionYt = document.getElementById('bgmYtSection');
+    dom.ytSearchInput = document.getElementById('bgmYtSearchInput');
+    dom.ytSearchClear = document.getElementById('bgmYtSearchClear');
+    dom.ytSearchBtn = document.getElementById('bgmYtSearchBtn');
+    dom.ytMicBtn = document.getElementById('bgmYtMicBtn');
+    dom.ytChips = document.getElementById('bgmYtChips');
+    dom.ytQueueList = document.getElementById('bgmYtQueueList');
+    dom.ytPlayerWrap = document.getElementById('bgmYtPlayerWrap');
+    dom.ytIframe = document.getElementById('bgmYtIframe');
+    dom.ytExtLink = document.getElementById('bgmYtExtLink');
+    dom.spectrumWrap = root.querySelector('.bgm-spectrum-wrap');
+    dom.panelTag = document.getElementById('bgmPanelTag');
+    dom.badgeHq = document.getElementById('bgmBadgeHq');
+
     // Attach Events
     dom.btnMin.addEventListener('click', function (e) {
       e.stopPropagation();
@@ -696,6 +1291,147 @@
         filterCategory(cat);
       });
     }
+
+    // YouTube Mode switch & search events
+    if (dom.btnModeBgm) {
+      dom.btnModeBgm.addEventListener('click', function (e) {
+        e.stopPropagation();
+        switchToBgm();
+      });
+    }
+
+    if (dom.btnModeYt) {
+      dom.btnModeYt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        switchToYt();
+      });
+    }
+
+    if (dom.ytSearchInput) {
+      dom.ytSearchInput.addEventListener('input', function () {
+        var v = dom.ytSearchInput.value;
+        if (dom.ytSearchClear) dom.ytSearchClear.style.display = v ? 'block' : 'none';
+        handleYtInput(v, false);
+      });
+      dom.ytSearchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleYtInput(dom.ytSearchInput.value, true);
+        }
+      });
+    }
+
+    if (dom.ytSearchClear) {
+      dom.ytSearchClear.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dom.ytSearchInput.value = '';
+        dom.ytSearchClear.style.display = 'none';
+        dom.ytSearchInput.focus();
+        ytSearchQuery = '';
+        ytSelectedCategory = 'all';
+        if (dom.ytChips) {
+          var chips = dom.ytChips.querySelectorAll('.bgm-yt-chip');
+          chips.forEach(function (c) { c.classList.toggle('active', c.getAttribute('data-ytcat') === 'all'); });
+        }
+        renderYtQueue();
+      });
+    }
+
+    if (dom.ytSearchBtn) {
+      dom.ytSearchBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var val = dom.ytSearchInput ? dom.ytSearchInput.value.trim() : '';
+        handleYtInput(val, true);
+      });
+    }
+
+    if (dom.ytChips) {
+      dom.ytChips.addEventListener('click', function (e) {
+        var chip = e.target.closest('.bgm-yt-chip');
+        if (!chip) return;
+        e.stopPropagation();
+        var cat = chip.getAttribute('data-ytcat') || 'all';
+        var query = chip.getAttribute('data-query') || '';
+        ytSelectedCategory = cat;
+        var chips = dom.ytChips.querySelectorAll('.bgm-yt-chip');
+        chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
+
+        if (cat === 'all' || !query) {
+          ytSearchQuery = '';
+          if (dom.ytSearchInput) dom.ytSearchInput.value = '';
+          if (dom.ytSearchClear) dom.ytSearchClear.style.display = 'none';
+          renderYtQueue();
+        } else {
+          ytSearchQuery = query;
+          if (dom.ytSearchInput) dom.ytSearchInput.value = chip.textContent.trim();
+          if (dom.ytSearchClear) dom.ytSearchClear.style.display = 'block';
+          performYtLiveSearch(query, false);
+        }
+      });
+    }
+
+    if (dom.ytMicBtn) {
+      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        var recognition = new SpeechRecognition();
+        recognition.lang = 'th-TH';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        var isListening = false;
+
+        dom.ytMicBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (isListening) {
+            recognition.stop();
+            return;
+          }
+          try {
+            recognition.start();
+          } catch (err) {
+            console.warn('Speech recognition error:', err);
+          }
+        });
+
+        recognition.onstart = function () {
+          isListening = true;
+          dom.ytMicBtn.classList.add('is-listening');
+          if (dom.ytSearchInput) dom.ytSearchInput.placeholder = 'กำลังฟังเสียง...';
+        };
+
+        recognition.onresult = function (event) {
+          isListening = false;
+          dom.ytMicBtn.classList.remove('is-listening');
+          if (dom.ytSearchInput) dom.ytSearchInput.placeholder = 'ค้นหา';
+          var transcript = (event.results && event.results[0] && event.results[0][0])
+            ? event.results[0][0].transcript
+            : '';
+          if (transcript) {
+            if (dom.ytSearchInput) dom.ytSearchInput.value = transcript;
+            if (dom.ytSearchClear) dom.ytSearchClear.style.display = 'block';
+            handleYtInput(transcript, true);
+          }
+        };
+
+        recognition.onerror = function () {
+          isListening = false;
+          dom.ytMicBtn.classList.remove('is-listening');
+          if (dom.ytSearchInput) dom.ytSearchInput.placeholder = 'ค้นหา';
+        };
+
+        recognition.onend = function () {
+          isListening = false;
+          dom.ytMicBtn.classList.remove('is-listening');
+          if (dom.ytSearchInput) dom.ytSearchInput.placeholder = 'ค้นหา';
+        };
+      } else {
+        dom.ytMicBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          alert('เบราว์เซอร์นี้ไม่รองรับ Speech Recognition');
+        });
+      }
+    }
+
+    renderYtQueue();
 
     // ── DRAGGABLE FLOATING CONTROLLER WITH EDGE SNAPPING & DYNAMIC ORIENTATION ──
     var isDragging = false;
@@ -1046,6 +1782,12 @@
 
   function updateUI() {
     if (!dom.slot) return;
+
+    if (currentMode === 'yt' && currentYtVideo && dom.ytPlayerWrap && dom.ytPlayerWrap.style.display !== 'none') {
+      if (dom.volSlider) dom.volSlider.value = audio.volume;
+      if (dom.btnMute) dom.btnMute.innerHTML = (audio.volume === 0 || isMuted) ? ICO_VOL_MUTE : ICO_VOL_HIGH;
+      return;
+    }
 
     var track = TRACKS[currentTrackIdx];
     var playingNow = !audio.paused;

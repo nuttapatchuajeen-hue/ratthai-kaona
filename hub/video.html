@@ -370,6 +370,254 @@
         flex-wrap: wrap;
       }
     }
+
+    /* ── YOUTUBE OFFICIAL DARK THEME SEARCH & CHIPS BAR ── */
+    .yt-app-header-bar {
+      max-width: 1000px;
+      margin: 2.5rem auto 0;
+      background: #0f0f0f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px 20px 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 229, 255, 0.05);
+      transition: border-color 0.25s;
+    }
+
+    .yt-top-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    .yt-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .yt-menu-icon {
+      color: #f1f1f1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    .yt-menu-icon:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .yt-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+      font-weight: 700;
+      font-size: 1.18rem;
+      letter-spacing: -0.04em;
+    }
+
+    .yt-logo-badge {
+      background: #FF0000;
+      color: #fff;
+      width: 28px;
+      height: 20px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    }
+
+    .yt-logo-th {
+      font-size: 0.62rem;
+      color: #aaa;
+      font-weight: 500;
+      vertical-align: super;
+      margin-left: 2px;
+    }
+
+    .yt-search-form {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .yt-search-box-pill {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      height: 42px;
+      background: #121212;
+      border: 1px solid #303030;
+      border-radius: 40px 0 0 40px;
+      padding: 0 16px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .yt-search-box-pill:focus-within {
+      border-color: #1c62b9;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 6px rgba(28, 98, 185, 0.4);
+    }
+
+    .yt-search-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #f1f1f1;
+      font-size: 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+    }
+
+    .yt-search-input::placeholder {
+      color: #888888;
+    }
+
+    .yt-search-clear {
+      color: #888;
+      cursor: pointer;
+      display: none;
+      padding: 4px 6px;
+      font-size: 1.1rem;
+      border-radius: 50%;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .yt-search-clear:hover { color: #fff; }
+
+    .yt-search-btn {
+      width: 64px;
+      height: 42px;
+      background: #222222;
+      border: 1px solid #303030;
+      border-left: none;
+      border-radius: 0 40px 40px 0;
+      color: #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .yt-search-btn:hover {
+      background: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .yt-mic-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #222222;
+      border: none;
+      color: #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .yt-mic-btn:hover {
+      background: #383838;
+      color: #ffffff;
+    }
+
+    .yt-mic-btn.is-listening {
+      background: #CC0000;
+      color: #ffffff;
+      animation: ytMicPulse 1.2s infinite alternate;
+    }
+
+    @keyframes ytMicPulse {
+      from { box-shadow: 0 0 4px #CC0000; transform: scale(1); }
+      to { box-shadow: 0 0 16px #FF4444; transform: scale(1.08); }
+    }
+
+    /* ── YOUTUBE CHIPS ROW ── */
+    .yt-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .yt-chips-row::-webkit-scrollbar { display: none; }
+
+    .yt-home-chip {
+      color: #f1f1f1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .yt-home-chip:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .yt-chip {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f1f1f1;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+    }
+
+    .yt-chip:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .yt-chip.active {
+      background: #f1f1f1;
+      color: #0f0f0f;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .yt-app-header-bar {
+        padding: 12px 14px;
+      }
+      .yt-top-row {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .yt-brand {
+        display: none;
+      }
+      .yt-search-form {
+        max-width: 100%;
+      }
+    }
   </style>
   <!-- ต้องมาหลัง <style> ของหน้า จึงจะทับกฎเมนูเดิมได้ (เมนูมือถือแบบลิ้นชัก) -->
   <link rel="stylesheet" href="../css/hub-nav.css" />
@@ -422,6 +670,56 @@
         </iframe>
       </div>
       <p class="video-now-playing" id="now-playing">กำลังเล่น: การดำเนินโครงการเทคโนโลยีดิจิทัลภาครัฐ <a class="np-link" href="https://www.youtube.com/watch?v=-5Lu0jS9U4U" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-play"></use></svg> เปิดบน YouTube</a></p>
+
+      <!-- YouTube App Header Search Bar & Filter Chips (สไตล์ YouTube แท้ตามภาพตัวอย่าง) -->
+      <div class="yt-app-header-bar">
+        <!-- Top row: Menu + YouTube Brand + Search Pill + Mic -->
+        <div class="yt-top-row">
+          <div class="yt-brand">
+            <div class="yt-menu-icon" title="เมนูนำทาง">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </div>
+            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="yt-logo" title="YouTube">
+              <div class="yt-logo-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span>YouTube</span>
+              <span class="yt-logo-th">TH</span>
+            </a>
+          </div>
+
+          <div class="yt-search-form">
+            <div class="yt-search-box-pill">
+              <input type="text" id="video-search-input" class="yt-search-input" placeholder="ค้นหา" autocomplete="off" />
+              <span class="yt-search-clear" id="video-search-clear" title="ล้างข้อความ">✕</span>
+            </div>
+            <button type="button" id="video-search-btn" class="yt-search-btn" title="ค้นหาบน YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <button type="button" id="video-mic-btn" class="yt-mic-btn" title="ค้นหาด้วยเสียง (ภาษาไทย)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chips row: Home icon + Scrollable pills -->
+        <div class="yt-chips-row" id="video-filter-chips">
+          <button type="button" class="yt-home-chip" id="yt-home-btn" title="หน้าแรกคลิป">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          </button>
+          <button type="button" class="yt-chip active" data-cat="all" data-query="">ทั้งหมด</button>
+          <button type="button" class="yt-chip" data-cat="music" data-query="เพลง">เพลง</button>
+          <button type="button" class="yt-chip" data-cat="mix" data-query="มิกซ์">มิกซ์</button>
+          <button type="button" class="yt-chip" data-cat="live" data-query="ถ่ายทอดสด">ไลฟ์สด</button>
+          <button type="button" class="yt-chip" data-cat="podcast" data-query="พอดแคสต์">พอดแคสต์</button>
+          <button type="button" class="yt-chip" data-cat="game" data-query="เกม">เกม</button>
+          <button type="button" class="yt-chip" data-cat="latest" data-query="ข่าวล่าสุด">อัปโหลดล่าสุด</button>
+          <button type="button" class="yt-chip" data-cat="watched" data-query="ไฮไลท์">ดูแล้ว</button>
+          <button type="button" class="yt-chip" data-cat="new" data-query="วิดีโอใหม่">วิดีโอใหม่สำหรับคุณ</button>
+          <button type="button" class="yt-chip" data-cat="tech" data-query="เทคโนโลยี ภาครัฐ AI">เทคโนโลยี</button>
+          <button type="button" class="yt-chip" data-cat="gov" data-query="การเมืองไทย สภาผู้แทนราษฎร">การเมืองไทย</button>
+        </div>
+      </div>
 
       <!-- Other Videos Grid (ดึงสดจาก YouTube RSS — ดูสคริปต์ท้ายไฟล์) -->
       <h2 style="font-family: var(--font-display); font-size: 2rem; margin-top: 6rem; color: var(--text-primary);">ข่าวและวิดีโออื่น ๆ</h2>
@@ -505,13 +803,387 @@
   <!-- พื้นที่ว่างด้านล่างสุด -->
   <div class="page-bottom-space" aria-hidden="true"></div>
 
-  <!-- ดึงวิดีโอสดจาก YouTube (ถูกกฎหมาย: RSS สาธารณะ + embed iframe ทางการ) -->
+  <!-- ดึงวิดีโอสดจาก YouTube + คลังคลิปคัดสรร และระบบค้นหา -->
   <script>
   (function () {
-    // ช่อง YouTube หน่วยงานรัฐ/เทคโนโลยีไทย (ไม่ต้องใช้ API key)
+    var CURATED_VIDEOS = [
+      { id: 'HuDH8-4Srpk', title: 'รวมเพลงฮิต TikTok 2026 ฟังยาวๆ 🎧 เพราะพี่รักจริง • แผลใหม่ | เพลงดังฟังเพลินๆ', channel: 'CorridosPesados', category: 'music', date: 'เพลงฮิต 2026', thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg' },
+      { id: 'm8Yd1P6FEd8', title: 'รวมเพลงลูกทุ่ง Cover เพราะๆ ไม่มีโฆษณา รบกวนเวลาฟังเพลง 💖 โคตรคิดถึง เพลงเพราะตลอดกาล', channel: 'เพลงเพราะตลอดกาล', category: 'music', date: 'เพลงเพราะ', thumb: 'https://i.ytimg.com/vi/m8Yd1P6FEd8/hqdefault.jpg' },
+      { id: 'dGVm5Lw8cfA', title: 'พี่เอ็ด 7 วิ - เงินทอนแลนด์ (Official MV เพลงสะท้อนสังคม)', channel: 'พี่เอ็ด 7 วิ', category: 'music', date: 'เพลงดัง', thumb: 'https://i.ytimg.com/vi/dGVm5Lw8cfA/hqdefault.jpg' },
+      { id: '4xDzrJKXOOY', title: 'synthwave radio 🌌 - chill synth / retro beats to relax (มิกซ์เพลง)', channel: 'Lofi Girl Synthwave', category: 'mix', date: 'มิกซ์เพลง', thumb: 'https://i.ytimg.com/vi/4xDzrJKXOOY/hqdefault.jpg' },
+      { id: '-5Lu0jS9U4U', title: 'การดำเนินโครงการ OTOD Digital Durian 2568', channel: 'depa Thailand', category: 'tech', date: 'depa Thailand', thumb: 'https://i.ytimg.com/vi/-5Lu0jS9U4U/hqdefault.jpg' },
+      { id: 'zQ9ZgU4H7m0', title: 'เปิดตัวแพลตฟอร์มบริการดิจิทัลภาครัฐ DGA Thailand', channel: 'DGA Thailand', category: 'tech', date: 'DGA Official', thumb: 'https://i.ytimg.com/vi/zQ9ZgU4H7m0/hqdefault.jpg' },
+      { id: 'gC44L044gEs', title: 'Thailand Smart City & Big Data Platform 2026', channel: 'depa Thailand', category: 'tech', date: 'Smart City Thailand', thumb: 'https://i.ytimg.com/vi/gC44L044gEs/hqdefault.jpg' },
+      { id: 'F_B_kKvhYQk', title: 'ถ่ายทอดสด การประชุมสภาผู้แทนราษฎร (รัฐสภาไทย)', channel: 'TPchannel วิทยุและโทรทัศน์รัฐสภา', category: 'live', date: 'โทรทัศน์รัฐสภา', thumb: 'https://i.ytimg.com/vi/F_B_kKvhYQk/hqdefault.jpg' },
+      { id: 'hX0VjH-1a6E', title: 'จับตานโยบายดิจิทัลและการปฏิรูปภาครัฐ — ข่าวค่ำ Thai PBS', channel: 'Thai PBS News', category: 'gov', date: 'Thai PBS', thumb: 'https://i.ytimg.com/vi/hX0VjH-1a6E/hqdefault.jpg' },
+      { id: 'NybHckSEQBI', title: 'สรุปการเมืองไทย และก้าวต่อไปของประชาธิปไตยดิจิทัล', channel: 'workpointTODAY', category: 'gov', date: 'TODAY News', thumb: 'https://i.ytimg.com/vi/NybHckSEQBI/hqdefault.jpg' },
+      { id: 'L_LUpnjgPso', title: 'Claude 3.5 Sonnet & Computer Use — Anthropic AI Overview', channel: 'Anthropic', category: 'tech', date: 'Anthropic AI', thumb: 'https://i.ytimg.com/vi/L_LUpnjgPso/hqdefault.jpg' },
+      { id: 'aircAruvnKk', title: 'But what is a neural network? | Deep learning Chapter 1', channel: '3Blue1Brown', category: 'tech', date: '3Blue1Brown', thumb: 'https://i.ytimg.com/vi/aircAruvnKk/hqdefault.jpg' },
+      { id: 'V1Pl8CzNzCw', title: 'OpenAI GPT-4o Realtime Voice & Vision Demonstration', channel: 'OpenAI Official', category: 'tech', date: 'OpenAI', thumb: 'https://i.ytimg.com/vi/V1Pl8CzNzCw/hqdefault.jpg' },
+      { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio 📚 - beats to relax/study to', channel: 'Lofi Girl', category: 'music', date: 'Lofi Girl', thumb: 'https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg' },
+      { id: '1nue_3tUe48', title: 'Cyberpunk 2077 Night City Ambient Mix — Futuristic Synth', channel: 'Cyber Sounds', category: 'mix', date: 'Cyber Ambient', thumb: 'https://i.ytimg.com/vi/1nue_3tUe48/hqdefault.jpg' },
+      { id: 'uD4izuDMUQA', title: 'เจาะลึกทิศทางเศรษฐกิจและเทคโนโลยีดิจิทัลไทย 2026', channel: 'THE STANDARD WEALTH', category: 'podcast', date: 'THE STANDARD', thumb: 'https://i.ytimg.com/vi/uD4izuDMUQA/hqdefault.jpg' },
+      { id: '1fueZCTYkpA', title: 'Mission To The Moon — การปรับตัวของภาครัฐในยุค AI First', channel: 'Mission To The Moon', category: 'podcast', date: 'Mission To The Moon', thumb: 'https://i.ytimg.com/vi/1fueZCTYkpA/hqdefault.jpg' }
+    ];
+
+    var allVideos = CURATED_VIDEOS.slice();
+    var currentCat = 'all';
+    var searchQuery = '';
+
+    var mainVideo = document.getElementById('main-video');
+    var nowPlaying = document.getElementById('now-playing');
+    var grid = document.getElementById('videos-grid');
+    var searchInput = document.getElementById('video-search-input');
+    var searchBtn = document.getElementById('video-search-btn');
+    var searchClear = document.getElementById('video-search-clear');
+    var micBtn = document.getElementById('video-mic-btn');
+    var homeBtn = document.getElementById('yt-home-btn');
+    var filterChips = document.getElementById('video-filter-chips');
+
+    function extractYtId(val) {
+      if (!val || typeof val !== 'string') return null;
+      val = val.trim();
+      if (/^[a-zA-Z0-9_-]{11}$/.test(val)) return val;
+      var m = val.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/))([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+
+    function embedUrl(id) {
+      var originParam = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
+        ? '&origin=' + encodeURIComponent(location.origin)
+        : '';
+      return 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&modestbranding=1&autoplay=1' + originParam;
+    }
+
+    function setMain(v, scroll) {
+      if (!v || !v.id) return;
+      mainVideo.src = embedUrl(v.id);
+      mainVideo.title = v.title || 'YouTube Video';
+      if (nowPlaying) {
+        nowPlaying.innerHTML = 'กำลังเล่น: ' + (v.title || '') +
+          ' <a class="np-link" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-play"></use></svg> เปิดบน YouTube</a>';
+      }
+      if (scroll) {
+        document.querySelector('.video-player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function getYtSearchUrl(query) {
+      var base = '';
+      if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
+        base = 'http://localhost:3333';
+      }
+      return base + '/api/yt-search?q=' + encodeURIComponent(query);
+    }
+
+    function performPageLiveSearch(query, scroll) {
+      query = (query || '').trim();
+      if (!query) return;
+
+      grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--accent-cyan); font-size: 1.1rem;">' +
+        '<div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>' +
+        'กำลังค้นหาคลิปบน YouTube: "' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '"...' +
+      '</div>';
+
+      fetch(getYtSearchUrl(query))
+        .then(function (r) { return r.json(); })
+        .then(function (results) {
+          if (Array.isArray(results) && results.length > 0) {
+            for (var i = results.length - 1; i >= 0; i--) {
+              var rv = results[i];
+              var existIdx = allVideos.findIndex(function (x) { return x.id === rv.id; });
+              if (existIdx !== -1) allVideos.splice(existIdx, 1);
+              allVideos.unshift(rv);
+            }
+            searchQuery = query;
+            renderGrid(results);
+            setMain(results[0], scroll);
+          } else {
+            renderPageNoResults(query, false);
+          }
+        })
+        .catch(function () {
+          renderPageNoResults(query, true);
+        });
+    }
+
+    function renderPageNoResults(query, isError) {
+      if (isError) {
+        var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">' +
+          '<div style="font-size: 2rem; margin-bottom: 0.5rem; color: #FF5C1A;">⚠️</div>' +
+          '<p style="color: var(--text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">ไม่สามารถเชื่อมต่อระบบค้นหาได้</p>' +
+          (isLocal
+            ? '<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">กรุณาเปิดหน้าเว็บผ่าน <b>http://localhost:3333</b> เพื่อค้นหาคลิปสดจาก YouTube</p><a href="http://localhost:3333/hub/video.html" class="video-search-btn" style="display:inline-flex;margin: 0 auto;text-decoration:none;">🌐 เปิดที่ http://localhost:3333</a>'
+            : '<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">ระบบค้นหากำลังเชื่อมต่อใหม่ กรุณาลองใหม่อีกครั้ง</p>') +
+        '</div>';
+        return;
+      }
+      grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">' +
+        '<p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem;">ไม่พบคลิปสำหรับ: "' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '"</p>' +
+        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="video-search-btn" style="display:inline-flex;margin: 0 auto;text-decoration:none;">🔴 เปิดค้นหาบน YouTube.com ↗</a>' +
+      '</div>';
+    }
+
+    function renderGrid(customList) {
+      var q = searchQuery.toLowerCase().trim();
+      var filtered = customList || allVideos.filter(function (v) {
+        var matchCat = (currentCat === 'all' || v.category === currentCat);
+        if (!matchCat) return false;
+        if (!q) return true;
+        var t = (v.title || '').toLowerCase();
+        var c = (v.channel || '').toLowerCase();
+        return t.indexOf(q) !== -1 || c.indexOf(q) !== -1;
+      });
+
+      if (filtered.length === 0) {
+        if (q) {
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">' +
+            '<p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem;">ไม่พบคลิปในฐานข้อมูลสำหรับ: "' + q.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '"</p>' +
+            '<button type="button" id="btn-yt-live-search" class="video-search-btn" style="margin: 0 auto;">🔴 ค้นหาคลิปบน YouTube สดทันที</button>' +
+          '</div>';
+          var btnLive = document.getElementById('btn-yt-live-search');
+          if (btnLive) {
+            btnLive.addEventListener('click', function () {
+              performPageLiveSearch(q, true);
+            });
+          }
+        } else {
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted);">ไม่มีวิดีโอในหมวดหมู่นี้</div>';
+        }
+        return;
+      }
+
+      grid.innerHTML = filtered.map(function (v) {
+        var thumb = v.thumb
+          ? '<div class="video-grid-thumbnail" style="background-image:url(\'' + v.thumb + '\');background-size:cover;background-position:center;"></div>'
+          : '<div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>';
+        return '<div class="video-grid-item" data-id="' + v.id + '" data-title="' + v.title.replace(/"/g, '&quot;') + '">' +
+          thumb +
+          '<span class="video-grid-date">' + (v.date || v.channel || 'YouTube') + '</span>' +
+          '<h3 class="video-grid-title">' + v.title + '</h3>' +
+        '</div>';
+      }).join('');
+    }
+
+    var pageDebounceTimer = null;
+    function handleSearch(val, autoPlay) {
+      val = (val || '').trim();
+      if (!val) {
+        searchQuery = '';
+        renderGrid();
+        return;
+      }
+
+      var id = extractYtId(val);
+      if (id) {
+        var existing = allVideos.find(function (v) { return v.id === id; });
+        if (existing) {
+          setMain(existing, true);
+          return;
+        }
+        fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json')
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var newVid = {
+              id: id,
+              title: d.title || ('YouTube Video (' + id + ')'),
+              channel: d.author_name || 'YouTube',
+              date: 'วิดีโอที่กำหนดเอง',
+              category: 'all',
+              thumb: d.thumbnail_url || ('https://i.ytimg.com/vi/' + id + '/hqdefault.jpg')
+            };
+            allVideos.unshift(newVid);
+            renderGrid();
+            setMain(newVid, true);
+          })
+          .catch(function () {
+            var newVid = {
+              id: id,
+              title: 'YouTube Video (' + id + ')',
+              channel: 'YouTube Clip',
+              date: 'วิดีโอที่กำหนดเอง',
+              category: 'all',
+              thumb: 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'
+            };
+            allVideos.unshift(newVid);
+            renderGrid();
+            setMain(newVid, true);
+          });
+        return;
+      }
+
+      searchQuery = val;
+      var q = val.toLowerCase();
+      var matched = allVideos.filter(function (v) {
+        return (v.title || '').toLowerCase().indexOf(q) !== -1 || (v.channel || '').toLowerCase().indexOf(q) !== -1;
+      });
+      renderGrid();
+
+      if (autoPlay) {
+        if (matched.length > 0) {
+          setMain(matched[0], true);
+        } else {
+          performPageLiveSearch(val, true);
+        }
+      } else {
+        if (pageDebounceTimer) clearTimeout(pageDebounceTimer);
+        if (matched.length === 0 && val.length >= 2) {
+          pageDebounceTimer = setTimeout(function () {
+            performPageLiveSearch(val, false);
+          }, 500);
+        }
+      }
+    }
+
+    function resetToAllChips() {
+      if (!filterChips) return;
+      var chips = filterChips.querySelectorAll('.yt-chip');
+      chips.forEach(function (c) {
+        c.classList.toggle('active', c.getAttribute('data-cat') === 'all');
+      });
+      currentCat = 'all';
+      searchQuery = '';
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        var v = searchInput.value;
+        if (searchClear) searchClear.style.display = v ? 'block' : 'none';
+        handleSearch(v, false);
+      });
+      searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleSearch(searchInput.value, true);
+        }
+      });
+    }
+
+    if (searchClear) {
+      searchClear.addEventListener('click', function () {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchInput.focus();
+        resetToAllChips();
+        renderGrid(allVideos);
+      });
+    }
+
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+        var val = searchInput ? searchInput.value.trim() : '';
+        handleSearch(val, true);
+      });
+    }
+
+    if (homeBtn) {
+      homeBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        if (searchClear) searchClear.style.display = 'none';
+        resetToAllChips();
+        renderGrid(allVideos);
+        var header = document.querySelector('.yt-app-header-bar');
+        if (header) header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    if (filterChips) {
+      filterChips.addEventListener('click', function (e) {
+        var chip = e.target.closest('.yt-chip');
+        if (!chip) return;
+        var cat = chip.getAttribute('data-cat') || 'all';
+        var query = chip.getAttribute('data-query') || '';
+        currentCat = cat;
+
+        var chips = filterChips.querySelectorAll('.yt-chip');
+        chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
+
+        if (cat === 'all' || !query) {
+          searchQuery = '';
+          searchInput.value = '';
+          if (searchClear) searchClear.style.display = 'none';
+          renderGrid(allVideos);
+        } else {
+          searchQuery = query;
+          searchInput.value = chip.textContent.trim();
+          if (searchClear) searchClear.style.display = 'block';
+          performPageLiveSearch(query, false);
+        }
+      });
+    }
+
+    // Web Speech Recognition for Thai Voice Search
+    if (micBtn) {
+      var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        var recognition = new SpeechRecognition();
+        recognition.lang = 'th-TH';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        var isListening = false;
+        micBtn.addEventListener('click', function () {
+          if (isListening) {
+            recognition.stop();
+            return;
+          }
+          try {
+            recognition.start();
+          } catch (err) {
+            console.warn('Speech recognition start failed:', err);
+          }
+        });
+
+        recognition.onstart = function () {
+          isListening = true;
+          micBtn.classList.add('is-listening');
+          searchInput.placeholder = 'กำลังฟังเสียงพูดของคุณ...';
+        };
+
+        recognition.onresult = function (event) {
+          isListening = false;
+          micBtn.classList.remove('is-listening');
+          searchInput.placeholder = 'ค้นหา';
+          var transcript = (event.results && event.results[0] && event.results[0][0])
+            ? event.results[0][0].transcript
+            : '';
+          if (transcript) {
+            searchInput.value = transcript;
+            if (searchClear) searchClear.style.display = 'block';
+            handleSearch(transcript, true);
+          }
+        };
+
+        recognition.onerror = function (event) {
+          isListening = false;
+          micBtn.classList.remove('is-listening');
+          searchInput.placeholder = 'ค้นหา';
+        };
+
+        recognition.onend = function () {
+          isListening = false;
+          micBtn.classList.remove('is-listening');
+          searchInput.placeholder = 'ค้นหา';
+        };
+      } else {
+        micBtn.addEventListener('click', function () {
+          alert('เบราว์เซอร์นี้ไม่รองรับ Speech Recognition โปรดพิมพ์ค้นหาในช่องค้นหาครับ');
+        });
+      }
+    }
+
+    grid.addEventListener('click', function (e) {
+      var card = e.target.closest('.video-grid-item');
+      if (!card || !card.dataset.id) return;
+      setMain({ id: card.dataset.id, title: card.dataset.title }, true);
+    });
+
+    renderGrid();
+
     var CHANNELS = [
-      'UCwXHoijhO-aJQpIlEmUxB0w', // depa Thailand — สนง.ส่งเสริมเศรษฐกิจดิจิทัล
-      'UCvF4DIEWOnx9eiU0b7ghjIA', // Thai PBS (สำรอง)
+      'UCwXHoijhO-aJQpIlEmUxB0w', // depa Thailand
+      'UCvF4DIEWOnx9eiU0b7ghjIA'  // Thai PBS
     ];
     var feedUrl = function (cid) {
       return 'https://api.rss2json.com/v1/api.json?rss_url=' +
@@ -537,78 +1209,34 @@
       return m ? m[1] : '';
     }
 
-    var mainVideo = document.getElementById('main-video');
-    var nowPlaying = document.getElementById('now-playing');
-    var grid = document.getElementById('videos-grid');
-
-    function embedUrl(id) {
-      // เปิดจาก file:// หรือ origin เป็น "null" ห้ามส่ง &origin= เพราะ YouTube จะติด Error 153 (configuration error)
-      var originParam = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
-        ? '&origin=' + encodeURIComponent(location.origin)
-        : '';
-      return 'https://www.youtube-nocookie.com/embed/' + id +
-        '?rel=0&modestbranding=1' + originParam;
-    }
-    function watchUrl(id) { return 'https://www.youtube.com/watch?v=' + id; }
-    function isLive(title) { return /\blive\b|🔴|🟢|\[live\]|premiere|พรีเมียร์/i.test(title || ''); }
-
-    function setMain(v, scroll) {
-      if (!v || !v.id) return;
-      mainVideo.src = embedUrl(v.id);
-      mainVideo.title = v.title || 'เทคโนโลยีภาครัฐไทย';
-      if (nowPlaying) {
-        nowPlaying.innerHTML = 'กำลังเล่น: ' + v.title +
-          ' <a class="np-link" href="' + watchUrl(v.id) + '" target="_blank" rel="noopener"><svg class="mdico"><use href="#i-play"></use></svg> เปิดบน YouTube</a>';
-      }
-      if (scroll) document.querySelector('.video-player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    function render(items) {
-      var vids = items.map(function (it) {
-        return { id: videoId(it), title: decode(it.title), date: thaiDate(it.pubDate),
-                 thumb: it.thumbnail || (it.enclosure && it.enclosure.link) || '',
-                 live: isLive(decode(it.title)) };
-      }).filter(function (v) { return v.id; });
-      if (!vids.length) return false;
-
-      // จัดวิดีโอที่ไม่ใช่ Live ขึ้นก่อน (Live มักฝังเล่นไม่ติด)
-      vids.sort(function (a, b) { return (a.live ? 1 : 0) - (b.live ? 1 : 0); });
-
-      // วิดีโอแรก (ไม่ใช่ Live) = เล่นบน player หลัก โดยไม่เลื่อนจอ
-      setMain(vids[0], false);
-
-      grid.innerHTML = vids.map(function (v) {
-        var thumb = v.thumb
-          ? '<div class="video-grid-thumbnail" style="background-image:url(\'' + v.thumb + '\');background-size:cover;background-position:center;"></div>'
-          : '<div class="video-grid-thumbnail"><svg class="mdico"><use href="#i-video"></use></svg></div>';
-        return '<div class="video-grid-item" data-id="' + v.id + '" data-title="' + v.title.replace(/"/g, '&quot;') + '">' +
-          thumb +
-          '<span class="video-grid-date">' + v.date + '</span>' +
-          '<h3 class="video-grid-title">' + v.title + '</h3>' +
-        '</div>';
-      }).join('');
-      return true;
-    }
-
-    // คลิกการ์ดเพื่อเล่นบน player หลัก
-    grid.addEventListener('click', function (e) {
-      var card = e.target.closest('.video-grid-item');
-      if (!card || !card.dataset.id) return;
-      setMain({ id: card.dataset.id, title: card.dataset.title }, true);
-    });
-
     (function tryFeeds(i) {
-      if (i >= CHANNELS.length) return; // ล้มเหลวทั้งหมด → คงการ์ด placeholder เดิม
+      if (i >= CHANNELS.length) return;
       fetch(feedUrl(CHANNELS[i]))
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          if (d.status === 'ok' && d.items && d.items.length && render(d.items)) return;
+          if (d.status === 'ok' && d.items && d.items.length) {
+            d.items.forEach(function (it) {
+              var vid = videoId(it);
+              if (vid && !allVideos.some(function (x) { return x.id === vid; })) {
+                allVideos.push({
+                  id: vid,
+                  title: decode(it.title),
+                  channel: d.feed ? d.feed.title : 'ภาครัฐไทย',
+                  date: thaiDate(it.pubDate),
+                  category: 'govtech',
+                  thumb: it.thumbnail || (it.enclosure && it.enclosure.link) || ('https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg')
+                });
+              }
+            });
+            renderGrid();
+          }
           tryFeeds(i + 1);
         })
         .catch(function () { tryFeeds(i + 1); });
     })(0);
   })();
   </script>
+  <script src="../js/cyber-audio.js"></script>
 
 </body>
 </html>

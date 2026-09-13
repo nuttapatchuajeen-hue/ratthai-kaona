@@ -47,9 +47,9 @@
   <!-- Fixed Header -->
   <header class="site-header">
     <nav>
-      <span class="nav-logo">
+      <a href="index.html" class="nav-logo" title="รัฐไทยก้าวหน้า — หน้าแรก">
         <img src="images/logo.png" alt="รัฐไทยก้าวหน้า" class="nav-logo-img" loading="lazy" decoding="async" />
-      </span>
+      </a>
       <button class="nav-burger" aria-expanded="false" aria-label="เปิดเมนู">
         <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -103,27 +103,100 @@
     <div class="marquee-text">แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp; แผนที่ภาครัฐไทย &nbsp;·&nbsp;</div>
   </div>
 
-  <!-- Infinite Logo Slider -->
-  <section class="infinite-logo-slider">
-    <div class="slider-track" id="infinite-track">
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank" rel="noopener noreferrer" title="CSS3 Documentation (MDN)"><img src="images/img1.png" alt="CSS3"></a>
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noopener noreferrer" title="JavaScript Documentation (MDN)"><img src="images/img2.png" alt="JavaScript"></a>
-      <a class="slider-item" href="https://dev.java/" target="_blank" rel="noopener noreferrer" title="Java Documentation"><img src="images/img3.png" alt="Java"></a>
-      <a class="slider-item" href="https://react.dev/" target="_blank" rel="noopener noreferrer" title="React Official"><img src="images/img4.png" alt="React"></a>
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener noreferrer" title="HTML5 Documentation (MDN)"><img src="images/img6.png" alt="HTML5"></a>
-      <a class="slider-item" href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noopener noreferrer" title="C# Documentation (.NET)"><img src="images/csharp.png" alt="C#"></a>
-      <a class="slider-item" href="https://isocpp.org/" target="_blank" rel="noopener noreferrer" title="C++ Official (ISO C++)"><img src="images/cpp.png" alt="C++"></a>
-      <a class="slider-item" href="https://www.python.org/" target="_blank" rel="noopener noreferrer" title="Python Official"><img src="images/python.png" alt="Python"></a>
-      <!-- Cloned for seamless loop -->
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank" rel="noopener noreferrer" title="CSS3 Documentation (MDN)"><img src="images/img1.png" alt="CSS3"></a>
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noopener noreferrer" title="JavaScript Documentation (MDN)"><img src="images/img2.png" alt="JavaScript"></a>
-      <a class="slider-item" href="https://dev.java/" target="_blank" rel="noopener noreferrer" title="Java Documentation"><img src="images/img3.png" alt="Java"></a>
-      <a class="slider-item" href="https://react.dev/" target="_blank" rel="noopener noreferrer" title="React Official"><img src="images/img4.png" alt="React"></a>
-      <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener noreferrer" title="HTML5 Documentation (MDN)"><img src="images/img6.png" alt="HTML5"></a>
-      <a class="slider-item" href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noopener noreferrer" title="C# Documentation (.NET)"><img src="images/csharp.png" alt="C#"></a>
-      <a class="slider-item" href="https://isocpp.org/" target="_blank" rel="noopener noreferrer" title="C++ Official (ISO C++)"><img src="images/cpp.png" alt="C++"></a>
-      <a class="slider-item" href="https://www.python.org/" target="_blank" rel="noopener noreferrer" title="Python Official"><img src="images/python.png" alt="Python"></a>
+  <!-- Infinite Logo Slider (3 Channels - Logos Only) -->
+  <section class="infinite-logo-slider" aria-label="พาร์ตเนอร์และเทคโนโลยี">
+    
+    <!-- Channel 01: Core Web Tech Stack -->
+    <div class="slider-row">
+      <div class="slider-track" id="infinite-track">
+        <!-- Original 8 items -->
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank" rel="noopener noreferrer" title="CSS3 Documentation (MDN)"><img src="images/img1.png" alt="CSS3"></a>
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noopener noreferrer" title="JavaScript Documentation (MDN)"><img src="images/img2.png" alt="JavaScript"></a>
+        <a class="slider-item" href="https://dev.java/" target="_blank" rel="noopener noreferrer" title="Java Documentation"><img src="images/img3.png" alt="Java"></a>
+        <a class="slider-item" href="https://react.dev/" target="_blank" rel="noopener noreferrer" title="React Official"><img src="images/img4.png" alt="React"></a>
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener noreferrer" title="HTML5 Documentation (MDN)"><img src="images/img6.png" alt="HTML5"></a>
+        <a class="slider-item" href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noopener noreferrer" title="C# Documentation (.NET)"><img src="images/csharp.png" alt="C#"></a>
+        <a class="slider-item" href="https://isocpp.org/" target="_blank" rel="noopener noreferrer" title="C++ Official (ISO C++)"><img src="images/cpp.png" alt="C++"></a>
+        <a class="slider-item" href="https://www.python.org/" target="_blank" rel="noopener noreferrer" title="Python Official"><img src="images/python.png" alt="Python"></a>
+
+        <!-- Cloned for seamless loop -->
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank" rel="noopener noreferrer" title="CSS3 Documentation (MDN)"><img src="images/img1.png" alt="CSS3"></a>
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noopener noreferrer" title="JavaScript Documentation (MDN)"><img src="images/img2.png" alt="JavaScript"></a>
+        <a class="slider-item" href="https://dev.java/" target="_blank" rel="noopener noreferrer" title="Java Documentation"><img src="images/img3.png" alt="Java"></a>
+        <a class="slider-item" href="https://react.dev/" target="_blank" rel="noopener noreferrer" title="React Official"><img src="images/img4.png" alt="React"></a>
+        <a class="slider-item" href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener noreferrer" title="HTML5 Documentation (MDN)"><img src="images/img6.png" alt="HTML5"></a>
+        <a class="slider-item" href="https://learn.microsoft.com/en-us/dotnet/csharp/" target="_blank" rel="noopener noreferrer" title="C# Documentation (.NET)"><img src="images/csharp.png" alt="C#"></a>
+        <a class="slider-item" href="https://isocpp.org/" target="_blank" rel="noopener noreferrer" title="C++ Official (ISO C++)"><img src="images/cpp.png" alt="C++"></a>
+        <a class="slider-item" href="https://www.python.org/" target="_blank" rel="noopener noreferrer" title="Python Official"><img src="images/python.png" alt="Python"></a>
+      </div>
     </div>
+
+    <!-- Channel 02: Thai Ministries (ตราสัญลักษณ์กระทรวงและหน่วยงานภาครัฐไทย) -->
+    <div class="slider-row">
+      <div class="slider-track slider-reverse" id="track-ministries">
+        <!-- Original 12 items -->
+        <a class="slider-item ministry-item" href="https://www.opm.go.th/" target="_blank" rel="noopener noreferrer" title="สำนักนายกรัฐมนตรี (Office of the Prime Minister)"><div class="slider-thumb"><img src="images/ministries/opm.svg" alt="สำนักนายกรัฐมนตรี"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mdes.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม (MDES)"><div class="slider-thumb"><img src="images/ministries/mdes.svg" alt="กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mof.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการคลัง (Ministry of Finance)"><div class="slider-thumb"><img src="images/ministries/mof.svg" alt="กระทรวงการคลัง"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moi.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงมหาดไทย (Ministry of Interior)"><div class="slider-thumb"><img src="images/ministries/moi.svg" alt="กระทรวงมหาดไทย"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mfa.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการต่างประเทศ (Ministry of Foreign Affairs)"><div class="slider-thumb"><img src="images/ministries/mfa.svg" alt="กระทรวงการต่างประเทศ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moe.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงศึกษาธิการ (Ministry of Education)"><div class="slider-thumb"><img src="images/ministries/moe.svg" alt="กระทรวงศึกษาธิการ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moph.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงสาธารณสุข (Ministry of Public Health)"><div class="slider-thumb"><img src="images/ministries/moph.svg" alt="กระทรวงสาธารณสุข"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moj.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงยุติธรรม (Ministry of Justice)"><div class="slider-thumb"><img src="images/ministries/moj.svg" alt="กระทรวงยุติธรรม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mot.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงคมนาคม (Ministry of Transport)"><div class="slider-thumb"><img src="images/ministries/mot.svg" alt="กระทรวงคมนาคม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mhesi.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม (MHESI)"><div class="slider-thumb"><img src="images/ministries/mhesi.svg" alt="กระทรวงการอุดมศึกษาฯ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mod.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงกลาโหม (Ministry of Defence)"><div class="slider-thumb"><img src="images/ministries/mod.svg" alt="กระทรวงกลาโหม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moac.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงเกษตรและสหกรณ์ (Ministry of Agriculture and Cooperatives)"><div class="slider-thumb"><img src="images/ministries/moac.svg" alt="กระทรวงเกษตรและสหกรณ์"></div></a>
+
+        <!-- Cloned for seamless loop -->
+        <a class="slider-item ministry-item" href="https://www.opm.go.th/" target="_blank" rel="noopener noreferrer" title="สำนักนายกรัฐมนตรี (Office of the Prime Minister)"><div class="slider-thumb"><img src="images/ministries/opm.svg" alt="สำนักนายกรัฐมนตรี"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mdes.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม (MDES)"><div class="slider-thumb"><img src="images/ministries/mdes.svg" alt="กระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mof.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการคลัง (Ministry of Finance)"><div class="slider-thumb"><img src="images/ministries/mof.svg" alt="กระทรวงการคลัง"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moi.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงมหาดไทย (Ministry of Interior)"><div class="slider-thumb"><img src="images/ministries/moi.svg" alt="กระทรวงมหาดไทย"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mfa.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการต่างประเทศ (Ministry of Foreign Affairs)"><div class="slider-thumb"><img src="images/ministries/mfa.svg" alt="กระทรวงการต่างประเทศ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moe.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงศึกษาธิการ (Ministry of Education)"><div class="slider-thumb"><img src="images/ministries/moe.svg" alt="กระทรวงศึกษาธิการ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moph.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงสาธารณสุข (Ministry of Public Health)"><div class="slider-thumb"><img src="images/ministries/moph.svg" alt="กระทรวงสาธารณสุข"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moj.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงยุติธรรม (Ministry of Justice)"><div class="slider-thumb"><img src="images/ministries/moj.svg" alt="กระทรวงยุติธรรม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mot.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงคมนาคม (Ministry of Transport)"><div class="slider-thumb"><img src="images/ministries/mot.svg" alt="กระทรวงคมนาคม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mhesi.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม (MHESI)"><div class="slider-thumb"><img src="images/ministries/mhesi.svg" alt="กระทรวงการอุดมศึกษาฯ"></div></a>
+        <a class="slider-item ministry-item" href="https://www.mod.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงกลาโหม (Ministry of Defence)"><div class="slider-thumb"><img src="images/ministries/mod.svg" alt="กระทรวงกลาโหม"></div></a>
+        <a class="slider-item ministry-item" href="https://www.moac.go.th/" target="_blank" rel="noopener noreferrer" title="กระทรวงเกษตรและสหกรณ์ (Ministry of Agriculture and Cooperatives)"><div class="slider-thumb"><img src="images/ministries/moac.svg" alt="กระทรวงเกษตรและสหกรณ์"></div></a>
+      </div>
+    </div>
+
+    <!-- Channel 03: AI Ecosystem (โลโก้ AI) -->
+    <div class="slider-row">
+      <div class="slider-track track-ai" id="track-ai">
+        <!-- Original 12 items -->
+        <a class="slider-item ai-item" href="https://claude.ai/" target="_blank" rel="noopener noreferrer" title="Claude AI (Anthropic)"><div class="slider-thumb"><img src="images/logos/ai-claude-symbol.png" alt="Claude AI"></div></a>
+        <a class="slider-item ai-item" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" title="ChatGPT (OpenAI)"><div class="slider-thumb"><img src="images/logos/ai-chatgpt.png" alt="ChatGPT"></div></a>
+        <a class="slider-item ai-item" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" title="Google Gemini"><div class="slider-thumb"><img src="images/logos/ai-gemini.png" alt="Google Gemini"></div></a>
+        <a class="slider-item ai-item" href="https://grok.com/" target="_blank" rel="noopener noreferrer" title="Grok (xAI)"><div class="slider-thumb"><img src="images/logos/ai-grok.svg" alt="Grok"></div></a>
+        <a class="slider-item ai-item" href="https://z.ai/" target="_blank" rel="noopener noreferrer" title="Z.ai (Zhipu AI)"><div class="slider-thumb"><img src="images/logos/ai-zai.svg" alt="Z.ai"></div></a>
+        <a class="slider-item ai-item" href="https://manus.im/" target="_blank" rel="noopener noreferrer" title="Manus AI"><div class="slider-thumb"><img src="images/logos/ai-manus.svg" alt="Manus AI"></div></a>
+        <a class="slider-item ai-item" href="https://www.deepseek.com/" target="_blank" rel="noopener noreferrer" title="DeepSeek AI"><div class="slider-thumb"><img src="images/logos/ai-deepseek.png" alt="DeepSeek"></div></a>
+        <a class="slider-item ai-item" href="https://copilot.microsoft.com/" target="_blank" rel="noopener noreferrer" title="Microsoft Copilot"><div class="slider-thumb"><img src="images/logos/ai-copilot.png" alt="Microsoft Copilot"></div></a>
+        <a class="slider-item ai-item" href="https://notebooklm.google.com/" target="_blank" rel="noopener noreferrer" title="Google NotebookLM"><div class="slider-thumb"><img src="images/logos/ai-notebooklm.png" alt="NotebookLM"></div></a>
+        <a class="slider-item ai-item" href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" title="Canva AI"><div class="slider-thumb"><img src="images/logos/ai-canva.png" alt="Canva AI"></div></a>
+        <a class="slider-item ai-item" href="https://openthaigpt.aieat.or.th/" target="_blank" rel="noopener noreferrer" title="OpenThaiGPT / ThaiLLM"><div class="slider-thumb"><img src="images/logos/ai-thaillm.png" alt="ThaiLLM"></div></a>
+        <a class="slider-item ai-item" href="https://openai.com/" target="_blank" rel="noopener noreferrer" title="OpenAI Codex"><div class="slider-thumb"><img src="images/logos/ai-codex.png" alt="OpenAI Codex"></div></a>
+
+        <!-- Cloned for seamless loop -->
+        <a class="slider-item ai-item" href="https://claude.ai/" target="_blank" rel="noopener noreferrer" title="Claude AI (Anthropic)"><div class="slider-thumb"><img src="images/logos/ai-claude-symbol.png" alt="Claude AI"></div></a>
+        <a class="slider-item ai-item" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" title="ChatGPT (OpenAI)"><div class="slider-thumb"><img src="images/logos/ai-chatgpt.png" alt="ChatGPT"></div></a>
+        <a class="slider-item ai-item" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" title="Google Gemini"><div class="slider-thumb"><img src="images/logos/ai-gemini.png" alt="Google Gemini"></div></a>
+        <a class="slider-item ai-item" href="https://grok.com/" target="_blank" rel="noopener noreferrer" title="Grok (xAI)"><div class="slider-thumb"><img src="images/logos/ai-grok.svg" alt="Grok"></div></a>
+        <a class="slider-item ai-item" href="https://z.ai/" target="_blank" rel="noopener noreferrer" title="Z.ai (Zhipu AI)"><div class="slider-thumb"><img src="images/logos/ai-zai.svg" alt="Z.ai"></div></a>
+        <a class="slider-item ai-item" href="https://manus.im/" target="_blank" rel="noopener noreferrer" title="Manus AI"><div class="slider-thumb"><img src="images/logos/ai-manus.svg" alt="Manus AI"></div></a>
+        <a class="slider-item ai-item" href="https://www.deepseek.com/" target="_blank" rel="noopener noreferrer" title="DeepSeek AI"><div class="slider-thumb"><img src="images/logos/ai-deepseek.png" alt="DeepSeek"></div></a>
+        <a class="slider-item ai-item" href="https://copilot.microsoft.com/" target="_blank" rel="noopener noreferrer" title="Microsoft Copilot"><div class="slider-thumb"><img src="images/logos/ai-copilot.png" alt="Microsoft Copilot"></div></a>
+        <a class="slider-item ai-item" href="https://notebooklm.google.com/" target="_blank" rel="noopener noreferrer" title="Google NotebookLM"><div class="slider-thumb"><img src="images/logos/ai-notebooklm.png" alt="NotebookLM"></div></a>
+        <a class="slider-item ai-item" href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" title="Canva AI"><div class="slider-thumb"><img src="images/logos/ai-canva.png" alt="Canva AI"></div></a>
+        <a class="slider-item ai-item" href="https://openthaigpt.aieat.or.th/" target="_blank" rel="noopener noreferrer" title="OpenThaiGPT / ThaiLLM"><div class="slider-thumb"><img src="images/logos/ai-thaillm.png" alt="ThaiLLM"></div></a>
+        <a class="slider-item ai-item" href="https://openai.com/" target="_blank" rel="noopener noreferrer" title="OpenAI Codex"><div class="slider-thumb"><img src="images/logos/ai-codex.png" alt="OpenAI Codex"></div></a>
+      </div>
+    </div>
+
   </section>
 
   <!-- Scroll Container -->
