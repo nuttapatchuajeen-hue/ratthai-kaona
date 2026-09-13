@@ -292,11 +292,27 @@
     },
     {
       id: 'NybHckSEQBI',
-      title: 'สรุปการเมืองไทย และก้าวต่อไปของประชาธิปไตยดิจิทัล',
-      channel: 'workpointTODAY',
+      title: 'เพื่อไทย รัฐบาล และก้าวต่อไปของการเมืองไทย — สรุปสถานการณ์พรรคเพื่อไทย',
+      channel: 'workpointTODAY · การเมืองไทย',
       category: 'gov',
-      categoryLabel: 'การเมืองไทย',
+      categoryLabel: 'พรรคเพื่อไทย',
       thumb: 'https://i.ytimg.com/vi/NybHckSEQBI/hqdefault.jpg'
+    },
+    {
+      id: 'a3ICN2DC_hA',
+      title: 'รวมเพลงเพื่อชีวิต อมตะ คาราบาว ปู พงษ์สิทธิ์ (เพลงเพื่อชีวิตฟังสบาย)',
+      channel: 'เพลงเพื่อชีวิต อมตะ',
+      category: 'music',
+      categoryLabel: 'เพลงเพื่อชีวิต',
+      thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg'
+    },
+    {
+      id: '4xDzrJKXOOY',
+      title: 'พรรคประชาชน & ก้าวไกล อภิปรายงบประมาณและการขับเคลื่อนการเมืองใหม่',
+      channel: 'TPchannel วิทยุและโทรทัศน์รัฐสภา',
+      category: 'gov',
+      categoryLabel: 'พรรคประชาชน',
+      thumb: 'https://i.ytimg.com/vi/F_B_kKvhYQk/hqdefault.jpg'
     },
     {
       id: 'L_LUpnjgPso',
