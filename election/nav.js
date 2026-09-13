@@ -58,7 +58,6 @@
   <a class="smlink" role="menuitem" href="../stats/index.html"><span class="smico"><svg class="mdico"><use href="#i-chart-column"></use></svg></span>ข้อมูลสถิติ</a>
   <a class="smlink" role="menuitem" href="../hub/about.html"><span class="smico"><svg class="mdico"><use href="#i-user"></use></svg></span>เกี่ยวกับเรา</a>
   <a class="smlink" role="menuitem" href="../hub/survey.html"><span class="smico"><svg class="mdico"><use href="#i-clipboard-list"></use></svg></span>แบบประเมิน</a>
-  <a class="smlink" role="menuitem" href="credits.html"><span class="smico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>แหล่งอ้างอิงและไอเดีย</a>
 </div>`;
 
   var SITEMENU_CSS = `
