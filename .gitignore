@@ -35,3 +35,4 @@ __pycache__/
 # ticket/spec ที่ agent skills สร้าง (issue tracker แบบ local markdown)
 # repo นี้เป็น public — ไม่ต้องการให้เนื้อหา ticket ขึ้น GitHub
 .scratch/
+.vercel

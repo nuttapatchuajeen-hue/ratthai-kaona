@@ -868,17 +868,70 @@
       }
     }
 
+    function extractYoutubeId(input) {
+      if (!input) return null;
+      var trimmed = (input || '').trim();
+      var m = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+      if (m) return m[1];
+      if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+      return null;
+    }
+
     function getYtSearchUrl(query) {
       var base = '';
       if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
         base = 'http://localhost:3333';
+      } else if (location.hostname.indexOf('github.io') !== -1) {
+        base = 'https://ratthai-kaona.vercel.app';
       }
       return base + '/api/yt-search?q=' + encodeURIComponent(query);
+    }
+
+    function fallbackPageLocalSearch(query, scroll) {
+      var qLow = (query || '').toLowerCase().trim();
+      var qTokens = qLow.split(/[\s,·\-_/]+/).filter(Boolean);
+      var matches = allVideos.filter(function (v) {
+        var t = (v.title || '').toLowerCase();
+        var c = (v.channel || '').toLowerCase();
+        var l = (v.categoryLabel || '').toLowerCase();
+        var combined = t + ' ' + c + ' ' + l;
+        if (combined.indexOf(qLow) !== -1) return true;
+        return qTokens.some(function (token) {
+          return token.length >= 2 && combined.indexOf(token) !== -1;
+        });
+      });
+
+      if (matches.length > 0) {
+        searchQuery = query;
+        renderGrid(matches);
+        setMain(matches[0], scroll);
+        return;
+      }
+      renderPageNoResults(query, false);
     }
 
     function performPageLiveSearch(query, scroll) {
       query = (query || '').trim();
       if (!query) return;
+
+      // ตรวจจับกรณีผู้ใช้วางลิงก์คลิป YouTube หรือ Video ID โดยตรง
+      var directId = extractYoutubeId(query);
+      if (directId) {
+        var directVid = {
+          id: directId,
+          title: 'YouTube Direct Video (' + directId + ')',
+          channel: 'YouTube Direct',
+          category: 'direct',
+          categoryLabel: 'YouTube Direct',
+          thumb: 'https://i.ytimg.com/vi/' + directId + '/hqdefault.jpg'
+        };
+        var existIdx = allVideos.findIndex(function (x) { return x.id === directId; });
+        if (existIdx !== -1) allVideos.splice(existIdx, 1);
+        allVideos.unshift(directVid);
+        renderGrid([directVid]);
+        setMain(directVid, scroll);
+        return;
+      }
 
       grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--accent-cyan); font-size: 1.1rem;">' +
         '<div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>' +
@@ -886,7 +939,10 @@
       '</div>';
 
       fetch(getYtSearchUrl(query))
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+          if (!r.ok) throw new Error('Search HTTP ' + r.status);
+          return r.json();
+        })
         .then(function (results) {
           if (Array.isArray(results) && results.length > 0) {
             for (var i = results.length - 1; i >= 0; i--) {
@@ -899,29 +955,20 @@
             renderGrid(results);
             setMain(results[0], scroll);
           } else {
-            renderPageNoResults(query, false);
+            fallbackPageLocalSearch(query, scroll);
           }
         })
         .catch(function () {
-          renderPageNoResults(query, true);
+          fallbackPageLocalSearch(query, scroll);
         });
     }
 
     function renderPageNoResults(query, isError) {
-      if (isError) {
-        var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">' +
-          '<div style="font-size: 2rem; margin-bottom: 0.5rem; color: #FF5C1A;">⚠️</div>' +
-          '<p style="color: var(--text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">ไม่สามารถเชื่อมต่อระบบค้นหาได้</p>' +
-          (isLocal
-            ? '<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">กรุณาเปิดหน้าเว็บผ่าน <b>http://localhost:3333</b> เพื่อค้นหาคลิปสดจาก YouTube</p><a href="http://localhost:3333/hub/video.html" class="video-search-btn" style="display:inline-flex;margin: 0 auto;text-decoration:none;">🌐 เปิดที่ http://localhost:3333</a>'
-            : '<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">ระบบค้นหากำลังเชื่อมต่อใหม่ กรุณาลองใหม่อีกครั้ง</p>') +
-        '</div>';
-        return;
-      }
       grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">' +
-        '<p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem;">ไม่พบคลิปสำหรับ: "' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '"</p>' +
-        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="video-search-btn" style="display:inline-flex;margin: 0 auto;text-decoration:none;">🔴 เปิดค้นหาบน YouTube.com ↗</a>' +
+        '<div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🎵</div>' +
+        '<p style="color: var(--text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">ไม่พบคลิปแนะนำสำหรับ: "' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '"</p>' +
+        '<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">วางลิงก์ YouTube (เช่น https://youtu.be/...) เพื่อเปิดดูได้ทันที หรือค้นหาบน YouTube</p>' +
+        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="video-search-btn" style="display:inline-flex;margin: 0 auto;text-decoration:none;background:#FF0000;color:#FFF;">🔴 เปิดค้นหาบน YouTube.com ↗</a>' +
       '</div>';
     }
 

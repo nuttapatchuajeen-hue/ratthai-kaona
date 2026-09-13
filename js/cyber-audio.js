@@ -212,26 +212,26 @@
   var YT_VIDEOS = [
     {
       id: 'HuDH8-4Srpk',
-      title: 'รวมเพลงฮิต TikTok 2026 ฟังยาวๆ 🎧 เพราะพี่รักจริง • แผลใหม่ | เพลงดังฟังเพลินๆ',
+      title: 'รวมเพลงไทยยอดฮิต 2026 ฟังยาวๆ 🎧 เพราะพี่รักจริง • แผลใหม่ | รวมเพลงไทยสตริง เพลงฮิต TikTok',
       channel: 'CorridosPesados · รวมเพลงฮิต',
       category: 'music',
-      categoryLabel: 'เพลงฮิต',
+      categoryLabel: 'เพลงไทยยอดฮิต',
       thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg'
     },
     {
       id: 'm8Yd1P6FEd8',
-      title: 'รวมเพลงลูกทุ่ง Cover เพราะๆ ไม่มีโฆษณา รบกวนเวลาฟังเพลง 💖 โคตรคิดถึง เพลงเพราะตลอดกาล',
+      title: 'รวมเพลงลูกทุ่ง Cover เพราะๆ ไม่มีโฆษณา รบกวนเวลาฟังเพลง 💖 โคตรคิดถึง เพลงไทยลูกทุ่งเพราะตลอดกาล',
       channel: 'เพลงเพราะตลอดกาล',
       category: 'music',
-      categoryLabel: 'เพลงเพราะ',
+      categoryLabel: 'เพลงไทยลูกทุ่ง',
       thumb: 'https://i.ytimg.com/vi/m8Yd1P6FEd8/hqdefault.jpg'
     },
     {
       id: 'dGVm5Lw8cfA',
-      title: 'พี่เอ็ด 7 วิ - เงินทอนแลนด์ (Official MV เพลงสะท้อนสังคม)',
+      title: 'พี่เอ็ด 7 วิ - เงินทอนแลนด์ (Official MV เพลงสะท้อนสังคมไทย)',
       channel: 'พี่เอ็ด 7 วิ',
       category: 'music',
-      categoryLabel: 'เพลงดัง',
+      categoryLabel: 'เพลงสะท้อนสังคม',
       thumb: 'https://i.ytimg.com/vi/dGVm5Lw8cfA/hqdefault.jpg'
     },
     {
@@ -247,8 +247,16 @@
       title: 'ถ่ายทอดสด การประชุมสภาผู้แทนราษฎร (รัฐสภาไทย)',
       channel: 'TPchannel วิทยุและโทรทัศน์รัฐสภา',
       category: 'live',
-      categoryLabel: 'ไลฟ์สด',
+      categoryLabel: 'ไลฟ์สดสภา',
       thumb: 'https://i.ytimg.com/vi/F_B_kKvhYQk/hqdefault.jpg'
+    },
+    {
+      id: 'hX0VjH-1a6E',
+      title: 'ข่าวการเมืองไทย จับตานโยบายดิจิทัลและการปฏิรูปภาครัฐ — Thai PBS News',
+      channel: 'Thai PBS News',
+      category: 'gov',
+      categoryLabel: 'ข่าวการเมือง',
+      thumb: 'https://i.ytimg.com/vi/hX0VjH-1a6E/hqdefault.jpg'
     },
     {
       id: '-5Lu0jS9U4U',
@@ -737,42 +745,89 @@
   var searchDebounceTimer = null;
   var isSearchingYt = false;
 
+  function extractYoutubeId(input) {
+    if (!input) return null;
+    var trimmed = (input || '').trim();
+    var m = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
+    if (m) return m[1];
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+    return null;
+  }
+
   function getYtSearchUrl(query) {
     var base = '';
     if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
       base = 'http://localhost:3333';
+    } else if (location.hostname.indexOf('github.io') !== -1) {
+      base = 'https://ratthai-kaona.vercel.app';
     }
     return base + '/api/yt-search?q=' + encodeURIComponent(query);
   }
 
   function renderYtNoResults(query, isError) {
     if (!dom.ytQueueList) return;
-    if (isError) {
-      var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-      dom.ytQueueList.innerHTML = [
-        '<div style="padding:24px 16px;text-align:center;color:#7E97A8;">',
-        '  <div style="font-size:1.1rem;color:#FF5C1A;margin-bottom:6px;">⚠️ ไม่สามารถเชื่อมต่อกับระบบค้นหาได้</div>',
-        isLocal
-          ? '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;">กรุณาเปิดหน้าเว็บผ่าน <b>http://localhost:3333</b> เพื่อค้นหาคลิปสดจาก YouTube</div><a href="http://localhost:3333/hub/index.html" class="bgm-yt-chip active" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:6px 14px;background:#00E5FF;color:#05080E;font-weight:700;border-radius:8px;">🌐 เปิดที่ http://localhost:3333</a>'
-          : '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;">ระบบค้นหากำลังเชื่อมต่อใหม่ กรุณาลองค้นหาใหม่อีกครั้ง</div>',
-        '</div>'
-      ].join('');
-      return;
-    }
+    var qEsc = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     dom.ytQueueList.innerHTML = [
-      '<div style="padding:28px 16px;text-align:center;color:#7E97A8;">',
-      '  <div style="font-size:1.1rem;color:#FF5C1A;margin-bottom:6px;">⚠️ ไม่พบคลิปที่ตรงกัน</div>',
-      '  <div style="font-size:0.8rem;margin-bottom:12px;">ไม่พบผลลัพธ์สำหรับ &ldquo;' + query.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '&rdquo;</div>',
-      '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-chip" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#00E5FF;border-color:rgba(0,229,255,0.4);padding:6px 14px;">',
-      '    เปิดค้นหาบน YouTube.com ↗',
+      '<div style="padding:24px 16px;text-align:center;color:#7E97A8;">',
+      '  <div style="font-size:1.6rem;margin-bottom:6px;">🎵</div>',
+      '  <div style="font-size:0.95rem;color:#DCE8F0;font-weight:700;margin-bottom:4px;">ไม่พบคลิปแนะนำสำหรับ &ldquo;' + qEsc + '&rdquo;</div>',
+      '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;line-height:1.5;">วางลิงก์ YouTube (เช่น https://youtu.be/...) เพื่อเล่นคลิปใดๆ ได้ทันที<br>หรือกดค้นหาโดยตรงบน YouTube</div>',
+      '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-chip active" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:6px 14px;background:#FF0000;color:#FFFFFF;font-weight:700;border-radius:8px;font-size:0.8rem;">',
+      '    🔴 เปิดค้นหาบน YouTube.com ↗',
       '  </a>',
       '</div>'
     ].join('');
   }
 
+  function fallbackLocalYtSearch(query, autoPlayFirst) {
+    var qLow = (query || '').toLowerCase().trim();
+    var qTokens = qLow.split(/[\s,·\-_/]+/).filter(Boolean);
+    var matches = YT_VIDEOS.filter(function (v) {
+      var t = (v.title || '').toLowerCase();
+      var c = (v.channel || '').toLowerCase();
+      var l = (v.categoryLabel || '').toLowerCase();
+      var combined = t + ' ' + c + ' ' + l;
+      if (combined.indexOf(qLow) !== -1) return true;
+      return qTokens.some(function (token) {
+        return token.length >= 2 && combined.indexOf(token) !== -1;
+      });
+    });
+
+    if (matches.length > 0) {
+      renderYtQueue(matches);
+      if (autoPlayFirst && matches[0]) {
+        playYtVideo(matches[0]);
+      }
+      return;
+    }
+    renderYtNoResults(query, false);
+  }
+
   function performYtLiveSearch(query, autoPlayFirst) {
     query = (query || '').trim();
     if (!query) return;
+
+    // ตรวจจับกรณีผู้ใช้วางลิงก์คลิป YouTube หรือ Video ID โดยตรง
+    var directId = extractYoutubeId(query);
+    if (directId) {
+      var directVid = {
+        id: directId,
+        title: 'YouTube Direct Video (' + directId + ')',
+        channel: 'YouTube Direct',
+        category: 'direct',
+        categoryLabel: 'YouTube Direct',
+        thumb: 'https://i.ytimg.com/vi/' + directId + '/hqdefault.jpg'
+      };
+      var existIdx = -1;
+      for (var j = 0; j < YT_VIDEOS.length; j++) {
+        if (YT_VIDEOS[j].id === directId) { existIdx = j; break; }
+      }
+      if (existIdx !== -1) YT_VIDEOS.splice(existIdx, 1);
+      YT_VIDEOS.unshift(directVid);
+      renderYtQueue([directVid]);
+      playYtVideo(directVid);
+      return;
+    }
 
     if (dom.ytQueueList) {
       dom.ytQueueList.innerHTML = [
@@ -786,7 +841,10 @@
 
     isSearchingYt = true;
     fetch(getYtSearchUrl(query))
-      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Search HTTP ' + res.status);
+        return res.json();
+      })
       .then(function (results) {
         isSearchingYt = false;
         if (Array.isArray(results) && results.length > 0) {
@@ -806,12 +864,12 @@
             playYtVideo(results[0]);
           }
         } else {
-          renderYtNoResults(query, false);
+          fallbackLocalYtSearch(query, autoPlayFirst);
         }
       })
       .catch(function () {
         isSearchingYt = false;
-        renderYtNoResults(query, true);
+        fallbackLocalYtSearch(query, autoPlayFirst);
       });
   }
 
