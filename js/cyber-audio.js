@@ -444,6 +444,16 @@
   var savedTucked = localStorage.getItem('cyber-bgm-tucked') === 'true';
   var savedCat = localStorage.getItem('cyber-bgm-cat') || 'all';
 
+  // ── YouTube Persistence State ──
+  var savedMode = localStorage.getItem('cyber-audio-mode') || 'bgm';
+  var savedYtVid = null;
+  try {
+    savedYtVid = JSON.parse(localStorage.getItem('cyber-yt-video') || 'null');
+  } catch (e) {}
+  var isYtPlaying = localStorage.getItem('cyber-yt-playing') === 'true';
+  var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
+  if (isNaN(savedYtTime) || savedYtTime < 0) savedYtTime = 0;
+
   var currentTrackIdx = savedTrackIdx;
   var currentVolume = savedVol;
   var selectedCategory = savedCat;
@@ -452,8 +462,8 @@
   var prevVolume = currentVolume;
   var drawerOpen = false;
   var isTucked = savedTucked;
-  var currentMode = 'bgm'; // 'bgm' or 'yt'
-  var currentYtVideo = null;
+  var currentMode = (savedMode === 'yt' && savedYtVid && savedYtVid.id && isYtPlaying) ? 'yt' : 'bgm';
+  var currentYtVideo = (currentMode === 'yt') ? savedYtVid : null;
   var ytSearchQuery = '';
   var ytSelectedCategory = 'all';
 
@@ -514,9 +524,15 @@
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
+    currentMode = 'bgm';
+    try {
+      localStorage.setItem('cyber-audio-mode', 'bgm');
+    } catch (e) {}
     audio.play().then(function () {
       isPlaying = true;
-      localStorage.setItem('cyber-bgm-playing', 'true');
+      try {
+        localStorage.setItem('cyber-bgm-playing', 'true');
+      } catch (e) {}
       updateUI();
       startVisualizer();
     }).catch(function (err) {
@@ -529,16 +545,19 @@
   function pauseAudio() {
     audio.pause();
     isPlaying = false;
-    localStorage.setItem('cyber-bgm-playing', 'false');
+    try {
+      localStorage.setItem('cyber-bgm-playing', 'false');
+    } catch (e) {}
     updateUI();
   }
 
   function togglePlay() {
     if (currentMode === 'yt') {
-      if (!dom.ytPlayerWrap || dom.ytPlayerWrap.style.display === 'none' || !dom.ytIframe.src) {
+      if (!dom.ytIframe || !dom.ytIframe.src) {
         var filtered = getFilteredYtVideos();
         var targetVid = currentYtVideo || (filtered.length > 0 ? filtered[0] : YT_VIDEOS[0]);
-        if (targetVid) playYtVideo(targetVid);
+        var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
+        if (targetVid) playYtVideo(targetVid, savedYtTime);
       } else {
         stopYtVideo();
       }
@@ -663,14 +682,65 @@
   function toggleTucked() { setTucked(!isTucked); }
 
   setInterval(function () {
-    if (!audio.paused && audio.currentTime > 0) {
+    if (currentMode === 'bgm' && !audio.paused && audio.currentTime > 0) {
       sessionStorage.setItem('cyber-bgm-pos', audio.currentTime);
+    } else if (currentMode === 'yt' && dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
+      try {
+        dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'listening'
+        }), '*');
+      } catch (e) {}
     }
-  }, 2000);
+  }, 1500);
+
+  window.addEventListener('message', function (e) {
+    try {
+      var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      if (!data) return;
+      if (data.event === 'infoDelivery' && data.info) {
+        if (typeof data.info.currentTime === 'number' && data.info.currentTime > 0) {
+          sessionStorage.setItem('cyber-yt-time', data.info.currentTime);
+        }
+        if (data.info.playerState === 1) { // 1 = playing
+          localStorage.setItem('cyber-yt-playing', 'true');
+          if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
+          if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
+          if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
+          if (dom.pill) dom.pill.classList.add('is-playing');
+          if (dom.slot) dom.slot.classList.add('is-playing');
+        } else if (data.info.playerState === 2) { // 2 = paused
+          localStorage.setItem('cyber-yt-playing', 'false');
+          if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
+          if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
+          if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
+          if (dom.pill) dom.pill.classList.remove('is-playing');
+          if (dom.slot) dom.slot.classList.remove('is-playing');
+        }
+      }
+    } catch (err) {}
+  });
+
+  window.addEventListener('beforeunload', function () {
+    try {
+      if (currentMode === 'yt' && currentYtVideo) {
+        localStorage.setItem('cyber-audio-mode', 'yt');
+        localStorage.setItem('cyber-yt-video', JSON.stringify(currentYtVideo));
+      }
+    } catch (e) {}
+  });
 
   function unlockAutoplayOnGesture() {
-    if (shouldAutoPlay() && audio.paused) {
-      playAudio();
+    var mode = localStorage.getItem('cyber-audio-mode') || 'bgm';
+    if (mode === 'yt') {
+      var isYtOn = localStorage.getItem('cyber-yt-playing') !== 'false';
+      if (isYtOn && currentYtVideo && (!dom.ytIframe || !dom.ytIframe.src)) {
+        var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
+        playYtVideo(currentYtVideo, savedYtTime);
+      }
+    } else {
+      if (shouldAutoPlay() && audio.paused) {
+        playAudio();
+      }
     }
     document.removeEventListener('click', unlockAutoplayOnGesture);
     document.removeEventListener('touchstart', unlockAutoplayOnGesture);
@@ -952,12 +1022,21 @@
     });
   }
 
-  function playYtVideo(v) {
+  function playYtVideo(v, startTime) {
     if (!v || !v.id) return;
     pauseAudio();
 
     currentMode = 'yt';
     currentYtVideo = v;
+    startTime = parseFloat(startTime || 0);
+    if (isNaN(startTime) || startTime < 0) startTime = 0;
+
+    try {
+      localStorage.setItem('cyber-audio-mode', 'yt');
+      localStorage.setItem('cyber-yt-video', JSON.stringify(v));
+      localStorage.setItem('cyber-yt-playing', 'true');
+      if (startTime > 0) sessionStorage.setItem('cyber-yt-time', startTime);
+    } catch (e) {}
 
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
@@ -966,7 +1045,8 @@
     var embedOrigin = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
       ? '&origin=' + encodeURIComponent(location.origin)
       : '';
-    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1' + embedOrigin;
+    var startParam = startTime > 0 ? ('&start=' + Math.floor(startTime)) : '';
+    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1' + startParam + embedOrigin;
 
     if (dom.ytIframe) {
       dom.ytIframe.src = embedUrl;
@@ -999,6 +1079,9 @@
   }
 
   function stopYtVideo() {
+    try {
+      localStorage.setItem('cyber-yt-playing', 'false');
+    } catch (e) {}
     if (dom.ytIframe) dom.ytIframe.src = '';
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'none';
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'block';
@@ -1079,6 +1162,10 @@
 
   function switchToBgm() {
     currentMode = 'bgm';
+    try {
+      localStorage.setItem('cyber-audio-mode', 'bgm');
+      localStorage.setItem('cyber-yt-playing', 'false');
+    } catch (e) {}
     if (dom.btnModeBgm) dom.btnModeBgm.classList.add('active');
     if (dom.btnModeYt) dom.btnModeYt.classList.remove('active');
     if (dom.sectionBgm) dom.sectionBgm.style.display = 'block';
@@ -1095,17 +1182,28 @@
 
   function switchToYt() {
     currentMode = 'yt';
+    try {
+      localStorage.setItem('cyber-audio-mode', 'yt');
+    } catch (e) {}
     if (dom.btnModeYt) dom.btnModeYt.classList.add('active');
     if (dom.btnModeBgm) dom.btnModeBgm.classList.remove('active');
     if (dom.sectionBgm) dom.sectionBgm.style.display = 'none';
     if (dom.sectionYt) dom.sectionYt.style.display = 'block';
     renderYtQueue();
 
-    if (currentYtVideo && dom.ytIframe && dom.ytIframe.src) {
+    if (currentYtVideo) {
+      if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
+      if (dom.cardTrackName) dom.cardTrackName.textContent = currentYtVideo.title;
+      if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = currentYtVideo.channel;
+      if (dom.cardYear) dom.cardYear.textContent = 'YT';
+      if (dom.badgeHq) dom.badgeHq.textContent = 'HD';
       if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
       if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
       if (dom.progressWrap) dom.progressWrap.style.display = 'none';
-      if (dom.ytExtLink) dom.ytExtLink.style.display = 'inline-flex';
+      if (dom.ytExtLink) {
+        dom.ytExtLink.style.display = 'inline-flex';
+        dom.ytExtLink.href = 'https://www.youtube.com/watch?v=' + currentYtVideo.id;
+      }
     }
   }
 
@@ -1857,7 +1955,16 @@
   function updateUI() {
     if (!dom.slot) return;
 
-    if (currentMode === 'yt' && currentYtVideo && dom.ytPlayerWrap && dom.ytPlayerWrap.style.display !== 'none') {
+    if (currentMode === 'yt' && currentYtVideo) {
+      var isYtActive = dom.ytIframe && dom.ytIframe.src;
+      dom.pillName.textContent = '🔴 ' + currentYtVideo.title;
+      dom.pillStatus.textContent = isYtActive ? 'YT PLAYING' : 'YT PAUSED';
+      dom.pill.classList.toggle('is-playing', isYtActive);
+      dom.slot.classList.toggle('is-playing', isYtActive);
+      dom.btnPlayPill.innerHTML = isYtActive ? ICO_PAUSE : ICO_PLAY;
+      dom.btnPlayCard.innerHTML = isYtActive ? ICO_PAUSE : ICO_PLAY;
+      if (dom.cardTrackName) dom.cardTrackName.textContent = currentYtVideo.title;
+      if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = currentYtVideo.channel;
       if (dom.volSlider) dom.volSlider.value = audio.volume;
       if (dom.btnMute) dom.btnMute.innerHTML = (audio.volume === 0 || isMuted) ? ICO_VOL_MUTE : ICO_VOL_HIGH;
       return;
@@ -1895,13 +2002,18 @@
   // ── INIT ──
   function init() {
     buildDOM();
-    loadTrack(currentTrackIdx, savedPos);
 
-    if (savedPlaying) {
-      playAudio();
+    if (currentMode === 'yt' && currentYtVideo) {
+      switchToYt();
+      playYtVideo(currentYtVideo, savedYtTime);
     } else {
-      updateUI();
-      startVisualizer();
+      loadTrack(currentTrackIdx, savedPos);
+      if (savedPlaying) {
+        playAudio();
+      } else {
+        updateUI();
+        startVisualizer();
+      }
     }
   }
 
