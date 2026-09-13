@@ -1496,6 +1496,7 @@ var NAV = [
       { id:"fiscal", ico:"<svg class='mdico'><use href='#i-banknote'></use></svg>", label:"การคลังภาครัฐ", subs:[
           { pane:"fiscal-debt",    ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"หนี้สาธารณะ", existing:true },
           { pane:"fiscal-tax",     ico:"<svg class='mdico'><use href='#i-receipt'></use></svg>", label:"โครงสร้างรายได้ภาษี", existing:true },
+          { pane:"fiscal-tax-calc",ico:"<svg class='mdico'><use href='#i-calculator'></use></svg>", label:"จำลองภาษีบุคคลธรรมดา (Tax Simulator)", existing:true },
           { pane:"fiscal-budget",  ico:"<svg class='mdico'><use href='#i-chart-column'></use></svg>", label:"งบประมาณรายกระทรวง", existing:true },
           { pane:"fiscal-balance", ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"ดุลการคลัง & โครงสร้างงบ", existing:true }
       ]},

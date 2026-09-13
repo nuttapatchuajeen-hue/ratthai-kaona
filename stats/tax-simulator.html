@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<title>HOW TO TAX?: เข้าใจภาษีแบบ "เห็นภาพ" — สถิติข้อมูลรัฐ</title>
+<meta name="description" content="คำนวณภาษียากจัง!? มาลองคิดภาษีแบบคร่าวๆ สไตล์มือใหม่หัดทำภาษี ผ่าน data visualization กัน!" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#EDF4F8; --paper-2:#F8FBFD; --paper-3:#DCE9F0;
+    --ink:#0A1822; --ink-2:#2C4356; --ink-soft:#516A7A;
+    --rule:#C8DAE4; --rule-strong:#A8C2D0;
+    --green:#0089A9; --green-soft:#D7EEF5;
+    --red:#D9480F; --shadow:18px 22px 40px -28px rgba(10,40,60,.45);
+    --maxw:1360px;
+  }
+  html[data-theme="dark"]{
+    --paper:#040911; --paper-2:#081220; --paper-3:#0e1e32;
+    --ink:#E2EDF8; --ink-2:#A8C0D3; --ink-soft:#6C8A9E;
+    --rule:#13263a; --rule-strong:#1d3954;
+    --green:#00E5FF; --green-soft:rgba(0,229,255,.12);
+    --red:#FF5C1A; --shadow:18px 22px 40px -28px rgba(0,0,0,.85);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:0;
+    font-family:"IBM Plex Sans Thai",system-ui,-apple-system,sans-serif;
+    color:var(--ink); background:var(--paper);
+    line-height:1.6; min-height:100vh;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+
+  /* Header */
+  .site-nav{background:var(--paper-2); border-bottom:1px solid var(--rule); padding:10px 0; position:sticky; top:0; z-index:100; backdrop-filter:blur(10px)}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:16px}
+  .nav-brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-weight:700}
+  .nav-brand img{height:30px}
+  .nav-links{display:flex; align-items:center; gap:16px; list-style:none; margin:0; padding:0}
+  .nav-links a{color:var(--ink-soft); text-decoration:none; font-size:13.5px; font-weight:600; transition:color .2s}
+  .nav-links a:hover, .nav-links a.active{color:var(--green)}
+
+
+  /* 2D Layout (Image 1 replica) */
+  .ht-container {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    margin: 28px 0 30px;
+  }
+  @media (max-width: 980px) {
+    .ht-container { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
+  }
+
+  /* Left: Chart Box */
+  .ht-chart-box {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper-3);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 12px;
+    overflow: hidden;
+  }
+  .howtotax-svg {
+    width: 100%;
+    height: 480px;
+    display: block;
+  }
+
+  /* Right: Controls Box */
+  .ht-controls-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+  .ht-head-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: "Noto Serif Thai", serif;
+  }
+  .ht-head-sub {
+    margin: 4px 0 16px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  .ht-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: 700;
+    font-size: 16px;
+    margin: 16px 0 10px;
+    color: var(--ink);
+  }
+  .ht-section-header span.ht-val-sum {
+    font-family: "Archivo", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .ht-section-header.text-income span.ht-val-sum { color: var(--ink); }
+  .ht-section-header.text-expense span.ht-val-sum { color: #0284c7; }
+  .ht-section-header.text-allowance span.ht-val-sum { color: #10b981; }
+
+  .ht-input-row {
+    display: grid;
+    grid-template-columns: 85px 1fr 95px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .ht-input-label {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .ht-slider {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rule);
+    outline: none;
+  }
+  .ht-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #78716c;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    transition: transform .15s;
+  }
+  .ht-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .ht-slider.green-thumb::-webkit-slider-thumb { background: #10b981; }
+
+  .ht-num-input {
+    width: 100%;
+    padding: 6px 8px;
+    font-family: "Archivo", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    border: 1px solid var(--rule);
+    background: var(--paper-3);
+    color: var(--ink);
+    border-radius: 6px;
+    outline: none;
+  }
+  .ht-num-input:focus { border-color: var(--green); }
+
+  .ht-subdetail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 3px 0 5px;
+  }
+  .ht-subdetail-row b { color: var(--ink-2); }
+
+  /* Summary Box */
+  .ht-summary-box {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .ht-summary-equation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .ht-eq-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ht-eq-label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .ht-eq-val {
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .ht-eq-val.tax-red {
+    color: #ff4d4f;
+    font-size: 20px;
+  }
+  .ht-eq-arrow {
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+  .ht-sum-rate-text {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .ht-btn-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .ht-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    text-decoration: none;
+  }
+  .ht-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink);
+  }
+  .ht-btn-secondary:hover { background: var(--paper-3); }
+  .ht-btn-primary {
+    background: #6b5c53;
+    border: 1px solid #6b5c53;
+    color: #fff;
+  }
+  .ht-btn-primary:hover { background: #584a42; }
+
+  /* Callout */
+  .callout-card{background:rgba(0,229,255,.03); border:1px solid rgba(0,229,255,.2); border-radius:18px; padding:22px; margin-bottom:40px}
+  .src{margin-top:12px; font-size:12px; color:var(--ink-soft); border-top:1px dashed var(--rule); padding-top:10px}
+  .src a{color:var(--green); text-decoration:none; font-weight:600}
+</style>
+</head>
+<body>
+
+  <!-- แถบนำทางบนสุด -->
+  <header class="site-nav">
+    <div class="wrap">
+      <div class="nav-inner">
+        <a class="nav-brand" href="../hub/index.html">
+          <img src="../hub/images/logo.png" alt="รัฐไทยก้าวหน้า" />
+          <span>รัฐไทยก้าวหน้า</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../hub/index.html">หน้าแรก</a></li>
+          <li><a href="index.html">สถิติข้อมูลรัฐ</a></li>
+          <li><a href="explore.html#pane-fiscal-tax-calc">ศูนย์ข้อมูลโลก &amp; การคลัง</a></li>
+          <li><a class="active" href="tax-simulator.html">Tax Simulator</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <div id="taxStandaloneRoot" class="ht-container">
+      <!-- ฝั่งซ้าย: กราฟ 2D แสดงภาพเงินและขั้นบันไดภาษี (Red Tax Area) -->
+      <div class="ht-chart-box">
+        <svg class="howtotax-svg" viewBox="0 0 600 480" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <!-- ฝั่งขวา: แผงควบคุมสไลเดอร์และช่องกรอกตัวเลข -->
+      <div class="ht-controls-box">
+        <div>
+          <h2 class="ht-head-title">ลองปรับตัวเลขคร่าวๆ ให้ตรงกับตัวคุณ</h2>
+          <div class="ht-head-sub">* เว็บไซต์นี้ไม่มีการเก็บข้อมูลตัวเลขที่คุณกรอก</div>
+
+          <!-- กลุ่มรายได้ -->
+          <div class="ht-section-header text-income">
+            <span>รายได้</span>
+            <span class="ht-val-sum ht-val-gross-title">400,000 บาท</span>
+          </div>
+
+          <div class="ht-input-row">
+            <span class="ht-input-label">เงินเดือน</span>
+            <input type="range" id="htSlSalary" class="ht-slider" min="0" max="600000" step="5000" value="300000">
+            <input type="number" id="htInSalary" class="ht-num-input" value="300000" step="5000">
+          </div>
+
+          <div class="ht-input-row">
+            <span class="ht-input-label">ฟรีแลนซ์</span>
+            <input type="range" id="htSlFreelance" class="ht-slider" min="0" max="500000" step="5000" value="50000">
+            <input type="number" id="htInFreelance" class="ht-num-input" value="50000" step="5000">
+          </div>
+
+          <div class="ht-input-row">
+            <span class="ht-input-label">ขายของ</span>
+            <input type="range" id="htSlMerchant" class="ht-slider" min="0" max="500000" step="5000" value="50000">
+            <input type="number" id="htInMerchant" class="ht-num-input" value="50000" step="5000">
+          </div>
+
+          <!-- กลุ่มค่าใช้จ่าย -->
+          <div class="ht-section-header text-expense">
+            <span>ค่าใช้จ่าย</span>
+            <span class="ht-val-sum ht-val-exp-title">130,000 บาท</span>
+          </div>
+          <div class="ht-subdetail-row">
+            <span>คิดจากเงินเดือน + ฟรีแลนซ์ (หักได้ 50% ไม่เกิน 100,000 บาท)</span>
+            <b class="ht-val-exp-labor">หักได้ 100,000 บาท</b>
+          </div>
+          <div class="ht-subdetail-row">
+            <span>คิดจากขายของ (หักได้ 60% หรือตามจริง)</span>
+            <b class="ht-val-exp-merchant">หักได้ 30,000 บาท</b>
+          </div>
+
+          <!-- กลุ่มค่าลดหย่อน -->
+          <div class="ht-section-header text-allowance">
+            <span>ค่าลดหย่อน</span>
+            <span class="ht-val-sum ht-val-ded-title">60,000 บาท</span>
+          </div>
+          <div class="ht-input-row">
+            <span class="ht-input-label">ค่าลดหย่อน</span>
+            <input type="range" id="htSlAllowance" class="ht-slider green-thumb" min="60000" max="400000" step="5000" value="60000">
+            <input type="number" id="htInAllowance" class="ht-num-input" value="60000" step="5000">
+          </div>
+        </div>
+
+        <!-- สรุปผลด้านล่าง (Summary Box) -->
+        <div>
+          <div class="ht-summary-box">
+            <div class="ht-summary-equation">
+              <div class="ht-eq-item">
+                <span class="ht-eq-label">รายได้</span>
+                <span class="ht-eq-val ht-sum-gross">400,000</span>
+              </div>
+              <span class="ht-eq-arrow">→</span>
+              <div class="ht-eq-item">
+                <span class="ht-eq-label">เงินได้สุทธิ</span>
+                <span class="ht-eq-val ht-sum-net">210,000</span>
+              </div>
+              <span class="ht-eq-arrow">→</span>
+              <div class="ht-eq-item">
+                <span class="ht-eq-label" style="color:#ff4d4f;font-weight:700;">ภาษี</span>
+                <span class="ht-eq-val tax-red ht-sum-tax">3,000</span>
+              </div>
+            </div>
+            <div class="ht-sum-rate-text ht-sum-rate">ภาษีที่ต้องเสีย คิดเป็น 0.8% ของเงินได้ทั้งหมด</div>
+          </div>
+
+          <div class="ht-btn-group">
+            <a href="explore.html#pane-fiscal-tax-calc" class="ht-btn ht-btn-secondary">กลับหน้าศูนย์ข้อมูล</a>
+            <a href="explore.html#pane-fiscal-tax" class="ht-btn ht-btn-primary">ดูโครงสร้างรายได้ภาษีรัฐ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Callout Card -->
+    <div class="callout-card">
+      <h3 style="margin:0 0 8px;font-size:18px;font-family:'Noto Serif Thai',serif;display:flex;align-items:center;gap:8px;color:var(--ink);">
+        💡 ไขความเชื่อผิดๆ: "เงินเดือนขึ้น แล้วจะโดนภาษีแพงจนเงินเหลือน้อยลงจริงไหม?"
+      </h3>
+      <p style="margin:0;font-size:14px;line-height:1.7;color:var(--ink-2);">
+        <b>ไม่จริงอย่างสิ้นเชิง!</b> ดูจากพื้นที่สี่เหลี่ยมสีแดงในกราฟด้านบน ภาษีของประเทศไทยคิดแบบ <b>ขั้นบันไดอัตราก้าวหน้า (Marginal Progressive Tax Rate)</b> 
+        เงินของคุณจะถูกแบ่งเป็นท่อนๆ เหมือนน้ำที่เทลงถังทีละชั้น เมื่อรายได้เพิ่มขึ้นจนข้ามไปยังขั้นที่สูงขึ้น 
+        อัตราภาษีที่สูงขึ้นจะคิด<b>เฉพาะเงินส่วนที่เกินเพดานขั้นเดิมเท่านั้น</b> (พื้นที่สีแดงขยายออกเฉพาะช่วงความสูงที่เกิน) เงินก้อนเดิมในขั้นล่างยังคงเสียภาษีในอัตราเดิมเสมอ 
+        ดังนั้น <u>เงินเดือนขึ้นหรือได้โบนัสเพิ่ม ยังไงคุณก็ได้รับเงินสุทธิเข้ากระเป๋าจริง (Take-Home Pay) มากขึ้นเสมอครับ!</u>
+      </p>
+      <div class="src">
+        แหล่งอ้างอิง: <a href="https://www.rd.go.th" target="_blank" rel="noopener">กรมสรรพากร ↗</a> · พระราชบัญญัติประมวลรัษฎากร · แนวคิดจาก <a href="https://taepras.github.io/howtotax/" target="_blank" rel="noopener">HOW TO TAX? (Tae Pras) ↗</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="tax-simulator.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.TaxSimulator) {
+        window.TaxSimulator.init("taxStandaloneRoot");
+      }
+    });
+  </script>
+</body>
+</html>

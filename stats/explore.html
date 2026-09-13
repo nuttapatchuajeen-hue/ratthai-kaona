@@ -1338,6 +1338,37 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   height: 100%;
   display: block;
 }
+/* ---------- TAX SIMULATOR (HowToTax 1:1 Visual 2D Chart) ---------- */
+.ht-container { display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); margin-top: 14px; position: relative; }
+@media (max-width: 980px) { .ht-container { grid-template-columns: 1fr; gap: 18px; } }
+.ht-chart-box { position: relative; width: 100%; min-height: 460px; display: flex; flex-direction: column; background: var(--paper-3); border: 1px solid var(--rule); border-radius: 16px; padding: 10px; overflow: hidden; }
+.howtotax-svg { width: 100%; height: 480px; display: block; overflow: visible; }
+.ht-controls-box { display: flex; flex-direction: column; justify-content: space-between; }
+.ht-head-title { margin: 0; font-size: 18px; font-weight: 700; color: var(--ink); font-family: "Noto Serif Thai", serif; }
+.ht-head-sub { margin: 2px 0 12px; font-size: 12px; color: var(--ink-soft); }
+.ht-section-header { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 15px; margin: 14px 0 8px; color: var(--ink); }
+.ht-section-header span.ht-val-sum { font-family: "Archivo", sans-serif; font-size: 16px; font-weight: 800; }
+.ht-section-header.text-income span.ht-val-sum { color: var(--ink); }
+.ht-section-header.text-expense span.ht-val-sum { color: #0284c7; }
+.ht-section-header.text-allowance span.ht-val-sum { color: #10b981; }
+.ht-input-row { display: grid; grid-template-columns: 80px 1fr 90px; align-items: center; gap: 12px; margin-bottom: 10px; }
+.ht-input-label { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+.ht-slider { width: 100%; appearance: none; height: 6px; border-radius: 3px; background: var(--rule); outline: none; }
+.ht-slider::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #78716c; cursor: pointer; transition: transform .15s; }
+.ht-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.ht-slider.green-thumb::-webkit-slider-thumb { background: #10b981; }
+.ht-num-input { width: 100%; padding: 5px 8px; font-family: "Archivo", sans-serif; font-size: 13.5px; font-weight: 600; text-align: right; border: 1px solid var(--rule); background: var(--paper-3); color: var(--ink); border-radius: 6px; outline: none; }
+.ht-num-input:focus { border-color: var(--green); }
+.ht-subdetail-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--ink-soft); padding: 2px 0 4px; }
+.ht-subdetail-row b { color: var(--ink-2); }
+.ht-summary-box { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); text-align: center; }
+.ht-summary-equation { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 6px; }
+.ht-eq-item { display: flex; flex-direction: column; gap: 2px; }
+.ht-eq-label { font-size: 12px; color: var(--ink-soft); }
+.ht-eq-val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 16px; }
+.ht-eq-val.tax-red { color: #ff4d4f; font-size: 18px; }
+.ht-eq-arrow { font-size: 16px; color: var(--ink-soft); }
+.ht-sum-rate-text { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; font-weight: 500; }
 </style>
 </head>
 <body>
@@ -6933,6 +6964,114 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ============ การคลังภาครัฐ · จำลองภาษีบุคคลธรรมดา & ขั้นบันไดภาษี ============ -->
+    <section class="tabpane" id="pane-fiscal-tax-calc" role="tabpanel">
+      <div class="ph-head">
+        <span class="ph-crumb">การคลังภาครัฐ</span>
+        <h2 class="ph-title"><svg class="mdico"><use href="#i-calculator"></use></svg> จำลองภาษีบุคคลธรรมดา &amp; ขั้นบันไดภาษี (Tax Simulator)</h2>
+      </div>
+
+      <!-- แผงจำลอง HowToTax 1:1 (รูปที่ 1) -->
+      <div class="ht-container">
+        <!-- ฝั่งซ้าย: กราฟ 2D แสดงภาพเงินและขั้นบันไดภาษี (Red Tax Area) -->
+        <div class="ht-chart-box">
+          <svg class="howtotax-svg" viewBox="0 0 600 480" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <!-- ฝั่งขวา: แผงควบคุมสไลเดอร์และช่องกรอกตัวเลข -->
+        <div class="ht-controls-box">
+          <div>
+            <h3 class="ht-head-title">ลองปรับตัวเลขคร่าวๆ ให้ตรงกับตัวคุณ</h3>
+            <div class="ht-head-sub">* เว็บไซต์นี้ไม่มีการเก็บข้อมูลตัวเลขที่คุณกรอก</div>
+
+            <!-- กลุ่มรายได้ -->
+            <div class="ht-section-header text-income">
+              <span>รายได้</span>
+              <span class="ht-val-sum ht-val-gross-title">400,000 บาท</span>
+            </div>
+
+            <div class="ht-input-row">
+              <span class="ht-input-label">เงินเดือน</span>
+              <input type="range" id="htSlSalary" class="ht-slider" min="0" max="600000" step="5000" value="300000">
+              <input type="number" id="htInSalary" class="ht-num-input" value="300000" step="5000">
+            </div>
+
+            <div class="ht-input-row">
+              <span class="ht-input-label">ฟรีแลนซ์</span>
+              <input type="range" id="htSlFreelance" class="ht-slider" min="0" max="500000" step="5000" value="50000">
+              <input type="number" id="htInFreelance" class="ht-num-input" value="50000" step="5000">
+            </div>
+
+            <div class="ht-input-row">
+              <span class="ht-input-label">ขายของ</span>
+              <input type="range" id="htSlMerchant" class="ht-slider" min="0" max="500000" step="5000" value="50000">
+              <input type="number" id="htInMerchant" class="ht-num-input" value="50000" step="5000">
+            </div>
+
+            <!-- กลุ่มค่าใช้จ่าย -->
+            <div class="ht-section-header text-expense">
+              <span>ค่าใช้จ่าย</span>
+              <span class="ht-val-sum ht-val-exp-title">130,000 บาท</span>
+            </div>
+            <div class="ht-subdetail-row">
+              <span>คิดจากเงินเดือน + ฟรีแลนซ์ (หักได้ 50% ไม่เกิน 100,000 บาท)</span>
+              <b class="ht-val-exp-labor">หักได้ 100,000 บาท</b>
+            </div>
+            <div class="ht-subdetail-row">
+              <span>คิดจากขายของ (หักได้ 60% หรือตามจริง)</span>
+              <b class="ht-val-exp-merchant">หักได้ 30,000 บาท</b>
+            </div>
+
+            <!-- กลุ่มค่าลดหย่อน -->
+            <div class="ht-section-header text-allowance">
+              <span>ค่าลดหย่อน</span>
+              <span class="ht-val-sum ht-val-ded-title">60,000 บาท</span>
+            </div>
+            <div class="ht-input-row">
+              <span class="ht-input-label">ค่าลดหย่อน</span>
+              <input type="range" id="htSlAllowance" class="ht-slider green-thumb" min="60000" max="400000" step="5000" value="60000">
+              <input type="number" id="htInAllowance" class="ht-num-input" value="60000" step="5000">
+            </div>
+          </div>
+
+          <!-- สรุปผลด้านล่าง (Summary Box) -->
+          <div class="ht-summary-box">
+            <div class="ht-summary-equation">
+              <div class="ht-eq-item">
+                <span class="ht-eq-label">รายได้</span>
+                <span class="ht-eq-val ht-sum-gross">400,000</span>
+              </div>
+              <span class="ht-eq-arrow">→</span>
+              <div class="ht-eq-item">
+                <span class="ht-eq-label">เงินได้สุทธิ</span>
+                <span class="ht-eq-val ht-sum-net">210,000</span>
+              </div>
+              <span class="ht-eq-arrow">→</span>
+              <div class="ht-eq-item">
+                <span class="ht-eq-label" style="color:#ff4d4f;font-weight:700;">ภาษี</span>
+                <span class="ht-eq-val tax-red ht-sum-tax">3,000</span>
+              </div>
+            </div>
+            <div class="ht-sum-rate-text ht-sum-rate">ภาษีที่ต้องเสีย คิดเป็น 0.8% ของเงินได้ทั้งหมด</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card ไขข้อข้องใจ (Bento Fact-Check) -->
+      <div class="card full" style="margin-top:20px;background:rgba(0, 229, 255, 0.03);border:1px solid rgba(0, 229, 255, 0.2);">
+        <div class="card-head">
+          <h2 style="font-size:17px;"><svg class="mdico" style="color:var(--green);"><use href="#i-lightbulb"></use></svg> ไขความเชื่อผิดๆ: "เงินเดือนขึ้น แล้วเสียภาษีเพิ่มจนเงินเหลือน้อยลงจริงไหม?"</h2>
+          <span class="tag" style="border-color:var(--green);color:var(--green);">Tax Fact</span>
+        </div>
+        <p class="sub" style="max-width:100%;font-size:13.5px;line-height:1.6;color:var(--ink-2);margin-bottom:0;">
+          <b>ไม่จริงอย่างเด็ดขาด!</b> ภาษีของประเทศไทยใช้ระบบ <b>อัตราก้าวหน้า (Marginal Progressive Tax Rate)</b> ซึ่งเงินของคุณจะถูกแบ่งเป็นท่อนๆ เหมือนน้ำที่เทลงถังขั้นบันไดทีละขั้น 
+          เมื่อเงินเดือนคุณปรับขึ้นจน "ข้ามขั้น" ภาษีที่อัตราสูงขึ้นจะคิด<b>เฉพาะส่วนของเงินที่เกินขั้นออกมาเท่านั้น</b> (ดูพื้นที่สี่เหลี่ยมสีแดงในกราฟด้านบน จะขยายเฉพาะช่วงเงินที่เกินออกมา) เงินก้อนเดิมที่อยู่ในขั้นต่ำกว่ายังคงเสียภาษีในอัตราเดิมเท่าเดิมเสมอ 
+          ดังนั้น <u>ไม่ว่าเงินเดือนจะขึ้นมากน้อยเพียงใด เงินได้สุทธิที่คุณได้รับเข้ากระเป๋าจริง (Take-Home Pay) จะเพิ่มขึ้นเสมอ</u>
+        </p>
+        <div class="src">ที่มาและอ้างอิง: <a href="https://www.rd.go.th" target="_blank" rel="noopener">กรมสรรพากร — อัตราภาษีเงินได้บุคคลธรรมดา ↗</a> · พระราชบัญญัติแก้ไขเพิ่มเติมประมวลรัษฎากร · แนวคิดจาก <a href="https://taepras.github.io/howtotax/" target="_blank" rel="noopener">HOW TO TAX? (Tae Pras) ↗</a></div>
+      </div>
+    </section>
+
     <!-- ============ การคลังภาครัฐ · งบประมาณรายกระทรวง ============ -->
     <section class="tabpane" id="pane-fiscal-budget" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">การคลังภาครัฐ</span><h2 class="ph-title"><svg class="mdico"><use href="#i-chart-column"></use></svg> งบประมาณรายกระทรวง</h2></div>
@@ -10773,6 +10912,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <!-- เอนจินซูมแผนที่ใช้ร่วมกับหน้า ส.ส./ประชามติ/กทม. (ไอเดียบินเข้ากรอบจาก elect.in.th) -->
   <script src="../js/mapzoom.js"></script>
   <script src="explore-data.js"></script>
+  <script src="tax-simulator.js"></script>
   <script src="../election/timeline-data.js"></script>
   <script>
   (function(){
@@ -19828,6 +19968,9 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       if(document.getElementById("pane-fiscal-balance")){
         hbarChart("#fisExpType", FIS_EXP_TYPE, {full:true, h:180, ml:150, mr:120, xlab:"ล้านบาท", nameLabel:"ประเภทรายจ่าย", fmt:fmtMB});
         gpoLine("#fisDeficit", FIS_DEFICIT, {full:true, h:270, ml:56, ticks:5, ylab:"ล้านบาท", color:cssVar("--red"), fmt:fmtMB});
+      }
+      if(document.getElementById("pane-fiscal-tax-calc") && window.TaxSimulator){
+        window.TaxSimulator.init("pane-fiscal-tax-calc");
       }
     }
 
