@@ -450,8 +450,8 @@
   try {
     savedYtVid = JSON.parse(localStorage.getItem('cyber-yt-video') || 'null');
   } catch (e) {}
-  var isYtPlaying = localStorage.getItem('cyber-yt-playing') === 'true';
-  var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
+  var isYtPlaying = localStorage.getItem('cyber-yt-playing') !== 'false';
+  var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || localStorage.getItem('cyber-yt-time') || '0');
   if (isNaN(savedYtTime) || savedYtTime < 0) savedYtTime = 0;
 
   var currentTrackIdx = savedTrackIdx;
@@ -462,10 +462,20 @@
   var prevVolume = currentVolume;
   var drawerOpen = false;
   var isTucked = savedTucked;
-  var currentMode = (savedMode === 'yt' && savedYtVid && savedYtVid.id && isYtPlaying) ? 'yt' : 'bgm';
+  var currentMode = (savedMode === 'yt' && savedYtVid && savedYtVid.id) ? 'yt' : 'bgm';
   var currentYtVideo = (currentMode === 'yt') ? savedYtVid : null;
   var ytSearchQuery = '';
   var ytSelectedCategory = 'all';
+
+  var ytLocalStartTime = 0;
+  var ytLocalStartOffset = savedYtTime;
+  var ytIsCurrentlyPlaying = isYtPlaying;
+
+  function getYtEstimatedCurrentTime() {
+    if (!ytIsCurrentlyPlaying) return ytLocalStartOffset;
+    var elapsed = (Date.now() - ytLocalStartTime) / 1000;
+    return Math.max(0, ytLocalStartOffset + elapsed);
+  }
 
   // ── Audio Element ──
   var audio = new Audio();
@@ -684,14 +694,22 @@
   setInterval(function () {
     if (currentMode === 'bgm' && !audio.paused && audio.currentTime > 0) {
       sessionStorage.setItem('cyber-bgm-pos', audio.currentTime);
-    } else if (currentMode === 'yt' && dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
-      try {
-        dom.ytIframe.contentWindow.postMessage(JSON.stringify({
-          event: 'listening'
-        }), '*');
-      } catch (e) {}
+    } else if (currentMode === 'yt') {
+      if (ytIsCurrentlyPlaying) {
+        var curEst = getYtEstimatedCurrentTime();
+        sessionStorage.setItem('cyber-yt-time', curEst);
+        localStorage.setItem('cyber-yt-time', curEst);
+        if (dom.timeCur) dom.timeCur.textContent = formatTime(curEst);
+      }
+      if (dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
+        try {
+          dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+            event: 'listening'
+          }), '*');
+        } catch (e) {}
+      }
     }
-  }, 1500);
+  }, 1000);
 
   window.addEventListener('message', function (e) {
     try {
@@ -699,9 +717,17 @@
       if (!data) return;
       if (data.event === 'infoDelivery' && data.info) {
         if (typeof data.info.currentTime === 'number' && data.info.currentTime > 0) {
+          ytLocalStartOffset = data.info.currentTime;
+          ytLocalStartTime = Date.now();
           sessionStorage.setItem('cyber-yt-time', data.info.currentTime);
+          localStorage.setItem('cyber-yt-time', data.info.currentTime);
+          if (dom.timeCur) dom.timeCur.textContent = formatTime(data.info.currentTime);
+        }
+        if (typeof data.info.duration === 'number' && data.info.duration > 0 && dom.timeDur) {
+          dom.timeDur.textContent = formatTime(data.info.duration);
         }
         if (data.info.playerState === 1) { // 1 = playing
+          ytIsCurrentlyPlaying = true;
           localStorage.setItem('cyber-yt-playing', 'true');
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
@@ -709,6 +735,8 @@
           if (dom.pill) dom.pill.classList.add('is-playing');
           if (dom.slot) dom.slot.classList.add('is-playing');
         } else if (data.info.playerState === 2) { // 2 = paused
+          ytLocalStartOffset = getYtEstimatedCurrentTime();
+          ytIsCurrentlyPlaying = false;
           localStorage.setItem('cyber-yt-playing', 'false');
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
@@ -723,8 +751,14 @@
   window.addEventListener('beforeunload', function () {
     try {
       if (currentMode === 'yt' && currentYtVideo) {
+        var finalTime = getYtEstimatedCurrentTime();
         localStorage.setItem('cyber-audio-mode', 'yt');
         localStorage.setItem('cyber-yt-video', JSON.stringify(currentYtVideo));
+        localStorage.setItem('cyber-yt-time', finalTime);
+        sessionStorage.setItem('cyber-yt-time', finalTime);
+        if (ytIsCurrentlyPlaying || (dom.ytIframe && dom.ytIframe.src)) {
+          localStorage.setItem('cyber-yt-playing', 'true');
+        }
       }
     } catch (e) {}
   });
@@ -733,9 +767,19 @@
     var mode = localStorage.getItem('cyber-audio-mode') || 'bgm';
     if (mode === 'yt') {
       var isYtOn = localStorage.getItem('cyber-yt-playing') !== 'false';
-      if (isYtOn && currentYtVideo && (!dom.ytIframe || !dom.ytIframe.src)) {
-        var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
-        playYtVideo(currentYtVideo, savedYtTime);
+      if (isYtOn && currentYtVideo) {
+        if (!dom.ytIframe || !dom.ytIframe.src) {
+          var curT = parseFloat(sessionStorage.getItem('cyber-yt-time') || localStorage.getItem('cyber-yt-time') || '0');
+          playYtVideo(currentYtVideo, curT);
+        } else if (dom.ytIframe && dom.ytIframe.contentWindow) {
+          try {
+            dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+              event: 'command',
+              func: 'playVideo',
+              args: []
+            }), '*');
+          } catch (e) {}
+        }
       }
     } else {
       if (shouldAutoPlay() && audio.paused) {
@@ -1031,11 +1075,16 @@
     startTime = parseFloat(startTime || 0);
     if (isNaN(startTime) || startTime < 0) startTime = 0;
 
+    ytLocalStartTime = Date.now();
+    ytLocalStartOffset = startTime;
+    ytIsCurrentlyPlaying = true;
+
     try {
       localStorage.setItem('cyber-audio-mode', 'yt');
       localStorage.setItem('cyber-yt-video', JSON.stringify(v));
       localStorage.setItem('cyber-yt-playing', 'true');
-      if (startTime > 0) sessionStorage.setItem('cyber-yt-time', startTime);
+      sessionStorage.setItem('cyber-yt-time', startTime);
+      localStorage.setItem('cyber-yt-time', startTime);
     } catch (e) {}
 
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
@@ -1079,8 +1128,12 @@
   }
 
   function stopYtVideo() {
+    ytLocalStartOffset = getYtEstimatedCurrentTime();
+    ytIsCurrentlyPlaying = false;
     try {
       localStorage.setItem('cyber-yt-playing', 'false');
+      sessionStorage.setItem('cyber-yt-time', ytLocalStartOffset);
+      localStorage.setItem('cyber-yt-time', ytLocalStartOffset);
     } catch (e) {}
     if (dom.ytIframe) dom.ytIframe.src = '';
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'none';
@@ -1956,7 +2009,7 @@
     if (!dom.slot) return;
 
     if (currentMode === 'yt' && currentYtVideo) {
-      var isYtActive = dom.ytIframe && dom.ytIframe.src;
+      var isYtActive = ytIsCurrentlyPlaying || (dom.ytIframe && dom.ytIframe.src);
       dom.pillName.textContent = '🔴 ' + currentYtVideo.title;
       dom.pillStatus.textContent = isYtActive ? 'YT PLAYING' : 'YT PAUSED';
       dom.pill.classList.toggle('is-playing', isYtActive);
@@ -2005,7 +2058,12 @@
 
     if (currentMode === 'yt' && currentYtVideo) {
       switchToYt();
-      playYtVideo(currentYtVideo, savedYtTime);
+      var isYtOn = localStorage.getItem('cyber-yt-playing') !== 'false';
+      if (isYtOn) {
+        playYtVideo(currentYtVideo, savedYtTime);
+      } else {
+        updateUI();
+      }
     } else {
       loadTrack(currentTrackIdx, savedPos);
       if (savedPlaying) {
