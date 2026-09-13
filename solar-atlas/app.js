@@ -3053,14 +3053,17 @@ function farPrepare() {
     f.far = true;
     f.nm = { th: f.th, en: f.en };
     f.kind = f.t;
-    f.color = f.t === 'bh' ? 0xffb070 : 0x9fd0ff;
-    f.glow = f.t === 'bh' ? '#ffb070' : '#9fd0ff';
+    f.color = f.t === 'bh' ? 0xffb070 : f.t === 'pulsar' ? 0x21e6c8 : 0x9fd0ff;
+    f.glow = f.t === 'bh' ? '#ffb070' : f.t === 'pulsar' ? '#21e6c8' : '#9fd0ff';
     f.desc = f.de || { th: '', en: '' };
     if (f.t === 'bh') {
       f.rs = 2.953 * f.mass;                        // รัศมีชวาร์สชิลด์ (กม.) = 2GM/c²
       f.ext = f.ext || (f.acc ? 30 : 9);            // ครึ่งความกว้างของแผ่นภาพ (หน่วย M)
       f.span = f.rs * f.ext * 1000;                 // ความกว้างของแผ่นภาพ (เมตร)
       f.radius = f.rs * 4;                          // กม. — ซูมเข้าได้จนเงาเกือบเต็มจอ
+    } else if (f.t === 'pulsar') {
+      f.span = f.size * LY * 1000;
+      f.radius = f.size * LY * 0.005;
     } else {
       f.span = f.size * LY * 1000;                  // แสงฟุ้ง = ขนาดเนบิวลาทั้งก้อน
       f.radius = f.size * LY * 0.3;
@@ -3076,8 +3079,8 @@ function farPrepare() {
   }
 }
 
-// ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล — หลุมดำแบบคำนวณจริงต้องเล็ก ไม่งั้นค้างเป็นก้อนใหญ่ตอนซูมออก
-const farMinPx = def => def.t === 'bh' ? (def.kerr ? 0 : def.acc ? 64 : 30) : 44;
+// ความกว้างขั้นต่ำบนจอเมื่ออยู่ไกล — หลุมดำและพัลซาร์แบบคำนวณจริงต้องเล็ก ไม่งั้นค้างเป็นก้อนใหญ่ตอนซูมออก
+const farMinPx = def => def.t === 'bh' ? (def.kerr ? 0 : def.acc ? 64 : 30) : def.t === 'pulsar' ? 0 : 44;
 
 function blackHoleMaterial(def) {
   return new THREE.ShaderMaterial({
@@ -3335,6 +3338,7 @@ const smoothClamp = (x, a, b) => { const t = Math.max(0, Math.min(1, (x - a) / (
 let bhSteps = 170, bhBusy = false;
 const _bhV = new THREE.Vector3(), _bhR = new THREE.Vector3(), _bhU = new THREE.Vector3();
 const _bhV2 = new THREE.Vector2();
+const _qVela = new THREE.Quaternion(), _vVela = new THREE.Vector3(), _cVela = new THREE.Vector3();
 const _bhSig = [0, 0, 0, 0, 0, 0, 0];       // สภาพของภาพเฟรมก่อน ใช้ดูว่ามีอะไรเปลี่ยนไหม
 
 /* วางแกนหมุนของหลุมดำในพิกัดจริง: เอียง incl องศาจากแนวสายตา ไปทางมุมตำแหน่ง axisPA บนท้องฟ้า
@@ -3642,6 +3646,250 @@ function kerrBlackHoleMaterial(def) {
   });
 }
 
+/* ── แบบจำลอง 3 มิติของ Vela Pulsar (ถอดแบบจากโมเดลฟิสิกส์ 3 มิติ) ────────── */
+let _velaSpriteTex = null;
+function velaSpriteTexture() {
+  if (!_velaSpriteTex) {
+    _velaSpriteTex = new THREE.CanvasTexture(glowTexture([
+      [0, 'rgba(255,255,255,1)'],
+      [0.25, 'rgba(255,255,255,0.6)'],
+      [0.55, 'rgba(255,255,255,0.18)'],
+      [1, 'rgba(255,255,255,0)']
+    ], 128));
+  }
+  return _velaSpriteTex;
+}
+
+function buildVelaPulsar3D(def) {
+  const root = new THREE.Group();
+  // สเกลอิงตามความกว้าง def.span (8 ปีแสง) โดยในพิกัดจำลอง 80 หน่วยเทียบเท่า def.span
+  root.scale.setScalar(def.span / 80);
+
+  const spriteTex = velaSpriteTexture();
+
+  // 1) แกนกลาง: ดาวนิวตรอน + ฮาโลเรืองแสง 2 ชั้น
+  const core = new THREE.Group();
+  const coreMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.55, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffffff })
+  );
+  core.add(coreMesh);
+
+  const haloA = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: spriteTex, color: 0xbfe9ff,
+    transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  haloA.scale.set(7, 7, 1);
+  core.add(haloA);
+
+  const haloB = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: spriteTex, color: 0x6fd0ff,
+    transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  haloB.scale.set(18, 18, 1);
+  core.add(haloB);
+  root.add(core);
+
+  // 2) เส้นสนามแม่เหล็กไดโพล (Magnetic dipole field lines: r = L·sin²θ)
+  const fieldGroup = new THREE.Group();
+  fieldGroup.rotation.set(-18 * DEG, 0, -30 * DEG);
+  [2.2, 3.4, 4.8, 6.4, 8.2, 10.2].forEach((L, li) => {
+    const pts = [];
+    for (let d = 3; d <= 177; d += 2) {
+      const th = d * DEG, r = L * Math.sin(th) ** 2;
+      if (r < 0.6) continue;
+      pts.push(new THREE.Vector3(r * Math.sin(th), r * Math.cos(th), 0));
+    }
+    if (pts.length < 2) return;
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const copies = 8 + li * 2;
+    for (let k = 0; k < copies; k++) {
+      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({
+        color: 0xe8f2ff, transparent: true, opacity: 0.16 + (k % 3) * 0.08,
+        blending: THREE.AdditiveBlending, depthWrite: false
+      }));
+      line.rotation.y = k * (Math.PI * 2 / copies) + li * 0.21;
+      fieldGroup.add(line);
+    }
+  });
+  root.add(fieldGroup);
+
+  // 3) แกนหมุนพัลซาร์ + ลำแสงเจ็ตเชิงสัมพัทธภาพเอียง 35° พร้อมกรวยกวาด
+  const spinAxis = new THREE.Group();
+  spinAxis.rotation.set(10 * DEG, 0, -14 * DEG);
+
+  const magTilt = new THREE.Group();
+  magTilt.rotation.z = (def.jetAngle || 35) * DEG;
+  spinAxis.add(magTilt);
+
+  const BEAM_LEN = 180;
+  function makeBeam(s) {
+    const g = new THREE.Group();
+    const cMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.12, BEAM_LEN, 16, 1, true),
+      new THREE.MeshBasicMaterial({ color: 0xeafffb, transparent: true, opacity: 1 * s,
+        blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    const gMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.45, 0.45, BEAM_LEN, 16, 1, true),
+      new THREE.MeshBasicMaterial({ color: 0x21e6c8, transparent: true, opacity: 0.34 * s,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    const hMesh = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.2, 1.2, BEAM_LEN, 16, 1, true),
+      new THREE.MeshBasicMaterial({ color: 0x12c9b4, transparent: true, opacity: 0.10 * s,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.add(cMesh, gMesh, hMesh);
+    g.userData.core = cMesh;
+    return g;
+  }
+
+  const beamMain = makeBeam(1);
+  magTilt.add(beamMain);
+
+  // 5 ghost trailing beams สำหรับแสดงความต่อเนื่องของลำแสงหมุนเร็ว
+  const GHOSTS = 5, ghosts = [], ghostGroup = new THREE.Group();
+  spinAxis.add(ghostGroup);
+  for (let i = 1; i <= GHOSTS; i++) {
+    const lag = new THREE.Group();
+    const tilt = new THREE.Group();
+    tilt.rotation.z = (def.jetAngle || 35) * DEG;
+    tilt.add(makeBeam(0.42 * (1 - i / (GHOSTS + 1))));
+    lag.add(tilt);
+    ghostGroup.add(lag);
+    ghosts.push(lag);
+  }
+
+  // กรวยกวาดลำแสง (Sweep cones)
+  const sweepCone = new THREE.Group();
+  spinAxis.add(sweepCone);
+  [1, -1].forEach(s => {
+    const h = 80, R = h * Math.tan((def.jetAngle || 35) * DEG);
+    const c = new THREE.Mesh(
+      new THREE.ConeGeometry(R, h, 48, 1, true),
+      new THREE.MeshBasicMaterial({ color: 0x16d9bd, transparent: true, opacity: 0.035,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    c.position.y = s * h / 2;
+    c.rotation.z = s > 0 ? 0 : Math.PI;
+    sweepCone.add(c);
+  });
+  sweepCone.visible = false;
+  root.add(spinAxis);
+
+  // สไปรต์วาบแสงของลำแสง (Flash flare)
+  const beamFlare = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: spriteTex, color: 0x9bfff0,
+    transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  beamFlare.scale.set(9, 9, 1);
+  core.add(beamFlare);
+
+  // 4) วงแหวนคู่รังสีเอกซ์ (Vela X-ray Arcs)
+  const arcGroup = new THREE.Group();
+  arcGroup.rotation.set(10 * DEG, 0, -14 * DEG);
+  [[4.2, 2.2], [6.6, 3.6]].forEach(([R, y]) => {
+    const t = new THREE.Mesh(
+      new THREE.TorusGeometry(R, 0.13, 12, 80),
+      new THREE.MeshBasicMaterial({ color: 0xff7ad1, transparent: true, opacity: 0.85,
+        blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    t.rotation.x = Math.PI / 2; t.position.y = y; arcGroup.add(t);
+    const g = new THREE.Mesh(
+      new THREE.TorusGeometry(R, 0.45, 10, 60),
+      new THREE.MeshBasicMaterial({ color: 0xff4fb0, transparent: true, opacity: 0.18,
+        blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.rotation.x = Math.PI / 2; g.position.y = y; arcGroup.add(g);
+  });
+  root.add(arcGroup);
+
+  // 5) เจ็ตเกลียว (Helical jets จากการสังเกตการณ์ของกล้องจันทรา)
+  const helixGroup = new THREE.Group();
+  helixGroup.rotation.set(10 * DEG, 0, -14 * DEG);
+  function helixJet(len, rad, turns, dir) {
+    const pts = [];
+    for (let i = 0; i <= 100; i++) {
+      const t = i / 100, a = turns * Math.PI * 2 * t, r = rad * (0.15 + 0.85 * t);
+      pts.push(new THREE.Vector3(Math.cos(a) * r, dir * t * len, Math.sin(a) * r));
+    }
+    return new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 120, 0.09, 8, false),
+      new THREE.MeshBasicMaterial({ color: 0x7fd4ff, transparent: true, opacity: 0.85,
+        blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+  }
+  const helixA = helixJet(20, 1.9, 2.4, 1);
+  const helixB = helixJet(9, 1.2, 1.4, -1);
+  helixGroup.add(helixA, helixB);
+  root.add(helixGroup);
+
+  // 6) เนบิวลาซากซูเปอร์โนวาสีแดง 3 ชั้น (Supernova remnant particle clouds)
+  const nebula = new THREE.Group();
+  nebula.rotation.set(6 * DEG, 0, -4 * DEG);
+  function buildNebulaLayer(count, rMin, rMax, thick, size, opacity, hueA, hueB) {
+    const pos = new Float32Array(count * 3), col = new Float32Array(count * 3);
+    const c = new THREE.Color();
+    for (let i = 0; i < count; i++) {
+      const arm = Math.floor(Math.random() * 3) * (Math.PI * 2 / 3);
+      const t = Math.pow(Math.random(), 0.65);
+      const r = rMin + (rMax - rMin) * t;
+      const a = arm + t * 3.1 + (Math.random() - 0.5) * 1.15;
+      const puff = (Math.random() - 0.5) * thick * (0.35 + t);
+      pos[i * 3]     = Math.cos(a) * r + (Math.random() - 0.5) * 2.2;
+      pos[i * 3 + 1] = puff + (Math.random() - 0.5) * 1.1;
+      pos[i * 3 + 2] = Math.sin(a) * r * 0.92 + (Math.random() - 0.5) * 2.2;
+      c.setHSL(hueA + Math.random() * (hueB - hueA), 0.95, 0.18 + Math.random() * 0.36);
+      col[i * 3]     = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    return new THREE.Points(geo, new THREE.PointsMaterial({
+      size, map: spriteTex, vertexColors: true, transparent: true, opacity,
+      depthWrite: false, blending: THREE.AdditiveBlending
+    }));
+  }
+  nebula.add(buildNebulaLayer(5000, 4.5, 19, 5.0, 2.5, 0.55, 0.985, 1.02));
+  nebula.add(buildNebulaLayer(3500, 9.0, 26, 7.5, 4.5, 0.30, 0.965, 1.00));
+  nebula.add(buildNebulaLayer(1500, 15.0, 34, 9.0, 7.0, 0.14, 0.955, 0.995));
+
+  // 14 เส้นใยฟิลาเมนต์เรืองแสง (Glowing filaments)
+  const filaments = new THREE.Group();
+  nebula.add(filaments);
+  for (let k = 0; k < 14; k++) {
+    const R0 = 5 + Math.random() * 13, turns = 0.9 + Math.random() * 1.5;
+    const off = Math.random() * Math.PI * 2, lift = (Math.random() - 0.5) * 4.5;
+    const pts = [];
+    for (let i = 0; i <= 50; i++) {
+      const t = i / 50, a = off + turns * Math.PI * 2 * t, r = R0 + t * 7.5;
+      pts.push(new THREE.Vector3(
+        Math.cos(a) * r,
+        lift * Math.sin(t * Math.PI) + (Math.random() - 0.5) * 0.4,
+        Math.sin(a) * r * 0.92
+      ));
+    }
+    filaments.add(new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 70, 0.085 + Math.random() * 0.06, 6, false),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color().setHSL(0.99, 0.95, 0.55),
+        transparent: true, opacity: 0.52, blending: THREE.AdditiveBlending, depthWrite: false
+      })
+    ));
+  }
+  root.add(nebula);
+
+  return {
+    root, core, haloA, haloB, fieldGroup, spinAxis, magTilt, beamMain,
+    beamCore: beamMain.userData.core, beamFlare, ghosts, ghostGroup,
+    sweepCone, arcGroup, helixGroup, helixA, helixB, nebula, filaments,
+    def
+  };
+}
+
 function makeFar(def) {
   const holder = new THREE.Group();
   const spin = new THREE.Group();
@@ -3674,7 +3922,11 @@ function makeFar(def) {
   } else if (def.t !== 'bh') {
     rec.fixedQuat = skyQuat(def._world);
   }
-  if (def.t !== 'bh') {
+  if (def.id === 'vela' || def.t === 'pulsar') {
+    rec.vela = buildVelaPulsar3D(def);
+    spin.add(rec.vela.root);
+    mesh.visible = false;
+  } else if (def.t !== 'bh') {
     // ตัวแทนที่ซ่อนไว้: ให้วัสดุของโมเดลถูกคอมไพล์ตั้งแต่หน้าโหลด โมเดลมาถึงระหว่างบินจะได้ไม่สะดุด
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
@@ -3700,6 +3952,14 @@ function farDisc(def, size) {
     gr.addColorStop(0, '#000'); gr.addColorStop(0.28, '#000');
     gr.addColorStop(0.34, 'rgba(255,214,150,1)'); gr.addColorStop(0.5, 'rgba(255,140,50,.55)'); gr.addColorStop(1, 'rgba(255,120,40,0)');
     g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  } else if (def.id === 'vela' || def.t === 'pulsar') {
+    const gr = g.createRadialGradient(m, m, 0, m, m, m);
+    gr.addColorStop(0, '#ffffff');
+    gr.addColorStop(0.18, 'rgba(126,240,216,1)');
+    gr.addColorStop(0.42, 'rgba(33,230,200,0.7)');
+    gr.addColorStop(0.70, 'rgba(255,80,120,0.3)');
+    gr.addColorStop(1, 'rgba(255,60,100,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, size, size);
   } else {
     const gr = g.createRadialGradient(m, m, 0, m, m, m);
     gr.addColorStop(0, 'rgba(230,240,255,1)'); gr.addColorStop(0.35, 'rgba(120,180,255,.65)'); gr.addColorStop(1, 'rgba(80,120,220,0)');
@@ -3709,10 +3969,10 @@ function farDisc(def, size) {
 }
 
 function farShown(rec) {
-  // หลุมดำที่คำนวณเส้นทางแสงจริงไม่ถูกขยายเป็นเครื่องหมายขนาดคงที่อีกแล้ว
+  // หลุมดำและพัลซาร์ที่คำนวณโครงสร้างจริงไม่ถูกขยายเป็นเครื่องหมายขนาดคงที่อีกแล้ว
   // มองจากไกลจึงต้องไม่เห็นตัวมัน แม้จะกำลังเพ่งอยู่ก็ตาม (ของจริงเล็กเกินกว่าจะเห็นจากระยะนั้นมาก)
   // ปล่อยให้ป้ายชื่อกับวงกลมบอกตำแหน่ง (labelRing) ทำหน้าที่แทน แล้วค่อยโผล่เมื่อเข้าใกล้จริง ๆ
-  if (rec.def.id === (trans.on ? trans.to : S.focus) && !rec.def.kerr) return true;
+  if (rec.def.id === (trans.on ? trans.to : S.focus) && !rec.def.kerr && rec.def.t !== 'pulsar') return true;
   // ใกล้พอให้ขนาดจริงบนจอเกินราว 2–3 พิกเซล (ไม่เกิน 400 เท่าของขนาด · span เป็นเมตร)
   eyeWorld(_eye);
   return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
@@ -3793,6 +4053,41 @@ function farPose(rec) {
     }
   } else if (rec.fixedQuat) {
     rec.spin.quaternion.copy(rec.fixedQuat);
+  }
+  if (rec.vela) {
+    const v = rec.vela;
+    const rps = def.freq || 11.2;
+    const tSec = performance.now() * 0.001;
+
+    // หมุนแกนพัลซาร์ด้วยความถี่จริง 11.2 รอบ/วินาที (คาบ 89.33 ms)
+    v.spinAxis.rotation.y = (tSec * Math.PI * 2 * rps) % (Math.PI * 2);
+
+    // เงาตามหลัง (ghost trails)
+    const lag = Math.min(0.35, 0.08 * (rps / 11.2));
+    for (let i = 0; i < v.ghosts.length; i++) {
+      v.ghosts[i].rotation.y = -(i + 1) * lag;
+    }
+
+    // ส่วนโครงสร้างแวดล้อมหมุนช้าๆ
+    v.nebula.rotation.y     = (tSec * 0.045) % (Math.PI * 2);
+    v.filaments.rotation.y  = (tSec * 0.020) % (Math.PI * 2);
+    v.fieldGroup.rotation.y = (tSec * 0.280) % (Math.PI * 2);
+    v.arcGroup.rotation.y   = (tSec * 0.050) % (Math.PI * 2);
+    v.helixA.rotation.y     = (tSec * 0.250) % (Math.PI * 2);
+    v.helixB.rotation.y     = (-tSec * 0.180) % (Math.PI * 2);
+
+    // วาบแสงเมื่อลำแสงเจ็ตกวาดผ่านแนวสายตากล้อง (Lighthouse pulse flash)
+    v.beamCore.getWorldQuaternion(_qVela);
+    _vVela.set(0, 1, 0).applyQuaternion(_qVela);
+    _cVela.copy(camera.position).sub(rec.holder.position).normalize();
+    const flash = Math.pow(Math.abs(_vVela.dot(_cVela)), 12);
+
+    const pulse = 0.82 + 0.18 * Math.sin(tSec * 7);
+    v.haloA.scale.setScalar(7 * pulse + flash * 6);
+    v.haloB.material.opacity = 0.32 + 0.18 * Math.sin(tSec * 3.1) + flash * 0.35;
+    v.beamCore.material.opacity = 0.8 + 0.2 * Math.sin(tSec * 9);
+    v.beamFlare.material.opacity = 0.35 + flash * 0.85;
+    v.beamFlare.scale.setScalar(9 + flash * 14);
   }
 }
 
@@ -3933,13 +4228,19 @@ function renderFarInfo(rec) {
     const muas = 2 * 2.598 * def.rs / (def.dly * LY) * 206264.806e6;
     rows.push([t.bhShadow, `${muas >= 1 ? nf(muas, 1) : muas >= 0.001 ? nf(muas, 4) : muas.toExponential(1)}<u>${t.muas}</u>`]);
     rows.push([t.bhAcc, def.acc ? t.bhAccYes : t.bhAccNo]);
+  } else if (def.t === 'pulsar') {
+    rows.push([t.pulsarPeriod, `${nf(def.period, 2)}<u>ms</u>`]);
+    rows.push([t.pulsarFreq, `${nf(def.freq, 1)}<u>rev/s</u>`]);
+    rows.push([t.pulsarBField, `${def.bfield}`]);
+    rows.push([t.pulsarJetAngle, `${def.jetAngle || 35}°`]);
+    rows.push([t.nebSize, `${nf(def.size, 1)}<u>${t.ly}</u>`]);
   } else {
     rows.push([t.nebSize, `${nf(def.size, def.size < 10 ? 1 : 0)}<u>${t.ly}</u>`]);
     rows.push([t.modelSrc, t.modelNasa]);
   }
   rows.push([t.refSrc, escHtml2(def.ref || '')]);
   const sec = el('div', 'sec');
-  sec.innerHTML = `<h3>${def.t === 'bh' ? t.secBh : t.secNeb}</h3><dl class="readout">` +
+  sec.innerHTML = `<h3>${def.t === 'bh' ? t.secBh : def.t === 'pulsar' ? t.secPulsar : t.secNeb}</h3><dl class="readout">` +
     rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
   const addNote = (title, text) => {
     const note = el('div', 'note');
