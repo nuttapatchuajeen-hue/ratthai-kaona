@@ -341,7 +341,7 @@
       <div class="tabs" role="tablist">
         <button class="tab-btn active" id="tab-form" type="button"><svg class="mdico"><use href="#i-pencil"></use></svg> ทำแบบประเมิน</button>
         <button class="tab-btn" id="tab-report" type="button"><svg class="mdico"><use href="#i-clipboard-list"></use></svg> ผลการประเมิน (รายงาน)</button>
-        <button class="tab-btn" id="tab-results" type="button"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลการประเมิน (สด)</button>
+        <button class="tab-btn" id="tab-results" type="button"><svg class="mdico"><use href="#i-chart-column"></use></svg> ผลการประเมิน (รวม)</button>
       </div>
     </section>
 
@@ -414,15 +414,22 @@
     <section class="wrap" id="view-results" hidden>
       <div class="results-actions">
         <button class="btn-ghost" type="button" id="btn-refresh">⟳ โหลดผลล่าสุด</button>
-        <a class="btn-ghost" id="csv-link" href="#" download>⬇ ดาวน์โหลดข้อมูลดิบ (CSV สำหรับ Excel/SPSS)</a>
+        <a class="btn-ghost" id="csv-link" href="#" download>⬇ ดาวน์โหลดข้อมูลดิบ — เฉพาะคำตอบออนไลน์ (CSV สำหรับ Excel/SPSS)</a>
       </div>
       <div class="loading" id="res-loading">กำลังโหลดผลการประเมิน…</div>
       <div id="res-body" hidden>
+
+        <div class="panel">
+          <span class="panel-num">ที่มาของข้อมูล</span>
+          <h2>ผลการประเมินรวม (รายงาน + ออนไลน์)</h2>
+          <p class="hint">รวมผลตามเล่มรายงาน <strong>บทที่ 4</strong> (30 คน) เข้ากับคำตอบที่ส่งผ่านหน้าเว็บนี้ แล้วคำนวณค่าร้อยละ ค่าเฉลี่ย (x̄) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ใหม่จากทั้งสองชุด — ข้อเสนอแนะและไฟล์ CSV มีเฉพาะคำตอบออนไลน์ เพราะเล่มรายงานไม่มีข้อมูลดิบรายคน</p>
+        </div>
 
         <div class="stat-band">
           <div class="stat-card">
             <div class="v" id="r-n">0</div>
             <div class="k">ผู้ตอบแบบประเมิน (คน)</div>
+            <div class="interp" id="r-n-src">—</div>
           </div>
           <div class="stat-card">
             <div class="v" id="r-mean">0 <small>/ 5.00</small></div>
@@ -463,12 +470,11 @@
 
         <div class="panel" id="r-comments-panel" hidden>
           <span class="panel-num">เสียงผู้ใช้</span>
-          <h2>ข้อเสนอแนะล่าสุด</h2>
+          <h2>ข้อเสนอแนะล่าสุด (ตอบออนไลน์)</h2>
           <div id="r-comments"></div>
         </div>
 
       </div>
-      <div class="empty" id="res-empty" hidden>ยังไม่มีผู้ตอบแบบประเมิน — เป็นคนแรกได้เลย!</div>
     </section>
     <!-- ════ VIEW 3: REPORT (ผลจริงจากรายงานโครงการ บทที่ 4 · n = 30) ════ -->
     <section class="wrap" id="view-report" hidden>
@@ -476,7 +482,7 @@
       <div class="panel">
         <span class="panel-num">ที่มาของข้อมูล</span>
         <h2>ผลการประเมินความพึงพอใจ (n = 30)</h2>
-        <p class="hint">ผลการเก็บข้อมูลจริงที่รายงานไว้ใน <strong>บทที่ 4 ผลการวิจัย</strong> ของโครงการ “รัฐไทยก้าวหน้า” — กลุ่มตัวอย่างคือนักเรียนระดับประกาศนียบัตรวิชาชีพ (ปวช.) และผู้ที่สนใจ จำนวน 30 คน วิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ตัวเลขในหน้านี้เป็นชุดข้อมูลคงที่ตามเล่มรายงาน แยกจากแท็บ “ผลการประเมิน (สด)” ที่ดึงคำตอบล่าสุดจากระบบ</p>
+        <p class="hint">ผลการเก็บข้อมูลจริงที่รายงานไว้ใน <strong>บทที่ 4 ผลการวิจัย</strong> ของโครงการ “รัฐไทยก้าวหน้า” — กลุ่มตัวอย่างคือนักเรียนระดับประกาศนียบัตรวิชาชีพ (ปวช.) และผู้ที่สนใจ จำนวน 30 คน วิเคราะห์ด้วยค่าร้อยละ (Percentage) ค่าเฉลี่ย (Mean) และส่วนเบี่ยงเบนมาตรฐาน (S.D.) ตัวเลขในหน้านี้เป็นชุดข้อมูลคงที่ตามเล่มรายงาน ส่วนแท็บ “ผลการประเมิน (รวม)” จะนำชุดนี้ไปรวมกับคำตอบที่ส่งผ่านหน้าเว็บ</p>
       </div>
 
       <div class="stat-band">
@@ -848,27 +854,88 @@
   csvLink.href = API + '?format=csv';
   document.getElementById('btn-refresh').addEventListener('click', loadResults);
 
+  // ── ผลตามเล่มรายงาน บทที่ 4 (n = 30) — นำไปรวมกับคำตอบออนไลน์ ──
+  // ต้องตรงกับตัวเลขในแท็บ "ผลการประเมิน (รายงาน)" (#view-report)
+  const REPORT = {
+    n: 30,
+    items: [                                  // [x̄, S.D.] รายข้อ ตามตารางที่ 4.6
+      [4.50, 0.57], [4.47, 0.63], [4.43, 0.68], [4.57, 0.57],
+      [4.67, 0.55], [4.53, 0.57], [4.60, 0.56], [4.50, 0.63],
+      [4.53, 0.57], [4.50, 0.60], [4.43, 0.67], [4.60, 0.61],
+      [4.63, 0.55], [4.57, 0.56], [4.53, 0.62], [4.60, 0.56],
+    ],
+    sections: [[4.49, 0.61], [4.57, 0.58], [4.52, 0.61], [4.58, 0.58]],
+    overall: [4.54, 0.60],
+    demographics: {                           // จำนวนคน ตามตารางที่ 4.5 (ลำดับเดียวกับ DEMO_QUESTIONS)
+      gender: [16, 13, 1],
+      age: [4, 18, 5, 2, 1],
+      status: [22, 3, 2, 2, 1],
+      freq: [17, 8, 4, 1],
+    },
+  };
+
+  // เก็บแต่ละชุดเป็น จำนวนค่า / ผลรวม / ผลรวมกำลังสอง แล้วบวกกันได้ตรง ๆ
+  // ฝั่งเล่มใช้ x̄, S.D. ของระดับนั้นเอง (รายข้อ/รายด้าน/รวม) → ไม่มีคำตอบออนไลน์ = ได้ตัวเลขตามเล่มพอดี
+  // S.D. แบบกลุ่มตัวอย่าง (หาร n-1) เหมือนฝั่ง server
+  const fromStat = (n, [m, s]) => ({ n, S: n * m, Q: (n - 1) * s * s + n * m * m });
+  const fromCounts = (counts = []) => counts.reduce(
+    (a, k, i) => ({ n: a.n + k, S: a.S + k * (i + 1), Q: a.Q + k * (i + 1) ** 2 }), { n: 0, S: 0, Q: 0 });
+  const addAgg = (...xs) => xs.reduce((a, b) => ({ n: a.n + b.n, S: a.S + b.S, Q: a.Q + b.Q }), { n: 0, S: 0, Q: 0 });
+  const aggStat = ({ n, S, Q }) => ({
+    mean: n ? S / n : 0,
+    sd: n > 1 ? Math.sqrt(Math.max(0, (Q - S * S / n) / (n - 1))) : 0,
+  });
+
+  function combine(live) {                    // live = JSON จาก API หรือ null (โหลดไม่ได้)
+    const R = REPORT.n;
+    const liveN = live ? live.n : 0;
+    const n = R + liveN;
+    const liveItems = ALL_ITEMS.map((_, i) => fromCounts(live?.items?.[i]?.counts));
+
+    const items = liveItems.map((a, i) => aggStat(addAgg(fromStat(R, REPORT.items[i]), a)));
+    let off = 0;
+    const sections = SECTIONS.map((sec, s) => {
+      const k = sec.items.length;
+      const liveSec = addAgg(...liveItems.slice(off, off + k));
+      off += k;
+      return { name: sec.name, ...aggStat(addAgg(fromStat(R * k, REPORT.sections[s]), liveSec)) };
+    });
+    const overall = aggStat(addAgg(fromStat(R * ALL_ITEMS.length, REPORT.overall), ...liveItems));
+
+    const demographics = {};
+    for (const q of DEMO_QUESTIONS) {
+      demographics[q.id] = q.choices.map((label, j) => {
+        const lc = live?.demographics?.[q.id]?.find((c) => c.label === label);
+        const count = REPORT.demographics[q.id][j] + (lc ? lc.count : 0);
+        return { label, count, percent: (count / n) * 100 };
+      });
+    }
+    return { n, reportN: R, liveN, items, sections, overall, demographics, comments: live?.comments || [] };
+  }
+
   async function loadResults() {
     const loading = document.getElementById('res-loading');
     const body = document.getElementById('res-body');
-    const empty = document.getElementById('res-empty');
-    loading.hidden = false; body.hidden = true; empty.hidden = true;
+    loading.textContent = 'กำลังโหลดผลการประเมิน…';
+    loading.hidden = false; body.hidden = true;
     try {
       const res = await fetch(API);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const d = await res.json();
       resultsLoadedOnce = true;
       loading.hidden = true;
-      if (!d.n) { empty.hidden = false; return; }
-      body.hidden = false;
-      renderResults(d);
+      renderResults(combine(d));
     } catch (err) {
-      loading.textContent = 'โหลดผลไม่สำเร็จ (' + err.message + ') — กด "โหลดผลล่าสุด" เพื่อลองใหม่';
+      // โหลดคำตอบออนไลน์ไม่ได้ → ยังแสดงผลตามเล่มไว้ก่อน
+      loading.textContent = 'โหลดคำตอบออนไลน์ไม่สำเร็จ (' + err.message + ') — ตอนนี้แสดงเฉพาะผลตามรายงาน กด "โหลดผลล่าสุด" เพื่อลองใหม่';
+      renderResults(combine(null));
     }
+    body.hidden = false;
   }
 
   function renderResults(d) {
     document.getElementById('r-n').textContent = d.n;
+    document.getElementById('r-n-src').textContent = `รายงาน ${d.reportN} + ออนไลน์ ${d.liveN}`;
     document.getElementById('r-mean').innerHTML = fmt(d.overall.mean) + ' <small>/ 5.00</small>';
     document.getElementById('r-interp').textContent = 'ระดับ: ' + interp(d.overall.mean);
     document.getElementById('r-sd').textContent = fmt(d.overall.sd);
