@@ -168,6 +168,8 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
     <button type="button" class="cr-tab" data-cat="opendata">🔍 การหาข้อมูล & ชุดข้อมูลเปิด</button>
     <button type="button" class="cr-tab" data-cat="ytdev">💡 ไอเดียพัฒนาเว็บ & ครีเอเตอร์ YT</button>
     <button type="button" class="cr-tab" data-cat="climate">🌍 ศูนย์ข้อมูลโลก &amp; สภาพภูมิอากาศ (NASA Climate)</button>
+    <button type="button" class="cr-tab" data-cat="nationalstats">📊 สถิติประเทศไทย &amp; นโยบายสาธารณะ</button>
+    <button type="button" class="cr-tab" data-cat="stem">🔬 แบบจำลอง STEM &amp; วิทยาการคำนวณ</button>
     <button type="button" class="cr-tab" data-cat="referendum">🗳️ ประชามติ 2569 (ล่าสุด)</button>
     <button type="button" class="cr-tab" data-cat="election">🏛️ รัฐสภา & การเลือกตั้ง</button>
     <button type="button" class="cr-tab" data-cat="gov">👑 ครม. & โครงสร้าง 20 กระทรวง</button>
@@ -710,6 +712,432 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
         <div class="cr-card-foot">
           <span class="cr-tag">Binary Compression</span>
           <a class="cr-card-link" href="../stats/explore.html">ดูตัวอย่างในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. หมวดสถิติประเทศไทย เศรษฐกิจ สังคม และนโยบายสาธารณะ (จากหน้า stats/explore.html) -->
+  <div class="cr-sec cr-sec-data" data-cat="nationalstats" id="nationalstats">
+    <h2>📊 สถิติประเทศไทย เศรษฐกิจ สังคม และนโยบายสาธารณะ (National Statistics &amp; Economy)<span class="cnt">13 แหล่งข้อมูลระดับชาติ</span></h2>
+    <p class="sub">ใช้ในหน้าศูนย์ข้อมูลและสถิติ (stats/explore.html) — ครอบคลุมการคลังภาครัฐ, หนี้สาธารณะ, สถิติประชากร, สังคมสูงวัย, สาธารณสุข, การศึกษา, พลังงาน, เศรษฐกิจ และผังเมืองกรุงเทพฯ</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">หนี้สาธารณะและวินัยการเงินการคลัง</div>
+            <div class="cr-card-org">สำนักงานบริหารหนี้สาธารณะ (สบน.) · กระทรวงการคลัง</div>
+          </div>
+          <span class="lic">Open Gov Data</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติยอดหนี้สาธารณะคงค้างรายปี สัดส่วนหนี้สาธารณะต่อ GDP (ปี 2561–2568) ยอดหนี้เฉลี่ยต่อหัวประชากร และการติดตามกรอบเพดานหนี้ 70% ตาม พ.ร.บ.วินัยการเงินการคลังของรัฐ พ.ศ. 2561
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">สบน. / pdmo.go.th</span>
+          <a class="cr-card-link" href="https://www.pdmo.go.th/th/public-debt/debt-outstanding" target="_blank" rel="noopener">สถิติหนี้สาธารณะ สบน. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">งบประมาณรายจ่ายและโครงสร้างรายได้ภาษี</div>
+            <div class="cr-card-org">สำนักงบประมาณ &amp; กรมสรรพากร · กระทรวงการคลัง</div>
+          </div>
+          <span class="lic">พระราชบัญญัติงบประมาณ</span>
+        </div>
+        <div class="cr-card-body">
+          พ.ร.บ.งบประมาณรายจ่ายประจำปี 2568 การจัดสรรงบประมาณรายกระทรวง งบกลาง รายจ่ายประจำ vs ลงทุน วงเงินขาดดุลงบประมาณ และผลการจัดเก็บรายได้ภาษี (VAT, นิติบุคคล, บุคคลธรรมดา)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">bb.go.th &amp; rd.go.th</span>
+          <a class="cr-card-link" href="https://www.bb.go.th/" target="_blank" rel="noopener">สำนักงบประมาณ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">สถิติเกิด–ตาย และโครงสร้างประชากรไทย</div>
+            <div class="cr-card-org">สำนักบริหารการทะเบียน กรมการปกครอง (BORA)</div>
+          </div>
+          <span class="lic">สถิติทะเบียนราษฎร</span>
+        </div>
+        <div class="cr-card-body">
+          ฐานข้อมูลสถิติจำนวนประชากรไทยรายปี ยอดคนเกิด ยอดคนตาย อัตราการเพิ่มตามธรรมชาติ และข้อมูลทะเบียนราษฎรระดับจังหวัดและราย 50 เขตในกรุงเทพมหานคร
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">stat.bora.dopa.go.th</span>
+          <a class="cr-card-link" href="https://stat.bora.dopa.go.th/" target="_blank" rel="noopener">ระบบสถิติทางการทะเบียน BORA ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">อัตราเจริญพันธุ์และสถานการณ์สังคมสูงวัย</div>
+            <div class="cr-card-org">สถาบันวิจัยประชากรและสังคม ม.มหิดล &amp; กรมกิจการผู้สูงอายุ</div>
+          </div>
+          <span class="lic">Open Research &amp; Data</span>
+        </div>
+        <div class="cr-card-body">
+          การสำรวจประชากรและสถิติอัตราเจริญพันธุ์รวม (TFR) ของไทยที่ลดลงสู่ 1.16 คนต่อสตรี รายงานสถานการณ์ผู้สูงอายุไทย และการเปลี่ยนแปลงพีระมิดประชากรเข้าสู่สังคมสูงวัยขั้นสุดยอด
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">IPSR &amp; dop.go.th</span>
+          <a class="cr-card-link" href="https://ipsr.mahidol.ac.th/" target="_blank" rel="noopener">สถาบันวิจัยประชากรฯ มหิดล ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">หลักประกันสุขภาพถ้วนหน้าและกำลังคนแพทย์</div>
+            <div class="cr-card-org">สำนักงานหลักประกันสุขภาพแห่งชาติ (สปสช.) &amp; แพทยสภา</div>
+          </div>
+          <span class="lic">Open Health Data</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติผู้ถือสิทธิบัตรทอง 30 บาท ประกันสังคม และสวัสดิการข้าราชการ สัดส่วนรายจ่ายสุขภาพที่ครัวเรือนจ่ายเอง และการกระจายตัวของแพทย์ต่อประชากรในแต่ละภูมิภาค
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">nhso.go.th &amp; tmc.or.th</span>
+          <a class="cr-card-link" href="https://www.nhso.go.th/" target="_blank" rel="noopener">สำนักงานหลักประกันสุขภาพฯ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">อายุคาดเฉลี่ยและสถิติโรค NCDs</div>
+            <div class="cr-card-org">กระทรวงสาธารณสุข (สธ.) &amp; องค์การอนามัยโลก (WHO)</div>
+          </div>
+          <span class="lic">Public Health Statistics</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติ 10 อันดับแรกของสาเหตุการเสียชีวิตในประเทศไทย อัตราการเจ็บป่วยด้วยโรคไม่ติดต่อเรื้อรัง (NCDs) และสถิติแนวโน้มอายุคาดเฉลี่ยเมื่อแรกเกิดจำแนกตามเพศ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">moph.go.th / who.int</span>
+          <a class="cr-card-link" href="https://moph.go.th/" target="_blank" rel="noopener">กระทรวงสาธารณสุข ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">คุณภาพการศึกษาและความเสมอภาคทางการศึกษา</div>
+            <div class="cr-card-org">สสวท. (PISA Thailand) &amp; กสศ. &amp; สสช.</div>
+          </div>
+          <span class="lic">Educational Research</span>
+        </div>
+        <div class="cr-card-body">
+          ผลการประเมินสมรรถนะนักเรียนมาตรฐานสากล OECD PISA Thailand ตัวชี้วัดความเป็นอยู่ที่ดีและการกลั่นแกล้งในโรงเรียน สถิติการมีงานทำตามวุฒิการศึกษา และแผนที่เด็กหลุดจากระบบ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">PISA &amp; eef.or.th</span>
+          <a class="cr-card-link" href="https://pisathailand.ipst.ac.th/" target="_blank" rel="noopener">PISA Thailand (สสวท.) ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">GDP มหภาคและการคาดประมาณเศรษฐกิจไทย</div>
+            <div class="cr-card-org">สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ (สศช.)</div>
+          </div>
+          <span class="lic">Official National Reports</span>
+        </div>
+        <div class="cr-card-body">
+          ผลิตภัณฑ์มวลรวมในประเทศ (GDP) อัตราการเติบโตทางเศรษฐกิจ โครงสร้าง GDP รายสาขาในรูปแบบ Treemap การคาดประมาณประชากรระยะยาว พ.ศ. 2553–2583 และรายงานภาวะเศรษฐกิจไทย
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">สศช. / nesdc.go.th</span>
+          <a class="cr-card-link" href="https://www.nesdc.go.th/" target="_blank" rel="noopener">สำนักงานสภาพัฒน์ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">หนี้ครัวเรือนไทยและเสถียรภาพการเงิน</div>
+            <div class="cr-card-org">ธนาคารแห่งประเทศไทย (ธปท.) &amp; BIS</div>
+          </div>
+          <span class="lic">Central Bank Statistics</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลสถิติหนี้ครัวเรือนต่อ GDP โครงสร้างสินเชื่อภาคครัวเรือน (อสังหาฯ บัตรเครดิต บุคคล รถยนต์) สถิติเปรียบเทียบหนี้ต่อ GDP ระดับโลกจาก BIS และดัชนีเงินเฟ้อจาก World Bank
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">bot.or.th &amp; bis.org</span>
+          <a class="cr-card-link" href="https://www.bot.or.th/" target="_blank" rel="noopener">ธนาคารแห่งประเทศไทย ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">การค้าระหว่างประเทศ การท่องเที่ยว และ GII</div>
+            <div class="cr-card-org">กระทรวงพาณิชย์ &amp; ก.ท่องเที่ยวฯ &amp; WIPO</div>
+          </div>
+          <span class="lic">Official Statistics</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติมูลค่าการส่งออก-นำเข้า ดุลการค้า คู่ค้าสำคัญ 5 อันดับแรก รายได้และจำนวนนักท่องเที่ยวต่างชาติรายสัญชาติ และดัชนีนวัตกรรมโลก (Global Innovation Index - GII) จาก WIPO
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">moc.go.th &amp; mots.go.th</span>
+          <a class="cr-card-link" href="https://www.moc.go.th/" target="_blank" rel="noopener">กระทรวงพาณิชย์ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">พลังงานไฟฟ้า เชื้อเพลิง และพลังงานหมุนเวียน</div>
+            <div class="cr-card-org">กฟผ. (EGAT) &amp; สนพ. &amp; กรมธุรกิจพลังงาน</div>
+          </div>
+          <span class="lic">Energy Open Data</span>
+        </div>
+        <div class="cr-card-body">
+          สัดส่วนกำลังการผลิตไฟฟ้าตามสัญญาในระบบ กำลังการผลิตพลังงานหมุนเวียนและราคาที่จ่ายจริง สัดส่วนแหล่งเชื้อเพลิงผลิตไฟฟ้า และปริมาณการใช้น้ำมันในประเทศ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">egat.co.th &amp; eppo.go.th</span>
+          <a class="cr-card-link" href="https://www.egat.co.th/" target="_blank" rel="noopener">การไฟฟ้าฝ่ายผลิตฯ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ข้อมูลเมืองกรุงเทพฯ อาคาร 3D และการจราจร</div>
+            <div class="cr-card-org">กรุงเทพมหานคร (กทม.) &amp; OpenFreeMap &amp; TomTom</div>
+          </div>
+          <span class="lic">Open Data / ODbL</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติประชากรราย 50 เขต ข้อมูลน้ำท่วมและงบประมาณเมือง แผนที่สามมิติรูปทรงอาคารจริงจาก OpenStreetMap/OpenFreeMap และดัชนีความหนาแน่นการจราจร TomTom Traffic Index
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">data.bangkok.go.th</span>
+          <a class="cr-card-link" href="https://data.bangkok.go.th/" target="_blank" rel="noopener">ศูนย์ข้อมูลเปิด กทม. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ข้อมูลเปรียบเทียบอาเซียนและภูมิรัฐศาสตร์โลก</div>
+            <div class="cr-card-org">World Bank &amp; Transparency International &amp; SIPRI</div>
+          </div>
+          <span class="lic">Open International Data</span>
+        </div>
+        <div class="cr-card-body">
+          สถิติเปรียบเทียบ GDP และอัตราการเติบโต 10 ประเทศอาเซียน ดัชนีคอร์รัปชัน CPI 2025 แสนยานุภาพทางการทหารจาก SIPRI ปริมาณน้ำมันสำรองจาก OPEC/EIA และวัฏจักรความมั่งคั่งมหาอำนาจ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">World Bank / TI / SIPRI</span>
+          <a class="cr-card-link" href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank Open Data ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 5. หมวดแบบจำลอง STEM & วิทยาการคำนวณ (จากหน้า stats/explore.html) -->
+  <div class="cr-sec cr-sec-data" data-cat="stem" id="stem">
+    <h2>🔬 วิทยาการคำนวณ คณิตศาสตร์ &amp; แบบจำลองฟิสิกส์ (STEM Simulation Labs)<span class="cnt">11 แบบจำลองและหลักสูตร</span></h2>
+    <p class="sub">ใช้ในห้องทดลองคณิตศาสตร์และแบบจำลองวิทยาศาสตร์ (stats/explore.html) — ทฤษฎีฟิสิกส์ดาราศาสตร์, กลศาสตร์ควอนตัม, สัมพัทธภาพ, ระบาดวิทยา, วิทยาการรหัสลับ, และหลักสูตรคณิตศาสตร์ สสวท.</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">หลักสูตรคณิตศาสตร์ ม.ต้น · ม.ปลาย · มหาวิทยาลัย</div>
+            <div class="cr-card-org">สถาบันส่งเสริมการสอนวิทยาศาสตร์และเทคโนโลยี (สสวท.)</div>
+          </div>
+          <span class="lic">สื่อการศึกษามาตรฐาน</span>
+        </div>
+        <div class="cr-card-body">
+          หนังสือเรียนคณิตศาสตร์พื้นฐานและเพิ่มเติม ม.1–ม.6 อ้างอิงหัวข้อ: ระบบพิกัด 2D &amp; y=mx+c, พีทาโกรัส, พาราโบลา, วงกลมหนึ่งหน่วย, ภาคตัดกรวย 4 รูปแบบ, เวกเตอร์ 3D, แคลคูลัส, สนามเวกเตอร์, และสมการเชิงอนุพันธ์
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">สสวท. / ipst.ac.th</span>
+          <a class="cr-card-link" href="https://www.ipst.ac.th/" target="_blank" rel="noopener">สถาบันส่งเสริมการสอนฯ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ปรัชญาการสอน Visual Math &amp; Interactive Sandbox</div>
+            <div class="cr-card-org">3Blue1Brown (Grant Sanderson) &amp; GeoGebra</div>
+          </div>
+          <span class="lic">Educational Inspiration</span>
+        </div>
+        <div class="cr-card-body">
+          แนวคิดการแปลงคณิตศาสตร์นามธรรมให้ “มองเห็นและสัมผัสได้” ผ่าน WebGL/Three.js และ Canvas 2D เช่น Gradient Descent บนพื้นผิวโค้ง 3D, สนามเวกเตอร์ Divergence &amp; Curl และ Phasor Helix
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">3blue1brown &amp; geogebra</span>
+          <a class="cr-card-link" href="https://www.3blue1brown.com/" target="_blank" rel="noopener">เว็บไซต์ 3Blue1Brown ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">กลศาสตร์วงโคจรอวกาศ &amp; การถ่ายโอนโฮห์มันน์</div>
+            <div class="cr-card-org">NASA JPL Celestial Mechanics / Keplerian Orbit</div>
+          </div>
+          <span class="lic">Open Science / Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          แบบจำลองการเคลื่อนที่ของดาวเคราะห์และวัตถุท้องฟ้าตามกฎของเคปเลอร์ การคำนวณสมการ Vis-Viva และการคำนวณ Delta-V สำหรับการย้ายวงโคจรระหว่างดาวเคราะห์แบบ Hohmann Transfer Orbit
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA JPL Horizons</span>
+          <a class="cr-card-link" href="https://ssd.jpl.nasa.gov/" target="_blank" rel="noopener">NASA Solar System Dynamics ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แบบจำลองระบาดวิทยา SEIRD &amp; ละอองลอย Aerosol</div>
+            <div class="cr-card-org">Agent-Based Epidemiological Model / Wells-Riley Formulation</div>
+          </div>
+          <span class="lic">Scientific Model</span>
+        </div>
+        <div class="cr-card-body">
+          การจำลองตัวแทนประชากร (Agent-Based SEIRD) เคลื่อนที่ชนกันในพื้นที่จำลอง พร้อมการคำนวณฟิสิกส์การกระจายของละอองลอย (Aerosol Concentration) และผลของการสวมหน้ากากอนามัย
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Epidemiology Simulation</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูห้องทดลองในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">กลศาสตร์ควอนตัม &amp; สัมพัทธภาพกาล-อวกาศบิดเบี้ยว</div>
+            <div class="cr-card-org">Schrödinger Equation &amp; Einstein Schwarzschild Metric</div>
+          </div>
+          <span class="lic">Theoretical Physics</span>
+        </div>
+        <div class="cr-card-body">
+          การจำลองการกระจายของกลุ่มคลื่นควอนตัม (Wavepacket) และการยุบตัวของฟังก์ชันคลื่น พร้อมแบบจำลอง Geodesics วิถีแสงและแผ่นกาล-อวกาศ (Spacetime Grid) ที่บิดเบี้ยวรอบหลุมดำ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Quantum &amp; Relativity</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูห้องทดลองในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">สนามแม่เหล็กไฟฟ้าแมกซ์เวลล์ &amp; ลมสุริยะ</div>
+            <div class="cr-card-org">Maxwell's Equations &amp; NASA Heliophysics</div>
+          </div>
+          <span class="lic">Classical Electrodynamics</span>
+        </div>
+        <div class="cr-card-body">
+          ระบบสมการแมกซ์เวลล์ 4 สมการสำหรับการแผ่คลื่นแม่เหล็กไฟฟ้า และแบบจำลอง Magnetosphere Canvas Simulator แสดงสนามแม่เหล็กโลกที่ต้านทานพลาสมาและรังสีจากลมสุริยะ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">NASA Heliophysics</span>
+          <a class="cr-card-link" href="https://science.nasa.gov/heliophysics/" target="_blank" rel="noopener">NASA Heliophysics ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ทฤษฎีความอลวน &amp; ตัวดึงดูดลอเรนซ์ (Lorenz Attractor)</div>
+            <div class="cr-card-org">Edward N. Lorenz (1963) / MIT Atmospheric Dynamics</div>
+          </div>
+          <span class="lic">Nonlinear Dynamics</span>
+        </div>
+        <div class="cr-card-body">
+          การจำลอง 3D Lorenz Attractor ด้วยสมการเชิงอนุพันธ์สามมิติไม่เชิงเส้น dx/dt, dy/dt, dz/dt แสดงปรากฏการณ์ Butterfly Effect และรูปทรงแฟร็กทัลของระบบพยากรณ์อากาศ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Chaos Theory / 3D</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูห้องทดลองในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">วิทยาการรหัสลับเส้นโค้งวงรี (Elliptic Curves)</div>
+            <div class="cr-card-org">Secp256k1 Curve / ECDSA Standards</div>
+          </div>
+          <span class="lic">Cryptographic Standards</span>
+        </div>
+        <div class="cr-card-body">
+          การแสดงผลเชิงเรขาคณิตของการบวกจุดบนเส้นโค้งวงรี y² = x³ + 7 การคูณสเกลาร์ (Point Multiplication) และกลไกการแลกเปลี่ยนกุญแจลับ Diffie-Hellman Key Exchange
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">secg.org / Cryptography</span>
+          <a class="cr-card-link" href="https://www.secg.org/" target="_blank" rel="noopener">SEC Standards ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">อนุกรมฟูเรียร์ &amp; เครื่องวาดภาพด้วยวงล้อฮาร์มอนิก</div>
+            <div class="cr-card-org">Fourier Series / Discrete Fourier Transform (DFT)</div>
+          </div>
+          <span class="lic">Mathematical Analysis</span>
+        </div>
+        <div class="cr-card-body">
+          เครื่องมือแปลงสัญญาณและขอบภาพเป็นวงล้อหมุนเชิงซ้อน (Epicycles) คำนวณสัมประสิทธิ์ความถี่และแอมพลิจูดด้วย DFT เพื่อให้คอมพิวเตอร์วาดรูปทรง 2 มิติอย่างต่อเนื่อง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Signal Processing</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูห้องทดลองในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">กฎกำลังสองของแลงเชสเตอร์ &amp; จำลองยุทธการรบอวกาศ</div>
+            <div class="cr-card-org">Lanchester's Power Laws / Operations Research</div>
+          </div>
+          <span class="lic">Mathematical Combat Model</span>
+        </div>
+        <div class="cr-card-body">
+          การจำลองการต่อสู้ของกองยานอวกาศ (Stellaris Space Fleet) ตามกฎคณิตศาสตร์ Lanchester N² Law พร้อมระบบสังเคราะห์เสียงเลเซอร์ด้วย Web Audio API แบบเรียลไทม์
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Combat Sim / Web Audio</span>
+          <a class="cr-card-link" href="../stats/explore.html">ดูห้องทดลองในหน้านี้ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ทวีปเลื่อน 540 ล้านปี &amp; สายพานยักษ์มหาสมุทร</div>
+            <div class="cr-card-org">PALEOMAP Project &amp; UNESCO EOS-80 &amp; RAPID/OSNAP</div>
+          </div>
+          <span class="lic">Paleogeography &amp; Oceanography</span>
+        </div>
+        <div class="cr-card-body">
+          แบบจำลองการเคลื่อนที่ของแผ่นทวีปตั้งแต่ยุคแคมเบรียนถึงปัจจุบัน 540 ล้านปี และลูกโลก 3D สายพานกระแสน้ำยักษ์โลก (Thermohaline Circulation) คำนวณความหนาแน่นน้ำทะเลตามมาตรฐาน UNESCO
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">PALEOMAP &amp; UNESCO</span>
+          <a class="cr-card-link" href="https://www.scotese.com/" target="_blank" rel="noopener">PALEOMAP Project ↗</a>
         </div>
       </div>
 
@@ -1321,10 +1749,9 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
   /* ---------- ตัวจัดการแท็บสลับหมวดหมู่ (Tabs Filter) ---------- */
   const tabContainer = document.getElementById('crTabs');
   if(tabContainer){
-    tabContainer.addEventListener('click', e => {
-      const btn = e.target.closest('.cr-tab');
+    function activateCat(cat){
+      const btn = tabContainer.querySelector(`.cr-tab[data-cat="${cat}"]`);
       if(!btn) return;
-      const cat = btn.dataset.cat;
       tabContainer.querySelectorAll('.cr-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
@@ -1333,7 +1760,20 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
         const match = (cat === 'all' || secCat === cat);
         sec.classList.toggle('cr-hidden-cat', !match);
       });
+    }
+
+    tabContainer.addEventListener('click', e => {
+      const btn = e.target.closest('.cr-tab');
+      if(!btn) return;
+      activateCat(btn.dataset.cat);
     });
+
+    if(window.location.hash){
+      const h = window.location.hash.replace('#', '');
+      if(tabContainer.querySelector(`.cr-tab[data-cat="${h}"]`)){
+        activateCat(h);
+      }
+    }
   }
 })();
 </script>
