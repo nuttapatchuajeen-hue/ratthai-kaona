@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v7';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css' : 'css/cyber-audio.css';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v7' : 'css/cyber-audio.css?v=20260914_v7';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
