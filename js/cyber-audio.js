@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v8';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v9';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v8' : 'css/cyber-audio.css?v=20260914_v8';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v9' : 'css/cyber-audio.css?v=20260914_v9';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -730,6 +730,36 @@
     }
   }, 1000);
 
+  function showYtErrorState(errCode) {
+    ytIsCurrentlyPlaying = false;
+    ytLocalStartTime = 0;
+    try {
+      localStorage.setItem('cyber-yt-playing', 'false');
+    } catch (e) {}
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT BLOCKED';
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
+    if (dom.pill) dom.pill.classList.remove('is-playing');
+    if (dom.slot) dom.slot.classList.remove('is-playing');
+    if (dom.ytCover) {
+      dom.ytCover.style.display = 'flex';
+      var errNotice = document.getElementById('bgmYtErrorNotice');
+      if (errNotice) {
+        errNotice.style.display = 'flex';
+        var reason = 'คลิปนี้ไม่อนุญาตให้เล่นบนเว็บภายนอก (YouTube ข้อผิดพลาด ' + (errCode || 150) + ')';
+        if (errCode === 153 || location.protocol === 'file:') {
+          reason = 'YouTube บล็อกการเล่นจาก file:// กรุณาเปิดดูบน YouTube โดยตรง';
+        }
+        var msgEl = document.getElementById('bgmYtErrorMsg');
+        if (msgEl) msgEl.textContent = reason;
+      }
+      var errBtn = document.getElementById('bgmYtErrorExtBtn');
+      if (errBtn && currentYtVideo) {
+        errBtn.href = 'https://www.youtube.com/watch?v=' + currentYtVideo.id;
+      }
+    }
+  }
+
   window.addEventListener('message', function (e) {
     try {
       var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
@@ -766,8 +796,19 @@
           if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
           if (dom.pill) dom.pill.classList.remove('is-playing');
           if (dom.slot) dom.slot.classList.remove('is-playing');
-          if (dom.ytCover) dom.ytCover.style.display = 'flex';
+          if (dom.ytCover) {
+            dom.ytCover.style.display = 'flex';
+            if (currentYtVideo && dom.ytCoverImg) {
+              dom.ytCoverImg.src = currentYtVideo.thumb || ('https://i.ytimg.com/vi/' + currentYtVideo.id + '/hqdefault.jpg');
+            }
+          }
+        } else if (data.info.playerState === 0) { // 0 = ended
+          nextTrack();
         }
+      }
+      if (data.event === 'onError' || (data.info && typeof data.info.errorCode !== 'undefined')) {
+        var errVal = data.info ? (data.info.errorCode || data.info) : (data.data || 150);
+        showYtErrorState(errVal);
       }
     } catch (err) {}
   });
@@ -909,9 +950,11 @@
   }
 
   function getYtSearchUrl(query) {
-    var base = 'https://ratthai-kaona.vercel.app';
-    if (location.hostname === 'ratthai-kaona.vercel.app') {
+    var base = '';
+    if (location.hostname === 'thaigovernmentdata.netlify.app' || location.hostname === 'ratthai-kaona.vercel.app') {
       base = '';
+    } else {
+      base = 'https://thaigovernmentdata.netlify.app';
     }
     return base + '/api/yt-search?q=' + encodeURIComponent(query);
   }
@@ -1056,13 +1099,13 @@
     }
 
     var html = filtered.map(function (v) {
-      var isCurrent = currentYtVideo && currentYtVideo.id === v.id && dom.ytPlayerWrap && dom.ytPlayerWrap.style.display !== 'none';
+      var isCurrent = currentYtVideo && currentYtVideo.id === v.id;
       var thumbUrl = v.thumb || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
       return [
-        '<div class="bgm-yt-item ' + (isCurrent ? 'active' : '') + '" data-ytid="' + v.id + '">',
+        '<div class="bgm-yt-item ' + (isCurrent ? 'active is-active' : '') + '" data-ytid="' + v.id + '">',
         '  <div class="bgm-yt-thumb-wrap">',
         '    <img class="bgm-yt-thumb" src="' + thumbUrl + '" alt="' + (v.title || '').replace(/"/g, '&quot;') + '" loading="lazy" />',
-        '    <div class="bgm-yt-thumb-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>',
+        '    <div class="bgm-yt-thumb-play bgm-yt-play-overlay"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>',
         '  </div>',
         '  <div class="bgm-yt-info">',
         '    <div class="bgm-yt-title" title="' + (v.title || '').replace(/"/g, '&quot;') + '">' + (v.title || '') + '</div>',
@@ -1117,14 +1160,23 @@
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
     if (dom.progressWrap) dom.progressWrap.style.display = 'none';
 
-    var embedOrigin = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
-      ? '&origin=' + encodeURIComponent(location.origin)
-      : '';
+    var thumbUrl = v.thumb || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
+    if (dom.ytCoverImg) dom.ytCoverImg.src = thumbUrl;
+    var errNotice = document.getElementById('bgmYtErrorNotice');
+    if (errNotice) errNotice.style.display = 'none';
+
+    var currentOrigin = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
+      ? location.origin
+      : 'https://thaigovernmentdata.netlify.app';
+    var embedOrigin = '&origin=' + encodeURIComponent(currentOrigin) + '&widget_referrer=' + encodeURIComponent(currentOrigin);
     var startParam = startTime > 0 ? ('&start=' + Math.floor(startTime)) : '';
     var embedUrl = 'https://www.youtube.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&playsinline=1' + startParam + embedOrigin;
 
     if (dom.ytIframe) {
+      dom.ytIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
       if (dom.ytIframe.src !== embedUrl) {
+        // Show cover while loading to prevent black box
+        if (dom.ytCover) dom.ytCover.style.display = 'flex';
         dom.ytIframe.src = embedUrl;
       } else if (dom.ytIframe.contentWindow) {
         try {
@@ -1136,7 +1188,10 @@
         } catch (e) {}
       }
     }
-    if (dom.ytCover) dom.ytCover.style.display = 'none';
+
+    if (location.protocol === 'file:') {
+      showYtErrorState(153);
+    }
 
     if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
     if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
@@ -1152,6 +1207,10 @@
     if (dom.ytExtLink) {
       dom.ytExtLink.style.display = 'inline-flex';
       dom.ytExtLink.href = 'https://www.youtube.com/watch?v=' + v.id;
+    }
+    var errExtBtn = document.getElementById('bgmYtErrorExtBtn');
+    if (errExtBtn) {
+      errExtBtn.href = 'https://www.youtube.com/watch?v=' + v.id;
     }
 
     if (dom.pillName) dom.pillName.textContent = '🔴 ' + v.title;
@@ -1187,7 +1246,12 @@
     if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
     if (dom.pill) dom.pill.classList.remove('is-playing');
     if (dom.slot) dom.slot.classList.remove('is-playing');
-    if (dom.ytCover) dom.ytCover.style.display = 'flex';
+    if (dom.ytCover) {
+      dom.ytCover.style.display = 'flex';
+      if (currentYtVideo && dom.ytCoverImg) {
+        dom.ytCoverImg.src = currentYtVideo.thumb || ('https://i.ytimg.com/vi/' + currentYtVideo.id + '/hqdefault.jpg');
+      }
+    }
   }
 
   function resumeYtVideo() {
@@ -1205,6 +1269,8 @@
         }), '*');
       } catch (e) {}
     }
+    var errNotice = document.getElementById('bgmYtErrorNotice');
+    if (errNotice) errNotice.style.display = 'none';
     if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
     if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
     if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
@@ -1458,12 +1524,17 @@
       '      </div>',
       '      <!-- YouTube Player Screen -->',
       '      <div class="bgm-yt-player-wrap" id="bgmYtPlayerWrap" style="display:none;">',
-      '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>',
+      '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="YouTube video player"></iframe>',
       '        <div class="bgm-yt-cover" id="bgmYtCover" style="display:none;" title="คลิกเพื่อเล่นคลิปต่อ">',
       '          <img id="bgmYtCoverImg" src="" alt="Thumbnail" />',
       '          <button type="button" class="bgm-yt-cover-play" id="bgmYtCoverPlay" title="เล่นคลิป">',
       '            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5v14l11-7z"/></svg>',
       '          </button>',
+      '          <div class="bgm-yt-error-notice" id="bgmYtErrorNotice" style="display:none;">',
+      '            <div class="bgm-yt-error-icon">⚠️</div>',
+      '            <div class="bgm-yt-error-msg" id="bgmYtErrorMsg">คลิปนี้ไม่อนุญาตให้เล่นบนเว็บภายนอก</div>',
+      '            <a class="bgm-yt-error-btn" id="bgmYtErrorExtBtn" href="#" target="_blank" rel="noopener noreferrer">เปิดดูบน YouTube ↗</a>',
+      '          </div>',
       '        </div>',
       '      </div>',
       '      <!-- Progress Bar -->',
@@ -1625,9 +1696,14 @@
     dom.ytCoverPlay = document.getElementById('bgmYtCoverPlay');
     if (dom.ytCover) {
       dom.ytCover.addEventListener('click', function (e) {
+        if (e.target.closest('#bgmYtErrorExtBtn')) return;
         e.stopPropagation();
         if (currentYtVideo) {
-          playYtVideo(currentYtVideo, savedYtTime);
+          if (!dom.ytIframe || !dom.ytIframe.src) {
+            playYtVideo(currentYtVideo, savedYtTime);
+          } else {
+            resumeYtVideo();
+          }
         }
       });
     }

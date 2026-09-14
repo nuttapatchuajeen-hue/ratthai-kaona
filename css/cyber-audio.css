@@ -1,4 +1,4 @@
-﻿/* ===========================================================================
+/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (7 Tracks)
    =========================================================================== */
@@ -1327,7 +1327,8 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
   transform: translateX(2px);
 }
 
-.bgm-yt-item.is-active {
+.bgm-yt-item.is-active,
+.bgm-yt-item.active {
   background: rgba(255, 68, 68, 0.14);
   border-color: #FF5555;
   box-shadow: 0 0 14px rgba(255, 68, 68, 0.25);
@@ -1350,7 +1351,8 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
   display: block;
 }
 
-.bgm-yt-play-overlay {
+.bgm-yt-play-overlay,
+.bgm-yt-thumb-play {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -1363,7 +1365,11 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
 }
 
 .bgm-yt-item:hover .bgm-yt-play-overlay,
-.bgm-yt-item.is-active .bgm-yt-play-overlay {
+.bgm-yt-item.is-active .bgm-yt-play-overlay,
+.bgm-yt-item.active .bgm-yt-play-overlay,
+.bgm-yt-item:hover .bgm-yt-thumb-play,
+.bgm-yt-item.is-active .bgm-yt-thumb-play,
+.bgm-yt-item.active .bgm-yt-thumb-play {
   opacity: 1;
 }
 
@@ -1538,6 +1544,57 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
 .bgm-yt-cover:hover .bgm-yt-cover-play {
   transform: scale(1.12);
   box-shadow: 0 0 35px rgba(255, 0, 51, 0.95);
+}
+
+/* YouTube Error / Restriction Notice */
+.bgm-yt-error-notice {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 5, 8, 0.93);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  z-index: 10;
+  gap: 8px;
+}
+
+.bgm-yt-error-icon {
+  font-size: 1.8rem;
+}
+
+.bgm-yt-error-msg {
+  color: #FF6666;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  max-width: 280px;
+}
+
+.bgm-yt-error-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #FF0033, #CC0029);
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 16px rgba(255, 0, 51, 0.5);
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.bgm-yt-error-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(255, 0, 51, 0.85);
+  color: #FFFFFF;
 }
 
 /* YouTube Search Empty State */
