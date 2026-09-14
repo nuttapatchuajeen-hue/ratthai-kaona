@@ -15,3 +15,9 @@
 # ไฟล์นี้ไม่ได้ตั้งค่าไซต์นั้น ลบไฟล์นี้ไม่กระทบ AI chat หรือแบบประเมิน
 [build]
   publish = "."
+
+[[redirects]]
+  from = "/api/yt-search"
+  to = "https://ratthai-kaona.vercel.app/api/yt-search"
+  status = 200
+  force = true

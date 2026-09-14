@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v7';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v8';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v7' : 'css/cyber-audio.css?v=20260914_v7';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v8' : 'css/cyber-audio.css?v=20260914_v8';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -909,11 +909,9 @@
   }
 
   function getYtSearchUrl(query) {
-    var base = '';
-    if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-      base = 'https://ratthai-kaona.vercel.app';
-    } else if (location.hostname.indexOf('github.io') !== -1) {
-      base = 'https://ratthai-kaona.vercel.app';
+    var base = 'https://ratthai-kaona.vercel.app';
+    if (location.hostname === 'ratthai-kaona.vercel.app') {
+      base = '';
     }
     return base + '/api/yt-search?q=' + encodeURIComponent(query);
   }
