@@ -21,7 +21,14 @@
   <meta name="twitter:description" content="รวมข้อมูลภาครัฐไทยให้เข้าใจง่ายในที่เดียว — โครงสร้างกระทรวง/กรม คณะรัฐมนตรี ผู้แทนราษฎร และศูนย์สถิติข้อมูลเปิดภาครัฐ" />
   <meta name="twitter:image" content="https://nuttapatchuajeen-hue.github.io/ratthai-kaona/hub/images/logo.png" />
   <meta http-equiv="refresh" content="0; url=hub/index.html" />
-  <script>location.replace('hub/index.html');</script>
+  <script>
+    location.replace('hub/index.html');
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      var k = (e.key || '').toUpperCase();
+      if (k === 'F12' || (e.ctrlKey && ['U','S','I','J','C'].includes(k))) e.preventDefault();
+    });
+  </script>
   <style>
     html,body{margin:0;height:100%;background:#020508;color:#DCE8F0;
       font-family:system-ui,'Sarabun',sans-serif;display:grid;place-items:center}

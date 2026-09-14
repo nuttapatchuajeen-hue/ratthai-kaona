@@ -51,3 +51,76 @@
   if (document.body) mount();
   else document.addEventListener('DOMContentLoaded', mount, { once: true });
 })();
+
+/* ============================================================================
+   Source Code Protection & Anti-Inspect — รัฐไทยก้าวหน้า
+   - ป้องกันการกดคลิกขวา (Context Menu)
+   - ป้องกันปุ่มลัดดูโค้ด: F12, Ctrl+Shift+I/J/C, Ctrl+U, Ctrl+S
+   - รองรับทั้ง Windows (Ctrl) และ macOS (Cmd)
+   ============================================================================ */
+(function () {
+  'use strict';
+
+  // 1. ป้องกันการคลิกขวา (Disable Right Click)
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    return false;
+  }, true);
+
+  // 2. ป้องกันปุ่มลัดคีย์บอร์ด (F12, Ctrl+Shift+I, Ctrl+U, etc.)
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toUpperCase();
+    var code = e.keyCode || e.which || 0;
+    var isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+    // F12
+    if (k === 'F12' || code === 123) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl/Cmd + Shift + I / J / C (DevTools / Inspect Element / Console)
+    if (isCtrlOrCmd && e.shiftKey && (k === 'I' || k === 'J' || k === 'C' || code === 73 || code === 74 || code === 67)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl/Cmd + U (View Source Code)
+    if (isCtrlOrCmd && (k === 'U' || code === 85)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl/Cmd + S (Save Page)
+    if (isCtrlOrCmd && (k === 'S' || code === 83)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }, true);
+
+  // 3. ป้องกันการลากรูปภาพออกไปบันทึก
+  document.addEventListener('dragstart', function (e) {
+    if (e.target && e.target.nodeName === 'IMG') {
+      e.preventDefault();
+    }
+  }, false);
+
+  // 4. ข้อความเตือนใน Console
+  try {
+    if (window.console) {
+      console.log(
+        '%c⛔ คำเตือน: ซอร์สโค้ดนี้ได้รับการคุ้มครอง',
+        'color: #ff3344; font-size: 18px; font-weight: bold; font-family: sans-serif;'
+      );
+      console.log(
+        '%cไม่อนุญาตให้เปิดดู คัดลอก หรือดัดแปลงโค้ดของเว็บไซต์ "รัฐไทยก้าวหน้า"',
+        'color: #888; font-size: 13px;'
+      );
+    }
+  } catch (err) {}
+})();
+
