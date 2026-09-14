@@ -1,4 +1,4 @@
-﻿/* ===========================================================================
+/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (Scalable Categories)
    =========================================================================== */
@@ -923,12 +923,12 @@
     var qEsc = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     dom.ytQueueList.innerHTML = [
       '<div class="bgm-yt-no-results">',
-      '  <div class="bgm-yt-no-res-icon">??</div>',
-      '  <div class="bgm-yt-no-res-title">???????????????????? &ldquo;' + qEsc + '&rdquo;</div>',
-      '  <div class="bgm-yt-no-res-desc">???????? YouTube (???? https://youtu.be/...) ???????????????? ????????<br>??????????????????? YouTube</div>',
+      '  <div class="bgm-yt-no-res-icon">🔍</div>',
+      '  <div class="bgm-yt-no-res-title">ไม่พบผลการค้นหาสำหรับ &ldquo;' + qEsc + '&rdquo;</div>',
+      '  <div class="bgm-yt-no-res-desc">ลองค้นหาด้วยคำอื่น หรือวางลิงก์ YouTube (เช่น https://youtu.be/...) ได้โดยตรง<br>หรือกดปุ่มค้นหาผ่านหน้าเว็บ YouTube</div>',
       '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-search-btn">',
       '    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>',
-      '    <span>??????????? YouTube.com</span>',
+      '    <span>เปิดค้นหาบน YouTube.com</span>',
       '    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>',
       '  </a>',
       '</div>'
@@ -1223,7 +1223,7 @@
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
     if (dom.progressWrap) dom.progressWrap.style.display = 'none';
-    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE ? 1080P STREAM';
+    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
     if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
     if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = v.channel;
     if (dom.cardTrackCat) {
@@ -1244,7 +1244,7 @@
         dom.ytCoverImg.src = v.thumb || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
       }
     }
-    if (dom.pillName) dom.pillName.textContent = '?? ' + v.title;
+    if (dom.pillName) dom.pillName.textContent = '⏸ ' + v.title;
     if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
     if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
     if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
@@ -1461,9 +1461,9 @@
       '      <!-- YouTube Player Screen -->',
       '      <div class="bgm-yt-player-wrap" id="bgmYtPlayerWrap" style="display:none;">',
       '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>',
-      '        <div class="bgm-yt-cover" id="bgmYtCover" style="display:none;" title="??????????????????">',
+      '        <div class="bgm-yt-cover" id="bgmYtCover" style="display:none;" title="คลิกเพื่อเล่นคลิปต่อ">',
       '          <img id="bgmYtCoverImg" src="" alt="Thumbnail" />',
-      '          <button type="button" class="bgm-yt-cover-play" id="bgmYtCoverPlay" title="????????">',
+      '          <button type="button" class="bgm-yt-cover-play" id="bgmYtCoverPlay" title="เล่นคลิป">',
       '            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5v14l11-7z"/></svg>',
       '          </button>',
       '        </div>',

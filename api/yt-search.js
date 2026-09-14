@@ -20,17 +20,87 @@ function fetchHttps(url, options = {}) {
   });
 }
 
+function searchInnertube(query) {
+  return new Promise((resolve, reject) => {
+    const postData = JSON.stringify({
+      context: {
+        client: {
+          hl: 'th',
+          gl: 'TH',
+          clientName: 'WEB',
+          clientVersion: '2.20240101.00.00'
+        }
+      },
+      query: query
+    });
+
+    const req = https.request('https://www.youtube.com/youtubei/v1/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData),
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      },
+      timeout: 7000
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          const sections = json.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
+          const results = [];
+          for (const sec of sections) {
+            const items = sec?.itemSectionRenderer?.contents || [];
+            for (const item of items) {
+              const vr = item.videoRenderer;
+              if (vr && vr.videoId) {
+                const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText || '';
+                const channel = vr.ownerText?.runs?.[0]?.text || vr.shortBylineText?.runs?.[0]?.text || 'YouTube';
+                const thumb = vr.thumbnail?.thumbnails?.[0]?.url || ('https://i.ytimg.com/vi/' + vr.videoId + '/hqdefault.jpg');
+                results.push({
+                  id: vr.videoId,
+                  title,
+                  channel,
+                  category: 'search',
+                  categoryLabel: 'YouTube',
+                  thumb
+                });
+              }
+            }
+          }
+          resolve(results);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    req.write(postData);
+    req.end();
+  });
+}
+
 async function searchYouTube(query) {
   const cached = cache.get(query);
   if (cached && Date.now() - cached.time < 3600000) {
     return cached.results;
   }
 
-  const results = [];
-  const q = encodeURIComponent(query);
+  let results = [];
 
-  // 1. Direct YouTube search scrape
+  // 1. YouTube Innertube API (Primary - high reliability on serverless)
   try {
+    results = await searchInnertube(query);
+  } catch (e) {
+    results = [];
+  }
+
+  // 2. Direct YouTube search scrape (Secondary fallback)
+  if (results.length === 0) {
+    const q = encodeURIComponent(query);
+    try {
     const ytRes = await fetchHttps('https://www.youtube.com/results?search_query=' + q, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -93,8 +163,9 @@ async function searchYouTube(query) {
   } catch (err) {
     // Primary search failed, proceed to fallback
   }
+}
 
-  // 2. Fallback to public Invidious instances if direct scrape returned empty
+  // 3. Fallback to public Invidious instances if direct scrape returned empty
   if (results.length === 0) {
     const invidiousInstances = [
       'https://inv.tux.pizza',
