@@ -754,15 +754,6 @@
           if (dom.slot) dom.slot.classList.add('is-playing');
           if (dom.ytCover) dom.ytCover.style.display = 'none';
           startVisualizer();
-          if (dom.ytIframe && dom.ytIframe.contentWindow) {
-            try {
-              dom.ytIframe.contentWindow.postMessage(JSON.stringify({
-                event: 'command',
-                func: 'setPlaybackQuality',
-                args: ['medium']
-              }), '*');
-            } catch (e) {}
-          }
         } else if (data.info.playerState === 3) { // 3 = buffering
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT BUFFER';
         } else if (data.info.playerState === 2) { // 2 = paused
@@ -1407,6 +1398,7 @@
     if (dom.panelTag) dom.panelTag.textContent = 'TH_AI_BGM · 48KHZ STEREO';
     if (dom.badgeHq) dom.badgeHq.textContent = 'HQ';
     updateUI();
+    startVisualizer();
   }
 
   function switchToYt() {
@@ -2171,7 +2163,8 @@
     if (animFrameId) cancelAnimationFrame(animFrameId);
 
     function render() {
-      if (!dom.canvas) return;
+      // โหมด YT ซ่อน canvas ไว้ — วาดทิ้ง 60 ครั้ง/วินาทีกิน CPU จนเสียงคลิปขาดเป็นช่วง ๆ
+      if (!dom.canvas || currentMode === 'yt') { animFrameId = null; return; }
       var ctx = dom.canvas.getContext('2d');
       var w = dom.canvas.width;
       var h = dom.canvas.height;
