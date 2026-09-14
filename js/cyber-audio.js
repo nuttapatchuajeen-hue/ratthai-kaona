@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v9';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v10';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v9' : 'css/cyber-audio.css?v=20260914_v9';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v10' : 'css/cyber-audio.css?v=20260914_v10';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -542,6 +542,9 @@
   }
 
   function playAudio() {
+    if (currentMode === 'yt' || ytIsCurrentlyPlaying || (dom.ytIframe && dom.ytIframe.src)) {
+      pauseYtVideo();
+    }
     setupAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
@@ -720,7 +723,7 @@
           if (dom.timeCur) dom.timeCur.textContent = formatTime(curEst);
         }
       }
-      if (dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
+      if (ytIsCurrentlyPlaying && dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
         try {
           dom.ytIframe.contentWindow.postMessage(JSON.stringify({
             event: 'listening'
@@ -806,8 +809,9 @@
           nextTrack();
         }
       }
-      if (data.event === 'onError' || (data.info && typeof data.info.errorCode !== 'undefined')) {
-        var errVal = data.info ? (data.info.errorCode || data.info) : (data.data || 150);
+      var hasRealError = data.event === 'onError' || (data.info && typeof data.info.errorCode === 'number' && data.info.errorCode > 0);
+      if (hasRealError) {
+        var errVal = (data.info && typeof data.info.errorCode === 'number') ? data.info.errorCode : (data.data || 150);
         showYtErrorState(errVal);
       }
     } catch (err) {}
@@ -828,10 +832,13 @@
     } catch (e) {}
   });
 
-  function unlockAutoplayOnGesture() {
+  function unlockAutoplayOnGesture(e) {
+    if (e && e.target && e.target.closest && e.target.closest('.bgm-ctrl-hero, .bgm-pill-btn-play, .bgm-ctrl-secondary, .bgm-vol-btn, .bgm-vol-slider, .bgm-yt-item, .bgm-track-item, .bgm-tool-btn')) {
+      return;
+    }
     var mode = localStorage.getItem('cyber-audio-mode') || 'bgm';
     if (mode === 'yt') {
-      var isYtOn = localStorage.getItem('cyber-yt-playing') !== 'false';
+      var isYtOn = localStorage.getItem('cyber-yt-playing') === 'true';
       if (isYtOn && currentYtVideo) {
         if (!dom.ytIframe || !dom.ytIframe.src) {
           var curT = parseFloat(sessionStorage.getItem('cyber-yt-time') || localStorage.getItem('cyber-yt-time') || '0');
@@ -1174,8 +1181,9 @@
 
     if (dom.ytIframe) {
       dom.ytIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-      if (dom.ytIframe.src !== embedUrl) {
-        // Show cover while loading to prevent black box
+      var curVid = dom.ytIframe.getAttribute('data-vid');
+      if (!curVid || curVid !== v.id || !dom.ytIframe.src) {
+        dom.ytIframe.setAttribute('data-vid', v.id);
         if (dom.ytCover) dom.ytCover.style.display = 'flex';
         dom.ytIframe.src = embedUrl;
       } else if (dom.ytIframe.contentWindow) {
