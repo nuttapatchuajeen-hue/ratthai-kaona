@@ -130,15 +130,17 @@
       localStorage.setItem('nl-hud:owner-private:v1', 'hidden');
     } catch (e) {}
 
-    var netlifyCss = '#nl-badge-frame, #nl-hud-frame, iframe[id*="nl-"], iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important; width: 0 !important; height: 0 !important; position: absolute !important; left: -99999px !important; z-index: -9999 !important; }';
+    var netlifyCss = '#nl-badge-frame, #nl-hud-frame, iframe[id^="nl-"], [data-netlify-deploy-id], netlify-feedback, .netlify-badge, #netlify-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important; width: 0 !important; height: 0 !important; position: absolute !important; left: -99999px !important; z-index: -9999 !important; }';
     var netlifyStyle = document.createElement('style');
     netlifyStyle.textContent = netlifyCss;
     (document.head || document.documentElement).appendChild(netlifyStyle);
 
     var purgeNetlify = function () {
-      var targets = document.querySelectorAll('#nl-badge-frame, #nl-hud-frame, iframe[id*="nl-"], script[data-nf-variant], iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge');
+      var targets = document.querySelectorAll('#nl-badge-frame, #nl-hud-frame, iframe[id^="nl-"], script[data-nf-variant], [data-netlify-deploy-id], netlify-feedback, .netlify-badge, #netlify-badge');
       for (var i = 0; i < targets.length; i++) {
-        targets[i].remove();
+        var el = targets[i];
+        if (el.id === 'bgmYtIframe' || el.id === 'main-video' || (el.tagName === 'IFRAME' && el.src && el.src.indexOf('youtube') !== -1)) continue;
+        el.remove();
       }
     };
     if (document.readyState === 'loading') {

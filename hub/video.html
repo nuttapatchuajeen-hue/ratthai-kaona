@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
@@ -852,7 +852,7 @@
       var originParam = (/^https?:$/.test(location.protocol) && location.origin && location.origin !== 'null')
         ? '&origin=' + encodeURIComponent(location.origin)
         : '';
-      return 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&modestbranding=1&autoplay=1' + originParam;
+      return 'https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1&autoplay=1' + originParam;
     }
 
     function setMain(v, scroll) {
@@ -881,7 +881,7 @@
       var base = '';
       if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
         base = 'http://localhost:3333';
-      } else if (location.hostname.indexOf('github.io') !== -1) {
+      } else if (location.hostname.indexOf('github.io') !== -1 || location.hostname.indexOf('netlify.app') !== -1) {
         base = 'https://ratthai-kaona.vercel.app';
       }
       return base + '/api/yt-search?q=' + encodeURIComponent(query);

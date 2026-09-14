@@ -1740,12 +1740,8 @@ body::before {
 /* ── PERMANENTLY HIDE NETLIFY BADGE / DRAWER ── */
 #nl-badge-frame,
 #nl-hud-frame,
-iframe[id*="nl-"],
-iframe[src*="netlify"],
+iframe[id^="nl-"],
 [data-netlify-deploy-id],
-[class*="netlify"],
-[id*="netlify"],
-[aria-label*="Netlify"],
 netlify-feedback,
 .netlify-badge,
 #netlify-badge {
