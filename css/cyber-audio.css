@@ -1,4 +1,4 @@
-/* ===========================================================================
+﻿/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (7 Tracks)
    =========================================================================== */
@@ -1486,4 +1486,102 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
 .bgm-yt-direct-play:hover {
   background: rgba(255, 68, 68, 0.22);
   border-color: #FF5555;
+}
+
+
+/* YouTube Thumbnail Cover & Play Overlay */
+.bgm-yt-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #020508;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.bgm-yt-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.72;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.bgm-yt-cover:hover img {
+  opacity: 0.92;
+  transform: scale(1.03);
+}
+
+.bgm-yt-cover-play {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF0033, #CC0029);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 25px rgba(255, 0, 51, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  padding: 0;
+}
+
+.bgm-yt-cover:hover .bgm-yt-cover-play {
+  transform: scale(1.12);
+  box-shadow: 0 0 35px rgba(255, 0, 51, 0.95);
+}
+
+/* YouTube Search Empty State */
+.bgm-yt-no-results {
+  padding: 24px 16px;
+  text-align: center;
+  color: #7E97A8;
+}
+
+.bgm-yt-no-res-icon {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.bgm-yt-no-res-title {
+  font-size: 0.95rem;
+  color: #DCE8F0;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.bgm-yt-no-res-desc {
+  font-size: 0.75rem;
+  margin-bottom: 14px;
+  color: #8C9DAE;
+  line-height: 1.5;
+}
+
+.bgm-yt-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  padding: 7px 15px;
+  background: linear-gradient(135deg, #FF0033, #CC0029);
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  box-shadow: 0 0 16px rgba(255, 0, 51, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.bgm-yt-search-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(255, 0, 51, 0.65);
 }

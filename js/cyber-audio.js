@@ -1,4 +1,4 @@
-/* ===========================================================================
+﻿/* ===========================================================================
    Cyber BGM Player — รัฐไทยก้าวหน้า
    UI/UX Refined: Hi-Fi Cyberpunk Audiophile Player Dashboard (Scalable Categories)
    =========================================================================== */
@@ -450,9 +450,16 @@
   try {
     savedYtVid = JSON.parse(localStorage.getItem('cyber-yt-video') || 'null');
   } catch (e) {}
-  var isYtPlaying = localStorage.getItem('cyber-yt-playing') !== 'false';
+  var isYtPlaying = localStorage.getItem('cyber-yt-playing') === 'true';
   var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || localStorage.getItem('cyber-yt-time') || '0');
-  if (isNaN(savedYtTime) || savedYtTime < 0) savedYtTime = 0;
+  if (isNaN(savedYtTime) || savedYtTime < 0 || savedYtTime > 86400) {
+    savedYtTime = 0;
+    try {
+      localStorage.removeItem('cyber-yt-time');
+      sessionStorage.removeItem('cyber-yt-time');
+    } catch (e) {}
+  }
+  var ytDuration = 0;
 
   var currentTrackIdx = savedTrackIdx;
   var currentVolume = savedVol;
@@ -472,9 +479,14 @@
   var ytIsCurrentlyPlaying = isYtPlaying;
 
   function getYtEstimatedCurrentTime() {
-    if (!ytIsCurrentlyPlaying) return ytLocalStartOffset;
+    if (!ytIsCurrentlyPlaying || ytLocalStartTime <= 0) {
+      return Math.min(ytLocalStartOffset || 0, 86400);
+    }
     var elapsed = (Date.now() - ytLocalStartTime) / 1000;
-    return Math.max(0, ytLocalStartOffset + elapsed);
+    if (elapsed < 0 || elapsed > 86400) elapsed = 0;
+    var est = (ytLocalStartOffset || 0) + elapsed;
+    if (ytDuration > 0 && est > ytDuration) est = ytDuration;
+    return Math.max(0, Math.min(est, 86400));
   }
 
   // ── Audio Element ──
@@ -563,13 +575,18 @@
 
   function togglePlay() {
     if (currentMode === 'yt') {
-      if (!dom.ytIframe || !dom.ytIframe.src) {
+      if (!currentYtVideo) {
         var filtered = getFilteredYtVideos();
-        var targetVid = currentYtVideo || (filtered.length > 0 ? filtered[0] : YT_VIDEOS[0]);
-        var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || '0');
-        if (targetVid) playYtVideo(targetVid, savedYtTime);
+        var targetVid = filtered.length > 0 ? filtered[0] : YT_VIDEOS[0];
+        if (targetVid) playYtVideo(targetVid, 0);
+        return;
+      }
+      if (!dom.ytIframe || !dom.ytIframe.src) {
+        playYtVideo(currentYtVideo, savedYtTime);
+      } else if (ytIsCurrentlyPlaying) {
+        pauseYtVideo();
       } else {
-        stopYtVideo();
+        resumeYtVideo();
       }
       return;
     }
@@ -695,11 +712,13 @@
     if (currentMode === 'bgm' && !audio.paused && audio.currentTime > 0) {
       sessionStorage.setItem('cyber-bgm-pos', audio.currentTime);
     } else if (currentMode === 'yt') {
-      if (ytIsCurrentlyPlaying) {
+      if (ytIsCurrentlyPlaying && ytLocalStartTime > 0) {
         var curEst = getYtEstimatedCurrentTime();
-        sessionStorage.setItem('cyber-yt-time', curEst);
-        localStorage.setItem('cyber-yt-time', curEst);
-        if (dom.timeCur) dom.timeCur.textContent = formatTime(curEst);
+        if (curEst >= 0 && curEst < 86400) {
+          sessionStorage.setItem('cyber-yt-time', curEst);
+          localStorage.setItem('cyber-yt-time', curEst);
+          if (dom.timeCur) dom.timeCur.textContent = formatTime(curEst);
+        }
       }
       if (dom.ytIframe && dom.ytIframe.src && dom.ytIframe.contentWindow) {
         try {
@@ -716,33 +735,38 @@
       var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
       if (!data) return;
       if (data.event === 'infoDelivery' && data.info) {
-        if (typeof data.info.currentTime === 'number' && data.info.currentTime > 0) {
+        if (typeof data.info.currentTime === 'number' && data.info.currentTime >= 0 && data.info.currentTime < 86400) {
           ytLocalStartOffset = data.info.currentTime;
           ytLocalStartTime = Date.now();
           sessionStorage.setItem('cyber-yt-time', data.info.currentTime);
           localStorage.setItem('cyber-yt-time', data.info.currentTime);
           if (dom.timeCur) dom.timeCur.textContent = formatTime(data.info.currentTime);
         }
-        if (typeof data.info.duration === 'number' && data.info.duration > 0 && dom.timeDur) {
-          dom.timeDur.textContent = formatTime(data.info.duration);
+        if (typeof data.info.duration === 'number' && data.info.duration > 0 && data.info.duration < 86400) {
+          ytDuration = data.info.duration;
+          if (dom.timeDur) dom.timeDur.textContent = formatTime(data.info.duration);
         }
         if (data.info.playerState === 1) { // 1 = playing
           ytIsCurrentlyPlaying = true;
+          ytLocalStartTime = Date.now();
           localStorage.setItem('cyber-yt-playing', 'true');
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
           if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
           if (dom.pill) dom.pill.classList.add('is-playing');
           if (dom.slot) dom.slot.classList.add('is-playing');
+          if (dom.ytCover) dom.ytCover.style.display = 'none';
         } else if (data.info.playerState === 2) { // 2 = paused
           ytLocalStartOffset = getYtEstimatedCurrentTime();
           ytIsCurrentlyPlaying = false;
+          ytLocalStartTime = 0;
           localStorage.setItem('cyber-yt-playing', 'false');
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
           if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
           if (dom.pill) dom.pill.classList.remove('is-playing');
           if (dom.slot) dom.slot.classList.remove('is-playing');
+          if (dom.ytCover) dom.ytCover.style.display = 'flex';
         }
       }
     } catch (err) {}
@@ -795,7 +819,7 @@
   document.addEventListener('keydown', unlockAutoplayOnGesture, { once: true });
 
   function formatTime(sec) {
-    if (isNaN(sec) || sec < 0) return '0:00';
+    if (isNaN(sec) || sec < 0 || sec > 86400) return '0:00';
     var m = Math.floor(sec / 60);
     var s = Math.floor(sec % 60);
     return m + ':' + (s < 10 ? '0' + s : s);
@@ -886,8 +910,8 @@
 
   function getYtSearchUrl(query) {
     var base = '';
-    if (location.protocol === 'file:' || (location.hostname === 'localhost' && location.port && location.port !== '3333')) {
-      base = 'http://localhost:3333';
+    if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      base = 'https://ratthai-kaona.vercel.app';
     } else if (location.hostname.indexOf('github.io') !== -1) {
       base = 'https://ratthai-kaona.vercel.app';
     }
@@ -898,12 +922,14 @@
     if (!dom.ytQueueList) return;
     var qEsc = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     dom.ytQueueList.innerHTML = [
-      '<div style="padding:24px 16px;text-align:center;color:#7E97A8;">',
-      '  <div style="font-size:1.6rem;margin-bottom:6px;">🎵</div>',
-      '  <div style="font-size:0.95rem;color:#DCE8F0;font-weight:700;margin-bottom:4px;">ไม่พบคลิปแนะนำสำหรับ &ldquo;' + qEsc + '&rdquo;</div>',
-      '  <div style="font-size:0.75rem;margin-bottom:12px;color:#A0AEC0;line-height:1.5;">วางลิงก์ YouTube (เช่น https://youtu.be/...) เพื่อเล่นคลิปใดๆ ได้ทันที<br>หรือกดค้นหาโดยตรงบน YouTube</div>',
-      '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-chip active" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:6px 14px;background:#FF0000;color:#FFFFFF;font-weight:700;border-radius:8px;font-size:0.8rem;">',
-      '    🔴 เปิดค้นหาบน YouTube.com ↗',
+      '<div class="bgm-yt-no-results">',
+      '  <div class="bgm-yt-no-res-icon">??</div>',
+      '  <div class="bgm-yt-no-res-title">???????????????????? &ldquo;' + qEsc + '&rdquo;</div>',
+      '  <div class="bgm-yt-no-res-desc">???????? YouTube (???? https://youtu.be/...) ???????????????? ????????<br>??????????????????? YouTube</div>',
+      '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-search-btn">',
+      '    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>',
+      '    <span>??????????? YouTube.com</span>',
+      '    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>',
       '  </a>',
       '</div>'
     ].join('');
@@ -1087,6 +1113,8 @@
       localStorage.setItem('cyber-yt-time', startTime);
     } catch (e) {}
 
+    if (dom.slot) dom.slot.classList.add('is-yt-active');
+    if (dom.card) dom.card.classList.add('is-yt-active');
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
     if (dom.progressWrap) dom.progressWrap.style.display = 'none';
@@ -1095,11 +1123,22 @@
       ? '&origin=' + encodeURIComponent(location.origin)
       : '';
     var startParam = startTime > 0 ? ('&start=' + Math.floor(startTime)) : '';
-    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1' + startParam + embedOrigin;
+    var embedUrl = 'https://www.youtube.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&playsinline=1' + startParam + embedOrigin;
 
     if (dom.ytIframe) {
-      dom.ytIframe.src = embedUrl;
+      if (dom.ytIframe.src !== embedUrl) {
+        dom.ytIframe.src = embedUrl;
+      } else if (dom.ytIframe.contentWindow) {
+        try {
+          dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+            event: 'command',
+            func: 'playVideo',
+            args: []
+          }), '*');
+        } catch (e) {}
+      }
     }
+    if (dom.ytCover) dom.ytCover.style.display = 'none';
 
     if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
     if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
@@ -1127,15 +1166,102 @@
     renderYtQueue();
   }
 
+  function pauseYtVideo() {
+    ytLocalStartOffset = getYtEstimatedCurrentTime();
+    ytIsCurrentlyPlaying = false;
+    ytLocalStartTime = 0;
+    try {
+      localStorage.setItem('cyber-yt-playing', 'false');
+      sessionStorage.setItem('cyber-yt-time', ytLocalStartOffset);
+      localStorage.setItem('cyber-yt-time', ytLocalStartOffset);
+    } catch (e) {}
+    if (dom.ytIframe && dom.ytIframe.contentWindow) {
+      try {
+        dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'pauseVideo',
+          args: []
+        }), '*');
+      } catch (e) {}
+    }
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
+    if (dom.pill) dom.pill.classList.remove('is-playing');
+    if (dom.slot) dom.slot.classList.remove('is-playing');
+    if (dom.ytCover) dom.ytCover.style.display = 'flex';
+  }
+
+  function resumeYtVideo() {
+    ytLocalStartTime = Date.now();
+    ytIsCurrentlyPlaying = true;
+    try {
+      localStorage.setItem('cyber-yt-playing', 'true');
+    } catch (e) {}
+    if (dom.ytIframe && dom.ytIframe.contentWindow) {
+      try {
+        dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'playVideo',
+          args: []
+        }), '*');
+      } catch (e) {}
+    }
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
+    if (dom.pill) dom.pill.classList.add('is-playing');
+    if (dom.slot) dom.slot.classList.add('is-playing');
+    if (dom.ytCover) dom.ytCover.style.display = 'none';
+  }
+
+  function showYtPausedState(v, startTime) {
+    if (!v) return;
+    currentYtVideo = v;
+    if (dom.slot) dom.slot.classList.add('is-yt-active');
+    if (dom.card) dom.card.classList.add('is-yt-active');
+    if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'block';
+    if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'none';
+    if (dom.progressWrap) dom.progressWrap.style.display = 'none';
+    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE ? 1080P STREAM';
+    if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
+    if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = v.channel;
+    if (dom.cardTrackCat) {
+      dom.cardTrackCat.textContent = v.categoryLabel || 'YouTube';
+      dom.cardTrackCat.style.borderColor = '#FF003360';
+      dom.cardTrackCat.style.color = '#FF4444';
+    }
+    if (dom.cardYear) dom.cardYear.textContent = 'YT';
+    if (dom.badgeHq) dom.badgeHq.textContent = 'HD';
+    if (dom.ytExtLink) {
+      dom.ytExtLink.style.display = 'inline-flex';
+      dom.ytExtLink.href = 'https://www.youtube.com/watch?v=' + v.id;
+    }
+    if (dom.timeCur) dom.timeCur.textContent = formatTime(startTime || 0);
+    if (dom.ytCover) {
+      dom.ytCover.style.display = 'flex';
+      if (dom.ytCoverImg) {
+        dom.ytCoverImg.src = v.thumb || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
+      }
+    }
+    if (dom.pillName) dom.pillName.textContent = '?? ' + v.title;
+    if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
+    if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
+    if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
+  }
+
   function stopYtVideo() {
     ytLocalStartOffset = getYtEstimatedCurrentTime();
     ytIsCurrentlyPlaying = false;
+    ytLocalStartTime = 0;
     try {
       localStorage.setItem('cyber-yt-playing', 'false');
       sessionStorage.setItem('cyber-yt-time', ytLocalStartOffset);
       localStorage.setItem('cyber-yt-time', ytLocalStartOffset);
     } catch (e) {}
     if (dom.ytIframe) dom.ytIframe.src = '';
+    if (dom.slot) dom.slot.classList.remove('is-yt-active');
+    if (dom.card) dom.card.classList.remove('is-yt-active');
     if (dom.ytPlayerWrap) dom.ytPlayerWrap.style.display = 'none';
     if (dom.spectrumWrap) dom.spectrumWrap.style.display = 'block';
     if (dom.progressWrap) dom.progressWrap.style.display = 'block';
@@ -1219,6 +1345,8 @@
       localStorage.setItem('cyber-audio-mode', 'bgm');
       localStorage.setItem('cyber-yt-playing', 'false');
     } catch (e) {}
+    if (dom.slot) dom.slot.classList.remove('is-yt-active');
+    if (dom.card) dom.card.classList.remove('is-yt-active');
     if (dom.btnModeBgm) dom.btnModeBgm.classList.add('active');
     if (dom.btnModeYt) dom.btnModeYt.classList.remove('active');
     if (dom.sectionBgm) dom.sectionBgm.style.display = 'block';
@@ -1238,6 +1366,8 @@
     try {
       localStorage.setItem('cyber-audio-mode', 'yt');
     } catch (e) {}
+    if (dom.slot) dom.slot.classList.add('is-yt-active');
+    if (dom.card) dom.card.classList.add('is-yt-active');
     if (dom.btnModeYt) dom.btnModeYt.classList.add('active');
     if (dom.btnModeBgm) dom.btnModeBgm.classList.remove('active');
     if (dom.sectionBgm) dom.sectionBgm.style.display = 'none';
@@ -1330,7 +1460,13 @@
       '      </div>',
       '      <!-- YouTube Player Screen -->',
       '      <div class="bgm-yt-player-wrap" id="bgmYtPlayerWrap" style="display:none;">',
-      '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+      '        <iframe id="bgmYtIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>',
+      '        <div class="bgm-yt-cover" id="bgmYtCover" style="display:none;" title="??????????????????">',
+      '          <img id="bgmYtCoverImg" src="" alt="Thumbnail" />',
+      '          <button type="button" class="bgm-yt-cover-play" id="bgmYtCoverPlay" title="????????">',
+      '            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5v14l11-7z"/></svg>',
+      '          </button>',
+      '        </div>',
       '      </div>',
       '      <!-- Progress Bar -->',
       '      <div class="bgm-progress-wrap" id="bgmProgressWrap" title="คลิกเพื่อเลื่อนช่วงเพลง">',
@@ -1486,6 +1622,17 @@
     dom.ytPlayerWrap = document.getElementById('bgmYtPlayerWrap');
     dom.ytIframe = document.getElementById('bgmYtIframe');
     dom.ytExtLink = document.getElementById('bgmYtExtLink');
+    dom.ytCover = document.getElementById('bgmYtCover');
+    dom.ytCoverImg = document.getElementById('bgmYtCoverImg');
+    dom.ytCoverPlay = document.getElementById('bgmYtCoverPlay');
+    if (dom.ytCover) {
+      dom.ytCover.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (currentYtVideo) {
+          playYtVideo(currentYtVideo, savedYtTime);
+        }
+      });
+    }
     dom.spectrumWrap = root.querySelector('.bgm-spectrum-wrap');
     dom.panelTag = document.getElementById('bgmPanelTag');
     dom.badgeHq = document.getElementById('bgmBadgeHq');
@@ -2058,10 +2205,11 @@
 
     if (currentMode === 'yt' && currentYtVideo) {
       switchToYt();
-      var isYtOn = localStorage.getItem('cyber-yt-playing') !== 'false';
+      var isYtOn = localStorage.getItem('cyber-yt-playing') === 'true';
       if (isYtOn) {
         playYtVideo(currentYtVideo, savedYtTime);
       } else {
+        showYtPausedState(currentYtVideo, savedYtTime);
         updateUI();
       }
     } else {
