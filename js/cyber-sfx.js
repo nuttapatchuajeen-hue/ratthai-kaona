@@ -1,4 +1,4 @@
-﻿/* ===========================================================================
+/* ===========================================================================
    Cyber UI Sound Effects (SFX) Engine — รัฐไทยก้าวหน้า
    เสียงสังเคราะห์ความละเอียดสูงด้วย Web Audio API (Zero dependencies & 0 latency)
    =========================================================================== */
@@ -132,14 +132,8 @@
       if (el) SFX.click();
     }, true);
 
-    var lastHoverTarget = null;
-    document.addEventListener('mouseover', function (e) {
-      var el = e.target.closest(hoverSelector);
-      if (el && el !== lastHoverTarget) {
-        lastHoverTarget = el;
-        SFX.hover();
-      }
-    }, true);
+    // Mouseover hover SFX disabled to prevent OS/driver audio ducking & stuttering on BGM/YouTube
+    // Click SFX remains active for crisp tactile response
   }
 
   if (document.readyState === 'loading') {

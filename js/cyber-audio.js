@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v11';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v12';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v11' : 'css/cyber-audio.css?v=20260914_v11';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v12' : 'css/cyber-audio.css?v=20260914_v12';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -495,32 +495,9 @@
   audio.volume = currentVolume;
   audio.loop = true;
 
-  // ── Web Audio Analyser (Canvas Visualizer) ──
-  var audioCtx = null;
-  var analyser = null;
-  var sourceNode = null;
-  var freqData = null;
+  // ── Spectrum Visualizer Canvas State (Procedural Synthesizer) ──
   var animFrameId = null;
   var updateCardOrientation = null;
-
-  function setupAudioContext() {
-    if (audioCtx) return;
-    try {
-      var AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        analyser.smoothingTimeConstant = 0.8;
-        sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        freqData = new Uint8Array(analyser.frequencyBinCount);
-      }
-    } catch (e) {
-      console.log('Web Audio Context not available, using procedural waveform:', e);
-    }
-  }
 
   function loadTrack(idx, startPos) {
     if (currentMode === 'yt') {
@@ -544,10 +521,6 @@
   function playAudio() {
     if (currentMode === 'yt' || ytIsCurrentlyPlaying || (dom.ytIframe && dom.ytIframe.src)) {
       pauseYtVideo();
-    }
-    setupAudioContext();
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
     }
     currentMode = 'bgm';
     try {
@@ -764,8 +737,6 @@
         if (typeof data.info.currentTime === 'number' && data.info.currentTime >= 0 && data.info.currentTime < 86400) {
           ytLocalStartOffset = data.info.currentTime;
           ytLocalStartTime = Date.now();
-          sessionStorage.setItem('cyber-yt-time', data.info.currentTime);
-          localStorage.setItem('cyber-yt-time', data.info.currentTime);
           if (dom.timeCur) dom.timeCur.textContent = formatTime(data.info.currentTime);
         }
         if (typeof data.info.duration === 'number' && data.info.duration > 0 && data.info.duration < 86400) {
@@ -775,20 +746,33 @@
         if (data.info.playerState === 1) { // 1 = playing
           ytIsCurrentlyPlaying = true;
           ytLocalStartTime = Date.now();
-          localStorage.setItem('cyber-yt-playing', 'true');
+          try { localStorage.setItem('cyber-yt-playing', 'true'); } catch (e) {}
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PLAYING';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PAUSE;
           if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PAUSE;
           if (dom.pill) dom.pill.classList.add('is-playing');
           if (dom.slot) dom.slot.classList.add('is-playing');
           if (dom.ytCover) dom.ytCover.style.display = 'none';
+          startVisualizer();
+          if (dom.ytIframe && dom.ytIframe.contentWindow) {
+            try {
+              dom.ytIframe.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: 'setPlaybackQuality',
+                args: ['medium']
+              }), '*');
+            } catch (e) {}
+          }
         } else if (data.info.playerState === 3) { // 3 = buffering
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT BUFFER';
         } else if (data.info.playerState === 2) { // 2 = paused
           ytLocalStartOffset = getYtEstimatedCurrentTime();
           ytIsCurrentlyPlaying = false;
           ytLocalStartTime = 0;
-          localStorage.setItem('cyber-yt-playing', 'false');
+          try {
+            localStorage.setItem('cyber-yt-playing', 'false');
+            localStorage.setItem('cyber-yt-time', ytLocalStartOffset);
+          } catch (e) {}
           if (dom.pillStatus) dom.pillStatus.textContent = 'YT PAUSED';
           if (dom.btnPlayPill) dom.btnPlayPill.innerHTML = ICO_PLAY;
           if (dom.btnPlayCard) dom.btnPlayCard.innerHTML = ICO_PLAY;
@@ -2196,25 +2180,17 @@
       var numBars = 36;
       var gap = 3;
       var barWidth = (w - (numBars - 1) * gap) / numBars;
-      var isAudioPlaying = !audio.paused;
+      var isAudioPlaying = (!audio.paused && audio.currentTime > 0) || ytIsCurrentlyPlaying;
 
-      if (analyser && isAudioPlaying) {
-        analyser.getByteFrequencyData(freqData);
-      }
-
-      phase += 0.05;
+      phase += 0.055;
 
       for (var i = 0; i < numBars; i++) {
         var barH = 6;
         if (isAudioPlaying) {
-          if (analyser && freqData) {
-            var dataIdx = Math.floor((i / numBars) * freqData.length);
-            barH = Math.max(6, (freqData[dataIdx] / 255) * (h * 0.78));
-          } else {
-            var wave1 = Math.sin(i * 0.3 + phase) * 20;
-            var wave2 = Math.cos(i * 0.15 - phase * 1.2) * 15;
-            barH = Math.max(8, 28 + wave1 + wave2);
-          }
+          var wave1 = Math.sin(i * 0.28 + phase) * 22;
+          var wave2 = Math.cos(i * 0.16 - phase * 1.3) * 16;
+          var wave3 = Math.sin((i + phase * 2.1) * 0.42) * 10;
+          barH = Math.max(8, 30 + wave1 + wave2 + wave3);
         } else {
           barH = Math.max(4, 8 + Math.sin(i * 0.3 + phase * 0.3) * 4);
         }
