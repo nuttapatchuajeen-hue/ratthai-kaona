@@ -11,20 +11,19 @@
   var audioCtx = null;
   var sfxMuted = localStorage.getItem('cyber-sfx-muted') === 'true';
 
-  var idleTimer = null;
-
-  function ytIsPlaying() {
+  function isAudioPlaying() {
     try {
-      return localStorage.getItem('cyber-audio-mode') === 'yt' && localStorage.getItem('cyber-yt-playing') === 'true';
+      var isBgm = localStorage.getItem('cyber-bgm-playing') === 'true';
+      var isYt = localStorage.getItem('cyber-yt-playing') === 'true';
+      return isBgm || isYt;
     } catch (e) {
       return false;
     }
   }
 
   function getCtx() {
-    // ระหว่างเล่นคลิป YouTube งดเสียงเอฟเฟกต์และพักช่องเสียงไว้ — ช่องเสียงที่สองทำให้เสียงคลิปสะดุด
-    if (ytIsPlaying()) {
-      if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+    // ระหว่างเล่นเพลง BGM หรือคลิป YouTube งดเสียงเอฟเฟกต์ — ป้องกันไม่ให้ไดรเวอร์เสียงทำ Audio Ducking
+    if (isAudioPlaying()) {
       return null;
     }
     if (!audioCtx) {
@@ -34,11 +33,6 @@
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
-    // พักช่องเสียงเมื่อว่าง ไม่ให้ค้างเปิดไว้ตอนเริ่มเล่นคลิปถัดไป
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(function () {
-      if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
-    }, 1500);
     return audioCtx;
   }
 

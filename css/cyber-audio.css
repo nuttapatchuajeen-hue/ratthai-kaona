@@ -1428,6 +1428,8 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
   margin-bottom: 12px;
   border: 1px solid rgba(255, 68, 68, 0.35);
   box-shadow: 0 0 20px rgba(255, 68, 68, 0.18);
+  transform: translateZ(0);
+  will-change: transform;
   display: none;
 }
 

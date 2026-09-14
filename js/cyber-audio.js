@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v12';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v13';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v12' : 'css/cyber-audio.css?v=20260914_v12';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v13' : 'css/cyber-audio.css?v=20260914_v13';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -1144,7 +1144,7 @@
       : 'https://thaigovernmentdata.netlify.app';
     var embedOrigin = '&origin=' + encodeURIComponent(currentOrigin) + '&widget_referrer=' + encodeURIComponent(currentOrigin);
     var startParam = startTime > 0 ? ('&start=' + Math.floor(startTime)) : '';
-    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&playsinline=1' + startParam + embedOrigin;
+    var embedUrl = 'https://www.youtube.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&playsinline=1' + startParam + embedOrigin;
 
     if (dom.ytIframe) {
       dom.ytIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
@@ -1168,7 +1168,7 @@
       showYtErrorState(153);
     }
 
-    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · 1080P STREAM';
+    if (dom.panelTag) dom.panelTag.textContent = 'YOUTUBE · STREAMING';
     if (dom.cardTrackName) dom.cardTrackName.textContent = v.title;
     if (dom.cardTrackGenre) dom.cardTrackGenre.textContent = v.channel;
     if (dom.cardTrackCat) {
