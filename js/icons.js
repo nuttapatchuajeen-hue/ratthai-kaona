@@ -122,5 +122,28 @@
       );
     }
   } catch (err) {}
+
+  // 5. ซ่อนและลบ Netlify Badge / Feedback Drawer ออกจากหน้าจอ
+  try {
+    var netlifyStyle = document.createElement('style');
+    netlifyStyle.textContent = 'iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important; width: 0 !important; height: 0 !important; }';
+    (document.head || document.documentElement).appendChild(netlifyStyle);
+
+    var purgeNetlify = function () {
+      var els = document.querySelectorAll('iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge');
+      for (var i = 0; i < els.length; i++) {
+        els[i].remove();
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', purgeNetlify);
+    } else {
+      purgeNetlify();
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(purgeNetlify).observe(document.documentElement, { childList: true, subtree: true });
+    }
+  } catch (err2) {}
 })();
+
 

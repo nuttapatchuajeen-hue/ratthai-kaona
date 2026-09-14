@@ -1737,3 +1737,21 @@ body::before {
   }
 }
 
+/* ── PERMANENTLY HIDE NETLIFY BADGE / DRAWER ── */
+iframe[src*="netlify"],
+[data-netlify-deploy-id],
+[class*="netlify"],
+[id*="netlify"],
+[aria-label*="Netlify"],
+netlify-feedback,
+.netlify-badge,
+#netlify-badge {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+
