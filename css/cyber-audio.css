@@ -285,10 +285,9 @@ html[data-theme="light"] #cyber-bgm-root {
   -webkit-backdrop-filter: blur(24px);
   box-shadow: var(--bgm-shadow), 0 0 45px rgba(0, 0, 0, 0.75);
   opacity: 0;
-  visibility: hidden;
-  transform: translateY(12px) scale(0.98);
-  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0.25s;
   pointer-events: none;
+  transform: translateY(12px) scale(0.98);
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
   display: grid;
   grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
   gap: 18px;
@@ -313,7 +312,6 @@ html[data-theme="light"] #cyber-bgm-root {
 
 .drawer-open .cyber-bgm-card {
   opacity: 1;
-  visibility: visible;
   transform: translateY(0) scale(1);
   pointer-events: auto;
 }
@@ -1421,6 +1419,8 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
 .bgm-yt-player-wrap {
   position: relative;
   width: 100%;
+  min-width: 240px;
+  min-height: 135px;
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
@@ -1447,6 +1447,8 @@ html[data-theme="light"] .bgm-cat-tab.active .bgm-cat-count {
 #bgmYtIframe {
   width: 100%;
   height: 100%;
+  min-width: 240px;
+  min-height: 135px;
   border: none;
   display: block;
 }
