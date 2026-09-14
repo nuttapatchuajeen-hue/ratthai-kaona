@@ -1,23 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>แบบประเมินความพึงพอใจ — รัฐไทยก้าวหน้า</title>
   <meta name="description" content="แบบประเมินความพึงพอใจของผู้ใช้งานที่มีต่อเว็บไซต์รัฐไทยก้าวหน้า เพื่อนำผลไปวิเคราะห์ด้วยค่าร้อยละ ค่าเฉลี่ย และส่วนเบี่ยงเบนมาตรฐาน" />
-  <link rel="canonical" href="https://thaigovernmentdata.netlify.app/hub/survey.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="รัฐไทยก้าวหน้า" />
-  <meta property="og:locale" content="th_TH" />
-  <meta property="og:title" content="แบบประเมินความพึงพอใจ — รัฐไทยก้าวหน้า" />
-  <meta property="og:url" content="https://thaigovernmentdata.netlify.app/hub/survey.html" />
-  <meta property="og:image" content="https://thaigovernmentdata.netlify.app/hub/images/logo.png" />
   <link rel="icon" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Prompt:wght@500;700;900&family=Sarabun:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/cursor-glow.css" />
-  <link rel="stylesheet" href="../css/cyber-auth.css" />
 
   <style>
   :root {
@@ -422,7 +414,7 @@
     <section class="wrap" id="view-results" hidden>
       <div class="results-actions">
         <button class="btn-ghost" type="button" id="btn-refresh">⟳ โหลดผลล่าสุด</button>
-        <button class="btn-ghost" type="button" id="csv-link">⬇ ดาวน์โหลดข้อมูลดิบ — เฉพาะคำตอบออนไลน์ (CSV สำหรับ Excel/SPSS)</button>
+        <a class="btn-ghost" id="csv-link" href="#" download>⬇ ดาวน์โหลดข้อมูลดิบ — เฉพาะคำตอบออนไลน์ (CSV สำหรับ Excel/SPSS)</a>
       </div>
       <div class="loading" id="res-loading">กำลังโหลดผลการประเมิน…</div>
       <div id="res-body" hidden>
@@ -476,28 +468,9 @@
           <div id="r-demo"></div>
         </div>
 
-        <div class="panel" id="r-comments-panel">
+        <div class="panel" id="r-comments-panel" hidden>
           <span class="panel-num">เสียงผู้ใช้</span>
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:1.2rem;">
-            <h2 style="margin:0;">ข้อเสนอแนะเพิ่มเติมจากผู้ใช้งาน</h2>
-            <button type="button" class="btn-ghost" id="btn-open-quick-comment" style="font-size:0.82rem;padding:0.35rem 0.85rem;border-color:var(--accent-cyan);color:var(--accent-cyan);">+ เขียนข้อเสนอแนะเพิ่มเติม</button>
-          </div>
-
-          <!-- กล่องกรอกข้อเสนอแนะแบบรวดเร็ว -->
-          <div id="quick-comment-box" style="display:none;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.22);border-radius:10px;padding:1.2rem;margin-bottom:1.4rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
-              <div style="font-size:0.88rem;font-weight:600;color:var(--accent-cyan);" id="quick-comment-user-label">
-                กำลังส่งข้อเสนอแนะในนาม: ผู้ใช้ทั่วไป
-              </div>
-              <button type="button" class="btn-ghost" id="btn-quick-login-link" style="font-size:0.75rem;padding:0.2rem 0.6rem;display:none;">เข้าสู่ระบบเพื่อระบุตัวตน</button>
-            </div>
-            <textarea id="quick-comment-input" rows="3" style="width:100%;background:rgba(8,16,26,0.9);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:0.75rem;color:#fff;font-family:var(--font-thai);font-size:0.9rem;resize:vertical;" placeholder="พิมพ์ความคิดเห็น ข้อเสนอแนะ หรือคำติชมเพื่อพัฒนาเว็บไซต์..."></textarea>
-            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:0.8rem;">
-              <button type="button" class="btn-ghost" id="btn-cancel-quick-comment" style="padding:0.35rem 0.9rem;font-size:0.82rem;">ยกเลิก</button>
-              <button type="button" class="btn-submit" id="btn-submit-quick-comment" style="padding:0.4rem 1.1rem;font-size:0.88rem;">บันทึกข้อเสนอแนะ</button>
-            </div>
-          </div>
-
+          <h2>ข้อเสนอแนะล่าสุด (ตอบออนไลน์)</h2>
           <div id="r-comments"></div>
         </div>
 
@@ -837,30 +810,25 @@
 
     btnSubmit.disabled = true;
     msg.textContent = 'กำลังส่งคำตอบ…';
-
-    // บันทึกลงระบบข้อมูล Local Data Store ทันที
-    if (window.CyberAuth) {
-      window.CyberAuth.saveSurveyResponse(data);
-    }
-
     try {
       const res = await fetch(API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!res.ok) console.warn('API error, using local store:', res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      localStorage.setItem('md-survey-done', new Date().toISOString());
+      form.hidden = true;
+      document.querySelector('#view-form .panel').hidden = true; // ซ่อนคำชี้แจง
+      document.getElementById('thanks').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      resultsLoadedOnce = false; // ให้ดึงผลใหม่รวมคำตอบเรา
     } catch (err) {
-      console.warn('API offline, preserved in local store:', err.message);
+      msg.className = 'form-msg err';
+      msg.textContent = 'ส่งไม่สำเร็จ กรุณาลองใหม่อีกครั้ง (' + err.message + ')';
+    } finally {
+      btnSubmit.disabled = false;
     }
-
-    localStorage.setItem('md-survey-done', new Date().toISOString());
-    form.hidden = true;
-    document.querySelector('#view-form .panel').hidden = true; // ซ่อนคำชี้แจง
-    document.getElementById('thanks').hidden = false;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    resultsLoadedOnce = false; // ให้ดึงผลใหม่รวมคำตอบเรา
-    btnSubmit.disabled = false;
   });
 
   function showError(text, scrollTarget) {
@@ -892,16 +860,7 @@
 
   // ── results ──
   const csvLink = document.getElementById('csv-link');
-  if (csvLink) {
-    csvLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (window.CyberAuth) {
-        window.CyberAuth.exportSurveyCSV();
-      } else {
-        window.location.href = API + '?format=csv';
-      }
-    });
-  }
+  csvLink.href = API + '?format=csv';
   document.getElementById('btn-refresh').addEventListener('click', loadResults);
 
   // ── ผลตามเล่มรายงาน บทที่ 4 (n = 30) — นำไปรวมกับคำตอบออนไลน์ ──
@@ -936,34 +895,6 @@
     sd: n > 1 ? Math.sqrt(Math.max(0, (Q - S * S / n) / (n - 1))) : 0,
   });
 
-  function getOnlineDataFromLocal() {
-    const responses = window.CyberAuth ? window.CyberAuth.getSurveyResponses() : [];
-    const n = responses.length;
-    const demographics = {};
-    for (const q of DEMO_QUESTIONS) {
-      demographics[q.id] = q.choices.map((label) => ({
-        label,
-        count: responses.filter((r) => r[q.id] === label).length
-      }));
-    }
-    const items = ALL_ITEMS.map((_, i) => {
-      const counts = [0, 0, 0, 0, 0];
-      responses.forEach((r) => {
-        const val = r.ratings && r.ratings[i];
-        if (val >= 1 && val <= 5) counts[val - 1]++;
-      });
-      return { counts };
-    });
-    const comments = (window.CyberAuth ? window.CyberAuth.getComments() : []).map((c) => ({
-      id: c.id,
-      text: c.text,
-      ts: c.ts,
-      author: c.author,
-      role: c.role
-    }));
-    return { n, items, demographics, comments };
-  }
-
   function combine(live) {                    // live = JSON จาก API หรือ null (โหลดไม่ได้)
     const R = REPORT.n;
     const liveN = live ? live.n : 0;
@@ -996,27 +927,18 @@
     const body = document.getElementById('res-body');
     loading.textContent = 'กำลังโหลดผลการประเมิน…';
     loading.hidden = false; body.hidden = true;
-
-    let onlineData = null;
     try {
-      const res = await fetch(API, { cache: 'no-store' });
-      if (res.ok) {
-        onlineData = await res.json();
-      }
-    } catch (err) {
-      // offline fallback
-    }
-
-    // หากโหลดจาก API ไม่ได้ ให้ใช้ข้อมูลจาก Local Data Engine ของเราทันที
-    if (!onlineData || typeof onlineData.n !== 'number') {
-      onlineData = getOnlineDataFromLocal();
-      loading.textContent = 'เชื่อมต่อฐานข้อมูลในระบบ (Local Data Engine) — โหลดข้อมูลสำเร็จแล้ว';
-    } else {
+      const res = await fetch(API);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const d = await res.json();
+      resultsLoadedOnce = true;
       loading.hidden = true;
+      renderResults(combine(d));
+    } catch (err) {
+      // โหลดคำตอบออนไลน์ไม่ได้ → ยังแสดงผลตามเล่มไว้ก่อน
+      loading.textContent = 'โหลดคำตอบออนไลน์ไม่สำเร็จ (' + err.message + ') — ตอนนี้แสดงเฉพาะผลตามรายงาน กด "โหลดผลล่าสุด" เพื่อลองใหม่';
+      renderResults(combine(null));
     }
-
-    resultsLoadedOnce = true;
-    renderResults(combine(onlineData));
     body.hidden = false;
   }
 
@@ -1089,119 +1011,25 @@
     const cPanel = document.getElementById('r-comments-panel');
     const cWrap = document.getElementById('r-comments');
     cWrap.innerHTML = '';
-    
-    // ดึงข้อเสนอแนะจากระบบ (ทั้งจาก API และจาก CyberAuth store)
-    const allComments = (window.CyberAuth ? window.CyberAuth.getComments() : (d.comments || []));
-    if (allComments && allComments.length) {
+    if (d.comments && d.comments.length) {
       cPanel.hidden = false;
-      const isAdmin = window.CyberAuth && window.CyberAuth.isAdmin();
-      for (const c of allComments) {
+      for (const c of d.comments) {
         const div = document.createElement('div');
-        div.className = 'comment-card';
-        const when = new Date(c.ts).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
-        const authorName = c.author || 'ผู้ตอบแบบประเมิน';
-        const roleLabel = c.role === 'admin' ? 'ADMIN' : 'ผู้ให้ข้อเสนอแนะ';
-        const roleClass = c.role === 'admin' ? 'admin' : '';
-        
-        div.innerHTML = `
-          <div class="comment-card-header">
-            <div class="comment-author">
-              <span>${authorName}</span>
-              <span class="comment-author-badge ${roleClass}">${roleLabel}</span>
-            </div>
-            <div class="comment-date">${when}</div>
-          </div>
-          <div class="comment-text">${c.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-          ${isAdmin && c.id ? `
-          <div class="comment-actions">
-            <button type="button" class="comment-btn-del" data-del-id="${c.id}">ลบข้อเสนอแนะนี้</button>
-          </div>` : ''}
-        `;
+        div.className = 'comment-item';
+        const when = document.createElement('div');
+        when.className = 'when';
+        when.textContent = new Date(c.ts).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+        const txt = document.createElement('div');
+        txt.className = 'txt';
+        txt.textContent = c.text; // textContent กัน XSS
+        div.append(when, txt);
         cWrap.appendChild(div);
       }
-
-      // ผูก Event ปุ่มลบสำหรับ Admin
-      cWrap.querySelectorAll('.comment-btn-del').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-del-id');
-          if (confirm('ยืนยันลบข้อเสนอแนะนี้?')) {
-            window.CyberAuth.deleteComment(id);
-            loadResults();
-          }
-        });
-      });
     } else {
-      cWrap.innerHTML = '<div style="color:var(--text-muted);font-style:italic;padding:1rem 0;">ยังไม่มีข้อเสนอแนะเพิ่มเติม</div>';
+      cPanel.hidden = true;
     }
   }
-
-  // ── จัดการกล่องส่งข้อเสนอแนะด่วน ──
-  const btnOpenQuickComment = document.getElementById('btn-open-quick-comment');
-  const quickCommentBox = document.getElementById('quick-comment-box');
-  const btnCancelQuickComment = document.getElementById('btn-cancel-quick-comment');
-  const btnSubmitQuickComment = document.getElementById('btn-submit-quick-comment');
-  const quickCommentInput = document.getElementById('quick-comment-input');
-  const quickUserLabel = document.getElementById('quick-comment-user-label');
-  const btnQuickLoginLink = document.getElementById('btn-quick-login-link');
-
-  function updateQuickCommentUser() {
-    if (!quickUserLabel) return;
-    const user = window.CyberAuth && window.CyberAuth.getCurrentUser();
-    if (user) {
-      quickUserLabel.textContent = `กำลังส่งข้อเสนอแนะในนาม: ${user.fullName} (${user.role.toUpperCase()})`;
-      if (btnQuickLoginLink) btnQuickLoginLink.style.display = 'none';
-    } else {
-      quickUserLabel.textContent = 'กำลังส่งข้อเสนอแนะในนาม: ผู้ใช้ทั่วไป (Guest)';
-      if (btnQuickLoginLink) btnQuickLoginLink.style.display = 'inline-block';
-    }
-  }
-
-  if (btnOpenQuickComment) {
-    btnOpenQuickComment.addEventListener('click', () => {
-      quickCommentBox.style.display = 'block';
-      updateQuickCommentUser();
-      quickCommentInput.focus();
-    });
-  }
-
-  if (btnCancelQuickComment) {
-    btnCancelQuickComment.addEventListener('click', () => {
-      quickCommentBox.style.display = 'none';
-      quickCommentInput.value = '';
-    });
-  }
-
-  if (btnQuickLoginLink) {
-    btnQuickLoginLink.addEventListener('click', () => {
-      if (window.CyberAuth) window.CyberAuth.openModal('login');
-    });
-  }
-
-  if (btnSubmitQuickComment) {
-    btnSubmitQuickComment.addEventListener('click', () => {
-      const val = quickCommentInput.value.trim();
-      if (!val) {
-        alert('กรุณากรอกข้อเสนอแนะ');
-        return;
-      }
-      if (window.CyberAuth) {
-        window.CyberAuth.addComment(val);
-        quickCommentInput.value = '';
-        quickCommentBox.style.display = 'none';
-        loadResults();
-      }
-    });
-  }
-
-  window.addEventListener('cyber-auth-changed', () => {
-    updateQuickCommentUser();
-    if (!viewResults.hidden) loadResults();
-  });
-  window.addEventListener('cyber-comments-updated', () => {
-    if (!viewResults.hidden) loadResults();
-  });
   </script>
-  <script src="../js/cyber-auth.js"></script>
   <script src="../js/cursor-glow.js"></script>
   <script src="../js/ai-chat.js"></script>
   <script src="../js/cyber-sfx.js?v=20260914_v14"></script>
