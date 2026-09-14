@@ -123,16 +123,22 @@
     }
   } catch (err) {}
 
-  // 5. ซ่อนและลบ Netlify Badge / Feedback Drawer ออกจากหน้าจอ
+  // 5. ซ่อนและลบ Netlify Badge / HUD Frame ถาวร
   try {
+    try {
+      localStorage.setItem('nl-hud:public:v1', 'hidden');
+      localStorage.setItem('nl-hud:owner-private:v1', 'hidden');
+    } catch (e) {}
+
+    var netlifyCss = '#nl-badge-frame, #nl-hud-frame, iframe[id*="nl-"], iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important; width: 0 !important; height: 0 !important; position: absolute !important; left: -99999px !important; z-index: -9999 !important; }';
     var netlifyStyle = document.createElement('style');
-    netlifyStyle.textContent = 'iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge { display: none !important; visibility: hidden !important; pointer-events: none !important; opacity: 0 !important; width: 0 !important; height: 0 !important; }';
+    netlifyStyle.textContent = netlifyCss;
     (document.head || document.documentElement).appendChild(netlifyStyle);
 
     var purgeNetlify = function () {
-      var els = document.querySelectorAll('iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge');
-      for (var i = 0; i < els.length; i++) {
-        els[i].remove();
+      var targets = document.querySelectorAll('#nl-badge-frame, #nl-hud-frame, iframe[id*="nl-"], script[data-nf-variant], iframe[src*="netlify"], [data-netlify-deploy-id], [class*="netlify"], [id*="netlify"], [aria-label*="Netlify"], netlify-feedback, .netlify-badge, #netlify-badge');
+      for (var i = 0; i < targets.length; i++) {
+        targets[i].remove();
       }
     };
     if (document.readyState === 'loading') {

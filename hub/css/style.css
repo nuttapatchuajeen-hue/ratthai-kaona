@@ -1738,6 +1738,9 @@ body::before {
 }
 
 /* ── PERMANENTLY HIDE NETLIFY BADGE / DRAWER ── */
+#nl-badge-frame,
+#nl-hud-frame,
+iframe[id*="nl-"],
 iframe[src*="netlify"],
 [data-netlify-deploy-id],
 [class*="netlify"],
@@ -1752,6 +1755,9 @@ netlify-feedback,
   opacity: 0 !important;
   width: 0 !important;
   height: 0 !important;
+  position: absolute !important;
+  left: -99999px !important;
+  z-index: -9999 !important;
 }
 
 
