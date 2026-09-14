@@ -211,12 +211,12 @@
   // ── รายการคลิป YouTube คัดสรรสำหรับค้นหาและเล่นทันที ──
   var YT_VIDEOS = [
     {
-      id: 'HuDH8-4Srpk',
-      title: 'รวมเพลงไทยยอดฮิต 2026 ฟังยาวๆ 🎧 เพราะพี่รักจริง • แผลใหม่ | รวมเพลงไทยสตริง เพลงฮิต TikTok',
-      channel: 'CorridosPesados · รวมเพลงฮิต',
+      id: 'lW_GSujItps',
+      title: 'รวมเพลงไทยสบายๆ ฟังเพลงชิล วันทำงาน 2026 🎧 💻 | #รวมเพลงทำงาน #เพลงฮิตในtiktok',
+      channel: 'GMM สบาย สบาย',
       category: 'music',
       categoryLabel: 'เพลงไทยยอดฮิต',
-      thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg'
+      thumb: 'https://i.ytimg.com/vi/lW_GSujItps/hqdefault.jpg'
     },
     {
       id: 'm8Yd1P6FEd8',
@@ -304,7 +304,7 @@
       channel: 'เพลงเพื่อชีวิต อมตะ',
       category: 'music',
       categoryLabel: 'เพลงเพื่อชีวิต',
-      thumb: 'https://i.ytimg.com/vi/HuDH8-4Srpk/hqdefault.jpg'
+      thumb: 'https://i.ytimg.com/vi/a3ICN2DC_hA/hqdefault.jpg'
     },
     {
       id: '4xDzrJKXOOY',
@@ -394,7 +394,7 @@
     if (scripts.length > 0) {
       var src = scripts[0].getAttribute('src') || '';
       var idx = src.lastIndexOf('js/');
-      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v13';
+      if (idx !== -1) return src.substring(0, idx) + 'css/cyber-audio.css?v=20260914_v14';
     }
     var p = window.location.pathname.replace(/\\/g, '/');
     var isSub = p.indexOf('/hub/') !== -1 ||
@@ -402,7 +402,7 @@
                 p.indexOf('/election/') !== -1 ||
                 p.indexOf('/stats/') !== -1 ||
                 p.indexOf('/solar-system-orrery/') !== -1;
-    return isSub ? '../css/cyber-audio.css?v=20260914_v13' : 'css/cyber-audio.css?v=20260914_v13';
+    return isSub ? '../css/cyber-audio.css?v=20260914_v14' : 'css/cyber-audio.css?v=20260914_v14';
   }
 
   // ── Helper คำนวณจำนวนเพลงในหมวด ──
@@ -450,6 +450,14 @@
   try {
     savedYtVid = JSON.parse(localStorage.getItem('cyber-yt-video') || 'null');
   } catch (e) {}
+  if (savedYtVid && savedYtVid.id === 'HuDH8-4Srpk') {
+    savedYtVid = YT_VIDEOS[0];
+    try {
+      localStorage.setItem('cyber-yt-video', JSON.stringify(savedYtVid));
+      localStorage.setItem('cyber-yt-time', '0');
+      sessionStorage.setItem('cyber-yt-time', '0');
+    } catch (e) {}
+  }
   var isYtPlaying = localStorage.getItem('cyber-yt-playing') === 'true';
   var savedYtTime = parseFloat(sessionStorage.getItem('cyber-yt-time') || localStorage.getItem('cyber-yt-time') || '0');
   if (isNaN(savedYtTime) || savedYtTime < 0 || savedYtTime > 86400) {
