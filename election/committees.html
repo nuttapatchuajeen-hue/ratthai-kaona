@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -411,8 +411,26 @@ function renderStats(){
     {n:parties.size, l:'พรรคของประธาน', u:'พรรค', sub:'ไม่รวมคณะที่ตั้งตาม ครม.'}
   ];
   document.getElementById('cmtStats').innerHTML = stats.map(s=>
-    `<div class="cmt-stat"><div class="n">${s.n}${s.u?` <span class="u">${s.u}</span>`:''}</div><div class="l">${s.l}</div>${s.sub?`<div class="ssub">${s.sub}</div>`:''}</div>`
+    `<div class="cmt-stat"><div class="n"><span class="cmt-num" data-val="${s.n}">0</span>${s.u?` <span class="u">${s.u}</span>`:''}</div><div class="l">${s.l}</div>${s.sub?`<div class="ssub">${s.sub}</div>`:''}</div>`
   ).join('');
+
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nums = document.querySelectorAll('#cmtStats .cmt-num');
+  if(reduceMotion){
+    nums.forEach(el => el.textContent = el.dataset.val);
+  } else {
+    const t0 = performance.now(), duration = 1000;
+    (function tick(t){
+      const p = Math.min(1, (t - t0) / duration);
+      const e = 1 - Math.pow(1 - p, 3);
+      nums.forEach(el => {
+        const target = +el.dataset.val;
+        el.textContent = Math.round(target * e);
+      });
+      if(p < 1) requestAnimationFrame(tick);
+      else nums.forEach(el => el.textContent = el.dataset.val);
+    })(t0);
+  }
 }
 
 /* ---- filter chips ---- */

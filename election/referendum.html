@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -510,24 +510,75 @@ mdSyncToggle();
   const pYes=pcOf(T.yes,validAll), pNo=pcOf(T.no,validAll), pAb=pcOf(T.ab,validAll);
 
   /* ---------- การ์ดสรุป + นับเลขวิ่ง ---------- */
-  document.getElementById('pcyes').innerHTML=pYes.toFixed(2)+'<small>%</small>';
-  document.getElementById('pcno').innerHTML=pNo.toFixed(2)+'<small>%</small>';
-  document.getElementById('pcab').innerHTML=pAb.toFixed(2)+'<small>%</small>';
-  document.getElementById('marginchip').innerHTML=
-    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4.5 4.5L19 8"/></svg>
-     เสียงเห็นชอบมากกว่าไม่เห็นชอบ +${fmt(T.yes-T.no)} เสียง (${(pYes-pNo).toFixed(2)}%)`;
-  document.querySelectorAll('[data-count]').forEach(el=>{
-    const target=+el.dataset.count,t0=performance.now();
-    (function step(t){const p=Math.min(1,(t-t0)/1200),e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(target*e));if(p<1)requestAnimationFrame(step);})(t0);
-  });
+  const elPcYes = document.getElementById('pcyes');
+  const elPcNo  = document.getElementById('pcno');
+  const elPcAb  = document.getElementById('pcab');
+  const elMargin = document.getElementById('marginchip');
+  const elTnv = document.getElementById('tnv');
+  const elTne = document.getElementById('tne');
+  const elTnp = document.getElementById('tnp');
+  const elTnSub = document.getElementById('tnsub');
+  const elTnFill = document.getElementById('tnfill');
+  const countEls = document.querySelectorAll('[data-count]');
 
-  /* ---------- ผู้มาใช้สิทธิ ---------- */
-  const tnPct=ballots/T.eligible*100;
-  document.getElementById('tnv').textContent=fmt(ballots);
-  document.getElementById('tne').textContent='/ '+fmt(T.eligible);
-  document.getElementById('tnp').textContent=tnPct.toFixed(1)+'%';
-  document.getElementById('tnsub').innerHTML=`บัตรเสีย <b class="num">${fmt(T.invalid)}</b> ใบ (${(T.invalid/ballots*100).toFixed(1)}% ของบัตรที่ใช้ทั้งหมด)`;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{document.getElementById('tnfill').style.width=tnPct.toFixed(1)+'%';}));
+  const tnPct = ballots / T.eligible * 100;
+  elTne.textContent = '/ ' + fmt(T.eligible);
+  elTnSub.innerHTML = `บัตรเสีย <b class="num">${fmt(T.invalid)}</b> ใบ (${(T.invalid/ballots*100).toFixed(1)}% ของบัตรที่ใช้ทั้งหมด)`;
+
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    elPcYes.innerHTML = pYes.toFixed(2) + '<small>%</small>';
+    elPcNo.innerHTML  = pNo.toFixed(2) + '<small>%</small>';
+    elPcAb.innerHTML  = pAb.toFixed(2) + '<small>%</small>';
+    elMargin.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4.5 4.5L19 8"/></svg>
+     เสียงเห็นชอบมากกว่าไม่เห็นชอบ +${fmt(T.yes-T.no)} เสียง (${(pYes-pNo).toFixed(2)}%)`;
+    elTnv.textContent = fmt(ballots);
+    elTnp.textContent = tnPct.toFixed(1) + '%';
+    elTnFill.style.width = tnPct.toFixed(1) + '%';
+    countEls.forEach(el => { el.textContent = fmt(+el.dataset.count); });
+  } else {
+    const t0 = performance.now(), duration = 1250;
+    const diffVotes = T.yes - T.no;
+    const diffPct = pYes - pNo;
+
+    (function step(t) {
+      const p = Math.min(1, (t - t0) / duration);
+      const e = 1 - Math.pow(1 - p, 3);
+
+      elPcYes.innerHTML = (pYes * e).toFixed(2) + '<small>%</small>';
+      elPcNo.innerHTML  = (pNo * e).toFixed(2) + '<small>%</small>';
+      elPcAb.innerHTML  = (pAb * e).toFixed(2) + '<small>%</small>';
+
+      elMargin.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4.5 4.5L19 8"/></svg>
+     เสียงเห็นชอบมากกว่าไม่เห็นชอบ +${fmt(Math.round(diffVotes * e))} เสียง (${(diffPct * e).toFixed(2)}%)`;
+
+      elTnv.textContent = fmt(Math.round(ballots * e));
+      elTnp.textContent = (tnPct * e).toFixed(1) + '%';
+
+      countEls.forEach(el => {
+        const target = +el.dataset.count;
+        el.textContent = fmt(Math.round(target * e));
+      });
+
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        elPcYes.innerHTML = pYes.toFixed(2) + '<small>%</small>';
+        elPcNo.innerHTML  = pNo.toFixed(2) + '<small>%</small>';
+        elPcAb.innerHTML  = pAb.toFixed(2) + '<small>%</small>';
+        elMargin.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4.5 4.5L19 8"/></svg>
+     เสียงเห็นชอบมากกว่าไม่เห็นชอบ +${fmt(diffVotes)} เสียง (${diffPct.toFixed(2)}%)`;
+        elTnv.textContent = fmt(ballots);
+        elTnp.textContent = tnPct.toFixed(1) + '%';
+        countEls.forEach(el => { el.textContent = fmt(+el.dataset.count); });
+      }
+    })(t0);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      elTnFill.style.width = tnPct.toFixed(1) + '%';
+    }));
+  }
 
   /* ---------- มาตรวัดครึ่งวงกลม (Gauge) + แอนิเมชัน ---------- */
   (function(){

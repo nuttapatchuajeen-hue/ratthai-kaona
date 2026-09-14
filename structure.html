@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -2509,11 +2509,11 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
 
       <div class="stat-chip">
         <div class="stat-dot" style="background:var(--gold)"></div>
-        <strong>20</strong> กระทรวง
+        <strong id="hdr-cnt-min" data-val="20">0</strong> กระทรวง
       </div>
       <div class="stat-chip">
         <div class="stat-dot" style="background:var(--green)"></div>
-        <strong>413</strong> หน่วยงาน
+        <strong id="hdr-cnt-org" data-val="413">0</strong> หน่วยงาน
       </div>
     </div>
 
@@ -2748,10 +2748,10 @@ document.addEventListener('DOMContentLoaded',function(){var cb=document.querySel
 
         <!-- Stats row -->
         <div class="corrupt-stats">
-          <div class="c-stat"><div class="c-stat-val">33</div><div class="c-stat-lbl">คะแนน CPI 2568 (เต็ม 100)</div></div>
-          <div class="c-stat"><div class="c-stat-val">116</div><div class="c-stat-lbl">อันดับโลก (จาก 180)</div></div>
-          <div class="c-stat"><div class="c-stat-val">4,475</div><div class="c-stat-lbl">คำกล่าวหา ป.ป.ช. ปีงบ 2566</div></div>
-          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n">10</div><div class="c-stat-lbl">หน่วยงานหลักที่แสดง</div></div>
+          <div class="c-stat"><div class="c-stat-val" data-val="33">0</div><div class="c-stat-lbl">คะแนน CPI 2568 (เต็ม 100)</div></div>
+          <div class="c-stat"><div class="c-stat-val" data-val="116">0</div><div class="c-stat-lbl">อันดับโลก (จาก 180)</div></div>
+          <div class="c-stat"><div class="c-stat-val" data-val="4475">0</div><div class="c-stat-lbl">คำกล่าวหา ป.ป.ช. ปีงบ 2566</div></div>
+          <div class="c-stat"><div class="c-stat-val" id="c-filtered-n" data-val="10">0</div><div class="c-stat-lbl">หน่วยงานหลักที่แสดง</div></div>
         </div>
       </div>
 
@@ -8143,6 +8143,25 @@ function goToMinistryFromCorrupt(minId, orgNo) {
   }
 }
 
+function animateNumberCount(el, target, duration, isFormatted) {
+  if (!el) return;
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    el.textContent = isFormatted ? target.toLocaleString('en-US') : target;
+    return;
+  }
+  const t0 = performance.now();
+  const dur = duration || 1000;
+  (function step(t) {
+    const p = Math.min(1, (t - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    const cur = Math.round(target * e);
+    el.textContent = isFormatted ? cur.toLocaleString('en-US') : cur;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = isFormatted ? target.toLocaleString('en-US') : target;
+  })(t0);
+}
+
 function showCorruptView(on) {
   const overlay  = document.getElementById('corrupt-overlay');
   const canvas   = document.getElementById('canvas');
@@ -8158,6 +8177,10 @@ function showCorruptView(on) {
     buildCorruptExtras();
     renderCorruptFiltered();
     overlay.classList.add('show');
+    document.querySelectorAll('.corrupt-stats .c-stat-val').forEach(el => {
+      const val = parseInt(el.dataset.val, 10);
+      if (!isNaN(val)) animateNumberCount(el, val, 1050, val >= 1000);
+    });
     canvas.style.display = 'none';
     zoomCtrl.style.display = 'none';
     coords.style.display = 'none';
@@ -8359,6 +8382,14 @@ if (window.matchMedia('(max-width: 640px)').matches) {
   document.getElementById('btn-cabinet').classList.add('active');
 }
 applyHashFromURL();   // มากับลิงก์ #… → เปิดแผงหน่วยงานนั้นเลย
+
+function initHeaderCountUp() {
+  const minEl = document.getElementById('hdr-cnt-min');
+  const orgEl = document.getElementById('hdr-cnt-org');
+  if (minEl) animateNumberCount(minEl, 20, 900, false);
+  if (orgEl) animateNumberCount(orgEl, 413, 1100, false);
+}
+initHeaderCountUp();
 </script>
 <div id="mob-overlay" onclick="toggleMobSidebar()"></div>
 <!-- ตั้งพิกัดเมาส์ --x/--y/--xp บน :root ให้สปอตไลต์การ์ด ครม. (ไฟล์เดียวกับที่ hub ใช้) -->
