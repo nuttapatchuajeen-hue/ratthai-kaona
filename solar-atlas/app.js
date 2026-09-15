@@ -3146,11 +3146,11 @@ function blackHoleMaterial(def) {
    และได้แสงฟุ้ง (bloom) มาฟรีจากเป้าหมายเดียวกัน: ตัดส่วนสว่าง → เบลอสองแกน → บวกทับ
    หลุมดำจึงไม่อยู่ใน layer 0 อีกต่อไป ฉากหลักไม่วาดมัน — ท่อนี้เป็นคนวาดและซ้อนเอง */
 const BH_LAYER = 3;
-const BH_MOVE = 40000;                      // งบพิกเซลตอนกล้องขยับ — เอาความลื่นไว้ก่อน
+const BH_MOVE = 2400000;                    // ไม่ลดความละเอียดตอนกล้องขยับ (ไม่เบลอ)
 const BH_STILL = 2400000;                   // งบตอนภาพนิ่ง — เผื่อให้วาดใหญ่กว่าจอแล้วย่อลงได้
 const BH_SS = 1.4;                          // ตอนนิ่งวาดใหญ่กว่าจอได้กี่เท่า (ลบรอยหยัก)
 const BH_TILEN = 4;                         // ตอนวาดใหญ่ ซอยเป็นกี่ช่องต่อด้าน (เฟรมละช่อง)
-let glowRec = null, bhScale = 0.55, bhBias = 1, bhStill = 0, bhCamStill = 0, bhDrawn = 0, bhDirty = true, bhNeedDraw = true, _bhOrb = 0, _bhOrbRaw = 0, _bhOrbWait = 0, glowScene = null, glowCam = null, glowQuad = null,
+let glowRec = null, bhScale = 1.0, bhBias = 1, bhStill = 0, bhCamStill = 0, bhDrawn = 0, bhDirty = true, bhNeedDraw = true, _bhOrb = 0, _bhOrbRaw = 0, _bhOrbWait = 0, glowScene = null, glowCam = null, glowQuad = null,
     bhTile = 0, bhRT = null, glowA = null, glowB = null, glowC = null, glowD = null, glowE = null, glowF = null,
     bhCopy = null, glowCut = null, glowBlur = null, glowAdd = null, bhW = 0, bhH = 0;
 
@@ -3276,8 +3276,8 @@ function bhRender() {
 
 function bhComposite() {
   bhCopy.uniforms.uTex.value = bhRT.texture;
-  const soft = Math.max(0, 1 - bhScale) * 0.6;
-  bhCopy.uniforms.uTexel.value.set(soft / bhRT.width, soft / bhRT.height);
+  const soft = 0;
+  bhCopy.uniforms.uTexel.value.set(0, 0);
   glowQuad.material = bhCopy;
   renderer.render(glowScene, glowCam);
   glowAdd.uniforms.uT1.value = glowA.texture;
@@ -4049,13 +4049,13 @@ function farPose(rec) {
       const area = Math.min(wpx * wpx, cv2.width * cv2.height * 1.15);
       // กล้องนิ่งเมื่อไร ให้ไล่ความละเอียดขึ้นได้เต็มที่ ถึงเวลาจำลองจะเดินเร็วจนก๊าซหมุนก็ตาม
       // ส่วนการวาดใหญ่กว่าจอ (ซอยเป็นช่อง) ทำได้เฉพาะตอนภาพนิ่งสนิท ไม่งั้นช่องจะเหลื่อมกัน
-      const budget = bhCamStill > 3 ? BH_STILL : BH_MOVE;
+      const budget = BH_STILL;
       // วาดใหญ่กว่าจอ (ซอยเป็นช่องหลายเฟรม) ทำได้เฉพาะตอนเวลาหยุดจริง ๆ
       // ถ้าลายจานยังขยับ ช่องแต่ละช่องจะเป็นคนละจังหวะเวลา ภาพจะเหลื่อมเป็นตาราง
       const want = Math.min(!orbRunning && bhStill > 3 ? BH_SS : 1,
-                            Math.max(0.18, Math.sqrt(budget * bhBias / Math.max(1, area))));
-      if (want < bhScale && bhCamStill < 2) bhScale = want;     // ลดทันทีเฉพาะตอนกล้องขยับ ไม่งั้นความคมจะวูบวาบ
-      else if (want > bhScale) bhScale = Math.min(want, bhScale + 0.06);   // นิ่งแล้ว = ไล่ขึ้นทีละนิด
+                            Math.max(1.0, Math.sqrt(budget * bhBias / Math.max(1, area))));
+      if (want < bhScale && bhCamStill < 2) bhScale = want;
+      else if (want > bhScale) bhScale = Math.min(want, bhScale + 0.1);
       bhDirty = bhNeedDraw || bhScale !== bhDrawn;
     } else {
       u.uTime.value = performance.now() / 1000;
