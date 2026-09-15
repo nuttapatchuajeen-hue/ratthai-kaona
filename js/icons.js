@@ -67,7 +67,7 @@
     return false;
   }, true);
 
-  // 2. ป้องกันปุ่มลัดคีย์บอร์ด (F12, Ctrl+Shift+I, Ctrl+U, etc.)
+  // 2. ป้องกันปุ่มลัดคีย์บอร์ดทุกค่าย (Chrome, Edge, Firefox, Safari on Mac/Windows)
   document.addEventListener('keydown', function (e) {
     var k = (e.key || '').toUpperCase();
     var code = e.keyCode || e.which || 0;
@@ -80,8 +80,18 @@
       return false;
     }
 
-    // Ctrl/Cmd + Shift + I / J / C (DevTools / Inspect Element / Console)
-    if (isCtrlOrCmd && e.shiftKey && (k === 'I' || k === 'J' || k === 'C' || code === 73 || code === 74 || code === 67)) {
+    // Ctrl/Cmd + Shift + I / J / C / K / M / E (DevTools / Console / Elements / Device Mode)
+    if (isCtrlOrCmd && e.shiftKey && (
+      k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'M' || k === 'E' ||
+      code === 73 || code === 74 || code === 67 || code === 75 || code === 77 || code === 69
+    )) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Shift + F7 (Firefox Style Editor)
+    if (e.shiftKey && (k === 'F7' || code === 118)) {
       e.preventDefault();
       e.stopPropagation();
       return false;
@@ -100,26 +110,68 @@
       e.stopPropagation();
       return false;
     }
+
+    // Ctrl/Cmd + P (Print / Save PDF)
+    if (isCtrlOrCmd && (k === 'P' || code === 80)) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl/Cmd + A (Select All - ยกเว้นเมื่อกำลังพิมพ์ใน input หรือ textarea)
+    if (isCtrlOrCmd && (k === 'A' || code === 65)) {
+      var tag = (e.target && e.target.tagName) || '';
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA' && !e.target.isContentEditable) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }
   }, true);
 
-  // 3. ป้องกันการลากรูปภาพออกไปบันทึก
+  // 3. ป้องกันการลากรูปภาพและลิงก์ (Disable Drag & Drop)
   document.addEventListener('dragstart', function (e) {
-    if (e.target && e.target.nodeName === 'IMG') {
-      e.preventDefault();
-    }
+    e.preventDefault();
+    return false;
   }, false);
 
-  // 4. ข้อความเตือนใน Console
+  // 4. ห้ามคลุมดำก๊อปปี้ข้อความ (CSS User-Select None) โดยยังคงให้พิมพ์ในแบบฟอร์มได้
+  try {
+    var protectCss = document.createElement('style');
+    protectCss.textContent =
+      'body, html { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; }\n' +
+      'input, textarea, [contenteditable="true"] { -webkit-user-select: text !important; -moz-user-select: text !important; -ms-user-select: text !important; user-select: text !important; }';
+    (document.head || document.documentElement).appendChild(protectCss);
+  } catch (errCss) {}
+
+  // 5. Debugger Trap Loop (เมื่อมีคนเปิด DevTools จะติดค้างที่คำสั่ง debugger ทันที)
+  (function initDebuggerTrap() {
+    function trap() {
+      try {
+        (function () {
+          Function('debugger')();
+        })();
+      } catch (e) {}
+    }
+    setInterval(trap, 1000);
+  })();
+
+  // 6. เคลียร์ Console และแสดงข้อความเตือนความปลอดภัย
   try {
     if (window.console) {
-      console.log(
-        '%c⛔ คำเตือน: ซอร์สโค้ดนี้ได้รับการคุ้มครอง',
-        'color: #ff3344; font-size: 18px; font-weight: bold; font-family: sans-serif;'
-      );
-      console.log(
-        '%cไม่อนุญาตให้เปิดดู คัดลอก หรือดัดแปลงโค้ดของเว็บไซต์ "รัฐไทยก้าวหน้า"',
-        'color: #888; font-size: 13px;'
-      );
+      var warnConsole = function () {
+        try { console.clear(); } catch (e) {}
+        console.log(
+          '%c⛔ คำเตือน: ซอร์สโค้ดนี้ได้รับการคุ้มครอง',
+          'color: #ff3344; font-size: 18px; font-weight: bold; font-family: sans-serif;'
+        );
+        console.log(
+          '%cไม่อนุญาตให้เปิดดู คัดลอก หรือดัดแปลงโค้ดของเว็บไซต์ "รัฐไทยก้าวหน้า"',
+          'color: #888; font-size: 13px;'
+        );
+      };
+      warnConsole();
+      setInterval(warnConsole, 3000);
     }
   } catch (err) {}
 
