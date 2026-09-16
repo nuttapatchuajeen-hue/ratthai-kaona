@@ -1402,6 +1402,7 @@ function defaultDist(id) {
 }
 
 function setFocus(id, instant) {
+  zoomAnim.on = false;                               // การบินไปหาเป้าคุมระยะเอง
   starSel = -1; exoSel = -1; deepSel = -1;
   if (REG[id] && REG[id].craft) requestCraftModel(id);
   requestShapeModel(id);                               // รูปทรงจริงของวัตถุจิ๋ว
@@ -1489,7 +1490,105 @@ function initControls() {
 
 function zoomBy(f) {
   const minD = focusRadius(trans.on ? trans.to : S.focus) * 1.22;
+  zoomAnim.on = false; viewWish = null;               // ผู้ใช้ซูมเอง = ยกเลิกที่สั่งไว้
   camState.dist = Math.max(minD, Math.min(MAX_DIST, camState.dist * f));
+}
+
+/* ── พาไปดูสิ่งที่ไม่ใช่เป้าโฟกัส ────────────────────────────────────────
+   ระบบดาวเคราะห์นอกระบบกับกาแล็กซีไม่มีทะเบียนใน REG จึงใช้ setFocus() บินไปไม่ได้
+   ของสองอย่างนี้โผล่เฉพาะเมื่อกล้องอยู่ในมาตราส่วนที่ถูก — กาแล็กซีเริ่มเห็นตอนกล้อง
+   ออกพ้นห้าหมื่นปีแสง ถ้ายืนอยู่ในระบบสุริยะแล้วกดเลือกจากช่องค้นหา จอจึงไม่มีอะไรขึ้นเลย
+   ตรงนี้เลยค่อย ๆ เลื่อน "ระยะกล้อง" ไปยังช่วงที่มองเห็นวัตถุนั้น โดยไม่ย้ายเป้าโฟกัส   */
+const zoomAnim = { on: false, d0: 1, d1: 1, t: 0, dur: 1 };
+let viewWish = null;                                   // เป้าที่ขอไปดูไว้ ระหว่างกล้องยังบินกลับ
+
+function zoomToDist(d) {
+  const minD = focusRadius(trans.on ? trans.to : S.focus) * 1.22;
+  d = Math.max(minD, Math.min(MAX_DIST, d));
+  const gap = Math.abs(log10(d / camState.dist));
+  if (gap < 0.05) { zoomAnim.on = false; return; }     // อยู่ในระยะนั้นอยู่แล้ว
+  zoomAnim.d0 = camState.dist; zoomAnim.d1 = d; zoomAnim.t = 0;
+  zoomAnim.dur = Math.min(2.8, 0.75 + gap * 0.3);
+  zoomAnim.on = true;
+}
+
+function updateZoomAnim(dt) {
+  if (!zoomAnim.on) return;
+  if (trans.on) { zoomAnim.on = false; return; }       // กำลังบินไปหาเป้า ระยะถูกคุมอยู่แล้ว
+  zoomAnim.t = Math.min(1, zoomAnim.t + dt / zoomAnim.dur);
+  const t = zoomAnim.t;
+  const e = t < 0.5 ? 4 * t ** 3 : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const l0 = Math.log(zoomAnim.d0), l1 = Math.log(zoomAnim.d1);
+  camState.dist = Math.exp(l0 + (l1 - l0) * e);
+  if (t >= 1) zoomAnim.on = false;
+}
+
+/* กล้องยังบินกลับมาที่ดวงอาทิตย์อยู่ — หันหน้าตามเป้าไปเรื่อย ๆ แล้วค่อยถอยออกตอนถึง */
+function updateViewWish() {
+  if (!viewWish) return;
+  if (viewWish.kind === "exo") aimAtExo(viewWish.i);
+  else aimAtDeep(deepSprites[viewWish.i].o);
+  if (trans.on) return;
+  zoomToDist(viewWish.dist);
+  viewWish = null;
+}
+
+const EXO_VIEW = 0.3 * LY;                             // พ้นวงโคจรดาวเคราะห์ออกมา แต่ดาวฤกษ์ยังสว่างเต็มที่
+const EXO_BAND = [3000 * AU, 60 * LY];                 // อยู่ในช่วงนี้ = เห็นอยู่แล้ว ไม่ต้องขยับกล้อง
+const eyeMly = () => Math.max(camState.dist / LY, eyeLy()) / MLY;
+/* เป้าโฟกัสอยู่นอกย่านดวงอาทิตย์หรือเปล่า (หลุมดำใจกลางกาแล็กซี · M87*) — วัดจากตัวเป้า
+   ไม่ใช่ระยะซูม เพราะซูมออกไกลแค่ไหนก็ยังโคจรรอบดวงอาทิตย์อยู่ */
+const focusLy = () => Math.hypot(origin.x, origin.y, origin.z) / LY;
+
+/* ถอยออกไปเท่าไรก็ยิ่ง "ห่าง" กาแล็กซีเป้าหมาย (กล้องโคจรรอบดวงอาทิตย์ ไม่ได้บินเข้าหามัน)
+   จึงถอยแค่พอให้ฉากกาแล็กซีสว่างเต็ม ไม่ถอยตามระยะจริงของมัน */
+/* มุมที่ต้องเบนออกจากกึ่งกลาง: รัศมีทางช้างเผือกบนจอ + รัศมีเป้า + เผื่ออีกสององศา */
+function deepAimOffset(g, distKm) {
+  const d = distKm / LY / MLY, D = Math.max(0.02, g.mly || 1);
+  const home = deepSprites[0] && deepSprites[0].o.home ? (deepSprites[0].o.dly || 1e5) / MLY / 2 : 0.053;
+  const half = ((g.dly || 3000) / MLY) / 2;
+  // มุมที่อยากให้เห็นบนจอ = รัศมีทางช้างเผือก + รัศมีเป้า + เผื่ออีกสององศา (ไม่เกิน 13°)
+  const want = Math.min(0.22, Math.atan(home / d) + Math.atan(half / (d + D)) + 0.035);
+  // หมุนกล้องไป δ ภาพเป้าเลื่อนแค่ D/(d+D) ของ δ จึงต้องหมุนเกินไว้เท่านั้นเท่า
+  return Math.min(0.35, want * (d + D) / D);
+}
+
+function deepViewDist(o) {
+  return Math.min(1.8, Math.max(0.35, (o.mly || 1) * 0.45)) * MLY * LY;
+}
+
+/* เลือกระบบดาวเคราะห์นอกระบบแล้วพาไปดู · opt.aim === false = คลิกจุดบนแผนที่ (ไม่ต้องหันกล้องซ้ำ) */
+function viewExo(i, opt) {
+  const o = opt || {};
+  if (!S.exo || !S.stars) { S.exo = true; S.stars = true; renderView(); }   // ชั้นที่ปิดอยู่ = กดแล้วไม่มีอะไรขึ้น
+  // ออกไปไกลถึงกาแล็กซีอื่นแล้ว ดาวฤกษ์ในแอตลาสไม่โผล่ ต้องบินกลับย่านดวงอาทิตย์ก่อน
+  const away = focusLy() > 2;
+  if (away) setFocus("sun");
+  selectExo(i);
+  if (o.aim !== false) aimAtExo(i);
+  if (away) { viewWish = { kind: "exo", i: i, dist: EXO_VIEW }; return; }
+  const need = o.aim === false ? starFadeR < 0.25      // คลิกบนแผนที่: ขยับให้เฉพาะตอนจุดจางจนดูไม่ออก
+                               : camState.dist < EXO_BAND[0] || camState.dist > EXO_BAND[1];
+  if (need) zoomToDist(EXO_VIEW);
+}
+
+/* เลือกกาแล็กซีแล้วพาไปดู — ไม่ต้องบินกลับ เพราะฉากไกลอิงตำแหน่งจริงของกล้อง */
+function viewDeep(i, opt) {
+  const o = opt || {}, g = deepSprites[i].o;
+  if (!S.deep) { S.deep = true; renderView(); }
+  selectDeep(i);
+  if (o.aim !== false) aimAtDeep(g);
+  if (focusLy() / MLY >= 0.2) return;                  // จอดอยู่นอกกาแล็กซีแล้ว เห็นฉากไกลอยู่แล้ว
+  const cur = eyeMly();
+  const need = o.aim === false ? cur < 0.5
+                               : cur < 0.8 || cur > Math.max(4, (g.mly || 1) * 1.2);
+  if (!need) return;
+  const d = deepViewDist(g);
+  if (o.aim !== false) {
+    const off = deepAimOffset(g, d);                   // เบนให้พ้นวงทางช้างเผือก ไม่งั้นเป้าไปซ่อนอยู่ข้างหลัง
+    camState.el = Math.max(-1.5, Math.min(1.5, camState.el + (camState.el > 0 ? -off : off)));
+  }
+  zoomToDist(d);
 }
 
 /* บันไดมาตราส่วน: ระยะกล้อง (กม.) ของแต่ละขั้น */
@@ -1509,6 +1608,7 @@ function ladderDist(k) {
   }
 }
 function gotoScale(k) {
+  zoomAnim.on = false; viewWish = null;
   if (k >= 2 && S.focus !== 'sun' && !trans.on) setFocus('sun');
   const d = ladderDist(k);
   if (trans.on) trans.d1 = d; else camState.dist = d;
@@ -2472,6 +2572,7 @@ const MLY = 1e6;                      // ปีแสงต่อหนึ่ง
 const OBS_RADIUS = 46500;             // รัศมีเอกภพที่สังเกตได้ (ล้านปีแสง)
 let deepScene, deepCam, deepFade = 0, obsShell = null;
 let cosmicPts = null, cosmicState = 0, cmbState = 0;
+let webPts = null, webState = 0, cosmicRaw = null;   // ใยสสารมืด: 0 ยังไม่สร้าง · 1 กำลังคำนวณ · 2 พร้อม
 const deepNodes = [];
 const deepSprites = [];
 const deepHalos = [];
@@ -2649,6 +2750,44 @@ function buildDeep() {
     deepHalos.push(hs);
   }
 
+
+  /* ใยสสารมืด — กลุ่มอนุภาคที่สุ่มตามสนามความหนาแน่นซึ่งคำนวณจากกาแล็กซีจริงใน 2MRS (ดู buildWeb)
+     สร้างวัตถุเปล่าไว้ตั้งแต่ต้น เชเดอร์จะได้ถูกคอมไพล์พร้อมฉากอื่นตอนโหลด แล้วค่อยสลับบัฟเฟอร์เมื่อคำนวณเสร็จ
+     สีเทาขาวเป็นสีสมมุติ — สสารมืดไม่เปล่งแสงและไม่บังแสง จึงมองไม่เห็นด้วยกล้องใด ๆ */
+  {
+    const g0 = new THREE.BufferGeometry();
+    g0.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3));
+    g0.setAttribute('dens', new THREE.BufferAttribute(new Float32Array(1), 1));
+    webPts = new THREE.Points(g0, new THREE.ShaderMaterial({
+      uniforms: { fade: { value: 0 }, scale: { value: 1 } },
+      vertexShader: `attribute float dens; uniform float fade; uniform float scale;
+        varying float vA;
+        void main(){
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          float d = max(-mv.z, 1.0);
+          // ขนาดที่ควรเป็นตามระยะ แล้วบีบให้อยู่ในช่วง 1.8–5 พิกเซล: เล็กกว่านี้จะเห็นเป็นเม็ดทราย
+          // ใหญ่กว่านี้เปลืองการวาดเกินจำเป็น · จุดที่ถูกบีบให้เล็กลงต้องหรี่ตามพื้นที่ที่หายไปด้วย
+          // ความสว่างพื้นผิวของโครงสร้างจึงคงเดิมไม่ว่าอยู่ใกล้หรือไกล
+          float ideal = scale * 900.0 / d;
+          float sz = clamp(ideal, 1.8, 4.0);
+          float k = min(1.0, ideal / sz);
+          gl_PointSize = sz;
+          vA = fade * dens * k * k;
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `varying float vA;
+        void main(){
+          float q = length(gl_PointCoord - 0.5);
+          if (q > 0.5) discard;
+          gl_FragColor = vec4(vec3(0.70, 0.73, 0.82) * smoothstep(0.5, 0.0, q) * vA, 1.0);
+        }`,
+      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+    }));
+    webPts.frustumCulled = false;
+    webPts.renderOrder = -8;
+    webPts.visible = false;
+    deepScene.add(webPts);
+  }
   const obsNode = el('button', 'lbl deep big');
   obsNode.id = 'obsLabel';
   obsNode.innerHTML = '<span class="ring"></span><span class="nm"></span>';
@@ -2712,6 +2851,7 @@ function loadCosmic() {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    cosmicRaw = { pos, lum, n: CM.n };          // เก็บไว้ให้ชั้นใยสสารมืดคำนวณต่อ
     geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
     cosmicPts = new THREE.Points(geo, new THREE.ShaderMaterial({
       uniforms: { fade: { value: 0 }, scale: { value: 1 } },
@@ -2739,6 +2879,182 @@ function loadCosmic() {
   });
 }
 
+
+/* ══ ใยสสารมืด ═══════════════════════════════════════════════════════════
+   สสารมืดมองไม่เห็นโดยตรง แต่กาแล็กซีจะเกาะอยู่ตรงที่มันหนาแน่น แผนที่นี้จึงคำนวณย้อนกลับจากกาแล็กซี:
+
+   1. โปะกาแล็กซี 43,439 แห่งจาก 2MRS ลงกริด 128³ คลุม ±420 ล้านปีแสง (ช่องละ 6.6 ล้านปีแสง)
+      ถ่วงน้ำหนักด้วยความสว่างย่านอินฟราเรดใกล้ ซึ่งแปรตามมวลดาวของกาแล็กซี และกระจายแบบไตรลิเนียร์
+   2. เกลี่ยแบบเกาส์เซียนกว้าง 10 ล้านปีแสง (แยกทำทีละแกน) ได้สนามความหนาแน่นต่อเนื่อง
+      ที่เผยเส้นใย แผ่น และโพรงว่าง — คือโครงสร้างขนาดใหญ่ของเอกภพ
+   3. หารด้วยความหนาแน่นเฉลี่ยของแต่ละเปลือกทรงกลม (ฟังก์ชันคัดเลือกของการสำรวจ) เพราะ 2MRS
+      จำกัดด้วยความสว่างปรากฏ ยิ่งไกลยิ่งเห็นเฉพาะกาแล็กซีสว่าง ถ้าไม่ปรับขอบนอกจะโล่งทั้งที่ของจริงไม่โล่ง
+   4. สุ่มอนุภาคตามความหนาแน่นที่ได้ ช่องไหนหนาก็ได้อนุภาคมาก — ออกมาเป็นก้อนควันเรืองแสงตามภาพ
+
+   ข้อจำกัดที่ต้องรู้: ช่องว่างบาง ๆ ตามแนวระนาบทางช้างเผือก (|b| < 5°) คือส่วนที่ 2MRS มองไม่ทะลุฝุ่น
+   ของกาแล็กซีเราเอง · เกิน 300 ล้านปีแสงข้อมูลเริ่มบางจึงค่อย ๆ จางทิ้ง · สีเทาขาวเป็นสีสมมุติ
+   ที่มา: 2MASS Redshift Survey (Huchra et al. 2012, ApJS 199, 26)                             */
+const WEB_R = 420;                    // รัศมีกล่องคำนวณ (ล้านปีแสง)
+const WEB_N = 128;                    // จำนวนช่องกริดต่อด้าน
+const WEB_SIG = 10;                   // ความกว้างเกลี่ยเกาส์เซียน (ล้านปีแสง)
+
+function buildWeb() {
+  if (!cosmicRaw || webState !== 0) return;
+  webState = 1;
+  const { pos, lum, n } = cosmicRaw;
+  const N = WEB_N, R = WEB_R, cell = 2 * R / N, NC = N * N * N, N2 = N * N;
+  // เครื่องเบาลดจำนวนอนุภาคลงครึ่ง เพื่อไม่ให้เฟรมตก
+  const target = (innerWidth <= 900 || (navigator.hardwareConcurrency || 4) <= 4) ? 140000 : 300000;
+  let g = new Float32Array(NC), h = new Float32Array(NC), wgt = new Float32Array(NC);
+
+  const sig = WEB_SIG / cell;
+  const kr = Math.max(1, Math.ceil(2.4 * sig));
+  const kw = [];
+  { let s = 0;
+    for (let i = -kr; i <= kr; i++) { const v = Math.exp(-0.5 * (i / sig) * (i / sig)); kw.push(v); s += v; }
+    for (let i = 0; i < kw.length; i++) kw[i] /= s; }
+
+  // เกลี่ยตามแกนเดียว เดินทีละเส้น (มี N² เส้น) — ทำแยกแกนได้เพราะเกาส์เซียนแยกตัวประกอบได้
+  function blurAxis(srcA, dstA, axis, l0, l1) {
+    const stride = axis === 0 ? 1 : axis === 1 ? N : N2;
+    for (let li = l0; li < l1; li++) {
+      const p = li % N, q = (li / N) | 0;
+      const base = axis === 0 ? p * N + q * N2 : axis === 1 ? p + q * N2 : p + q * N;
+      for (let i = 0; i < N; i++) {
+        let s = 0;
+        for (let k = -kr; k <= kr; k++) {
+          const j = i + k;
+          if (j >= 0 && j < N) s += srcA[base + j * stride] * kw[k + kr];
+        }
+        dstA[base + i * stride] = s;
+      }
+    }
+  }
+
+  const NS = 96, dsh = R * 1.7321 / NS;      // เปลือกทรงกลมถึงมุมกล่อง
+  const prof = new Float64Array(NS);
+  let totalV = 0;
+
+  const jobs = [];
+
+  // ① โปะกาแล็กซีลงกริดแบบไตรลิเนียร์
+  jobs.push(() => {
+    for (let i = 0; i < n; i++) {
+      const x = (pos[i * 3] + R) / cell - 0.5, y = (pos[i * 3 + 1] + R) / cell - 0.5, z = (pos[i * 3 + 2] + R) / cell - 0.5;
+      if (x < 0 || y < 0 || z < 0 || x >= N - 1 || y >= N - 1 || z >= N - 1) continue;
+      const ix = x | 0, iy = y | 0, iz = z | 0, fx = x - ix, fy = y - iy, fz = z - iz;
+      const w = Math.min(30, lum[i]);        // กันไม่ให้กาแล็กซีสว่างจัดหนึ่งแห่งกลบโครงสร้างรอบตัว
+      for (let dz = 0; dz < 2; dz++) for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++)
+        g[(ix + dx) + (iy + dy) * N + (iz + dz) * N2] +=
+          w * (dx ? fx : 1 - fx) * (dy ? fy : 1 - fy) * (dz ? fz : 1 - fz);
+    }
+  });
+
+  // ② เกลี่ยทีละแกน แบ่งเป็นช่วงละ 4,096 เส้น ไม่ให้เฟรมค้าง
+  for (let axis = 0; axis < 3; axis++) for (let c = 0; c < 4; c++) {
+    const a = axis, l0 = c * (N2 / 4), l1 = (c + 1) * (N2 / 4);
+    jobs.push(() => { blurAxis(a % 2 === 0 ? g : h, a % 2 === 0 ? h : g, a, l0, l1); });
+  }
+  // หลังเกลี่ยสามรอบ ผลอยู่ใน h (g→h→g→h)
+
+  // ③ ความหนาแน่นเฉลี่ยของแต่ละเปลือก = ฟังก์ชันคัดเลือกของการสำรวจ
+  jobs.push(() => {
+    const cnt = new Float64Array(NS);
+    for (let z = 0; z < N; z++) {
+      const pz = -R + (z + 0.5) * cell;
+      for (let y = 0; y < N; y++) {
+        const py = -R + (y + 0.5) * cell, row = y * N + z * N2;
+        for (let x = 0; x < N; x++) {
+          const px = -R + (x + 0.5) * cell;
+          const si = Math.min(NS - 1, Math.sqrt(px * px + py * py + pz * pz) / dsh | 0);
+          prof[si] += h[row + x]; cnt[si]++;
+        }
+      }
+    }
+    let mx = 0;
+    for (let i = 0; i < NS; i++) { prof[i] = cnt[i] ? prof[i] / cnt[i] : 0; if (prof[i] > mx) mx = prof[i]; }
+    // เกลี่ยโพรไฟล์เบา ๆ แล้วตั้งพื้น กันหารด้วยค่าใกล้ศูนย์ตรงเปลือกที่แทบไม่มีกาแล็กซี
+    const sm = new Float64Array(NS);
+    for (let i = 0; i < NS; i++) {
+      let s = 0, w = 0;
+      for (let k = -2; k <= 2; k++) { const j = i + k; if (j >= 0 && j < NS) { s += prof[j]; w++; } }
+      sm[i] = Math.max(s / w, mx * 0.04);
+    }
+    prof.set(sm);
+  });
+
+  // ④ ปรับค่าตามระยะ + ค่อย ๆ ตัดขอบที่ข้อมูลเริ่มบาง แล้วคิดน้ำหนักสุ่มของแต่ละช่อง
+  //    น้ำหนัก = ความหนาแน่น / r² เพราะผู้ชมยืนอยู่กลางแผนที่: จำนวนอนุภาคที่ตกในหนึ่งพิกเซล
+  //    แปรตามระยะยกกำลังสอง ถ้าสุ่มตามความหนาแน่นเปล่า ๆ อนุภาคเกือบทั้งหมดจะไปกองที่เปลือกนอก
+  //    (ปริมาตรมากกว่า) จนย่านใกล้ตัวโล่ง — หารด้วย r² แล้วความละเอียดที่เห็นจะเท่ากันทุกระยะ
+  jobs.push(() => {
+    totalV = 0;
+    for (let z = 0; z < N; z++) {
+      const pz = -R + (z + 0.5) * cell;
+      for (let y = 0; y < N; y++) {
+        const py = -R + (y + 0.5) * cell, row = y * N + z * N2;
+        for (let x = 0; x < N; x++) {
+          const px = -R + (x + 0.5) * cell, i = row + x;
+          const r = Math.sqrt(px * px + py * py + pz * pz);
+          const trust = 1 - step01(300, 430, r);
+          if (trust <= 0) { h[i] = wgt[i] = 0; continue; }
+          const v = h[i] / prof[Math.min(NS - 1, r / dsh | 0)] * trust;
+          h[i] = v > 0.02 ? v : 0;             // ทิ้งพื้นหลังจาง ๆ เพื่อเก็บอนุภาคไว้ให้โครงสร้างจริง
+          if (h[i] > 0) {
+            const rr = Math.max(r, 45);        // พื้นระยะ กันอนุภาคกระจุกแน่นตรงตำแหน่งเราเอง
+            wgt[i] = h[i] / (rr * rr);
+            totalV += wgt[i];
+          }
+        }
+      }
+    }
+  });
+
+  // ⑤ สุ่มอนุภาคตามความหนาแน่น — ปัดเศษแบบสุ่มทีละช่อง จึงไม่ต้องทำตารางความน่าจะเป็นสะสม
+  jobs.push(() => {
+    const cap = target + 8192;
+    const P = new Float32Array(cap * 3), A = new Float32Array(cap);
+    const k = totalV > 0 ? target / totalV : 0;
+    let m = 0;
+    for (let z = 0; z < N && m < cap; z++) {
+      const pz = -R + (z + 0.5) * cell;
+      for (let y = 0; y < N && m < cap; y++) {
+        const py = -R + (y + 0.5) * cell, row = y * N + z * N2;
+        for (let x = 0; x < N && m < cap; x++) {
+          const w = wgt[row + x];
+          if (w <= 0) continue;
+          const f = w * k;
+          let c = f | 0;
+          if (Math.random() < f - c) c++;
+          if (!c) continue;
+          const px = -R + (x + 0.5) * cell, v = h[row + x];
+          // ความสว่างต่ออนุภาค: ยกกำลัง 0.55 ให้ใจกลางกระจุกเด่นกว่าเส้นใยบาง ๆ แต่ไม่ถึงกับกลบ
+          // ค่า 0.13 ได้จากการปรับเทียบให้พิกเซลสว่างสุดไม่ล้นจอตลอดช่วงซูม (ดู test-web3.js)
+          const a = Math.min(2.4, Math.pow(v, 0.55)) * 0.13;
+          for (let j = 0; j < c && m < cap; j++, m++) {
+            // กระจายในช่องแบบสามเหลี่ยม (ผลรวมสองสุ่ม) เทียบเท่าการอ่านค่าแบบไตรลิเนียร์ ไม่เห็นรอยช่อง
+            P[m * 3] = px + (Math.random() + Math.random() - 1) * cell;
+            P[m * 3 + 1] = py + (Math.random() + Math.random() - 1) * cell;
+            P[m * 3 + 2] = pz + (Math.random() + Math.random() - 1) * cell;
+            A[m] = a;
+          }
+        }
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(P.subarray(0, m * 3), 3));
+    geo.setAttribute('dens', new THREE.BufferAttribute(A.subarray(0, m), 1));
+    const old = webPts.geometry;
+    webPts.geometry = geo;
+    old.dispose();
+    g = h = wgt = null;
+    webState = 2;
+  });
+
+  const run = () => { const f = jobs.shift(); if (f) { f(); setTimeout(run, 0); } };
+  setTimeout(run, 0);
+}
+
 function aimAtDeep(o) {
   const p = deepEye;
   const dx = o.x - p.x, dy = o.y - p.y, dz = o.z - p.z;
@@ -2764,7 +3080,7 @@ function pickDeep(cx, cy) {
     if (d < bestD) { bestD = d; best = i; }
   }
   if (best < 0) return false;
-  selectDeep(best);
+  viewDeep(best, { aim: false });
   return true;
 }
 
@@ -2810,11 +3126,12 @@ function updateDeep() {
 
   for (const hs of deepHalos) {
     hs.visible = on && S.darkmatter;
-    hs.material.opacity = deepFade * 0.55 * step01(log10(0.25), log10(1.5), ld);
+    // ถอยพ้น 20 ล้านปีแสงก็หมดความหมายที่จะวาดฮาโลรายตัว ปล่อยให้ใยสสารมืดรับช่วงต่อ
+    hs.material.opacity = deepFade * 0.55 * step01(log10(0.25), log10(1.5), ld) * (1 - step01(log10(20), log10(80), ld));
   }
 
   // แผนที่กาแล็กซี 2MRS
-  if (S.cosmic && on && cosmicState === 0 && dMly > 8) loadCosmic();
+  if ((S.cosmic || S.darkmatter) && on && cosmicState === 0 && dMly > 8) loadCosmic();
   if (cosmicPts) {
     const cf = S.cosmic ? deepFade * step01(log10(15), log10(250), ld) : 0;
     cosmicPts.visible = cf > 0.01;
@@ -2822,6 +3139,19 @@ function updateDeep() {
     cosmicPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
   }
 
+
+  // ใยสสารมืด — คำนวณครั้งเดียวเมื่อข้อมูล 2MRS มาถึงและผู้ชมถอยออกมาไกลพอ
+  if (S.darkmatter && on && webState === 0 && cosmicRaw && dMly > 8) buildWeb();
+  if (webPts) {
+    // ถอยเข้ามาใกล้ กรอบภาพจะกินเนื้อใยน้อยลงเรื่อย ๆ จึงต้องเร่งความสว่างชดเชย
+    // (ค่า 196 และเพดาน 5.5 มาจากการปรับเทียบที่ระยะ 30/60/196/600/1500 ล้านปีแสง)
+    const wf = webState === 2 && S.darkmatter
+      ? deepFade * step01(log10(10), log10(45), ld) * (1 - step01(log10(1500), log10(5000), ld))
+        * Math.min(5.5, Math.max(1, 196 / dMly)) : 0;
+    webPts.visible = wf > 0.004;
+    webPts.material.uniforms.fade.value = wf;
+    webPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
   // ขอบเอกภพที่สังเกตได้ + รังสีไมโครเวฟพื้นหลัง
   if (obsShell) {
     const sh = step01(log10(800), log10(20000), ld);
@@ -2869,7 +3199,14 @@ function updateDeep() {
     if (shown >= 36) break;
     const o = deepSprites[c.i].o, node = deepNodes[c.i];
     const txt = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
-    if (!claimLabel(c.x, c.y, labelWidth(txt, 6.4) + 12, 16)) continue;
+    const bw = labelWidth(txt, 6.4) + 12;
+    let ok = claimLabel(c.x, c.y, bw, 16);
+    // ที่เพิ่งเลือกต้องได้ป้ายเสมอ — กลางจอมีป้าย "ใจกลางกาแล็กซี" จองไว้ก่อนแล้ว ขยับลงมาหลบ
+    if (!ok && c.i === deepSel) {
+      for (const dy of [26, 44, -24, -42, 62]) if (claimLabel(c.x, c.y + dy, bw, 16)) { c.y += dy; ok = true; break; }
+      if (!ok) { c.y += 26; ok = true; }
+    }
+    if (!ok) continue;
     vis[c.i] = 1; shown++;
     node.hidden = false;
     node.style.left = c.x.toFixed(1) + 'px';
@@ -2950,7 +3287,7 @@ function renderDeepInfo() {
   }
   const act = el('div', 'chips');
   const aim = el('button', 'chip', t.galAim);
-  aim.addEventListener('click', () => aimAtDeep(o));
+  aim.addEventListener('click', () => viewDeep(deepSel));
   act.appendChild(aim);
   // หลุมดำ/ซากซูเปอร์โนวาในกาแล็กซีนี้ — บินไปดูได้
   const farId = o.home ? 'sgra' : o.id === 'm87' ? 'm87bh' : o.id === 'lmc' ? 'sn1987a' : null;
@@ -4351,12 +4688,19 @@ function updateExo() {
   for (const c of cand) {
     if (k >= EXO_LABELS) break;
     const txt = exoName(EXO[c.i]) + ' · ' + EXO[c.i].p.length;
-    if (!claimLabel(c.x, c.y + 13, labelWidth(txt, 5.9), 14)) continue;
+    // ป้ายของระบบที่เพิ่งเลือกต้องได้ที่เสมอ ไม่งั้นกดจากช่องค้นหาแล้วหาไม่เจอว่าจุดไหน
+    const bw = labelWidth(txt, 5.9);
+    let ly = c.y + 13, ok = claimLabel(c.x, ly, bw, 14);
+    if (!ok && c.i === exoSel) {
+      for (const dy of [28, 44, -14, -32]) if (claimLabel(c.x, c.y + dy, bw, 14)) { ly = c.y + dy; ok = true; break; }
+      if (!ok) { ly = c.y + 28; ok = true; }
+    }
+    if (!ok) continue;
     const node = exoLabels[k++];
     node._ei = c.i;
     node.hidden = false;
     node.style.left = c.x.toFixed(1) + 'px';
-    node.style.top = (c.y + 13).toFixed(1) + 'px';
+    node.style.top = ly.toFixed(1) + 'px';
     node.querySelector('.nm').textContent = txt;
     node.classList.toggle('on', c.i === exoSel);
     node.style.opacity = String(starFadeR);
@@ -4376,7 +4720,7 @@ function pickExo(cx, cy) {
     if (d < bestD) { bestD = d; best = i; }
   }
   if (best < 0) return false;
-  selectExo(best);
+  viewExo(best, { aim: false });
   return true;
 }
 
@@ -4510,7 +4854,7 @@ function renderExoInfo() {
   const chips = el('div', 'chips');
   const b1 = el('button', 'chip');
   b1.textContent = t.stAim;
-  b1.addEventListener('click', () => aimAtExo(exoSel));
+  b1.addEventListener('click', () => viewExo(exoSel));
   const b2 = el('button', 'chip');
   b2.textContent = t.stBack;
   b2.addEventListener('click', () => { exoSel = -1; syncCrumb(); renderInfo(); });
@@ -5916,7 +6260,7 @@ function renderFind(filter) {
       const icon = el('span', 'exo-icon');
       thumb.appendChild(icon);
       b.append(info, thumb);
-      b.addEventListener('click', () => { selectExo(i); aimAtExo(i); closeSheets(); });
+      b.addEventListener('click', () => { viewExo(i); closeSheets(); });
       grid.appendChild(b);
     }
     g.appendChild(grid);
@@ -5957,7 +6301,7 @@ function renderFind(filter) {
         thumb.appendChild(icon);
       }
       b.append(info, thumb);
-      b.addEventListener('click', () => { selectDeep(i); aimAtDeep(o); closeSheets(); });
+      b.addEventListener('click', () => { viewDeep(i); closeSheets(); });
       grid.appendChild(b);
     }
     g.appendChild(grid);
@@ -6686,6 +7030,8 @@ function loop(now) {
   if (Math.abs(S.time - tPrev) > Math.max(3000, 5000 * dt * RATES[S.rateIdx].s)) clearTrails();
   updatePositions(S.time);
   updateOrigin(dt);
+  updateViewWish();
+  updateZoomAnim(dt);
   if (hostSky) hostSky.visible = false;        // เปิดใหม่เฉพาะเฟรมที่หลุมดำนอกกาแล็กซีโผล่อยู่
   updateScene();
   updateTrails();

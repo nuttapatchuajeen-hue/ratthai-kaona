@@ -1220,6 +1220,14 @@ const ABOUT = {
   (สีม่วงเป็นสีสมมุติ ของจริงมองไม่เห็น) กดป้ายในฉากกาแล็กซีเพื่อดูสัดส่วนมวลและกราฟความเร็วการหมุน
   ซึ่งเป็นหลักฐานว่าสสารมืดมีอยู่จริง</p>
 
+  <p>ถอยออกไปพ้นสิบล้านปีแสง ชั้นสสารมืดจะกลายเป็นใยเอกภพ: เส้นใย แผ่น และโพรงว่างสีเทาขาว
+  ที่คำนวณจากตำแหน่งจริงของกาแล็กซี 43,439 แห่งใน 2MASS Redshift Survey — โปะลงกริดสามมิติ
+  ถ่วงน้ำหนักด้วยความสว่างย่านอินฟราเรดใกล้ซึ่งแปรตามมวลดาว เกลี่ยให้เรียบในช่วง 10 ล้านปีแสง
+  แล้วปรับตามจำนวนกาแล็กซีที่การสำรวจยังมองเห็นได้ในแต่ละระยะ จากนั้นโรยอนุภาคสามแสนจุดตามความหนาแน่นที่ได้
+  ช่องว่างบาง ๆ ที่พาดผ่านคือแนวระนาบทางช้างเผือก ซึ่งฝุ่นของกาแล็กซีเราเองบังจนสำรวจไม่ทะลุ
+  และเกินสามร้อยล้านปีแสงข้อมูลเริ่มบางจึงค่อย ๆ จางทิ้ง สสารมืดของจริงไม่เปล่งแสงและไม่บังแสง
+  ภาพนี้จึงเป็นการวาดความหนาแน่นที่อนุมานจากกาแล็กซี ไม่ใช่สิ่งที่กล้องถ่ายเห็น</p>
+
   <h4>หลุมดำและซากซูเปอร์โนวา</h4>
   <p>บินไปดูหลุมดำได้ 7 แห่ง ตั้งแต่ M87* กับ Sgr A* ที่กล้อง EHT ถ่ายภาพได้ ไปจนถึงหลุมดำเงียบที่ใกล้โลกที่สุดอย่าง Gaia BH1
   ภาพหลุมดำวาดในเชเดอร์ตามหลักฟิสิกส์ (เงา วงแหวนโฟตอน และจานก๊าซที่ถูกแรงโน้มถ่วงดัดแสง) ขนาดตามมวลจริง
@@ -1328,6 +1336,15 @@ const ABOUT = {
   holding about nine tenths of the galaxy’s mass (the purple is only a stand-in colour; the real thing is
   invisible). Click a label in the galaxy view for the mass breakdown and the rotation curve — the evidence
   that dark matter is there.</p>
+
+  <p>Zoom out past ten million light-years and the dark-matter layer becomes the cosmic web: grey filaments,
+  sheets and voids computed from the real positions of 43,439 galaxies in the 2MASS Redshift Survey — binned
+  onto a 3-D grid, weighted by near-infrared luminosity as a proxy for stellar mass, smoothed over ten million
+  light-years and corrected for how many galaxies the survey can still see at each distance, then sprinkled
+  with 300,000 particles following that density. The thin empty lane cutting through it is the plane of the
+  Milky Way, where our own dust blocks the survey; past 300 million light-years the data thins out and the web
+  fades away. Real dark matter neither emits nor blocks light — this is a density map inferred from galaxies,
+  not something a camera could see.</p>
 
   <h4>Black holes and supernova remnants</h4>
   <p>Fly to seven black holes, from M87* and Sgr A*, imaged by the Event Horizon Telescope, to Gaia BH1, the
