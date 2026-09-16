@@ -1460,7 +1460,7 @@ const UI = {
     vScale:'มาตราส่วนมุมมอง', viewDist:'ระยะมอง', ly:'ปีแสง',
     ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี',
             'กลุ่มท้องถิ่น','กระจุกกาแล็กซี','เอกภพที่สังเกตได้'],
-    mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · แสงเก่าที่สุด 13,800 ล้านปี', vDeep:'กาแล็กซีมีชื่อ', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)',
+    mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · แสงเก่าที่สุด 13,800 ล้านปี', vDeep:'กาแล็กซีมีชื่อ', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)', milkyWayHome:'ทางช้างเผือก (บ้านของเรา)',
     vCosmic:'แผนที่กาแล็กซี 2MRS', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
     galType:{ spiral:'กาแล็กซีกังหัน', barred:'กาแล็กซีกังหันมีคาน', lenticular:'กาแล็กซีรูปเลนส์', elliptical:'กาแล็กซีรี',
       irregular:'กาแล็กซีไร้รูปทรง', dwarf:'กาแล็กซีแคระ', ring:'กาแล็กซีวงแหวน', merger:'กาแล็กซีกำลังชนกัน',
@@ -1525,6 +1525,7 @@ const UI = {
     stTravel:'ถ้าจะเดินทางไปหา',
     stTravelNote:'ด้วยความเร็วของยานวอยเอเจอร์ 1 (16.9 กม./วิ) ต้องใช้เวลาราว {yr} ปี',
     stAim:'หันกล้องไปทางนี้', stBack:'กลับไปดูวัตถุที่เจาะจงอยู่',
+    goFly:'บินไปดู', goHome:'กลับระบบสุริยะ',
     starHint:'ซูมออกไปให้พ้นระบบสุริยะแล้วคลิกที่ดาวดวงไหนก็ได้ที่มีชื่อ',
     skyWhere:'จุดที่ยืนดู', skyHere:'ตำแหน่งของฉัน', skyMine:'ตำแหน่งของฉัน',
     skyNoGeo:'ขอตำแหน่งไม่สำเร็จ — เลือกเมืองจากรายการแทนได้',
@@ -1584,7 +1585,7 @@ const UI = {
     vScale:'View scale', viewDist:'View', ly:'ly',
     ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy',
             'Local Group','Galaxy clusters','Observable universe'],
-    mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · the oldest light, 13.8 billion years', vDeep:'Named galaxies', milkyWay:'Milky Way (you are here)',
+    mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · the oldest light, 13.8 billion years', vDeep:'Named galaxies', milkyWay:'Milky Way (you are here)', milkyWayHome:'Milky Way (our home)',
     vCosmic:'2MRS galaxy map', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
     galType:{ spiral:'Spiral galaxy', barred:'Barred spiral galaxy', lenticular:'Lenticular galaxy', elliptical:'Elliptical galaxy',
       irregular:'Irregular galaxy', dwarf:'Dwarf galaxy', ring:'Ring galaxy', merger:'Merging galaxies',
@@ -1649,6 +1650,7 @@ const UI = {
     stTravel:'Travelling there',
     stTravelNote:'At Voyager 1’s speed (16.9 km/s) the trip would take about {yr} years.',
     stAim:'Point the camera at it', stBack:'Back to the focused object',
+    goFly:'Fly there', goHome:'Back to the Solar System',
     starHint:'Zoom out past the solar system and click any named star',
     skyWhere:'Where you are standing', skyHere:'Use my location', skyMine:'My location',
     skyNoGeo:'Could not get your location — pick a city from the list instead',
@@ -6019,7 +6021,7 @@ function updateOrigin(dt) {
     origin.z = A.z + (B.z - A.z) * eo;
     const lg = Math.log(trans.d0) + (Math.log(trans.d1) - Math.log(trans.d0)) * e;
     camState.dist = Math.exp(w > 0 ? lg + (Math.log(trans.peak) - lg) * w : lg);
-    if (trans.t >= 1) { trans.on = false; S.focus = trans.to; syncCrumb(); }
+    if (trans.t >= 1) { trans.on = false; S.focus = trans.to; syncCrumb(); if (isGoto(S.focus)) renderInfo(); }
   } else {
     const w = worldOf(S.focus);
     origin.x = w.x; origin.y = w.y; origin.z = w.z;
@@ -6047,6 +6049,7 @@ function updateScene() {
   const d = days(S.time);
   for (const id in REG) {
     const rec = REG[id], def = rec.def;
+    if (rec.goto) { toScene(rec.world, rec.holder.position); gotoPose(rec); continue; }
     toScene(rec.world, rec.holder.position);
     const scale = (S.enlarge && id !== 'sun') ? 25 : 1;
     if (!rec.craft && !rec.far) rec.mesh.scale.setScalar(rec.R * scale);
@@ -6229,6 +6232,7 @@ function focusRadius(id) {
 }
 function defaultDist(id) {
   const rec = REG[id];
+  if (rec && rec.goto) return rec.def.viewDist;
   if (rec && (rec.craft || rec.far)) return rec.def.span * 1.6e-3;   // ขนาดตัวยาน (เมตร) → กิโลเมตร × 1.6
   return focusRadius(id) * (id === 'sun' ? 9 : 6.2);
 }
@@ -6421,6 +6425,144 @@ function viewDeep(i, opt) {
     camState.el = Math.max(-1.5, Math.min(1.5, camState.el + (camState.el > 0 ? -off : off)));
   }
   zoomToDist(d);
+}
+
+/* ── บินไปยืนข้างดาวดวงอื่น ────────────────────────────────────────────
+   ดาวฤกษ์ · ระบบนอกระบบ · กาแล็กซี ไม่มีทะเบียนใน REG จึงสั่ง setFocus ไม่ได้
+   ทำ "เป้าเสมือน" ไว้สองช่องแล้วสลับกันใช้ (setFocus ไม่ทำอะไรถ้าเป้าซ้ำของเดิม
+   และของเดิมต้องคงตำแหน่งไว้จนบินจบ) พอตั้งตำแหน่งจริงลงไปก็ได้ท่าบินของเอนจินมาฟรี   */
+const GOTO_IDS = ['goto1', 'goto2'];
+const isGoto = id => id === 'goto1' || id === 'goto2';
+let gotoRef = null;                                    // { kind, i, home } ของที่ไปยืนอยู่
+
+/* รัศมีดาวโดยประมาณจากความสว่างสัมบูรณ์ + ชนิดสเปกตรัม (L = 4πR²σT⁴ และแก้ค่าโบโลเมตริก)
+   ใช้ตั้งขนาดดวงที่เห็นตอนไปถึงเท่านั้น ไม่ได้เอาไปแสดงเป็นตัวเลขที่ไหน
+   เทียบของจริง: ซิริอุส 1.7 (จริง 1.71) · อาร์คทูรัส 19 (จริง 25) · พร็อกซิมา 0.12 (จริง 0.15) */
+const R_SUN = 696340;                                  // กม.
+const SP_TEFF = { O: [42000, 30000], B: [30000, 10000], A: [10000, 7300], F: [7300, 6000], G: [6000, 5300],
+                  K: [5300, 3900], M: [3900, 2300], L: [2300, 1300], T: [1300, 600], Y: [600, 400],
+                  D: [25000, 5000], C: [3600, 2600], S: [3600, 2600], W: [70000, 30000] };
+const SP_BC = { O: [-4.4, -3.3], B: [-3.2, -0.9], A: [-0.3, -0.15], F: [-0.09, -0.16], G: [-0.18, -0.4],
+                K: [-0.31, -1.0], M: [-1.4, -4.1], L: [-4.2, -5.5], T: [-5.5, -6.5], Y: [-6.5, -7],
+                D: [-0.3, -0.6], C: [-2, -3.5], S: [-2, -3], W: [-4, -5] };
+function spParts(sp, cls) {
+  const m = /([OBAFGKMLTYDCSW])\s*(\d+(?:\.\d+)?)?/.exec(String(sp || '')) || [];
+  const L = SP_TEFF[m[1]] ? m[1] : (SP_TEFF[cls] ? cls : 'G');
+  return { L, sub: m[2] != null ? Math.max(0, Math.min(9.9, parseFloat(m[2]))) : 5 };
+}
+const spLerp = (tab, p) => tab[p.L][0] + (tab[p.L][1] - tab[p.L][0]) * (p.sub / 10);
+function starRadiusKm(absMagV, sp, cls) {
+  const p = spParts(sp, cls);
+  const teff = spLerp(SP_TEFF, p);
+  const lum = Math.pow(10, (4.74 - (absMagV + spLerp(SP_BC, p))) / 2.5);
+  const r = Math.sqrt(Math.max(1e-12, lum)) * Math.pow(5772 / teff, 2);
+  return Math.max(0.006, Math.min(1400, r)) * R_SUN;
+}
+const teffTint = t => SP_TINT[t > 30000 ? "O" : t > 10000 ? "B" : t > 7300 ? "A" : t > 6000 ? "F" : t > 5300 ? "G" : t > 3900 ? "K" : "M"];
+
+/* ดวงดาวที่ไปถึงวาดเป็นแผ่นภาพหันเข้าหากล้อง — ดาวฤกษ์เป็นทรงกลมเรียบไม่มีลวดลาย
+   แผ่นภาพจึงแยกไม่ออกจากทรงกลมจริง และไม่ต้องเพิ่มเชเดอร์ใหม่ (กันอาการกระตุกตอนวาดครั้งแรก) */
+let gotoDisc = null, gotoHalo = null;
+function gotoTextures() {
+  if (gotoDisc) return;
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(0.55, 'rgba(255,252,244,1)');
+  gr.addColorStop(0.9, 'rgba(255,240,220,1)');          // ขอบหรี่ลงเล็กน้อยแบบ limb darkening
+  gr.addColorStop(0.99, 'rgba(255,232,206,1)');
+  gr.addColorStop(1, 'rgba(255,232,206,0)');
+  g.fillStyle = gr; g.beginPath(); g.arc(64, 64, 64, 0, Math.PI * 2); g.fill();
+  gotoDisc = new THREE.CanvasTexture(c);
+  gotoHalo = new THREE.CanvasTexture(glowTexture([[0, 'rgba(255,255,255,.8)'], [0.16, 'rgba(255,240,215,.4)'],
+    [0.45, 'rgba(255,205,155,.1)'], [1, 'rgba(255,180,120,0)']], 128));
+}
+
+function makeGotoRec(id) {
+  gotoTextures();
+  const holder = new THREE.Group();
+  const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: gotoDisc, transparent: true, depthWrite: false, depthTest: false }));
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: gotoHalo, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending }));
+  halo.renderOrder = 20; core.renderOrder = 21;
+  core.frustumCulled = halo.frustumCulled = false;
+  holder.add(halo, core);
+  holder.visible = false;
+  scene.add(holder);
+  return {
+    def: { id, nm: { th: '', en: '' }, kind: 'star', color: 0xffd9a0, glow: '#ffd9a0', radius: R_SUN, viewDist: R_SUN * 6.2, span: 0 },
+    far: true, goto: true, show: false, holder, spin: holder, mesh: core, core, halo,
+    R: R_SUN / KMU, world: { x: 0, y: 0, z: 0 }, parent: null, axis: new THREE.Vector3(0, 0, 1)
+  };
+}
+
+function gotoPose(rec) {
+  const on = rec.show && (S.focus === rec.def.id || (trans.on && trans.to === rec.def.id));
+  rec.holder.visible = on;
+  if (!on) return;
+  const s = rec.def.radius / KMU;
+  rec.core.scale.setScalar(s * 2);
+  rec.halo.scale.setScalar(s * 9);
+}
+
+/* kind: s = ดาวฤกษ์ · x = ระบบดาวเคราะห์นอกระบบ · g = กาแล็กซี */
+function flyTo(kind, i, opt) {
+  const o = opt || {};
+  const id = GOTO_IDS[S.focus === GOTO_IDS[0] ? 1 : 0];
+  const rec = REG[id], def = rec.def;
+  const home = isGoto(S.focus) ? ((gotoRef && gotoRef.home) || 'sun') : S.focus;
+  let tint = 0xffd9a0;
+  if (kind === 's') {
+    const s = STARS[i];
+    if (!S.stars) { S.stars = true; renderView(); }
+    rec.world = { x: s.x * LY, y: s.y * LY, z: s.z * LY };
+    def.radius = starRadiusKm(starAbsMag(s), s.sp, s.c);
+    def.nm = { th: s.th || s.n, en: s.n };
+    tint = SP_TINT[s.c] || 0xffd9a0;
+    rec.show = true;
+  } else if (kind === 'x') {
+    const h = EXO[i];
+    if (!S.exo || !S.stars) { S.exo = true; S.stars = true; renderView(); }
+    rec.world = { x: h.x * LY, y: h.y * LY, z: h.z * LY };
+    const lum = exoLum(h);
+    def.radius = (h.sr != null ? h.sr
+      : lum != null && h.teff ? Math.sqrt(lum) * Math.pow(5772 / h.teff, 2) : 1) * R_SUN;
+    def.nm = { th: exoName(h), en: exoName(h) };
+    tint = h.teff ? teffTint(h.teff) : 0xffd9a0;
+    rec.show = true;
+  } else {
+    const g = deepSprites[i].o;
+    if (!S.deep) { S.deep = true; renderView(); }
+    rec.world = { x: g.x * MLY * LY, y: g.y * MLY * LY, z: g.z * MLY * LY };
+    def.radius = ((g.dly || 3000) / 2) * LY;            // ยืนดูจากนอกตัวกาแล็กซี
+    def.nm = { th: g.th, en: g.en };
+    rec.show = false;                                   // ตัวกาแล็กซีวาดอยู่ในฉากไกลแล้ว
+  }
+  def.radius = Math.max(1, def.radius);
+  def.viewDist = def.radius * (kind === 'g' ? 6.2 : 7);
+  def.color = tint;
+  def.glow = '#' + tint.toString(16).padStart(6, '0');
+  rec.R = def.radius / KMU;
+  rec.core.material.color.setHex(tint);
+  rec.halo.material.color.setHex(tint);
+  gotoRef = { kind, i, home };
+  zoomAnim.on = false; viewWish = null;
+  setFocus(id, !!o.instant);
+  // setFocus ล้างสิ่งที่เลือกไว้ทิ้ง — เลือกใหม่ให้แผงข้อมูลกับป้ายชื่อรู้ว่ากำลังดูอะไร
+  if (kind === 's') selectStar(i); else if (kind === 'x') selectExo(i); else selectDeep(i);
+}
+
+/* กลุ่มดาวไม่ใช่ "ที่" แต่เป็นรูปที่มองจากตรงนี้ — พาถอยออกไปพอให้เห็นเป็นโครงสามมิติแทน */
+function flyToCons(i) {
+  if (!S.figures || !S.stars) { S.figures = true; S.stars = true; renderView(); }
+  aimAtCons(i);
+  zoomToDist(45 * LY);
+}
+
+function goHome() {
+  const back = (gotoRef && gotoRef.home) || 'sun';
+  gotoRef = null;
+  starSel = -1; exoSel = -1; deepSel = -1;
+  setFocus(REG[back] && !isGoto(back) ? back : 'sun');
 }
 
 /* บันไดมาตราส่วน: ระยะกล้อง (กม.) ของแต่ละขั้น */
@@ -6960,7 +7102,7 @@ function buildStarLabels() {
     node.hidden = true;
     node.addEventListener('click', ev => {
       ev.stopPropagation();
-      if (node._si != null) selectStar(node._si);
+      if (node._si != null) flyTo('s', node._si);
     });
     labelLayer.appendChild(node);
     starLabels.push(node);
@@ -7082,7 +7224,8 @@ function renderStarInfo() {
   const abs = starAbsMag(s);
   const rows = [
     [t.stDist, `${nf(s.d, s.d < 100 ? 2 : 0)}<u>${t.ly}</u>`],
-    [t.stFromHere, `${nf(rNow, rNow < 100 ? 2 : 0)}<u>${t.ly}</u>`]
+    // ไปยืนข้างดาวแล้วบอกเป็นปีแสงจะเหลือ 0.00 — ใกล้กว่าหนึ่งปีแสงจึงเปลี่ยนไปบอกเป็น AU/กม.
+    [t.stFromHere, rNow >= 1 ? `${nf(rNow, rNow < 100 ? 2 : 0)}<u>${t.ly}</u>` : fmtKm(rNow * LY)]
   ];
   if (s.V != null) rows.push([t.stMagApp, `${nf(starAppMag(abs, rNow), 2)}`]);
   rows.push([t.stMagAbs, `${nf(abs, 2)}`]);
@@ -7117,11 +7260,12 @@ function renderStarInfo() {
 
   const act = el('div', 'sec');
   const b1 = el('button', 'chip');
-  b1.textContent = t.stAim;
-  b1.addEventListener('click', () => aimAtStar(starSel));
+  b1.textContent = t.goFly;
+  b1.addEventListener('click', () => flyTo('s', starSel));
   const b2 = el('button', 'chip');
-  b2.textContent = t.stBack;
-  b2.addEventListener('click', () => { starSel = -1; syncCrumb(); renderInfo(); });
+  const away1 = isGoto(trans.on ? trans.to : S.focus);
+  b2.textContent = away1 ? t.goHome : t.stBack;
+  b2.addEventListener('click', away1 ? goHome : () => { starSel = -1; syncCrumb(); renderInfo(); });
   const chips = el('div', 'chips');
   chips.append(b1, b2);
   act.appendChild(chips);
@@ -7222,7 +7366,7 @@ function buildConsLabels() {
     node.hidden = true;
     node.addEventListener('click', ev => {
       ev.stopPropagation();
-      if (node._ci != null) aimAtCons(node._ci);
+      if (node._ci != null) flyToCons(node._ci);
     });
     labelLayer.appendChild(node);
     consLabels.push(node);
@@ -7563,7 +7707,7 @@ function buildDeep() {
     const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' ? ' big' : ''));
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
-    node.addEventListener('click', ev => { ev.stopPropagation(); selectDeep(idx); aimAtDeep(o); });
+    node.addEventListener('click', ev => { ev.stopPropagation(); flyTo('g', idx); });
     labelLayer.appendChild(node);
     deepNodes.push(node);
   }
@@ -8030,7 +8174,7 @@ function updateDeep() {
   for (const c of cand) {
     if (shown >= 36) break;
     const o = deepSprites[c.i].o, node = deepNodes[c.i];
-    const txt = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
+    const txt = o.home ? mwName(t) : (S.lang === 'th' ? o.th : o.en);
     const bw = labelWidth(txt, 6.4) + 12;
     let ok = claimLabel(c.x, c.y, bw, 16);
     // ที่เพิ่งเลือกต้องได้ป้ายเสมอ — กลางจอมีป้าย "ใจกลางกาแล็กซี" จองไว้ก่อนแล้ว ขยับลงมาหลบ
@@ -8067,6 +8211,9 @@ function fmtYears(gyr) {
   return gyr >= 1 ? `${nf(gyr, 2)}<u>${t.gyr}</u>` : `${nf(gyr * 1000, 0)}<u>${t.myr}</u>`;
 }
 
+/* ออกไปยืนนอกกาแล็กซีแล้วจะบอกว่า "เราอยู่ที่นี่" ไม่ได้ */
+const mwName = t => (eyeLy() > 1e5 ? t.milkyWayHome : t.milkyWay);
+
 function renderDeepInfo() {
   const t = L(), o = deepSprites[deepSel].o, pane = $('#pane-info');
   pane.innerHTML = '';
@@ -8080,7 +8227,7 @@ function renderDeepInfo() {
   sw.style.background = `#04060a url(${galaxyTex(type).image.toDataURL('image/png')}) center/cover`;
   const ti = el('div', 'obj-title');
   ti.innerHTML = `<h2></h2><div class="kind"><em></em><span></span></div>`;
-  ti.querySelector('h2').textContent = o.home ? t.milkyWay : (S.lang === 'th' ? o.th : o.en);
+  ti.querySelector('h2').textContent = o.home ? mwName(t) : (S.lang === 'th' ? o.th : o.en);
   ti.querySelector('.kind em').style.background = col;
   ti.querySelector('.kind span').textContent = t.galType[type] + (o.g && t.galGroup[o.g] ? ' · ' + t.galGroup[o.g] : '');
   hd.append(sw, ti);
@@ -8118,9 +8265,14 @@ function renderDeepInfo() {
     sec.appendChild(note);
   }
   const act = el('div', 'chips');
-  const aim = el('button', 'chip', t.galAim);
-  aim.addEventListener('click', () => viewDeep(deepSel));
+  const aim = el('button', 'chip', t.goFly);
+  aim.addEventListener('click', () => flyTo('g', deepSel));
   act.appendChild(aim);
+  if (isGoto(trans.on ? trans.to : S.focus)) {
+    const back = el('button', 'chip', t.goHome);
+    back.addEventListener('click', goHome);
+    act.appendChild(back);
+  }
   // หลุมดำ/ซากซูเปอร์โนวาในกาแล็กซีนี้ — บินไปดูได้
   const farId = o.home ? 'sgra' : o.id === 'm87' ? 'm87bh' : o.id === 'lmc' ? 'sn1987a' : null;
   if (farId && REG[farId]) {
@@ -9484,7 +9636,7 @@ function buildExo() {
     const node = el('button', 'lbl exo');
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
-    node.addEventListener('click', ev => { ev.stopPropagation(); if (node._ei != null) selectExo(node._ei); });
+    node.addEventListener('click', ev => { ev.stopPropagation(); if (node._ei != null) flyTo('x', node._ei); });
     labelLayer.appendChild(node);
     exoLabels.push(node);
   }
@@ -9685,11 +9837,12 @@ function renderExoInfo() {
   const act = el('div', 'sec');
   const chips = el('div', 'chips');
   const b1 = el('button', 'chip');
-  b1.textContent = t.stAim;
-  b1.addEventListener('click', () => viewExo(exoSel));
+  b1.textContent = t.goFly;
+  b1.addEventListener('click', () => flyTo('x', exoSel));
   const b2 = el('button', 'chip');
-  b2.textContent = t.stBack;
-  b2.addEventListener('click', () => { exoSel = -1; syncCrumb(); renderInfo(); });
+  const away2 = isGoto(trans.on ? trans.to : S.focus);
+  b2.textContent = away2 ? t.goHome : t.stBack;
+  b2.addEventListener('click', away2 ? goHome : () => { exoSel = -1; syncCrumb(); renderInfo(); });
   chips.append(b1, b2);
   act.appendChild(chips);
   pane.appendChild(act);
@@ -10181,7 +10334,7 @@ function syncCrumb() {
   if (deepSel >= 0) {
     const o = deepSprites[deepSel].o, t0 = L();
     $('#crumb').innerHTML = '<i>▸</i><b></b><i>·</i><span></span>';
-    $('#crumb b').textContent = o.home ? t0.milkyWay : (S.lang === 'th' ? o.th : o.en);
+    $('#crumb b').textContent = o.home ? mwName(t0) : (S.lang === 'th' ? o.th : o.en);
     $('#crumb span').textContent = t0.galType[o.home ? 'barred' : o.t];
     return;
   }
@@ -10212,6 +10365,12 @@ function renderInfo() {
   if (exoSel >= 0) return renderExoInfo();
   if (starSel >= 0) return renderStarInfo();
   const frec = REG[trans.on ? trans.to : S.focus];
+  if (frec && frec.goto) {
+    if (!gotoRef) return;
+    if (gotoRef.kind === 's') { starSel = gotoRef.i; return renderStarInfo(); }
+    if (gotoRef.kind === 'x') { exoSel = gotoRef.i; return renderExoInfo(); }
+    deepSel = gotoRef.i; return renderDeepInfo();
+  }
   if (frec && frec.far) return renderFarInfo(frec);
   const t = L();
   const id = trans.on ? trans.to : S.focus;
@@ -11293,6 +11452,7 @@ const LAYER_KEYS = ['orbits', 'labels', 'moons', 'belt', 'kuiper', 'oort', 'star
 const LAYER_DEF = { orbits: 1, labels: 1, moons: 1, belt: 1, kuiper: 1, oort: 1, stars: 1, galaxy: 1, grid: 0, trails: 0,
                     asteroids: 1, comets: 1, dwarfs: 1, craft: 1, figures: 1, deep: 1, exo: 1, shadows: 1, cosmic: 1, cmb: 1, ism: 1, darkmatter: 1 };
 let hashDist = 0;
+let pendingGo = null;                 // เป้าที่ลิงก์สั่งให้ไปยืน
 
 function buildHash() {
   const q = [];
@@ -11309,7 +11469,10 @@ function buildHash() {
   const on = LAYER_KEYS.filter(k => !LAYER_DEF[k] && S[k]);
   if (off.length) q.push('off=' + off.join(','));
   if (on.length) q.push('on=' + on.join(','));
-  return '#/' + (trans.on ? trans.to : S.focus) + '?' + q.join('&');
+  // ยืนอยู่ที่เป้าเสมือน: เก็บว่าเป็นดาว/ระบบ/กาแล็กซีดวงไหน แล้วให้ id เป็นที่ที่ออกมา
+  const f = trans.on ? trans.to : S.focus;
+  if (isGoto(f) && gotoRef) q.push('go=' + gotoRef.kind + gotoRef.i);
+  return '#/' + (isGoto(f) ? ((gotoRef && gotoRef.home) || 'sun') : f) + '?' + q.join('&');
 }
 
 let hashPrev = '', hashT = 0;
@@ -11344,6 +11507,8 @@ function readHash() {
     camState.az = ae[0];
     camState.el = Math.max(-1.5, Math.min(1.5, ae[1]));
   }
+  const go = /^([sxg])(\d+)$/.exec(p.get('go') || '');
+  if (go) pendingGo = { kind: go[1], i: +go[2] };
   const d = parseFloat(p.get('d'));
   if (isFinite(d) && d > 0) hashDist = d;
   if (id && ORDER.indexOf(id) >= 0) S.focus = id;
@@ -11835,6 +12000,7 @@ function buildAll() {
     f._disc = farDisc(f, 96);
     f._discURL = f._disc.toDataURL('image/png');
   }
+  for (const id of GOTO_IDS) REG[id] = makeGotoRec(id);
   updatePositions(S.time);
   setupShadows();
   for (const id in REG) if (REG[id].line) refreshOrbit(REG[id], S.time);
@@ -11952,6 +12118,11 @@ async function boot() {
   applyLang();
   camState.dist = defaultDist(S.focus);
   setFocus(S.focus, true);
+  if (pendingGo) {                  // ลิงก์ที่แชร์มาจากที่ไกลบ้าน — ไปยืนที่เดิมทันที
+    const n = pendingGo.kind === "s" ? STARS.length : pendingGo.kind === "x" ? EXO.length : deepSprites.length;
+    if (pendingGo.i >= 0 && pendingGo.i < n) flyTo(pendingGo.kind, pendingGo.i, { instant: true });
+    pendingGo = null;
+  }
   if (hashDist) camState.dist = Math.max(focusRadius(S.focus) * 1.22, Math.min(MAX_DIST, hashDist));
   syncConsole();
   // คอมไพล์เชเดอร์ของทุกฉากไว้ก่อน (รวมวัตถุที่ยังซ่อนอยู่) — ไม่งั้นจะไปค้างตอนซูมออกไปดูกาแล็กซีหรือบินไปหาหลุมดำครั้งแรก
