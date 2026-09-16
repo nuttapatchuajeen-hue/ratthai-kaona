@@ -1,25 +1,29 @@
 # รวมงานเว็บ md — static site, ไม่มีขั้นตอน build
 #
 # ── สถานะโฮสต์ ณ 16 ก.ย. 2026 ────────────────────────────────────────────
-# เว็บตัวจริงตอนนี้เสิร์ฟจาก GitHub Pages (ย้ายมา "ชั่วคราว"):
-#   https://nuttapatchuajeen-hue.github.io/ratthai-kaona/
+# เว็บตัวจริงตอนนี้คือ Vercel:
+#   https://ratthai-kaona.vercel.app
+# canonical/og ทุกหน้า (27 บรรทัด ใน 9 ไฟล์ html) ชี้มาที่นี่
 #
-# เหตุผลที่ย้าย: ทีม Netlify ชนโควตา production deploys เลยถูกพัก
-# ไซต์ thaigovernmentdata.netlify.app ยัง live อยู่ แต่ค้างที่ main@b58bb3f
-# และ deploy ใหม่ไม่ได้จนกว่าจะ upgrade หรือรอบบิลใหม่มาถึง
+# ทำไมถึงเป็น Vercel:
+#   · Netlify (thaigovernmentdata.netlify.app) โดนพัก production deploys เพราะทีมชนโควตา
+#     ไซต์ยัง live แต่ค้างที่ main@b58bb3f และ deploy ใหม่ไม่ได้จนกว่าโควตาจะคืน
+#   · GitHub Pages ใช้ไม่ได้ เพราะรีโปนี้เป็น private (Pages + private ต้องใช้แพลนเสียเงิน)
+#   · Vercel เป็นตัวเดียวที่ auto-deploy ได้ปกติกับ repo private
 #
-# เพื่อให้ย้ายมา Pages ได้ รีโปนี้ถูกเปลี่ยนเป็น public (Pages กับ repo private
-# ต้องใช้แพลนเสียเงิน) และ canonical/og ทุกหน้าถูกชี้กลับมาที่ github.io แล้ว
+# ⚠️ ปัญหาที่ยังค้างและแก้ไม่ได้ตอนนี้:
+#   หน้าเวอร์ชันเก่าที่ค้างอยู่บน Netlify ประกาศ canonical เป็น github.io ซึ่ง 404
+#   แก้ไม่ได้เพราะ deploy ทับไม่ได้ — จะหายเองเมื่อโควตา Netlify คืนแล้ว build คอมมิตใหม่
 #
-# ⚠️ พอโควตา Netlify กลับมา ถ้าจะย้ายกลับต้องแก้ 2 อย่างคู่กัน:
-#   1) canonical/og 26 บรรทัดใน 9 ไฟล์ html → กลับเป็น thaigovernmentdata.netlify.app
-#   2) เช็กว่า Netlify deploy คอมมิตล่าสุดสำเร็จจริงก่อน แล้วค่อยสลับ canonical
-#   (Netlify ต่อกับ repo นี้และเปิด auto publishing ไว้อยู่แล้ว จะ build เองเมื่อโควตากลับมา)
+# ถ้าจะย้ายกลับ Netlify ตอนโควตาคืน ทำตามลำดับนี้:
+#   1) ปล่อยให้ Netlify build คอมมิตล่าสุดจนสำเร็จก่อน (auto publishing เปิดอยู่แล้ว)
+#   2) ยืนยันว่า thaigovernmentdata.netlify.app เสิร์ฟของใหม่จริง
+#   3) แล้วค่อยเปลี่ยน canonical/og 27 บรรทัด → thaigovernmentdata.netlify.app
+#   ห้ามสลับ canonical ก่อนข้อ 2 เด็ดขาด
 #
 # ── ไฟล์นี้ยังจำเป็น ────────────────────────────────────────────────────
 # ห้ามลบ redirect กับ headers ด้านล่างยังถูกใช้กับไซต์ Netlify ที่ยัง live อยู่
-# โดยเฉพาะ /api/yt-search ซึ่ง js/cyber-audio.js เรียกด้วย URL เต็มจาก Pages
-# (Pages ทำ redirect แบบนี้ไม่ได้ จึงยังต้องยืมของ Netlify ใช้)
+# โดยเฉพาะ /api/yt-search ซึ่ง js/cyber-audio.js เรียกด้วย URL เต็มเมื่ออยู่โฮสต์อื่น
 #
 # ── ระวังสับสน ─────────────────────────────────────────────────────────
 # Netlify ยังถูกใช้จริงอีกที่ แต่เป็น "คนละไซต์" —
