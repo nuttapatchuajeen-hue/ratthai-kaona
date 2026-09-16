@@ -1461,12 +1461,13 @@ const UI = {
     ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี',
             'กลุ่มท้องถิ่น','กระจุกกาแล็กซี','เอกภพที่สังเกตได้'],
     mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · แสงเก่าที่สุด 13,800 ล้านปี', vDeep:'กาแล็กซีมีชื่อ', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)', milkyWayHome:'ทางช้างเผือก (บ้านของเรา)',
-    vCosmic:'แผนที่กาแล็กซี 2MRS', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
+    vCosmic:'แผนที่กาแล็กซีจริง', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
     galType:{ spiral:'กาแล็กซีกังหัน', barred:'กาแล็กซีกังหันมีคาน', lenticular:'กาแล็กซีรูปเลนส์', elliptical:'กาแล็กซีรี',
       irregular:'กาแล็กซีไร้รูปทรง', dwarf:'กาแล็กซีแคระ', ring:'กาแล็กซีวงแหวน', merger:'กาแล็กซีกำลังชนกัน',
-      quasar:'เควซาร์', distant:'กาแล็กซียุคแรกของเอกภพ', cluster:'กระจุกกาแล็กซี' },
+      quasar:'เควซาร์', distant:'กาแล็กซียุคแรกของเอกภพ', cluster:'กระจุกกาแล็กซี',
+      supercluster:'มหากระจุกกาแล็กซี', wall:'กำแพงกาแล็กซี', void:'ช่องว่างในเอกภพ' },
     galGroup:{ lg:'กลุ่มท้องถิ่น', near:'นอกกลุ่มท้องถิ่น', far:'ไกลมาก', cluster:'โครงสร้างขนาดใหญ่' },
-    galDiam:'เส้นผ่านศูนย์กลาง', galMorph:'รหัสชนิด (ฮับเบิล)', galZ:'เรดชิฟต์ z', galLookback:'แสงเดินทางมานาน',
+    galDiam:'เส้นผ่านศูนย์กลาง', galLength:'ความยาว', galMorph:'รหัสชนิด (ฮับเบิล)', galZ:'เรดชิฟต์ z', galLookback:'แสงเดินทางมานาน',
     galAgeThen:'อายุเอกภพตอนแสงออกเดินทาง', gyr:'พันล้านปี', myr:'ล้านปี',
     secGalaxy:'ข้อมูลกาแล็กซี', galAim:'หันกล้องไปดู', gGalaxies:'กาแล็กซีและกระจุกกาแล็กซี',
     galComovTitle:'ระยะของวัตถุที่ไกลมาก',
@@ -1500,11 +1501,14 @@ const UI = {
     gComets:'ดาวหางและวัตถุจากนอกระบบ', gCraft:'ยานอวกาศ',
     gFar:'หลุมดำและซากซูเปอร์โนวา', secBh:'ข้อมูลหลุมดำ', secNeb:'ข้อมูลซากซูเปอร์โนวา', secPulsar:'ข้อมูลพัลซาร์',
     pulsarPeriod:'คาบการหมุน', pulsarFreq:'ความถี่การหมุน', pulsarBField:'สนามแม่เหล็กที่ผิว', pulsarJetAngle:'มุมเอียงแกนเจ็ต',
+    pulsarSpeedTitle:'ความเร็วการหมุน', pulsarBtnSlow:'ภาพช้า {k} เท่า', pulsarBtnReal:'ความเร็วจริง',
+    pulsarSlowNote:'ตอนนี้แสดงช้าลง {k} เท่า ({s} รอบต่อวินาที) ให้ตาตามลำแสงทัน — ของจริงหมุน {f} รอบต่อวินาที · กดหยุดที่แถบเวลาแล้วพัลซาร์หยุดตาม',
+    pulsarRealNote:'หมุนตามจริง {f} รอบต่อวินาที เร็วกว่าที่จอ 60 ภาพต่อวินาทีจะแสดงได้ ลำแสงจึงกระโดดครั้งละราว {d}° ดูกระตุกหรือเหมือนหมุนถอยหลัง (แบบล้อรถในภาพยนตร์)',
     bhMass:'มวล', bhRs:'รัศมีขอบฟ้าเหตุการณ์ (ชวาร์สชิลด์)', bhShadow:'ขนาดเงาเมื่อมองจากโลก', muas:'ไมโครพิลิปดา',
     bhAcc:'จานพอกพูนมวล', bhAccYes:'มี · กำลังกลืนก๊าซ', bhAccNo:'ไม่มี · หลุมดำเงียบ',
     nebSize:'ความกว้าง', modelSrc:'โมเดลสามมิติ', modelNasa:'NASA', refSrc:'อ้างอิง', farGo:'บินไปดู {n}',
     bhNoteTitle:'ภาพนี้วาดอย่างไร',
-    bhNoteKerr:'ภาพนี้ไม่ได้วาดตามที่ตาเห็น แต่คำนวณเส้นทางของแสงทีละพิกเซลในกาลอวกาศของหลุมดำหมุน (เมตริกเคอร์ สปิน a = 0.94) ยิงรังสีย้อนจากกล้องแล้วเดินสมการจีโอเดสิกไร้มวลด้วยวิธีรุงเง-คุตตาอันดับสี่ ทุกอย่างที่เห็นจึงโผล่มาจากการคำนวณเอง ทั้งเงาที่ใหญ่กว่าขอบฟ้าเหตุการณ์และเบี้ยวเล็กน้อยเพราะการหมุน วงแหวนโฟตอนซึ่งเป็นภาพซ้ำของจานที่วนรอบหลุมดำก่อนหลุดออกมา จานด้านหลังที่ถูกดัดให้โค้งข้ามเหนือเงา และด้านที่วิ่งเข้าหาเราซึ่งสว่างกว่าตามกำลังสี่ของการเลื่อนความถี่ แกนหมุนวางตามที่สังเกตได้จริง คือเอียง 17° จากแนวสายตา มองจากโลกจึงเห็นเป็นวงคล้ายภาพของ EHT — ลองหมุนกล้องไปดูจากด้านข้าง จะเห็นจานม้วนข้ามตัวเองแบบในหนัง ลำสีฟ้าที่พุ่งออกสองข้างตามแกนหมุนคือลำอนุภาค รูปทรงฐานเป็นพาราโบลาตามที่ VLBI วัดได้ — ด้านที่พุ่งเข้าหาเราสว่างกว่าด้านไกลหลายหมื่นเท่าจากการบีบลำแสง กล้องจริงจึงเห็นเจตของ M87 ข้างเดียว · ส่วนดาวบนท้องฟ้ารอบตัวเมื่อเข้าใกล้เป็นภาพจำลอง ไม่ใช่ตำแหน่งดาวจริง เพราะกาแล็กซีทรงรีอย่าง M87 ยังไม่มีแคตตาล็อกดาวรายดวง',
+    bhNoteKerr:'ภาพนี้ไม่ได้วาดตามที่ตาเห็น แต่คำนวณเส้นทางของแสงทีละพิกเซลในกาลอวกาศของหลุมดำหมุน (เมตริกเคอร์ สปิน a = 0.94) ยิงรังสีย้อนจากกล้องแล้วเดินสมการจีโอเดสิกไร้มวลด้วยวิธีรุงเง-คุตตาอันดับสี่ ทุกอย่างที่เห็นจึงโผล่มาจากการคำนวณเอง ทั้งเงาที่ใหญ่กว่าขอบฟ้าเหตุการณ์และเบี้ยวเล็กน้อยเพราะการหมุน วงแหวนโฟตอนซึ่งเป็นภาพซ้ำของจานที่วนรอบหลุมดำก่อนหลุดออกมา จานด้านหลังที่ถูกดัดให้โค้งข้ามเหนือเงา และด้านที่วิ่งเข้าหาเราซึ่งสว่างกว่าตามกำลังสี่ของการเลื่อนความถี่ แกนหมุนวางตามที่สังเกตได้จริง คือเอียง 17° จากแนวสายตา มองจากโลกจึงเห็นเป็นวงคล้ายภาพของ EHT (กดปุ่ม “มุมจากโลก (EHT)” เพื่อดูมุมนั้น) ส่วนภาพเริ่มต้นเป็นมุมข้างจาน จะเห็นจานด้านหลังม้วนข้ามตัวเองแบบในหนัง ลากเมาส์ซ้าย–ขวาเพื่อเดินวนรอบจาน ดาวและกาแล็กซีทั้งจอก็ถูกดัดไปตามเส้นทางแสงชุดเดียวกันลำสีฟ้าที่พุ่งออกสองข้างตามแกนหมุนคือลำอนุภาค รูปทรงฐานเป็นพาราโบลาตามที่ VLBI วัดได้ — ด้านที่พุ่งเข้าหาเราสว่างกว่าด้านไกลหลายหมื่นเท่าจากการบีบลำแสง กล้องจริงจึงเห็นเจตของ M87 ข้างเดียว · ส่วนดาวบนท้องฟ้ารอบตัวเมื่อเข้าใกล้เป็นภาพจำลอง ไม่ใช่ตำแหน่งดาวจริง เพราะกาแล็กซีทรงรีอย่าง M87 ยังไม่มีแคตตาล็อกดาวรายดวง',
     bhNote:'เงาดำตรงกลางมีรัศมีราว 2.6 เท่าของรัศมีชวาร์สชิลด์ ใหญ่กว่าขอบฟ้าเหตุการณ์ เพราะแรงโน้มถ่วงดัดแสงที่ผ่านใกล้ ๆ ให้ตกลงไป วงแหวนบางรอบเงาคือแสงที่วนรอบหลุมดำก่อนหลุดออกมา หลุมดำที่กำลังกลืนก๊าซมีจานก๊าซร้อน ด้านหลังของจานถูกดัดแสงให้เห็นโค้งข้ามเหนือและใต้เงา และด้านที่หมุนเข้าหาเราสว่างกว่า ส่วนหลุมดำเงียบแทบมองไม่เห็นเลย — เป็นภาพวาดเชิงคุณภาพตามหลักฟิสิกส์ ไม่ใช่ภาพถ่าย ขนาดตามมวลจริง',
     nebNote:'โมเดลสามมิติจาก NASA ขยายเท่าขนาดจริง วาดให้เรืองแสงแบบโปร่งแทนผิวทึบ ทิศที่หันเป็นค่าประมาณ',
     nebNote_crab:'โมเดลสามมิติจาก NASA คือโครงสร้างที่กล้องจันทราเห็นในรังสีเอกซ์ ได้แก่จานวงแหวนกับลำอนุภาคที่พุ่งออกจากพัลซาร์ใจกลาง กว้างราว 40% ของเนบิวลาที่เห็นในแสงปกติ ส่วนแสงฟุ้งรอบนอกแทนเนบิวลาทั้งก้อน วาดให้เรืองแสงแบบโปร่ง ทิศที่หันเป็นค่าประมาณ',
@@ -1526,6 +1530,10 @@ const UI = {
     stTravelNote:'ด้วยความเร็วของยานวอยเอเจอร์ 1 (16.9 กม./วิ) ต้องใช้เวลาราว {yr} ปี',
     stAim:'หันกล้องไปทางนี้', stBack:'กลับไปดูวัตถุที่เจาะจงอยู่',
     goFly:'บินไปดู', goHome:'กลับระบบสุริยะ',
+    bhViewSide:'มุมข้างจาน', bhViewEarth:'มุมจากโลก (EHT)', bhViewTop:'มองจากขั้ว',
+    bhSwirlTitle:'ความเร็วของก๊าซ', bhSwirlBtnShow:'เร่งให้เห็น', bhSwirlBtnReal:'ความเร็วจริง',
+    bhSwirlShow:'ตอนนี้เร่งให้ก๊าซหมุนพอเห็นได้ (ทุกหลุมดำหมุนเร็วเท่ากันบนจอ) — ของจริง ขอบในของจานโคจรรอบละ {p}',
+    bhSwirlReal:'ก๊าซหมุนตามเวลาจำลอง — ขอบในของจานโคจรรอบละ {p} (หลุมดำมวลดาวฤกษ์หมุนเร็วเกินตาจะตามทัน จึงจำกัดความเร็วที่แสดงไว้)',
     starHint:'ซูมออกไปให้พ้นระบบสุริยะแล้วคลิกที่ดาวดวงไหนก็ได้ที่มีชื่อ',
     skyWhere:'จุดที่ยืนดู', skyHere:'ตำแหน่งของฉัน', skyMine:'ตำแหน่งของฉัน',
     skyNoGeo:'ขอตำแหน่งไม่สำเร็จ — เลือกเมืองจากรายการแทนได้',
@@ -1586,12 +1594,13 @@ const UI = {
     ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy',
             'Local Group','Galaxy clusters','Observable universe'],
     mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · the oldest light, 13.8 billion years', vDeep:'Named galaxies', milkyWay:'Milky Way (you are here)', milkyWayHome:'Milky Way (our home)',
-    vCosmic:'2MRS galaxy map', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
+    vCosmic:'Real galaxy maps', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
     galType:{ spiral:'Spiral galaxy', barred:'Barred spiral galaxy', lenticular:'Lenticular galaxy', elliptical:'Elliptical galaxy',
       irregular:'Irregular galaxy', dwarf:'Dwarf galaxy', ring:'Ring galaxy', merger:'Merging galaxies',
-      quasar:'Quasar', distant:'Early-universe galaxy', cluster:'Galaxy cluster' },
+      quasar:'Quasar', distant:'Early-universe galaxy', cluster:'Galaxy cluster',
+      supercluster:'Supercluster', wall:'Galaxy wall', void:'Cosmic void' },
     galGroup:{ lg:'Local Group', near:'Beyond the Local Group', far:'Very distant', cluster:'Large-scale structure' },
-    galDiam:'Diameter', galMorph:'Hubble type', galZ:'Redshift z', galLookback:'Light travel time',
+    galDiam:'Diameter', galLength:'Length', galMorph:'Hubble type', galZ:'Redshift z', galLookback:'Light travel time',
     galAgeThen:'Age of the universe when the light left', gyr:'billion yr', myr:'million yr',
     secGalaxy:'Galaxy data', galAim:'Point the camera', gGalaxies:'Galaxies and clusters',
     galComovTitle:'Distance to very far objects',
@@ -1625,11 +1634,14 @@ const UI = {
     gComets:'Comets & interstellar objects', gCraft:'Spacecraft',
     gFar:'Black holes & supernova remnants', secBh:'Black hole data', secNeb:'Supernova remnant data', secPulsar:'Pulsar data',
     pulsarPeriod:'Rotation period', pulsarFreq:'Rotation rate', pulsarBField:'Surface magnetic field', pulsarJetAngle:'Jet tilt angle',
+    pulsarSpeedTitle:'Spin speed', pulsarBtnSlow:'{k}× slow motion', pulsarBtnReal:'Real speed',
+    pulsarSlowNote:'Shown {k} times slower ({s} turns a second) so your eye can follow the beams. The real pulsar spins {f} times a second. Pausing the time bar pauses the pulsar too.',
+    pulsarRealNote:'Spinning at the real {f} turns a second, faster than a 60 fps screen can show, so the beams jump about {d}° per frame and can look jerky or even seem to spin backwards (like wagon wheels in films).',
     bhMass:'Mass', bhRs:'Event-horizon (Schwarzschild) radius', bhShadow:'Shadow size seen from Earth', muas:'µas',
     bhAcc:'Accretion disc', bhAccYes:'yes · feeding on gas', bhAccNo:'none · a quiet black hole',
     nebSize:'Width', modelSrc:'3D model', modelNasa:'NASA', refSrc:'Reference', farGo:'Fly to {n}',
     bhNoteTitle:'How this is drawn',
-    bhNoteKerr:'This image is not drawn — it is computed. For every pixel a light ray is traced backwards through the spacetime of a spinning black hole (Kerr metric, spin a = 0.94) by integrating the null geodesic equations with fourth-order Runge–Kutta. Everything you see falls out of that calculation: a shadow larger than the event horizon and slightly lopsided because of the spin, the photon ring where light circled the hole before escaping, the far side of the disc bent up and over the shadow, and the approaching side brightened by the fourth power of its Doppler shift. The spin axis is placed as observed, 17° from our line of sight, so from Earth it looks like the EHT image. Orbit the camera round to the side to see the disc curl over itself as in the film. The blue plumes along the spin axis are the jet: its parabolic base follows the shape VLBI measures for M87, and relativistic beaming makes the approaching side tens of thousands of times brighter than the receding one — which is why real telescopes see only one of the two jets of M87. The stars that fill the sky as you approach are a simulation, not real positions: no star-by-star catalogue exists for a giant elliptical like M87.',
+    bhNoteKerr:'This image is not drawn — it is computed. For every pixel a light ray is traced backwards through the spacetime of a spinning black hole (Kerr metric, spin a = 0.94) by integrating the null geodesic equations with fourth-order Runge–Kutta. Everything you see falls out of that calculation: a shadow larger than the event horizon and slightly lopsided because of the spin, the photon ring where light circled the hole before escaping, the far side of the disc bent up and over the shadow, and the approaching side brightened by the fourth power of its Doppler shift. The spin axis is placed as observed, 17° from our line of sight, so from Earth it looks like the EHT image (press “View from Earth (EHT)” to see that angle). The default view is from the side, where the far side of the disc curls over itself as in the film; drag left or right to walk round the disc. Stars and galaxies across the whole screen are bent along the same light paths. The blue plumes along the spin axis are the jet: its parabolic base follows the shape VLBI measures for M87, and relativistic beaming makes the approaching side tens of thousands of times brighter than the receding one — which is why real telescopes see only one of the two jets of M87. The stars that fill the sky as you approach are a simulation, not real positions: no star-by-star catalogue exists for a giant elliptical like M87.',
     bhNote:'The dark centre has a radius of about 2.6 Schwarzschild radii — larger than the event horizon, because gravity bends passing light into the hole. The thin ring around it is light that circled the hole before escaping. A feeding black hole has a hot gas disc: its far side is bent into view above and below the shadow, and the side turning towards us is brighter. A quiet black hole is almost invisible. A qualitative drawing based on the physics, not a photograph; sizes follow the real mass.',
     nebNote:'NASA 3D model scaled to the real size and drawn as a translucent glow instead of a solid surface. The orientation is approximate.',
     nebNote_crab:'The NASA 3D model is the structure Chandra sees in X-rays — the ringed disc and the jets fired from the central pulsar — about 40% the size of the nebula in visible light; the soft outer glow stands for the whole nebula. Drawn as a translucent glow; the orientation is approximate.',
@@ -1651,6 +1663,10 @@ const UI = {
     stTravelNote:'At Voyager 1’s speed (16.9 km/s) the trip would take about {yr} years.',
     stAim:'Point the camera at it', stBack:'Back to the focused object',
     goFly:'Fly there', goHome:'Back to the Solar System',
+    bhViewSide:'Side view', bhViewEarth:'View from Earth (EHT)', bhViewTop:'Pole view',
+    bhSwirlTitle:'Gas speed', bhSwirlBtnShow:'Sped up', bhSwirlBtnReal:'Real speed',
+    bhSwirlShow:'The gas is sped up so you can see it turn (every black hole spins at the same on-screen rate). In reality the inner edge of the disc orbits once every {p}.',
+    bhSwirlReal:'The gas turns with simulation time. The inner edge of the disc orbits once every {p} (stellar black holes spin too fast to follow, so the displayed rate is capped).',
     starHint:'Zoom out past the solar system and click any named star',
     skyWhere:'Where you are standing', skyHere:'Use my location', skyMine:'My location',
     skyNoGeo:'Could not get your location — pick a city from the list instead',
@@ -1715,7 +1731,8 @@ const ABOUT = {
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
         ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
         วิถียานอวกาศจาก JPL Horizons ดาวฤกษ์และกาแล็กซีจากฐานข้อมูล SIMBAD ของ CDS
-        แผนที่กาแล็กซีจากแค็ตตาล็อก 2MASS Redshift Survey
+        แผนที่กาแล็กซีจากแค็ตตาล็อก 2MASS Redshift Survey, Updated Nearby Galaxy Catalog,
+        Sloan Digital Sky Survey (SDSS) และ 6dF Galaxy Survey (ผ่าน VizieR ของ CDS และ SkyServer ของ SDSS)
         และดาวเคราะห์นอกระบบจากคลังข้อมูลของนาซา — ทั้งหมดเปิดให้ทุกคนใช้ และ
         คัดลอกมาเก็บไว้ในไฟล์ครั้งเดียว ไม่ได้เรียกข้อมูลตอนเปิดหน้าเว็บ</li>
     <li><b>ไม่ใช้เครื่องหมายขององค์กรใด</b> ไม่มีโลโก้ ชื่อ หรือรูปแบบตราสัญลักษณ์ของหน่วยงานอวกาศใด ๆ
@@ -1738,7 +1755,7 @@ const ABOUT = {
   <h4>ออกไปไกลกว่าระบบสุริยะ</h4>
   <p>บันไดมาตราส่วนมีสิบขั้น ไล่จากผิวดาวไปจนถึงขอบเอกภพที่สังเกตได้ ระหว่างทางมีดาวฤกษ์จริง
   1,356 ดวง เส้นกลุ่มดาว 86 กลุ่ม ป้ายบอกแขนกังหันของทางช้างเผือกกับตำแหน่งของเราในนั้น
-  กาแล็กซีมีชื่อ 106 แห่ง แผนที่กาแล็กซีจริง 43,439 แห่ง หลุมดำ 7 แห่ง ซากซูเปอร์โนวา 2 แห่ง
+  กาแล็กซี กระจุก และโครงสร้างขนาดใหญ่ที่มีชื่อ 218 แห่ง แผนที่กาแล็กซีจริง 469,698 แห่ง หลุมดำ 7 แห่ง ซากซูเปอร์โนวา 2 แห่ง
   และดาวเคราะห์นอกระบบ 646 ดวงใน 299 ระบบ
   ที่กดดูผังเทียบกับระบบสุริยะของเราได้</p>
 
@@ -1774,9 +1791,19 @@ const ABOUT = {
   รูปที่เราคุ้นเคยเป็นแค่มุมมองจากตรงที่เรายืนเท่านั้น</p>
 
   <h4>กาแล็กซีและขอบเอกภพ</h4>
-  <p>กาแล็กซีมีชื่อ 106 แห่งวางตามระยะที่วัดจริงจาก SIMBAD จานของกาแล็กซีกังหันเอียงตามที่เห็นบนท้องฟ้า
-  วัตถุไกลมากบอกระยะโคมูฟวิง เวลาที่แสงเดินทาง และอายุเอกภพตอนแสงออกเดินทาง (ค่าจักรวาลวิทยา Planck 2018)
-  ซูมออกเกินแปดล้านปีแสงจะเห็นแผนที่กาแล็กซีจริง 43,439 แห่งจาก 2MASS Redshift Survey เรียงเป็นใยเอกภพ
+  <p>วัตถุมีชื่อ 218 แห่ง — กาแล็กซี 191 แห่ง กระจุกกาแล็กซี 19 แห่ง และมหากระจุก กำแพง ช่องว่าง 8 แห่ง —
+  วางตามระยะที่วัดจริงจาก SIMBAD (ดาวแคระในกลุ่มท้องถิ่นใช้ระยะจาก McConnachie 2012 และงานที่ค้นพบ)
+  จานของกาแล็กซีกังหันเอียงตามที่เห็นบนท้องฟ้า วัตถุไกลมากบอกระยะโคมูฟวิง เวลาที่แสงเดินทาง
+  และอายุเอกภพตอนแสงออกเดินทาง (ค่าจักรวาลวิทยา Planck 2018)
+  มหากระจุก กำแพง และช่องว่างไม่มีขอบชัด จึงวาดเป็นเส้นประบอกขอบเขตโดยประมาณ โผล่เมื่อซูมออกกว้างพอ
+  และสว่างขึ้นเมื่อกดเลือก</p>
+  <p>แผนที่กาแล็กซีจริงมีสามชุด (ปุ่ม “แผนที่กาแล็กซีจริง” เปิดปิดพร้อมกัน):
+  กาแล็กซีใกล้ 685 แห่งที่วัดระยะจริงจาก Updated Nearby Galaxy Catalog (Karachentsev และคณะ 2013) ถึงราว 36 ล้านปีแสง
+  · 43,439 แห่งทั่วท้องฟ้าจาก 2MASS Redshift Survey (โหลดเมื่อซูมออกเกินแปดล้านปีแสง)
+  · และ 425,574 แห่งจาก SDSS (ฟ้าซีกเหนือ ใช้ครึ่งหนึ่งของตัวอย่างหลัก) กับ 6dF Galaxy Survey (ฟ้าซีกใต้)
+  ไกลถึงราว 2,700 ล้านปีแสง (โหลดเมื่อซูมออกเกินหกสิบล้านปีแสง ไฟล์ราว 4 MB)
+  ระยะของสองชุดหลังคำนวณจากเรดชิฟต์ บางทิศจึงหนาแน่นกว่าทิศอื่นตามพื้นที่ที่แต่ละการสำรวจครอบคลุม
+  สีของชุด SDSS/6dF มาจากสีจริงของกาแล็กซี (ส้ม = ดาวแก่ ฟ้า = ยังสร้างดาว) ไม่ใช่รูปร่างที่วัด
   และที่ขอบเอกภพที่สังเกตได้ (รัศมี 46,500 ล้านปีแสง) คือรังสีไมโครเวฟพื้นหลังจากข้อมูล WMAP 9 ปี
   แสงเก่าที่สุด ซึ่งออกเดินทางเมื่อราว 13,800 ล้านปีก่อน ตอนเอกภพอายุราว 380,000 ปี</p>
 
@@ -1833,8 +1860,9 @@ const ABOUT = {
         The Crab Nebula and SN 1987A ring models come from the same NASA page.</li>
     <li><b>Numbers are facts.</b> Orbital elements and physical data are measurements, not creative works.
         All descriptive text here was written fresh. Asteroid and comet numbers come from JPL’s public
-        Small-Body Database; stars and galaxies come from CDS SIMBAD and the galaxy map from the 2MASS
-        Redshift Survey — all copied into files once rather than fetched when the page opens.</li>
+        Small-Body Database; stars and galaxies come from CDS SIMBAD and the galaxy maps from the 2MASS
+        Redshift Survey, the Updated Nearby Galaxy Catalog, the Sloan Digital Sky Survey and the 6dF Galaxy Survey
+        (via CDS VizieR and SDSS SkyServer) — all copied into files once rather than fetched when the page opens.</li>
     <li><b>No agency marks.</b> No space-agency logo, name or insignia appears — those are protected as
         trademarks quite separately from copyright.</li>
   </ul>
@@ -1850,7 +1878,7 @@ const ABOUT = {
   <h4>Beyond the solar system</h4>
   <p>The scale ladder now has ten rungs, from a planet’s surface out to the edge of the observable
   universe. Along the way: 1,356 real stars, 86 constellation figures, labels for the Milky Way’s spiral
-  arms and our place in them, 106 named galaxies, a map of 43,439 real galaxies, 7 black holes,
+  arms and our place in them, 218 named galaxies, clusters and large-scale structures, maps of 469,698 real galaxies, 7 black holes,
   2 supernova remnants and 646 exoplanets in 299 systems,
   each with a chart placing it beside our own solar system.</p>
 
@@ -1889,11 +1917,21 @@ const ABOUT = {
   very different distances — the familiar figures are only the view from where we stand.</p>
 
   <h4>Galaxies and the edge of the universe</h4>
-  <p>106 named galaxies sit at distances measured in SIMBAD, with spiral discs tilted the way we see them on
-  the sky. The most distant ones show comoving distance, light-travel time and the age of the universe when
-  the light set out (Planck 2018 cosmology). Zoom out past eight million light-years to see 43,439 real
-  galaxies from the 2MASS Redshift Survey tracing the cosmic web, and at the edge of the observable universe
-  (46.5 billion light-years) the cosmic microwave background from nine years of WMAP data — the oldest light,
+  <p>218 named objects — 191 galaxies, 19 galaxy clusters and 8 superclusters, walls and voids — sit at distances
+  measured in SIMBAD (Local Group dwarfs use McConnachie 2012 and their discovery papers), with spiral discs tilted
+  the way we see them on the sky. The most distant ones show comoving distance, light-travel time and the age of
+  the universe when the light set out (Planck 2018 cosmology). Superclusters, walls and voids have no sharp edges,
+  so they are drawn as dashed outlines of their approximate extent; they appear once you zoom out far enough and
+  brighten when selected.</p>
+  <p>There are three real galaxy maps (the “Real galaxy maps” switch controls all of them): 685 nearby galaxies with
+  measured distances from the Updated Nearby Galaxy Catalog (Karachentsev et al. 2013), out to about 36 million
+  light-years · 43,439 galaxies across the whole sky from the 2MASS Redshift Survey (loaded past eight million
+  light-years) · and 425,574 galaxies from SDSS (northern sky, half of its main sample) and the 6dF Galaxy Survey
+  (southern sky), reaching about 2.7 billion light-years (loaded past sixty million light-years, about 4 MB).
+  The last two use redshift distances, so some directions look denser simply because of where each survey looked.
+  SDSS/6dF colours come from each galaxy's real colour (orange = old stars, blue = still forming stars), not from
+  a measured shape. At the edge of the observable universe
+  (46.5 billion light-years) lies the cosmic microwave background from nine years of WMAP data — the oldest light,
   which set out about 13.8 billion years ago, when the universe was some 380,000 years old.</p>
 
   <h4>Interstellar matter and dark matter</h4>
@@ -3419,6 +3457,9 @@ const CONSTELLATIONS = [
      x, y, z = ล้านปีแสง ในพิกัดสุริยวิถี · dly = เส้นผ่านศูนย์กลางจริงโดยประมาณ (ปีแสง)
      ar = อัตราส่วนแกนสั้น/ยาว · pa = มุมของแกนยาวบนท้องฟ้า (องศา จากเหนือไปตะวันออก)
      สร้างด้วย build-deep.js — 106 รายการ + หลุมดำ/เนบิวลา 9 รายการ
+     รอบ 18 (build-new.js) ต่อท้ายอีก 112 รายการ: กาแล็กซี · กระจุก · มหากระจุก/กำแพง/ช่องว่าง (t = supercluster/wall/void)
+       กระจุกและโครงสร้างขนาดใหญ่ใช้ระยะโคมูฟวิง H0 = 70, Ωm = 0.3 ให้ตรงกับแผนที่จุด · ขนาดเป็นค่าประมาณ
+     ท้ายไฟล์: LOCALV = กาแล็กซีใกล้ที่วัดระยะจริง (UNGC) สำหรับแผนที่จุด
    ══════════════════════════════════════════════════════════════════════ */
 'use strict';
 
@@ -3429,8 +3470,8 @@ const DEEP = [
 {"id":"smc","th":"เมฆแมกเจลแลนเล็ก","en":"Small Magellanic Cloud","g":"lg","t":"irregular","x":0.0563,"y":-0.0623,"z":-0.1768,"mly":0.1957,"dly":9007,"ar":0.59,"pa":45,"ra":13.1583,"dec":-72.8003,"m":"dIrr"},
 {"id":"m32","th":"M32 บริวารแอนดรอเมดา","en":"M32","g":"lg","t":"dwarf","x":1.8906,"y":0.9891,"z":1.3854,"mly":2.544,"dly":2498,"ar":0.81,"pa":-20,"ra":10.6743,"dec":40.8652,"m":"cE2"},
 {"id":"m110","th":"M110 บริวารแอนดรอเมดา","en":"M110","g":"lg","t":"elliptical","x":1.9304,"y":1.0098,"z":1.4653,"mly":2.6256,"dly":2545,"ar":0.63,"pa":-15,"ra":10.0919,"dec":41.6854,"m":"E5pec"},
-{"id":"ngc147","th":"NGC 147","en":"NGC 147","g":"lg","t":"dwarf","x":1.5609,"y":0.9183,"z":1.5457,"mly":2.3809,"dly":8720,"ar":0.56,"pa":25,"ra":8.3005,"dec":48.5087,"m":"dGspD..."},
-{"id":"ngc185","th":"NGC 185","en":"NGC 185","g":"lg","t":"dwarf","x":1.4103,"y":0.8618,"z":1.3792,"mly":2.1526,"dly":7189,"ar":0.83,"pa":35,"ra":9.7414,"dec":48.3375,"m":"dGspD..."},
+{"id":"ngc147","th":"NGC 147","en":"NGC 147","g":"lg","t":"dwarf","x":1.5609,"y":0.9183,"z":1.5457,"mly":2.3809,"dly":8720,"ar":0.56,"pa":25,"ra":8.3005,"dec":48.5087,"m":"dGspD"},
+{"id":"ngc185","th":"NGC 185","en":"NGC 185","g":"lg","t":"dwarf","x":1.4103,"y":0.8618,"z":1.3792,"mly":2.1526,"dly":7189,"ar":0.83,"pa":35,"ra":9.7414,"dec":48.3375,"m":"dGspD"},
 {"id":"ngc6822","th":"กาแล็กซีบาร์นาร์ด","en":"Barnard's Galaxy (NGC 6822)","g":"lg","t":"irregular","x":0.6691,"y":-1.4047,"z":0.1732,"mly":1.5655,"dly":6285,"ar":0.93,"pa":0,"ra":296.2342,"dec":-14.7976,"m":"IBm","de":{"th":"กาแล็กซีแคระไร้รูปร่างในกลุ่มท้องถิ่น เต็มไปด้วยเนบิวลาก๊าซเรืองแสงที่ดาวกำลังเกิด","en":"A dwarf irregular in the Local Group, dotted with glowing nebulae where stars are forming."}},
 {"id":"ic1613","th":"IC 1613","en":"IC 1613","g":"lg","t":"irregular","x":2.3161,"y":0.6529,"z":-0.1858,"mly":2.4136,"dly":11374,"ar":0.9,"pa":50,"ra":16.2017,"dec":2.1195,"m":"IB(s)m"},
 {"id":"ic10","th":"IC 10","en":"IC 10","g":"lg","t":"irregular","x":1.2273,"y":0.9255,"z":1.8608,"mly":2.4136,"dly":5617,"ar":0.88,"pa":90,"ra":5.0722,"dec":59.3038,"m":"dIrr"},
@@ -3447,14 +3488,14 @@ const DEEP = [
 {"id":"sextansdwarfspheroidal","th":"แคระเซ็กซ์แทนส์","en":"Sextans Dwarf","g":"lg","t":"dwarf","x":-0.262,"y":0.1178,"z":-0.0601,"mly":0.2935,"dly":4458,"ar":1,"pa":90,"ra":153.2621,"dec":-1.6147,"m":"dSph"},
 {"id":"carinadwarf","th":"แคระกระดูกงูเรือ","en":"Carina Dwarf","g":"lg","t":"dwarf","x":-0.0389,"y":0.0888,"z":-0.3284,"mly":0.3425,"dly":1986,"ar":1,"pa":90,"ra":100.4029,"dec":-50.9661,"m":"dSph"},
 {"id":"fornaxdwarf","th":"แคระเตาหลอม","en":"Fornax Dwarf","g":"lg","t":"dwarf","x":0.2885,"y":0.1193,"z":-0.3333,"mly":0.4566,"dly":3653,"ar":1,"pa":90,"ra":39.9971,"dec":-34.4492,"m":"dSph"},
-{"id":"phoenixdwarf","th":"แคระนกฟีนิกซ์","en":"Phoenix Dwarf","g":"lg","t":"dwarf","x":0.8859,"y":0.0375,"z":-1.0866,"mly":1.4025,"dly":1999,"ar":0.84,"pa":90,"ra":27.7763,"dec":-44.4447,"m":"dI/dGsp..."},
-{"id":"tucanadwarf","th":"แคระนกทูแคน","en":"Tucana Dwarf","g":"lg","t":"dwarf","x":1.1944,"y":-1.4422,"z":-2.2605,"mly":2.9354,"dly":2246,"ar":0.44,"pa":0,"ra":340.4567,"dec":-64.4194,"m":"dGsp..."},
-{"id":"cetusdwarf","th":"แคระปลาวาฬ","en":"Cetus Dwarf","g":"lg","t":"dwarf","x":2.5123,"y":0.0679,"z":-0.5679,"mly":2.5766,"dly":3755,"ar":0.87,"pa":0,"ra":6.545,"dec":-11.0539,"m":"dGsp..."},
-{"id":"aquariusdwarf","th":"แคระคนแบกหม้อน้ำ","en":"Aquarius Dwarf","g":"lg","t":"dwarf","x":2.0737,"y":-2.417,"z":0.2732,"mly":3.1963,"dly":1041,"ar":0.51,"pa":102,"ra":311.7154,"dec":-12.8483,"m":"dI/dGsp..."},
+{"id":"phoenixdwarf","th":"แคระนกฟีนิกซ์","en":"Phoenix Dwarf","g":"lg","t":"dwarf","x":0.8859,"y":0.0375,"z":-1.0866,"mly":1.4025,"dly":1999,"ar":0.84,"pa":90,"ra":27.7763,"dec":-44.4447,"m":"dI/dGsp"},
+{"id":"tucanadwarf","th":"แคระนกทูแคน","en":"Tucana Dwarf","g":"lg","t":"dwarf","x":1.1944,"y":-1.4422,"z":-2.2605,"mly":2.9354,"dly":2246,"ar":0.44,"pa":0,"ra":340.4567,"dec":-64.4194,"m":"dGsp"},
+{"id":"cetusdwarf","th":"แคระปลาวาฬ","en":"Cetus Dwarf","g":"lg","t":"dwarf","x":2.5123,"y":0.0679,"z":-0.5679,"mly":2.5766,"dly":3755,"ar":0.87,"pa":0,"ra":6.545,"dec":-11.0539,"m":"dGsp"},
+{"id":"aquariusdwarf","th":"แคระคนแบกหม้อน้ำ","en":"Aquarius Dwarf","g":"lg","t":"dwarf","x":2.0737,"y":-2.417,"z":0.2732,"mly":3.1963,"dly":1041,"ar":0.51,"pa":102,"ra":311.7154,"dec":-12.8483,"m":"dI/dGsp"},
 {"id":"pegasusdwarfirregular","th":"แคระม้าบิน","en":"Pegasus Dwarf Irregular","g":"lg","t":"irregular","x":3.0309,"y":-0.0633,"z":0.905,"mly":3.1637,"dly":4601,"ar":0.6,"pa":90,"ra":352.1467,"dec":14.7431,"m":"I"},
-{"id":"antliadwarf","th":"แคระเครื่องสูบลม","en":"Antlia Dwarf","g":"lg","t":"dwarf","x":-3.3329,"y":0.9105,"z":-2.5412,"mly":4.289,"dly":2495,"ar":0.75,"pa":160,"ra":151.0162,"dec":-27.3336,"m":"dI/dGsp..."},
+{"id":"antliadwarf","th":"แคระเครื่องสูบลม","en":"Antlia Dwarf","g":"lg","t":"dwarf","x":-3.3329,"y":0.9105,"z":-2.5412,"mly":4.289,"dly":2495,"ar":0.75,"pa":160,"ra":151.0162,"dec":-27.3336,"m":"dI/dGsp"},
 {"id":"andromedai","th":"แอนดรอเมดา I","en":"Andromeda I","g":"lg","t":"dwarf","x":1.8632,"y":0.9368,"z":1.2149,"mly":2.4136,"dly":4156,"ar":1,"pa":0,"ra":11.4158,"dec":38.0411,"m":"dSph"},
-{"id":"andromedaii","th":"แอนดรอเมดา II","en":"Andromeda II","g":"lg","t":"dwarf","x":1.6718,"y":0.9963,"z":0.8407,"mly":2.12,"dly":6388,"ar":1,"pa":0,"ra":19.1242,"dec":33.4192,"m":"dGsp..."},
+{"id":"andromedaii","th":"แอนดรอเมดา II","en":"Andromeda II","g":"lg","t":"dwarf","x":1.6718,"y":0.9963,"z":0.8407,"mly":2.12,"dly":6388,"ar":1,"pa":0,"ra":19.1242,"dec":33.4192,"m":"dGsp"},
 {"id":"andromedaiii","th":"แอนดรอเมดา III","en":"Andromeda III","g":"lg","t":"dwarf","x":1.9298,"y":0.8519,"z":1.2059,"mly":2.4299,"dly":2983,"ar":1,"pa":0,"ra":8.8908,"dec":36.4978,"m":"dSph"},
 {"id":"canesvenaticii","th":"แคระสุนัขล่าเนื้อ I","en":"Canes Venatici I","g":"lg","t":"dwarf","x":-0.5544,"y":-0.0479,"z":0.4531,"mly":0.7175,"dly":3000,"ar":0.6,"pa":0,"ra":202.0146,"dec":33.5558,"m":"dSph"},
 {"id":"bootesi","th":"แคระคนเลี้ยงสัตว์ I","en":"Boötes I","g":"lg","t":"dwarf","x":-0.1805,"y":-0.0742,"z":0.0909,"mly":0.2153,"dly":1643,"ar":1,"pa":90,"ra":210,"dec":14.5,"m":"dSph"},
@@ -3515,20 +3556,132 @@ const DEEP = [
 {"id":"ngc1275","th":"เพอร์ซีอัส เอ","en":"Perseus A (NGC 1275)","g":"near","t":"elliptical","x":112.5198,"y":184.3819,"z":88.757,"mly":233.5277,"dly":178657,"ar":0.68,"pa":110,"ra":49.9507,"dec":41.5117,"m":"cD"},
 {"id":"ngc4889","th":"NGC 4889 (กลางกระจุกผมเบเรนิซ)","en":"NGC 4889","g":"near","t":"elliptical","x":-263.9802,"y":-7.2943,"z":161.4158,"mly":309.5057,"dly":263199,"ar":0.62,"pa":75,"ra":195.0337,"dec":27.977,"m":"E3"},
 {"id":"ic1101","th":"IC 1101","en":"IC 1101","g":"near","t":"elliptical","x":-738.5456,"y":-701.6146,"z":424.5928,"mly":1103.6266,"dly":738663,"ar":0.49,"pa":22,"ra":227.7338,"dec":5.7448,"m":"E-SO","zr":0.0778,"lb":1.06,"de":{"th":"หนึ่งในกาแล็กซีที่ใหญ่ที่สุดที่รู้จัก เป็นกาแล็กซีรียักษ์ใจกลางกระจุก Abell 2029 แสงจางรอบนอกแผ่ไปหลายแสนปีแสง","en":"One of the largest galaxies known, a giant elliptical at the heart of the cluster Abell 2029 whose faint halo stretches hundreds of thousands of light-years."}},
-{"id":"ngc6240","th":"NGC 6240","en":"NGC 6240","g":"near","t":"merger","x":-99.0122,"y":-296.0185,"z":144.0359,"mly":343.7684,"dly":219483,"ar":0.43,"pa":20,"ra":253.2454,"dec":2.4009,"m":"I..."},
+{"id":"ngc6240","th":"NGC 6240","en":"NGC 6240","g":"near","t":"merger","x":-99.0122,"y":-296.0185,"z":144.0359,"mly":343.7684,"dly":219483,"ar":0.43,"pa":20,"ra":253.2454,"dec":2.4009,"m":"I"},
 {"id":"ngc2207","th":"NGC 2207","en":"NGC 2207","g":"near","t":"spiral","x":-8.3005,"y":88.3475,"z":-87.9219,"mly":124.9177,"dly":80000,"ar":0.6,"pa":0,"ra":94.0918,"dec":-21.3727,"m":"SAB(rs)bc"},
 {"id":"ugc2885","th":"กาแล็กซีรูบิน","en":"Rubin's Galaxy (UGC 2885)","g":"near","t":"spiral","x":94.0563,"y":190.404,"z":56.9117,"mly":219.8618,"dly":351754,"ar":0.45,"pa":90,"ra":58.2602,"dec":35.5895,"m":"Sc","de":{"th":"กาแล็กซีกังหันยักษ์กว้างราว 2.5 เท่าของทางช้างเผือก ตั้งชื่อตามเวรา รูบิน ผู้วัดความเร็วการหมุนของกาแล็กซีจนกลายเป็นหลักฐานสำคัญของสสารมืด","en":"A giant spiral about 2.5 times the width of the Milky Way, named after Vera Rubin, whose measurements of galaxy rotation became key evidence for dark matter."}},
 {"id":"malin1","th":"มาลิน 1","en":"Malin 1","g":"near","t":"spiral","x":-1120.5187,"y":-52.0171,"z":338.6535,"mly":1171.7313,"dly":650000,"ar":1,"pa":90,"ra":189.2473,"dec":14.3303,"m":"S","zr":0.0827,"lb":1.13,"de":{"th":"กาแล็กซีจานยักษ์ที่จางมาก จานก๊าซกว้างราว 650,000 ปีแสง ใหญ่กว่าทางช้างเผือกหลายเท่า แต่สว่างน้อยจนพบโดยบังเอิญ","en":"A giant, extremely faint disc galaxy about 650,000 light-years across — several times the Milky Way — yet so dim it was found by chance."}},
 {"id":"ngc1052df2","th":"NGC 1052-DF2","en":"NGC 1052-DF2","g":"near","t":"dwarf","x":54.2811,"y":38.261,"z":-28.0725,"mly":72.1,"dly":20000,"ar":0.85,"pa":0,"ra":40.445,"dec":-8.4033,"m":"dSph","de":{"th":"กาแล็กซีจางที่ดูเหมือน \"แทบไม่มีสสารมืด\" ความเร็วของกระจุกดาวรอบ ๆ บอกว่ามวลเกือบทั้งหมดคือดาวที่มองเห็น ซึ่งกลับเป็นหลักฐานว่าสสารมืดเป็นของจริงที่แยกจากสสารปกติได้ (ระยะยังถกเถียง)","en":"A faint galaxy that appears to have almost no dark matter: its star clusters move as if the visible stars were all the mass. That itself argues dark matter is real and separable from ordinary matter (its distance is still debated)."}},
 {"id":"dragonfly44","th":"ดราก้อนฟลาย 44","en":"Dragonfly 44","g":"near","t":"dwarf","x":-283.7492,"y":-11.3894,"z":168.0972,"mly":330,"dly":30000,"ar":0.7,"pa":0,"ra":195.2417,"dec":26.9764,"m":"dSph","de":{"th":"กาแล็กซีจางขนาดใกล้ทางช้างเผือก แต่มีดาวน้อยกว่าร้อยเท่า งานวิจัยปี 2559 ประเมินว่ามวลส่วนใหญ่เกือบทั้งหมดเป็นสสารมืด (ตัวเลขยังถกเถียง)","en":"A faint galaxy about as wide as the Milky Way but with a hundred times fewer stars; a 2016 study found it almost entirely dark matter (the exact share is still debated)."}},
 {"id":"3c273","th":"เควซาร์ 3C 273","en":"Quasar 3C 273","g":"far","t":"quasar","x":-2181.8855,"y":-224.3024,"z":183.1622,"mly":2201.0189,"dly":60000,"ar":0.6,"pa":0,"ra":187.2779,"dec":2.0524,"m":"E3","zr":0.1583,"lb":2.05,"de":{"th":"เควซาร์ดวงแรกที่ถูกระบุ (พ.ศ. 2506) คือหลุมดำมวลยิ่งยวดที่กลืนก๊าซจนสว่างกว่าทางช้างเผือกทั้งกาแล็กซีหลายพันเท่า และเป็นเควซาร์ที่สว่างที่สุดบนท้องฟ้า","en":"The first quasar identified (1963): a supermassive black hole swallowing gas so fiercely it outshines the whole Milky Way thousands of times. The brightest quasar in the sky."}},
-{"id":"ton618","th":"TON 618","en":"TON 618","g":"far","t":"quasar","x":-15496.76,"y":2031.3134,"z":9540.5746,"mly":18311.1542,"dly":60000,"ar":0.6,"pa":0,"ra":187.104,"dec":31.4771,"m":"?...","zr":2.219,"lb":10.83,"de":{"th":"เควซาร์ที่มีหลุมดำใหญ่ที่สุดแห่งหนึ่งที่รู้จัก ประเมินมวลราว 4 หมื่นล้านเท่าดวงอาทิตย์","en":"A quasar powered by one of the most massive black holes known, estimated at around 40 billion solar masses."}},
+{"id":"ton618","th":"TON 618","en":"TON 618","g":"far","t":"quasar","x":-15496.76,"y":2031.3134,"z":9540.5746,"mly":18311.1542,"dly":60000,"ar":0.6,"pa":0,"ra":187.104,"dec":31.4771,"zr":2.219,"lb":10.83,"de":{"th":"เควซาร์ที่มีหลุมดำใหญ่ที่สุดแห่งหนึ่งที่รู้จัก ประเมินมวลราว 4 หมื่นล้านเท่าดวงอาทิตย์","en":"A quasar powered by one of the most massive black holes known, estimated at around 40 billion solar masses."}},
 {"id":"apm082795255","th":"APM 08279+5255","en":"APM 08279+5255","g":"far","t":"quasar","x":-8817.6494,"y":17889.334,"z":12811.377,"mly":23704.6534,"dly":60000,"ar":0.6,"pa":0,"ra":127.9238,"dec":52.7549,"zr":3.911,"lb":12.21},
 {"id":"gnz11","th":"GN-z11","en":"GN-z11","g":"far","t":"distant","x":-14640.7855,"y":9053.6568,"z":26781.9178,"mly":31836.9663,"dly":3000,"ar":0.6,"pa":0,"ra":189.1061,"dec":62.2421,"zr":10.603,"lb":13.35,"de":{"th":"กาแล็กซีที่กล้องฮับเบิลพบเมื่อ พ.ศ. 2559 ว่าไกลที่สุดในยุคนั้น แสงที่เห็นออกเดินทางตั้งแต่เอกภพอายุราว 430 ล้านปี","en":"Found by Hubble in 2016 as the most distant galaxy of its time. The light we see left when the universe was about 430 million years old."}},
 {"id":"jadesgsz140","th":"JADES-GS-z14-0","en":"JADES-GS-z14-0","g":"far","t":"distant","x":17920.5341,"y":15612.9906,"z":-23954.3074,"mly":33744.9235,"dly":3000,"ar":0.6,"pa":0,"ra":53.0829,"dec":-27.8556,"zr":14.18,"lb":13.5,"de":{"th":"หนึ่งในกาแล็กซีที่ไกลที่สุดที่ยืนยันระยะแล้ว (กล้องเจมส์ เว็บบ์ พ.ศ. 2567) แสงออกเดินทางตั้งแต่เอกภพอายุไม่ถึง 300 ล้านปี","en":"One of the most distant galaxies with a confirmed distance (James Webb, 2024). Its light left when the universe was under 300 million years old."}},
 {"id":"macs0647jd","th":"MACS0647-JD","en":"MACS0647-JD","g":"far","t":"distant","x":-2213.7804,"y":21379.6991,"z":23089.6821,"mly":31545.6142,"dly":3000,"ar":0.6,"pa":0,"ra":101.9822,"dec":70.2433,"zr":10.17,"lb":13.33,"de":{"th":"กาแล็กซีไกลมากที่มองเห็นได้เพราะกระจุกกาแล็กซีด้านหน้าทำหน้าที่เป็นเลนส์ความโน้มถ่วง ขยายภาพและทำให้เห็นซ้ำหลายภาพ","en":"A very distant galaxy we can see only because a foreground galaxy cluster acts as a gravitational lens, magnifying it into several images."}},
-{"id":"comacluster","th":"กระจุกผมเบเรนิซ","en":"Coma Cluster","g":"cluster","t":"cluster","x":-274.0738,"y":-7.2995,"z":166.9468,"mly":321,"dly":null,"ar":1,"pa":0,"de":{"th":"กระจุกกาแล็กซีหนาแน่นที่มีสมาชิกกว่าพันกาแล็กซี เป็นที่แรกที่ฟริตซ์ ซวิกกีสังเกตเมื่อปี 1933 ว่ามวลที่มองเห็นไม่พอจะยึดกระจุกไว้ได้ ซึ่งเป็นจุดเริ่มของแนวคิดสสารมืด","en":"A dense cluster of over a thousand galaxies — where Fritz Zwicky noticed in 1933 that the visible mass was far too small to hold it together, the first hint of dark matter."}},
-{"id":"normaclustergreatattractor","th":"กระจุกนอร์มา · จุดดึงดูดใหญ่","en":"Norma Cluster · Great Attractor","g":"cluster","t":"cluster","x":-47.6305,"y":-164.4505,"z":-138.157,"mly":220,"dly":null,"ar":1,"pa":0,"de":{"th":"ใจกลางแรงโน้มถ่วงที่ดึงทางช้างเผือกและกาแล็กซีเพื่อนบ้านทั้งกลุ่มให้เคลื่อนที่ไปทางนั้นด้วยความเร็วราว 600 กิโลเมตรต่อวินาที มองเห็นยากเพราะอยู่หลังระนาบทางช้างเผือกพอดี","en":"The gravitational focus pulling the Milky Way and its neighbours towards it at about 600 km/s. It is hard to observe because it lies directly behind the plane of our own galaxy."}}
+{"id":"comacluster","th":"กระจุกผมเบเรนิซ","en":"Coma Cluster","g":"cluster","t":"cluster","x":-274.0738,"y":-7.2995,"z":166.9468,"mly":321,"dly":10000000,"ar":1,"pa":0,"de":{"th":"กระจุกกาแล็กซีหนาแน่นที่มีสมาชิกกว่าพันกาแล็กซี เป็นที่แรกที่ฟริตซ์ ซวิกกีสังเกตเมื่อปี 1933 ว่ามวลที่มองเห็นไม่พอจะยึดกระจุกไว้ได้ ซึ่งเป็นจุดเริ่มของแนวคิดสสารมืด","en":"A dense cluster of over a thousand galaxies — where Fritz Zwicky noticed in 1933 that the visible mass was far too small to hold it together, the first hint of dark matter."}},
+{"id":"normaclustergreatattractor","th":"กระจุกนอร์มา · จุดดึงดูดใหญ่","en":"Norma Cluster · Great Attractor","g":"cluster","t":"cluster","x":-47.6305,"y":-164.4505,"z":-138.157,"mly":220,"dly":10000000,"ar":1,"pa":0,"de":{"th":"ใจกลางแรงโน้มถ่วงที่ดึงทางช้างเผือกและกาแล็กซีเพื่อนบ้านทั้งกลุ่มให้เคลื่อนที่ไปทางนั้นด้วยความเร็วราว 600 กิโลเมตรต่อวินาที มองเห็นยากเพราะอยู่หลังระนาบทางช้างเผือกพอดี","en":"The gravitational focus pulling the Milky Way and its neighbours towards it at about 600 km/s. It is hard to observe because it lies directly behind the plane of our own galaxy."}},
+{"id":"leot","th":"ลีโอ ที","en":"Leo T","g":"lg","t":"irregular","x":-1.0281,"y":0.8479,"z":0.0587,"mly":1.334,"dly":770,"ar":0.9,"pa":0,"ra":143.7225,"dec":17.0514,"m":"dI/dGsp","de":{"th":"กาแล็กซีเล็กที่สุดเท่าที่รู้จักที่ยังมีก๊าซไฮโดรเจนเหลือและยังเกิดดาวใหม่ได้","en":"The least massive galaxy known that still holds hydrogen gas and has formed stars recently."}},
+{"id":"craterii","th":"แคระถ้วย II","en":"Crater II","g":"lg","t":"dwarf","x":-0.3617,"y":-0.0324,"z":-0.1173,"mly":0.3816,"dly":7000,"ar":0.88,"pa":0,"ra":177.31,"dec":-18.413,"de":{"th":"บริวารใหญ่อันดับสี่ของทางช้างเผือก แต่จางมากจนเพิ่งพบเมื่อ พ.ศ. 2559 บนท้องฟ้ากว้างราวดวงจันทร์สองดวงเรียงกัน","en":"The fourth-largest satellite of the Milky Way, yet so faint it was only found in 2016. On the sky it spans about two full Moons."}},
+{"id":"antliaii","th":"แคระเครื่องสูบลม II","en":"Antlia II","g":"lg","t":"dwarf","x":-0.2743,"y":0.0828,"z":-0.3125,"mly":0.424,"dly":19000,"ar":0.62,"pa":0,"ra":143.87,"dec":-36.77,"de":{"th":"บริวารของทางช้างเผือกที่กว้างพอ ๆ กับเมฆแมกเจลแลนใหญ่ แต่จางกว่าหลายพันเท่า ซ่อนอยู่หลังระนาบทางช้างเผือก จนพบจากการเคลื่อนที่ของดาวในข้อมูล Gaia","en":"A Milky Way satellite about as wide as the Large Magellanic Cloud but thousands of times fainter, hidden behind the galactic plane until the motions of its stars showed up in Gaia data."}},
+{"id":"herculesdwarf","th":"แคระเฮอร์คิวลีส","en":"Hercules Dwarf","g":"lg","t":"dwarf","x":-0.177,"y":-0.3548,"z":0.2695,"mly":0.4794,"dly":2200,"ar":0.32,"pa":0,"ra":247.7583,"dec":12.7917},
+{"id":"bootesii","th":"แคระคนเลี้ยงสัตว์ II","en":"Boötes II","g":"lg","t":"dwarf","x":-0.1162,"y":-0.0482,"z":0.0541,"mly":0.137,"dly":330,"ar":0.79,"pa":0,"ra":209.5,"dec":12.85,"m":"dSph"},
+{"id":"comaberenicesdwarf","th":"แคระผมเบเรนิซ","en":"Coma Berenices Dwarf","g":"lg","t":"dwarf","x":-0.1303,"y":0.009,"z":0.0595,"mly":0.1435,"dly":500,"ar":0.62,"pa":0,"ra":186.7458,"dec":23.9042},
+{"id":"ursamajoridwarf","th":"แคระหมีใหญ่ I","en":"Ursa Major I","g":"lg","t":"dwarf","x":-0.1818,"y":0.164,"z":0.2003,"mly":0.3164,"dly":2100,"ar":0.2,"pa":0,"ra":158.72,"dec":51.92},
+{"id":"ursamajoriidwarf","th":"แคระหมีใหญ่ II","en":"Ursa Major II","g":"lg","t":"dwarf","x":-0.0321,"y":0.0688,"z":0.0717,"mly":0.1044,"dly":970,"ar":0.37,"pa":0,"ra":132.875,"dec":63.13,"m":"dSph"},
+{"id":"segue1","th":"ซีก 1","en":"Segue 1","g":"lg","t":"dwarf","x":-0.0635,"y":0.0396,"z":0.0055,"mly":0.075,"dly":190,"ar":0.52,"pa":0,"ra":151.7633,"dec":16.0736,"m":"dSph","de":{"th":"หนึ่งในกาแล็กซีที่จางที่สุดที่รู้จัก มีดาวราวพันดวง แต่มวลเกือบทั้งหมดเป็นสสารมืด","en":"One of the faintest galaxies known — about a thousand stars — yet almost all of its mass is dark matter."}},
+{"id":"willman1","th":"วิลแมน 1","en":"Willman 1","g":"lg","t":"dwarf","x":-0.0742,"y":0.06,"z":0.079,"mly":0.1239,"dly":160,"ar":0.53,"pa":0,"ra":162.3375,"dec":51.05,"m":"dSph"},
+{"id":"canesvenaticiii","th":"แคระสุนัขล่าเนื้อ II","en":"Canes Venatici II","g":"lg","t":"dwarf","x":-0.4177,"y":0.0194,"z":0.3123,"mly":0.5218,"dly":480,"ar":0.48,"pa":0,"ra":194.29,"dec":34.32},
+{"id":"reticulumii","th":"แคระตาข่าย II","en":"Reticulum II","g":"lg","t":"dwarf","x":0.0361,"y":0.0118,"z":-0.0972,"mly":0.1044,"dly":210,"ar":0.4,"pa":0,"ra":53.9254,"dec":-54.0492,"m":"S0 (T=-3)","de":{"th":"ดาวในกาแล็กซีแคระนี้มีธาตุหนักอย่างยูโรเพียมและทองคำสูงผิดปกติ หลักฐานว่าเหตุการณ์ครั้งเดียว เช่น ดาวนิวตรอนชนกัน สร้างธาตุเหล่านี้ไว้","en":"Its stars are unusually rich in heavy elements such as europium and gold — evidence that a single event, such as a neutron-star merger, made them."}},
+{"id":"tucanaii","th":"แคระนกทูแคน II","en":"Tucana II","g":"lg","t":"dwarf","x":0.0927,"y":-0.0891,"z":-0.1343,"mly":0.1859,"dly":1100,"ar":0.61,"pa":0,"ra":342.9796,"dec":-58.5689,"m":"S0 (T=-3)"},
+{"id":"triangulumii","th":"แคระสามเหลี่ยม II","en":"Triangulum II","g":"lg","t":"dwarf","x":0.066,"y":0.0628,"z":0.0357,"mly":0.0978,"dly":220,"ar":0.79,"pa":0,"ra":33.3225,"dec":36.1784,"m":"S0 (T=-2)"},
+{"id":"piscesii","th":"แคระปลา II","en":"Pisces II","g":"lg","t":"dwarf","x":0.5724,"y":-0.1197,"z":0.1194,"mly":0.5969,"dly":390,"ar":0.6,"pa":0,"ra":344.6292,"dec":5.9525,"m":"dGsp"},
+{"id":"leoiv","th":"ลีโอ โฟร์","en":"Leo IV","g":"lg","t":"dwarf","x":-0.4988,"y":0.0524,"z":-0.0278,"mly":0.5023,"dly":1300,"ar":0.95,"pa":0,"ra":173.2375,"dec":-0.5333,"m":"dG"},
+{"id":"leov","th":"ลีโอ ไฟว์","en":"Leo V","g":"lg","t":"dwarf","x":-0.5755,"y":0.0757,"z":-0.0083,"mly":0.5806,"dly":880,"ar":0.5,"pa":0,"ra":172.79,"dec":2.22,"m":"dSph"},
+{"id":"eridanusii","th":"แคระแม่น้ำ II","en":"Eridanus II","g":"lg","t":"dwarf","x":0.4828,"y":0.3319,"z":-1.0401,"mly":1.1937,"dly":1800,"ar":0.52,"pa":0,"ra":56.0878,"dec":-43.5332,"m":"S0 (T=-3)","de":{"th":"กาแล็กซีแคระห่างไกลที่มีกระจุกดาวเพียงกระจุกเดียวอยู่ใกล้ใจกลาง กระจุกนี้ยังไม่แตกกระจาย จึงใช้ทดสอบว่าสสารมืดเป็นหลุมดำขนาดเล็กได้หรือไม่","en":"A distant dwarf with a single star cluster near its centre. That the cluster survives intact has been used to test whether dark matter could be made of small black holes."}},
+{"id":"carinaii","th":"แคระกระดูกงูเรือ II","en":"Carina II","g":"lg","t":"dwarf","x":-0.0264,"y":0.013,"z":-0.1184,"mly":0.122,"dly":600,"ar":0.66,"pa":0,"ra":114.1066,"dec":-57.9991},
+{"id":"grusi","th":"แคระนกกระเรียน I","en":"Grus I","g":"lg","t":"dwarf","x":0.2412,"y":-0.1823,"z":-0.2485,"mly":0.3914,"dly":400,"ar":0.55,"pa":0,"ra":344.1765,"dec":-50.1633,"m":"S0 (T=-3)"},
+{"id":"horologiumi","th":"แคระนาฬิกา I","en":"Horologium I","g":"lg","t":"dwarf","x":0.1088,"y":0.013,"z":-0.2332,"mly":0.2577,"dly":200,"ar":0.73,"pa":0,"ra":43.882,"dec":-54.1188,"m":"S0 (T=-3)"},
+{"id":"hydrusi","th":"แคระงูน้ำตัวผู้ I","en":"Hydrus I","g":"lg","t":"dwarf","x":0.0133,"y":-0.0259,"z":-0.0852,"mly":0.09,"dly":350,"ar":0.79,"pa":0,"ra":37.389,"dec":-79.3089},
+{"id":"sagdig","th":"แคระไร้รูปร่างคนยิงธนู","en":"Sagittarius Dwarf Irregular","g":"lg","t":"irregular","x":1.2687,"y":-3.231,"z":0.249,"mly":3.4801,"dly":1800,"ar":0.5,"pa":0,"ra":292.4958,"dec":-17.6781},
+{"id":"lgs3","th":"LGS 3 (แคระปลา)","en":"LGS 3 (Pisces Dwarf)","g":"lg","t":"irregular","x":2.2375,"y":0.9597,"z":0.6029,"mly":2.5081,"dly":3100,"ar":0.8,"pa":0,"ra":15.9792,"dec":21.885,"m":"Im (T=10)"},
+{"id":"ngc3109","th":"NGC 3109","en":"NGC 3109","g":"lg","t":"irregular","x":-3.3214,"y":0.961,"z":-2.4541,"mly":4.24,"dly":22448,"ar":0.18,"pa":94,"ra":150.7787,"dec":-26.1596,"m":"SB(s)m"},
+{"id":"andromedav","th":"แอนดรอเมดา V","en":"Andromeda V","g":"lg","t":"dwarf","x":1.5549,"y":1.1629,"z":1.4445,"mly":2.4201,"dly":2100,"ar":0.82,"pa":0,"ra":17.5713,"dec":47.6281,"m":"dSph"},
+{"id":"andromedavi","th":"แอนดรอเมดา VI (แคระม้าบิน)","en":"Andromeda VI (Pegasus dSph)","g":"lg","t":"dwarf","x":2.3208,"y":0.3461,"z":1.0079,"mly":2.5538,"dly":3400,"ar":0.59,"pa":0,"ra":357.9429,"dec":24.5825,"m":"dSph"},
+{"id":"andromedavii","th":"แอนดรอเมดา VII (แคระแคสซิโอเปีย)","en":"Andromeda VII (Cassiopeia dSph)","g":"lg","t":"dwarf","x":1.5582,"y":0.5544,"z":1.8551,"mly":2.4853,"dly":5100,"ar":0.87,"pa":0,"ra":351.6292,"dec":50.6758,"m":"dSph"},
+{"id":"andromedaix","th":"แอนดรอเมดา IX","en":"Andromeda IX","g":"lg","t":"dwarf","x":1.3888,"y":0.8322,"z":1.0992,"mly":1.9569,"dly":3600,"ar":0.88,"pa":0,"ra":13.2208,"dec":43.1958,"m":"dGsp"},
+{"id":"andromedax","th":"แอนดรอเมดา X","en":"Andromeda X","g":"lg","t":"dwarf","x":1.4855,"y":1.0199,"z":1.2362,"mly":2.1852,"dly":1700,"ar":0.56,"pa":0,"ra":16.6404,"dec":44.8044,"m":"dGsp"},
+{"id":"andromedaxix","th":"แอนดรอเมดา XIX","en":"Andromeda XIX","g":"lg","t":"dwarf","x":2.1843,"y":0.7828,"z":1.3364,"mly":2.6777,"dly":11000,"ar":0.83,"pa":0,"ra":4.8838,"dec":35.0436,"m":"dG","de":{"th":"หนึ่งในกาแล็กซีที่แผ่กว้างและจางที่สุดที่รู้จัก กว้างพอ ๆ กับเมฆแมกเจลแลนเล็ก แต่มีดาวน้อยกว่ามาก","en":"One of the most spread-out, diffuse galaxies known — about as wide as the Small Magellanic Cloud, with far fewer stars."}},
+{"id":"andromedaxxi","th":"แอนดรอเมดา XXI","en":"Andromeda XXI","g":"lg","t":"dwarf","x":2.066,"y":0.7094,"z":1.7543,"mly":2.8017,"dly":5700,"ar":0.8,"pa":0,"ra":358.6988,"dec":42.4708,"m":"dSph"},
+{"id":"andromedaxxv","th":"แอนดรอเมดา XXV","en":"Andromeda XXV","g":"lg","t":"dwarf","x":1.7955,"y":0.9866,"z":1.6783,"mly":2.6484,"dly":4200,"ar":0.75,"pa":0,"ra":7.5371,"dec":46.8519,"m":"dSph"},
+{"id":"m59","th":"M59","en":"M59","g":"near","t":"elliptical","x":-48.2116,"y":-4.1853,"z":12.8307,"mly":50.0649,"dly":81283,"ar":0.68,"pa":160,"ra":190.5094,"dec":11.6469,"m":"E-E/S0"},
+{"id":"m85","th":"M85","en":"M85","g":"near","t":"lenticular","x":-55.0621,"y":1.6197,"z":19.1409,"mly":58.3167,"dly":116824,"ar":0.75,"pa":21,"ra":186.3502,"dec":18.1911,"m":"S0"},
+{"id":"m89","th":"M89","en":"M89","g":"near","t":"elliptical","x":-49.8496,"y":-2.7046,"z":13.422,"mly":51.6957,"dly":65619,"ar":0.9,"pa":134,"ra":188.9159,"dec":12.5563,"m":"S0","de":{"th":"กาแล็กซีรีที่เกือบกลมสมบูรณ์ในกระจุกหญิงสาว รอบตัวมีเปลือกและสายดาวจาง ๆ ร่องรอยของกาแล็กซีที่ถูกกลืนเข้าไป","en":"A nearly perfectly round elliptical in the Virgo Cluster, wrapped in faint shells and streams of stars left by galaxies it has swallowed."}},
+{"id":"ngc5866","th":"กาแล็กซีกระสวย (M102)","en":"Spindle Galaxy (NGC 5866 · M102)","g":"near","t":"lenticular","x":-18.5511,"y":-2.2249,"z":44.2254,"mly":48.0102,"dly":88123,"ar":0.43,"pa":128,"ra":226.6232,"dec":55.7633,"m":"S","de":{"th":"กาแล็กซีรูปเลนส์ที่เราเห็นตะแคงข้างพอดี แถบฝุ่นบางเฉียบพาดกลาง นักดาราศาสตร์หลายคนเชื่อว่าคือ M102 ที่เมซีเยบันทึกตำแหน่งไว้คลาดเคลื่อน","en":"A lenticular galaxy seen exactly edge-on, split by a razor-thin dust lane. Many astronomers think it is the M102 that Messier recorded with a garbled position."}},
+{"id":"ngc6946","th":"กาแล็กซีดอกไม้ไฟ","en":"Fireworks Galaxy (NGC 6946)","g":"near","t":"spiral","x":5.9801,"y":-0.216,"z":18.2548,"mly":19.2106,"dly":64152,"ar":0.93,"pa":0,"ra":308.718,"dec":60.1537,"m":"Sc","de":{"th":"ได้ชื่อเพราะพบซูเปอร์โนวาบ่อยเป็นประวัติการณ์ — สิบครั้งในรอบร้อยปีที่ผ่านมา ขณะที่ทางช้างเผือกเกิดเฉลี่ยราวหนึ่งถึงสองครั้งต่อศตวรรษ","en":"Named for its record supernova rate: ten seen in the past century, while the Milky Way averages about one or two per century."}},
+{"id":"ngc5195","th":"NGC 5195 (คู่ของวังน้ำวน)","en":"NGC 5195 (M51b)","g":"near","t":"lenticular","x":-15.5816,"y":1.3404,"z":19.3156,"mly":24.8531,"dly":42582,"ar":0.79,"pa":79,"ra":202.4983,"dec":47.2661,"m":"S0/a (T=0)","de":{"th":"กาแล็กซีเล็กที่ดูเหมือนเกาะอยู่ปลายแขนของวังน้ำวน (M51) จริง ๆ อยู่ข้างหลัง และการเฉียดผ่านของมันคือสิ่งที่ทำให้แขนของ M51 เด่นชัด","en":"The small galaxy that seems to hang on the end of the Whirlpool's arm. It actually lies behind, and its close passage is what sharpened M51's spiral arms."}},
+{"id":"ngc4676","th":"กาแล็กซีหนู","en":"Mice Galaxies (NGC 4676)","g":"near","t":"merger","x":-250.7869,"y":13.5398,"z":159.9868,"mly":297.7804,"dly":203039,"ar":0.19,"pa":0,"ra":191.5424,"dec":30.7316,"m":"Sdm","de":{"th":"กาแล็กซีกังหันสองแห่งที่กำลังชนกัน หางดาวยาวที่ถูกเหวี่ยงออกมาดูเหมือนหางหนู ในที่สุดทั้งคู่จะรวมเป็นกาแล็กซีเดียว","en":"Two spiral galaxies in collision, their long tidal tails like the tails of mice. They will eventually merge into one galaxy."}},
+{"id":"ugc10214","th":"กาแล็กซีลูกอ๊อด","en":"Tadpole Galaxy (UGC 10214)","g":"near","t":"merger","x":-118.0303,"y":-56.7407,"z":415.9957,"mly":436.1228,"dly":188496,"ar":0.42,"pa":85,"ra":241.5163,"dec":55.4254,"m":"SB","de":{"th":"กาแล็กซีที่ถูกกาแล็กซีเล็กเฉียดผ่าน แรงดึงลากดาวและก๊าซออกเป็นหางยาวราว 280,000 ปีแสง จึงดูเหมือนลูกอ๊อด","en":"A galaxy disrupted by a smaller intruder, whose pull drew out a tail of stars and gas about 280,000 light-years long — hence the tadpole."}},
+{"id":"arp273","th":"กาแล็กซีดอกกุหลาบ (Arp 273)","en":"Rose Galaxies (Arp 273)","g":"near","t":"merger","x":220.8596,"y":232.263,"z":141.5784,"mly":350.3847,"dly":122307,"ar":0.42,"pa":45,"ra":35.3696,"dec":39.3756,"m":"Sb:","de":{"th":"คู่กาแล็กซีที่แรงดึงระหว่างกันบิดแขนของกาแล็กซีใหญ่จนดูเหมือนดอกกุหลาบ เป็นภาพฉลองครบรอบ 21 ปีของกล้องฮับเบิล (พ.ศ. 2554)","en":"A pair whose mutual pull has twisted the larger galaxy's arms into the shape of a rose — Hubble's 21st-anniversary image (2011)."}},
+{"id":"ngc2936","th":"กาแล็กซีเพนกวิน (Arp 142)","en":"Penguin Galaxy (Arp 142)","g":"near","t":"merger","x":-265.0021,"y":180.0989,"z":-60.9592,"mly":326.156,"dly":113496,"ar":0.58,"pa":76,"ra":144.4339,"dec":2.7609,"m":"E+S","de":{"th":"กาแล็กซีกังหันที่ถูกกาแล็กซีรีข้างเคียง (NGC 2937) ดึงจนบิดเป็นรูปนกเพนกวินที่กำลังเฝ้าไข่","en":"A spiral pulled out of shape by its elliptical neighbour NGC 2937 into the likeness of a penguin guarding an egg."}},
+{"id":"ngc4567","th":"กาแล็กซีแฝดสยาม","en":"Siamese Twins (NGC 4567/4568)","g":"near","t":"merger","x":-53.6897,"y":-3.6162,"z":13.366,"mly":55.4465,"dly":63228,"ar":0.61,"pa":61,"ra":189.1362,"dec":11.258,"m":"SA","de":{"th":"กาแล็กซีกังหันสองแห่งในกระจุกหญิงสาวที่ซ้อนกันบนท้องฟ้าจนดูเหมือนแฝดตัวติดกัน ทั้งคู่เพิ่งเริ่มดึงดูดกันและจะรวมกันในอนาคต","en":"Two spirals in the Virgo Cluster that overlap on the sky like conjoined twins. They are just beginning to interact and will merge in the future."}},
+{"id":"ngc4438","th":"กาแล็กซีคู่ดวงตา","en":"The Eyes (NGC 4435/4438)","g":"near","t":"merger","x":-52.839,"y":-1.0095,"z":13.8412,"mly":54.6311,"dly":141594,"ar":0.56,"pa":0,"ra":186.9403,"dec":13.0088,"m":"S","de":{"th":"คู่กาแล็กซีในโซ่มาร์คาเรียนของกระจุกหญิงสาว NGC 4438 ถูกการเฉียดชนดึงจนดาวและก๊าซฟุ้งกระจาย","en":"A pair in Markarian's Chain in the Virgo Cluster; a near-collision has smeared out NGC 4438's stars and gas."}},
+{"id":"ngc2442","th":"กาแล็กซีตะขอเกี่ยวเนื้อ","en":"Meathook Galaxy (NGC 2442)","g":"near","t":"barred","x":-7.5725,"y":-4.231,"z":-52.3187,"mly":53.033,"dly":79139,"ar":0.73,"pa":23,"ra":114.099,"dec":-69.5308,"m":"SAB(s)bcpec"},
+{"id":"ngc6872","th":"กาแล็กซีนกคอนดอร์","en":"Condor Galaxy (NGC 6872)","g":"near","t":"barred","x":40.0179,"y":-135.0599,"z":-163.6792,"mly":215.9479,"dly":522000,"ar":0.6,"pa":0,"ra":304.235,"dec":-70.7681,"m":"Sbc (T=3.5)","de":{"th":"หนึ่งในกาแล็กซีกังหันใหญ่ที่สุดที่รู้จัก แขนสองข้างถูกกาแล็กซีเล็ก IC 4970 ดึงจนยืดกว้างราว 522,000 ปีแสง","en":"One of the largest spiral galaxies known; the small galaxy IC 4970 has stretched its two arms to about 522,000 light-years across."}},
+{"id":"ngc1316","th":"เตาหลอม เอ (NGC 1316)","en":"Fornax A (NGC 1316)","g":"near","t":"lenticular","x":33.3193,"y":21.4355,"z":-52.8033,"mly":66.014,"dly":186959,"ar":0.66,"pa":49,"ra":50.6741,"dec":-37.2082,"m":"E","de":{"th":"กาแล็กซีรูปเลนส์ยักษ์ที่กลืนกาแล็กซีอื่นมาหลายแห่ง และเป็นแหล่งคลื่นวิทยุที่สว่างที่สุดแห่งหนึ่งบนท้องฟ้า ปีกคลื่นวิทยุแผ่กว้างหลายแสนปีแสง","en":"A giant lenticular that has swallowed several galaxies, and one of the brightest radio sources in the sky, with radio lobes spanning hundreds of thousands of light-years."}},
+{"id":"ngc5907","th":"กาแล็กซีเสี้ยนไม้","en":"Splinter Galaxy (NGC 5907)","g":"near","t":"spiral","x":-17.6859,"y":-2.5613,"z":45.1923,"mly":48.5972,"dly":218695,"ar":0.11,"pa":155,"ra":228.9737,"dec":56.3289,"m":"S","de":{"th":"กาแล็กซีกังหันที่เราเห็นตะแคงข้างจนบางเหมือนเสี้ยนไม้ รอบตัวมีสายดาวจางวนเป็นห่วง ซากของกาแล็กซีแคระที่ถูกฉีก","en":"A spiral seen so edge-on it looks like a splinter, looped by faint streams of stars from a shredded dwarf galaxy."}},
+{"id":"ngc1097","th":"NGC 1097","en":"NGC 1097","g":"near","t":"barred","x":33.2488,"y":16.7429,"z":-35.5399,"mly":51.4674,"dly":158712,"ar":0.53,"pa":147,"ra":41.5794,"dec":-30.2749,"m":"SB(s)b"},
+{"id":"ngc1566","th":"กาแล็กซีนักเต้นสเปน","en":"Spanish Dancer (NGC 1566)","g":"near","t":"barred","x":13.4604,"y":8.433,"z":-53.1227,"mly":55.4465,"dly":86069,"ar":0.75,"pa":20,"ra":65.0017,"dec":-54.938,"m":"SABbc","de":{"th":"กาแล็กซีกังหันหน้าตรงที่แขนสองข้างชัดมาก ใจกลางเป็นนิวเคลียสกัมมันต์ที่สว่างขึ้นลงได้มากในเวลาไม่กี่ปี","en":"A face-on spiral with two strong arms and an active nucleus whose brightness can change dramatically within a few years."}},
+{"id":"ngc4945","th":"NGC 4945","en":"NGC 4945","g":"near","t":"barred","x":-7.4435,"y":-5.6142,"z":-7.4548,"mly":11.9373,"dly":70908,"ar":0.21,"pa":43,"ra":196.3637,"dec":-49.4679,"m":"SB(s)cd?edge"},
+{"id":"ngc4151","th":"กาแล็กซีดวงตาเซารอน","en":"Eye of Sauron (NGC 4151)","g":"near","t":"barred","x":-36.742,"y":10.4684,"z":28.3977,"mly":47.6025,"dly":45674,"ar":0.88,"pa":140,"ra":182.6357,"dec":39.4059,"m":"SAB_a","de":{"th":"กาแล็กซีที่ใจกลางสว่างจัดจากหลุมดำกลืนก๊าซ ภาพรังสีเอกซ์ซ้อนภาพย่านอื่นดูเหมือนดวงตาในเรื่องลอร์ดออฟเดอะริงส์","en":"A galaxy with a brilliant core powered by a feeding black hole; combined X-ray and optical images look like the eye from The Lord of the Rings."}},
+{"id":"ngc7742","th":"กาแล็กซีไข่ดาว","en":"Fried Egg Galaxy (NGC 7742)","g":"near","t":"spiral","x":77.3894,"y":0.9845,"z":15.6514,"mly":78.9624,"dly":41691,"ar":0.92,"pa":114,"ra":356.0656,"dec":10.7671,"m":"Sa-Sc","de":{"th":"กาแล็กซีที่มีวงแหวนดาวเกิดใหม่ล้อมแกนกลางสีเหลืองสว่าง ภาพจากกล้องฮับเบิลจึงดูเหมือนไข่ดาว","en":"A ring of young stars around a bright yellow core makes it look like a fried egg in Hubble images."}},
+{"id":"ngc4622","th":"กาแล็กซีหมุนกลับหลัง","en":"Backward Galaxy (NGC 4622)","g":"near","t":"spiral","x":-150.4175,"y":-78.4178,"z":-109.7165,"mly":202.021,"dly":68756,"ar":0.84,"pa":0,"ra":190.6568,"dec":-40.7442,"m":"Sa (T=1.0)","de":{"th":"แขนด้านนอกของกาแล็กซีนี้ดูเหมือนหมุนผิดทาง ปลายแขนชี้ไปทางเดียวกับการหมุน ต่างจากกาแล็กซีกังหันแทบทั้งหมด","en":"Its outer arms appear to turn the 'wrong' way, with their tips pointing in the direction of rotation — unlike almost every other spiral."}},
+{"id":"ngc4656","th":"กาแล็กซีไม้ฮอกกี้","en":"Hockey Stick Galaxy (NGC 4656)","g":"near","t":"barred","x":-14.906,"y":1.1433,"z":9.9145,"mly":17.9386,"dly":50573,"ar":0.22,"pa":35,"ra":190.9904,"dec":32.1704,"m":"SB","de":{"th":"ปลายข้างหนึ่งของกาแล็กซีถูกแรงดึงจากเพื่อนบ้าน (กาแล็กซีวาฬ NGC 4631) บิดงอจนดูเหมือนไม้ฮอกกี้","en":"One end has been bent by the pull of its neighbour, the Whale Galaxy (NGC 4631), giving it the shape of a hockey stick."}},
+{"id":"ngc4650a","th":"NGC 4650A (วงแหวนขั้ว)","en":"NGC 4650A (polar ring)","g":"near","t":"ring","x":-147.9523,"y":-78.519,"z":-107.4292,"mly":198.9878,"dly":30099,"ar":0.78,"pa":35,"ra":191.2043,"dec":-40.7144,"m":"Sab (T=2.0)","de":{"th":"กาแล็กซีวงแหวนขั้ว วงแหวนดาวและก๊าซหมุนตั้งฉากกับจานของกาแล็กซีกลาง น่าจะเกิดจากการกลืนกาแล็กซีอื่นหรือรับก๊าซจากใยเอกภพ","en":"A polar-ring galaxy: a ring of stars and gas orbits at right angles to the central disc, probably gained from a swallowed galaxy or from gas flowing in along the cosmic web."}},
+{"id":"arp147","th":"Arp 147 (คู่วงแหวน)","en":"Arp 147","g":"near","t":"ring","x":294.4296,"y":302.2205,"z":-120.0582,"mly":438.6798,"dly":82944,"ar":0.44,"pa":40,"ra":47.8287,"dec":1.3147,"de":{"th":"คู่กาแล็กซีที่ชนกันแบบพุ่งทะลุ คลื่นกระแทกทำให้ทั้งสองกลายเป็นวงแหวน ดูเหมือนเลข 10","en":"A pair that collided head-on; the shock turned both into rings, so together they look like the number 10."}},
+{"id":"am0644741","th":"วงแหวนลินด์ซี–แชปลีย์","en":"Lindsay–Shapley Ring (AM 0644-741)","g":"near","t":"ring","x":-15.1411,"y":-41.1264,"z":-294.8676,"mly":298.1066,"dly":81773,"ar":0.76,"pa":150,"ra":100.7753,"dec":-74.2363,"m":"Im (T=10.0)","de":{"th":"กาแล็กซีวงแหวนที่เกิดจากกาแล็กซีอื่นพุ่งทะลุกลาง วงแหวนดาวเกิดใหม่สีฟ้ากว้างราว 150,000 ปีแสง","en":"A ring galaxy made when another galaxy plunged through its centre; the blue ring of new stars is about 150,000 light-years across."}},
+{"id":"ngc6027","th":"หกดาวของเซย์เฟิร์ต","en":"Seyfert's Sextet (NGC 6027)","g":"near","t":"merger","x":-101.3495,"y":-129.3934,"z":139.3633,"mly":215.4913,"dly":37422,"ar":0.42,"pa":95,"ra":239.8023,"dec":20.7634,"m":"SA","de":{"th":"กลุ่มกาแล็กซีแน่นที่ดูเหมือนมีหกสมาชิก แต่ที่อยู่ด้วยกันจริงมีสี่แห่ง อีกแห่งอยู่ไกลออกไปมาก และอีกหนึ่งเป็นแค่หางดาวที่ถูกดึงออกมา","en":"A compact group that seems to have six members, but only four belong together: one is far in the background and another is just a tidal tail."}},
+{"id":"ngc2537","th":"กาแล็กซีอุ้งตีนหมี","en":"Bear Paw Galaxy (NGC 2537)","g":"near","t":"irregular","x":-8.587,"y":18.4271,"z":9.6524,"mly":22.5048,"dly":12494,"ar":0.94,"pa":147,"ra":123.311,"dec":45.9898,"m":"SB","de":{"th":"กาแล็กซีแคระที่มีกลุ่มดาวเกิดใหม่เป็นก้อน ๆ จนดูเหมือนอุ้งตีนหมี","en":"A small dwarf galaxy whose clumps of young stars look like the pads of a bear's paw."}},
+{"id":"ngc4490","th":"กาแล็กซีรังไหม","en":"Cocoon Galaxy (NGC 4490)","g":"near","t":"barred","x":-20.4256,"y":4.7736,"z":17.9017,"mly":27.5765,"dly":54227,"ar":0.32,"pa":151,"ra":187.6437,"dec":41.6405,"m":"SAB"},
+{"id":"ngc7814","th":"ซอมบรีโรน้อย","en":"Little Sombrero (NGC 7814)","g":"near","t":"spiral","x":45.2662,"y":5.8019,"z":11.7687,"mly":47.1295,"dly":92740,"ar":0.48,"pa":134,"ra":0.8123,"dec":16.1452,"m":"S"},
+{"id":"ic2574","th":"เนบิวลาของคอดดิงตัน (IC 2574)","en":"Coddington's Nebula (IC 2574)","g":"near","t":"irregular","x":-4.3443,"y":6.4248,"z":10.2053,"mly":12.8179,"dly":26822,"ar":0.33,"pa":38,"ra":157.0984,"dec":68.4121,"m":"SABm","de":{"th":"กาแล็กซีแคระไร้รูปร่างในกลุ่ม M81 ที่เอ็ดวิน คอดดิงตันค้นพบเมื่อ ค.ศ. 1898 มีฟองก๊าซร้อนขนาดใหญ่ที่ลมและซูเปอร์โนวาของดาวมวลมากเป่าออกมา","en":"A dwarf irregular in the M81 group, discovered by Edwin Coddington in 1898, with a huge bubble of hot gas blown by the winds and supernovae of massive stars."}},
+{"id":"dwingeloo1","th":"ดวิงเงอลู 1","en":"Dwingeloo 1","g":"near","t":"barred","x":4.9972,"y":9.0606,"z":8.6752,"mly":13.5029,"dly":80000,"ar":0.6,"pa":0,"ra":44.2151,"dec":58.9117,"m":"SBb","de":{"th":"กาแล็กซีกังหันมีคานที่ซ่อนอยู่หลังฝุ่นหนาของระนาบทางช้างเผือก ค้นพบเมื่อ พ.ศ. 2537 ด้วยคลื่นวิทยุของไฮโดรเจนจากกล้องดวิงเงอลูในเนเธอร์แลนด์","en":"A barred spiral hidden behind the dust of the Milky Way's plane, found in 1994 through the radio emission of its hydrogen with the Dwingeloo telescope in the Netherlands."}},
+{"id":"cygnusa","th":"ซิกนัส เอ","en":"Cygnus A","g":"near","t":"elliptical","x":301.8922,"y":-274.6484,"z":688.0675,"mly":800.0047,"dly":140325,"ar":0.84,"pa":160,"ra":299.8682,"dec":40.7339,"m":"Sc","zr":0.0561,"lb":0.78,"de":{"th":"กาแล็กซีวิทยุที่สว่างที่สุดแห่งหนึ่งบนท้องฟ้า หลุมดำใจกลางยิงลำอนุภาคสองข้างไปพองเป็นปีกคลื่นวิทยุห่างกันหลายแสนปีแสง","en":"One of the brightest radio galaxies in the sky; its central black hole fires twin jets that inflate radio lobes hundreds of thousands of light-years apart."}},
+{"id":"herculesa","th":"เฮอร์คิวลีส เอ","en":"Hercules A","g":"near","t":"elliptical","x":-636.0017,"y":-1808.4277,"z":988.6688,"mly":2156.9364,"dly":281376,"ar":0.6,"pa":116,"ra":252.7833,"dec":4.9932,"zr":0.155,"lb":2.01,"de":{"th":"กาแล็กซีรียักษ์ที่ยิงลำอนุภาคสองข้างแผ่กว้างราว 1.5 ล้านปีแสง ใจกลางมีหลุมดำมวลราว 2,500 ล้านเท่าดวงอาทิตย์","en":"A giant elliptical whose twin jets span about 1.5 million light-years, driven by a black hole of about 2.5 billion solar masses."}},
+{"id":"ngc1399","th":"NGC 1399 (กลางกระจุกเตาหลอม)","en":"NGC 1399","g":"near","t":"elliptical","x":30.6891,"y":24.6393,"z":-51.8164,"mly":65.0681,"dly":116416,"ar":0.92,"pa":96,"ra":54.6212,"dec":-35.4507,"m":"E1","de":{"th":"กาแล็กซีรียักษ์ใจกลางกระจุกเตาหลอม ล้อมรอบด้วยกระจุกดาวทรงกลมหลายพันกระจุก","en":"The giant elliptical at the heart of the Fornax Cluster, surrounded by thousands of globular clusters."}},
+{"id":"3c48","th":"เควซาร์ 3C 48","en":"Quasar 3C 48","g":"far","t":"quasar","x":3682.5047,"y":2585.316,"z":1759.3048,"mly":4831.1337,"dly":60000,"ar":0.6,"pa":0,"ra":24.4221,"dec":33.1597,"m":"E","zr":0.367,"lb":4.14,"de":{"th":"เควซาร์ดวงที่สองที่ถูกระบุ ระยะของมันวัดได้ใน พ.ศ. 2506 ไม่นานหลัง 3C 273","en":"The second quasar identified; its distance was measured in 1963, soon after 3C 273."}},
+{"id":"3c279","th":"บลาซาร์ 3C 279","en":"Blazar 3C 279","g":"far","t":"quasar","x":-6505.7263,"y":-1763.8217,"z":23.6252,"mly":6740.6306,"dly":60000,"ar":0.6,"pa":0,"ra":194.0465,"dec":-5.7893,"zr":0.5362,"lb":5.45,"de":{"th":"บลาซาร์ที่ลำอนุภาคพุ่งเกือบตรงเข้าหาโลก เป็นวัตถุแรก ๆ ที่เห็นการเคลื่อนที่ที่ดูเหมือนเร็วกว่าแสง — ภาพลวงจากความเร็วใกล้แสงที่พุ่งเข้าหาเรา","en":"A blazar whose jet points almost straight at Earth; one of the first objects seen to show apparent faster-than-light motion — an illusion caused by near-light-speed motion towards us."}},
+{"id":"mrk421","th":"มาร์คาเรียน 421","en":"Markarian 421","g":"far","t":"quasar","x":-319.6527,"y":175.606,"z":206.3744,"mly":419.0533,"dly":60000,"ar":0.76,"pa":75,"ra":166.1138,"dec":38.2088,"de":{"th":"บลาซาร์ใกล้โลกที่สุดแห่งหนึ่ง และเป็นแหล่งรังสีแกมมาพลังงานสูงมากแห่งแรกนอกทางช้างเผือกที่ตรวจพบ (พ.ศ. 2535)","en":"One of the nearest blazars, and the first source outside the Milky Way detected in very-high-energy gamma rays (1992)."}},
+{"id":"mrk501","th":"มาร์คาเรียน 501","en":"Markarian 501","g":"far","t":"quasar","x":-102.9726,"y":-198.5229,"z":414.22,"mly":470.7366,"dly":60000,"ar":0.76,"pa":160,"ra":253.4676,"dec":39.7602,"m":"E (T=-4.9)","de":{"th":"บลาซาร์ที่ปล่อยรังสีแกมมาพลังงานสูงมาก ตรวจพบเมื่อ พ.ศ. 2539","en":"A blazar emitting very-high-energy gamma rays, detected in 1996."}},
+{"id":"bllac","th":"บีแอล ลาเซอร์ตา","en":"BL Lacertae","g":"far","t":"quasar","x":629.1808,"y":-63.2183,"z":742.53,"mly":975.303,"dly":60000,"ar":0.54,"pa":17,"ra":330.6804,"dec":42.2778,"zr":0.0686,"lb":0.94,"de":{"th":"ต้นแบบของบลาซาร์กลุ่ม BL Lac เดิมถูกจัดเป็นดาวแปรแสงในกลุ่มดาวกิ้งก่า จนพบว่าเป็นใจกลางกาแล็กซีที่อยู่ไกลหลายร้อยล้านปีแสง","en":"The prototype of the BL Lac blazars. Long catalogued as a variable star in Lacerta, it turned out to be the core of a galaxy hundreds of millions of light-years away."}},
+{"id":"oj287","th":"OJ 287","en":"OJ 287","g":"far","t":"quasar","x":-2653.2995,"y":3106.3403,"z":185.6464,"mly":4089.4759,"dly":60000,"ar":0.6,"pa":0,"ra":133.7036,"dec":20.1085,"zr":0.3056,"lb":3.58,"de":{"th":"บลาซาร์ที่สว่างวาบเป็นจังหวะราวทุก 12 ปี เชื่อว่าเกิดจากหลุมดำมวลยิ่งยวดสองดวงโคจรรอบกัน","en":"A blazar that flares roughly every 12 years, thought to be caused by two supermassive black holes orbiting each other."}},
+{"id":"s5001481","th":"S5 0014+81","en":"S5 0014+81","g":"far","t":"quasar","x":3254.7566,"y":9000.5442,"z":20146.8346,"mly":22304.6673,"dly":60000,"ar":0.6,"pa":0,"ra":4.2853,"dec":81.5856,"zr":3.366,"lb":11.9,"de":{"th":"เควซาร์ที่สว่างที่สุดแห่งหนึ่งที่รู้จัก หลุมดำใจกลางประเมินมวลราว 4 หมื่นล้านเท่าดวงอาทิตย์","en":"One of the most luminous quasars known, with a central black hole estimated at about 40 billion solar masses."}},
+{"id":"q2237030","th":"กางเขนไอน์สไตน์","en":"Einstein Cross (Q2237+030)","g":"far","t":"quasar","x":14776.7927,"y":-4533.9918,"z":2970.7398,"mly":15739.6308,"dly":60000,"ar":0.6,"pa":0,"ra":340.126,"dec":3.3585,"zr":1.695,"lb":9.96,"de":{"th":"เควซาร์ไกลที่ถูกกาแล็กซีด้านหน้าหักเหแสงจนเห็นเป็นสี่ภาพเรียงเป็นกากบาทรอบใจกลางกาแล็กซีนั้น","en":"A distant quasar whose light is bent by a foreground galaxy into four images arranged in a cross around the galaxy's centre."}},
+{"id":"q0957561","th":"เควซาร์แฝด","en":"Twin Quasar (Q0957+561)","g":"far","t":"quasar","x":-6847.8492,"y":8208.1558,"z":9127.2866,"mly":14056.1098,"dly":60000,"ar":0.6,"pa":0,"ra":150.3362,"dec":55.8988,"zr":1.413,"lb":9.3,"de":{"th":"เลนส์ความโน้มถ่วงแห่งแรกที่ค้นพบ (พ.ศ. 2522) — เควซาร์ดวงเดียวที่เห็นเป็นสองภาพเพราะกาแล็กซีด้านหน้าหักเหแสง","en":"The first gravitational lens discovered (1979): a single quasar seen twice because a foreground galaxy bends its light."}},
+{"id":"smssj052915804351520","th":"J0529−4351 (เควซาร์สว่างที่สุด)","en":"J0529−4351","g":"far","t":"quasar","x":2296.7186,"y":9050.8548,"z":-21917.7535,"mly":23823.9545,"dly":60000,"ar":0.6,"pa":0,"ra":82.3159,"dec":-43.8645,"zr":3.962,"lb":12.23,"de":{"th":"เควซาร์ที่สว่างที่สุดเท่าที่รู้จัก (ประกาศ พ.ศ. 2567) หลุมดำใจกลางกลืนมวลราวหนึ่งเท่าดวงอาทิตย์ต่อวัน","en":"The most luminous quasar known (announced 2024); its black hole swallows roughly one Sun's worth of matter every day."}},
+{"id":"ulasj13420928","th":"ULAS J1342+0928","en":"ULAS J1342+0928","g":"far","t":"quasar","x":-26100.0648,"y":-9518.4163,"z":9389.6627,"mly":29325.4053,"dly":60000,"ar":0.6,"pa":0,"ra":205.5338,"dec":9.4773,"zr":7.5413,"lb":13.1,"de":{"th":"เควซาร์ไกลมาก (ค้นพบ พ.ศ. 2560) หลุมดำใจกลางมีมวลราว 800 ล้านเท่าดวงอาทิตย์แล้ว ทั้งที่แสงออกเดินทางตอนเอกภพอายุเพียงราว 690 ล้านปี","en":"A very distant quasar (found 2017) whose black hole already weighed about 800 million Suns when the universe was only about 690 million years old."}},
+{"id":"desij031343841806364","th":"J0313−1806","en":"J0313−1806","g":"far","t":"quasar","x":18558.6335,"y":15561.4947,"z":-16717.2226,"mly":29428.7024,"dly":60000,"ar":0.6,"pa":0,"ra":48.4327,"dec":-18.1101,"zr":7.642,"lb":13.11,"de":{"th":"เควซาร์ที่ไกลที่สุดที่ยืนยันได้เมื่อประกาศ (พ.ศ. 2564) หลุมดำมวลราว 1,600 ล้านเท่าดวงอาทิตย์ ตั้งแต่เอกภพอายุราว 670 ล้านปี","en":"The most distant quasar confirmed when announced (2021): a black hole of about 1.6 billion Suns when the universe was about 670 million years old."}},
+{"id":"alcyoneus","th":"อัลไซโอเนียส","en":"Alcyoneus","g":"far","t":"elliptical","x":-1131.7593,"y":2620.1728,"z":1759.5469,"mly":3352.9375,"dly":90000,"ar":0.8,"pa":0,"ra":123.5904,"dec":52.4028,"zr":0.2467,"lb":3,"de":{"th":"กาแล็กซีวิทยุที่ลำอนุภาคยาวที่สุดแห่งหนึ่งที่รู้จัก ปลายปีกคลื่นวิทยุสองข้างห่างกันราว 16 ล้านปีแสง (ประกาศ พ.ศ. 2565) — ยาวกว่ากาแล็กซีต้นกำเนิดเป็นร้อยเท่า","en":"A radio galaxy with one of the longest jets known: its two radio lobes are about 16 million light-years apart (announced 2022), far larger than the galaxy itself."}},
+{"id":"cosmosredshift7","th":"COSMOS Redshift 7","en":"COSMOS Redshift 7","g":"far","t":"distant","x":-24527.9083,"y":13220.4072,"z":-4761.7141,"mly":28267.8505,"dly":3000,"ar":0.6,"pa":0,"ra":150.2417,"dec":1.8042,"zr":6.604,"lb":12.97,"de":{"th":"กาแล็กซียุคแรกที่สว่างผิดปกติในแสงไลแมน-แอลฟา เคยถูกเสนอว่าอาจมีดาวรุ่นแรกของเอกภพ แต่งานต่อมายังไม่ยืนยัน","en":"An early galaxy unusually bright in Lyman-alpha light; it was once proposed to host the universe's first generation of stars, which later work has not confirmed."}},
+{"id":"momz14","th":"MoM-z14","en":"MoM-z14","g":"far","t":"distant","x":-29325.5461,"y":16009.788,"z":-5477.4128,"mly":33857.097,"dly":3000,"ar":0.6,"pa":0,"ra":150.0933,"dec":2.2732,"zr":14.44,"lb":13.5,"de":{"th":"หนึ่งในกาแล็กซีที่ไกลที่สุดที่ยืนยันระยะด้วยสเปกตรัม ตอนประกาศ (พ.ศ. 2568) เป็นสถิติไกลที่สุด แสงออกเดินทางตั้งแต่เอกภพอายุราว 280 ล้านปี","en":"One of the most distant galaxies with a spectroscopic distance — the record-holder when announced in 2025. Its light left when the universe was about 280 million years old."}},
+{"id":"jadesgsz141","th":"JADES-GS-z14-1","en":"JADES-GS-z14-1","g":"far","t":"distant","x":17853.2461,"y":15540.7587,"z":-23876.9335,"mly":33620.8497,"dly":3000,"ar":0.6,"pa":0,"ra":53.0743,"dec":-27.8859,"zr":13.9,"lb":13.49},
+{"id":"jadesgsz130","th":"JADES-GS-z13-0","en":"JADES-GS-z13-0","g":"far","t":"distant","x":17666.8256,"y":15455.5757,"z":-23612.4754,"mly":33294.7525,"dly":3000,"ar":0.6,"pa":0,"ra":53.1499,"dec":-27.7765,"zr":13.2,"lb":13.47},
+{"id":"ghz2","th":"GHZ2 (GLASS-z12)","en":"GHZ2 (GLASS-z12)","g":"far","t":"distant","x":28310.6836,"y":-5011.211,"z":-15910.3049,"mly":32859.4712,"dly":3000,"ar":0.6,"pa":0,"ra":3.499,"dec":-30.3247,"zr":12.34,"lb":13.43,"de":{"th":"กาแล็กซียุคแรกที่กล้องเจมส์ เว็บบ์ยืนยันระยะ และพบธาตุออกซิเจนแล้ว บอกว่าดาวรุ่นก่อนหน้าเกิดและตายไปตั้งแต่เอกภพอายุยังไม่ถึง 400 ล้านปี","en":"An early galaxy confirmed by James Webb, already containing oxygen — so earlier stars had lived and died before the universe was 400 million years old."}},
+{"id":"macs1149jd1","th":"MACS1149-JD1","en":"MACS1149-JD1","g":"far","t":"distant","x":-28402.0346,"y":5852.2229,"z":10243.3899,"mly":30754.6926,"dly":3000,"ar":0.6,"pa":0,"ra":177.3899,"dec":22.4127,"zr":9.1096,"lb":13.25,"de":{"th":"กาแล็กซียุคแรกที่ตรวจพบออกซิเจน บอกว่าเริ่มสร้างดาวตั้งแต่เอกภพอายุราว 250 ล้านปี","en":"An early galaxy with detected oxygen, implying it began forming stars when the universe was about 250 million years old."}},
+{"id":"virgocluster","th":"กระจุกหญิงสาว","en":"Virgo Cluster","g":"cluster","t":"cluster","x":-52.0742,"y":-1.8689,"z":13.3873,"mly":53.8,"dly":14400000,"ar":1,"pa":0,"ra":187.6991,"dec":12.3852,"de":{"th":"กระจุกกาแล็กซีใหญ่ที่ใกล้ที่สุด มีสมาชิกราว 1,300–2,000 แห่ง M87 อยู่ใจกลาง แรงโน้มถ่วงของกระจุกนี้ดึงกลุ่มท้องถิ่นของเราอยู่","en":"The nearest large galaxy cluster, with about 1,300–2,000 members and M87 at its heart. Its gravity tugs on our Local Group."}},
+{"id":"fornaxcluster","th":"กระจุกเตาหลอม","en":"Fornax Cluster","g":"cluster","t":"cluster","x":30.7497,"y":24.6887,"z":-51.9227,"mly":65.2,"dly":6800000,"ar":1,"pa":0,"ra":54.6225,"dec":-35.4522,"de":{"th":"กระจุกกาแล็กซีที่มีสมาชิกมากเป็นอันดับสองในรัศมีหนึ่งร้อยล้านปีแสง รองจากกระจุกหญิงสาว ใจกลางคือ NGC 1399","en":"The second-richest galaxy cluster within 100 million light-years, after Virgo, centred on NGC 1399."}},
+{"id":"abell1060","th":"กระจุกงูไฮดรา","en":"Hydra Cluster (Abell 1060)","g":"cluster","t":"cluster","x":-145.4546,"y":18.5728,"z":-96.4313,"mly":175.5021,"dly":10000000,"ar":1,"pa":0,"ra":159.15,"dec":-27.5178,"de":{"th":"กระจุกกาแล็กซีในฟ้าซีกใต้ที่อยู่ในมหากระจุกลาเนียเคียเดียวกับเรา","en":"A southern galaxy cluster that belongs to the same supercluster as we do, Laniakea."}},
+{"id":"abell3526","th":"กระจุกคนครึ่งม้า","en":"Centaurus Cluster (Abell 3526)","g":"cluster","t":"cluster","x":-116.6184,"y":-64.8455,"z":-86.1535,"mly":158.8308,"dly":10000000,"ar":1,"pa":0,"ra":192.2051,"dec":-41.3047,"de":{"th":"กระจุกกาแล็กซีใหญ่ในฟ้าซีกใต้ ส่วนหนึ่งของมหากระจุกงูไฮดรา–คนครึ่งม้าในลาเนียเคีย","en":"A large southern cluster, part of the Hydra–Centaurus Supercluster within Laniakea."}},
+{"id":"abell426","th":"กระจุกเพอร์ซีอัส","en":"Perseus Cluster (Abell 426)","g":"cluster","t":"cluster","x":119.9865,"y":196.6101,"z":94.6616,"mly":249.0243,"dly":10000000,"ar":1,"pa":0,"ra":49.9482,"dec":41.515,"de":{"th":"กระจุกกาแล็กซีที่สว่างที่สุดในรังสีเอกซ์ กล้องจันทราพบคลื่นเสียงในก๊าซร้อนรอบใจกลาง ต่ำกว่าโน้ตโดกลางราว 57 ออกเทฟ","en":"The brightest galaxy cluster in X-rays. Chandra found sound waves in its hot gas, about 57 octaves below middle C."}},
+{"id":"abell1367","th":"กระจุกสิงโต","en":"Leo Cluster (Abell 1367)","g":"cluster","t":"cluster","x":-287.2434,"y":58.5706,"z":86.9518,"mly":305.7775,"dly":10000000,"ar":1,"pa":32767,"ra":176.1858,"dec":19.6997,"de":{"th":"กระจุกกาแล็กซีที่รวมกับกระจุกผมเบเรนิซเป็นมหากระจุกผมเบเรนิซ","en":"A cluster that, together with the Coma Cluster, forms the Coma Supercluster."}},
+{"id":"abell2151","th":"กระจุกเฮอร์คิวลีส","en":"Hercules Cluster (Abell 2151)","g":"cluster","t":"cluster","x":-231.7937,"y":-327.1661,"z":310.2999,"mly":507.003,"dly":10000000,"ar":1,"pa":32767,"ra":241.3125,"dec":17.7486,"de":{"th":"กระจุกกาแล็กซีที่มีกาแล็กซีกังหันมากผิดปกติ และยังรวมตัวกันไม่เสร็จ — ยังแยกเป็นกลุ่มย่อยหลายกลุ่ม","en":"A cluster unusually rich in spiral galaxies and still assembling from several sub-groups."}},
+{"id":"abells0636","th":"กระจุกเครื่องสูบลม","en":"Antlia Cluster (Abell S0636)","g":"cluster","t":"cluster","x":-97.6589,"y":7.4416,"z":-84.9257,"mly":129.6342,"dly":10000000,"ar":1,"pa":0,"ra":157.4212,"dec":-35.3258},
+{"id":"abell1689","th":"Abell 1689","en":"Abell 1689","g":"cluster","t":"cluster","x":-2331.3544,"y":-712.5654,"z":246.43,"mly":2450.2429,"dly":10000000,"ar":1,"pa":0,"ra":197.8729,"dec":-1.3411,"zr":0.1832,"lb":2.33,"de":{"th":"หนึ่งในเลนส์ความโน้มถ่วงที่ทรงพลังที่สุด หักเหแสงของกาแล็กซีเบื้องหลังเป็นเส้นโค้งกว่าร้อยเส้น","en":"One of the most powerful gravitational lenses known, bending the light of background galaxies into more than a hundred arcs."}},
+{"id":"1e065756","th":"กระจุกกระสุน","en":"Bullet Cluster (1E 0657-56)","g":"cluster","t":"cluster","x":-543.1645,"y":643.1035,"z":-3754.4028,"mly":3847.6162,"dly":10000000,"ar":1,"pa":0,"ra":104.612,"dec":-55.9725,"zr":0.296,"lb":3.49,"de":{"th":"กระจุกสองกลุ่มที่พุ่งชนกัน ก๊าซร้อนชนกันแล้วถูกรั้งไว้ตรงกลาง แต่มวลส่วนใหญ่ที่วัดจากเลนส์ความโน้มถ่วงทะลุผ่านไป — หลักฐานสำคัญว่าสสารมืดมีอยู่จริง","en":"Two clusters that smashed through each other. Their hot gas collided and was held back, but most of the mass, mapped by gravitational lensing, passed straight through — key evidence that dark matter is real."}},
+{"id":"abell2744","th":"กระจุกแพนดอรา (Abell 2744)","en":"Pandora's Cluster (Abell 2744)","g":"cluster","t":"cluster","x":3436.1781,"y":-605.6776,"z":-1937.9906,"mly":3991.237,"dly":10000000,"ar":1,"pa":0,"ra":3.5835,"dec":-30.3883,"zr":0.308,"lb":3.6,"de":{"th":"กระจุกที่เกิดจากกระจุกเล็กอย่างน้อยสี่กลุ่มชนกัน กล้องเจมส์ เว็บบ์ใช้เป็นเลนส์ส่องหากาแล็กซียุคแรก","en":"A cluster built from the collision of at least four smaller clusters, used by James Webb as a lens to find early galaxies."}},
+{"id":"abell370","th":"Abell 370","en":"Abell 370","g":"cluster","t":"cluster","x":3658.9314,"y":2760.3505,"z":-1340.7778,"mly":4775.458,"dly":10000000,"ar":1,"pa":0,"ra":39.9604,"dec":-1.5856,"zr":0.375,"lb":4.21,"de":{"th":"ที่แรกที่พบส่วนโค้งไอน์สไตน์ขนาดใหญ่ (พ.ศ. 2530) — ภาพของกาแล็กซีเบื้องหลังที่ถูกยืดเป็นเส้นโค้ง","en":"Where the first giant gravitational arc was identified (1987): a background galaxy stretched into a curve."}},
+{"id":"smacsj072337327","th":"SMACS 0723 (ภาพแรกของเจมส์ เว็บบ์)","en":"SMACS 0723","g":"cluster","t":"cluster","x":-500.3171,"y":-678.2639,"z":-4874.6267,"mly":4946.953,"dly":10000000,"ar":1,"pa":0,"ra":110.8054,"dec":-73.457,"zr":0.39,"lb":4.33,"de":{"th":"ภาพ Webb's First Deep Field ภาพสีภาพแรกที่เผยแพร่จากกล้องเจมส์ เว็บบ์ (กรกฎาคม 2565) มองผ่านกระจุกนี้ซึ่งทำหน้าที่เป็นเลนส์","en":"The target of Webb's First Deep Field, the first full-colour image released from the James Webb Space Telescope (July 2022), seen through this cluster acting as a lens."}},
+{"id":"actclj01024915","th":"เอล กอร์โด","en":"El Gordo (ACT-CL J0102-4915)","g":"cluster","t":"cluster","x":6097.6147,"y":-1349.7182,"z":-7427.4194,"mly":9704.0818,"dly":14000000,"ar":1,"pa":0,"ra":15.7188,"dec":-49.2494,"zr":0.87,"lb":7.37,"de":{"th":"กระจุกกาแล็กซีมวลมากที่สุดที่รู้จักในเอกภพยุคที่แสงนี้ออกเดินทาง เกิดจากกระจุกสองกลุ่มชนกัน ชื่อเป็นภาษาสเปนแปลว่า \"เจ้าอ้วน\"","en":"The most massive galaxy cluster known at its distance, formed by two clusters colliding. Its name is Spanish for \"the fat one\"."}},
+{"id":"sptclj23444243","th":"กระจุกฟีนิกซ์","en":"Phoenix Cluster","g":"cluster","t":"cluster","x":5245.6754,"y":-2252.1748,"z":-4314.8512,"mly":7155.9306,"dly":12000000,"ar":1,"pa":0,"ra":356.183,"dec":-42.7196,"zr":0.596,"lb":5.86,"de":{"th":"กาแล็กซีใจกลางกระจุกนี้สร้างดาวใหม่เร็วที่สุดเท่าที่พบในใจกลางกระจุก — หลายร้อยเท่าดวงอาทิตย์ต่อปี","en":"Its central galaxy forms stars faster than any other cluster core known — hundreds of Suns per year."}},
+{"id":"abell2029","th":"Abell 2029","en":"Abell 2029","g":"cluster","t":"cluster","x":-709.932,"y":-674.2744,"z":407.9517,"mly":1060.6951,"dly":10000000,"ar":1,"pa":0,"ra":227.7257,"dec":5.7396,"zr":0.0773,"lb":1.06,"de":{"th":"กระจุกที่มีกาแล็กซีรียักษ์ IC 1101 อยู่ใจกลาง","en":"The cluster with the giant elliptical IC 1101 at its centre."}},
+{"id":"abell3558","th":"Abell 3558 (ใจกลางมหากระจุกแชปลีย์)","en":"Abell 3558","g":"cluster","t":"cluster","x":-524.0757,"y":-332.3363,"z":-233.8712,"mly":663.173,"dly":10000000,"ar":1,"pa":0,"ra":202.0135,"dec":-31.5265,"de":{"th":"กระจุกที่มวลมากที่สุดในแกนกลางของมหากระจุกแชปลีย์","en":"The most massive cluster in the core of the Shapley Supercluster."}},
+{"id":"laniakea","th":"มหากระจุกลาเนียเคีย (บ้านของเรา)","en":"Laniakea Supercluster (our home)","g":"cluster","t":"supercluster","x":-47.6347,"y":-164.4449,"z":-138.1623,"mly":220,"dly":520000000,"ar":1,"pa":0,"ra":243.59,"dec":-60.87,"de":{"th":"มหากระจุกที่ทางช้างเผือกสังกัดอยู่ นิยามจากทิศทางการไหลของกาแล็กซีราวแสนแห่ง (Tully และคณะ 2557) กว้างราว 520 ล้านปีแสง มวลราว 10¹⁷ เท่าดวงอาทิตย์ ชื่อเป็นภาษาฮาวาย แปลว่า \"ฟ้ากว้างสุดประมาณ\" · วาดเป็นทรงกลมรอบจุดดึงดูดใหญ่โดยประมาณ ขอบจริงไม่เรียบ","en":"The supercluster the Milky Way belongs to, defined by the flow of about 100,000 galaxies (Tully et al. 2014): about 520 million light-years across and 10¹⁷ solar masses. The name is Hawaiian for \"immeasurable heaven\". Drawn as an approximate sphere around the Great Attractor; the real boundary is irregular."}},
+{"id":"virgosupercluster","th":"มหากระจุกหญิงสาว (มหากระจุกท้องถิ่น)","en":"Virgo (Local) Supercluster","g":"cluster","t":"supercluster","x":-52.0712,"y":-1.8639,"z":13.3999,"mly":53.8,"dly":110000000,"ar":1,"pa":0,"ra":187.7,"dec":12.4,"de":{"th":"มหากระจุกท้องถิ่น — ส่วนหนึ่งของลาเนียเคีย มีกระจุกหญิงสาวเป็นแกนกลาง และมีกลุ่มท้องถิ่นของเราอยู่ใกล้ขอบ กว้างราว 110 ล้านปีแสง (วาดเป็นทรงกลมโดยประมาณ)","en":"The Local Supercluster — part of Laniakea, centred on the Virgo Cluster, with our Local Group near its edge. About 110 million light-years across (drawn as an approximate sphere)."}},
+{"id":"shapleysupercluster","th":"มหากระจุกแชปลีย์","en":"Shapley Supercluster","g":"cluster","t":"supercluster","x":-513.2097,"y":-309.5681,"z":-212.2969,"mly":635.8354,"dly":625000000,"ar":1,"pa":0,"ra":201.25,"dec":-30,"de":{"th":"กลุ่มกระจุกกาแล็กซีที่มวลมากที่สุดในย่านใกล้เรา แรงดึงของมันมีส่วนทำให้กลุ่มท้องถิ่นเคลื่อนที่ ขนาดตามแอ่งแรงโน้มถ่วงราว 625 ล้านปีแสง (Valade และคณะ 2567 · วาดเป็นทรงกลมโดยประมาณ)","en":"The largest concentration of galaxy clusters in our cosmic neighbourhood; its pull contributes to the Local Group's motion. Its gravitational basin is about 625 million light-years across (Valade et al. 2024; drawn as an approximate sphere)."}},
+{"id":"perseuspiscessupercluster","th":"มหากระจุกเพอร์ซีอัส–ปลา","en":"Perseus–Pisces Supercluster","g":"cluster","t":"wall","x":179.4017,"y":144.1361,"z":97.672,"mly":250,"dly":180000000,"ar":1,"pa":70,"ra":27.5,"dec":36,"de":{"th":"สายกาแล็กซีและกระจุกยาวในฟ้าซีกเหนือ พาดผ่านท้องฟ้ากว่า 40 องศา เป็นหนึ่งในโครงสร้างที่เด่นที่สุดในย่านใกล้เรา (วาดเป็นแถบโดยประมาณ)","en":"A long chain of galaxies and clusters in the northern sky, stretching over 40 degrees — one of the most prominent structures near us (drawn as an approximate band)."}},
+{"id":"cfa2greatwall","th":"กำแพงใหญ่ CfA2","en":"CfA2 Great Wall","g":"cluster","t":"wall","x":-279.9634,"y":29.7334,"z":161.2404,"mly":324.4412,"dly":500000000,"ar":1,"pa":90,"ra":187.5,"dec":29.5,"de":{"th":"แผ่นกาแล็กซีที่ค้นพบเมื่อ พ.ศ. 2532 (Geller และ Huchra) ยาวอย่างน้อย 500 ล้านปีแสง กว้างราว 300 ล้านปีแสง แต่หนาเพียงราว 15 ล้านปีแสง กระจุกผมเบเรนิซอยู่ในแผ่นนี้ (ตำแหน่งและขนาดโดยประมาณ)","en":"A sheet of galaxies discovered in 1989 (Geller & Huchra): at least 500 million light-years long and about 300 million wide, but only about 15 million thick. The Coma Cluster lies within it (position and size approximate)."}},
+{"id":"sloangreatwall","th":"กำแพงใหญ่สโลน","en":"Sloan Great Wall","g":"cluster","t":"wall","x":-1004.9975,"y":72.5683,"z":-31.4622,"mly":1008.1052,"dly":1370000000,"ar":1,"pa":90,"ra":175.5,"dec":0,"zr":0.0734,"lb":1.01,"de":{"th":"โครงสร้างที่พบจากข้อมูล SDSS (Gott และคณะ 2548) ยาวราว 1,370 ล้านปีแสง บางงานเสนอว่าเป็นมหากระจุกหลายกลุ่มที่เรียงกันโดยบังเอิญ ไม่ใช่โครงสร้างเดียว — เปิดแผนที่กาแล็กซีจริงจะเห็นกาแล็กซีที่ประกอบเป็นกำแพงนี้","en":"A structure found in SDSS data (Gott et al. 2005), about 1.37 billion light-years long. Some studies suggest it is several superclusters aligned by chance rather than one structure. Turn on the galaxy maps to see the galaxies that trace it."}},
+{"id":"bootesvoid","th":"ช่องว่างคนเลี้ยงสัตว์","en":"Boötes Void","g":"cluster","t":"void","x":-358.5091,"y":-101.109,"z":592.662,"mly":700,"dly":330000000,"ar":1,"pa":0,"ra":222.5,"dec":46,"de":{"th":"ช่องว่างขนาดยักษ์ (พบ พ.ศ. 2524) กว้างราว 330 ล้านปีแสง ภายในพบกาแล็กซีเพียงราวหกสิบแห่ง น้อยกว่าที่ปริมาตรเท่านี้ควรมีมาก (วาดเป็นทรงกลมโดยประมาณ)","en":"A giant void (found 1981), about 330 million light-years across. Only about sixty galaxies have been found inside — far fewer than a volume this size would normally hold (drawn as an approximate sphere)."}},
+{"id":"localvoid","th":"ช่องว่างท้องถิ่น","en":"Local Void","g":"cluster","t":"void","x":11.7727,"y":-55.3268,"z":49.2478,"mly":75,"dly":150000000,"ar":1,"pa":0,"ra":279.5,"dec":18,"de":{"th":"ช่องว่างที่อยู่ติดกลุ่มท้องถิ่นของเรา แรงดึงที่น้อยกว่ารอบข้างทำให้กาแล็กซีรอบขอบเคลื่อนหนีออกมา กลุ่มท้องถิ่นจึงมีความเร็วส่วนหนึ่งพุ่งออกจากช่องว่างนี้ (Tully และคณะ 2551) · ขนาดและระยะยังไม่แน่ชัด","en":"The void right next to our Local Group. Its weaker pull makes galaxies on its edge move away from it, so part of the Local Group's motion is directed out of it (Tully et al. 2008). Its size and distance are still uncertain."}}
 ];
 
 /* หลุมดำและเนบิวลา: บินไปดูได้ · dly = ระยะจากดวงอาทิตย์ (ปีแสง) · mass = มวล (เท่าดวงอาทิตย์) */
@@ -3542,8 +3695,16 @@ const FAR = [
 {"id":"v404cyg","th":"V404 ซิกนัส","en":"V404 Cygni","t":"bh","ra":306.0159,"dec":33.8672,"dly":7800,"mass":9,"acc":true,"incl":67,"kerr":true,"spin":0.9,"axisPA":10,"rout":20,"ext":28,"ref":"Khargharia et al. 2010","de":{"th":"หลุมดำคู่กับดาวที่ปะทุรังสีเอกซ์รุนแรงเป็นระยะ ครั้งล่าสุด พ.ศ. 2558","en":"A black hole with a companion star that erupts in violent X-ray outbursts from time to time, most recently in 2015."}},
 {"id":"crab","th":"เนบิวลาปู","en":"Crab Nebula (M1)","t":"nebula","ra":83.6324,"dec":22.0174,"dly":6500,"size":11,"model":"models/crab.glb","ref":"Hester 2008","de":{"th":"ซากซูเปอร์โนวาที่นักดาราศาสตร์จีนบันทึกไว้เมื่อ ค.ศ. 1054 สว่างจนเห็นได้กลางวัน 23 วัน ใจกลางมีพัลซาร์ที่หมุนรอบตัวเอง 30 รอบต่อวินาที","en":"The remnant of a supernova recorded by Chinese astronomers in 1054, bright enough to see in daylight for 23 days. A pulsar at its centre spins 30 times a second."}},
 {"id":"sn1987a","th":"ซูเปอร์โนวา 1987A","en":"SN 1987A","t":"nebula","ra":83.8666,"dec":-69.2698,"dly":168000,"size":1.3,"model":"models/sn1987a.glb","ref":"Panagia 1999","de":{"th":"ซูเปอร์โนวาที่ใกล้โลกที่สุดในรอบสี่ร้อยปี อยู่ในเมฆแมกเจลแลนใหญ่ วงแหวนคือก๊าซที่ดาวพ่นออกมาก่อนระเบิด แล้วถูกคลื่นกระแทกชนจนเรืองแสงเป็นจุด ๆ","en":"The closest supernova in four centuries, in the Large Magellanic Cloud. The ring is gas the star shed before it exploded, now lit up in knots where the blast wave hits it."}},
-{"id":"vela","th":"พัลซาร์ใบเรือ (Vela Pulsar)","en":"Vela Pulsar (PSR B0833-45)","t":"pulsar","ra":128.836,"dec":-45.176,"dly":936,"size":8,"period":89.33,"freq":11.2,"bfield":"3.4 × 10¹² G","ref":"Manchester et al. 2005 / Chandra X-ray Observatory","de":{"th":"พัลซาร์ในกลุ่มดาวใบเรือ (PSR B0833-45) ซากดาวนิวตรอนจากการระเบิดซูเปอร์โนวาเมื่อราว 11,000 ปีก่อน หมุนรอบตัวเองอย่างรวดเร็ว 11.2 รอบต่อวินาที (คาบ 89 มิลลิวินาที) มีสนามแม่เหล็กมหาศาล พ่นลำอนุภาคสัมพัทธภาพเป็นวงแหวนคู่และกรวยกวาดแสง","en":"The Vela Pulsar (PSR B0833-45), a rapidly rotating neutron star remnant of a supernova ~11,000 years ago, spinning 11.2 times a second (89 ms period) with intense magnetic dipole fields, relativistic jets, and double X-ray arcs."}}
+{"id":"vela","th":"พัลซาร์ใบเรือ (Vela Pulsar)","en":"Vela Pulsar (PSR B0833-45)","t":"pulsar","ra":128.836,"dec":-45.176,"dly":936,"size":8,"period":89.33,"freq":11.2,"bfield":"3.4 × 10¹² G","spinPA":130.63,"spinInc":63.6,"ref":"Manchester et al. 2005 / Ng & Romani 2004 / Chandra X-ray Observatory","de":{"th":"พัลซาร์ในกลุ่มดาวใบเรือ (PSR B0833-45) ซากดาวนิวตรอนจากการระเบิดซูเปอร์โนวาเมื่อราว 11,000 ปีก่อน หมุนรอบตัวเองอย่างรวดเร็ว 11.2 รอบต่อวินาที (คาบ 89 มิลลิวินาที) มีสนามแม่เหล็กมหาศาล พ่นลำอนุภาคสัมพัทธภาพเป็นวงแหวนคู่และกรวยกวาดแสง","en":"The Vela Pulsar (PSR B0833-45), a rapidly rotating neutron star remnant of a supernova ~11,000 years ago, spinning 11.2 times a second (89 ms period) with intense magnetic dipole fields, relativistic jets, and double X-ray arcs."}}
 ];
+
+/* กาแล็กซีใกล้ที่วัดระยะจริง (ไม่มีชื่อบนแผนที่) — Updated Nearby Galaxy Catalog
+   (Karachentsev, Makarov & Kaisina 2013, AJ 145, 101 · VizieR J/AJ/145/101)
+   685 แห่ง · ตัดตัวที่มีป้ายชื่ออยู่แล้วและตัวที่แผนที่ 2MRS แสดงอยู่แล้ว · 83 แห่งใช้ระยะจากความเร็ว (ไม่มีวิธีวัดตรง)
+   pos = Int16 ทีละ 0.005 ล้านปีแสง (พิกัดสุริยวิถี) · cm = [ชนิด, (M_K + 27) × 25] ต่อแห่ง */
+const LOCALV = { n: 685, scale: 0.005,
+  pos: 'qBB8BZUMcgIAAT4CThG1/Fv3QQ3QAToDqwGEAA4BfBLxBnAOuwZg/qX7iwzQ/iL7IgQ4/3/9SgGyAEQBsQkl/3z7nwMX/9b8WgwjBjEKCxcI/8j1HAGwACQBVQG5AB8BdwHSAEkBAQw6BrMIZgsaAMj6hAGyANMAgwhRAEX8tQHOAPQADAiMANX8wgdcAIX8/wd2AJH8UQGeAK8AkwGzALQAwAHVAOkAFQGMAIkAiQo9BMIBfQYxBQYHsQ9J/znyBgaIA2oDcgHsAOcA/gDEAOAApgH8AJsAfxBNCDkCWAH4ANkAyhAACbACWQUjBfIFzQYkAMr4ZxALCbIBEhQdCxACWQ3RCH0E1A7ACacEXRHnCZ4Bog7yCdsEVQc5AGv3og4JCqoEig4cCswEgw4jCtEEyQoMCKIDeAlrB1kDkwmRB2EDVw7nCnkDkQKRBJQGgQfQBloDDwAMAAIAcwPVBNAEZQKf/R32dA/xD0kI2g8LEEYHuw8UEHUHSgPTBO8EiA5lEAkJgQ9yEB8H3g5HETIKCAPcBBAFtgQe/zn0GA2/EHkKbQ7QDzUE2wIYBe8E2QIeBekE4AWpACfzwgf0AVPxuwwFD7oCngwVD+ICjQaqCBIDwAw0BnLrmAvlBbztIQoSDbH/mwIu/zz2xQkPDcL/jwXVCmoGbQjlBCfuhwF4BeAGrwFIBdcFSAfpDAL/eAEYBV4FwAwVBinRMAFLBrMH5wcxDaXuQgGfBUEFRwGiBQwFBAGnBagG9AAHBu4FqAPtBmnvogUfEBftvAAoBhkFwgIEES76uwEpCQ73EgGXD9P6JQB5DSb8AQCNB/8ImP+qCt/vgP8WChPwbv9ZAsbwbf9SAubwDP5FEoj08v00Eu30sv4oCFX20/6qCK79yfqnMD4OBf56ER0DZ/7jBt33nfs3FQfvrfs4I1kRd/1MCIvuEvunElvvsv+3BDsHG/k9LFkUjvxhESUF5f6iAxX+K/6BAb7zIvuDDGLzSfo9DhPxE/yuENUGH/qHESn8kvpWE3AIu/mbC2vy2PsyDawE6f55BekFe/mtC3HzUv5c/3/0uv6oBbIFw/nmDer8y/hNDNvz1PRYIjYRSPqKD4UFjfefEmP+h/eFElL+//wRBET6//qiDskI3/rjDukI/PgkDZD8rfY4Ed/9bvh0CU/1jvSEGdEOYP5lBYwGZ/TsGJUPLf9S+uzvuOgnF5biRv6WBecGlfVnEXQEKPbCCIPyOvQ6FdkJuP3uBXkGNv4QBSwGBPSXCKzyqvYkDKkCwPRRDy8F1vQ+D0kFrfQiD0MF3+pLHf0NJfFOEDIBROCUFMfhJ/SWBZ3wbeBnJkkOlfVkCV39t+4dEUL/KO9TCrvwEu9hCt3wEO/9CZvwDu/jCY3wDO/eCYzwtNi/GA/hDPj8B6wAZNqWJ7UIbP5cAv0Bve1RCjnwje8cEE0Cy+a7IwodR95pEkDkZe1mEjUEEPLOB2r1DveODKMK9/k0DPwPTt/pIjwPYf2pBdYHXecnIXAcFe/5DvYBQO8QD54C1/EdBSbxGu/mDpYCdv02BU4HeuVcE6b7a/EDCK/3lP0NBVwHZfTXBKb2Ctz4IN0M8PQADZIKGethDTj6af1XBcgHYvG/Da8GN/TiBFf3A/2dBeYHuf2pBOgGYeymDXH+8fxoBVQHPvTACg8FZP3PBLcG6eqiAXngJf0OBfgGZeCwFCv8I/3uBMsG+fJZC18F9fJcC2MFXfFlCYX+3vyRBQII/ORQGM0O/OqbCnb4If1ZBfcH0/RCBVn7Nu0SD5cGH/34BCgHI/31BCsH//xNBcEHK/30BDcHgfyjBd8HHf3vBCwH5OqcCXb3G/yYBUQHxvQlDMkLfPLGClkFG/3sBC4Hp+oECpn4u+qsCfH3k+oGCtX46/wwBaMH6fwvBaMHh+GUCD/p/uRUGHYS4PwjBYYHK/KFCh8F4/zSBNQGdPmYC8IRgOpvCUf4o/xHBZ8H3vwFBVcH3N+DGzYU5fwMBX8HPPnZC28SU/wUBQsHN/wIBjcJrPxbBTwI0ez6D2cNxOzKD3MN5PzPBH0HCP0MBTgIS/C0BmT9mPt6AqcAC+SxEWsJYPScA2H7sfzNBHoHS+cEDhMG9/I7CscJ0/wLBUUI8dItGz4P3/wBBU8IuO26B/b+/OdOC1cB0eyACwUHSfzmBKUHzee+ChkB5fBkAtP2iucxCtf/ffBRCuII2ufICq4B4OmADfwJGegWC9UClOdDCsEAg8H0Fvf6Q+/ZBQz+ued4CtQBtudyCsoB1eedClcCIM5tEvr8pudOCsUB0fzGBCUImecuCsIBj+cZCrQB6+/TCXsItOdNCmUCXPICAB70guf2CcEB3ed0CjsDcufaCYEBqecqCo0Cc+fUCbQBgOfcCTQCm+cACqoCYeenCbMBbee4CfQBdefDCSQCdufECSkCe+fLCUACeefICTwC2O1eBwYCvfOK/+D0gfgOCegOPOdICakBa+eNCZgCzuUeCqwCTOdbCSECUOdXCWACcOeDCewCj+rVCn8IhueXCVUD+e2YCpkK/u2WCqQKHuf3CKUBeueFCTUDAO6QCq0K2PxjBLoHCufKCGUB9+aeCCUBHufOCFsCFOe6CDoCye09CqEKafc9/ub1yu0qCrQK8e7VBt8DBOeICE8CNufKCD4DKeebCFcDIOeNCDkD0ObdB3oCh+X+BW/9qu7aB3EHhOWHBaP8f+XmBYL9fuWNBdj8VvHZCm0RL+VdB38D4+a9BpADrebIBjQExeYtBr8DkuguB/0G0uYxBg8EveYKBsQD5/2ZBN4JIfLpCPEPlfEV/hD3xvHX/dD2kvmsA5cGy/i/BAYJmfqzAs8EDvQq/Y32q/yaAoYFs/eVAxkHA+ALB14MHvMOCC0RxPrfAcsD6/RP/Sf5wdiHBsoMTO/lAyII89tsCQQUJvYJBrENnfDKAegDbPOuAgEGhutH/Xz5c80jDCQcJfN1BQIN3O/1A7EJVPldAw0I6fXp/Gz5OuQEBnsPAfHmApIH4PDlApoH1u9+AzgJAvBoAzwJTdtlB8IUHPaDAuEGTvPQBH0MA+0sAcwE1uHGBc8Q9vl3AS8E3Nm0BhAVPvpjARIEGPoIAUUDpvmn/Y37avq1BLkLQOuc/2wCIvpcARoE5O0lBI4M+OyzARoHhOvyCBoYqt3SCtMe+/ljATwE4fg8A7IIcugXAFYEmeneAOwFcvnxAvgHCPz1A9wJgPLcBMENa+9pBaoP/fYoArUGTPNXAtgHpNfXA6YQB/bpAVkGp/QDBIcL/NbTBF0T8evjArsK+f6p/dD6rvLUBPANfPNqBNAM0fCKBLwNnPLGBOQNhfK7BNENTtuHBawUIPSb/7ABoPK6BOsNgPKpBNINlvTOA2ILCvC4A0AMdfKhBMsNhPMRBEwM+Oh8AI8GzvBrA4ML3OvgA8sN7PHIAYIHSOqHAIAGy+fR/k4Dne/iAscK2MnlBsEdr/KSBAgOC+PjArsOUPKSAXcHLuWj/SIC79NcBIkWrewQAKIFRvaSAWUGC/KXB4cVefZOA2EKo+BHA64Q3/d1A2IKKPbqAVoH+fpaAacEheooAVAJne7kAHEHW/gaAjoHIfKjAm8KgPRh/zAC6PaTAYAGm+9IBBIPmPgCAvoGVO8fBM8O0vPfA/MM/fIo/1wC3fMKAxYLxudB/fgBIvWUAq4JP+7IAWAKofLBAhULPev8BO8Sk/UxAYgGbeqPAssNKeybA5QPjesx/QIBePHjAbgJ/e1mA50O5usCA4IOAPEhAw4NTOeA+g79ctRUCL0kUu1O/qcDZO0C/0YFfufsArkQieeK/VoE9uy3+/b9CvM9AoUK9u3g/ZQCZukl+zb+3+oR/loEB+m0+pj9YPjKABYF3vCmAw8PJulk+iz9BOzA/vgFefnSA7ULT+vJAP0KMe+VAmoNNelI+vP80uuz/a4DMek9+in9ovBqAWMKC/daAVEHl/BDAVcKmvBAAV0KCfUpBO0OlfQOAk8KM/igAY8HaflU/Mj6Oe3UAXsNP+rZAL4MPfXi+ov5Ze92/rUEsvTQ+tL5zefw/FcF0u3q/YsEdOdPAIcNNvJxBHMRK/UwAWcI2s5qA5UhTv6L/O348PbMAlYLrem/+v3/l/SiAKsHaPbhAEkHDfK/AggOqujq+4UDXNOnAJ8aD/FwA3cQfOvI/1cLUPNk/+wFW+ZQ+er/nuwJ+u39GPfn/ykFCd5S/yATaPNm+s/6KPPq/n8FNPka+/r4r/FI/hUFUPC5/bcE6upW+XT+6fpP/8EBCvCY+18APvGpAE0L+++++Vj84+5v+df8/vUY//gE7e5Y+dH8I/ro+8H6vvWk/lEEL/VV+Y745PMK/Nj/5/ZxAMYHxPsgA2MKj+2I+PD8avg8Aa4IEv+3Aa4EH++K98n5tflZ+036NPm1+5X7ffQ3ATwMaPjd+m76rvDdAKoOdfEMAXcOdPlI+4/6APnxAAIIOvXIANIKuvjoAD8IKvkAASwI0fgLAZQI7u/vAPkPcfYTAJMI0u6QAcESTPCq/TEJXvWh+S/7rPZb+rP7SvnZ+mn6MvkD++X6GPnq+sj63vZA+m778/Wi+kH9kfY9+uL72fXA+bz7BPo0+/j6ZfkP+0j7vfOeAUUQt/E8+Nj8QPrZATkKXfzWAMAFk/FG/TMJ6fN0AVkQefMEAQwQd/n0AGgJWfUG+ef7ifbE+Ur8hfcP+uf7jvbi+aL8ZvdK+U76N/o/+6T7CfcC/tUFu/q9/5EFAPkd++78F/cE+q38V/ln+gv7M/ri+ir7tvS0ADcPQvDU/kkQ/vnH+kr7N/oV+9X7Y/nQ+lP84/lp+sv67fZ9+XD8H/vL+jz6Zfqj+tP6ufWU99P52fkm+nT6sPnz+o38R/pB/9UFMvd89w74DfeVAiISOfpN/bQBgfYjAbAPa/oG/24Fa/ZPATcQA+/n/eASyfcf+bX75//5/xMAKfU/AS0Stfa0AM4PRPbnAAMRNfwX/88Dt/cKAVYQufs6/ikDSu/I9aQFePmlAPUM+/tA/6kF+Prl+XX71PBI8Af5gfgD9hj4ZPd6AIcSk/GS+qkRqPpm9kz18vdr9Rr5Qvjq88j3kvaJ/PUPXfr+9Hz47PtkARgSxP5E/4QEqf0KAtUa2v9T++f7yv/YAGYN/ABk8QrywAFi86L0rQJJ8BryMwHzAPQLxAJA8Cjy0gJk8APy5QJS8BvyVQHK/ycJJgPi8jHzRgiQ81cKvgh67i38TwYd7sLvhATP/1AOiATL/04OfwTq/1IO5QQWADAOPQXH/xAOrAV5/zAO0gXX/9UN5wXi/9MNCQD6/wcAvQII/QT9BQwX9Yf0QQ7B88PzUQHc//8AHgSa/TL+Ug+C9w/0BQ/wAhMN7w4qAyANpAQw/ov9PA9M+Rr2fxI3BNgPvA+k+af1mxr+A5MPNQkc/fr63ARGAbQDIxfg9/XvIQn2+iz1ZQjL/Rz7mQFfAOAA',
+  cm: 'BP8B/wT/BP8B/wT4BP8B1AH/Af8B/wH/BP8E/wD/Af8B/wT/BP8B/wOlAf8B/wT/BP8B/wH/Af8B/wT/BP8E/wKyAf8B/wH/BPIB/wTsBP8DxwT/BOAE/wT/BP8E/wTiBP8DpwOcBP8E/wPcBO8E2wH/Af8E/wH0BP8E/wT/BP8E/wPLA8YE/APUBO4E/wT2BP8DygT/A7EE/wT/A7AE/wT/BP8D7QTLBP8B/wT/BP8DwwO+BP8E9wOxBP8D1gT/BPQE0wPBA9QE/wPdBP8E/wTFBOUE/wT/BNkDrAT/BP8DyAT/BP8DqwT4BP8E2QT/BP8D/wT/BP8C/wO9BP8E6QTnA5oE/wTYA6gE+QH/BP8E1AT/BPsD1AT6BP8E/wT/BP8E8gT/BP8EuAOjBP8E4QT/BP8E8ATpBP8E/wTsBP8DYQT/Af8DyAT/A9IE/wOzBP8E/wH5BPEB/wHrAcADvwT/BP8E/wT6BP8D1wO4BP8E/wP/BNUD/wH/A9UE/wT/BP8B6wH/BOQE/wH/BP8E6wT/BP8E/wT/BP8B/wH/BPEB/wT/Af8E2wOpBP8B/wT/BP8E6QT/BP8E8gH/BP8E9wH8BP8E/wT/BP8E/wH/Af8E/wT/BP8E/wT3A+MBoAT/BOQDtAH/A/kB/wToAegB/wH/A9cB/wH/BP8B/wH/A+0B/wT/Af8E/wT/BP8E/wH/A88E/wT/BP8E6AT/BP8E/wH/BP8DywP/BP8DxQT/BP8E1AT/BPAB/wH/BP8E/wPzBP8D+AH/A9gE/wT/BP8B/wT/AeME/wH/Af8B/wHzAf8B/wH/BP8E7QP6BO0B/wT/AdsB/wHxAf8B/wH2BP8E/wHfAf8E/wT/Af8E6wT/BP8E/wT/BP8E/wH/BP8B/wHzBP8E/wT/BP8B2wT/BP8E/wH/BP8B7AH/BP4E/wT/Af8E/wT/BP8EzAT/BP8E/wT/BOAB/wT/BP8E6QT/A8gE/wT/BP8E3QPJBP8D/wTwBP8E3wP/A/8D/wP/A/YE/wOxBP8ChQT/A/UE/wT/BP8E/wT/Af8D7gO7A9ID3APDBP8E/wT3BP8DnAH/BP8DoQT/A6IE/wP/BP8B7gTtAf8E/wT/Af8B/wHABP8B/wH/BP8E/wH/BNUE/wT/BP8B/wT/BP8E/wO0Af8D4AT/BPEE/wT/A6cD2wT/BP8E/wT8BPsE/wT/A5kE/wT/BP8DzwH/BPUE7QT/BP8E/wT/BP8E/wPMBPIE1AT/BP8E/wP0A84E/wT/A54E8wTcBP8E2AT/BP8E/wT/BOMB/wT/BP8B/wT/A5gE/wT/Af8E/wH/BP8E9gH/Af8E/wT/BP8B/wT/BOwE/wP0BP8E7QT/BOcE6gT/A+gE/wT4A80B/wH/BP8E/wPgBP8E/wT/BP8E7gT/BP8E/wT/Af8B/wT/A+QE/wT/BMwE/wT0Af8DygT/Af8E/wH/A9EE9gT8BP8E/wTQBMwB/wO/Af8E+gH/AeYE/wH/BPgE/wT/Af8E/wT/BP8E/wH/BP8B+wH/Af8B/wT/BPQB/wPtBP8E/wPMBP8E/wH7A+UE/wT/AdkE/wT/BP8E5gT/BP8DvATzAf8B/wT/BP8B/wT/Af8B/wH/BP8B/wT/BP8DvAT/BP8E/wT/A9sE/wT/Av8E/wH/Af8DtATqBP8E/wT/Af8DwQT/BP8B/wT/A+oE/wT/BP8EuATrBP8E/wH/BP8E1wOOA7EE/wT/BP8E+gT3BP8E/wT1BP8E/wPJBP8E/wT/BP0E/wOzA8EE8AH/BNQE9QT/Af8B/wH/A5kD0gT/A+oDpwT/A8oD/wT/BOQE/wOTAf8=' };
 
 </script>
 <script>
@@ -6021,6 +6182,7 @@ function updateOrigin(dt) {
     origin.z = A.z + (B.z - A.z) * eo;
     const lg = Math.log(trans.d0) + (Math.log(trans.d1) - Math.log(trans.d0)) * e;
     camState.dist = Math.exp(w > 0 ? lg + (Math.log(trans.peak) - lg) * w : lg);
+    if (trans.elGoal != null) camState.el = trans.el0 + (trans.elGoal - trans.el0) * e;
     if (trans.t >= 1) { trans.on = false; S.focus = trans.to; syncCrumb(); if (isGoto(S.focus)) renderInfo(); }
   } else {
     const w = worldOf(S.focus);
@@ -6069,6 +6231,7 @@ function updateScene() {
                 : (!rec.isMoon || S.moons);
     if (rec.craft && shown) craftPose(rec);
     if (rec.far && shown) farPose(rec);
+    if (rec.kerrSky) rec.mesh.visible = shown;         // ทรงกลมไม่ได้อยู่ใต้ holder ต้องซ่อนตามเอง
     if (rec.line) {
       const pw = rec.parent ? worldOf(rec.parent) : ZERO;
       toScene(pw, rec.line.position);
@@ -6233,6 +6396,7 @@ function focusRadius(id) {
 function defaultDist(id) {
   const rec = REG[id];
   if (rec && rec.goto) return rec.def.viewDist;
+  if (kerrBh(id)) return rec.def.rs * 22;          // หลุมดำเคอร์: ยืนห่าง ~44 M (มีจาน = จานเต็มจอเกือบทั้งหมด แบบในหนัง)
   if (rec && (rec.craft || rec.far)) return rec.def.span * 1.6e-3;   // ขนาดตัวยาน (เมตร) → กิโลเมตร × 1.6
   return focusRadius(id) * (id === 'sun' ? 9 : 6.2);
 }
@@ -6258,19 +6422,77 @@ function setFocus(id, instant) {
       trans.peak = Math.max(sep * 0.55, trans.d0, trans.d1);
       trans.dur = Math.min(6, 3 + Math.log10(1 + sep / LY) * 0.5);
     }
+    // บินไปหาหลุมดำที่มีจาน: ระหว่างทางค่อย ๆ ลดมุมลงมาใกล้ระนาบจาน ไปถึงก็เห็นจานม้วนข้ามหัว
+    syncCamBasis();
+    trans.el0 = camState.el;
+    trans.elGoal = kerrBh(id) ? BH_SIDE_EL : null;
   }
   syncCrumb();
   renderInfo();
 }
 
+/* ── กรอบของมุมกล้อง ─────────────────────────────────────────────────
+   ปกติ az/el วัดในพิกัดสุริยวิถี (z ชี้ขั้วเหนือของสุริยวิถี)
+   แต่เมื่อโฟกัสหลุมดำเคอร์ (ทั้ง 7 ดวง) az/el จะวัดรอบแกนหมุนของหลุมดำแทน
+   ลากซ้าย–ขวาจึงเดินวนรอบจาน ลากขึ้น–ลงคือก้ม/เงยจากระนาบจาน และจานวางแนวนอนบนจอเสมอ
+   (ถ้าใช้กรอบสุริยวิถี มุมข้างจานของ M87* อยู่แถวขั้วสุริยวิถีพอดี ซึ่ง el ถูกจำกัดไว้ ไปไม่ถึง) */
+const CAM_E = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
+const camB = CAM_E.map(v => v.clone());
+const camUp = new THREE.Vector3(0, 0, 1);
+const _cbV = new THREE.Vector3();
+const BH_SIDE_EL = 0.17;                          // มุมเงยจากระนาบจานตอนไปถึง (~10°)
+let camBId = null;                                // null = ยังไม่เคยตั้งกรอบ (มุมจากลิงก์ใช้ได้เลย ไม่ต้องแปลง)
+// หลุมดำเคอร์ทุกดวง (มีจานหรือไม่ก็ตาม — Gaia BH ใช้กล้องแบบเดียวกัน ตามที่ผู้ใช้ขอ 2026-09-17)
+function kerrBh(id) {
+  const r = REG[id];
+  return r && r.far && r.def.kerr ? r.def : null;
+}
+const clampEl = e => Math.max(-1.5, Math.min(1.5, e));
+/* เปลี่ยนกรอบตามเป้าปัจจุบัน โดยกล้องยังอยู่ที่เดิม (แปลง az/el จากกรอบเก่าเป็นกรอบใหม่) */
+function syncCamBasis() {
+  const id = trans.on ? trans.to : S.focus;
+  const bh = kerrBh(id);
+  const key = bh ? id : '';
+  if (key === camBId) return;
+  const nb = bh ? [bh._ax, bh._ay, bh._axis] : CAM_E;
+  if (camBId !== null) {
+    camDirOut(_cbV);
+    camState.az = Math.atan2(_cbV.dot(nb[1]), _cbV.dot(nb[0]));
+    camState.el = clampEl(Math.asin(Math.max(-1, Math.min(1, _cbV.dot(nb[2])))));
+  } else {
+    camUp.copy(nb[2]);
+  }
+  camB.forEach((v, i) => v.copy(nb[i]));
+  camBId = key;
+}
+/* ทิศจากเป้าไปหากล้อง (เวกเตอร์หนึ่งหน่วย พิกัดสุริยวิถี) */
+function camDirOut(out) {
+  const ce = Math.cos(camState.el);
+  return out.set(0, 0, 0)
+    .addScaledVector(camB[0], ce * Math.cos(camState.az))
+    .addScaledVector(camB[1], ce * Math.sin(camState.az))
+    .addScaledVector(camB[2], Math.sin(camState.el));
+}
+/* วางกล้องไว้ทางทิศ (x, y, z) ของเป้า — ทิศในพิกัดสุริยวิถี แปลงเข้ากรอบปัจจุบันให้เอง */
+function setCamDir(x, y, z) {
+  _cbV.set(x, y, z).normalize();
+  camState.az = Math.atan2(_cbV.dot(camB[1]), _cbV.dot(camB[0]));
+  camState.el = clampEl(Math.asin(Math.max(-1, Math.min(1, _cbV.dot(camB[2])))));
+}
+
 const camDir = new THREE.Vector3();
 function applyCamera() {
   const d = Math.max(1e-9, camState.dist / KMU);   // 1e-9 หน่วย = 1 มิลลิเมตร
-  const ce = Math.cos(camState.el);
-  camera.position.set(d * ce * Math.cos(camState.az), d * ce * Math.sin(camState.az), d * Math.sin(camState.el));
+  syncCamBasis();
+  camera.position.copy(camDirOut(_cbV)).multiplyScalar(d);
   camera.near = Math.max(1e-9, d * 2e-4);      // 1e-9 หน่วย ≈ 1 มิลลิเมตร
   camera.far = Math.max(1e7, d * 1e6);
   camera.updateProjectionMatrix();
+  // ทิศ "บน" ของจอค่อย ๆ หมุนตามกรอบใหม่ ภาพจึงไม่กระตุกตอนบินเข้า/ออกจากหลุมดำ
+  if (camUp.dot(camB[2]) < -0.98) camUp.add(camB[0]);
+  camUp.lerp(camB[2], 0.06).normalize();
+  if (camUp.distanceToSquared(camB[2]) < 1e-8) camUp.copy(camB[2]);
+  camera.up.copy(camUp);
   camera.lookAt(0, 0, 0);
   skyCam.quaternion.copy(camera.quaternion);
 
@@ -6390,6 +6612,9 @@ function deepAimOffset(g, distKm) {
 }
 
 function deepViewDist(o) {
+  // โครงสร้างขนาดใหญ่ต้องถอยออกไปไกลพอให้เส้นขอบโผล่ (ดู updateDeep) · กระจุกต้องพ้นระยะที่แผนที่จุดเริ่มชัด
+  if (LSS_TYPES.has(o.t)) return (o.dly / MLY) * 0.7 * MLY * LY;
+  if (o.t === 'cluster') return Math.min(300, Math.max(20, (o.mly || 1) * 0.25)) * MLY * LY;
   return Math.min(1.8, Math.max(0.35, (o.mly || 1) * 0.45)) * MLY * LY;
 }
 
@@ -6416,10 +6641,11 @@ function viewDeep(i, opt) {
   if (o.aim !== false) aimAtDeep(g);
   if (focusLy() / MLY >= 0.2) return;                  // จอดอยู่นอกกาแล็กซีแล้ว เห็นฉากไกลอยู่แล้ว
   const cur = eyeMly();
-  const need = o.aim === false ? cur < 0.5
-                               : cur < 0.8 || cur > Math.max(4, (g.mly || 1) * 1.2);
+  const d = deepViewDist(g), dm = d / LY / MLY;
+  const big = dm > 2;                                  // กระจุก/โครงสร้างขนาดใหญ่ ต้องถอยไกลกว่ากาแล็กซีเดี่ยว
+  const need = o.aim === false ? cur < (big ? dm * 0.5 : 0.5)
+                               : cur < (big ? dm * 0.5 : 0.8) || cur > Math.max(4, (g.mly || 1) * 1.2, dm * 3);
   if (!need) return;
-  const d = deepViewDist(g);
   if (o.aim !== false) {
     const off = deepAimOffset(g, d);                   // เบนให้พ้นวงทางช้างเผือก ไม่งั้นเป้าไปซ่อนอยู่ข้างหลัง
     camState.el = Math.max(-1.5, Math.min(1.5, camState.el + (camState.el > 0 ? -off : off)));
@@ -7190,8 +7416,7 @@ function aimAtStar(i) {
   const s = STARS[i];
   const dx = s.x - starEye.x, dy = s.y - starEye.y, dz = s.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 /* ── แผงข้อมูลของดาว ─────────────────────────────────────────────────── */
@@ -7377,8 +7602,7 @@ function aimAtCons(i) {
   const c = CONSTELLATIONS[i];
   const dx = c.x - starEye.x, dy = c.y - starEye.y, dz = c.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 const _cv = new THREE.Vector3();
@@ -7581,9 +7805,11 @@ function deepGlowTex() {
 
 /* ภาพกาแล็กซีตามชนิด — ปั้นจากสูตร ไม่ใช่ภาพถ่าย · เก็บผ้าใบไว้ใช้ทำรูปในแผงข้อมูลด้วย */
 const GAL_TEX = {};
+/* โครงสร้างขนาดใหญ่ (มหากระจุก · กำแพง · ช่องว่าง) วาดเป็นเส้นประบอกขอบเขตโดยประมาณ ไม่ใช่ภาพของวัตถุ */
+const LSS_TYPES = new Set(['supercluster', 'wall', 'void']);
 function galaxyTex(type) {
   if (GAL_TEX[type]) return GAL_TEX[type];
-  const N = 256, c = document.createElement('canvas');
+  const N = LSS_TYPES.has(type) ? 512 : 256, c = document.createElement('canvas');
   c.width = c.height = N;
   const g = c.getContext('2d'), img = g.createImageData(N, N), d = img.data;
   let seed = 977 + type.length * 7919;
@@ -7649,6 +7875,17 @@ function galaxyTex(type) {
       add((Math.exp(-Math.abs(u) / 0.012) * Math.exp(-Math.abs(v) / 0.4) + Math.exp(-Math.abs(v) / 0.012) * Math.exp(-Math.abs(u) / 0.4)) * 0.45 * edge, 0.8, 0.95, 1.0);
     } else if (type === 'distant') {
       add(Math.exp(-((r / 0.22) ** 2)) * 1.0 + Math.exp(-r / 0.3) * 0.2 * edge, 1.0, 0.5, 0.36);
+    } else if (type === 'supercluster' || type === 'void') {
+      // เส้นประรอบวงที่ขอบ (รัศมี 0.96) · มหากระจุกสีทอง ช่องว่างสีฟ้า — ไม่ระบายข้างใน ไม่งั้นเป็นแผ่นเทาบังแผนที่จุด
+      const dash = sm(-0.3, 0.3, Math.cos(th * 48));
+      const rim = Math.exp(-(((r - 0.96) / 0.006) ** 2)) * (0.2 + 0.8 * dash);
+      if (type === 'void') add(rim * 0.85, 0.6, 0.72, 1.0);
+      else add(rim * 0.85, 1.0, 0.86, 0.6);
+    } else if (type === 'wall') {
+      // แถบยาว: แกนยาวตามแนวนอนของภาพ (หมุนไปตามมุม pa บนท้องฟ้า)
+      const q = Math.hypot(u / 0.94, v / 0.3), qa = Math.atan2(v / 0.3, u / 0.94);
+      const dash = sm(-0.3, 0.3, Math.cos(qa * 48));
+      add(Math.exp(-(((q - 1) / 0.022) ** 2)) * (0.2 + 0.8 * dash) * 0.85, 1.0, 0.86, 0.6);
     } else {                                                         // กระจุกกาแล็กซี
       add(Math.exp(-r / 0.35) * 0.22 * edge, 0.95, 0.9, 0.82);
       for (const [bx, by, bs, bi] of blobs) add(Math.exp(-((u - bx) ** 2 + (v - by) ** 2) / (bs * bs * 0.25)) * bi, 1.0, 0.88, 0.7);
@@ -7663,7 +7900,7 @@ function galaxyTex(type) {
 }
 
 /* จานกาแล็กซีเอียงในสามมิติ: แกนยาวตามมุมบนท้องฟ้า (pa) · มุมเอียงจากอัตราส่วนแกน (ar = cos i) */
-const FLAT_TYPES = new Set(['spiral', 'barred', 'lenticular', 'ring', 'irregular', 'merger']);
+const FLAT_TYPES = new Set(['spiral', 'barred', 'lenticular', 'ring', 'irregular', 'merger', 'wall']);
 function discQuat(o, north) {
   const l = new THREE.Vector3(o.x, o.y, o.z).normalize();
   const n = north.clone().addScaledVector(l, -north.dot(l)).normalize();     // ทิศเหนือบนท้องฟ้า ณ ตำแหน่งนั้น
@@ -7704,7 +7941,7 @@ function buildDeep() {
     deepScene.add(obj);
     deepSprites.push({ sp: obj, o });
     const idx = deepSprites.length - 1;
-    const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' ? ' big' : ''));
+    const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' || LSS_TYPES.has(o.t) ? ' big' : ''));
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
     node.addEventListener('click', ev => { ev.stopPropagation(); flyTo('g', idx); });
@@ -7724,6 +7961,21 @@ function buildDeep() {
     hs.frustumCulled = false;
     deepScene.add(hs);
     deepHalos.push(hs);
+  }
+
+  // กาแล็กซีใกล้ที่วัดระยะจริงแต่ไม่มีป้ายชื่อ (UNGC ใน deep.js) — มากับหน้าเว็บเลย จึงสร้างตอนบูต
+  // ซึ่งพลอยคอมไพล์เชเดอร์ของแผนที่จุดทุกชุดไว้ด้วย (2MRS กับ SDSS/6dF ใช้โปรแกรมเดียวกัน)
+  {
+    const LV = typeof LOCALV !== 'undefined' ? LOCALV : { n: 0, scale: 1, pos: '', cm: '' };
+    const p16 = new Int16Array(b64u8(LV.pos).buffer, 0, LV.n * 3), cm = b64u8(LV.cm);
+    const pos = new Float32Array(Math.max(1, LV.n) * 3), col = new Float32Array(Math.max(1, LV.n) * 3), lum = new Float32Array(Math.max(1, LV.n));
+    for (let i = 0; i < LV.n; i++) {
+      for (let k = 0; k < 3; k++) pos[i * 3 + k] = p16[i * 3 + k] * LV.scale;
+      const pc = GAL_PAL[cm[i * 2]] || GAL_PAL[0];
+      col.set(pc, i * 3);
+      lum[i] = Math.pow(10, -0.4 * (cm[i * 2 + 1] / 25 - 27 + 24));
+    }
+    localPts = galPoints(pos, col, lum, 1);
   }
 
 
@@ -7806,52 +8058,90 @@ function loadCmb() {
   }, undefined, () => { cmbState = -1; });
 }
 
-/* แผนที่กาแล็กซี 2MRS: จุดละกาแล็กซี สีตามชนิด ขนาดตามความสว่างจริง */
+/* ── แผนที่จุดกาแล็กซีจริง ──────────────────────────────────────────────
+   สามชุด ใช้เชเดอร์ตัวเดียวกัน: จุดละกาแล็กซี สีตามชนิด/สีจริง ขนาดตามความสว่างจริง
+   · กาแล็กซีใกล้ (UNGC, ใน deep.js) ระยะวัดจริงถึงราว 36 ล้านปีแสง — เห็นตั้งแต่ถอยพ้นกลุ่มท้องถิ่น
+   · 2MRS (cosmic.js) ทั้งท้องฟ้า ถึงราว 1,400 ล้านปีแสง — โหลดเมื่อถอยพ้น 8 ล้านปีแสง
+   · SDSS + 6dF (survey.js) ฟ้าเหนือ/ใต้ ถึงราว 2,700 ล้านปีแสง — โหลดเมื่อถอยพ้น 60 ล้านปีแสง            */
+// ไม่ทราบชนิด · รี (หรือสีแดง) · เลนส์ · กังหัน (หรือสีฟ้า) · ไร้รูปร่าง · เควซาร์
+const GAL_PAL = [[0.84, 0.86, 0.92], [1.0, 0.78, 0.55], [1.0, 0.87, 0.7], [0.62, 0.76, 1.0], [0.55, 0.7, 1.0], [0.5, 1.0, 0.95]];
+let localPts = null, surveyPts = null, surveyState = 0;
+const SURVEY_GAIN = 1.6;              // จุด SDSS/6dF ส่วนใหญ่อยู่ไกลจึงเล็กสุดที่ 1.3 px — เร่งให้เห็นใยเอกภพ (ปรับเทียบที่ 1,800 ล้านปีแสง)
+function b64u8(s) {
+  const bin = atob(s), u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+function galPoints(pos, col, lum, gain) {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
+  const pts = new THREE.Points(geo, new THREE.ShaderMaterial({
+    uniforms: { fade: { value: 0 }, scale: { value: 1 }, gain: { value: gain } },
+    vertexShader: `attribute float lum; attribute vec3 color; uniform float fade; uniform float scale; uniform float gain;
+      varying vec3 vCol; varying float vA;
+      void main(){
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        float s = scale * sqrt(lum) * 900.0 / max(-mv.z, 0.5);
+        gl_PointSize = clamp(s, 1.3, 6.5);
+        vA = min(1.0, fade * gain * clamp(s / 2.0, 0.28, 1.0));
+        vCol = color;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `varying vec3 vCol; varying float vA;
+      void main(){
+        float q = length(gl_PointCoord - 0.5);
+        if (q > 0.5) discard;
+        gl_FragColor = vec4(vCol * smoothstep(0.5, 0.05, q) * vA, 1.0);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+  }));
+  pts.frustumCulled = false;
+  pts.visible = false;
+  deepScene.add(pts);
+  return pts;
+}
+
 function loadCosmic() {
   cosmicState = 1;
   addScript('cosmic.js').then(ok => {
     const CM = window.COSMIC;
     if (!ok || !CM) { cosmicState = -1; return; }
-    const dec = s => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-    const p8 = dec(CM.pos), cls = dec(CM.cls), mag = dec(CM.mag);
-    const p16 = new Int16Array(p8.buffer, 0, CM.n * 3);
+    const cls = b64u8(CM.cls), mag = b64u8(CM.mag);
+    const p16 = new Int16Array(b64u8(CM.pos).buffer, 0, CM.n * 3);
     const pos = new Float32Array(CM.n * 3), col = new Float32Array(CM.n * 3), lum = new Float32Array(CM.n);
-    // ไม่ทราบชนิด · รี · เลนส์ · กังหัน · ไร้รูปร่าง · เควซาร์
-    const PAL = [[0.84, 0.86, 0.92], [1.0, 0.78, 0.55], [1.0, 0.87, 0.7], [0.62, 0.76, 1.0], [0.55, 0.7, 1.0], [0.5, 1.0, 0.95]];
     for (let i = 0; i < CM.n; i++) {
       pos[i * 3] = p16[i * 3] * CM.scale; pos[i * 3 + 1] = p16[i * 3 + 1] * CM.scale; pos[i * 3 + 2] = p16[i * 3 + 2] * CM.scale;
-      const k = PAL[cls[i]] || PAL[0];
-      col[i * 3] = k[0]; col[i * 3 + 1] = k[1]; col[i * 3 + 2] = k[2];
+      col.set(GAL_PAL[cls[i]] || GAL_PAL[0], i * 3);
       lum[i] = Math.pow(10, -0.4 * (mag[i] / 25 - 27 + 24));          // เทียบกาแล็กซีที่ M_K = −24
     }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     cosmicRaw = { pos, lum, n: CM.n };          // เก็บไว้ให้ชั้นใยสสารมืดคำนวณต่อ
-    geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
-    cosmicPts = new THREE.Points(geo, new THREE.ShaderMaterial({
-      uniforms: { fade: { value: 0 }, scale: { value: 1 } },
-      vertexShader: `attribute float lum; attribute vec3 color; uniform float fade; uniform float scale;
-        varying vec3 vCol; varying float vA;
-        void main(){
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          float s = scale * sqrt(lum) * 900.0 / max(-mv.z, 0.5);
-          gl_PointSize = clamp(s, 1.3, 6.5);
-          vA = fade * clamp(s / 2.0, 0.28, 1.0);
-          vCol = color;
-          gl_Position = projectionMatrix * mv;
-        }`,
-      fragmentShader: `varying vec3 vCol; varying float vA;
-        void main(){
-          float q = length(gl_PointCoord - 0.5);
-          if (q > 0.5) discard;
-          gl_FragColor = vec4(vCol * smoothstep(0.5, 0.05, q) * vA, 1.0);
-        }`,
-      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
-    }));
-    cosmicPts.frustumCulled = false;
-    deepScene.add(cosmicPts);
+    cosmicPts = galPoints(pos, col, lum, 1);
     cosmicState = 2;
+  });
+}
+
+/* SDSS + 6dF: สี 2 บิต (แดง = ใกล้ลำดับแดงของกาแล็กซีดาวแก่ · ฟ้า = ยังสร้างดาว) + ความสว่าง 6 บิต */
+function loadSurvey() {
+  surveyState = 1;
+  addScript('survey.js').then(ok => {
+    const SV = window.SURVEY;
+    if (!ok || !SV) { surveyState = -1; return; }
+    const cm = b64u8(SV.cm);
+    const p16 = new Int16Array(b64u8(SV.pos).buffer, 0, SV.n * 3);
+    // เครื่องเบาใช้ครึ่งเดียว (เว้นตัว) — โครงสร้างยังเห็นเหมือนเดิม แค่บางลง
+    const step = (innerWidth <= 900 || (navigator.hardwareConcurrency || 4) <= 4) ? 2 : 1;
+    const n = Math.ceil(SV.n / step);
+    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), lum = new Float32Array(n);
+    const SC = [GAL_PAL[0], GAL_PAL[1], GAL_PAL[3]];
+    for (let j = 0, i = 0; i < SV.n; i += step, j++) {
+      pos[j * 3] = p16[i * 3] * SV.scale; pos[j * 3 + 1] = p16[i * 3 + 1] * SV.scale; pos[j * 3 + 2] = p16[i * 3 + 2] * SV.scale;
+      col.set(SC[cm[i] >> 6] || SC[0], j * 3);
+      lum[j] = Math.pow(10, -0.4 * ((cm[i] & 63) * 0.16 - 27 + 24));
+    }
+    surveyPts = galPoints(pos, col, lum, SURVEY_GAIN * (step === 2 ? 1.9 : 1));
+    surveyState = 2;
   });
 }
 
@@ -8035,8 +8325,7 @@ function aimAtDeep(o) {
   const p = deepEye;
   const dx = o.x - p.x, dy = o.y - p.y, dz = o.z - p.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 function selectDeep(i) {
@@ -8083,10 +8372,26 @@ function updateDeep() {
   const on = deepFade > 0.01;
   const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
   const homeFade = step01(log10(0.4), log10(3), ld);        // ทางช้างเผือกละเอียดในฉากกาแล็กซีจางไปก่อน แล้วค่อยเป็นภาพนี้
+  const zoomLd = log10(Math.max(1e-12, camState.dist / LY / MLY));
   for (const { sp, o } of deepSprites) {
     if (!on) { sp.visible = false; continue; }
     sp.visible = true;
     const camDist = Math.max(1e-9, sp.position.distanceTo(deepCam.position));
+    if (LSS_TYPES.has(o.t)) {
+      // เส้นขอบโครงสร้างขนาดใหญ่: ขนาดจริงเสมอ · โผล่เมื่อซูมออกกว้างพอเทียบกับขนาดของมัน
+      // (วัดจากระยะซูม ไม่ใช่ระยะจากบ้าน — บินไปยืนข้างกาแล็กซีไกล ๆ แล้วต้องไม่มีวงยักษ์บังจอ)
+      // หายเมื่อกล้องอยู่ข้างใน และจางลงเมื่อใหญ่ล้นจอ
+      const real = o.dly / MLY, px = real / camDist * fovK;
+      const a = step01(0.6, 0.9, camDist / real) * step01(log10(real * 0.2), log10(real * 0.5), zoomLd)
+        * (1 - step01(innerHeight * 1.2, innerHeight * 2.6, px));
+      sp.userData.lssA = a;
+      sp.visible = a > 0.01;
+      sp.scale.setScalar(real);
+      // หลายวงซ้อนกันที่ระยะหลายร้อยล้านปีแสง — ปกติให้จาง ตัวที่เลือกอยู่จึงเด่นขึ้น
+      const selO = deepSel > 0 && deepSprites[deepSel].o === o;
+      sp.material.opacity = deepFade * (selO ? 0.8 : 0.22) * a;
+      continue;
+    }
     const baseMinPx = o.t === 'quasar' || o.t === 'distant' ? 9 : o.t === 'dwarf' ? 11 : 16;
     // เมื่อถอยออกไกลถึงระดับใยเอกภพ (พ้น 30 ล้านปีแสง) ค่อย ๆ ลดขนาดขั้นต่ำลง ให้จุดกาแล็กซี 2MRS รับช่วงต่อ
     const cosmicTaper = 1 - step01(log10(30), log10(400), ld);
@@ -8113,6 +8418,21 @@ function updateDeep() {
     cosmicPts.visible = cf > 0.01;
     cosmicPts.material.uniforms.fade.value = cf;
     cosmicPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
+  // กาแล็กซีใกล้ (UNGC) — โผล่ตั้งแต่ถอยพ้นกลุ่มท้องถิ่น และอยู่ต่อไปเป็นส่วนหนึ่งของแผนที่
+  if (localPts) {
+    const lf = S.cosmic ? deepFade * step01(log10(0.25), log10(1.5), ld) : 0;
+    localPts.visible = lf > 0.01;
+    localPts.material.uniforms.fade.value = lf;
+    localPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
+  // SDSS + 6dF — ไกลกว่า 2MRS จึงค่อยโผล่ตอนถอยออกไปหลายร้อยล้านปีแสง
+  if (S.cosmic && on && surveyState === 0 && dMly > 60) loadSurvey();
+  if (surveyPts) {
+    const sf = S.cosmic ? deepFade * step01(log10(120), log10(700), ld) : 0;
+    surveyPts.visible = sf > 0.01;
+    surveyPts.material.uniforms.fade.value = sf;
+    surveyPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
   }
 
 
@@ -8164,8 +8484,13 @@ function updateDeep() {
     if (_dv.z > 1 || Math.abs(_dv.x) > 0.98 || Math.abs(_dv.y) > 0.96) continue;
     const camDist = Math.max(1e-9, deepSprites[i].sp.position.distanceTo(deepCam.position));
     if (camDist < ((o.dly || 3000) / MLY) * 0.6) continue;
-    const px = ((o.dly || 3000) / MLY) / camDist * fovK;
-    const score = (i === deepSel ? 1e9 : 0) + (o.home ? 1e8 : 0) + (o.de ? 2000 : 0) + (o.t === 'cluster' ? 800 : 0) + px;
+    const lss = LSS_TYPES.has(o.t);
+    if (lss && i !== deepSel && !(deepSprites[i].sp.userData.lssA > 0.3)) continue;
+    const px = lss ? 0 : ((o.dly || 3000) / MLY) / camDist * fovK;
+    // ของที่อยู่ไกลเกินมาตราส่วนที่กำลังดู (เช่นกระจุกที่ไกลหลายพันล้านปีแสงขณะดูกลุ่มท้องถิ่น) ไม่ได้คะแนนพิเศษ
+    const rel = o.home ? 1 : 1 - step01(log10(dMly * 3), log10(dMly * 12), log10(Math.max(1e-6, o.mly)));
+    const score = (i === deepSel ? 1e9 : 0) + (o.home ? 1e8 : 0)
+      + ((o.de ? 2000 : 0) + (o.t === 'cluster' ? 800 : 0) + (lss ? 1500 : 0)) * rel + px;
     cand.push({ i, x: (_dv.x * 0.5 + 0.5) * W, y: (-_dv.y * 0.5 + 0.5) * H, score });
   }
   cand.sort((a, b) => b.score - a.score);
@@ -8190,14 +8515,16 @@ function updateDeep() {
     const nm = node.querySelector('.nm');
     if (nm.textContent !== txt) nm.textContent = txt;
     node.classList.toggle('on', c.i === deepSel);
-    node.style.opacity = String(o.home ? Math.max(deepFade * homeFade, 0.35 * deepFade) : deepFade);
+    node.style.opacity = String(o.home ? Math.max(deepFade * homeFade, 0.35 * deepFade)
+      : LSS_TYPES.has(o.t) && c.i !== deepSel ? deepFade * deepSprites[c.i].sp.userData.lssA : deepFade);
   }
   for (let i = 0; i < deepNodes.length; i++) if (!vis[i]) deepNodes[i].hidden = true;
 }
 
 /* ── แผงข้อมูลกาแล็กซี ── */
 const DEEP_COL = { spiral: '#9fc0ff', barred: '#a8c4ff', lenticular: '#f2dcb8', elliptical: '#ffd49a', irregular: '#8fb4ff',
-  dwarf: '#d8d2c4', ring: '#9fd0ff', merger: '#c8b8ff', quasar: '#7ff0ff', distant: '#ff9a7a', cluster: '#e8d8b8' };
+  dwarf: '#d8d2c4', ring: '#9fd0ff', merger: '#c8b8ff', quasar: '#7ff0ff', distant: '#ff9a7a', cluster: '#e8d8b8',
+  supercluster: '#f2d49a', wall: '#f2d49a', void: '#9fb6ee' };
 const UNIVERSE_AGE_GYR = 13.79;                      // Planck 2018: 13.787 ± 0.020
 const escHtml2 = s => String(s).replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]));
 function fmtLy(ly) {
@@ -8240,7 +8567,9 @@ function renderDeepInfo() {
   const rows = [];
   if (!o.home) rows.push([t.stDist, fmtLy(o.mly * MLY)]);
   rows.push([t.stFromHere, fmtLy(hereMly * MLY)]);
-  if (o.dly) rows.push([t.galDiam, (o.home ? '~' : '') + fmtLy(o.dly)]);
+  // กระจุกและโครงสร้างขนาดใหญ่ไม่มีขอบชัด ขนาดเป็นค่าประมาณ · กำแพงบอกเป็นความยาว
+  if (o.dly) rows.push([o.t === 'wall' ? t.galLength : t.galDiam,
+    (o.home || o.t === 'cluster' || LSS_TYPES.has(o.t) ? '~' : '') + fmtLy(o.dly)]);
   if (o.m) rows.push([t.galMorph, escHtml2(o.m)]);
   if (o.zr != null) {
     rows.push([t.galZ, nf(o.zr, o.zr < 1 ? 4 : 2)]);
@@ -8249,7 +8578,7 @@ function renderDeepInfo() {
   }
   const sec = el('div', 'sec');
   sec.innerHTML = `<h3>${t.secGalaxy}</h3><dl class="readout">` + rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
-  if (!o.home) {
+  if (!o.home && o.t !== 'void') {                    // ช่องว่างไม่มีแสงให้พูดถึง
     const note = el('div', 'note');
     note.innerHTML = '<span></span><p></p>';
     if (o.zr != null) {
@@ -8354,11 +8683,13 @@ const farRecs = [];
 const _eye = { x: 0, y: 0, z: 0 };
 
 /* ตำแหน่งจริงของกล้องในพิกัดสุริยวิถี (กม.) คิดจากสถานะกล้องโดยตรง ใช้ได้ก่อน applyCamera */
+const _eyeV = new THREE.Vector3();
 function eyeWorld(out) {
-  const ce = Math.cos(camState.el), d = camState.dist;
-  out.x = origin.x + d * ce * Math.cos(camState.az);
-  out.y = origin.y + d * ce * Math.sin(camState.az);
-  out.z = origin.z + d * Math.sin(camState.el);
+  const d = camState.dist;
+  camDirOut(_eyeV);                    // az/el อาจวัดรอบแกนหลุมดำ — แปลงผ่านกรอบกล้องเสมอ
+  out.x = origin.x + d * _eyeV.x;
+  out.y = origin.y + d * _eyeV.y;
+  out.z = origin.z + d * _eyeV.z;
   return out;
 }
 function eyeLy() {
@@ -8467,17 +8798,28 @@ function blackHoleMaterial(def) {
    และได้แสงฟุ้ง (bloom) มาฟรีจากเป้าหมายเดียวกัน: ตัดส่วนสว่าง → เบลอสองแกน → บวกทับ
    หลุมดำจึงไม่อยู่ใน layer 0 อีกต่อไป ฉากหลักไม่วาดมัน — ท่อนี้เป็นคนวาดและซ้อนเอง */
 const BH_LAYER = 3;
-const BH_MOVE = 2400000;                    // ไม่ลดความละเอียดตอนกล้องขยับ (ไม่เบลอ)
-const BH_STILL = 2400000;                   // งบตอนภาพนิ่ง — เผื่อให้วาดใหญ่กว่าจอแล้วย่อลงได้
-const BH_SS = 1.4;                          // ตอนนิ่งวาดใหญ่กว่าจอได้กี่เท่า (ลบรอยหยัก)
-const BH_TILEN = 4;                         // ตอนวาดใหญ่ ซอยเป็นกี่ช่องต่อด้าน (เฟรมละช่อง)
-let glowRec = null, bhScale = 1.0, bhBias = 1, bhStill = 0, bhCamStill = 0, bhDrawn = 0, bhDirty = true, bhNeedDraw = true, _bhOrb = 0, _bhOrbRaw = 0, _bhOrbWait = 0, glowScene = null, glowCam = null, glowQuad = null,
-    bhTile = 0, bhRT = null, glowA = null, glowB = null, glowC = null, glowD = null, glowE = null, glowF = null,
-    bhCopy = null, glowCut = null, glowBlur = null, glowAdd = null, bhW = 0, bhH = 0;
+// วาดเต็มความละเอียดจอในเฟรมเดียวเสมอ (ผู้ใช้ยืนยันว่าการ์ดจอรับได้ 2026-09-16)
+// ของเดิมวาดใหญ่กว่าจอแบบซอยทีละช่องหลายเฟรม + ตรึงลายจานแล้วกระโดดเป็นจังหวะ → ผู้ใช้เห็นเป็น "ภาพตัด ๆ ขยับไว"
+const BH_ORB_MAX = 4;                       // ความเร็วลายจานที่แสดงสูงสุด (t_g ต่อวินาทีจริง) — หลุมดำมวลดาวฤกษ์หมุนจริงหลายร้อยรอบ/วินาที
+// โหมด "เร่งให้เห็น" (ค่าเริ่มต้น): ก๊าซหมุนด้วยความเร็วคงที่ต่อวินาทีจริงเสมอ ไม่ขึ้นกับความเร็วเวลาจำลอง
+// ของจริง M87* ขอบในโคจรรอบละ ~9 วัน ที่เวลาปกติจานจึงนิ่งสนิท ผู้ใช้เห็นเป็นภาพนิ่ง 2 มิติ (2026-09-16)
+const BH_ORB_SHOW = 4;
+let bhSwirl = true;
+// พัลซาร์หมุนจริงหลายรอบต่อวินาที (Vela 11.2) — ที่ 60 ภาพ/วินาที ลำแสงกระโดดครั้งละ ~67° ดูกระตุกมั่ว
+// ค่าเริ่มต้นจึงแสดงช้าลง VELA_SLOW เท่า · ผู้ใช้สลับเป็นความเร็วจริงได้ในแผงข้อมูล (2026-09-17)
+const VELA_SLOW = 20;
+let velaSlow = true;
+let glowRec = null, bhCamStill = 0, bhDrawn = false, bhDirty = true, bhNeedDraw = true,
+    _bhOrb = 0, _bhOrbVis = 0, _bhTPrev = 0, _bhNowPrev = 0, glowScene = null, glowCam = null, glowQuad = null,
+    bhRT = null, glowA = null, glowB = null, glowC = null, glowD = null, glowE = null, glowF = null,
+    glowCut = null, glowBlur = null, glowAdd = null, bhW = 0, bhH = 0,
+    bgRT = null, bhLens = null, bgMid = null, bgLow = null, bgDown = null;
 
 function glowInit() {
+  // เข้ารหัสสีตามจอ: ไม่มีผลกับค่าที่เก็บ (เชเดอร์ของเราเขียนค่าดิบ) แต่ทำให้คีย์โปรแกรมตรงกับตอนวาดลงจอ
+  // วัสดุที่คอมไพล์ไว้ตอนบูตจึงใช้ซ้ำได้ ไม่ไปคอมไพล์ใหม่ (ค้าง) ตอนเห็นหลุมดำครั้งแรก
   const rtOpt = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false };
+    format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false, encoding: renderer.outputEncoding };
   bhRT = new THREE.WebGLRenderTarget(4, 4, rtOpt);
   glowA = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นละเอียด 1/2
   glowB = new THREE.WebGLRenderTarget(4, 4, rtOpt);
@@ -8485,27 +8827,54 @@ function glowInit() {
   glowD = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นกลาง 1/4
   glowE = new THREE.WebGLRenderTarget(4, 4, rtOpt);
   glowF = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นหยาบ 1/8
+  // ฉากหลังทั้งจอ ให้หลุมดำดึงไปดัด · เข้ารหัสสีแบบเดียวกับจอ วัสดุทุกชิ้นจึงใช้โปรแกรมเดิม ไม่ต้องคอมไพล์ใหม่
+  bgRT = new THREE.WebGLRenderTarget(4, 4, Object.assign({}, rtOpt, { depthBuffer: true }));
+  // ฉากหลังย่อจนเหลือแต่สีเฉลี่ย ใช้เติมทิศที่แสงวนรอบหลุมดำจนชี้ออกนอกจอ (ไม่มีภาพจริงให้ดึง)
+  bgMid = new THREE.WebGLRenderTarget(4, 4, rtOpt);
+  bgLow = new THREE.WebGLRenderTarget(32, 32, rtOpt);
   const vs = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
-  // ซ้อนภาพหลุมดำ: สีในเป้าหมายคูณอัลฟามาแล้ว จึงผสมแบบ src + dst·(1−a) เงาดำจึงบังฉากหลังได้จริง
-  bhCopy = new THREE.ShaderMaterial({
+  bgDown = new THREE.ShaderMaterial({
     uniforms: { uTex: { value: null }, uTexel: { value: new THREE.Vector2() } }, vertexShader: vs,
     fragmentShader: `uniform sampler2D uTex; uniform vec2 uTexel; varying vec2 vUv;
       void main(){
-        // เฉลี่ยห้าจุดตอนขยายกลับ กลบขั้นบันไดจากการย่อ · uTexel = 0 เมื่อไม่ได้ย่อ จึงคมเท่าเดิม
-        vec4 c = texture2D(uTex, vUv) * 0.44;
-        c += texture2D(uTex, vUv + vec2(uTexel.x, 0.0)) * 0.14;
-        c += texture2D(uTex, vUv - vec2(uTexel.x, 0.0)) * 0.14;
-        c += texture2D(uTex, vUv + vec2(0.0, uTexel.y)) * 0.14;
-        c += texture2D(uTex, vUv - vec2(0.0, uTexel.y)) * 0.14;
-        gl_FragColor = c;
+        vec3 c = texture2D(uTex, vUv + uTexel * vec2(-1.0, -1.0)).rgb + texture2D(uTex, vUv + uTexel * vec2(1.0, -1.0)).rgb
+               + texture2D(uTex, vUv + uTexel * vec2(-1.0, 1.0)).rgb + texture2D(uTex, vUv + uTexel * vec2(1.0, 1.0)).rgb;
+        gl_FragColor = vec4(c * 0.25, 1.0);
       }`,
-    depthTest: false, depthWrite: false, transparent: true, blending: THREE.CustomBlending,
-    blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
-    blendSrcAlpha: THREE.OneFactor, blendDstAlpha: THREE.OneMinusSrcAlphaFactor });
+    depthTest: false, depthWrite: false });
+  // ซ้อนภาพหลุมดำแบบทึบทั้งจอ ทีละพิกเซล:
+  //   พิกเซลที่เชเดอร์เดินรังสีจริง (อัลฟาในเป้าหมาย ≥ 1/255) → ใช้ผลนั้น
+  //   ที่เหลือ (อัลฟา 0: รังสีเฉียดห่าง หรืออยู่นอกแผ่นภาพ) → คิดดัดแสงสนามอ่อนตรงนี้ที่ความละเอียดจอ
+  // ตัดสินรายพิกเซล ไม่อิงขอบแผ่นภาพ จึงไม่มีรอยต่อเป็นกรอบสี่เหลี่ยม
+  bhLens = new THREE.ShaderMaterial({
+    uniforms: { uTex: { value: null }, uBg: { value: null },
+      uCam: { value: new THREE.Vector3() }, uRight: { value: new THREE.Vector3() }, uUp: { value: new THREE.Vector3() },
+      uFwd: { value: new THREE.Vector3() }, uTanH: { value: new THREE.Vector2(1, 1) } },
+    vertexShader: vs,
+    fragmentShader: `precision highp float;
+      uniform sampler2D uTex, uBg;
+      uniform vec3 uCam, uRight, uUp, uFwd;
+      uniform vec2 uTanH;
+      varying vec2 vUv;
+${BH_LENS_GLSL}
+      void main(){
+        vec4 bh = texture2D(uTex, vUv);
+        float w = clamp(bh.a * 255.0, 0.0, 1.0);          // สัดส่วนที่เดินรังสีแล้ว
+        vec3 col = bh.rgb;
+        if (w < 1.0) {
+          vec2 p = vUv * 2.0 - 1.0;
+          vec3 d0 = normalize(uFwd + uRight * (p.x * uTanH.x) + uUp * (p.y * uTanH.y));
+          col += (1.0 - w) * lensSky(bendRay(uCam, d0), vec3(vUv, 1.0));
+        }
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+    depthTest: false, depthWrite: false, blending: THREE.NoBlending });
   glowCut = new THREE.ShaderMaterial({
     uniforms: { uTex: { value: null }, uCut: { value: 0.45 } }, vertexShader: vs,
     fragmentShader: `uniform sampler2D uTex; uniform float uCut; varying vec2 vUv;
-      void main(){ vec3 c = texture2D(uTex, vUv).rgb;
+      void main(){ vec4 t = texture2D(uTex, vUv);
+        // อัลฟา = (1 + 254 × สัดส่วนแสงของจาน/ลำ) / 255 — ดาวฉากหลังที่ถูกดัดมาจึงไม่ฟุ้งตาม
+        vec3 c = t.rgb * max(t.a * 255.0 - 1.0, 0.0) / 254.0;
         gl_FragColor = vec4(max(c - uCut, 0.0) / max(1.0 - uCut, 1e-3), 1.0); }`,
     depthTest: false, depthWrite: false });
   glowBlur = new THREE.ShaderMaterial({
@@ -8526,7 +8895,7 @@ function glowInit() {
                                      + texture2D(uT2, vUv).rgb * uW.y
                                      + texture2D(uT3, vUv).rgb * uW.z, 1.0); }`,
     depthTest: false, depthWrite: false, transparent: true, blending: THREE.AdditiveBlending });
-  glowQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bhCopy);
+  glowQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bhLens);
   glowQuad.frustumCulled = false;
   glowScene = new THREE.Scene();
   glowScene.add(glowQuad);
@@ -8540,40 +8909,40 @@ function glowPass(mat, target) {
   renderer.render(glowScene, glowCam);
 }
 
-/* คืนค่า true ถ้ามีหลุมดำรอซ้อนอยู่ · ต้องเรียกก่อนวาดภาพหลักเพราะสลับเป้าหมายการวาดชั่วคราว */
+/* ขนาดของภาพหลุมดำที่แสดงอยู่เปลี่ยน → ชั้นแสงฟุ้งย่อตาม */
+function bhRTsized(w, h) {
+  bhW = w; bhH = h;
+  const sz2 = (rt, d) => rt.setSize(Math.max(8, Math.floor(w / d)), Math.max(8, Math.floor(h / d)));
+  sz2(glowA, 2); sz2(glowB, 2); sz2(glowC, 4); sz2(glowD, 4); sz2(glowE, 8); sz2(glowF, 8);
+}
+
+/* คืนค่า true ถ้ามีหลุมดำรอซ้อนอยู่ · เรียกหลังวาดฉากหลังลง bgRT แล้ว (เชเดอร์ดึงไปดัด) */
 function bhRender() {
   if (!glowRec || !glowRec.holder.visible) return false;
   if (!glowScene) glowInit();
   if (!bhDirty && bhW) return true;          // ไม่มีอะไรเปลี่ยน — ซ้อนภาพเดิมไปเลย ไม่ต้องเดินรังสีใหม่
+  // เต็มความละเอียดจอ วาดจบในเฟรมเดียว (ขนาดเท่าจอพอดี ตัวซ้อนภาพอ่านตรงพิกเซลต่อพิกเซล)
   const sz = renderer.getDrawingBufferSize(_bhV2);
-  const w = Math.max(16, Math.round(sz.x * bhScale)), h = Math.max(16, Math.round(sz.y * bhScale));
-  let resized = false;
-  if (w !== bhW || h !== bhH) {
-    bhW = w; bhH = h; bhTile = 0; resized = true;
-    bhRT.setSize(w, h);
-    const sz2 = (rt, d) => rt.setSize(Math.max(8, Math.floor(w / d)), Math.max(8, Math.floor(h / d)));
-    sz2(glowA, 2); sz2(glowB, 2); sz2(glowC, 4); sz2(glowD, 4); sz2(glowE, 8); sz2(glowF, 8);
-  }
-  // วาดใหญ่กว่าจอ = งานหนักเกินจะจบในเฟรมเดียว จึงซอยเป็นช่อง วาดเฟรมละช่อง
-  // ไม่ล้างทั้งผืน ภาพความละเอียดก่อนหน้าจึงค้างอยู่ในช่องที่ยังไม่ถึงคิว ไม่มีวาบดำให้เห็น
-  const n = bhScale > 1.05 ? BH_TILEN : 1;
+  const w = Math.max(16, sz.x), h = Math.max(16, sz.y);
+  if (w !== bhW || h !== bhH) { bhRT.setSize(w, h); bhRTsized(w, h); }
+  glowRec.mesh.material.uniforms.uBg.value = bgRT.texture;
+  // ย่อฉากหลังสองขั้น (1/8 แล้ว 32×32) เหลือสีเฉลี่ยไว้เติมทิศที่หลุดนอกจอ
+  bgMid.setSize(Math.max(8, w >> 3), Math.max(8, h >> 3));
+  bgDown.uniforms.uTex.value = bgRT.texture;
+  bgDown.uniforms.uTexel.value.set(2 / w, 2 / h);
+  glowPass(bgDown, bgMid);
+  bgDown.uniforms.uTex.value = bgMid.texture;
+  bgDown.uniforms.uTexel.value.set(1 / bgMid.width, 1 / bgMid.height);
+  glowPass(bgDown, bgLow);
+  glowRec.mesh.material.uniforms.uBgLow.value = bgLow.texture;
   const keep = camera.layers.mask;
   camera.layers.set(BH_LAYER);                 // เฉพาะหลุมดำ ไม่มีอย่างอื่นในเป้าหมายนี้
   renderer.setRenderTarget(bhRT);
   renderer.setClearColor(0x000000, 0);
-  if (resized) renderer.clear(true, true, false);
-  if (n > 1) {
-    const tw = Math.ceil(bhW / n), th = Math.ceil(bhH / n);
-    renderer.setScissorTest(true);
-    renderer.setScissor((bhTile % n) * tw, Math.floor(bhTile / n) * th, tw, th);
-  }
   renderer.clear(true, true, false);
   renderer.render(scene, camera);
-  renderer.setScissorTest(false);
   camera.layers.mask = keep;
   renderer.setClearColor(0x05070c, 1);
-  if (n > 1 && ++bhTile < n * n) { renderer.setRenderTarget(null); return true; }
-  bhTile = 0;
   // ตัดเก็บเฉพาะส่วนสว่าง แล้วเบลอลงไปทีละชั้น ชั้นถัดไปย่อครึ่งหนึ่งเสมอ
   // การอ่านภาพชั้นก่อนหน้าที่ความละเอียดต่ำกว่าเท่ากับย่อและเบลอไปในตัว แสงจึงฟุ้งไกลขึ้นทุกชั้น
   glowCut.uniforms.uTex.value = bhRT.texture;
@@ -8590,16 +8959,29 @@ function bhRender() {
   blurTo(glowA, glowC, glowD);          // ชั้น 1/4
   blurTo(glowD, glowE, glowF);          // ชั้น 1/8
   renderer.setRenderTarget(null);
-  bhDrawn = bhScale;
+  bhDrawn = true;
   bhNeedDraw = false;
   return true;
 }
 
+/* ดัดแสงทั้งจอ: ฉากหลังวาดลงภาพพักก่อน แล้วหลุมดำกับตัวซ้อนภาพค่อยดึงไปใช้ */
+function bgTarget() {
+  if (!glowScene) glowInit();
+  const sz = renderer.getDrawingBufferSize(_bhV2);
+  if (bgRT.width !== sz.x || bgRT.height !== sz.y) bgRT.setSize(sz.x, sz.y);
+  renderer.setRenderTarget(bgRT);
+}
+
 function bhComposite() {
-  bhCopy.uniforms.uTex.value = bhRT.texture;
-  const soft = 0;
-  bhCopy.uniforms.uTexel.value.set(0, 0);
-  glowQuad.material = bhCopy;
+  const L = bhLens.uniforms, u = glowRec.mesh.material.uniforms;
+  L.uTex.value = bhRT.texture;
+  L.uBg.value = bgRT.texture;
+  L.uCam.value = u.uCam.value; L.uRight.value = u.uRight.value; L.uUp.value = u.uUp.value;
+  L.uFwd.value = u.uFwd.value; L.uTanH.value = u.uTanH.value;
+  // เฟรมที่ใช้ภาพหลุมดำเดิม bhRender คืนค่าทันทีโดยยังค้างเป้าหมายไว้ที่ bgRT — ต้องกลับมาวาดลงจอเอง
+  // (ถ้าวาดลง bgRT ขณะอ่าน bgRT อยู่ WebGL ปฏิเสธทั้งคำสั่ง จอไม่อัปเดต)
+  renderer.setRenderTarget(null);
+  glowQuad.material = bhLens;
   renderer.render(glowScene, glowCam);
   glowAdd.uniforms.uT1.value = glowA.texture;
   glowAdd.uniforms.uT2.value = glowD.texture;
@@ -8667,11 +9049,14 @@ function hostSkyPose(rec) {
 const smoothClamp = (x, a, b) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
 /* ตัวแปรร่วมของหลุมดำเคอร์ — งบการเดินรังสีปรับตามความลื่นของเฟรม */
-let bhSteps = 170, bhBusy = false;
+// ก้าวสูงสุดต่อรังสี — รังสีที่วิ่งข้ามแกนหมุนต้องกวาดมุม φ ครึ่งรอบ ใช้ก้าวเพิ่มอีกราว 50
+// งบ 170 เดิมไม่พอ รังสีแถวแกนเดินไม่จบกลายเป็นเส้นดำตั้งกลางภาพ (วัดแล้ว 600 ไม่เหลือพิกเซลค้างเลยแม้ซูมใกล้)
+// รังสีส่วนใหญ่จบเองก่อนถึงงบ จึงเพิ่มงานเฉพาะรังสีที่ยากจริง
+const bhSteps = 600;
 const _bhV = new THREE.Vector3(), _bhR = new THREE.Vector3(), _bhU = new THREE.Vector3();
 const _bhV2 = new THREE.Vector2();
-const _qVela = new THREE.Quaternion(), _vVela = new THREE.Vector3(), _cVela = new THREE.Vector3();
-const _bhSig = [0, 0, 0, 0, 0, 0, 0];       // สภาพของภาพเฟรมก่อน ใช้ดูว่ามีอะไรเปลี่ยนไหม
+const _qVela = new THREE.Quaternion(), _vVela = new THREE.Vector3(), _cVela = new THREE.Vector3(), _sVela = new THREE.Vector3();
+const _bhSig = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // สภาพของภาพเฟรมก่อน ใช้ดูว่ามีอะไรเปลี่ยนไหม
 
 /* วางแกนหมุนของหลุมดำในพิกัดจริง: เอียง incl องศาจากแนวสายตา ไปทางมุมตำแหน่ง axisPA บนท้องฟ้า
    (มุมตำแหน่งวัดจากทิศเหนือของท้องฟ้าไปทางตะวันออก) แล้วสร้างฐานตั้งฉากไว้ให้เชเดอร์ใช้
@@ -8701,6 +9086,36 @@ function kerrFrame(f) {
      · ดอปเพลอร์บีมมิง + เรดชิฟต์จากแรงโน้มถ่วง (I ∝ g⁴ · อุณหภูมิที่เห็น ∝ g) — ด้านที่วิ่งเข้าหาเราจึงสว่างกว่ามาก
    วางแกนหมุนตามของจริง: เอียง 17° จากแนวสายตา มุมตำแหน่งบนท้องฟ้าตามลำอนุภาคของ M87
    ดูจากโลกจึงเห็นเป็นวงแบบภาพ EHT — บินไปดูจากด้านข้างถึงจะเห็นจานม้วนแบบในหนัง */
+/* ── ดัดแสงทั้งจอ: ชิ้นเชเดอร์ที่ใช้ร่วมกันระหว่างหลุมดำกับตัวซ้อนภาพ (bhLens) ─────────
+   หน่วย M = GM/c² · เวกเตอร์ทุกตัวอยู่ในกรอบหลุมดำ (แกนหมุน = z)
+   ผู้ใช้ต้องประกาศ uRight uUp uFwd uTanH uBg ไว้ก่อนแทรกชิ้นนี้
+   ฉากหลัง (uBg) คือภาพที่ renderFrame วาดไว้แล้วทั้งจอ จึงดัดได้ทุกอย่างที่อยู่ในฉาก ทั้งดาว กาแล็กซี และฟ้าของกาแล็กซีแม่ */
+const BH_LENS_GLSL = `
+      /* แรงดัดที่เหลือตั้งแต่จุด P (ทิศ D) ออกไปถึงอนันต์ — สนามอ่อนของชวาร์สชิลด์ถึงพจน์อันดับสอง
+         ทั้งเส้นดัด 4/b + 15π/(4b²) · เริ่มกลางทางได้สัดส่วน (1 − P·D/|P|)/2 ของทั้งหมด */
+      vec3 bendRay(vec3 P, vec3 D){
+        float rP = length(P), s = dot(P, D);
+        vec3 perp = P - s * D;
+        float b = length(perp);
+        if (b < 1e-3) return D;
+        float al = min((4.0 / b + 11.780972 / (b * b)) * 0.5 * (1.0 - s / rP), 3.0);
+        return normalize(D * cos(al) - perp * (sin(al) / b));
+      }
+      /* ทิศ → ตำแหน่งบนจอ (xy) กับน้ำหนัก z (1 = อยู่ในจอ · 0 = นอกจอหรืออยู่หลังกล้อง) */
+      vec3 lensScreen(vec3 d){
+        float z = dot(d, uFwd);
+        if (z < 1e-3) return vec3(0.5, 0.5, 0.0);
+        vec2 p = vec2(dot(d, uRight), dot(d, uUp)) / (z * uTanH);
+        return vec3(p * 0.5 + 0.5, 1.0 - smoothstep(0.93, 1.0, max(abs(p.x), abs(p.y))));
+      }
+      /* ฟ้าตามทิศที่ถูกดัด (สนามอ่อน) — ถ้าหลุดขอบจอ ใช้ภาพเดิมของพิกเซลนั้น (ทิศต่างกันไม่กี่องศา) */
+      vec3 lensSky(vec3 dE, vec3 scr0){
+        vec3 base = texture2D(uBg, scr0.xy).rgb;
+        vec3 sc = lensScreen(dE);
+        return sc.z > 0.0 ? mix(base, texture2D(uBg, sc.xy).rgb, sc.z) : base;
+      }
+`;
+
 function kerrBlackHoleMaterial(def) {
   const a = Math.min(Math.max(def.spin != null ? def.spin : 0.9, 0), 0.998);
   // รัศมีวงโคจรเสถียรวงในสุด (ISCO) ของเคอร์ — Bardeen, Press & Teukolsky 1972
@@ -8713,21 +9128,43 @@ function kerrBlackHoleMaterial(def) {
       uCam: { value: new THREE.Vector3(0, 0, 60) },      // ตำแหน่งกล้องในกรอบหลุมดำ (M)
       uRight: { value: new THREE.Vector3(1, 0, 0) },     // แกนของแผ่นภาพในกรอบหลุมดำ
       uUp: { value: new THREE.Vector3(0, 1, 0) },
-      uHalf: { value: def.ext },                         // ครึ่งความกว้างของแผ่นภาพ (หน่วย M)
       uRin: { value: isco }, uRout: { value: def.rout != null ? def.rout : 18 },
       uSteps: { value: 170 }, uOrb: { value: 0 }, uFlick: { value: 0 },
       uExpo: { value: 3.2 }, uStars: { value: def.acc ? 0.55 : 1.1 }, uStarSc: { value: 400 },
-      uJet: { value: def.jet || 0 }
+      uJet: { value: def.jet || 0 },
+      // ดัดแสงทั้งจอ: ภาพฉากหลังที่วาดไว้แล้ว + ทิศกล้อง/มุมรับภาพ (กรอบหลุมดำ) ไว้ฉายทิศที่ถูกดัดกลับลงจอ
+      uBg: { value: null }, uBgLow: { value: null }, uFwd: { value: new THREE.Vector3(0, 0, -1) }, uTanH: { value: new THREE.Vector2(1, 1) },
+      uToWorld: { value: new THREE.Matrix3() }, uHost: { value: 0 }, uCoreW: { value: new THREE.Vector3(0, 0, 1) }
     },
-    vertexShader: `varying vec2 vUv;
-      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    // ทรงกลมหนึ่งหน่วยล้อมกล้อง ไม่หมุน → ตำแหน่งบนผิว = ทิศของรังสี (พิกัดฉาก)
+    vertexShader: `varying vec3 vDir;
+      void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `precision highp float;
-      uniform float uA, uHalf, uRin, uRout, uSteps, uOrb, uFlick, uExpo, uStars, uStarSc, uJet;
-      uniform vec3 uCam, uRight, uUp;
-      varying vec2 vUv;
-      #define MAXSTEP 200
+      uniform float uA, uRin, uRout, uSteps, uOrb, uFlick, uExpo, uStars, uStarSc, uJet, uHost;
+      uniform vec3 uCam, uRight, uUp, uFwd, uCoreW;
+      uniform vec2 uTanH;
+      uniform mat3 uToWorld;
+      uniform sampler2D uBg, uBgLow;
+      varying vec3 vDir;
+      #define MAXSTEP 600
       #define JBETA 0.95                      // ความเร็วพลาสมาในลำ (เท่าความเร็วแสง)
       #define JGAM 3.2026                     // แฟกเตอร์ลอเรนซ์ที่ความเร็วนั้น
+${BH_LENS_GLSL}
+      /* ดาวของกาแล็กซีแม่ — สูตรเดียวกับทรงกลม hostSky ทุกตัวอักษร ส่วนที่ต่อจากภาพฉากหลังจึงไม่มีรอยต่อ */
+      float hsh(vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 33.33); return fract((p.x + p.y) * p.z); }
+      float hostLayer(vec3 d, float sc, float thr, float rad){
+        vec3 p = d * sc, ip = floor(p), fp = p - ip;
+        float h = hsh(ip);
+        if (h < thr) return 0.0;
+        vec3 c = vec3(hsh(ip + 11.3), hsh(ip + 27.7), hsh(ip + 41.1)) * 0.5 + 0.25;
+        return smoothstep(rad, 0.0, length(fp - c)) * (0.35 + fract(h * 91.0));
+      }
+      vec3 hostStars(vec3 d){
+        float toCore = max(dot(d, uCoreW), 0.0);
+        float dens = mix(0.55, 1.0, pow(toCore, 1.5));
+        float s = hostLayer(d, 210.0, 0.9955 - 0.003 * dens, 0.12) + hostLayer(d, 95.0, 0.9975 - 0.002 * dens, 0.10) * 0.7;
+        return (vec3(1.0, 0.86, 0.66) * s * 1.6 + vec3(0.30, 0.22, 0.14) * pow(toCore, 6.0) * 0.5 * dens) * uHost;
+      }
 
       float hash31(vec3 p){
         p = fract(p * 0.1031);
@@ -8797,7 +9234,7 @@ function kerrBlackHoleMaterial(def) {
       void deriv(float a, float a2, float L, float L2, float r, float th, float pr, float pth,
                  out float dr, out float dth, out float dph, out float dpr, out float dpth){
         float s = sin(th), c = cos(th);
-        s = (s < 0.0 ? -1.0 : 1.0) * max(abs(s), 3e-3);      // กันหารศูนย์บนแกนหมุน
+        s = (s < 0.0 ? -1.0 : 1.0) * max(abs(s), 1e-5);      // กันหารศูนย์บนแกนหมุน (เล็กพอให้รังสี L ≠ 0 ไม่ชน)
         float r2 = r * r;
         float Sig = r2 + a2 * c * c;
         float Del = max(r2 - 2.0 * r + a2, 1e-3);             // การเดินหยุดก่อนถึงขอบฟ้าอยู่แล้ว
@@ -8823,11 +9260,13 @@ function kerrBlackHoleMaterial(def) {
         float a = uA, a2 = uA * uA;
         float rh = 1.0 + sqrt(max(1.0 - a2, 0.0));            // ขอบฟ้าเหตุการณ์ของเคอร์
 
-        // จุดบนแผ่นภาพ (คาร์ทีเซียนในกรอบหลุมดำ หน่วย M) → ทิศของรังสีที่เข้ากล้องพิกเซลนี้
-        vec3 tgt = uRight * ((vUv.x - 0.5) * 2.0 * uHalf) + uUp * ((vUv.y - 0.5) * 2.0 * uHalf);
-        vec3 d0 = normalize(tgt - uCam);
+        // ทิศของรังสีที่เข้ากล้องพิกเซลนี้ (พิกัดฉาก) → หมุนเข้ากรอบหลุมดำ (แกนหมุน = z)
+        // uToWorld มีคอลัมน์เป็นแกนของกรอบหลุมดำ ส่วนกลับจึงคือการดอตกับแต่ละคอลัมน์
+        vec3 dw = normalize(vDir);
+        vec3 d0 = normalize(vec3(dot(dw, uToWorld[0]), dot(dw, uToWorld[1]), dot(dw, uToWorld[2])));
 
-        // รังสีที่เฉียดห่างมากและไม่ตัดระนาบจาน — ไม่ต้องเดินเลย (แผ่นภาพกินพื้นที่จอเยอะตอนเข้าใกล้)
+        // รังสีที่เฉียดห่างมากและไม่ตัดระนาบจาน — ไม่ต้องเดิน ปล่อยให้ตัวซ้อนภาพ (bhLens) ดัดด้วยสูตรสนามอ่อน
+        // อัลฟา 0 = "ยังไม่ได้คิด" · พิกเซลที่เดินรังสีแล้วอัลฟาอย่างน้อย 1/255 เสมอ
         float bImp = length(cross(uCam, d0));
         float tPl = abs(d0.z) > 1e-6 ? -uCam.z / d0.z : -1.0;
         float rPl = tPl > 0.0 ? length(uCam + d0 * tPl) : 1e9;
@@ -8855,6 +9294,12 @@ function kerrBlackHoleMaterial(def) {
         float L = np * sqrt(A0 / Sig0) * s0;
         float E = al0 + om0 * L;
         L /= E;
+        // รังสีที่วิ่งเฉียดแกนหมุนมาก (L เล็กจิ๋ว): ในพิกัด Boyer–Lindquist φ ต้องกวาดครึ่งรอบในช่วงสั้นมาก
+        // ตัวกันหารศูนย์ข้างบนทำให้กวาดไม่ครบ ทิศปลายทางเพี้ยน → เป็นเส้นดำตามแนวแกนกลางภาพ
+        // ให้รังสีกลุ่มนี้ผ่านแกนพอดี (L = 0) แทน — รังสีที่ L ใหญ่กว่านี้เข้าใกล้แกนไม่ถึง 3 เท่าของตัวกัน
+        // เกณฑ์ต้องเล็กกว่าหนึ่งพิกเซลแม้กล้องอยู่ใกล้ขั้ว (ตอนมองจากบน L ต่อพิกเซลเล็กลงมาก)
+        // เคยใช้ 6e-4 → มองจากบนแล้วเห็นแถบตั้งกว้าง ~5 px ที่ทุกแถวเป็นสีเดียว
+        if (abs(L) < 3e-5 * max(r0, max(uRout * 1.6, 30.0))) L = 0.0;
         float pr = nr * sqrt(Sig0 / Del0) / E;
         float pth = nt * sqrt(Sig0) / E;
         float Ecam = (1.0 - om0 * L) / al0;                   // พลังงานที่กล้องวัดได้
@@ -8949,7 +9394,10 @@ function kerrBlackHoleMaterial(def) {
               float fil = pow(clamp(turb * 1.25, 0.0, 1.0), 2.2);
               col += trans * op * em * g2 * g2 * (0.25 + 1.7 * fil) * bbCol(pow(em, 0.25) * g);
               // ร่องมืดโปร่งแสงบ้าง เห็นชั้นที่อยู่หลังลาง ๆ จานจึงดูเป็นก๊าซ ไม่ใช่แผ่นทึบ
-              trans *= 1.0 - op * (0.62 + 0.36 * fil);
+              // ขอบนอกแทบไม่มีแสง (∝ r⁻³) ถ้าทึบเต็มที่จะเป็นวงรีมืดบังดาวข้างหลังเหมือนแผ่นกระดาษ
+              // จึงให้ความทึบตามความสว่างที่ตาเห็น ส่วนที่มืดจนมองไม่ออกกลายเป็นก๊าซบางที่ดาวลอดผ่านได้
+              float seen = smoothstep(0.004, 0.08, em * g2 * g2);
+              trans *= 1.0 - op * (0.62 + 0.36 * fil) * seen;
               if (trans < 0.02) { fate = 3.0; break; }
             }
           }
@@ -8960,21 +9408,36 @@ function kerrBlackHoleMaterial(def) {
         // หลุดออกไป: ดาวฉากหลังที่ถูกเลนส์ดัด · ตกลงไปหรือเดินไม่จบ: ดำสนิท (บังฉากหลัง)
         // เดินจนหมดงบ: ถ้ากำลังวิ่งออกและพ้นจานไปแล้ว ยังไงก็หลุด อย่าเหมาว่าถูกกลืน
         if (fate == 0.0 && pr > 0.0 && r > uRout) fate = 2.0;
+        vec3 sky = vec3(0.0);
         if (fate == 2.0) {
-          if (trans > 0.01 && uStars > 0.0) {
-            vec3 dEsc = normalize(blCart(r, th, ph, a) - blCart(rPrev, thPrev, phPrev, a));
-            float amt = uStars * smoothstep(0.01, 0.12, 1.0 - dot(dEsc, d0));
-            if (amt > 0.002) col += trans * amt * starField(dEsc, uStarSc) * vec3(0.95, 0.97, 1.0);
+          if (trans > 0.01) {
+            // ทิศตอนพ้นย่านที่เดินรังสี + แรงดัดที่เหลือจากตรงนั้นถึงอนันต์ (สูตรเดียวกับรังสีที่ไม่ได้เดิน รอยต่อจึงเนียน)
+            vec3 pE = blCart(r, th, ph, a);
+            vec3 dEsc = bendRay(pE, normalize(pE - blCart(rPrev, thPrev, phPrev, a)));
+            vec3 sc = lensScreen(dEsc);
+            vec3 far = vec3(0.0);
+            if (sc.z < 1.0) {
+              // ทิศนั้นอยู่นอกจอ (แสงวนรอบหลุมดำมา) — ไม่มีภาพฉากหลังให้ดึง
+              // ใช้สีเฉลี่ยของฉากหลังตรงขอบจอฝั่งเดียวกับทิศนั้น + ดาวสุ่ม (นอกกาแล็กซีใช้ดาวของกาแล็กซีแม่)
+              vec2 q = vec2(dot(dEsc, uRight) / uTanH.x, dot(dEsc, uUp) / uTanH.y);
+              float qm = max(abs(q.x), abs(q.y));
+              vec3 amb = texture2D(uBgLow, qm > 1e-4 ? 0.5 + 0.47 * q / qm : vec2(0.5)).rgb;
+              far = hostStars(uToWorld * dEsc)
+                  + (1.0 - uHost) * (amb + uStars * min(starField(dEsc, uStarSc), 1.2) * vec3(0.72, 0.74, 0.78));
+            }
+            sky = trans * (sc.z > 0.0 ? mix(far, texture2D(uBg, sc.xy).rgb, sc.z) : far);
           }
-        } else {
-          trans = 0.0;                                        // ตกลงหลุม · จานบังหมด · เดินไม่จบ = ทึบ
         }
+        // ตกลงหลุม · จานบังหมด · เดินไม่จบ = ดำสนิท (sky = 0)
 
-        float alpha = 1.0 - trans;
-        float edge = 1.0 - smoothstep(0.44, 0.5, max(abs(vUv.x - 0.5), abs(vUv.y - 0.5)));
-        gl_FragColor = vec4(aces(col * uExpo) * edge, alpha * edge);
+        vec3 em = aces(col * uExpo);
+        float le = dot(em, vec3(0.299, 0.587, 0.114)), ls = dot(sky, vec3(0.299, 0.587, 0.114));
+        // อัลฟา = (1 + 254 × สัดส่วนแสงของจาน/ลำ) / 255 → ≥ 1/255 บอกตัวซ้อนภาพว่าพิกเซลนี้คิดแล้ว
+        // และบอกชั้นแสงฟุ้งว่าส่วนไหนเป็นแสงของจาน (ดาวฉากหลังที่ถูกดัดมาไม่ฟุ้งตาม)
+        gl_FragColor = vec4(em + sky, (1.0 + 254.0 * le / max(le + ls, 1e-4)) / 255.0);
       }`,
-    transparent: true, premultipliedAlpha: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide
+    // ซ้อนเองใน bhComposite (ทึบทั้งผืน) — อัลฟาในเป้าหมายไม่ใช่ความทึบ
+    transparent: false, blending: THREE.NoBlending, depthWrite: false, depthTest: false, side: THREE.DoubleSide
   });
 }
 
@@ -8996,6 +9459,16 @@ function buildVelaPulsar3D(def) {
   const root = new THREE.Group();
   // สเกลอิงตามความกว้าง def.span (8 ปีแสง) โดยในพิกัดจำลอง 80 หน่วยเทียบเท่า def.span
   root.scale.setScalar(def.span / 80);
+
+  // แกนหมุน (+Y ของโมเดล) หันตามค่าที่วัดจากทอรัสในภาพจันทรา (Ng & Romani 2004):
+  // spinPA = มุมของแกนบนท้องฟ้า (ค่าตีพิมพ์ 130.6° ชี้ SE) · spinInc = มุมเอียงจากแนวสายตา
+  // ให้ฝั่ง +Y (วงแหวนคู่ + เจ็ตยาว) อยู่ทาง NW ตามภาพ = spinPA + 180° และเอียงเข้าหาโลก
+  // เฟรมแม่คือ skyQuat(): +X ตะวันตก · +Y เหนือ · +Z ชี้กลับมาหาโลก
+  if (def.spinPA != null && def.spinInc != null) {
+    const pa = (def.spinPA + 180) * DEG, inc = def.spinInc * DEG;
+    root.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(
+      -Math.sin(pa) * Math.sin(inc), Math.cos(pa) * Math.sin(inc), Math.cos(inc)));
+  }
 
   const spriteTex = velaSpriteTexture();
 
@@ -9046,52 +9519,70 @@ function buildVelaPulsar3D(def) {
   });
   root.add(fieldGroup);
 
-  // 3) แกนหมุนพัลซาร์ + ลำแสงเจ็ตเชิงสัมพัทธภาพเอียง 35° พร้อมกรวยกวาด
+  // 3) แกนหมุนพัลซาร์ (= +Y ของ root) + ลำแสงเจ็ตเชิงสัมพัทธภาพเอียง 35° พร้อมกรวยกวาด
   const spinAxis = new THREE.Group();
-  spinAxis.rotation.set(10 * DEG, 0, -14 * DEG);
+  const jetTilt = (def.jetAngle || 35) * DEG;
 
   const magTilt = new THREE.Group();
-  magTilt.rotation.z = (def.jetAngle || 35) * DEG;
+  magTilt.rotation.z = jetTilt;
   spinAxis.add(magTilt);
 
-  const BEAM_LEN = 180;
-  function makeBeam(s) {
-    const g = new THREE.Group();
-    const cMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12, 0.12, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0xeafffb, transparent: true, opacity: 1 * s,
-        blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    const gMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.45, 0.45, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0x21e6c8, transparent: true, opacity: 0.34 * s,
-        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    const hMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1.2, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0x12c9b4, transparent: true, opacity: 0.10 * s,
-        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    g.add(cMesh, gMesh, hMesh);
-    g.userData.core = cMesh;
-    return g;
+  // ลำแสงสว่างเต็มช่วงแรก แล้วค่อย ๆ จางจนหายที่ปลาย (t = 0 ที่ดาว → 1 ที่ปลาย) ไม่ตัดกุด
+  const BEAM_LEN = 260;
+  const beamFade = t => {
+    const s = Math.min(1, Math.max(0, (t - 0.25) / 0.75));
+    return 1 - s * s * (3 - 2 * s);
+  };
+  function beamCylinder(r, color, opacity, side) {
+    const geo = new THREE.CylinderGeometry(r, r, BEAM_LEN, 16, 16, true);
+    const p = geo.attributes.position, col = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) {
+      const f = beamFade(Math.abs(p.getY(i)) / (BEAM_LEN / 2));
+      col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = f;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, vertexColors: true, transparent: true, opacity,
+      side, blending: THREE.AdditiveBlending, depthWrite: false }));
   }
-
-  const beamMain = makeBeam(1);
+  const beamMain = new THREE.Group();
+  const beamCore = beamCylinder(0.12, 0xeafffb, 1, THREE.FrontSide);
+  beamMain.add(beamCore,
+    beamCylinder(0.45, 0x21e6c8, 0.34, THREE.DoubleSide),
+    beamCylinder(1.2, 0x12c9b4, 0.10, THREE.DoubleSide));
   magTilt.add(beamMain);
 
-  // 5 ghost trailing beams สำหรับแสดงความต่อเนื่องของลำแสงหมุนเร็ว
-  const GHOSTS = 5, ghosts = [], ghostGroup = new THREE.Group();
-  spinAxis.add(ghostGroup);
-  for (let i = 1; i <= GHOSTS; i++) {
-    const lag = new THREE.Group();
-    const tilt = new THREE.Group();
-    tilt.rotation.z = (def.jetAngle || 35) * DEG;
-    tilt.add(makeBeam(0.42 * (1 - i / (GHOSTS + 1))));
-    lag.add(tilt);
-    ghostGroup.add(lag);
-    ghosts.push(lag);
+  // พัดแสงตามหลังลำแสง: ผิวกรวยบางส่วนที่จางลงตามมุมที่เลยไป (แทนลำแสงเงา 5 เส้นที่เว้นระยะคงที่จนดูเป็นซี่หวี)
+  // หมุนไปกับ spinAxis · ลำแสงหมุนมุมเพิ่มขึ้น หางจึงอยู่ฝั่งมุมน้อยกว่า
+  const WAKE_SPAN = 40 * DEG, WA = 24, WR = 16, halfLen = BEAM_LEN / 2;
+  const up = new THREE.Vector3(0, 1, 0), tip = new THREE.Vector3(-Math.sin(jetTilt), Math.cos(jetTilt), 0);
+  const tint = new THREE.Color(0x21e6c8), d = new THREE.Vector3();
+  const wPos = [], wCol = [], wIdx = [];
+  for (const sgn of [1, -1]) {
+    const base = wPos.length / 3;
+    for (let i = 0; i <= WA; i++) {
+      const u = i / WA;                                        // 0 = ชิดลำแสง → 1 = ปลายหาง
+      d.copy(tip).applyAxisAngle(up, -u * WAKE_SPAN).multiplyScalar(sgn);
+      for (let j = 0; j <= WR; j++) {
+        const r = 0.6 + (j / WR) * (halfLen - 0.6);
+        const k = 0.22 * (1 - u) * (1 - u) * beamFade(r / halfLen);
+        wPos.push(d.x * r, d.y * r, d.z * r);
+        wCol.push(tint.r * k, tint.g * k, tint.b * k);
+      }
+    }
+    for (let i = 0; i < WA; i++) {
+      for (let j = 0; j < WR; j++) {
+        const a = base + i * (WR + 1) + j, b = a + WR + 1;
+        wIdx.push(a, b, a + 1, b, b + 1, a + 1);
+      }
+    }
   }
+  const wakeGeo = new THREE.BufferGeometry();
+  wakeGeo.setAttribute('position', new THREE.Float32BufferAttribute(wPos, 3));
+  wakeGeo.setAttribute('color', new THREE.Float32BufferAttribute(wCol, 3));
+  wakeGeo.setIndex(wIdx);
+  const beamWake = new THREE.Mesh(wakeGeo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true,
+    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+  spinAxis.add(beamWake);
 
   // กรวยกวาดลำแสง (Sweep cones)
   const sweepCone = new THREE.Group();
@@ -9120,7 +9611,6 @@ function buildVelaPulsar3D(def) {
 
   // 4) วงแหวนคู่รังสีเอกซ์ (Vela X-ray Arcs)
   const arcGroup = new THREE.Group();
-  arcGroup.rotation.set(10 * DEG, 0, -14 * DEG);
   [[4.2, 2.2], [6.6, 3.6]].forEach(([R, y]) => {
     const t = new THREE.Mesh(
       new THREE.TorusGeometry(R, 0.13, 12, 80),
@@ -9139,7 +9629,6 @@ function buildVelaPulsar3D(def) {
 
   // 5) เจ็ตเกลียว (Helical jets จากการสังเกตการณ์ของกล้องจันทรา)
   const helixGroup = new THREE.Group();
-  helixGroup.rotation.set(10 * DEG, 0, -14 * DEG);
   function helixJet(len, rad, turns, dir) {
     const pts = [];
     for (let i = 0; i <= 100; i++) {
@@ -9180,11 +9669,16 @@ function buildVelaPulsar3D(def) {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    return new THREE.Points(geo, new THREE.PointsMaterial({
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({
       size, map: spriteTex, vertexColors: true, transparent: true, opacity,
       depthWrite: false, blending: THREE.AdditiveBlending
     }));
+    // ขนาดจุดไม่ย่อ/ขยายตามโหนดแม่ — farPose() คูณสเกลรวมให้ทุกเฟรม (ไม่งั้นจุดเล็กกว่าพิกเซล เนบิวลาหายทั้งก้อน)
+    pts.userData.size = size;
+    nebLayers.push(pts);
+    return pts;
   }
+  const nebLayers = [];
   nebula.add(buildNebulaLayer(5000, 4.5, 19, 5.0, 2.5, 0.55, 0.985, 1.02));
   nebula.add(buildNebulaLayer(3500, 9.0, 26, 7.5, 4.5, 0.30, 0.965, 1.00));
   nebula.add(buildNebulaLayer(1500, 15.0, 34, 9.0, 7.0, 0.14, 0.955, 0.995));
@@ -9216,8 +9710,8 @@ function buildVelaPulsar3D(def) {
 
   return {
     root, core, haloA, haloB, fieldGroup, spinAxis, magTilt, beamMain,
-    beamCore: beamMain.userData.core, beamFlare, ghosts, ghostGroup,
-    sweepCone, arcGroup, helixGroup, helixA, helixB, nebula, filaments,
+    beamCore, beamFlare, beamWake,
+    sweepCone, arcGroup, helixGroup, helixA, helixB, nebula, nebLayers, filaments,
     def
   };
 }
@@ -9227,9 +9721,13 @@ function makeFar(def) {
   const spin = new THREE.Group();
   holder.add(spin);
   let mesh;
-  if (def.t === 'bh') {
-    mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), def.kerr ? kerrBlackHoleMaterial(def) : blackHoleMaterial(def));
-    if (def.kerr) mesh.layers.set(BH_LAYER);          // ย้ายออกจากฉากหลัก ไปวาดในเป้าหมายย่อแทน
+  if (def.t === 'bh' && def.kerr) {
+    // โครงสร้างแบบเดโม dgreenheck/webgpu-black-hole: ทรงกลมกลับด้านล้อมกล้อง ทุกพิกเซลยิงรังสีจากตำแหน่งกล้องจริง
+    // (แทนแผ่นภาพที่หันเข้ากล้อง) · kerrCamPose() ย้ายทรงกลมไปอยู่ที่กล้องทุกเฟรม
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), kerrBlackHoleMaterial(def));
+    mesh.layers.set(BH_LAYER);                         // ไม่อยู่ในฉากหลัก วาดในเป้าหมายแยกแล้วซ้อน
+  } else if (def.t === 'bh') {
+    mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), blackHoleMaterial(def));
   } else {
     // แสงฟุ้งรอบซาก · ระหว่างรอโมเดลของ NASA ก็เป็นตัวแทนไปก่อน
     mesh = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -9238,13 +9736,13 @@ function makeFar(def) {
         : [[0, 'rgba(255,220,200,.7)'], [0.3, 'rgba(255,160,130,.3)'], [0.7, 'rgba(220,120,110,.06)'], [1, 'rgba(200,100,100,0)']], 128)),
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   }
-  mesh.scale.setScalar(def.span);
   mesh.renderOrder = 20;
   mesh.frustumCulled = false;
-  spin.add(mesh);
+  if (def.kerr) scene.add(mesh);                      // ทรงกลมล้อมกล้อง ไม่ผูกกับตำแหน่งหลุมดำ
+  else { mesh.scale.setScalar(def.span); spin.add(mesh); }
   scene.add(holder);
   const rec = {
-    def, isMoon: false, far: true, holder, spin, mesh,
+    def, isMoon: false, far: true, holder, spin, mesh, kerrSky: !!def.kerr,
     R: def.radius / KMU, world: { x: def._world.x, y: def._world.y, z: def._world.z }, parent: null,
     axis: new THREE.Vector3(0, 0, 1)
   };
@@ -9308,6 +9806,44 @@ function farShown(rec) {
   return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
 }
 
+/* หลุมดำเคอร์: ค่าที่ขึ้นกับกล้อง — เรียกจาก renderFrame() หลัง applyCamera() ภาพจึงตรงกับกล้องเฟรมเดียวกัน
+   ทรงกลมกลับด้านย้ายไปอยู่ที่กล้อง (แบบเดโม dgreenheck/webgpu-black-hole) ทุกพิกเซลได้ทิศจากตำแหน่งกล้องจริง */
+function kerrCamPose(rec) {
+  const def = rec.def, u = rec.mesh.material.uniforms;
+  // เชเดอร์คิดในหน่วย M = GM/c² (ครึ่งหนึ่งของรัศมีชวาร์สชิลด์)
+  const spm = 0.5 * def.span * rec.spin.scale.x / def.ext;          // หน่วยฉากต่อ 1 M
+  _bhV.copy(camera.position).sub(rec.holder.position).divideScalar(spm);
+  const ax = def._ax, ay = def._ay, az = def._axis;
+  u.uCam.value.set(_bhV.dot(ax), _bhV.dot(ay), _bhV.dot(az));
+  _bhR.set(1, 0, 0).applyQuaternion(camera.quaternion);
+  _bhU.set(0, 1, 0).applyQuaternion(camera.quaternion);
+  u.uRight.value.set(_bhR.dot(ax), _bhR.dot(ay), _bhR.dot(az));
+  u.uUp.value.set(_bhU.dot(ax), _bhU.dot(ay), _bhU.dot(az));
+  u.uFwd.value.crossVectors(u.uUp.value, u.uRight.value);
+  const tanY = Math.tan(camera.fov * DEG / 2);
+  u.uTanH.value.set(tanY * camera.aspect, tanY);
+  // ดาวฉากหลังต้องละเอียดขึ้นตามกำลังขยาย (ตอนอยู่ไกล ภาพถูกขยายเหมือนมองผ่านกล้องโทรทรรศน์)
+  u.uStarSc.value = Math.min(3000, Math.max(26, 26 * _bhV.length() / def.ext));
+  // ทรงกลมล้อมกล้อง: รัศมีอยู่ระหว่าง near กับ far ของกล้องเสมอ (ทิศคิดจากตำแหน่งบนทรงกลม ขนาดไม่มีผล)
+  rec.mesh.position.copy(camera.position);
+  rec.mesh.scale.setScalar(Math.max(camera.near * 20, Math.min(camera.far * 0.05, camera.position.length())));
+  // กล้องขยับไปจากเฟรมก่อนไหม → ต้องเดินรังสีใหม่ · ขนาดจอ/มุมรับภาพเปลี่ยนก็เช่นกัน
+  const cv = u.uCam.value, rv = u.uRight.value;
+  const camMoved = Math.abs(cv.x - _bhSig[0]) + Math.abs(cv.y - _bhSig[1]) + Math.abs(cv.z - _bhSig[2])
+                 + 60 * (Math.abs(rv.x - _bhSig[3]) + Math.abs(rv.y - _bhSig[4]) + Math.abs(rv.z - _bhSig[5]))
+                 + 1e3 * (Math.abs(camera.aspect - _bhSig[7]) + Math.abs(camera.fov - _bhSig[8]));
+  if (camMoved > 1e-3 + cv.length() * 2e-4) {
+    _bhSig[0] = cv.x; _bhSig[1] = cv.y; _bhSig[2] = cv.z;
+    _bhSig[3] = rv.x; _bhSig[4] = rv.y; _bhSig[5] = rv.z;
+    _bhSig[7] = camera.aspect; _bhSig[8] = camera.fov;
+    bhCamStill = 0; bhNeedDraw = true;
+  } else {
+    bhCamStill++;
+  }
+  // ภาพนิ่ง (กล้องไม่ขยับ ลายจานไม่เปลี่ยน) = ใช้ภาพเดิม ไม่เดินรังสีซ้ำ
+  bhDirty = bhNeedDraw || !bhDrawn;
+}
+
 function farPose(rec) {
   const def = rec.def;
   const camDist = Math.max(1e-12, rec.holder.position.distanceTo(camera.position));
@@ -9318,66 +9854,31 @@ function farPose(rec) {
     rec.spin.quaternion.copy(camera.quaternion);
     const u = rec.mesh.material.uniforms;
     if (def.kerr) {
-      // เชเดอร์คิดในหน่วย M = GM/c² (ครึ่งหนึ่งของรัศมีชวาร์สชิลด์) — แผ่นภาพกว้าง 2·uHalf M เสมอ
-      const spm = 0.5 * def.span * rec.spin.scale.x / u.uHalf.value;   // หน่วยฉากต่อ 1 M
-      _bhV.copy(camera.position).sub(rec.holder.position).divideScalar(spm);
+      // ค่าที่ขึ้นกับกล้อง (ตำแหน่ง ทิศ ทรงกลมล้อมกล้อง) คิดใน kerrCamPose() ตอนวาด — หลัง applyCamera แล้ว
+      // ถ้าคิดตรงนี้จะช้ากว่ากล้องหนึ่งเฟรม: ลากเมาส์แล้วฉากหลังขยับทันทีแต่หลุมดำตามทีหลัง ดูเหมือนติดจอ
       const ax = def._ax, ay = def._ay, az = def._axis;
-      u.uCam.value.set(_bhV.dot(ax), _bhV.dot(ay), _bhV.dot(az));
-      _bhR.set(1, 0, 0).applyQuaternion(camera.quaternion);
-      _bhU.set(0, 1, 0).applyQuaternion(camera.quaternion);
-      u.uRight.value.set(_bhR.dot(ax), _bhR.dot(ay), _bhR.dot(az));
-      u.uUp.value.set(_bhU.dot(ax), _bhU.dot(ay), _bhU.dot(az));
-      // ดาวฉากหลังต้องละเอียดขึ้นตามกำลังขยาย (ตอนอยู่ไกล ภาพถูกขยายเหมือนมองผ่านกล้องโทรทรรศน์)
-      u.uStarSc.value = Math.min(3000, Math.max(26, 26 * _bhV.length() / u.uHalf.value));
-      // ลายจานหมุนตามเวลาจำลองจริง หน่วย t_g = GM/c³ (M87* ราว 8.9 ชั่วโมงต่อหนึ่งหน่วย)
-      // เวลาจำลองเดินเร็วจนก๊าซหมุนเห็นได้ = ภาพเปลี่ยนทุกเฟรม ซึ่งการ์ดจอวาดเต็มความละเอียดไม่ทัน
-      // ถ้าปล่อยตามนั้น ระบบจะถือว่าภาพไม่เคยนิ่ง แล้วค้างที่คุณภาพต่ำสุดตลอด = เบลอไม่หาย
-      // จึง "ตรึงลายจานไว้" จนกว่าจะวาดเสร็จคมแล้ว ค่อยขยับไปขั้นถัดไป
-      // ผลคือก๊าซหมุนเป็นจังหวะ (ราว 2–3 ครั้ง/วินาที) แต่ทุกจังหวะเป็นภาพคมเต็มที่
-      // และเว้นอย่างน้อยหกเฟรมให้หน้าจอตอบสนองก่อนจะวาดหนักอีกรอบ
-      const rawOrb = (S.time / 1000 / (def.mass * 4.9255e-6)) % 1e5;
-      const orbRunning = Math.abs(rawOrb - _bhOrbRaw) > 2e-3;
-      _bhOrbRaw = rawOrb;
-      if (!bhDirty) _bhOrbWait++;
-      if (bhCamStill < 2 || _bhOrbWait > 6) { if (_bhOrb !== rawOrb) bhNeedDraw = true; _bhOrb = rawOrb; _bhOrbWait = 0; }
+      u.uToWorld.value.set(ax.x, ay.x, az.x, ax.y, ay.y, az.y, ax.z, ay.z, az.z);
+      // ลายจานหมุนตามเวลาจำลอง หน่วย t_g = GM/c³ (M87* ราว 8.9 ชั่วโมงต่อหนึ่งหน่วย)
+      // ลายขยับเมื่อไรก็วาดใหม่เฟรมนั้นเลย ก๊าซจึงหมุนลื่นต่อเนื่อง (แบบเดิมตรึงลายแล้วกระโดดเป็นจังหวะ ดูกระตุก)
+      // หลุมดำมวลดาวฤกษ์ วงในหมุนจริงหลายร้อยรอบต่อวินาที ถ้าตามนั้นลายจะสั่นเป็นสัญญาณรบกวนทั้งจาน
+      // จึงจำกัดความเร็วที่แสดงไว้ไม่เกิน BH_ORB_MAX t_g ต่อวินาทีจริง
+      const nowS = performance.now() / 1000;
+      const dtReal = Math.min(0.1, Math.max(0, nowS - _bhNowPrev));
+      const lim = BH_ORB_MAX * dtReal;
+      let dOrb = (S.time - _bhTPrev) / 1000 / (def.mass * 4.9255e-6);
+      if (!(Math.abs(dOrb) <= lim)) dOrb = dOrb < 0 ? -lim : lim;
+      if (bhSwirl) dOrb = (S.sign < 0 ? -1 : 1) * BH_ORB_SHOW * dtReal;   // เร่งให้เห็น: หมุนตลอด ตามทิศเวลา
+      _bhTPrev = S.time; _bhNowPrev = nowS;
+      _bhOrbVis = (_bhOrbVis + dOrb) % 6000;                   // 6000 = 100 รอบของวงสลับลาย (60) ต่อกันเนียน
+      if (Math.abs(_bhOrbVis - _bhOrb) > 1e-3) { _bhOrb = _bhOrbVis; bhNeedDraw = true; }
       u.uOrb.value = _bhOrb;
       u.uFlick.value = performance.now() / 1000;
       u.uSteps.value = bhSteps;
-      bhBusy = true;
       glowRec = rec;
       if (def.dly > 2e5) hostSkyPose(rec);      // อยู่นอกทางช้างเผือก → ต้องมีฟ้าของกาแล็กซีแม่ให้
-      // มีอะไรเปลี่ยนไปจากเฟรมก่อนไหม — แยกสองอย่าง เพราะคุณภาพที่ทำได้ต่างกันคนละเรื่อง
-      //   กล้องขยับ  = ภาพเคลื่อน ตาจับรายละเอียดไม่ทัน ย่อได้มาก
-      //   เวลาเดินเร็วจนก๊าซหมุนเห็นได้ = ภาพเปลี่ยนทุกเฟรม ต้องวาดใหม่ทั้งผืนทุกเฟรม (ซอยเป็นช่องไม่ได้ ภาพจะเหลื่อม)
-      //     แต่กล้องนิ่ง ตายังจับรายละเอียดได้ จึงต้องให้คุณภาพสูงกว่าตอนขยับกล้องมาก
-      const cv = u.uCam.value, rv = u.uRight.value;
-      const camMoved = Math.abs(cv.x - _bhSig[0]) + Math.abs(cv.y - _bhSig[1]) + Math.abs(cv.z - _bhSig[2])
-                     + 60 * (Math.abs(rv.x - _bhSig[3]) + Math.abs(rv.y - _bhSig[4]) + Math.abs(rv.z - _bhSig[5]));
-      const orbMoved = Math.abs(u.uOrb.value - _bhSig[6]);
-      if (camMoved > 1e-3 + cv.length() * 2e-4) {
-        _bhSig[0] = cv.x; _bhSig[1] = cv.y; _bhSig[2] = cv.z;
-        _bhSig[3] = rv.x; _bhSig[4] = rv.y; _bhSig[5] = rv.z;
-        bhCamStill = 0; bhStill = 0; bhNeedDraw = true;
-      } else {
-        bhCamStill++;
-        if (orbMoved > 2e-3) bhStill = 0; else bhStill++;
-      }
-      _bhSig[6] = u.uOrb.value;
-      // แผ่นภาพกินพื้นที่จอกี่พิกเซล → ย่อลงเท่าไรถึงจะอยู่ในงบ (ไกล = ไม่ต้องย่อ · ใกล้จนเต็มจอ = ย่อมาก)
-      const wpx = fovK * rec.spin.scale.x * def.span / camDist * renderer.getPixelRatio();
-      // ตอนเข้าใกล้ แผ่นภาพใหญ่ล้นจอ ส่วนที่ล้นไม่ได้ถูกวาดจริง จึงไม่ต้องเอามานับเป็นงาน
-      const cv2 = renderer.domElement;
-      const area = Math.min(wpx * wpx, cv2.width * cv2.height * 1.15);
-      // กล้องนิ่งเมื่อไร ให้ไล่ความละเอียดขึ้นได้เต็มที่ ถึงเวลาจำลองจะเดินเร็วจนก๊าซหมุนก็ตาม
-      // ส่วนการวาดใหญ่กว่าจอ (ซอยเป็นช่อง) ทำได้เฉพาะตอนภาพนิ่งสนิท ไม่งั้นช่องจะเหลื่อมกัน
-      const budget = BH_STILL;
-      // วาดใหญ่กว่าจอ (ซอยเป็นช่องหลายเฟรม) ทำได้เฉพาะตอนเวลาหยุดจริง ๆ
-      // ถ้าลายจานยังขยับ ช่องแต่ละช่องจะเป็นคนละจังหวะเวลา ภาพจะเหลื่อมเป็นตาราง
-      const want = Math.min(!orbRunning && bhStill > 3 ? BH_SS : 1,
-                            Math.max(1.0, Math.sqrt(budget * bhBias / Math.max(1, area))));
-      if (want < bhScale && bhCamStill < 2) bhScale = want;
-      else if (want > bhScale) bhScale = Math.min(want, bhScale + 0.1);
-      bhDirty = bhNeedDraw || bhScale !== bhDrawn;
+      // ทิศที่แสงวนรอบหลุมดำจนหลุดนอกจอ เชเดอร์วาดดาวของกาแล็กซีแม่ต่อเองด้วยสูตรเดียวกัน
+      u.uHost.value = hostSky && hostSky.visible ? hostSky.material.uniforms.uFade.value : 0;
+      if (u.uHost.value > 0) u.uCoreW.value.copy(hostSky.material.uniforms.uCore.value);
     } else {
       u.uTime.value = performance.now() / 1000;
     }
@@ -9387,16 +9888,23 @@ function farPose(rec) {
   if (rec.vela) {
     const v = rec.vela;
     const rps = def.freq || 11.2;
-    const tSec = performance.now() * 0.001;
 
-    // หมุนแกนพัลซาร์ด้วยความถี่จริง 11.2 รอบ/วินาที (คาบ 89.33 ms)
-    v.spinAxis.rotation.y = (tSec * Math.PI * 2 * rps) % (Math.PI * 2);
+    // นาฬิกาของพัลซาร์เอง: เดินเฉพาะตอนแถบเวลาเล่นอยู่ ตามทิศเวลา (กดหยุด = หยุดทั้งก้อน)
+    // ความเร็วบนจอคงที่ไม่ขึ้นกับความเร็วเวลาจำลอง (เร่งไปก็แสดงไม่ได้อยู่แล้ว) — แบบเดียวกับก๊าซรอบหลุมดำ
+    const nowS = performance.now() / 1000;
+    const dtReal = v.nowPrev == null ? 0 : Math.min(0.1, Math.max(0, nowS - v.nowPrev));
+    v.nowPrev = nowS;
+    const step = S.playing ? dtReal * (S.sign < 0 ? -1 : 1) : 0;
+    v.ambT = (v.ambT || 0) + step;
+    const tSec = v.ambT;
 
-    // เงาตามหลัง (ghost trails)
-    const lag = Math.min(0.35, 0.08 * (rps / 11.2));
-    for (let i = 0; i < v.ghosts.length; i++) {
-      v.ghosts[i].rotation.y = -(i + 1) * lag;
-    }
+    // หมุนแกนพัลซาร์ด้วยความถี่จริง 11.2 รอบ/วินาที (คาบ 89.33 ms) หรือช้าลง VELA_SLOW เท่า
+    v.phase = ((v.phase || 0) + step * Math.PI * 2 * rps / (velaSlow ? VELA_SLOW : 1)) % (Math.PI * 2);
+    v.spinAxis.rotation.y = v.phase;
+
+    // จุดของเนบิวลา: ขนาดเป็นหน่วยฉาก ไม่ตามสเกลของโหนดแม่ → คูณสเกลรวม (spin เปลี่ยนตามระยะกล้องทุกเฟรม)
+    const ws = v.root.getWorldScale(_sVela).x;
+    for (const p of v.nebLayers) p.material.size = p.userData.size * ws;
 
     // ส่วนโครงสร้างแวดล้อมหมุนช้าๆ
     v.nebula.rotation.y     = (tSec * 0.045) % (Math.PI * 2);
@@ -9549,6 +10057,16 @@ function renderFarInfo(rec) {
   hd.append(sw, ti);
   head.appendChild(hd);
   if (def.desc[S.lang]) { const p = el('p', 'desc'); p.textContent = def.desc[S.lang]; head.appendChild(p); }
+  // หลุมดำที่มีจาน: สลับมุมดูได้ทันที (มุมข้างจานแบบในหนัง · มุมที่โลกเห็นจริง · มองจากขั้ว)
+  if (def.t === 'bh' && def.kerr && def.acc) {
+    const act = el('div', 'chips');
+    for (const [k, label] of [['edge', t.bhViewSide], ['earth', t.bhViewEarth], ['top', t.bhViewTop]]) {
+      const b = el('button', 'chip', label);
+      b.addEventListener('click', () => camPreset(k));
+      act.appendChild(b);
+    }
+    head.appendChild(act);
+  }
   pane.appendChild(head);
 
   eyeWorld(_eye);
@@ -9583,6 +10101,43 @@ function renderFarInfo(rec) {
     sec.appendChild(note);
   };
   if (def.t === 'bh') addNote(t.bhNoteTitle, def.kerr ? t.bhNoteKerr : t.bhNote);
+  if (def.t === 'bh' && def.kerr && def.acc) {
+    // ความเร็วของก๊าซ: เร่งให้เห็น ↔ ตามเวลาจำลองจริง + คาบวงโคจรจริงของขอบในจาน
+    const a = Math.min(Math.max(def.spin != null ? def.spin : 0.9, 0), 0.998);
+    const z1 = 1 + Math.cbrt(1 - a * a) * (Math.cbrt(1 + a) + Math.cbrt(1 - a));
+    const z2 = Math.sqrt(3 * a * a + z1 * z1);
+    const isco = 3 + z2 - Math.sqrt(Math.max((3 - z1) * (3 + z1 + 2 * z2), 0));
+    const ps = 2 * Math.PI * (Math.pow(isco, 1.5) + a) * def.mass * 4.9255e-6;   // คาบวงโคจรที่ ISCO (วินาที)
+    const th = S.lang === 'th';
+    const per = ps < 1 ? nf(ps * 1000, 1) + (th ? ' มิลลิวินาที' : ' ms')
+              : ps < 120 ? nf(ps, 1) + (th ? ' วินาที' : ' s')
+              : ps < 7200 ? nf(ps / 60, 0) + (th ? ' นาที' : ' min')
+              : ps < 172800 ? nf(ps / 3600, 1) + (th ? ' ชั่วโมง' : ' h')
+              : nf(ps / 86400, 1) + (th ? ' วัน' : ' days');
+    addNote(t.bhSwirlTitle, (bhSwirl ? t.bhSwirlShow : t.bhSwirlReal).replace('{p}', per));
+    const row = el('div', 'chips');
+    row.style.marginTop = '8px';
+    for (const [on, label] of [[true, t.bhSwirlBtnShow], [false, t.bhSwirlBtnReal]]) {
+      const b = el('button', 'chip' + (bhSwirl === on ? ' on' : ''), label);
+      b.addEventListener('click', () => { bhSwirl = on; renderInfo(); });
+      row.appendChild(b);
+    }
+    sec.appendChild(row);
+  }
+  if (def.t === 'pulsar') {
+    // ความเร็วการหมุน: ภาพช้า ↔ ความเร็วจริง (ที่ 60 ภาพ/วินาที ลำแสงกระโดดครั้งละ 360° × f ÷ 60)
+    const f = def.freq || 11.2;
+    addNote(t.pulsarSpeedTitle, (velaSlow ? t.pulsarSlowNote : t.pulsarRealNote)
+      .replace('{f}', nf(f, 1)).replace('{s}', nf(f / VELA_SLOW, 2)).replace('{d}', nf(360 * f / 60, 0)).replace('{k}', VELA_SLOW));
+    const row = el('div', 'chips');
+    row.style.marginTop = '8px';
+    for (const [on, label] of [[true, t.pulsarBtnSlow.replace('{k}', VELA_SLOW)], [false, t.pulsarBtnReal]]) {
+      const b = el('button', 'chip' + (velaSlow === on ? ' on' : ''), label);
+      b.addEventListener('click', () => { velaSlow = on; renderInfo(); });
+      row.appendChild(b);
+    }
+    sec.appendChild(row);
+  }
   const n = def.dly >= 1e6 ? nf(def.dly / 1e6, 1) + (S.lang === 'th' ? ' ล้าน' : ' million')
                            : nf(def.dly, 0) + (S.lang === 'th' ? ' ' : '');
   addNote(t.galLightTitle, t.galLightNote.replace('{n}', n));
@@ -9719,8 +10274,7 @@ function aimAtExo(i) {
   const h = EXO[i];
   const dx = h.x - starEye.x, dy = h.y - starEye.y, dz = h.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 /* กำลังส่องสว่างของดาวแม่ เทียบดวงอาทิตย์ */
@@ -10674,9 +11228,15 @@ function renderView() {
 }
 
 function camPreset(kind) {
+  const bh = kerrBh(trans.on ? trans.to : S.focus);
   if (kind === 'near') gotoScale(1);
   else if (kind === 'top') camState.el = 1.45;
-  else camState.el = 0.05;
+  else if (kind === 'earth' && bh) {
+    // มุมจากโลก: กล้องอยู่ฝั่งเดียวกับโลก เห็นจานเกือบตรงหน้าแบบภาพของ EHT
+    syncCamBasis();
+    setCamDir(-bh._world.x, -bh._world.y, -bh._world.z);
+  }
+  else camState.el = bh ? BH_SIDE_EL : 0.05;        // หลุมดำ: เงยจากระนาบจานนิดหน่อย จะเห็นจานด้านหลังม้วนข้ามหัว
 }
 
 /* ── แท็บ “ท้องฟ้า”: มองจากจุดที่ยืนอยู่บนโลก + ปฏิทินเหตุการณ์ ────────── */
@@ -11053,6 +11613,7 @@ function renderModelThumb(id) {
       group.add(craftClone);
     }
   } else if (rec.far) {
+    if (def.kerr) return null;          // หลุมดำเป็นทรงกลมรอบกล้อง ย่อเป็นรูปเล็กไม่ได้ — ใช้ภาพนิ่ง (_discURL)
     if (rec.model) {
       const farClone = rec.model.clone(true);
       farClone.position.set(0, 0, 0);
@@ -12044,17 +12605,6 @@ function loop(now) {
   updateExo();
   renderFrame();
 
-  // หลุมดำเคอร์กินแรงมาก — เฟรมตกก็ลดจำนวนก้าวของการเดินรังสี ยังลื่นก็เพิ่มคืน
-  if (bhBusy) {
-    // เฟรมที่ยาวเพราะแท็บถูกหน่วง (ซ่อนอยู่ · สลับหน้าต่าง) ไม่ได้แปลว่าการ์ดจอทำไม่ไหว จึงไม่นับ
-    // และขยับทีละน้อย เพราะงบหลักมาจากพื้นที่บนจอซึ่งแม่นกว่าอยู่แล้ว
-    if (!document.hidden && dt < 0.09 && bhCamStill < 4) {
-      if (dt > 0.045) bhBias = Math.max(0.3, bhBias - 0.04);
-      else if (dt < 0.022) bhBias = Math.min(1.6, bhBias + 0.015);
-    }
-    bhBusy = false;
-  }
-
   liveT += dt;
   if (liveT > 0.25) {
     liveT = 0;
@@ -12069,7 +12619,9 @@ function loop(now) {
 
 /* วาดสามชั้นเรียงจากไกลไปใกล้ — แยกออกมาเพื่อให้ปุ่มบันทึกภาพเรียกซ้ำได้ */
 function renderFrame() {
-  const bh = bhRender();              // ต้องทำก่อน เพราะสลับเป้าหมายการวาดชั่วคราว
+  // มีหลุมดำในภาพ: วาดฉากหลังลงภาพพักก่อน → เดินรังสี (ดึงฉากหลังไปดัด) → ซ้อนลงจอทึบทั้งผืน
+  const bh = !!(glowRec && glowRec.holder.visible);
+  if (bh) { kerrCamPose(glowRec); bgTarget(); }
   renderer.clear();
   if (deepFade > 0.01) renderer.render(deepScene, deepCam);
   if (galFade > 0.01) renderer.render(galScene, galCam);
@@ -12077,7 +12629,7 @@ function renderFrame() {
   if (starFadeR > 0.01) renderer.render(starScene, starCam);
   renderer.clearDepth();
   renderer.render(scene, camera);
-  if (bh) bhComposite();              // ซ้อนหลุมดำ + แสงฟุ้งทับภาพที่วาดเสร็จแล้ว
+  if (bh && bhRender()) bhComposite();  // ซ้อนหลุมดำ + แสงฟุ้ง
 }
 
 /* คืนคิวให้เบราว์เซอร์วาดหน้าจอโดยไม่ใช้ requestAnimationFrame
@@ -12131,6 +12683,13 @@ async function boot() {
   for (const [sc, cam] of [[scene, camera], [skyScene, skyCam], [starScene, starCam], [galScene, galCam], [deepScene, deepCam]]) {
     await yieldToPaint();
     renderer.compile(sc, cam);
+  }
+  // ท่อวาดหลุมดำ (ดัดแสงทั้งจอ + แสงฟุ้ง) — คอมไพล์ตามเป้าหมายที่จะวาดจริง
+  // (เป้าหมายทุกผืนเข้ารหัสสีแบบเดียวกับจอ โปรแกรมที่คอมไพล์ไว้ข้างบนจึงใช้กับเป้าหมายเหล่านั้นได้เลย)
+  glowInit();
+  for (const m of [bhLens, glowAdd, glowCut, glowBlur, bgDown]) {
+    glowQuad.material = m;
+    renderer.compile(glowScene, glowCam);
   }
   // วาดมุมมองทั้งกาแล็กซีหนึ่งเฟรมไว้ใต้หน้าโหลด พื้นผิวของฉากไกลจะขึ้นการ์ดจอไว้ก่อน แล้วค่อยคืนกล้อง
   {

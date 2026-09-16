@@ -1187,6 +1187,7 @@ function updateOrigin(dt) {
     origin.z = A.z + (B.z - A.z) * eo;
     const lg = Math.log(trans.d0) + (Math.log(trans.d1) - Math.log(trans.d0)) * e;
     camState.dist = Math.exp(w > 0 ? lg + (Math.log(trans.peak) - lg) * w : lg);
+    if (trans.elGoal != null) camState.el = trans.el0 + (trans.elGoal - trans.el0) * e;
     if (trans.t >= 1) { trans.on = false; S.focus = trans.to; syncCrumb(); if (isGoto(S.focus)) renderInfo(); }
   } else {
     const w = worldOf(S.focus);
@@ -1235,6 +1236,7 @@ function updateScene() {
                 : (!rec.isMoon || S.moons);
     if (rec.craft && shown) craftPose(rec);
     if (rec.far && shown) farPose(rec);
+    if (rec.kerrSky) rec.mesh.visible = shown;         // ทรงกลมไม่ได้อยู่ใต้ holder ต้องซ่อนตามเอง
     if (rec.line) {
       const pw = rec.parent ? worldOf(rec.parent) : ZERO;
       toScene(pw, rec.line.position);
@@ -1399,6 +1401,7 @@ function focusRadius(id) {
 function defaultDist(id) {
   const rec = REG[id];
   if (rec && rec.goto) return rec.def.viewDist;
+  if (kerrBh(id)) return rec.def.rs * 22;          // หลุมดำเคอร์: ยืนห่าง ~44 M (มีจาน = จานเต็มจอเกือบทั้งหมด แบบในหนัง)
   if (rec && (rec.craft || rec.far)) return rec.def.span * 1.6e-3;   // ขนาดตัวยาน (เมตร) → กิโลเมตร × 1.6
   return focusRadius(id) * (id === 'sun' ? 9 : 6.2);
 }
@@ -1424,19 +1427,77 @@ function setFocus(id, instant) {
       trans.peak = Math.max(sep * 0.55, trans.d0, trans.d1);
       trans.dur = Math.min(6, 3 + Math.log10(1 + sep / LY) * 0.5);
     }
+    // บินไปหาหลุมดำที่มีจาน: ระหว่างทางค่อย ๆ ลดมุมลงมาใกล้ระนาบจาน ไปถึงก็เห็นจานม้วนข้ามหัว
+    syncCamBasis();
+    trans.el0 = camState.el;
+    trans.elGoal = kerrBh(id) ? BH_SIDE_EL : null;
   }
   syncCrumb();
   renderInfo();
 }
 
+/* ── กรอบของมุมกล้อง ─────────────────────────────────────────────────
+   ปกติ az/el วัดในพิกัดสุริยวิถี (z ชี้ขั้วเหนือของสุริยวิถี)
+   แต่เมื่อโฟกัสหลุมดำเคอร์ (ทั้ง 7 ดวง) az/el จะวัดรอบแกนหมุนของหลุมดำแทน
+   ลากซ้าย–ขวาจึงเดินวนรอบจาน ลากขึ้น–ลงคือก้ม/เงยจากระนาบจาน และจานวางแนวนอนบนจอเสมอ
+   (ถ้าใช้กรอบสุริยวิถี มุมข้างจานของ M87* อยู่แถวขั้วสุริยวิถีพอดี ซึ่ง el ถูกจำกัดไว้ ไปไม่ถึง) */
+const CAM_E = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
+const camB = CAM_E.map(v => v.clone());
+const camUp = new THREE.Vector3(0, 0, 1);
+const _cbV = new THREE.Vector3();
+const BH_SIDE_EL = 0.17;                          // มุมเงยจากระนาบจานตอนไปถึง (~10°)
+let camBId = null;                                // null = ยังไม่เคยตั้งกรอบ (มุมจากลิงก์ใช้ได้เลย ไม่ต้องแปลง)
+// หลุมดำเคอร์ทุกดวง (มีจานหรือไม่ก็ตาม — Gaia BH ใช้กล้องแบบเดียวกัน ตามที่ผู้ใช้ขอ 2026-09-17)
+function kerrBh(id) {
+  const r = REG[id];
+  return r && r.far && r.def.kerr ? r.def : null;
+}
+const clampEl = e => Math.max(-1.5, Math.min(1.5, e));
+/* เปลี่ยนกรอบตามเป้าปัจจุบัน โดยกล้องยังอยู่ที่เดิม (แปลง az/el จากกรอบเก่าเป็นกรอบใหม่) */
+function syncCamBasis() {
+  const id = trans.on ? trans.to : S.focus;
+  const bh = kerrBh(id);
+  const key = bh ? id : '';
+  if (key === camBId) return;
+  const nb = bh ? [bh._ax, bh._ay, bh._axis] : CAM_E;
+  if (camBId !== null) {
+    camDirOut(_cbV);
+    camState.az = Math.atan2(_cbV.dot(nb[1]), _cbV.dot(nb[0]));
+    camState.el = clampEl(Math.asin(Math.max(-1, Math.min(1, _cbV.dot(nb[2])))));
+  } else {
+    camUp.copy(nb[2]);
+  }
+  camB.forEach((v, i) => v.copy(nb[i]));
+  camBId = key;
+}
+/* ทิศจากเป้าไปหากล้อง (เวกเตอร์หนึ่งหน่วย พิกัดสุริยวิถี) */
+function camDirOut(out) {
+  const ce = Math.cos(camState.el);
+  return out.set(0, 0, 0)
+    .addScaledVector(camB[0], ce * Math.cos(camState.az))
+    .addScaledVector(camB[1], ce * Math.sin(camState.az))
+    .addScaledVector(camB[2], Math.sin(camState.el));
+}
+/* วางกล้องไว้ทางทิศ (x, y, z) ของเป้า — ทิศในพิกัดสุริยวิถี แปลงเข้ากรอบปัจจุบันให้เอง */
+function setCamDir(x, y, z) {
+  _cbV.set(x, y, z).normalize();
+  camState.az = Math.atan2(_cbV.dot(camB[1]), _cbV.dot(camB[0]));
+  camState.el = clampEl(Math.asin(Math.max(-1, Math.min(1, _cbV.dot(camB[2])))));
+}
+
 const camDir = new THREE.Vector3();
 function applyCamera() {
   const d = Math.max(1e-9, camState.dist / KMU);   // 1e-9 หน่วย = 1 มิลลิเมตร
-  const ce = Math.cos(camState.el);
-  camera.position.set(d * ce * Math.cos(camState.az), d * ce * Math.sin(camState.az), d * Math.sin(camState.el));
+  syncCamBasis();
+  camera.position.copy(camDirOut(_cbV)).multiplyScalar(d);
   camera.near = Math.max(1e-9, d * 2e-4);      // 1e-9 หน่วย ≈ 1 มิลลิเมตร
   camera.far = Math.max(1e7, d * 1e6);
   camera.updateProjectionMatrix();
+  // ทิศ "บน" ของจอค่อย ๆ หมุนตามกรอบใหม่ ภาพจึงไม่กระตุกตอนบินเข้า/ออกจากหลุมดำ
+  if (camUp.dot(camB[2]) < -0.98) camUp.add(camB[0]);
+  camUp.lerp(camB[2], 0.06).normalize();
+  if (camUp.distanceToSquared(camB[2]) < 1e-8) camUp.copy(camB[2]);
+  camera.up.copy(camUp);
   camera.lookAt(0, 0, 0);
   skyCam.quaternion.copy(camera.quaternion);
 
@@ -1556,6 +1617,9 @@ function deepAimOffset(g, distKm) {
 }
 
 function deepViewDist(o) {
+  // โครงสร้างขนาดใหญ่ต้องถอยออกไปไกลพอให้เส้นขอบโผล่ (ดู updateDeep) · กระจุกต้องพ้นระยะที่แผนที่จุดเริ่มชัด
+  if (LSS_TYPES.has(o.t)) return (o.dly / MLY) * 0.7 * MLY * LY;
+  if (o.t === 'cluster') return Math.min(300, Math.max(20, (o.mly || 1) * 0.25)) * MLY * LY;
   return Math.min(1.8, Math.max(0.35, (o.mly || 1) * 0.45)) * MLY * LY;
 }
 
@@ -1582,10 +1646,11 @@ function viewDeep(i, opt) {
   if (o.aim !== false) aimAtDeep(g);
   if (focusLy() / MLY >= 0.2) return;                  // จอดอยู่นอกกาแล็กซีแล้ว เห็นฉากไกลอยู่แล้ว
   const cur = eyeMly();
-  const need = o.aim === false ? cur < 0.5
-                               : cur < 0.8 || cur > Math.max(4, (g.mly || 1) * 1.2);
+  const d = deepViewDist(g), dm = d / LY / MLY;
+  const big = dm > 2;                                  // กระจุก/โครงสร้างขนาดใหญ่ ต้องถอยไกลกว่ากาแล็กซีเดี่ยว
+  const need = o.aim === false ? cur < (big ? dm * 0.5 : 0.5)
+                               : cur < (big ? dm * 0.5 : 0.8) || cur > Math.max(4, (g.mly || 1) * 1.2, dm * 3);
   if (!need) return;
-  const d = deepViewDist(g);
   if (o.aim !== false) {
     const off = deepAimOffset(g, d);                   // เบนให้พ้นวงทางช้างเผือก ไม่งั้นเป้าไปซ่อนอยู่ข้างหลัง
     camState.el = Math.max(-1.5, Math.min(1.5, camState.el + (camState.el > 0 ? -off : off)));
@@ -2356,8 +2421,7 @@ function aimAtStar(i) {
   const s = STARS[i];
   const dx = s.x - starEye.x, dy = s.y - starEye.y, dz = s.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 /* ── แผงข้อมูลของดาว ─────────────────────────────────────────────────── */
@@ -2543,8 +2607,7 @@ function aimAtCons(i) {
   const c = CONSTELLATIONS[i];
   const dx = c.x - starEye.x, dy = c.y - starEye.y, dz = c.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 const _cv = new THREE.Vector3();
@@ -2747,9 +2810,11 @@ function deepGlowTex() {
 
 /* ภาพกาแล็กซีตามชนิด — ปั้นจากสูตร ไม่ใช่ภาพถ่าย · เก็บผ้าใบไว้ใช้ทำรูปในแผงข้อมูลด้วย */
 const GAL_TEX = {};
+/* โครงสร้างขนาดใหญ่ (มหากระจุก · กำแพง · ช่องว่าง) วาดเป็นเส้นประบอกขอบเขตโดยประมาณ ไม่ใช่ภาพของวัตถุ */
+const LSS_TYPES = new Set(['supercluster', 'wall', 'void']);
 function galaxyTex(type) {
   if (GAL_TEX[type]) return GAL_TEX[type];
-  const N = 256, c = document.createElement('canvas');
+  const N = LSS_TYPES.has(type) ? 512 : 256, c = document.createElement('canvas');
   c.width = c.height = N;
   const g = c.getContext('2d'), img = g.createImageData(N, N), d = img.data;
   let seed = 977 + type.length * 7919;
@@ -2815,6 +2880,17 @@ function galaxyTex(type) {
       add((Math.exp(-Math.abs(u) / 0.012) * Math.exp(-Math.abs(v) / 0.4) + Math.exp(-Math.abs(v) / 0.012) * Math.exp(-Math.abs(u) / 0.4)) * 0.45 * edge, 0.8, 0.95, 1.0);
     } else if (type === 'distant') {
       add(Math.exp(-((r / 0.22) ** 2)) * 1.0 + Math.exp(-r / 0.3) * 0.2 * edge, 1.0, 0.5, 0.36);
+    } else if (type === 'supercluster' || type === 'void') {
+      // เส้นประรอบวงที่ขอบ (รัศมี 0.96) · มหากระจุกสีทอง ช่องว่างสีฟ้า — ไม่ระบายข้างใน ไม่งั้นเป็นแผ่นเทาบังแผนที่จุด
+      const dash = sm(-0.3, 0.3, Math.cos(th * 48));
+      const rim = Math.exp(-(((r - 0.96) / 0.006) ** 2)) * (0.2 + 0.8 * dash);
+      if (type === 'void') add(rim * 0.85, 0.6, 0.72, 1.0);
+      else add(rim * 0.85, 1.0, 0.86, 0.6);
+    } else if (type === 'wall') {
+      // แถบยาว: แกนยาวตามแนวนอนของภาพ (หมุนไปตามมุม pa บนท้องฟ้า)
+      const q = Math.hypot(u / 0.94, v / 0.3), qa = Math.atan2(v / 0.3, u / 0.94);
+      const dash = sm(-0.3, 0.3, Math.cos(qa * 48));
+      add(Math.exp(-(((q - 1) / 0.022) ** 2)) * (0.2 + 0.8 * dash) * 0.85, 1.0, 0.86, 0.6);
     } else {                                                         // กระจุกกาแล็กซี
       add(Math.exp(-r / 0.35) * 0.22 * edge, 0.95, 0.9, 0.82);
       for (const [bx, by, bs, bi] of blobs) add(Math.exp(-((u - bx) ** 2 + (v - by) ** 2) / (bs * bs * 0.25)) * bi, 1.0, 0.88, 0.7);
@@ -2829,7 +2905,7 @@ function galaxyTex(type) {
 }
 
 /* จานกาแล็กซีเอียงในสามมิติ: แกนยาวตามมุมบนท้องฟ้า (pa) · มุมเอียงจากอัตราส่วนแกน (ar = cos i) */
-const FLAT_TYPES = new Set(['spiral', 'barred', 'lenticular', 'ring', 'irregular', 'merger']);
+const FLAT_TYPES = new Set(['spiral', 'barred', 'lenticular', 'ring', 'irregular', 'merger', 'wall']);
 function discQuat(o, north) {
   const l = new THREE.Vector3(o.x, o.y, o.z).normalize();
   const n = north.clone().addScaledVector(l, -north.dot(l)).normalize();     // ทิศเหนือบนท้องฟ้า ณ ตำแหน่งนั้น
@@ -2870,7 +2946,7 @@ function buildDeep() {
     deepScene.add(obj);
     deepSprites.push({ sp: obj, o });
     const idx = deepSprites.length - 1;
-    const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' ? ' big' : ''));
+    const node = el('button', 'lbl deep' + (o.home || o.de || o.t === 'cluster' || LSS_TYPES.has(o.t) ? ' big' : ''));
     node.innerHTML = `<span class="ring"></span><span class="nm"></span>`;
     node.hidden = true;
     node.addEventListener('click', ev => { ev.stopPropagation(); flyTo('g', idx); });
@@ -2890,6 +2966,21 @@ function buildDeep() {
     hs.frustumCulled = false;
     deepScene.add(hs);
     deepHalos.push(hs);
+  }
+
+  // กาแล็กซีใกล้ที่วัดระยะจริงแต่ไม่มีป้ายชื่อ (UNGC ใน deep.js) — มากับหน้าเว็บเลย จึงสร้างตอนบูต
+  // ซึ่งพลอยคอมไพล์เชเดอร์ของแผนที่จุดทุกชุดไว้ด้วย (2MRS กับ SDSS/6dF ใช้โปรแกรมเดียวกัน)
+  {
+    const LV = typeof LOCALV !== 'undefined' ? LOCALV : { n: 0, scale: 1, pos: '', cm: '' };
+    const p16 = new Int16Array(b64u8(LV.pos).buffer, 0, LV.n * 3), cm = b64u8(LV.cm);
+    const pos = new Float32Array(Math.max(1, LV.n) * 3), col = new Float32Array(Math.max(1, LV.n) * 3), lum = new Float32Array(Math.max(1, LV.n));
+    for (let i = 0; i < LV.n; i++) {
+      for (let k = 0; k < 3; k++) pos[i * 3 + k] = p16[i * 3 + k] * LV.scale;
+      const pc = GAL_PAL[cm[i * 2]] || GAL_PAL[0];
+      col.set(pc, i * 3);
+      lum[i] = Math.pow(10, -0.4 * (cm[i * 2 + 1] / 25 - 27 + 24));
+    }
+    localPts = galPoints(pos, col, lum, 1);
   }
 
 
@@ -2972,52 +3063,90 @@ function loadCmb() {
   }, undefined, () => { cmbState = -1; });
 }
 
-/* แผนที่กาแล็กซี 2MRS: จุดละกาแล็กซี สีตามชนิด ขนาดตามความสว่างจริง */
+/* ── แผนที่จุดกาแล็กซีจริง ──────────────────────────────────────────────
+   สามชุด ใช้เชเดอร์ตัวเดียวกัน: จุดละกาแล็กซี สีตามชนิด/สีจริง ขนาดตามความสว่างจริง
+   · กาแล็กซีใกล้ (UNGC, ใน deep.js) ระยะวัดจริงถึงราว 36 ล้านปีแสง — เห็นตั้งแต่ถอยพ้นกลุ่มท้องถิ่น
+   · 2MRS (cosmic.js) ทั้งท้องฟ้า ถึงราว 1,400 ล้านปีแสง — โหลดเมื่อถอยพ้น 8 ล้านปีแสง
+   · SDSS + 6dF (survey.js) ฟ้าเหนือ/ใต้ ถึงราว 2,700 ล้านปีแสง — โหลดเมื่อถอยพ้น 60 ล้านปีแสง            */
+// ไม่ทราบชนิด · รี (หรือสีแดง) · เลนส์ · กังหัน (หรือสีฟ้า) · ไร้รูปร่าง · เควซาร์
+const GAL_PAL = [[0.84, 0.86, 0.92], [1.0, 0.78, 0.55], [1.0, 0.87, 0.7], [0.62, 0.76, 1.0], [0.55, 0.7, 1.0], [0.5, 1.0, 0.95]];
+let localPts = null, surveyPts = null, surveyState = 0;
+const SURVEY_GAIN = 1.6;              // จุด SDSS/6dF ส่วนใหญ่อยู่ไกลจึงเล็กสุดที่ 1.3 px — เร่งให้เห็นใยเอกภพ (ปรับเทียบที่ 1,800 ล้านปีแสง)
+function b64u8(s) {
+  const bin = atob(s), u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+function galPoints(pos, col, lum, gain) {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
+  const pts = new THREE.Points(geo, new THREE.ShaderMaterial({
+    uniforms: { fade: { value: 0 }, scale: { value: 1 }, gain: { value: gain } },
+    vertexShader: `attribute float lum; attribute vec3 color; uniform float fade; uniform float scale; uniform float gain;
+      varying vec3 vCol; varying float vA;
+      void main(){
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        float s = scale * sqrt(lum) * 900.0 / max(-mv.z, 0.5);
+        gl_PointSize = clamp(s, 1.3, 6.5);
+        vA = min(1.0, fade * gain * clamp(s / 2.0, 0.28, 1.0));
+        vCol = color;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `varying vec3 vCol; varying float vA;
+      void main(){
+        float q = length(gl_PointCoord - 0.5);
+        if (q > 0.5) discard;
+        gl_FragColor = vec4(vCol * smoothstep(0.5, 0.05, q) * vA, 1.0);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
+  }));
+  pts.frustumCulled = false;
+  pts.visible = false;
+  deepScene.add(pts);
+  return pts;
+}
+
 function loadCosmic() {
   cosmicState = 1;
   addScript('cosmic.js').then(ok => {
     const CM = window.COSMIC;
     if (!ok || !CM) { cosmicState = -1; return; }
-    const dec = s => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-    const p8 = dec(CM.pos), cls = dec(CM.cls), mag = dec(CM.mag);
-    const p16 = new Int16Array(p8.buffer, 0, CM.n * 3);
+    const cls = b64u8(CM.cls), mag = b64u8(CM.mag);
+    const p16 = new Int16Array(b64u8(CM.pos).buffer, 0, CM.n * 3);
     const pos = new Float32Array(CM.n * 3), col = new Float32Array(CM.n * 3), lum = new Float32Array(CM.n);
-    // ไม่ทราบชนิด · รี · เลนส์ · กังหัน · ไร้รูปร่าง · เควซาร์
-    const PAL = [[0.84, 0.86, 0.92], [1.0, 0.78, 0.55], [1.0, 0.87, 0.7], [0.62, 0.76, 1.0], [0.55, 0.7, 1.0], [0.5, 1.0, 0.95]];
     for (let i = 0; i < CM.n; i++) {
       pos[i * 3] = p16[i * 3] * CM.scale; pos[i * 3 + 1] = p16[i * 3 + 1] * CM.scale; pos[i * 3 + 2] = p16[i * 3 + 2] * CM.scale;
-      const k = PAL[cls[i]] || PAL[0];
-      col[i * 3] = k[0]; col[i * 3 + 1] = k[1]; col[i * 3 + 2] = k[2];
+      col.set(GAL_PAL[cls[i]] || GAL_PAL[0], i * 3);
       lum[i] = Math.pow(10, -0.4 * (mag[i] / 25 - 27 + 24));          // เทียบกาแล็กซีที่ M_K = −24
     }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     cosmicRaw = { pos, lum, n: CM.n };          // เก็บไว้ให้ชั้นใยสสารมืดคำนวณต่อ
-    geo.setAttribute('lum', new THREE.BufferAttribute(lum, 1));
-    cosmicPts = new THREE.Points(geo, new THREE.ShaderMaterial({
-      uniforms: { fade: { value: 0 }, scale: { value: 1 } },
-      vertexShader: `attribute float lum; attribute vec3 color; uniform float fade; uniform float scale;
-        varying vec3 vCol; varying float vA;
-        void main(){
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          float s = scale * sqrt(lum) * 900.0 / max(-mv.z, 0.5);
-          gl_PointSize = clamp(s, 1.3, 6.5);
-          vA = fade * clamp(s / 2.0, 0.28, 1.0);
-          vCol = color;
-          gl_Position = projectionMatrix * mv;
-        }`,
-      fragmentShader: `varying vec3 vCol; varying float vA;
-        void main(){
-          float q = length(gl_PointCoord - 0.5);
-          if (q > 0.5) discard;
-          gl_FragColor = vec4(vCol * smoothstep(0.5, 0.05, q) * vA, 1.0);
-        }`,
-      transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending
-    }));
-    cosmicPts.frustumCulled = false;
-    deepScene.add(cosmicPts);
+    cosmicPts = galPoints(pos, col, lum, 1);
     cosmicState = 2;
+  });
+}
+
+/* SDSS + 6dF: สี 2 บิต (แดง = ใกล้ลำดับแดงของกาแล็กซีดาวแก่ · ฟ้า = ยังสร้างดาว) + ความสว่าง 6 บิต */
+function loadSurvey() {
+  surveyState = 1;
+  addScript('survey.js').then(ok => {
+    const SV = window.SURVEY;
+    if (!ok || !SV) { surveyState = -1; return; }
+    const cm = b64u8(SV.cm);
+    const p16 = new Int16Array(b64u8(SV.pos).buffer, 0, SV.n * 3);
+    // เครื่องเบาใช้ครึ่งเดียว (เว้นตัว) — โครงสร้างยังเห็นเหมือนเดิม แค่บางลง
+    const step = (innerWidth <= 900 || (navigator.hardwareConcurrency || 4) <= 4) ? 2 : 1;
+    const n = Math.ceil(SV.n / step);
+    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), lum = new Float32Array(n);
+    const SC = [GAL_PAL[0], GAL_PAL[1], GAL_PAL[3]];
+    for (let j = 0, i = 0; i < SV.n; i += step, j++) {
+      pos[j * 3] = p16[i * 3] * SV.scale; pos[j * 3 + 1] = p16[i * 3 + 1] * SV.scale; pos[j * 3 + 2] = p16[i * 3 + 2] * SV.scale;
+      col.set(SC[cm[i] >> 6] || SC[0], j * 3);
+      lum[j] = Math.pow(10, -0.4 * ((cm[i] & 63) * 0.16 - 27 + 24));
+    }
+    surveyPts = galPoints(pos, col, lum, SURVEY_GAIN * (step === 2 ? 1.9 : 1));
+    surveyState = 2;
   });
 }
 
@@ -3201,8 +3330,7 @@ function aimAtDeep(o) {
   const p = deepEye;
   const dx = o.x - p.x, dy = o.y - p.y, dz = o.z - p.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 function selectDeep(i) {
@@ -3249,10 +3377,26 @@ function updateDeep() {
   const on = deepFade > 0.01;
   const fovK = innerHeight / (2 * Math.tan(camera.fov * DEG / 2));
   const homeFade = step01(log10(0.4), log10(3), ld);        // ทางช้างเผือกละเอียดในฉากกาแล็กซีจางไปก่อน แล้วค่อยเป็นภาพนี้
+  const zoomLd = log10(Math.max(1e-12, camState.dist / LY / MLY));
   for (const { sp, o } of deepSprites) {
     if (!on) { sp.visible = false; continue; }
     sp.visible = true;
     const camDist = Math.max(1e-9, sp.position.distanceTo(deepCam.position));
+    if (LSS_TYPES.has(o.t)) {
+      // เส้นขอบโครงสร้างขนาดใหญ่: ขนาดจริงเสมอ · โผล่เมื่อซูมออกกว้างพอเทียบกับขนาดของมัน
+      // (วัดจากระยะซูม ไม่ใช่ระยะจากบ้าน — บินไปยืนข้างกาแล็กซีไกล ๆ แล้วต้องไม่มีวงยักษ์บังจอ)
+      // หายเมื่อกล้องอยู่ข้างใน และจางลงเมื่อใหญ่ล้นจอ
+      const real = o.dly / MLY, px = real / camDist * fovK;
+      const a = step01(0.6, 0.9, camDist / real) * step01(log10(real * 0.2), log10(real * 0.5), zoomLd)
+        * (1 - step01(innerHeight * 1.2, innerHeight * 2.6, px));
+      sp.userData.lssA = a;
+      sp.visible = a > 0.01;
+      sp.scale.setScalar(real);
+      // หลายวงซ้อนกันที่ระยะหลายร้อยล้านปีแสง — ปกติให้จาง ตัวที่เลือกอยู่จึงเด่นขึ้น
+      const selO = deepSel > 0 && deepSprites[deepSel].o === o;
+      sp.material.opacity = deepFade * (selO ? 0.8 : 0.22) * a;
+      continue;
+    }
     const baseMinPx = o.t === 'quasar' || o.t === 'distant' ? 9 : o.t === 'dwarf' ? 11 : 16;
     // เมื่อถอยออกไกลถึงระดับใยเอกภพ (พ้น 30 ล้านปีแสง) ค่อย ๆ ลดขนาดขั้นต่ำลง ให้จุดกาแล็กซี 2MRS รับช่วงต่อ
     const cosmicTaper = 1 - step01(log10(30), log10(400), ld);
@@ -3279,6 +3423,21 @@ function updateDeep() {
     cosmicPts.visible = cf > 0.01;
     cosmicPts.material.uniforms.fade.value = cf;
     cosmicPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
+  // กาแล็กซีใกล้ (UNGC) — โผล่ตั้งแต่ถอยพ้นกลุ่มท้องถิ่น และอยู่ต่อไปเป็นส่วนหนึ่งของแผนที่
+  if (localPts) {
+    const lf = S.cosmic ? deepFade * step01(log10(0.25), log10(1.5), ld) : 0;
+    localPts.visible = lf > 0.01;
+    localPts.material.uniforms.fade.value = lf;
+    localPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
+  }
+  // SDSS + 6dF — ไกลกว่า 2MRS จึงค่อยโผล่ตอนถอยออกไปหลายร้อยล้านปีแสง
+  if (S.cosmic && on && surveyState === 0 && dMly > 60) loadSurvey();
+  if (surveyPts) {
+    const sf = S.cosmic ? deepFade * step01(log10(120), log10(700), ld) : 0;
+    surveyPts.visible = sf > 0.01;
+    surveyPts.material.uniforms.fade.value = sf;
+    surveyPts.material.uniforms.scale.value = Math.min(2, innerHeight / 900);
   }
 
 
@@ -3330,8 +3489,13 @@ function updateDeep() {
     if (_dv.z > 1 || Math.abs(_dv.x) > 0.98 || Math.abs(_dv.y) > 0.96) continue;
     const camDist = Math.max(1e-9, deepSprites[i].sp.position.distanceTo(deepCam.position));
     if (camDist < ((o.dly || 3000) / MLY) * 0.6) continue;
-    const px = ((o.dly || 3000) / MLY) / camDist * fovK;
-    const score = (i === deepSel ? 1e9 : 0) + (o.home ? 1e8 : 0) + (o.de ? 2000 : 0) + (o.t === 'cluster' ? 800 : 0) + px;
+    const lss = LSS_TYPES.has(o.t);
+    if (lss && i !== deepSel && !(deepSprites[i].sp.userData.lssA > 0.3)) continue;
+    const px = lss ? 0 : ((o.dly || 3000) / MLY) / camDist * fovK;
+    // ของที่อยู่ไกลเกินมาตราส่วนที่กำลังดู (เช่นกระจุกที่ไกลหลายพันล้านปีแสงขณะดูกลุ่มท้องถิ่น) ไม่ได้คะแนนพิเศษ
+    const rel = o.home ? 1 : 1 - step01(log10(dMly * 3), log10(dMly * 12), log10(Math.max(1e-6, o.mly)));
+    const score = (i === deepSel ? 1e9 : 0) + (o.home ? 1e8 : 0)
+      + ((o.de ? 2000 : 0) + (o.t === 'cluster' ? 800 : 0) + (lss ? 1500 : 0)) * rel + px;
     cand.push({ i, x: (_dv.x * 0.5 + 0.5) * W, y: (-_dv.y * 0.5 + 0.5) * H, score });
   }
   cand.sort((a, b) => b.score - a.score);
@@ -3356,14 +3520,16 @@ function updateDeep() {
     const nm = node.querySelector('.nm');
     if (nm.textContent !== txt) nm.textContent = txt;
     node.classList.toggle('on', c.i === deepSel);
-    node.style.opacity = String(o.home ? Math.max(deepFade * homeFade, 0.35 * deepFade) : deepFade);
+    node.style.opacity = String(o.home ? Math.max(deepFade * homeFade, 0.35 * deepFade)
+      : LSS_TYPES.has(o.t) && c.i !== deepSel ? deepFade * deepSprites[c.i].sp.userData.lssA : deepFade);
   }
   for (let i = 0; i < deepNodes.length; i++) if (!vis[i]) deepNodes[i].hidden = true;
 }
 
 /* ── แผงข้อมูลกาแล็กซี ── */
 const DEEP_COL = { spiral: '#9fc0ff', barred: '#a8c4ff', lenticular: '#f2dcb8', elliptical: '#ffd49a', irregular: '#8fb4ff',
-  dwarf: '#d8d2c4', ring: '#9fd0ff', merger: '#c8b8ff', quasar: '#7ff0ff', distant: '#ff9a7a', cluster: '#e8d8b8' };
+  dwarf: '#d8d2c4', ring: '#9fd0ff', merger: '#c8b8ff', quasar: '#7ff0ff', distant: '#ff9a7a', cluster: '#e8d8b8',
+  supercluster: '#f2d49a', wall: '#f2d49a', void: '#9fb6ee' };
 const UNIVERSE_AGE_GYR = 13.79;                      // Planck 2018: 13.787 ± 0.020
 const escHtml2 = s => String(s).replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]));
 function fmtLy(ly) {
@@ -3406,7 +3572,9 @@ function renderDeepInfo() {
   const rows = [];
   if (!o.home) rows.push([t.stDist, fmtLy(o.mly * MLY)]);
   rows.push([t.stFromHere, fmtLy(hereMly * MLY)]);
-  if (o.dly) rows.push([t.galDiam, (o.home ? '~' : '') + fmtLy(o.dly)]);
+  // กระจุกและโครงสร้างขนาดใหญ่ไม่มีขอบชัด ขนาดเป็นค่าประมาณ · กำแพงบอกเป็นความยาว
+  if (o.dly) rows.push([o.t === 'wall' ? t.galLength : t.galDiam,
+    (o.home || o.t === 'cluster' || LSS_TYPES.has(o.t) ? '~' : '') + fmtLy(o.dly)]);
   if (o.m) rows.push([t.galMorph, escHtml2(o.m)]);
   if (o.zr != null) {
     rows.push([t.galZ, nf(o.zr, o.zr < 1 ? 4 : 2)]);
@@ -3415,7 +3583,7 @@ function renderDeepInfo() {
   }
   const sec = el('div', 'sec');
   sec.innerHTML = `<h3>${t.secGalaxy}</h3><dl class="readout">` + rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('') + `</dl>`;
-  if (!o.home) {
+  if (!o.home && o.t !== 'void') {                    // ช่องว่างไม่มีแสงให้พูดถึง
     const note = el('div', 'note');
     note.innerHTML = '<span></span><p></p>';
     if (o.zr != null) {
@@ -3520,11 +3688,13 @@ const farRecs = [];
 const _eye = { x: 0, y: 0, z: 0 };
 
 /* ตำแหน่งจริงของกล้องในพิกัดสุริยวิถี (กม.) คิดจากสถานะกล้องโดยตรง ใช้ได้ก่อน applyCamera */
+const _eyeV = new THREE.Vector3();
 function eyeWorld(out) {
-  const ce = Math.cos(camState.el), d = camState.dist;
-  out.x = origin.x + d * ce * Math.cos(camState.az);
-  out.y = origin.y + d * ce * Math.sin(camState.az);
-  out.z = origin.z + d * Math.sin(camState.el);
+  const d = camState.dist;
+  camDirOut(_eyeV);                    // az/el อาจวัดรอบแกนหลุมดำ — แปลงผ่านกรอบกล้องเสมอ
+  out.x = origin.x + d * _eyeV.x;
+  out.y = origin.y + d * _eyeV.y;
+  out.z = origin.z + d * _eyeV.z;
   return out;
 }
 function eyeLy() {
@@ -3633,17 +3803,28 @@ function blackHoleMaterial(def) {
    และได้แสงฟุ้ง (bloom) มาฟรีจากเป้าหมายเดียวกัน: ตัดส่วนสว่าง → เบลอสองแกน → บวกทับ
    หลุมดำจึงไม่อยู่ใน layer 0 อีกต่อไป ฉากหลักไม่วาดมัน — ท่อนี้เป็นคนวาดและซ้อนเอง */
 const BH_LAYER = 3;
-const BH_MOVE = 2400000;                    // ไม่ลดความละเอียดตอนกล้องขยับ (ไม่เบลอ)
-const BH_STILL = 2400000;                   // งบตอนภาพนิ่ง — เผื่อให้วาดใหญ่กว่าจอแล้วย่อลงได้
-const BH_SS = 1.4;                          // ตอนนิ่งวาดใหญ่กว่าจอได้กี่เท่า (ลบรอยหยัก)
-const BH_TILEN = 4;                         // ตอนวาดใหญ่ ซอยเป็นกี่ช่องต่อด้าน (เฟรมละช่อง)
-let glowRec = null, bhScale = 1.0, bhBias = 1, bhStill = 0, bhCamStill = 0, bhDrawn = 0, bhDirty = true, bhNeedDraw = true, _bhOrb = 0, _bhOrbRaw = 0, _bhOrbWait = 0, glowScene = null, glowCam = null, glowQuad = null,
-    bhTile = 0, bhRT = null, glowA = null, glowB = null, glowC = null, glowD = null, glowE = null, glowF = null,
-    bhCopy = null, glowCut = null, glowBlur = null, glowAdd = null, bhW = 0, bhH = 0;
+// วาดเต็มความละเอียดจอในเฟรมเดียวเสมอ (ผู้ใช้ยืนยันว่าการ์ดจอรับได้ 2026-09-16)
+// ของเดิมวาดใหญ่กว่าจอแบบซอยทีละช่องหลายเฟรม + ตรึงลายจานแล้วกระโดดเป็นจังหวะ → ผู้ใช้เห็นเป็น "ภาพตัด ๆ ขยับไว"
+const BH_ORB_MAX = 4;                       // ความเร็วลายจานที่แสดงสูงสุด (t_g ต่อวินาทีจริง) — หลุมดำมวลดาวฤกษ์หมุนจริงหลายร้อยรอบ/วินาที
+// โหมด "เร่งให้เห็น" (ค่าเริ่มต้น): ก๊าซหมุนด้วยความเร็วคงที่ต่อวินาทีจริงเสมอ ไม่ขึ้นกับความเร็วเวลาจำลอง
+// ของจริง M87* ขอบในโคจรรอบละ ~9 วัน ที่เวลาปกติจานจึงนิ่งสนิท ผู้ใช้เห็นเป็นภาพนิ่ง 2 มิติ (2026-09-16)
+const BH_ORB_SHOW = 4;
+let bhSwirl = true;
+// พัลซาร์หมุนจริงหลายรอบต่อวินาที (Vela 11.2) — ที่ 60 ภาพ/วินาที ลำแสงกระโดดครั้งละ ~67° ดูกระตุกมั่ว
+// ค่าเริ่มต้นจึงแสดงช้าลง VELA_SLOW เท่า · ผู้ใช้สลับเป็นความเร็วจริงได้ในแผงข้อมูล (2026-09-17)
+const VELA_SLOW = 20;
+let velaSlow = true;
+let glowRec = null, bhCamStill = 0, bhDrawn = false, bhDirty = true, bhNeedDraw = true,
+    _bhOrb = 0, _bhOrbVis = 0, _bhTPrev = 0, _bhNowPrev = 0, glowScene = null, glowCam = null, glowQuad = null,
+    bhRT = null, glowA = null, glowB = null, glowC = null, glowD = null, glowE = null, glowF = null,
+    glowCut = null, glowBlur = null, glowAdd = null, bhW = 0, bhH = 0,
+    bgRT = null, bhLens = null, bgMid = null, bgLow = null, bgDown = null;
 
 function glowInit() {
+  // เข้ารหัสสีตามจอ: ไม่มีผลกับค่าที่เก็บ (เชเดอร์ของเราเขียนค่าดิบ) แต่ทำให้คีย์โปรแกรมตรงกับตอนวาดลงจอ
+  // วัสดุที่คอมไพล์ไว้ตอนบูตจึงใช้ซ้ำได้ ไม่ไปคอมไพล์ใหม่ (ค้าง) ตอนเห็นหลุมดำครั้งแรก
   const rtOpt = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false };
+    format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false, encoding: renderer.outputEncoding };
   bhRT = new THREE.WebGLRenderTarget(4, 4, rtOpt);
   glowA = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นละเอียด 1/2
   glowB = new THREE.WebGLRenderTarget(4, 4, rtOpt);
@@ -3651,27 +3832,54 @@ function glowInit() {
   glowD = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นกลาง 1/4
   glowE = new THREE.WebGLRenderTarget(4, 4, rtOpt);
   glowF = new THREE.WebGLRenderTarget(4, 4, rtOpt);    // ชั้นหยาบ 1/8
+  // ฉากหลังทั้งจอ ให้หลุมดำดึงไปดัด · เข้ารหัสสีแบบเดียวกับจอ วัสดุทุกชิ้นจึงใช้โปรแกรมเดิม ไม่ต้องคอมไพล์ใหม่
+  bgRT = new THREE.WebGLRenderTarget(4, 4, Object.assign({}, rtOpt, { depthBuffer: true }));
+  // ฉากหลังย่อจนเหลือแต่สีเฉลี่ย ใช้เติมทิศที่แสงวนรอบหลุมดำจนชี้ออกนอกจอ (ไม่มีภาพจริงให้ดึง)
+  bgMid = new THREE.WebGLRenderTarget(4, 4, rtOpt);
+  bgLow = new THREE.WebGLRenderTarget(32, 32, rtOpt);
   const vs = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
-  // ซ้อนภาพหลุมดำ: สีในเป้าหมายคูณอัลฟามาแล้ว จึงผสมแบบ src + dst·(1−a) เงาดำจึงบังฉากหลังได้จริง
-  bhCopy = new THREE.ShaderMaterial({
+  bgDown = new THREE.ShaderMaterial({
     uniforms: { uTex: { value: null }, uTexel: { value: new THREE.Vector2() } }, vertexShader: vs,
     fragmentShader: `uniform sampler2D uTex; uniform vec2 uTexel; varying vec2 vUv;
       void main(){
-        // เฉลี่ยห้าจุดตอนขยายกลับ กลบขั้นบันไดจากการย่อ · uTexel = 0 เมื่อไม่ได้ย่อ จึงคมเท่าเดิม
-        vec4 c = texture2D(uTex, vUv) * 0.44;
-        c += texture2D(uTex, vUv + vec2(uTexel.x, 0.0)) * 0.14;
-        c += texture2D(uTex, vUv - vec2(uTexel.x, 0.0)) * 0.14;
-        c += texture2D(uTex, vUv + vec2(0.0, uTexel.y)) * 0.14;
-        c += texture2D(uTex, vUv - vec2(0.0, uTexel.y)) * 0.14;
-        gl_FragColor = c;
+        vec3 c = texture2D(uTex, vUv + uTexel * vec2(-1.0, -1.0)).rgb + texture2D(uTex, vUv + uTexel * vec2(1.0, -1.0)).rgb
+               + texture2D(uTex, vUv + uTexel * vec2(-1.0, 1.0)).rgb + texture2D(uTex, vUv + uTexel * vec2(1.0, 1.0)).rgb;
+        gl_FragColor = vec4(c * 0.25, 1.0);
       }`,
-    depthTest: false, depthWrite: false, transparent: true, blending: THREE.CustomBlending,
-    blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
-    blendSrcAlpha: THREE.OneFactor, blendDstAlpha: THREE.OneMinusSrcAlphaFactor });
+    depthTest: false, depthWrite: false });
+  // ซ้อนภาพหลุมดำแบบทึบทั้งจอ ทีละพิกเซล:
+  //   พิกเซลที่เชเดอร์เดินรังสีจริง (อัลฟาในเป้าหมาย ≥ 1/255) → ใช้ผลนั้น
+  //   ที่เหลือ (อัลฟา 0: รังสีเฉียดห่าง หรืออยู่นอกแผ่นภาพ) → คิดดัดแสงสนามอ่อนตรงนี้ที่ความละเอียดจอ
+  // ตัดสินรายพิกเซล ไม่อิงขอบแผ่นภาพ จึงไม่มีรอยต่อเป็นกรอบสี่เหลี่ยม
+  bhLens = new THREE.ShaderMaterial({
+    uniforms: { uTex: { value: null }, uBg: { value: null },
+      uCam: { value: new THREE.Vector3() }, uRight: { value: new THREE.Vector3() }, uUp: { value: new THREE.Vector3() },
+      uFwd: { value: new THREE.Vector3() }, uTanH: { value: new THREE.Vector2(1, 1) } },
+    vertexShader: vs,
+    fragmentShader: `precision highp float;
+      uniform sampler2D uTex, uBg;
+      uniform vec3 uCam, uRight, uUp, uFwd;
+      uniform vec2 uTanH;
+      varying vec2 vUv;
+${BH_LENS_GLSL}
+      void main(){
+        vec4 bh = texture2D(uTex, vUv);
+        float w = clamp(bh.a * 255.0, 0.0, 1.0);          // สัดส่วนที่เดินรังสีแล้ว
+        vec3 col = bh.rgb;
+        if (w < 1.0) {
+          vec2 p = vUv * 2.0 - 1.0;
+          vec3 d0 = normalize(uFwd + uRight * (p.x * uTanH.x) + uUp * (p.y * uTanH.y));
+          col += (1.0 - w) * lensSky(bendRay(uCam, d0), vec3(vUv, 1.0));
+        }
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+    depthTest: false, depthWrite: false, blending: THREE.NoBlending });
   glowCut = new THREE.ShaderMaterial({
     uniforms: { uTex: { value: null }, uCut: { value: 0.45 } }, vertexShader: vs,
     fragmentShader: `uniform sampler2D uTex; uniform float uCut; varying vec2 vUv;
-      void main(){ vec3 c = texture2D(uTex, vUv).rgb;
+      void main(){ vec4 t = texture2D(uTex, vUv);
+        // อัลฟา = (1 + 254 × สัดส่วนแสงของจาน/ลำ) / 255 — ดาวฉากหลังที่ถูกดัดมาจึงไม่ฟุ้งตาม
+        vec3 c = t.rgb * max(t.a * 255.0 - 1.0, 0.0) / 254.0;
         gl_FragColor = vec4(max(c - uCut, 0.0) / max(1.0 - uCut, 1e-3), 1.0); }`,
     depthTest: false, depthWrite: false });
   glowBlur = new THREE.ShaderMaterial({
@@ -3692,7 +3900,7 @@ function glowInit() {
                                      + texture2D(uT2, vUv).rgb * uW.y
                                      + texture2D(uT3, vUv).rgb * uW.z, 1.0); }`,
     depthTest: false, depthWrite: false, transparent: true, blending: THREE.AdditiveBlending });
-  glowQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bhCopy);
+  glowQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bhLens);
   glowQuad.frustumCulled = false;
   glowScene = new THREE.Scene();
   glowScene.add(glowQuad);
@@ -3706,40 +3914,40 @@ function glowPass(mat, target) {
   renderer.render(glowScene, glowCam);
 }
 
-/* คืนค่า true ถ้ามีหลุมดำรอซ้อนอยู่ · ต้องเรียกก่อนวาดภาพหลักเพราะสลับเป้าหมายการวาดชั่วคราว */
+/* ขนาดของภาพหลุมดำที่แสดงอยู่เปลี่ยน → ชั้นแสงฟุ้งย่อตาม */
+function bhRTsized(w, h) {
+  bhW = w; bhH = h;
+  const sz2 = (rt, d) => rt.setSize(Math.max(8, Math.floor(w / d)), Math.max(8, Math.floor(h / d)));
+  sz2(glowA, 2); sz2(glowB, 2); sz2(glowC, 4); sz2(glowD, 4); sz2(glowE, 8); sz2(glowF, 8);
+}
+
+/* คืนค่า true ถ้ามีหลุมดำรอซ้อนอยู่ · เรียกหลังวาดฉากหลังลง bgRT แล้ว (เชเดอร์ดึงไปดัด) */
 function bhRender() {
   if (!glowRec || !glowRec.holder.visible) return false;
   if (!glowScene) glowInit();
   if (!bhDirty && bhW) return true;          // ไม่มีอะไรเปลี่ยน — ซ้อนภาพเดิมไปเลย ไม่ต้องเดินรังสีใหม่
+  // เต็มความละเอียดจอ วาดจบในเฟรมเดียว (ขนาดเท่าจอพอดี ตัวซ้อนภาพอ่านตรงพิกเซลต่อพิกเซล)
   const sz = renderer.getDrawingBufferSize(_bhV2);
-  const w = Math.max(16, Math.round(sz.x * bhScale)), h = Math.max(16, Math.round(sz.y * bhScale));
-  let resized = false;
-  if (w !== bhW || h !== bhH) {
-    bhW = w; bhH = h; bhTile = 0; resized = true;
-    bhRT.setSize(w, h);
-    const sz2 = (rt, d) => rt.setSize(Math.max(8, Math.floor(w / d)), Math.max(8, Math.floor(h / d)));
-    sz2(glowA, 2); sz2(glowB, 2); sz2(glowC, 4); sz2(glowD, 4); sz2(glowE, 8); sz2(glowF, 8);
-  }
-  // วาดใหญ่กว่าจอ = งานหนักเกินจะจบในเฟรมเดียว จึงซอยเป็นช่อง วาดเฟรมละช่อง
-  // ไม่ล้างทั้งผืน ภาพความละเอียดก่อนหน้าจึงค้างอยู่ในช่องที่ยังไม่ถึงคิว ไม่มีวาบดำให้เห็น
-  const n = bhScale > 1.05 ? BH_TILEN : 1;
+  const w = Math.max(16, sz.x), h = Math.max(16, sz.y);
+  if (w !== bhW || h !== bhH) { bhRT.setSize(w, h); bhRTsized(w, h); }
+  glowRec.mesh.material.uniforms.uBg.value = bgRT.texture;
+  // ย่อฉากหลังสองขั้น (1/8 แล้ว 32×32) เหลือสีเฉลี่ยไว้เติมทิศที่หลุดนอกจอ
+  bgMid.setSize(Math.max(8, w >> 3), Math.max(8, h >> 3));
+  bgDown.uniforms.uTex.value = bgRT.texture;
+  bgDown.uniforms.uTexel.value.set(2 / w, 2 / h);
+  glowPass(bgDown, bgMid);
+  bgDown.uniforms.uTex.value = bgMid.texture;
+  bgDown.uniforms.uTexel.value.set(1 / bgMid.width, 1 / bgMid.height);
+  glowPass(bgDown, bgLow);
+  glowRec.mesh.material.uniforms.uBgLow.value = bgLow.texture;
   const keep = camera.layers.mask;
   camera.layers.set(BH_LAYER);                 // เฉพาะหลุมดำ ไม่มีอย่างอื่นในเป้าหมายนี้
   renderer.setRenderTarget(bhRT);
   renderer.setClearColor(0x000000, 0);
-  if (resized) renderer.clear(true, true, false);
-  if (n > 1) {
-    const tw = Math.ceil(bhW / n), th = Math.ceil(bhH / n);
-    renderer.setScissorTest(true);
-    renderer.setScissor((bhTile % n) * tw, Math.floor(bhTile / n) * th, tw, th);
-  }
   renderer.clear(true, true, false);
   renderer.render(scene, camera);
-  renderer.setScissorTest(false);
   camera.layers.mask = keep;
   renderer.setClearColor(0x05070c, 1);
-  if (n > 1 && ++bhTile < n * n) { renderer.setRenderTarget(null); return true; }
-  bhTile = 0;
   // ตัดเก็บเฉพาะส่วนสว่าง แล้วเบลอลงไปทีละชั้น ชั้นถัดไปย่อครึ่งหนึ่งเสมอ
   // การอ่านภาพชั้นก่อนหน้าที่ความละเอียดต่ำกว่าเท่ากับย่อและเบลอไปในตัว แสงจึงฟุ้งไกลขึ้นทุกชั้น
   glowCut.uniforms.uTex.value = bhRT.texture;
@@ -3756,16 +3964,29 @@ function bhRender() {
   blurTo(glowA, glowC, glowD);          // ชั้น 1/4
   blurTo(glowD, glowE, glowF);          // ชั้น 1/8
   renderer.setRenderTarget(null);
-  bhDrawn = bhScale;
+  bhDrawn = true;
   bhNeedDraw = false;
   return true;
 }
 
+/* ดัดแสงทั้งจอ: ฉากหลังวาดลงภาพพักก่อน แล้วหลุมดำกับตัวซ้อนภาพค่อยดึงไปใช้ */
+function bgTarget() {
+  if (!glowScene) glowInit();
+  const sz = renderer.getDrawingBufferSize(_bhV2);
+  if (bgRT.width !== sz.x || bgRT.height !== sz.y) bgRT.setSize(sz.x, sz.y);
+  renderer.setRenderTarget(bgRT);
+}
+
 function bhComposite() {
-  bhCopy.uniforms.uTex.value = bhRT.texture;
-  const soft = 0;
-  bhCopy.uniforms.uTexel.value.set(0, 0);
-  glowQuad.material = bhCopy;
+  const L = bhLens.uniforms, u = glowRec.mesh.material.uniforms;
+  L.uTex.value = bhRT.texture;
+  L.uBg.value = bgRT.texture;
+  L.uCam.value = u.uCam.value; L.uRight.value = u.uRight.value; L.uUp.value = u.uUp.value;
+  L.uFwd.value = u.uFwd.value; L.uTanH.value = u.uTanH.value;
+  // เฟรมที่ใช้ภาพหลุมดำเดิม bhRender คืนค่าทันทีโดยยังค้างเป้าหมายไว้ที่ bgRT — ต้องกลับมาวาดลงจอเอง
+  // (ถ้าวาดลง bgRT ขณะอ่าน bgRT อยู่ WebGL ปฏิเสธทั้งคำสั่ง จอไม่อัปเดต)
+  renderer.setRenderTarget(null);
+  glowQuad.material = bhLens;
   renderer.render(glowScene, glowCam);
   glowAdd.uniforms.uT1.value = glowA.texture;
   glowAdd.uniforms.uT2.value = glowD.texture;
@@ -3833,11 +4054,14 @@ function hostSkyPose(rec) {
 const smoothClamp = (x, a, b) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
 /* ตัวแปรร่วมของหลุมดำเคอร์ — งบการเดินรังสีปรับตามความลื่นของเฟรม */
-let bhSteps = 170, bhBusy = false;
+// ก้าวสูงสุดต่อรังสี — รังสีที่วิ่งข้ามแกนหมุนต้องกวาดมุม φ ครึ่งรอบ ใช้ก้าวเพิ่มอีกราว 50
+// งบ 170 เดิมไม่พอ รังสีแถวแกนเดินไม่จบกลายเป็นเส้นดำตั้งกลางภาพ (วัดแล้ว 600 ไม่เหลือพิกเซลค้างเลยแม้ซูมใกล้)
+// รังสีส่วนใหญ่จบเองก่อนถึงงบ จึงเพิ่มงานเฉพาะรังสีที่ยากจริง
+const bhSteps = 600;
 const _bhV = new THREE.Vector3(), _bhR = new THREE.Vector3(), _bhU = new THREE.Vector3();
 const _bhV2 = new THREE.Vector2();
-const _qVela = new THREE.Quaternion(), _vVela = new THREE.Vector3(), _cVela = new THREE.Vector3();
-const _bhSig = [0, 0, 0, 0, 0, 0, 0];       // สภาพของภาพเฟรมก่อน ใช้ดูว่ามีอะไรเปลี่ยนไหม
+const _qVela = new THREE.Quaternion(), _vVela = new THREE.Vector3(), _cVela = new THREE.Vector3(), _sVela = new THREE.Vector3();
+const _bhSig = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // สภาพของภาพเฟรมก่อน ใช้ดูว่ามีอะไรเปลี่ยนไหม
 
 /* วางแกนหมุนของหลุมดำในพิกัดจริง: เอียง incl องศาจากแนวสายตา ไปทางมุมตำแหน่ง axisPA บนท้องฟ้า
    (มุมตำแหน่งวัดจากทิศเหนือของท้องฟ้าไปทางตะวันออก) แล้วสร้างฐานตั้งฉากไว้ให้เชเดอร์ใช้
@@ -3867,6 +4091,36 @@ function kerrFrame(f) {
      · ดอปเพลอร์บีมมิง + เรดชิฟต์จากแรงโน้มถ่วง (I ∝ g⁴ · อุณหภูมิที่เห็น ∝ g) — ด้านที่วิ่งเข้าหาเราจึงสว่างกว่ามาก
    วางแกนหมุนตามของจริง: เอียง 17° จากแนวสายตา มุมตำแหน่งบนท้องฟ้าตามลำอนุภาคของ M87
    ดูจากโลกจึงเห็นเป็นวงแบบภาพ EHT — บินไปดูจากด้านข้างถึงจะเห็นจานม้วนแบบในหนัง */
+/* ── ดัดแสงทั้งจอ: ชิ้นเชเดอร์ที่ใช้ร่วมกันระหว่างหลุมดำกับตัวซ้อนภาพ (bhLens) ─────────
+   หน่วย M = GM/c² · เวกเตอร์ทุกตัวอยู่ในกรอบหลุมดำ (แกนหมุน = z)
+   ผู้ใช้ต้องประกาศ uRight uUp uFwd uTanH uBg ไว้ก่อนแทรกชิ้นนี้
+   ฉากหลัง (uBg) คือภาพที่ renderFrame วาดไว้แล้วทั้งจอ จึงดัดได้ทุกอย่างที่อยู่ในฉาก ทั้งดาว กาแล็กซี และฟ้าของกาแล็กซีแม่ */
+const BH_LENS_GLSL = `
+      /* แรงดัดที่เหลือตั้งแต่จุด P (ทิศ D) ออกไปถึงอนันต์ — สนามอ่อนของชวาร์สชิลด์ถึงพจน์อันดับสอง
+         ทั้งเส้นดัด 4/b + 15π/(4b²) · เริ่มกลางทางได้สัดส่วน (1 − P·D/|P|)/2 ของทั้งหมด */
+      vec3 bendRay(vec3 P, vec3 D){
+        float rP = length(P), s = dot(P, D);
+        vec3 perp = P - s * D;
+        float b = length(perp);
+        if (b < 1e-3) return D;
+        float al = min((4.0 / b + 11.780972 / (b * b)) * 0.5 * (1.0 - s / rP), 3.0);
+        return normalize(D * cos(al) - perp * (sin(al) / b));
+      }
+      /* ทิศ → ตำแหน่งบนจอ (xy) กับน้ำหนัก z (1 = อยู่ในจอ · 0 = นอกจอหรืออยู่หลังกล้อง) */
+      vec3 lensScreen(vec3 d){
+        float z = dot(d, uFwd);
+        if (z < 1e-3) return vec3(0.5, 0.5, 0.0);
+        vec2 p = vec2(dot(d, uRight), dot(d, uUp)) / (z * uTanH);
+        return vec3(p * 0.5 + 0.5, 1.0 - smoothstep(0.93, 1.0, max(abs(p.x), abs(p.y))));
+      }
+      /* ฟ้าตามทิศที่ถูกดัด (สนามอ่อน) — ถ้าหลุดขอบจอ ใช้ภาพเดิมของพิกเซลนั้น (ทิศต่างกันไม่กี่องศา) */
+      vec3 lensSky(vec3 dE, vec3 scr0){
+        vec3 base = texture2D(uBg, scr0.xy).rgb;
+        vec3 sc = lensScreen(dE);
+        return sc.z > 0.0 ? mix(base, texture2D(uBg, sc.xy).rgb, sc.z) : base;
+      }
+`;
+
 function kerrBlackHoleMaterial(def) {
   const a = Math.min(Math.max(def.spin != null ? def.spin : 0.9, 0), 0.998);
   // รัศมีวงโคจรเสถียรวงในสุด (ISCO) ของเคอร์ — Bardeen, Press & Teukolsky 1972
@@ -3879,21 +4133,43 @@ function kerrBlackHoleMaterial(def) {
       uCam: { value: new THREE.Vector3(0, 0, 60) },      // ตำแหน่งกล้องในกรอบหลุมดำ (M)
       uRight: { value: new THREE.Vector3(1, 0, 0) },     // แกนของแผ่นภาพในกรอบหลุมดำ
       uUp: { value: new THREE.Vector3(0, 1, 0) },
-      uHalf: { value: def.ext },                         // ครึ่งความกว้างของแผ่นภาพ (หน่วย M)
       uRin: { value: isco }, uRout: { value: def.rout != null ? def.rout : 18 },
       uSteps: { value: 170 }, uOrb: { value: 0 }, uFlick: { value: 0 },
       uExpo: { value: 3.2 }, uStars: { value: def.acc ? 0.55 : 1.1 }, uStarSc: { value: 400 },
-      uJet: { value: def.jet || 0 }
+      uJet: { value: def.jet || 0 },
+      // ดัดแสงทั้งจอ: ภาพฉากหลังที่วาดไว้แล้ว + ทิศกล้อง/มุมรับภาพ (กรอบหลุมดำ) ไว้ฉายทิศที่ถูกดัดกลับลงจอ
+      uBg: { value: null }, uBgLow: { value: null }, uFwd: { value: new THREE.Vector3(0, 0, -1) }, uTanH: { value: new THREE.Vector2(1, 1) },
+      uToWorld: { value: new THREE.Matrix3() }, uHost: { value: 0 }, uCoreW: { value: new THREE.Vector3(0, 0, 1) }
     },
-    vertexShader: `varying vec2 vUv;
-      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    // ทรงกลมหนึ่งหน่วยล้อมกล้อง ไม่หมุน → ตำแหน่งบนผิว = ทิศของรังสี (พิกัดฉาก)
+    vertexShader: `varying vec3 vDir;
+      void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `precision highp float;
-      uniform float uA, uHalf, uRin, uRout, uSteps, uOrb, uFlick, uExpo, uStars, uStarSc, uJet;
-      uniform vec3 uCam, uRight, uUp;
-      varying vec2 vUv;
-      #define MAXSTEP 200
+      uniform float uA, uRin, uRout, uSteps, uOrb, uFlick, uExpo, uStars, uStarSc, uJet, uHost;
+      uniform vec3 uCam, uRight, uUp, uFwd, uCoreW;
+      uniform vec2 uTanH;
+      uniform mat3 uToWorld;
+      uniform sampler2D uBg, uBgLow;
+      varying vec3 vDir;
+      #define MAXSTEP 600
       #define JBETA 0.95                      // ความเร็วพลาสมาในลำ (เท่าความเร็วแสง)
       #define JGAM 3.2026                     // แฟกเตอร์ลอเรนซ์ที่ความเร็วนั้น
+${BH_LENS_GLSL}
+      /* ดาวของกาแล็กซีแม่ — สูตรเดียวกับทรงกลม hostSky ทุกตัวอักษร ส่วนที่ต่อจากภาพฉากหลังจึงไม่มีรอยต่อ */
+      float hsh(vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 33.33); return fract((p.x + p.y) * p.z); }
+      float hostLayer(vec3 d, float sc, float thr, float rad){
+        vec3 p = d * sc, ip = floor(p), fp = p - ip;
+        float h = hsh(ip);
+        if (h < thr) return 0.0;
+        vec3 c = vec3(hsh(ip + 11.3), hsh(ip + 27.7), hsh(ip + 41.1)) * 0.5 + 0.25;
+        return smoothstep(rad, 0.0, length(fp - c)) * (0.35 + fract(h * 91.0));
+      }
+      vec3 hostStars(vec3 d){
+        float toCore = max(dot(d, uCoreW), 0.0);
+        float dens = mix(0.55, 1.0, pow(toCore, 1.5));
+        float s = hostLayer(d, 210.0, 0.9955 - 0.003 * dens, 0.12) + hostLayer(d, 95.0, 0.9975 - 0.002 * dens, 0.10) * 0.7;
+        return (vec3(1.0, 0.86, 0.66) * s * 1.6 + vec3(0.30, 0.22, 0.14) * pow(toCore, 6.0) * 0.5 * dens) * uHost;
+      }
 
       float hash31(vec3 p){
         p = fract(p * 0.1031);
@@ -3963,7 +4239,7 @@ function kerrBlackHoleMaterial(def) {
       void deriv(float a, float a2, float L, float L2, float r, float th, float pr, float pth,
                  out float dr, out float dth, out float dph, out float dpr, out float dpth){
         float s = sin(th), c = cos(th);
-        s = (s < 0.0 ? -1.0 : 1.0) * max(abs(s), 3e-3);      // กันหารศูนย์บนแกนหมุน
+        s = (s < 0.0 ? -1.0 : 1.0) * max(abs(s), 1e-5);      // กันหารศูนย์บนแกนหมุน (เล็กพอให้รังสี L ≠ 0 ไม่ชน)
         float r2 = r * r;
         float Sig = r2 + a2 * c * c;
         float Del = max(r2 - 2.0 * r + a2, 1e-3);             // การเดินหยุดก่อนถึงขอบฟ้าอยู่แล้ว
@@ -3989,11 +4265,13 @@ function kerrBlackHoleMaterial(def) {
         float a = uA, a2 = uA * uA;
         float rh = 1.0 + sqrt(max(1.0 - a2, 0.0));            // ขอบฟ้าเหตุการณ์ของเคอร์
 
-        // จุดบนแผ่นภาพ (คาร์ทีเซียนในกรอบหลุมดำ หน่วย M) → ทิศของรังสีที่เข้ากล้องพิกเซลนี้
-        vec3 tgt = uRight * ((vUv.x - 0.5) * 2.0 * uHalf) + uUp * ((vUv.y - 0.5) * 2.0 * uHalf);
-        vec3 d0 = normalize(tgt - uCam);
+        // ทิศของรังสีที่เข้ากล้องพิกเซลนี้ (พิกัดฉาก) → หมุนเข้ากรอบหลุมดำ (แกนหมุน = z)
+        // uToWorld มีคอลัมน์เป็นแกนของกรอบหลุมดำ ส่วนกลับจึงคือการดอตกับแต่ละคอลัมน์
+        vec3 dw = normalize(vDir);
+        vec3 d0 = normalize(vec3(dot(dw, uToWorld[0]), dot(dw, uToWorld[1]), dot(dw, uToWorld[2])));
 
-        // รังสีที่เฉียดห่างมากและไม่ตัดระนาบจาน — ไม่ต้องเดินเลย (แผ่นภาพกินพื้นที่จอเยอะตอนเข้าใกล้)
+        // รังสีที่เฉียดห่างมากและไม่ตัดระนาบจาน — ไม่ต้องเดิน ปล่อยให้ตัวซ้อนภาพ (bhLens) ดัดด้วยสูตรสนามอ่อน
+        // อัลฟา 0 = "ยังไม่ได้คิด" · พิกเซลที่เดินรังสีแล้วอัลฟาอย่างน้อย 1/255 เสมอ
         float bImp = length(cross(uCam, d0));
         float tPl = abs(d0.z) > 1e-6 ? -uCam.z / d0.z : -1.0;
         float rPl = tPl > 0.0 ? length(uCam + d0 * tPl) : 1e9;
@@ -4021,6 +4299,12 @@ function kerrBlackHoleMaterial(def) {
         float L = np * sqrt(A0 / Sig0) * s0;
         float E = al0 + om0 * L;
         L /= E;
+        // รังสีที่วิ่งเฉียดแกนหมุนมาก (L เล็กจิ๋ว): ในพิกัด Boyer–Lindquist φ ต้องกวาดครึ่งรอบในช่วงสั้นมาก
+        // ตัวกันหารศูนย์ข้างบนทำให้กวาดไม่ครบ ทิศปลายทางเพี้ยน → เป็นเส้นดำตามแนวแกนกลางภาพ
+        // ให้รังสีกลุ่มนี้ผ่านแกนพอดี (L = 0) แทน — รังสีที่ L ใหญ่กว่านี้เข้าใกล้แกนไม่ถึง 3 เท่าของตัวกัน
+        // เกณฑ์ต้องเล็กกว่าหนึ่งพิกเซลแม้กล้องอยู่ใกล้ขั้ว (ตอนมองจากบน L ต่อพิกเซลเล็กลงมาก)
+        // เคยใช้ 6e-4 → มองจากบนแล้วเห็นแถบตั้งกว้าง ~5 px ที่ทุกแถวเป็นสีเดียว
+        if (abs(L) < 3e-5 * max(r0, max(uRout * 1.6, 30.0))) L = 0.0;
         float pr = nr * sqrt(Sig0 / Del0) / E;
         float pth = nt * sqrt(Sig0) / E;
         float Ecam = (1.0 - om0 * L) / al0;                   // พลังงานที่กล้องวัดได้
@@ -4115,7 +4399,10 @@ function kerrBlackHoleMaterial(def) {
               float fil = pow(clamp(turb * 1.25, 0.0, 1.0), 2.2);
               col += trans * op * em * g2 * g2 * (0.25 + 1.7 * fil) * bbCol(pow(em, 0.25) * g);
               // ร่องมืดโปร่งแสงบ้าง เห็นชั้นที่อยู่หลังลาง ๆ จานจึงดูเป็นก๊าซ ไม่ใช่แผ่นทึบ
-              trans *= 1.0 - op * (0.62 + 0.36 * fil);
+              // ขอบนอกแทบไม่มีแสง (∝ r⁻³) ถ้าทึบเต็มที่จะเป็นวงรีมืดบังดาวข้างหลังเหมือนแผ่นกระดาษ
+              // จึงให้ความทึบตามความสว่างที่ตาเห็น ส่วนที่มืดจนมองไม่ออกกลายเป็นก๊าซบางที่ดาวลอดผ่านได้
+              float seen = smoothstep(0.004, 0.08, em * g2 * g2);
+              trans *= 1.0 - op * (0.62 + 0.36 * fil) * seen;
               if (trans < 0.02) { fate = 3.0; break; }
             }
           }
@@ -4126,21 +4413,36 @@ function kerrBlackHoleMaterial(def) {
         // หลุดออกไป: ดาวฉากหลังที่ถูกเลนส์ดัด · ตกลงไปหรือเดินไม่จบ: ดำสนิท (บังฉากหลัง)
         // เดินจนหมดงบ: ถ้ากำลังวิ่งออกและพ้นจานไปแล้ว ยังไงก็หลุด อย่าเหมาว่าถูกกลืน
         if (fate == 0.0 && pr > 0.0 && r > uRout) fate = 2.0;
+        vec3 sky = vec3(0.0);
         if (fate == 2.0) {
-          if (trans > 0.01 && uStars > 0.0) {
-            vec3 dEsc = normalize(blCart(r, th, ph, a) - blCart(rPrev, thPrev, phPrev, a));
-            float amt = uStars * smoothstep(0.01, 0.12, 1.0 - dot(dEsc, d0));
-            if (amt > 0.002) col += trans * amt * starField(dEsc, uStarSc) * vec3(0.95, 0.97, 1.0);
+          if (trans > 0.01) {
+            // ทิศตอนพ้นย่านที่เดินรังสี + แรงดัดที่เหลือจากตรงนั้นถึงอนันต์ (สูตรเดียวกับรังสีที่ไม่ได้เดิน รอยต่อจึงเนียน)
+            vec3 pE = blCart(r, th, ph, a);
+            vec3 dEsc = bendRay(pE, normalize(pE - blCart(rPrev, thPrev, phPrev, a)));
+            vec3 sc = lensScreen(dEsc);
+            vec3 far = vec3(0.0);
+            if (sc.z < 1.0) {
+              // ทิศนั้นอยู่นอกจอ (แสงวนรอบหลุมดำมา) — ไม่มีภาพฉากหลังให้ดึง
+              // ใช้สีเฉลี่ยของฉากหลังตรงขอบจอฝั่งเดียวกับทิศนั้น + ดาวสุ่ม (นอกกาแล็กซีใช้ดาวของกาแล็กซีแม่)
+              vec2 q = vec2(dot(dEsc, uRight) / uTanH.x, dot(dEsc, uUp) / uTanH.y);
+              float qm = max(abs(q.x), abs(q.y));
+              vec3 amb = texture2D(uBgLow, qm > 1e-4 ? 0.5 + 0.47 * q / qm : vec2(0.5)).rgb;
+              far = hostStars(uToWorld * dEsc)
+                  + (1.0 - uHost) * (amb + uStars * min(starField(dEsc, uStarSc), 1.2) * vec3(0.72, 0.74, 0.78));
+            }
+            sky = trans * (sc.z > 0.0 ? mix(far, texture2D(uBg, sc.xy).rgb, sc.z) : far);
           }
-        } else {
-          trans = 0.0;                                        // ตกลงหลุม · จานบังหมด · เดินไม่จบ = ทึบ
         }
+        // ตกลงหลุม · จานบังหมด · เดินไม่จบ = ดำสนิท (sky = 0)
 
-        float alpha = 1.0 - trans;
-        float edge = 1.0 - smoothstep(0.44, 0.5, max(abs(vUv.x - 0.5), abs(vUv.y - 0.5)));
-        gl_FragColor = vec4(aces(col * uExpo) * edge, alpha * edge);
+        vec3 em = aces(col * uExpo);
+        float le = dot(em, vec3(0.299, 0.587, 0.114)), ls = dot(sky, vec3(0.299, 0.587, 0.114));
+        // อัลฟา = (1 + 254 × สัดส่วนแสงของจาน/ลำ) / 255 → ≥ 1/255 บอกตัวซ้อนภาพว่าพิกเซลนี้คิดแล้ว
+        // และบอกชั้นแสงฟุ้งว่าส่วนไหนเป็นแสงของจาน (ดาวฉากหลังที่ถูกดัดมาไม่ฟุ้งตาม)
+        gl_FragColor = vec4(em + sky, (1.0 + 254.0 * le / max(le + ls, 1e-4)) / 255.0);
       }`,
-    transparent: true, premultipliedAlpha: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide
+    // ซ้อนเองใน bhComposite (ทึบทั้งผืน) — อัลฟาในเป้าหมายไม่ใช่ความทึบ
+    transparent: false, blending: THREE.NoBlending, depthWrite: false, depthTest: false, side: THREE.DoubleSide
   });
 }
 
@@ -4162,6 +4464,16 @@ function buildVelaPulsar3D(def) {
   const root = new THREE.Group();
   // สเกลอิงตามความกว้าง def.span (8 ปีแสง) โดยในพิกัดจำลอง 80 หน่วยเทียบเท่า def.span
   root.scale.setScalar(def.span / 80);
+
+  // แกนหมุน (+Y ของโมเดล) หันตามค่าที่วัดจากทอรัสในภาพจันทรา (Ng & Romani 2004):
+  // spinPA = มุมของแกนบนท้องฟ้า (ค่าตีพิมพ์ 130.6° ชี้ SE) · spinInc = มุมเอียงจากแนวสายตา
+  // ให้ฝั่ง +Y (วงแหวนคู่ + เจ็ตยาว) อยู่ทาง NW ตามภาพ = spinPA + 180° และเอียงเข้าหาโลก
+  // เฟรมแม่คือ skyQuat(): +X ตะวันตก · +Y เหนือ · +Z ชี้กลับมาหาโลก
+  if (def.spinPA != null && def.spinInc != null) {
+    const pa = (def.spinPA + 180) * DEG, inc = def.spinInc * DEG;
+    root.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(
+      -Math.sin(pa) * Math.sin(inc), Math.cos(pa) * Math.sin(inc), Math.cos(inc)));
+  }
 
   const spriteTex = velaSpriteTexture();
 
@@ -4212,52 +4524,70 @@ function buildVelaPulsar3D(def) {
   });
   root.add(fieldGroup);
 
-  // 3) แกนหมุนพัลซาร์ + ลำแสงเจ็ตเชิงสัมพัทธภาพเอียง 35° พร้อมกรวยกวาด
+  // 3) แกนหมุนพัลซาร์ (= +Y ของ root) + ลำแสงเจ็ตเชิงสัมพัทธภาพเอียง 35° พร้อมกรวยกวาด
   const spinAxis = new THREE.Group();
-  spinAxis.rotation.set(10 * DEG, 0, -14 * DEG);
+  const jetTilt = (def.jetAngle || 35) * DEG;
 
   const magTilt = new THREE.Group();
-  magTilt.rotation.z = (def.jetAngle || 35) * DEG;
+  magTilt.rotation.z = jetTilt;
   spinAxis.add(magTilt);
 
-  const BEAM_LEN = 180;
-  function makeBeam(s) {
-    const g = new THREE.Group();
-    const cMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12, 0.12, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0xeafffb, transparent: true, opacity: 1 * s,
-        blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    const gMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.45, 0.45, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0x21e6c8, transparent: true, opacity: 0.34 * s,
-        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    const hMesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1.2, BEAM_LEN, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0x12c9b4, transparent: true, opacity: 0.10 * s,
-        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
-    );
-    g.add(cMesh, gMesh, hMesh);
-    g.userData.core = cMesh;
-    return g;
+  // ลำแสงสว่างเต็มช่วงแรก แล้วค่อย ๆ จางจนหายที่ปลาย (t = 0 ที่ดาว → 1 ที่ปลาย) ไม่ตัดกุด
+  const BEAM_LEN = 260;
+  const beamFade = t => {
+    const s = Math.min(1, Math.max(0, (t - 0.25) / 0.75));
+    return 1 - s * s * (3 - 2 * s);
+  };
+  function beamCylinder(r, color, opacity, side) {
+    const geo = new THREE.CylinderGeometry(r, r, BEAM_LEN, 16, 16, true);
+    const p = geo.attributes.position, col = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) {
+      const f = beamFade(Math.abs(p.getY(i)) / (BEAM_LEN / 2));
+      col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = f;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, vertexColors: true, transparent: true, opacity,
+      side, blending: THREE.AdditiveBlending, depthWrite: false }));
   }
-
-  const beamMain = makeBeam(1);
+  const beamMain = new THREE.Group();
+  const beamCore = beamCylinder(0.12, 0xeafffb, 1, THREE.FrontSide);
+  beamMain.add(beamCore,
+    beamCylinder(0.45, 0x21e6c8, 0.34, THREE.DoubleSide),
+    beamCylinder(1.2, 0x12c9b4, 0.10, THREE.DoubleSide));
   magTilt.add(beamMain);
 
-  // 5 ghost trailing beams สำหรับแสดงความต่อเนื่องของลำแสงหมุนเร็ว
-  const GHOSTS = 5, ghosts = [], ghostGroup = new THREE.Group();
-  spinAxis.add(ghostGroup);
-  for (let i = 1; i <= GHOSTS; i++) {
-    const lag = new THREE.Group();
-    const tilt = new THREE.Group();
-    tilt.rotation.z = (def.jetAngle || 35) * DEG;
-    tilt.add(makeBeam(0.42 * (1 - i / (GHOSTS + 1))));
-    lag.add(tilt);
-    ghostGroup.add(lag);
-    ghosts.push(lag);
+  // พัดแสงตามหลังลำแสง: ผิวกรวยบางส่วนที่จางลงตามมุมที่เลยไป (แทนลำแสงเงา 5 เส้นที่เว้นระยะคงที่จนดูเป็นซี่หวี)
+  // หมุนไปกับ spinAxis · ลำแสงหมุนมุมเพิ่มขึ้น หางจึงอยู่ฝั่งมุมน้อยกว่า
+  const WAKE_SPAN = 40 * DEG, WA = 24, WR = 16, halfLen = BEAM_LEN / 2;
+  const up = new THREE.Vector3(0, 1, 0), tip = new THREE.Vector3(-Math.sin(jetTilt), Math.cos(jetTilt), 0);
+  const tint = new THREE.Color(0x21e6c8), d = new THREE.Vector3();
+  const wPos = [], wCol = [], wIdx = [];
+  for (const sgn of [1, -1]) {
+    const base = wPos.length / 3;
+    for (let i = 0; i <= WA; i++) {
+      const u = i / WA;                                        // 0 = ชิดลำแสง → 1 = ปลายหาง
+      d.copy(tip).applyAxisAngle(up, -u * WAKE_SPAN).multiplyScalar(sgn);
+      for (let j = 0; j <= WR; j++) {
+        const r = 0.6 + (j / WR) * (halfLen - 0.6);
+        const k = 0.22 * (1 - u) * (1 - u) * beamFade(r / halfLen);
+        wPos.push(d.x * r, d.y * r, d.z * r);
+        wCol.push(tint.r * k, tint.g * k, tint.b * k);
+      }
+    }
+    for (let i = 0; i < WA; i++) {
+      for (let j = 0; j < WR; j++) {
+        const a = base + i * (WR + 1) + j, b = a + WR + 1;
+        wIdx.push(a, b, a + 1, b, b + 1, a + 1);
+      }
+    }
   }
+  const wakeGeo = new THREE.BufferGeometry();
+  wakeGeo.setAttribute('position', new THREE.Float32BufferAttribute(wPos, 3));
+  wakeGeo.setAttribute('color', new THREE.Float32BufferAttribute(wCol, 3));
+  wakeGeo.setIndex(wIdx);
+  const beamWake = new THREE.Mesh(wakeGeo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true,
+    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+  spinAxis.add(beamWake);
 
   // กรวยกวาดลำแสง (Sweep cones)
   const sweepCone = new THREE.Group();
@@ -4286,7 +4616,6 @@ function buildVelaPulsar3D(def) {
 
   // 4) วงแหวนคู่รังสีเอกซ์ (Vela X-ray Arcs)
   const arcGroup = new THREE.Group();
-  arcGroup.rotation.set(10 * DEG, 0, -14 * DEG);
   [[4.2, 2.2], [6.6, 3.6]].forEach(([R, y]) => {
     const t = new THREE.Mesh(
       new THREE.TorusGeometry(R, 0.13, 12, 80),
@@ -4305,7 +4634,6 @@ function buildVelaPulsar3D(def) {
 
   // 5) เจ็ตเกลียว (Helical jets จากการสังเกตการณ์ของกล้องจันทรา)
   const helixGroup = new THREE.Group();
-  helixGroup.rotation.set(10 * DEG, 0, -14 * DEG);
   function helixJet(len, rad, turns, dir) {
     const pts = [];
     for (let i = 0; i <= 100; i++) {
@@ -4346,11 +4674,16 @@ function buildVelaPulsar3D(def) {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    return new THREE.Points(geo, new THREE.PointsMaterial({
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({
       size, map: spriteTex, vertexColors: true, transparent: true, opacity,
       depthWrite: false, blending: THREE.AdditiveBlending
     }));
+    // ขนาดจุดไม่ย่อ/ขยายตามโหนดแม่ — farPose() คูณสเกลรวมให้ทุกเฟรม (ไม่งั้นจุดเล็กกว่าพิกเซล เนบิวลาหายทั้งก้อน)
+    pts.userData.size = size;
+    nebLayers.push(pts);
+    return pts;
   }
+  const nebLayers = [];
   nebula.add(buildNebulaLayer(5000, 4.5, 19, 5.0, 2.5, 0.55, 0.985, 1.02));
   nebula.add(buildNebulaLayer(3500, 9.0, 26, 7.5, 4.5, 0.30, 0.965, 1.00));
   nebula.add(buildNebulaLayer(1500, 15.0, 34, 9.0, 7.0, 0.14, 0.955, 0.995));
@@ -4382,8 +4715,8 @@ function buildVelaPulsar3D(def) {
 
   return {
     root, core, haloA, haloB, fieldGroup, spinAxis, magTilt, beamMain,
-    beamCore: beamMain.userData.core, beamFlare, ghosts, ghostGroup,
-    sweepCone, arcGroup, helixGroup, helixA, helixB, nebula, filaments,
+    beamCore, beamFlare, beamWake,
+    sweepCone, arcGroup, helixGroup, helixA, helixB, nebula, nebLayers, filaments,
     def
   };
 }
@@ -4393,9 +4726,13 @@ function makeFar(def) {
   const spin = new THREE.Group();
   holder.add(spin);
   let mesh;
-  if (def.t === 'bh') {
-    mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), def.kerr ? kerrBlackHoleMaterial(def) : blackHoleMaterial(def));
-    if (def.kerr) mesh.layers.set(BH_LAYER);          // ย้ายออกจากฉากหลัก ไปวาดในเป้าหมายย่อแทน
+  if (def.t === 'bh' && def.kerr) {
+    // โครงสร้างแบบเดโม dgreenheck/webgpu-black-hole: ทรงกลมกลับด้านล้อมกล้อง ทุกพิกเซลยิงรังสีจากตำแหน่งกล้องจริง
+    // (แทนแผ่นภาพที่หันเข้ากล้อง) · kerrCamPose() ย้ายทรงกลมไปอยู่ที่กล้องทุกเฟรม
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), kerrBlackHoleMaterial(def));
+    mesh.layers.set(BH_LAYER);                         // ไม่อยู่ในฉากหลัก วาดในเป้าหมายแยกแล้วซ้อน
+  } else if (def.t === 'bh') {
+    mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), blackHoleMaterial(def));
   } else {
     // แสงฟุ้งรอบซาก · ระหว่างรอโมเดลของ NASA ก็เป็นตัวแทนไปก่อน
     mesh = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -4404,13 +4741,13 @@ function makeFar(def) {
         : [[0, 'rgba(255,220,200,.7)'], [0.3, 'rgba(255,160,130,.3)'], [0.7, 'rgba(220,120,110,.06)'], [1, 'rgba(200,100,100,0)']], 128)),
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   }
-  mesh.scale.setScalar(def.span);
   mesh.renderOrder = 20;
   mesh.frustumCulled = false;
-  spin.add(mesh);
+  if (def.kerr) scene.add(mesh);                      // ทรงกลมล้อมกล้อง ไม่ผูกกับตำแหน่งหลุมดำ
+  else { mesh.scale.setScalar(def.span); spin.add(mesh); }
   scene.add(holder);
   const rec = {
-    def, isMoon: false, far: true, holder, spin, mesh,
+    def, isMoon: false, far: true, holder, spin, mesh, kerrSky: !!def.kerr,
     R: def.radius / KMU, world: { x: def._world.x, y: def._world.y, z: def._world.z }, parent: null,
     axis: new THREE.Vector3(0, 0, 1)
   };
@@ -4474,6 +4811,44 @@ function farShown(rec) {
   return Math.hypot(rec.world.x - _eye.x, rec.world.y - _eye.y, rec.world.z - _eye.z) < rec.def.span * 0.4;
 }
 
+/* หลุมดำเคอร์: ค่าที่ขึ้นกับกล้อง — เรียกจาก renderFrame() หลัง applyCamera() ภาพจึงตรงกับกล้องเฟรมเดียวกัน
+   ทรงกลมกลับด้านย้ายไปอยู่ที่กล้อง (แบบเดโม dgreenheck/webgpu-black-hole) ทุกพิกเซลได้ทิศจากตำแหน่งกล้องจริง */
+function kerrCamPose(rec) {
+  const def = rec.def, u = rec.mesh.material.uniforms;
+  // เชเดอร์คิดในหน่วย M = GM/c² (ครึ่งหนึ่งของรัศมีชวาร์สชิลด์)
+  const spm = 0.5 * def.span * rec.spin.scale.x / def.ext;          // หน่วยฉากต่อ 1 M
+  _bhV.copy(camera.position).sub(rec.holder.position).divideScalar(spm);
+  const ax = def._ax, ay = def._ay, az = def._axis;
+  u.uCam.value.set(_bhV.dot(ax), _bhV.dot(ay), _bhV.dot(az));
+  _bhR.set(1, 0, 0).applyQuaternion(camera.quaternion);
+  _bhU.set(0, 1, 0).applyQuaternion(camera.quaternion);
+  u.uRight.value.set(_bhR.dot(ax), _bhR.dot(ay), _bhR.dot(az));
+  u.uUp.value.set(_bhU.dot(ax), _bhU.dot(ay), _bhU.dot(az));
+  u.uFwd.value.crossVectors(u.uUp.value, u.uRight.value);
+  const tanY = Math.tan(camera.fov * DEG / 2);
+  u.uTanH.value.set(tanY * camera.aspect, tanY);
+  // ดาวฉากหลังต้องละเอียดขึ้นตามกำลังขยาย (ตอนอยู่ไกล ภาพถูกขยายเหมือนมองผ่านกล้องโทรทรรศน์)
+  u.uStarSc.value = Math.min(3000, Math.max(26, 26 * _bhV.length() / def.ext));
+  // ทรงกลมล้อมกล้อง: รัศมีอยู่ระหว่าง near กับ far ของกล้องเสมอ (ทิศคิดจากตำแหน่งบนทรงกลม ขนาดไม่มีผล)
+  rec.mesh.position.copy(camera.position);
+  rec.mesh.scale.setScalar(Math.max(camera.near * 20, Math.min(camera.far * 0.05, camera.position.length())));
+  // กล้องขยับไปจากเฟรมก่อนไหม → ต้องเดินรังสีใหม่ · ขนาดจอ/มุมรับภาพเปลี่ยนก็เช่นกัน
+  const cv = u.uCam.value, rv = u.uRight.value;
+  const camMoved = Math.abs(cv.x - _bhSig[0]) + Math.abs(cv.y - _bhSig[1]) + Math.abs(cv.z - _bhSig[2])
+                 + 60 * (Math.abs(rv.x - _bhSig[3]) + Math.abs(rv.y - _bhSig[4]) + Math.abs(rv.z - _bhSig[5]))
+                 + 1e3 * (Math.abs(camera.aspect - _bhSig[7]) + Math.abs(camera.fov - _bhSig[8]));
+  if (camMoved > 1e-3 + cv.length() * 2e-4) {
+    _bhSig[0] = cv.x; _bhSig[1] = cv.y; _bhSig[2] = cv.z;
+    _bhSig[3] = rv.x; _bhSig[4] = rv.y; _bhSig[5] = rv.z;
+    _bhSig[7] = camera.aspect; _bhSig[8] = camera.fov;
+    bhCamStill = 0; bhNeedDraw = true;
+  } else {
+    bhCamStill++;
+  }
+  // ภาพนิ่ง (กล้องไม่ขยับ ลายจานไม่เปลี่ยน) = ใช้ภาพเดิม ไม่เดินรังสีซ้ำ
+  bhDirty = bhNeedDraw || !bhDrawn;
+}
+
 function farPose(rec) {
   const def = rec.def;
   const camDist = Math.max(1e-12, rec.holder.position.distanceTo(camera.position));
@@ -4484,66 +4859,31 @@ function farPose(rec) {
     rec.spin.quaternion.copy(camera.quaternion);
     const u = rec.mesh.material.uniforms;
     if (def.kerr) {
-      // เชเดอร์คิดในหน่วย M = GM/c² (ครึ่งหนึ่งของรัศมีชวาร์สชิลด์) — แผ่นภาพกว้าง 2·uHalf M เสมอ
-      const spm = 0.5 * def.span * rec.spin.scale.x / u.uHalf.value;   // หน่วยฉากต่อ 1 M
-      _bhV.copy(camera.position).sub(rec.holder.position).divideScalar(spm);
+      // ค่าที่ขึ้นกับกล้อง (ตำแหน่ง ทิศ ทรงกลมล้อมกล้อง) คิดใน kerrCamPose() ตอนวาด — หลัง applyCamera แล้ว
+      // ถ้าคิดตรงนี้จะช้ากว่ากล้องหนึ่งเฟรม: ลากเมาส์แล้วฉากหลังขยับทันทีแต่หลุมดำตามทีหลัง ดูเหมือนติดจอ
       const ax = def._ax, ay = def._ay, az = def._axis;
-      u.uCam.value.set(_bhV.dot(ax), _bhV.dot(ay), _bhV.dot(az));
-      _bhR.set(1, 0, 0).applyQuaternion(camera.quaternion);
-      _bhU.set(0, 1, 0).applyQuaternion(camera.quaternion);
-      u.uRight.value.set(_bhR.dot(ax), _bhR.dot(ay), _bhR.dot(az));
-      u.uUp.value.set(_bhU.dot(ax), _bhU.dot(ay), _bhU.dot(az));
-      // ดาวฉากหลังต้องละเอียดขึ้นตามกำลังขยาย (ตอนอยู่ไกล ภาพถูกขยายเหมือนมองผ่านกล้องโทรทรรศน์)
-      u.uStarSc.value = Math.min(3000, Math.max(26, 26 * _bhV.length() / u.uHalf.value));
-      // ลายจานหมุนตามเวลาจำลองจริง หน่วย t_g = GM/c³ (M87* ราว 8.9 ชั่วโมงต่อหนึ่งหน่วย)
-      // เวลาจำลองเดินเร็วจนก๊าซหมุนเห็นได้ = ภาพเปลี่ยนทุกเฟรม ซึ่งการ์ดจอวาดเต็มความละเอียดไม่ทัน
-      // ถ้าปล่อยตามนั้น ระบบจะถือว่าภาพไม่เคยนิ่ง แล้วค้างที่คุณภาพต่ำสุดตลอด = เบลอไม่หาย
-      // จึง "ตรึงลายจานไว้" จนกว่าจะวาดเสร็จคมแล้ว ค่อยขยับไปขั้นถัดไป
-      // ผลคือก๊าซหมุนเป็นจังหวะ (ราว 2–3 ครั้ง/วินาที) แต่ทุกจังหวะเป็นภาพคมเต็มที่
-      // และเว้นอย่างน้อยหกเฟรมให้หน้าจอตอบสนองก่อนจะวาดหนักอีกรอบ
-      const rawOrb = (S.time / 1000 / (def.mass * 4.9255e-6)) % 1e5;
-      const orbRunning = Math.abs(rawOrb - _bhOrbRaw) > 2e-3;
-      _bhOrbRaw = rawOrb;
-      if (!bhDirty) _bhOrbWait++;
-      if (bhCamStill < 2 || _bhOrbWait > 6) { if (_bhOrb !== rawOrb) bhNeedDraw = true; _bhOrb = rawOrb; _bhOrbWait = 0; }
+      u.uToWorld.value.set(ax.x, ay.x, az.x, ax.y, ay.y, az.y, ax.z, ay.z, az.z);
+      // ลายจานหมุนตามเวลาจำลอง หน่วย t_g = GM/c³ (M87* ราว 8.9 ชั่วโมงต่อหนึ่งหน่วย)
+      // ลายขยับเมื่อไรก็วาดใหม่เฟรมนั้นเลย ก๊าซจึงหมุนลื่นต่อเนื่อง (แบบเดิมตรึงลายแล้วกระโดดเป็นจังหวะ ดูกระตุก)
+      // หลุมดำมวลดาวฤกษ์ วงในหมุนจริงหลายร้อยรอบต่อวินาที ถ้าตามนั้นลายจะสั่นเป็นสัญญาณรบกวนทั้งจาน
+      // จึงจำกัดความเร็วที่แสดงไว้ไม่เกิน BH_ORB_MAX t_g ต่อวินาทีจริง
+      const nowS = performance.now() / 1000;
+      const dtReal = Math.min(0.1, Math.max(0, nowS - _bhNowPrev));
+      const lim = BH_ORB_MAX * dtReal;
+      let dOrb = (S.time - _bhTPrev) / 1000 / (def.mass * 4.9255e-6);
+      if (!(Math.abs(dOrb) <= lim)) dOrb = dOrb < 0 ? -lim : lim;
+      if (bhSwirl) dOrb = (S.sign < 0 ? -1 : 1) * BH_ORB_SHOW * dtReal;   // เร่งให้เห็น: หมุนตลอด ตามทิศเวลา
+      _bhTPrev = S.time; _bhNowPrev = nowS;
+      _bhOrbVis = (_bhOrbVis + dOrb) % 6000;                   // 6000 = 100 รอบของวงสลับลาย (60) ต่อกันเนียน
+      if (Math.abs(_bhOrbVis - _bhOrb) > 1e-3) { _bhOrb = _bhOrbVis; bhNeedDraw = true; }
       u.uOrb.value = _bhOrb;
       u.uFlick.value = performance.now() / 1000;
       u.uSteps.value = bhSteps;
-      bhBusy = true;
       glowRec = rec;
       if (def.dly > 2e5) hostSkyPose(rec);      // อยู่นอกทางช้างเผือก → ต้องมีฟ้าของกาแล็กซีแม่ให้
-      // มีอะไรเปลี่ยนไปจากเฟรมก่อนไหม — แยกสองอย่าง เพราะคุณภาพที่ทำได้ต่างกันคนละเรื่อง
-      //   กล้องขยับ  = ภาพเคลื่อน ตาจับรายละเอียดไม่ทัน ย่อได้มาก
-      //   เวลาเดินเร็วจนก๊าซหมุนเห็นได้ = ภาพเปลี่ยนทุกเฟรม ต้องวาดใหม่ทั้งผืนทุกเฟรม (ซอยเป็นช่องไม่ได้ ภาพจะเหลื่อม)
-      //     แต่กล้องนิ่ง ตายังจับรายละเอียดได้ จึงต้องให้คุณภาพสูงกว่าตอนขยับกล้องมาก
-      const cv = u.uCam.value, rv = u.uRight.value;
-      const camMoved = Math.abs(cv.x - _bhSig[0]) + Math.abs(cv.y - _bhSig[1]) + Math.abs(cv.z - _bhSig[2])
-                     + 60 * (Math.abs(rv.x - _bhSig[3]) + Math.abs(rv.y - _bhSig[4]) + Math.abs(rv.z - _bhSig[5]));
-      const orbMoved = Math.abs(u.uOrb.value - _bhSig[6]);
-      if (camMoved > 1e-3 + cv.length() * 2e-4) {
-        _bhSig[0] = cv.x; _bhSig[1] = cv.y; _bhSig[2] = cv.z;
-        _bhSig[3] = rv.x; _bhSig[4] = rv.y; _bhSig[5] = rv.z;
-        bhCamStill = 0; bhStill = 0; bhNeedDraw = true;
-      } else {
-        bhCamStill++;
-        if (orbMoved > 2e-3) bhStill = 0; else bhStill++;
-      }
-      _bhSig[6] = u.uOrb.value;
-      // แผ่นภาพกินพื้นที่จอกี่พิกเซล → ย่อลงเท่าไรถึงจะอยู่ในงบ (ไกล = ไม่ต้องย่อ · ใกล้จนเต็มจอ = ย่อมาก)
-      const wpx = fovK * rec.spin.scale.x * def.span / camDist * renderer.getPixelRatio();
-      // ตอนเข้าใกล้ แผ่นภาพใหญ่ล้นจอ ส่วนที่ล้นไม่ได้ถูกวาดจริง จึงไม่ต้องเอามานับเป็นงาน
-      const cv2 = renderer.domElement;
-      const area = Math.min(wpx * wpx, cv2.width * cv2.height * 1.15);
-      // กล้องนิ่งเมื่อไร ให้ไล่ความละเอียดขึ้นได้เต็มที่ ถึงเวลาจำลองจะเดินเร็วจนก๊าซหมุนก็ตาม
-      // ส่วนการวาดใหญ่กว่าจอ (ซอยเป็นช่อง) ทำได้เฉพาะตอนภาพนิ่งสนิท ไม่งั้นช่องจะเหลื่อมกัน
-      const budget = BH_STILL;
-      // วาดใหญ่กว่าจอ (ซอยเป็นช่องหลายเฟรม) ทำได้เฉพาะตอนเวลาหยุดจริง ๆ
-      // ถ้าลายจานยังขยับ ช่องแต่ละช่องจะเป็นคนละจังหวะเวลา ภาพจะเหลื่อมเป็นตาราง
-      const want = Math.min(!orbRunning && bhStill > 3 ? BH_SS : 1,
-                            Math.max(1.0, Math.sqrt(budget * bhBias / Math.max(1, area))));
-      if (want < bhScale && bhCamStill < 2) bhScale = want;
-      else if (want > bhScale) bhScale = Math.min(want, bhScale + 0.1);
-      bhDirty = bhNeedDraw || bhScale !== bhDrawn;
+      // ทิศที่แสงวนรอบหลุมดำจนหลุดนอกจอ เชเดอร์วาดดาวของกาแล็กซีแม่ต่อเองด้วยสูตรเดียวกัน
+      u.uHost.value = hostSky && hostSky.visible ? hostSky.material.uniforms.uFade.value : 0;
+      if (u.uHost.value > 0) u.uCoreW.value.copy(hostSky.material.uniforms.uCore.value);
     } else {
       u.uTime.value = performance.now() / 1000;
     }
@@ -4553,16 +4893,23 @@ function farPose(rec) {
   if (rec.vela) {
     const v = rec.vela;
     const rps = def.freq || 11.2;
-    const tSec = performance.now() * 0.001;
 
-    // หมุนแกนพัลซาร์ด้วยความถี่จริง 11.2 รอบ/วินาที (คาบ 89.33 ms)
-    v.spinAxis.rotation.y = (tSec * Math.PI * 2 * rps) % (Math.PI * 2);
+    // นาฬิกาของพัลซาร์เอง: เดินเฉพาะตอนแถบเวลาเล่นอยู่ ตามทิศเวลา (กดหยุด = หยุดทั้งก้อน)
+    // ความเร็วบนจอคงที่ไม่ขึ้นกับความเร็วเวลาจำลอง (เร่งไปก็แสดงไม่ได้อยู่แล้ว) — แบบเดียวกับก๊าซรอบหลุมดำ
+    const nowS = performance.now() / 1000;
+    const dtReal = v.nowPrev == null ? 0 : Math.min(0.1, Math.max(0, nowS - v.nowPrev));
+    v.nowPrev = nowS;
+    const step = S.playing ? dtReal * (S.sign < 0 ? -1 : 1) : 0;
+    v.ambT = (v.ambT || 0) + step;
+    const tSec = v.ambT;
 
-    // เงาตามหลัง (ghost trails)
-    const lag = Math.min(0.35, 0.08 * (rps / 11.2));
-    for (let i = 0; i < v.ghosts.length; i++) {
-      v.ghosts[i].rotation.y = -(i + 1) * lag;
-    }
+    // หมุนแกนพัลซาร์ด้วยความถี่จริง 11.2 รอบ/วินาที (คาบ 89.33 ms) หรือช้าลง VELA_SLOW เท่า
+    v.phase = ((v.phase || 0) + step * Math.PI * 2 * rps / (velaSlow ? VELA_SLOW : 1)) % (Math.PI * 2);
+    v.spinAxis.rotation.y = v.phase;
+
+    // จุดของเนบิวลา: ขนาดเป็นหน่วยฉาก ไม่ตามสเกลของโหนดแม่ → คูณสเกลรวม (spin เปลี่ยนตามระยะกล้องทุกเฟรม)
+    const ws = v.root.getWorldScale(_sVela).x;
+    for (const p of v.nebLayers) p.material.size = p.userData.size * ws;
 
     // ส่วนโครงสร้างแวดล้อมหมุนช้าๆ
     v.nebula.rotation.y     = (tSec * 0.045) % (Math.PI * 2);
@@ -4715,6 +5062,16 @@ function renderFarInfo(rec) {
   hd.append(sw, ti);
   head.appendChild(hd);
   if (def.desc[S.lang]) { const p = el('p', 'desc'); p.textContent = def.desc[S.lang]; head.appendChild(p); }
+  // หลุมดำที่มีจาน: สลับมุมดูได้ทันที (มุมข้างจานแบบในหนัง · มุมที่โลกเห็นจริง · มองจากขั้ว)
+  if (def.t === 'bh' && def.kerr && def.acc) {
+    const act = el('div', 'chips');
+    for (const [k, label] of [['edge', t.bhViewSide], ['earth', t.bhViewEarth], ['top', t.bhViewTop]]) {
+      const b = el('button', 'chip', label);
+      b.addEventListener('click', () => camPreset(k));
+      act.appendChild(b);
+    }
+    head.appendChild(act);
+  }
   pane.appendChild(head);
 
   eyeWorld(_eye);
@@ -4749,6 +5106,43 @@ function renderFarInfo(rec) {
     sec.appendChild(note);
   };
   if (def.t === 'bh') addNote(t.bhNoteTitle, def.kerr ? t.bhNoteKerr : t.bhNote);
+  if (def.t === 'bh' && def.kerr && def.acc) {
+    // ความเร็วของก๊าซ: เร่งให้เห็น ↔ ตามเวลาจำลองจริง + คาบวงโคจรจริงของขอบในจาน
+    const a = Math.min(Math.max(def.spin != null ? def.spin : 0.9, 0), 0.998);
+    const z1 = 1 + Math.cbrt(1 - a * a) * (Math.cbrt(1 + a) + Math.cbrt(1 - a));
+    const z2 = Math.sqrt(3 * a * a + z1 * z1);
+    const isco = 3 + z2 - Math.sqrt(Math.max((3 - z1) * (3 + z1 + 2 * z2), 0));
+    const ps = 2 * Math.PI * (Math.pow(isco, 1.5) + a) * def.mass * 4.9255e-6;   // คาบวงโคจรที่ ISCO (วินาที)
+    const th = S.lang === 'th';
+    const per = ps < 1 ? nf(ps * 1000, 1) + (th ? ' มิลลิวินาที' : ' ms')
+              : ps < 120 ? nf(ps, 1) + (th ? ' วินาที' : ' s')
+              : ps < 7200 ? nf(ps / 60, 0) + (th ? ' นาที' : ' min')
+              : ps < 172800 ? nf(ps / 3600, 1) + (th ? ' ชั่วโมง' : ' h')
+              : nf(ps / 86400, 1) + (th ? ' วัน' : ' days');
+    addNote(t.bhSwirlTitle, (bhSwirl ? t.bhSwirlShow : t.bhSwirlReal).replace('{p}', per));
+    const row = el('div', 'chips');
+    row.style.marginTop = '8px';
+    for (const [on, label] of [[true, t.bhSwirlBtnShow], [false, t.bhSwirlBtnReal]]) {
+      const b = el('button', 'chip' + (bhSwirl === on ? ' on' : ''), label);
+      b.addEventListener('click', () => { bhSwirl = on; renderInfo(); });
+      row.appendChild(b);
+    }
+    sec.appendChild(row);
+  }
+  if (def.t === 'pulsar') {
+    // ความเร็วการหมุน: ภาพช้า ↔ ความเร็วจริง (ที่ 60 ภาพ/วินาที ลำแสงกระโดดครั้งละ 360° × f ÷ 60)
+    const f = def.freq || 11.2;
+    addNote(t.pulsarSpeedTitle, (velaSlow ? t.pulsarSlowNote : t.pulsarRealNote)
+      .replace('{f}', nf(f, 1)).replace('{s}', nf(f / VELA_SLOW, 2)).replace('{d}', nf(360 * f / 60, 0)).replace('{k}', VELA_SLOW));
+    const row = el('div', 'chips');
+    row.style.marginTop = '8px';
+    for (const [on, label] of [[true, t.pulsarBtnSlow.replace('{k}', VELA_SLOW)], [false, t.pulsarBtnReal]]) {
+      const b = el('button', 'chip' + (velaSlow === on ? ' on' : ''), label);
+      b.addEventListener('click', () => { velaSlow = on; renderInfo(); });
+      row.appendChild(b);
+    }
+    sec.appendChild(row);
+  }
   const n = def.dly >= 1e6 ? nf(def.dly / 1e6, 1) + (S.lang === 'th' ? ' ล้าน' : ' million')
                            : nf(def.dly, 0) + (S.lang === 'th' ? ' ' : '');
   addNote(t.galLightTitle, t.galLightNote.replace('{n}', n));
@@ -4885,8 +5279,7 @@ function aimAtExo(i) {
   const h = EXO[i];
   const dx = h.x - starEye.x, dy = h.y - starEye.y, dz = h.z - starEye.z;
   const r = Math.hypot(dx, dy, dz) || 1;
-  camState.az = Math.atan2(-dy / r, -dx / r);
-  camState.el = Math.max(-1.5, Math.min(1.5, Math.asin(-dz / r)));
+  setCamDir(-dx / r, -dy / r, -dz / r);
 }
 
 /* กำลังส่องสว่างของดาวแม่ เทียบดวงอาทิตย์ */
@@ -5840,9 +6233,15 @@ function renderView() {
 }
 
 function camPreset(kind) {
+  const bh = kerrBh(trans.on ? trans.to : S.focus);
   if (kind === 'near') gotoScale(1);
   else if (kind === 'top') camState.el = 1.45;
-  else camState.el = 0.05;
+  else if (kind === 'earth' && bh) {
+    // มุมจากโลก: กล้องอยู่ฝั่งเดียวกับโลก เห็นจานเกือบตรงหน้าแบบภาพของ EHT
+    syncCamBasis();
+    setCamDir(-bh._world.x, -bh._world.y, -bh._world.z);
+  }
+  else camState.el = bh ? BH_SIDE_EL : 0.05;        // หลุมดำ: เงยจากระนาบจานนิดหน่อย จะเห็นจานด้านหลังม้วนข้ามหัว
 }
 
 /* ── แท็บ “ท้องฟ้า”: มองจากจุดที่ยืนอยู่บนโลก + ปฏิทินเหตุการณ์ ────────── */
@@ -6219,6 +6618,7 @@ function renderModelThumb(id) {
       group.add(craftClone);
     }
   } else if (rec.far) {
+    if (def.kerr) return null;          // หลุมดำเป็นทรงกลมรอบกล้อง ย่อเป็นรูปเล็กไม่ได้ — ใช้ภาพนิ่ง (_discURL)
     if (rec.model) {
       const farClone = rec.model.clone(true);
       farClone.position.set(0, 0, 0);
@@ -7210,17 +7610,6 @@ function loop(now) {
   updateExo();
   renderFrame();
 
-  // หลุมดำเคอร์กินแรงมาก — เฟรมตกก็ลดจำนวนก้าวของการเดินรังสี ยังลื่นก็เพิ่มคืน
-  if (bhBusy) {
-    // เฟรมที่ยาวเพราะแท็บถูกหน่วง (ซ่อนอยู่ · สลับหน้าต่าง) ไม่ได้แปลว่าการ์ดจอทำไม่ไหว จึงไม่นับ
-    // และขยับทีละน้อย เพราะงบหลักมาจากพื้นที่บนจอซึ่งแม่นกว่าอยู่แล้ว
-    if (!document.hidden && dt < 0.09 && bhCamStill < 4) {
-      if (dt > 0.045) bhBias = Math.max(0.3, bhBias - 0.04);
-      else if (dt < 0.022) bhBias = Math.min(1.6, bhBias + 0.015);
-    }
-    bhBusy = false;
-  }
-
   liveT += dt;
   if (liveT > 0.25) {
     liveT = 0;
@@ -7235,7 +7624,9 @@ function loop(now) {
 
 /* วาดสามชั้นเรียงจากไกลไปใกล้ — แยกออกมาเพื่อให้ปุ่มบันทึกภาพเรียกซ้ำได้ */
 function renderFrame() {
-  const bh = bhRender();              // ต้องทำก่อน เพราะสลับเป้าหมายการวาดชั่วคราว
+  // มีหลุมดำในภาพ: วาดฉากหลังลงภาพพักก่อน → เดินรังสี (ดึงฉากหลังไปดัด) → ซ้อนลงจอทึบทั้งผืน
+  const bh = !!(glowRec && glowRec.holder.visible);
+  if (bh) { kerrCamPose(glowRec); bgTarget(); }
   renderer.clear();
   if (deepFade > 0.01) renderer.render(deepScene, deepCam);
   if (galFade > 0.01) renderer.render(galScene, galCam);
@@ -7243,7 +7634,7 @@ function renderFrame() {
   if (starFadeR > 0.01) renderer.render(starScene, starCam);
   renderer.clearDepth();
   renderer.render(scene, camera);
-  if (bh) bhComposite();              // ซ้อนหลุมดำ + แสงฟุ้งทับภาพที่วาดเสร็จแล้ว
+  if (bh && bhRender()) bhComposite();  // ซ้อนหลุมดำ + แสงฟุ้ง
 }
 
 /* คืนคิวให้เบราว์เซอร์วาดหน้าจอโดยไม่ใช้ requestAnimationFrame
@@ -7297,6 +7688,13 @@ async function boot() {
   for (const [sc, cam] of [[scene, camera], [skyScene, skyCam], [starScene, starCam], [galScene, galCam], [deepScene, deepCam]]) {
     await yieldToPaint();
     renderer.compile(sc, cam);
+  }
+  // ท่อวาดหลุมดำ (ดัดแสงทั้งจอ + แสงฟุ้ง) — คอมไพล์ตามเป้าหมายที่จะวาดจริง
+  // (เป้าหมายทุกผืนเข้ารหัสสีแบบเดียวกับจอ โปรแกรมที่คอมไพล์ไว้ข้างบนจึงใช้กับเป้าหมายเหล่านั้นได้เลย)
+  glowInit();
+  for (const m of [bhLens, glowAdd, glowCut, glowBlur, bgDown]) {
+    glowQuad.material = m;
+    renderer.compile(glowScene, glowCam);
   }
   // วาดมุมมองทั้งกาแล็กซีหนึ่งเฟรมไว้ใต้หน้าโหลด พื้นผิวของฉากไกลจะขึ้นการ์ดจอไว้ก่อน แล้วค่อยคืนกล้อง
   {

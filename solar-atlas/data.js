@@ -897,12 +897,13 @@ const UI = {
     ladder:['ผิวดาว','ดาวเคราะห์','ระบบสุริยะ','แถบไคเปอร์','เมฆออร์ต','ดาวใกล้เคียง','กาแล็กซี',
             'กลุ่มท้องถิ่น','กระจุกกาแล็กซี','เอกภพที่สังเกตได้'],
     mly:'ล้านปีแสง', gly:'พันล้านปีแสง', obsEdge:'ขอบเอกภพที่สังเกตได้ · แสงเก่าที่สุด 13,800 ล้านปี', vDeep:'กาแล็กซีมีชื่อ', milkyWay:'ทางช้างเผือก (เราอยู่ที่นี่)', milkyWayHome:'ทางช้างเผือก (บ้านของเรา)',
-    vCosmic:'แผนที่กาแล็กซี 2MRS', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
+    vCosmic:'แผนที่กาแล็กซีจริง', vCmb:'รังสีไมโครเวฟพื้นหลัง', vIsm:'สสารระหว่างดาว', vDark:'สสารมืด',
     galType:{ spiral:'กาแล็กซีกังหัน', barred:'กาแล็กซีกังหันมีคาน', lenticular:'กาแล็กซีรูปเลนส์', elliptical:'กาแล็กซีรี',
       irregular:'กาแล็กซีไร้รูปทรง', dwarf:'กาแล็กซีแคระ', ring:'กาแล็กซีวงแหวน', merger:'กาแล็กซีกำลังชนกัน',
-      quasar:'เควซาร์', distant:'กาแล็กซียุคแรกของเอกภพ', cluster:'กระจุกกาแล็กซี' },
+      quasar:'เควซาร์', distant:'กาแล็กซียุคแรกของเอกภพ', cluster:'กระจุกกาแล็กซี',
+      supercluster:'มหากระจุกกาแล็กซี', wall:'กำแพงกาแล็กซี', void:'ช่องว่างในเอกภพ' },
     galGroup:{ lg:'กลุ่มท้องถิ่น', near:'นอกกลุ่มท้องถิ่น', far:'ไกลมาก', cluster:'โครงสร้างขนาดใหญ่' },
-    galDiam:'เส้นผ่านศูนย์กลาง', galMorph:'รหัสชนิด (ฮับเบิล)', galZ:'เรดชิฟต์ z', galLookback:'แสงเดินทางมานาน',
+    galDiam:'เส้นผ่านศูนย์กลาง', galLength:'ความยาว', galMorph:'รหัสชนิด (ฮับเบิล)', galZ:'เรดชิฟต์ z', galLookback:'แสงเดินทางมานาน',
     galAgeThen:'อายุเอกภพตอนแสงออกเดินทาง', gyr:'พันล้านปี', myr:'ล้านปี',
     secGalaxy:'ข้อมูลกาแล็กซี', galAim:'หันกล้องไปดู', gGalaxies:'กาแล็กซีและกระจุกกาแล็กซี',
     galComovTitle:'ระยะของวัตถุที่ไกลมาก',
@@ -936,11 +937,14 @@ const UI = {
     gComets:'ดาวหางและวัตถุจากนอกระบบ', gCraft:'ยานอวกาศ',
     gFar:'หลุมดำและซากซูเปอร์โนวา', secBh:'ข้อมูลหลุมดำ', secNeb:'ข้อมูลซากซูเปอร์โนวา', secPulsar:'ข้อมูลพัลซาร์',
     pulsarPeriod:'คาบการหมุน', pulsarFreq:'ความถี่การหมุน', pulsarBField:'สนามแม่เหล็กที่ผิว', pulsarJetAngle:'มุมเอียงแกนเจ็ต',
+    pulsarSpeedTitle:'ความเร็วการหมุน', pulsarBtnSlow:'ภาพช้า {k} เท่า', pulsarBtnReal:'ความเร็วจริง',
+    pulsarSlowNote:'ตอนนี้แสดงช้าลง {k} เท่า ({s} รอบต่อวินาที) ให้ตาตามลำแสงทัน — ของจริงหมุน {f} รอบต่อวินาที · กดหยุดที่แถบเวลาแล้วพัลซาร์หยุดตาม',
+    pulsarRealNote:'หมุนตามจริง {f} รอบต่อวินาที เร็วกว่าที่จอ 60 ภาพต่อวินาทีจะแสดงได้ ลำแสงจึงกระโดดครั้งละราว {d}° ดูกระตุกหรือเหมือนหมุนถอยหลัง (แบบล้อรถในภาพยนตร์)',
     bhMass:'มวล', bhRs:'รัศมีขอบฟ้าเหตุการณ์ (ชวาร์สชิลด์)', bhShadow:'ขนาดเงาเมื่อมองจากโลก', muas:'ไมโครพิลิปดา',
     bhAcc:'จานพอกพูนมวล', bhAccYes:'มี · กำลังกลืนก๊าซ', bhAccNo:'ไม่มี · หลุมดำเงียบ',
     nebSize:'ความกว้าง', modelSrc:'โมเดลสามมิติ', modelNasa:'NASA', refSrc:'อ้างอิง', farGo:'บินไปดู {n}',
     bhNoteTitle:'ภาพนี้วาดอย่างไร',
-    bhNoteKerr:'ภาพนี้ไม่ได้วาดตามที่ตาเห็น แต่คำนวณเส้นทางของแสงทีละพิกเซลในกาลอวกาศของหลุมดำหมุน (เมตริกเคอร์ สปิน a = 0.94) ยิงรังสีย้อนจากกล้องแล้วเดินสมการจีโอเดสิกไร้มวลด้วยวิธีรุงเง-คุตตาอันดับสี่ ทุกอย่างที่เห็นจึงโผล่มาจากการคำนวณเอง ทั้งเงาที่ใหญ่กว่าขอบฟ้าเหตุการณ์และเบี้ยวเล็กน้อยเพราะการหมุน วงแหวนโฟตอนซึ่งเป็นภาพซ้ำของจานที่วนรอบหลุมดำก่อนหลุดออกมา จานด้านหลังที่ถูกดัดให้โค้งข้ามเหนือเงา และด้านที่วิ่งเข้าหาเราซึ่งสว่างกว่าตามกำลังสี่ของการเลื่อนความถี่ แกนหมุนวางตามที่สังเกตได้จริง คือเอียง 17° จากแนวสายตา มองจากโลกจึงเห็นเป็นวงคล้ายภาพของ EHT — ลองหมุนกล้องไปดูจากด้านข้าง จะเห็นจานม้วนข้ามตัวเองแบบในหนัง ลำสีฟ้าที่พุ่งออกสองข้างตามแกนหมุนคือลำอนุภาค รูปทรงฐานเป็นพาราโบลาตามที่ VLBI วัดได้ — ด้านที่พุ่งเข้าหาเราสว่างกว่าด้านไกลหลายหมื่นเท่าจากการบีบลำแสง กล้องจริงจึงเห็นเจตของ M87 ข้างเดียว · ส่วนดาวบนท้องฟ้ารอบตัวเมื่อเข้าใกล้เป็นภาพจำลอง ไม่ใช่ตำแหน่งดาวจริง เพราะกาแล็กซีทรงรีอย่าง M87 ยังไม่มีแคตตาล็อกดาวรายดวง',
+    bhNoteKerr:'ภาพนี้ไม่ได้วาดตามที่ตาเห็น แต่คำนวณเส้นทางของแสงทีละพิกเซลในกาลอวกาศของหลุมดำหมุน (เมตริกเคอร์ สปิน a = 0.94) ยิงรังสีย้อนจากกล้องแล้วเดินสมการจีโอเดสิกไร้มวลด้วยวิธีรุงเง-คุตตาอันดับสี่ ทุกอย่างที่เห็นจึงโผล่มาจากการคำนวณเอง ทั้งเงาที่ใหญ่กว่าขอบฟ้าเหตุการณ์และเบี้ยวเล็กน้อยเพราะการหมุน วงแหวนโฟตอนซึ่งเป็นภาพซ้ำของจานที่วนรอบหลุมดำก่อนหลุดออกมา จานด้านหลังที่ถูกดัดให้โค้งข้ามเหนือเงา และด้านที่วิ่งเข้าหาเราซึ่งสว่างกว่าตามกำลังสี่ของการเลื่อนความถี่ แกนหมุนวางตามที่สังเกตได้จริง คือเอียง 17° จากแนวสายตา มองจากโลกจึงเห็นเป็นวงคล้ายภาพของ EHT (กดปุ่ม “มุมจากโลก (EHT)” เพื่อดูมุมนั้น) ส่วนภาพเริ่มต้นเป็นมุมข้างจาน จะเห็นจานด้านหลังม้วนข้ามตัวเองแบบในหนัง ลากเมาส์ซ้าย–ขวาเพื่อเดินวนรอบจาน ดาวและกาแล็กซีทั้งจอก็ถูกดัดไปตามเส้นทางแสงชุดเดียวกันลำสีฟ้าที่พุ่งออกสองข้างตามแกนหมุนคือลำอนุภาค รูปทรงฐานเป็นพาราโบลาตามที่ VLBI วัดได้ — ด้านที่พุ่งเข้าหาเราสว่างกว่าด้านไกลหลายหมื่นเท่าจากการบีบลำแสง กล้องจริงจึงเห็นเจตของ M87 ข้างเดียว · ส่วนดาวบนท้องฟ้ารอบตัวเมื่อเข้าใกล้เป็นภาพจำลอง ไม่ใช่ตำแหน่งดาวจริง เพราะกาแล็กซีทรงรีอย่าง M87 ยังไม่มีแคตตาล็อกดาวรายดวง',
     bhNote:'เงาดำตรงกลางมีรัศมีราว 2.6 เท่าของรัศมีชวาร์สชิลด์ ใหญ่กว่าขอบฟ้าเหตุการณ์ เพราะแรงโน้มถ่วงดัดแสงที่ผ่านใกล้ ๆ ให้ตกลงไป วงแหวนบางรอบเงาคือแสงที่วนรอบหลุมดำก่อนหลุดออกมา หลุมดำที่กำลังกลืนก๊าซมีจานก๊าซร้อน ด้านหลังของจานถูกดัดแสงให้เห็นโค้งข้ามเหนือและใต้เงา และด้านที่หมุนเข้าหาเราสว่างกว่า ส่วนหลุมดำเงียบแทบมองไม่เห็นเลย — เป็นภาพวาดเชิงคุณภาพตามหลักฟิสิกส์ ไม่ใช่ภาพถ่าย ขนาดตามมวลจริง',
     nebNote:'โมเดลสามมิติจาก NASA ขยายเท่าขนาดจริง วาดให้เรืองแสงแบบโปร่งแทนผิวทึบ ทิศที่หันเป็นค่าประมาณ',
     nebNote_crab:'โมเดลสามมิติจาก NASA คือโครงสร้างที่กล้องจันทราเห็นในรังสีเอกซ์ ได้แก่จานวงแหวนกับลำอนุภาคที่พุ่งออกจากพัลซาร์ใจกลาง กว้างราว 40% ของเนบิวลาที่เห็นในแสงปกติ ส่วนแสงฟุ้งรอบนอกแทนเนบิวลาทั้งก้อน วาดให้เรืองแสงแบบโปร่ง ทิศที่หันเป็นค่าประมาณ',
@@ -962,6 +966,10 @@ const UI = {
     stTravelNote:'ด้วยความเร็วของยานวอยเอเจอร์ 1 (16.9 กม./วิ) ต้องใช้เวลาราว {yr} ปี',
     stAim:'หันกล้องไปทางนี้', stBack:'กลับไปดูวัตถุที่เจาะจงอยู่',
     goFly:'บินไปดู', goHome:'กลับระบบสุริยะ',
+    bhViewSide:'มุมข้างจาน', bhViewEarth:'มุมจากโลก (EHT)', bhViewTop:'มองจากขั้ว',
+    bhSwirlTitle:'ความเร็วของก๊าซ', bhSwirlBtnShow:'เร่งให้เห็น', bhSwirlBtnReal:'ความเร็วจริง',
+    bhSwirlShow:'ตอนนี้เร่งให้ก๊าซหมุนพอเห็นได้ (ทุกหลุมดำหมุนเร็วเท่ากันบนจอ) — ของจริง ขอบในของจานโคจรรอบละ {p}',
+    bhSwirlReal:'ก๊าซหมุนตามเวลาจำลอง — ขอบในของจานโคจรรอบละ {p} (หลุมดำมวลดาวฤกษ์หมุนเร็วเกินตาจะตามทัน จึงจำกัดความเร็วที่แสดงไว้)',
     starHint:'ซูมออกไปให้พ้นระบบสุริยะแล้วคลิกที่ดาวดวงไหนก็ได้ที่มีชื่อ',
     skyWhere:'จุดที่ยืนดู', skyHere:'ตำแหน่งของฉัน', skyMine:'ตำแหน่งของฉัน',
     skyNoGeo:'ขอตำแหน่งไม่สำเร็จ — เลือกเมืองจากรายการแทนได้',
@@ -1022,12 +1030,13 @@ const UI = {
     ladder:['Surface','Planet','Solar system','Kuiper belt','Oort cloud','Neighbourhood','Galaxy',
             'Local Group','Galaxy clusters','Observable universe'],
     mly:'Mly', gly:'Gly', obsEdge:'Edge of the observable universe · the oldest light, 13.8 billion years', vDeep:'Named galaxies', milkyWay:'Milky Way (you are here)', milkyWayHome:'Milky Way (our home)',
-    vCosmic:'2MRS galaxy map', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
+    vCosmic:'Real galaxy maps', vCmb:'Cosmic microwave background', vIsm:'Interstellar matter', vDark:'Dark matter',
     galType:{ spiral:'Spiral galaxy', barred:'Barred spiral galaxy', lenticular:'Lenticular galaxy', elliptical:'Elliptical galaxy',
       irregular:'Irregular galaxy', dwarf:'Dwarf galaxy', ring:'Ring galaxy', merger:'Merging galaxies',
-      quasar:'Quasar', distant:'Early-universe galaxy', cluster:'Galaxy cluster' },
+      quasar:'Quasar', distant:'Early-universe galaxy', cluster:'Galaxy cluster',
+      supercluster:'Supercluster', wall:'Galaxy wall', void:'Cosmic void' },
     galGroup:{ lg:'Local Group', near:'Beyond the Local Group', far:'Very distant', cluster:'Large-scale structure' },
-    galDiam:'Diameter', galMorph:'Hubble type', galZ:'Redshift z', galLookback:'Light travel time',
+    galDiam:'Diameter', galLength:'Length', galMorph:'Hubble type', galZ:'Redshift z', galLookback:'Light travel time',
     galAgeThen:'Age of the universe when the light left', gyr:'billion yr', myr:'million yr',
     secGalaxy:'Galaxy data', galAim:'Point the camera', gGalaxies:'Galaxies and clusters',
     galComovTitle:'Distance to very far objects',
@@ -1061,11 +1070,14 @@ const UI = {
     gComets:'Comets & interstellar objects', gCraft:'Spacecraft',
     gFar:'Black holes & supernova remnants', secBh:'Black hole data', secNeb:'Supernova remnant data', secPulsar:'Pulsar data',
     pulsarPeriod:'Rotation period', pulsarFreq:'Rotation rate', pulsarBField:'Surface magnetic field', pulsarJetAngle:'Jet tilt angle',
+    pulsarSpeedTitle:'Spin speed', pulsarBtnSlow:'{k}× slow motion', pulsarBtnReal:'Real speed',
+    pulsarSlowNote:'Shown {k} times slower ({s} turns a second) so your eye can follow the beams. The real pulsar spins {f} times a second. Pausing the time bar pauses the pulsar too.',
+    pulsarRealNote:'Spinning at the real {f} turns a second, faster than a 60 fps screen can show, so the beams jump about {d}° per frame and can look jerky or even seem to spin backwards (like wagon wheels in films).',
     bhMass:'Mass', bhRs:'Event-horizon (Schwarzschild) radius', bhShadow:'Shadow size seen from Earth', muas:'µas',
     bhAcc:'Accretion disc', bhAccYes:'yes · feeding on gas', bhAccNo:'none · a quiet black hole',
     nebSize:'Width', modelSrc:'3D model', modelNasa:'NASA', refSrc:'Reference', farGo:'Fly to {n}',
     bhNoteTitle:'How this is drawn',
-    bhNoteKerr:'This image is not drawn — it is computed. For every pixel a light ray is traced backwards through the spacetime of a spinning black hole (Kerr metric, spin a = 0.94) by integrating the null geodesic equations with fourth-order Runge–Kutta. Everything you see falls out of that calculation: a shadow larger than the event horizon and slightly lopsided because of the spin, the photon ring where light circled the hole before escaping, the far side of the disc bent up and over the shadow, and the approaching side brightened by the fourth power of its Doppler shift. The spin axis is placed as observed, 17° from our line of sight, so from Earth it looks like the EHT image. Orbit the camera round to the side to see the disc curl over itself as in the film. The blue plumes along the spin axis are the jet: its parabolic base follows the shape VLBI measures for M87, and relativistic beaming makes the approaching side tens of thousands of times brighter than the receding one — which is why real telescopes see only one of the two jets of M87. The stars that fill the sky as you approach are a simulation, not real positions: no star-by-star catalogue exists for a giant elliptical like M87.',
+    bhNoteKerr:'This image is not drawn — it is computed. For every pixel a light ray is traced backwards through the spacetime of a spinning black hole (Kerr metric, spin a = 0.94) by integrating the null geodesic equations with fourth-order Runge–Kutta. Everything you see falls out of that calculation: a shadow larger than the event horizon and slightly lopsided because of the spin, the photon ring where light circled the hole before escaping, the far side of the disc bent up and over the shadow, and the approaching side brightened by the fourth power of its Doppler shift. The spin axis is placed as observed, 17° from our line of sight, so from Earth it looks like the EHT image (press “View from Earth (EHT)” to see that angle). The default view is from the side, where the far side of the disc curls over itself as in the film; drag left or right to walk round the disc. Stars and galaxies across the whole screen are bent along the same light paths. The blue plumes along the spin axis are the jet: its parabolic base follows the shape VLBI measures for M87, and relativistic beaming makes the approaching side tens of thousands of times brighter than the receding one — which is why real telescopes see only one of the two jets of M87. The stars that fill the sky as you approach are a simulation, not real positions: no star-by-star catalogue exists for a giant elliptical like M87.',
     bhNote:'The dark centre has a radius of about 2.6 Schwarzschild radii — larger than the event horizon, because gravity bends passing light into the hole. The thin ring around it is light that circled the hole before escaping. A feeding black hole has a hot gas disc: its far side is bent into view above and below the shadow, and the side turning towards us is brighter. A quiet black hole is almost invisible. A qualitative drawing based on the physics, not a photograph; sizes follow the real mass.',
     nebNote:'NASA 3D model scaled to the real size and drawn as a translucent glow instead of a solid surface. The orientation is approximate.',
     nebNote_crab:'The NASA 3D model is the structure Chandra sees in X-rays — the ringed disc and the jets fired from the central pulsar — about 40% the size of the nebula in visible light; the soft outer glow stands for the whole nebula. Drawn as a translucent glow; the orientation is approximate.',
@@ -1087,6 +1099,10 @@ const UI = {
     stTravelNote:'At Voyager 1’s speed (16.9 km/s) the trip would take about {yr} years.',
     stAim:'Point the camera at it', stBack:'Back to the focused object',
     goFly:'Fly there', goHome:'Back to the Solar System',
+    bhViewSide:'Side view', bhViewEarth:'View from Earth (EHT)', bhViewTop:'Pole view',
+    bhSwirlTitle:'Gas speed', bhSwirlBtnShow:'Sped up', bhSwirlBtnReal:'Real speed',
+    bhSwirlShow:'The gas is sped up so you can see it turn (every black hole spins at the same on-screen rate). In reality the inner edge of the disc orbits once every {p}.',
+    bhSwirlReal:'The gas turns with simulation time. The inner edge of the disc orbits once every {p} (stellar black holes spin too fast to follow, so the displayed rate is capped).',
     starHint:'Zoom out past the solar system and click any named star',
     skyWhere:'Where you are standing', skyHere:'Use my location', skyMine:'My location',
     skyNoGeo:'Could not get your location — pick a city from the list instead',
@@ -1151,7 +1167,8 @@ const ABOUT = {
         ซึ่งไม่เข้าข่ายงานอันมีลิขสิทธิ์ คำบรรยายทั้งหมดเรียบเรียงขึ้นใหม่
         ตัวเลขของดาวเคราะห์น้อยและดาวหางนำมาจากฐานข้อมูลวัตถุขนาดเล็กของ JPL
         วิถียานอวกาศจาก JPL Horizons ดาวฤกษ์และกาแล็กซีจากฐานข้อมูล SIMBAD ของ CDS
-        แผนที่กาแล็กซีจากแค็ตตาล็อก 2MASS Redshift Survey
+        แผนที่กาแล็กซีจากแค็ตตาล็อก 2MASS Redshift Survey, Updated Nearby Galaxy Catalog,
+        Sloan Digital Sky Survey (SDSS) และ 6dF Galaxy Survey (ผ่าน VizieR ของ CDS และ SkyServer ของ SDSS)
         และดาวเคราะห์นอกระบบจากคลังข้อมูลของนาซา — ทั้งหมดเปิดให้ทุกคนใช้ และ
         คัดลอกมาเก็บไว้ในไฟล์ครั้งเดียว ไม่ได้เรียกข้อมูลตอนเปิดหน้าเว็บ</li>
     <li><b>ไม่ใช้เครื่องหมายขององค์กรใด</b> ไม่มีโลโก้ ชื่อ หรือรูปแบบตราสัญลักษณ์ของหน่วยงานอวกาศใด ๆ
@@ -1174,7 +1191,7 @@ const ABOUT = {
   <h4>ออกไปไกลกว่าระบบสุริยะ</h4>
   <p>บันไดมาตราส่วนมีสิบขั้น ไล่จากผิวดาวไปจนถึงขอบเอกภพที่สังเกตได้ ระหว่างทางมีดาวฤกษ์จริง
   1,356 ดวง เส้นกลุ่มดาว 86 กลุ่ม ป้ายบอกแขนกังหันของทางช้างเผือกกับตำแหน่งของเราในนั้น
-  กาแล็กซีมีชื่อ 106 แห่ง แผนที่กาแล็กซีจริง 43,439 แห่ง หลุมดำ 7 แห่ง ซากซูเปอร์โนวา 2 แห่ง
+  กาแล็กซี กระจุก และโครงสร้างขนาดใหญ่ที่มีชื่อ 218 แห่ง แผนที่กาแล็กซีจริง 469,698 แห่ง หลุมดำ 7 แห่ง ซากซูเปอร์โนวา 2 แห่ง
   และดาวเคราะห์นอกระบบ 646 ดวงใน 299 ระบบ
   ที่กดดูผังเทียบกับระบบสุริยะของเราได้</p>
 
@@ -1210,9 +1227,19 @@ const ABOUT = {
   รูปที่เราคุ้นเคยเป็นแค่มุมมองจากตรงที่เรายืนเท่านั้น</p>
 
   <h4>กาแล็กซีและขอบเอกภพ</h4>
-  <p>กาแล็กซีมีชื่อ 106 แห่งวางตามระยะที่วัดจริงจาก SIMBAD จานของกาแล็กซีกังหันเอียงตามที่เห็นบนท้องฟ้า
-  วัตถุไกลมากบอกระยะโคมูฟวิง เวลาที่แสงเดินทาง และอายุเอกภพตอนแสงออกเดินทาง (ค่าจักรวาลวิทยา Planck 2018)
-  ซูมออกเกินแปดล้านปีแสงจะเห็นแผนที่กาแล็กซีจริง 43,439 แห่งจาก 2MASS Redshift Survey เรียงเป็นใยเอกภพ
+  <p>วัตถุมีชื่อ 218 แห่ง — กาแล็กซี 191 แห่ง กระจุกกาแล็กซี 19 แห่ง และมหากระจุก กำแพง ช่องว่าง 8 แห่ง —
+  วางตามระยะที่วัดจริงจาก SIMBAD (ดาวแคระในกลุ่มท้องถิ่นใช้ระยะจาก McConnachie 2012 และงานที่ค้นพบ)
+  จานของกาแล็กซีกังหันเอียงตามที่เห็นบนท้องฟ้า วัตถุไกลมากบอกระยะโคมูฟวิง เวลาที่แสงเดินทาง
+  และอายุเอกภพตอนแสงออกเดินทาง (ค่าจักรวาลวิทยา Planck 2018)
+  มหากระจุก กำแพง และช่องว่างไม่มีขอบชัด จึงวาดเป็นเส้นประบอกขอบเขตโดยประมาณ โผล่เมื่อซูมออกกว้างพอ
+  และสว่างขึ้นเมื่อกดเลือก</p>
+  <p>แผนที่กาแล็กซีจริงมีสามชุด (ปุ่ม “แผนที่กาแล็กซีจริง” เปิดปิดพร้อมกัน):
+  กาแล็กซีใกล้ 685 แห่งที่วัดระยะจริงจาก Updated Nearby Galaxy Catalog (Karachentsev และคณะ 2013) ถึงราว 36 ล้านปีแสง
+  · 43,439 แห่งทั่วท้องฟ้าจาก 2MASS Redshift Survey (โหลดเมื่อซูมออกเกินแปดล้านปีแสง)
+  · และ 425,574 แห่งจาก SDSS (ฟ้าซีกเหนือ ใช้ครึ่งหนึ่งของตัวอย่างหลัก) กับ 6dF Galaxy Survey (ฟ้าซีกใต้)
+  ไกลถึงราว 2,700 ล้านปีแสง (โหลดเมื่อซูมออกเกินหกสิบล้านปีแสง ไฟล์ราว 4 MB)
+  ระยะของสองชุดหลังคำนวณจากเรดชิฟต์ บางทิศจึงหนาแน่นกว่าทิศอื่นตามพื้นที่ที่แต่ละการสำรวจครอบคลุม
+  สีของชุด SDSS/6dF มาจากสีจริงของกาแล็กซี (ส้ม = ดาวแก่ ฟ้า = ยังสร้างดาว) ไม่ใช่รูปร่างที่วัด
   และที่ขอบเอกภพที่สังเกตได้ (รัศมี 46,500 ล้านปีแสง) คือรังสีไมโครเวฟพื้นหลังจากข้อมูล WMAP 9 ปี
   แสงเก่าที่สุด ซึ่งออกเดินทางเมื่อราว 13,800 ล้านปีก่อน ตอนเอกภพอายุราว 380,000 ปี</p>
 
@@ -1269,8 +1296,9 @@ const ABOUT = {
         The Crab Nebula and SN 1987A ring models come from the same NASA page.</li>
     <li><b>Numbers are facts.</b> Orbital elements and physical data are measurements, not creative works.
         All descriptive text here was written fresh. Asteroid and comet numbers come from JPL’s public
-        Small-Body Database; stars and galaxies come from CDS SIMBAD and the galaxy map from the 2MASS
-        Redshift Survey — all copied into files once rather than fetched when the page opens.</li>
+        Small-Body Database; stars and galaxies come from CDS SIMBAD and the galaxy maps from the 2MASS
+        Redshift Survey, the Updated Nearby Galaxy Catalog, the Sloan Digital Sky Survey and the 6dF Galaxy Survey
+        (via CDS VizieR and SDSS SkyServer) — all copied into files once rather than fetched when the page opens.</li>
     <li><b>No agency marks.</b> No space-agency logo, name or insignia appears — those are protected as
         trademarks quite separately from copyright.</li>
   </ul>
@@ -1286,7 +1314,7 @@ const ABOUT = {
   <h4>Beyond the solar system</h4>
   <p>The scale ladder now has ten rungs, from a planet’s surface out to the edge of the observable
   universe. Along the way: 1,356 real stars, 86 constellation figures, labels for the Milky Way’s spiral
-  arms and our place in them, 106 named galaxies, a map of 43,439 real galaxies, 7 black holes,
+  arms and our place in them, 218 named galaxies, clusters and large-scale structures, maps of 469,698 real galaxies, 7 black holes,
   2 supernova remnants and 646 exoplanets in 299 systems,
   each with a chart placing it beside our own solar system.</p>
 
@@ -1325,11 +1353,21 @@ const ABOUT = {
   very different distances — the familiar figures are only the view from where we stand.</p>
 
   <h4>Galaxies and the edge of the universe</h4>
-  <p>106 named galaxies sit at distances measured in SIMBAD, with spiral discs tilted the way we see them on
-  the sky. The most distant ones show comoving distance, light-travel time and the age of the universe when
-  the light set out (Planck 2018 cosmology). Zoom out past eight million light-years to see 43,439 real
-  galaxies from the 2MASS Redshift Survey tracing the cosmic web, and at the edge of the observable universe
-  (46.5 billion light-years) the cosmic microwave background from nine years of WMAP data — the oldest light,
+  <p>218 named objects — 191 galaxies, 19 galaxy clusters and 8 superclusters, walls and voids — sit at distances
+  measured in SIMBAD (Local Group dwarfs use McConnachie 2012 and their discovery papers), with spiral discs tilted
+  the way we see them on the sky. The most distant ones show comoving distance, light-travel time and the age of
+  the universe when the light set out (Planck 2018 cosmology). Superclusters, walls and voids have no sharp edges,
+  so they are drawn as dashed outlines of their approximate extent; they appear once you zoom out far enough and
+  brighten when selected.</p>
+  <p>There are three real galaxy maps (the “Real galaxy maps” switch controls all of them): 685 nearby galaxies with
+  measured distances from the Updated Nearby Galaxy Catalog (Karachentsev et al. 2013), out to about 36 million
+  light-years · 43,439 galaxies across the whole sky from the 2MASS Redshift Survey (loaded past eight million
+  light-years) · and 425,574 galaxies from SDSS (northern sky, half of its main sample) and the 6dF Galaxy Survey
+  (southern sky), reaching about 2.7 billion light-years (loaded past sixty million light-years, about 4 MB).
+  The last two use redshift distances, so some directions look denser simply because of where each survey looked.
+  SDSS/6dF colours come from each galaxy's real colour (orange = old stars, blue = still forming stars), not from
+  a measured shape. At the edge of the observable universe
+  (46.5 billion light-years) lies the cosmic microwave background from nine years of WMAP data — the oldest light,
   which set out about 13.8 billion years ago, when the universe was some 380,000 years old.</p>
 
   <h4>Interstellar matter and dark matter</h4>
