@@ -9972,13 +9972,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
         </div>
       </div>
 
-      <!-- เครื่องมือจำลอง Spacetime Fabric & Gravitational Lensing -->
+      <!-- หลุมดำหมุน 3 มิติ: คำนวณเส้นทางแสงจริงในเมตริกเคอร์ (bh3d.js) · เครื่องที่ไม่มี WebGL ใช้ภาพวาด 2 มิติเดิม -->
       <div class="phys-box">
         <div class="card-head">
-          <h2><svg class="mdico"><use href="#i-globe"></use></svg> แบบจำลองแผ่นกาลอวกาศ 3D &amp; เลนส์ความโน้มถ่วง (Spacetime Warp Simulator)</h2>
-          <span class="tag">General Relativity 3D Grid</span>
+          <h2><svg class="mdico"><use href="#i-globe"></use></svg> แบบจำลองหลุมดำหมุน 3 มิติ &amp; เลนส์ความโน้มถ่วง (Kerr Black Hole Ray Tracer)</h2>
+          <span class="tag">General Relativity · Kerr Ray Tracing</span>
         </div>
-        <p class="sub">ลากปรับมวลของหลุมดำ สังเกตตาข่ายกาลอวกาศบิดยุบลงด้านล่าง และลำแสง (Photons) เลี้ยวโค้งตามความโค้งของอวกาศ</p>
+        <p class="sub">ภาพนี้คำนวณเส้นทางแสงจริงทีละพิกเซลในกาลอวกาศของหลุมดำที่หมุน (เมตริกเคอร์) — <b>ลากบนภาพเพื่อเดินรอบหลุมดำ</b> สังเกตจานก๊าซด้านหลังที่ถูกดัดให้โค้งข้ามเหนือเงา ด้านที่วิ่งเข้าหาเราสว่างกว่า และดาวทั้งฟ้าที่บิดรอบหลุมดำ · กล้องอยู่ห่างคงที่ 80 กม. ปรับมวลแล้วหลุมดำจะใหญ่หรือเล็กลง</p>
         <div class="phys-stage-wrap">
           <canvas class="phys-canvas" id="relCanvas"></canvas>
         </div>
@@ -9988,12 +9988,12 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
             <input type="range" id="sliderRelMass" min="0.2" max="3.5" step="0.1" value="1.0">
           </div>
           <div class="mlab-ctl-group">
-            <div class="mlab-ctl-head"><span>มุมมองการหมุน <b>Camera Angle</b></span><span class="val" id="valRelAngle">35°</span></div>
-            <input type="range" id="sliderRelAngle" min="10" max="75" step="1" value="35">
+            <div class="mlab-ctl-head"><span>มุมเงยจากระนาบจาน <b>Camera Elevation</b></span><span class="val" id="valRelAngle">12°</span></div>
+            <input type="range" id="sliderRelAngle" min="-80" max="80" step="1" value="12">
           </div>
           <div class="mlab-ctl-group">
-            <div class="mlab-ctl-head"><span>ความเร็วลำแสง <b>Photon Stream</b></span><span class="val" id="valRelSpeed">1.0x</span></div>
-            <input type="range" id="sliderRelSpeed" min="0.2" max="2.5" step="0.1" value="1.0">
+            <div class="mlab-ctl-head"><span>ความเร็วการหมุนของก๊าซ <b>Disk Spin</b></span><span class="val" id="valRelSpeed">1.0x</span></div>
+            <input type="range" id="sliderRelSpeed" min="0" max="2.5" step="0.1" value="1.0">
           </div>
         </div>
       </div>
@@ -10902,6 +10902,8 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
   <script src="co2-map.js"></script>
   <!-- เอนจินจำลองสึนามิ (แผง "สึนามิ — จำลองคลื่นด้วยฟิสิกส์จริง") -->
   <script src="tsunami-sim.js"></script>
+  <!-- หลุมดำหมุน 3 มิติ คำนวณเส้นทางแสงจริง (แผง "หลุมดำ & กาล-อวกาศบิดเบี้ยว") -->
+  <script src="bh3d.js"></script>
   <!-- ป้อนค่าผิวน้ำทะเลจริงจากกริดชุดเดียวกันให้ลูกโลก ENSO (ต้องมาหลัง climate-map.js) -->
   <script src="enso-sst.js"></script>
   <!-- รูปทรงแผนที่ไทยรายจังหวัด + centroid — สกัดจากหน้า ส.ส. ผู้แทนราษฎร (election/referendum-data.js) -->
@@ -22087,13 +22089,13 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
     }
 
     /* ================= 🌌 18. หลุมดำ & กาล-อวกาศบิดเบี้ยว ================= */
-    var RELLAB = { isInit: false, reqId: null, t: 0, mass: 1.0, angle: 35, speed: 1.0, photons: [] };
+    var RELLAB = { isInit: false, reqId: null, t: 0, mass: 1.0, angle: 12, speed: 1.0, photons: [], bh: null };
 
     function initRelativityLab(){
       var canvas = document.getElementById("relCanvas");
       if(!canvas) return;
       if(RELLAB.isInit){
-        if(!RELLAB.reqId) RELLAB.reqId = requestAnimationFrame(relLabLoop);
+        if(!RELLAB.bh && !RELLAB.reqId) RELLAB.reqId = requestAnimationFrame(relLabLoop);
         return;
       }
       RELLAB.isInit = true;
@@ -22101,11 +22103,20 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       var sM = document.getElementById("sliderRelMass");
       var sA = document.getElementById("sliderRelAngle");
       var sS = document.getElementById("sliderRelSpeed");
-      if(sM) sM.addEventListener("input", function(){ RELLAB.mass = parseFloat(sM.value); document.getElementById("valRelMass").textContent = RELLAB.mass.toFixed(1) + " M☉"; });
-      if(sA) sA.addEventListener("input", function(){ RELLAB.angle = parseFloat(sA.value); document.getElementById("valRelAngle").textContent = RELLAB.angle + "°"; });
-      if(sS) sS.addEventListener("input", function(){ RELLAB.speed = parseFloat(sS.value); document.getElementById("valRelSpeed").textContent = RELLAB.speed.toFixed(1) + "x"; });
+      var showAngle = function(){ document.getElementById("valRelAngle").textContent = RELLAB.angle + "°"; };
+      if(sM) sM.addEventListener("input", function(){ RELLAB.mass = parseFloat(sM.value); document.getElementById("valRelMass").textContent = RELLAB.mass.toFixed(1) + " M☉"; if(RELLAB.bh) RELLAB.bh.set("mass", RELLAB.mass); });
+      if(sA) sA.addEventListener("input", function(){ RELLAB.angle = parseFloat(sA.value); showAngle(); if(RELLAB.bh) RELLAB.bh.set("angle", RELLAB.angle); });
+      if(sS) sS.addEventListener("input", function(){ RELLAB.speed = parseFloat(sS.value); document.getElementById("valRelSpeed").textContent = RELLAB.speed.toFixed(1) + "x"; if(RELLAB.bh) RELLAB.bh.set("speed", RELLAB.speed); });
 
-      RELLAB.reqId = requestAnimationFrame(relLabLoop);
+      // หลุมดำ 3 มิติ (bh3d.js) — ลากบนภาพแล้วมุมเงยเปลี่ยน ให้แถบเลื่อนตามด้วย
+      // เครื่องที่ไม่มี WebGL ได้ null กลับมา → ใช้ภาพวาด 2 มิติเดิม (relLabLoop)
+      if(window.BH3D){
+        RELLAB.bh = window.BH3D.mount(canvas, {
+          mass: RELLAB.mass, angle: RELLAB.angle, speed: RELLAB.speed,
+          onAngle: function(deg){ RELLAB.angle = deg; if(sA) sA.value = deg; showAngle(); }
+        });
+      }
+      if(!RELLAB.bh) RELLAB.reqId = requestAnimationFrame(relLabLoop);
     }
 
     function relLabLoop(){
@@ -22131,7 +22142,7 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
 
       var cx = w * 0.5;
       var cy = h * 0.52;
-      var tilt = (RELLAB.angle * Math.PI) / 180;
+      var tilt = (Math.max(10, Math.min(75, Math.abs(RELLAB.angle))) * Math.PI) / 180;   // แถบเลื่อนเป็นของโมเดล 3 มิติ (−80…80°) — ภาพ 2 มิติรับได้แค่ 10…75°
       var cosT = Math.cos(tilt);
       var rs = RELLAB.mass * 24; // Schwarzschild radius
 
