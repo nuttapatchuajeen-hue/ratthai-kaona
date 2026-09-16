@@ -1,19 +1,28 @@
 # รวมงานเว็บ md — static site, ไม่มีขั้นตอน build
 #
-# เว็บที่ใช้งานจริงเสิร์ฟจาก Netlify:
-#   https://thaigovernmentdata.netlify.app
-# ยืนยันแล้ว (2026-09-16) ว่ารีโปนี้ผูกกับไซต์ Netlify ชื่อ "thaigovernmentdata" จริง
-# → ห้ามลบไฟล์นี้ redirect กับ headers ด้านล่างถูก deploy ใช้งานอยู่
+# ── สถานะโฮสต์ ณ 16 ก.ย. 2026 ────────────────────────────────────────────
+# เว็บตัวจริงตอนนี้เสิร์ฟจาก GitHub Pages (ย้ายมา "ชั่วคราว"):
+#   https://nuttapatchuajeen-hue.github.io/ratthai-kaona/
 #
-# GitHub Pages (https://nuttapatchuajeen-hue.github.io/ratthai-kaona/) ปิดไปแล้ว ตอนนี้ตอบ 404
-# .nojekyll ในรูทจึงไม่มีผลอะไรแล้ว ส่วน 404.html ไม่ต้องแก้ — logic หา base path รองรับ
-# ทั้ง /ratthai-kaona/ ของ Pages และ / ของ Netlify ไว้อยู่แล้ว
+# เหตุผลที่ย้าย: ทีม Netlify ชนโควตา production deploys เลยถูกพัก
+# ไซต์ thaigovernmentdata.netlify.app ยัง live อยู่ แต่ค้างที่ main@b58bb3f
+# และ deploy ใหม่ไม่ได้จนกว่าจะ upgrade หรือรอบบิลใหม่มาถึง
 #
-# ratthai-kaona.vercel.app เสิร์ฟเนื้อหาชุดเดียวกัน แต่เป็นตัวสำรอง —
-# canonical/og:url ทุกหน้าชี้มาที่ thaigovernmentdata.netlify.app เพื่อไม่ให้ Google
-# มองเป็น duplicate content
+# เพื่อให้ย้ายมา Pages ได้ รีโปนี้ถูกเปลี่ยนเป็น public (Pages กับ repo private
+# ต้องใช้แพลนเสียเงิน) และ canonical/og ทุกหน้าถูกชี้กลับมาที่ github.io แล้ว
 #
-# ระวังสับสน: Netlify ยังถูกใช้จริงในโปรเจกต์อีกที่ แต่เป็น "คนละไซต์" —
+# ⚠️ พอโควตา Netlify กลับมา ถ้าจะย้ายกลับต้องแก้ 2 อย่างคู่กัน:
+#   1) canonical/og 26 บรรทัดใน 9 ไฟล์ html → กลับเป็น thaigovernmentdata.netlify.app
+#   2) เช็กว่า Netlify deploy คอมมิตล่าสุดสำเร็จจริงก่อน แล้วค่อยสลับ canonical
+#   (Netlify ต่อกับ repo นี้และเปิด auto publishing ไว้อยู่แล้ว จะ build เองเมื่อโควตากลับมา)
+#
+# ── ไฟล์นี้ยังจำเป็น ────────────────────────────────────────────────────
+# ห้ามลบ redirect กับ headers ด้านล่างยังถูกใช้กับไซต์ Netlify ที่ยัง live อยู่
+# โดยเฉพาะ /api/yt-search ซึ่ง js/cyber-audio.js เรียกด้วย URL เต็มจาก Pages
+# (Pages ทำ redirect แบบนี้ไม่ได้ จึงยังต้องยืมของ Netlify ใช้)
+#
+# ── ระวังสับสน ─────────────────────────────────────────────────────────
+# Netlify ยังถูกใช้จริงอีกที่ แต่เป็น "คนละไซต์" —
 #   md-ai-proxy-nook.netlify.app = proxy ของผู้ช่วย AI และแบบประเมิน
 #   (js/ai-chat.js · hub/js/voices.js · hub/survey.html)
 # ไฟล์นี้ไม่ได้ตั้งค่าไซต์นั้น แก้ไฟล์นี้ไม่กระทบ AI chat หรือแบบประเมิน
