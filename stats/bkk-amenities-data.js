@@ -112,17 +112,19 @@ window.BKK_INTELLIGENCE = {
   },
 
   // 💼 Corporate Headquarters & Tech Hiring Hubs
+  // ตรวจตึกกับที่อยู่ทางการแล้ว 17 ก.ย. 2569 (แก้ TikTok / Agoda / Bluebik / PERSOL) — roles = จำนวนประกาศที่บริษัทลงเองบน JobsDB 17 ก.ย. 2569 (TikTok/Microsoft/LINE ไม่ได้ลง จึงไม่มีตัวเลข)
+  // height ไม่ได้ถูกใช้ในหน้า — รายการที่ย้ายไปตึกที่ยังไม่รู้ความสูงจึงไม่ใส่ แทนการเดา
   corporate: [
-    { id: "corp-tt", name: "TikTok Thailand Head Office", company: "TikTok / ByteDance", brandIco: "music", building: "G Tower Grand Rama 9", coords: [100.56950, 13.75780], height: 130, industry: "Tech & Entertainment", roles: "48 ตำแหน่งงาน" },
-    { id: "corp-del", name: "Deloitte Thailand", company: "Deloitte Touche Tohmatsu", brandIco: "chart-column", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Management Consulting & Audit", roles: "65 ตำแหน่งงาน" },
-    { id: "corp-goo", name: "Google Thailand", company: "Google / Alphabet", brandIco: "globe", building: "Park Ventures Ecoplex", coords: [100.54780, 13.74280], height: 142, industry: "Big Tech & Cloud AI", roles: "32 ตำแหน่งงาน" },
-    { id: "corp-ms", name: "Microsoft Thailand", company: "Microsoft", brandIco: "laptop", building: "All Seasons Place (CRC Tower)", coords: [100.54760, 13.73680], height: 210, industry: "Enterprise Software & Cloud", roles: "24 ตำแหน่งงาน" },
-    { id: "corp-ago", name: "Agoda Global Operations Hub", company: "Agoda / Booking Holdings", brandIco: "plane", building: "CentralWorld Offices", coords: [100.53950, 13.74650], height: 204, industry: "Travel Tech & Platform", roles: "120 ตำแหน่งงาน" },
-    { id: "corp-line", name: "LINE Thailand", company: "LINE Company", brandIco: "smartphone", building: "Gaysorn Tower", coords: [100.54120, 13.74450], height: 127, industry: "Super App & Fintech", roles: "38 ตำแหน่งงาน" },
-    { id: "corp-bb", name: "Bluebik Group", company: "Bluebik Group PLC", brandIco: "gem", building: "AIA Sathorn Tower", coords: [100.52834, 13.72085], height: 134, industry: "Digital Transformation & AI", roles: "29 ตำแหน่งงาน" },
-    { id: "corp-sho", name: "Shopee & Sea Thailand", company: "Sea Group", brandIco: "shopping-basket", building: "Singha Complex", coords: [100.56350, 13.74850], height: 120, industry: "E-Commerce & Digital Media", roles: "85 ตำแหน่งงาน" },
-    { id: "corp-persol", name: "PERSOL Thailand", company: "PERSOLKELLY", brandIco: "users", building: "Empire Tower Sathorn", coords: [100.53035, 13.72080], height: 227, industry: "Executive Search & HR Solutions", roles: "15 ตำแหน่งงาน" },
-    { id: "corp-bbl", name: "Bangkok Bank Head Office", company: "Bangkok Bank PLC", brandIco: "landmark", building: "Bangkok Bank Silom HQ", coords: [100.52988, 13.72710], height: 150, industry: "Banking & Financial Services", roles: "90 ตำแหน่งงาน" }
+    { id: "corp-tt", name: "TikTok Thailand Head Office", company: "TikTok / ByteDance", brandIco: "music", building: "Park Silom", coords: [100.53434, 13.72763], industry: "Tech & Entertainment" },
+    { id: "corp-del", name: "Deloitte Thailand", company: "Deloitte Touche Tohmatsu", brandIco: "chart-column", building: "AIA Sathorn Tower", coords: [100.52666, 13.72018], height: 134, industry: "Management Consulting & Audit", roles: "10 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Deloitte-jobs" },
+    { id: "corp-goo", name: "Google Thailand", company: "Google / Alphabet", brandIco: "globe", building: "Park Ventures Ecoplex", coords: [100.54780, 13.74280], height: 142, industry: "Big Tech & Cloud AI", roles: "17 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Google-jobs" },
+    { id: "corp-ms", name: "Microsoft Thailand", company: "Microsoft", brandIco: "laptop", building: "All Seasons Place (CRC Tower)", coords: [100.54804, 13.73908], height: 210, industry: "Enterprise Software & Cloud" },
+    { id: "corp-ago", name: "Agoda Bangkok Office", company: "Agoda / Booking Holdings", brandIco: "plane", building: "One Bangkok Tower 5", coords: [100.54677, 13.72710], industry: "Travel Tech & Platform", roles: "2 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Agoda-jobs" },
+    { id: "corp-line", name: "LINE Thailand", company: "LINE Company", brandIco: "smartphone", building: "Gaysorn Tower", coords: [100.54120, 13.74450], height: 127, industry: "Super App & Fintech" },
+    { id: "corp-bb", name: "Bluebik Group", company: "Bluebik Group PLC", brandIco: "gem", building: "Empire Tower", coords: [100.53015, 13.72032], height: 227, industry: "Digital Transformation & AI", roles: "11 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Bluebik-jobs" },
+    { id: "corp-sho", name: "Shopee & Sea Thailand", company: "Sea Group", brandIco: "shopping-basket", building: "Singha Complex", coords: [100.56449, 13.74827], height: 120, industry: "E-Commerce & Digital Media", roles: "141 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Shopee-jobs" },
+    { id: "corp-persol", name: "PERSOL Thailand", company: "PERSOLKELLY", brandIco: "users", building: "Bangkok City Tower", coords: [100.53119, 13.72135], industry: "Executive Search & HR Solutions", roles: "290 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/PERSOL-jobs" },
+    { id: "corp-bbl", name: "Bangkok Bank Head Office", company: "Bangkok Bank PLC", brandIco: "landmark", building: "Bangkok Bank Silom HQ", coords: [100.52988, 13.72710], height: 150, industry: "Banking & Financial Services", roles: "154 ตำแหน่งงาน", rolesSrc: "JobsDB 17 ก.ย. 2569", rolesUrl: "https://th.jobsdb.com/Bangkok-Bank-jobs" }
   ],
 
   // 🌊 Major Flood Surveillance Points & Drainage Hubs

@@ -1,4 +1,5 @@
 // Bangkok Ashton Luxury & Corporate Dataset (Extracted from Ashton Page)
+// officeTowers: ตรวจคู่บริษัท↔ตึกกับที่อยู่จริงบนเว็บแล้ว 311/733 คู่ (อัปเดต 2026-09-17) — ถูก 255 · เอาออก 30 · ย้าย 1 · ยืนยันไม่ได้ 25 (คงไว้) · ยังไม่ได้ตรวจ 422
 const ASHTON_DATA = {
   "categories": {
     "amenities": [
@@ -22054,7 +22055,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "The PARQ",
       "height": 52.8,
       "estimated": false,
       "footprint": "osm",
@@ -22164,7 +22165,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Bangkok City Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -22382,7 +22383,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Krungsri Ploenchit Office",
       "height": 33,
       "estimated": true,
       "footprint": "approx",
@@ -22828,7 +22829,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "AIA Capital Center",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -22839,6 +22840,7 @@ const ASHTON_DATA = {
         "Monee",
         "Muze Innovation",
         "Possefy Group",
+        "Shopee",
         "Sirisoft",
         "Techno Brave Asia",
         "eUnite"
@@ -22929,6 +22931,10 @@ const ASHTON_DATA = {
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/75a69a64-d390-4485-a7e0-8953b4910e33.1/jdpLogo"
         },
         {
+          "name": "Shopee",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/7f1364e3-a4b0-4da9-bdfb-2e1267ddf464.1/jdpLogo"
+        },
+        {
           "name": "Sirisoft",
           "logo": null
         },
@@ -22943,7 +22949,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "True Digital Park",
       "height": 52.8,
       "estimated": false,
       "footprint": "osm",
@@ -22951,7 +22957,8 @@ const ASHTON_DATA = {
         "Amity Solutions Corporation",
         "Ascend Group",
         "Ascend Money",
-        "Copeland"
+        "Copeland",
+        "Siemens"
       ],
       "ring": [
         [
@@ -22997,6 +23004,10 @@ const ASHTON_DATA = {
         {
           "name": "Copeland",
           "logo": "https://media.licdn.com/dms/image/v2/D560BAQFB1nmUiuousg/company-logo_100_100/company-logo_100_100/0/1690464855164/copeland_hq_logo?e=2147483647&v=beta&t=ocvydZtz2w62gpAmELm1A4RlK-C1vBfe9lD4C0bJxKc"
+        },
+        {
+          "name": "Siemens",
+          "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFK_4wGnzwPTQ/company-logo_100_100/company-logo_100_100/0/1719931174735/siemens_logo?e=2147483647&v=beta&t=iNZVOYYuYOnkz09IBCFrK9Ik8uTqP6ZDnhCEJjPouV4"
         }
       ]
     },
@@ -23260,9 +23271,14 @@ const ASHTON_DATA = {
         "Cheil Thailand",
         "HP",
         "Invitrace",
+        "KPMG",
+        "KPMG Thailand",
+        "Krungthai Asset Management",
         "Maersk Group",
         "RAMS Solutions",
-        "Skilllane Education"
+        "Skilllane Education",
+        "Socket 9",
+        "TCC Land Commercial"
       ],
       "ring": [
         [
@@ -23342,6 +23358,18 @@ const ASHTON_DATA = {
           "logo": null
         },
         {
+          "name": "KPMG",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/4e9e002a-a89b-41ab-9fc0-ca42ed1a9e2e.1/jdpLogo"
+        },
+        {
+          "name": "KPMG Thailand",
+          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHXhcPGklzWIg/company-logo_100_100/B4EZ8XsA34IsAM-/0/1782808842056/kpmg_thailand_logo?e=2147483647&v=beta&t=ADhWkfe3ry5Wdu6UudoEQ9cdQu_ZoXiMI8U8OVTm6OU"
+        },
+        {
+          "name": "Krungthai Asset Management",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/cc6b5731-2e2b-497d-8b66-212945f6b762.1/jdpLogo"
+        },
+        {
           "name": "Maersk Group",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/49aa9174-ab18-4524-b4a3-2f4d410794ba.2/jdpLogo"
         },
@@ -23352,6 +23380,14 @@ const ASHTON_DATA = {
         {
           "name": "Skilllane Education",
           "logo": null
+        },
+        {
+          "name": "Socket 9",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/db98f82d-c640-40f0-baed-202a8e23347b.1/jdpLogo"
+        },
+        {
+          "name": "TCC Land Commercial",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/3ad3efe2-7c58-46a9-88a6-423aa605aa90.1/jdpLogo"
         }
       ]
     },
@@ -23562,46 +23598,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "TikTok"
-      ],
-      "ring": [
-        [
-          100.533421,
-          13.727882
-        ],
-        [
-          100.533781,
-          13.727882
-        ],
-        [
-          100.533781,
-          13.728242
-        ],
-        [
-          100.533421,
-          13.728242
-        ],
-        [
-          100.533421,
-          13.727882
-        ]
-      ],
-      "lng": 100.533565,
-      "lat": 13.728026,
-      "tenantList": [
-        {
-          "name": "TikTok",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQHYzDOZhwEZ7Q/company-logo_100_100/B56Zl_CaXSIAAU-/0/1758772964879/tiktok_logo?e=2147483647&v=beta&t=pOXL9bnyBOPMlI34LzNiPIxaX9lk7ry0r40olePnSGE"
-        }
-      ]
-    },
-    {
-      "name": null,
+      "name": "S.P. Building",
       "height": 59.4,
       "estimated": false,
       "footprint": "osm",
@@ -23807,13 +23804,14 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "AIA Sathorn Tower",
       "height": 110,
       "estimated": false,
       "footprint": "osm",
       "companies": [
         "Deloitte",
-        "Focus Media"
+        "Focus Media",
+        "Mitsubishi Electric"
       ],
       "ring": [
         [
@@ -23883,11 +23881,15 @@ const ASHTON_DATA = {
         {
           "name": "Focus Media",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/1eb7ae8f-5143-407d-b5ce-d9a38cc30d7d.1/jdpLogo"
+        },
+        {
+          "name": "Mitsubishi Electric",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/f996ab6b-8792-4eef-b57d-95f046d7f02c.1/jdpLogo"
         }
       ]
     },
     {
-      "name": null,
+      "name": "AIA Tower (Surawong)",
       "height": 33,
       "estimated": true,
       "footprint": "approx",
@@ -23987,7 +23989,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Central Group Office (Chidlom)",
       "height": 13.2,
       "estimated": false,
       "footprint": "osm",
@@ -24063,14 +24065,12 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Rasa Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
       "companies": [
         "KONE",
-        "Rasa Tower",
-        "Thaioil Energy Services",
         "VR Jobpro"
       ],
       "ring": [
@@ -24131,163 +24131,8 @@ const ASHTON_DATA = {
           "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQGO-rYSkfM5cw/company-logo_100_100/company-logo_100_100/0/1679389367282/kone_logo?e=2147483647&v=beta&t=Ok0K-koqQtfUzEVQ53oWXKc5pTAXFCwIkk71wed-oSc"
         },
         {
-          "name": "Rasa Tower",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/a79b37cc-23ff-407c-8ee6-d852063f0d30.1/jdpLogo"
-        },
-        {
-          "name": "Thaioil Energy Services",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/78615c42-2f5c-48d0-a4e0-b8878d859be7.1/jdpLogo"
-        },
-        {
           "name": "VR Jobpro",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/ea55708b-78ee-48a6-b6d6-e4d6d7b115a8.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "KPMG",
-        "KPMG Thailand",
-        "Krungthai Asset Management",
-        "Socket 9",
-        "TCC Land Commercial"
-      ],
-      "ring": [
-        [
-          100.530475,
-          13.720659
-        ],
-        [
-          100.530366,
-          13.720892
-        ],
-        [
-          100.530367,
-          13.720983
-        ],
-        [
-          100.530326,
-          13.721068
-        ],
-        [
-          100.530275,
-          13.721127
-        ],
-        [
-          100.530242,
-          13.721151
-        ],
-        [
-          100.530212,
-          13.721248
-        ],
-        [
-          100.530162,
-          13.721352
-        ],
-        [
-          100.530117,
-          13.721429
-        ],
-        [
-          100.530089,
-          13.721449
-        ],
-        [
-          100.530081,
-          13.721455
-        ],
-        [
-          100.530028,
-          13.721457
-        ],
-        [
-          100.529945,
-          13.721442
-        ],
-        [
-          100.529871,
-          13.7214
-        ],
-        [
-          100.529832,
-          13.721345
-        ],
-        [
-          100.529827,
-          13.721283
-        ],
-        [
-          100.529841,
-          13.721233
-        ],
-        [
-          100.529904,
-          13.721158
-        ],
-        [
-          100.529976,
-          13.721013
-        ],
-        [
-          100.529965,
-          13.720957
-        ],
-        [
-          100.529967,
-          13.720923
-        ],
-        [
-          100.530047,
-          13.720763
-        ],
-        [
-          100.530031,
-          13.720716
-        ],
-        [
-          100.530115,
-          13.720561
-        ],
-        [
-          100.530139,
-          13.720532
-        ],
-        [
-          100.530173,
-          13.72052
-        ],
-        [
-          100.530475,
-          13.720659
-        ]
-      ],
-      "lng": 100.53010548148148,
-      "lat": 13.72106574074074,
-      "tenantList": [
-        {
-          "name": "KPMG",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/4e9e002a-a89b-41ab-9fc0-ca42ed1a9e2e.1/jdpLogo"
-        },
-        {
-          "name": "KPMG Thailand",
-          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHXhcPGklzWIg/company-logo_100_100/B4EZ8XsA34IsAM-/0/1782808842056/kpmg_thailand_logo?e=2147483647&v=beta&t=ADhWkfe3ry5Wdu6UudoEQ9cdQu_ZoXiMI8U8OVTm6OU"
-        },
-        {
-          "name": "Krungthai Asset Management",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/cc6b5731-2e2b-497d-8b66-212945f6b762.1/jdpLogo"
-        },
-        {
-          "name": "Socket 9",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/db98f82d-c640-40f0-baed-202a8e23347b.1/jdpLogo"
-        },
-        {
-          "name": "TCC Land Commercial",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/3ad3efe2-7c58-46a9-88a6-423aa605aa90.1/jdpLogo"
         }
       ]
     },
@@ -24383,7 +24228,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "United Center",
       "height": 66,
       "estimated": false,
       "footprint": "osm",
@@ -24886,7 +24731,8 @@ const ASHTON_DATA = {
         "Allianz Technology",
         "CHANGAN Thailand",
         "Changan Automobile",
-        "TD SUPPLY CHAIN",
+        "Krungthai-AXA Life",
+        "Noventiq Thailand",
         "TPP SOLUTION",
         "ThoughtWorks"
       ],
@@ -24936,8 +24782,12 @@ const ASHTON_DATA = {
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/01611df0-8ef1-4674-8c7b-2bc1ac09e08f.1/jdpLogo"
         },
         {
-          "name": "TD SUPPLY CHAIN",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/86dfd7c6-343e-4f55-9158-02ef3aa53e4f.1/jdpLogo"
+          "name": "Krungthai-AXA Life",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/6d57e61e-592b-47e8-8727-053677e9b070.1/jdpLogo"
+        },
+        {
+          "name": "Noventiq Thailand",
+          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQFGBYX3pDkmjw/company-logo_100_100/company-logo_100_100/0/1681789599416/noventiq_thailand_logo?e=2147483647&v=beta&t=296LOPUUZUSiqKkaacbTqrGaN5bYGO5lMwyYCNEN_kA"
         },
         {
           "name": "TPP SOLUTION",
@@ -25299,7 +25149,9 @@ const ASHTON_DATA = {
         "Cornerstone Global Partners",
         "Generali",
         "Generali Thailand",
-        "PSI CRO AG"
+        "PSI CRO AG",
+        "Thai Glico",
+        "TikTok"
       ],
       "ring": [
         [
@@ -25365,6 +25217,14 @@ const ASHTON_DATA = {
         {
           "name": "PSI CRO AG",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/0c888d0f-bbe4-485a-86d6-d5c74bc47d32.1/jdpLogo"
+        },
+        {
+          "name": "Thai Glico",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/9a10e1fa-9081-4acd-80f9-10100098b40a.1/jdpLogo"
+        },
+        {
+          "name": "TikTok",
+          "logo": "https://media.licdn.com/dms/image/v2/D560BAQHYzDOZhwEZ7Q/company-logo_100_100/B56Zl_CaXSIAAU-/0/1758772964879/tiktok_logo?e=2147483647&v=beta&t=pOXL9bnyBOPMlI34LzNiPIxaX9lk7ry0r40olePnSGE"
         }
       ]
     },
@@ -26119,7 +25979,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "osm",
       "companies": [
-        "Intrepid Asia",
         "Intrepid Group"
       ],
       "ring": [
@@ -26147,10 +26006,6 @@ const ASHTON_DATA = {
       "lng": 100.497506,
       "lat": 13.760230799999999,
       "tenantList": [
-        {
-          "name": "Intrepid Asia",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQGWUPt8TcIbug/company-logo_100_100/company-logo_100_100/0/1713918788734/flywheelsea_logo?e=2147483647&v=beta&t=PM6Rs3-0LhAYFtaTxj5TliYGwuJNrO5vis_ubIVHWVI"
-        },
         {
           "name": "Intrepid Group",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/9907fec9-ab52-4cd7-afeb-2e9dda7f15c7.1/jdpLogo"
@@ -26561,45 +26416,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "approx",
       "companies": [
-        "Cathcart Associates"
-      ],
-      "ring": [
-        [
-          100.529,
-          13.722121
-        ],
-        [
-          100.52936,
-          13.722121
-        ],
-        [
-          100.52936,
-          13.722481
-        ],
-        [
-          100.529,
-          13.722481
-        ],
-        [
-          100.529,
-          13.722121
-        ]
-      ],
-      "lng": 100.529144,
-      "lat": 13.722264999999998,
-      "tenantList": [
-        {
-          "name": "Cathcart Associates",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/c5a9f711-54e8-4201-ab9d-c4adea47bef6.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
         "PRTR Recruitment"
       ],
       "ring": [
@@ -26939,7 +26755,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "C.P. Tower Silom",
       "height": 39.6,
       "estimated": false,
       "footprint": "osm",
@@ -27209,7 +27025,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "osm",
       "companies": [
-        "Electrolux",
         "Siam Paragon",
         "The Hour Glass"
       ],
@@ -27398,10 +27213,6 @@ const ASHTON_DATA = {
       "lng": 100.53471255555552,
       "lat": 13.746561488888887,
       "tenantList": [
-        {
-          "name": "Electrolux",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/2a7f7dbf-c48c-4f50-bc9c-9ee61a856414.1/jdpLogo"
-        },
         {
           "name": "Siam Paragon",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/c2bf9c7b-57c7-411d-93ba-b49ba97d22fa.1/jdpLogo"
@@ -27736,46 +27547,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "N Infinite"
-      ],
-      "ring": [
-        [
-          100.575596,
-          13.832201
-        ],
-        [
-          100.575956,
-          13.832201
-        ],
-        [
-          100.575956,
-          13.832561
-        ],
-        [
-          100.575596,
-          13.832561
-        ],
-        [
-          100.575596,
-          13.832201
-        ]
-      ],
-      "lng": 100.57574000000001,
-      "lat": 13.832345,
-      "tenantList": [
-        {
-          "name": "N Infinite",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/d010b258-3b46-4f81-a411-cd469fd63cce.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
+      "name": "Energy Complex",
       "height": 33,
       "estimated": true,
       "footprint": "approx",
@@ -28106,7 +27878,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Ploenchit Tower",
       "height": 72.6,
       "estimated": false,
       "footprint": "osm",
@@ -28696,7 +28468,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Rajanakarn Building",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -28809,13 +28581,14 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Sindhorn Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
       "companies": [
         "Cargill",
-        "Publicis"
+        "Publicis",
+        "Ubon Bio Ethanol"
       ],
       "ring": [
         [
@@ -28849,86 +28622,10 @@ const ASHTON_DATA = {
         {
           "name": "Publicis",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/920d2fdc-e058-439b-b3f5-56bf8e0841a3.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 3.3,
-      "estimated": false,
-      "footprint": "osm",
-      "companies": [
-        "CPF Group",
-        "Charoen Pokphand Group"
-      ],
-      "ring": [
-        [
-          100.522897,
-          13.724305
-        ],
-        [
-          100.522928,
-          13.72421
-        ],
-        [
-          100.522767,
-          13.724166
-        ],
-        [
-          100.522794,
-          13.724078
-        ],
-        [
-          100.523068,
-          13.72416
-        ],
-        [
-          100.523098,
-          13.724169
-        ],
-        [
-          100.523079,
-          13.724222
-        ],
-        [
-          100.523033,
-          13.724208
-        ],
-        [
-          100.523012,
-          13.724269
-        ],
-        [
-          100.523058,
-          13.72428
-        ],
-        [
-          100.523027,
-          13.724369
-        ],
-        [
-          100.522914,
-          13.724333
-        ],
-        [
-          100.522921,
-          13.724311
-        ],
-        [
-          100.522897,
-          13.724305
-        ]
-      ],
-      "lng": 100.52296378571428,
-      "lat": 13.724241785714284,
-      "tenantList": [
-        {
-          "name": "CPF Group",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQG-g5ZB1A2Brg/company-logo_100_100/B56Z9ebEndG0AI-/0/1783995583636/cpf_group_logo?e=2147483647&v=beta&t=Dpmhq0sc1o0G16GWMD6BCED79KtFlRiUNjJOyzZvs8c"
         },
         {
-          "name": "Charoen Pokphand Group",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/8b8421cd-d3c7-4e1f-804a-b6f715668628.2/jdpLogo"
+          "name": "Ubon Bio Ethanol",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/8a7c12e3-f0d1-414e-a5c4-9e9ddcba5835.1/jdpLogo"
         }
       ]
     },
@@ -29401,12 +29098,11 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Abdulrahim Place",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
       "companies": [
-        "Galderma",
         "Government Pension Fund"
       ],
       "ring": [
@@ -29507,10 +29203,6 @@ const ASHTON_DATA = {
       "lat": 13.727552217391306,
       "tenantList": [
         {
-          "name": "Galderma",
-          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQGL3kh_LPxYFA/company-logo_100_100/company-logo_100_100/0/1692632436457/galderma__logo?e=2147483647&v=beta&t=2CC6_EIP3fQRcQ6qmsxp7wD3J5va6DNuVIdxuB0xsec"
-        },
-        {
           "name": "Government Pension Fund",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/ba584148-1c5f-4e2a-9057-02bc97c200f8.1/jdpLogo"
         }
@@ -29597,7 +29289,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Thai Summit Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -29993,7 +29685,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "M Thai Tower (All Seasons Place)",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -30101,7 +29793,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Vanissa Building",
       "height": 72.6,
       "estimated": false,
       "footprint": "osm",
@@ -30158,7 +29850,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Ocean Insurance Building",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -30221,8 +29913,7 @@ const ASHTON_DATA = {
       "footprint": "osm",
       "companies": [
         "Hillebrand Gori",
-        "Yaoyao Info Tech",
-        "ZIEHL-ABEGG"
+        "Yaoyao Info Tech"
       ],
       "ring": [
         [
@@ -30296,10 +29987,6 @@ const ASHTON_DATA = {
         {
           "name": "Yaoyao Info Tech",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/fa626227-5021-497a-9c1d-d806583e9faf.2/jdpLogo"
-        },
-        {
-          "name": "ZIEHL-ABEGG",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/88010b1a-f549-455e-ad73-9e5ac3a40392.1/jdpLogo"
         }
       ]
     },
@@ -30408,7 +30095,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Vorawat Building",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -30499,7 +30186,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Sathorn Thani Building",
       "height": 66,
       "estimated": false,
       "footprint": "osm",
@@ -30588,7 +30275,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "A.A. Capital Ratchada",
       "height": 26.4,
       "estimated": false,
       "footprint": "osm",
@@ -30815,244 +30502,6 @@ const ASHTON_DATA = {
         {
           "name": "Shangri-La Group",
           "logo": "https://media.licdn.com/dms/image/v2/C510BAQGLea_84XHKnQ/company-logo_100_100/company-logo_100_100/0/1630577144269/shangri_la_hotels_and_resorts_logo?e=2147483647&v=beta&t=d1tLg59h00w1WxelvZqhEMYnIhtQNQhbe11YlRd53yU"
-        }
-      ]
-    },
-    {
-      "name": "The Platinum Fashion Mall",
-      "height": 26.4,
-      "estimated": false,
-      "footprint": "osm",
-      "companies": [
-        "SPX Express"
-      ],
-      "ring": [
-        [
-          100.540334,
-          13.74984
-        ],
-        [
-          100.540358,
-          13.749978
-        ],
-        [
-          100.540531,
-          13.749977
-        ],
-        [
-          100.54074,
-          13.749905
-        ],
-        [
-          100.540824,
-          13.749783
-        ],
-        [
-          100.540858,
-          13.749643
-        ],
-        [
-          100.540817,
-          13.749499
-        ],
-        [
-          100.540769,
-          13.749512
-        ],
-        [
-          100.540216,
-          13.749625
-        ],
-        [
-          100.540295,
-          13.749714
-        ],
-        [
-          100.540203,
-          13.74974
-        ],
-        [
-          100.540094,
-          13.749771
-        ],
-        [
-          100.54005,
-          13.74966
-        ],
-        [
-          100.539971,
-          13.749628
-        ],
-        [
-          100.538571,
-          13.749755
-        ],
-        [
-          100.538806,
-          13.750489
-        ],
-        [
-          100.538864,
-          13.750473
-        ],
-        [
-          100.539139,
-          13.750394
-        ],
-        [
-          100.539585,
-          13.750269
-        ],
-        [
-          100.539835,
-          13.750194
-        ],
-        [
-          100.540141,
-          13.750074
-        ],
-        [
-          100.540094,
-          13.749914
-        ],
-        [
-          100.540334,
-          13.74984
-        ]
-      ],
-      "lng": 100.54006213043478,
-      "lat": 13.749899000000001,
-      "tenantList": [
-        {
-          "name": "SPX Express",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQH2zdXw1NE2Zg/company-logo_100_100/B56ZhQRMvdHcAQ-/0/1753693343179?e=2147483647&v=beta&t=k6VjSHgnrWq3fF3YkGj7KjU0eBR7tTLJ34vWZ2WQrRk"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Summit Capital"
-      ],
-      "ring": [
-        [
-          100.540134,
-          13.727194
-        ],
-        [
-          100.540149,
-          13.727232
-        ],
-        [
-          100.54011,
-          13.727246
-        ],
-        [
-          100.540125,
-          13.727284
-        ],
-        [
-          100.540086,
-          13.727299
-        ],
-        [
-          100.540173,
-          13.727518
-        ],
-        [
-          100.540212,
-          13.727504
-        ],
-        [
-          100.540227,
-          13.727541
-        ],
-        [
-          100.540266,
-          13.727527
-        ],
-        [
-          100.54028,
-          13.727565
-        ],
-        [
-          100.540425,
-          13.727511
-        ],
-        [
-          100.540479,
-          13.727491
-        ],
-        [
-          100.540537,
-          13.727469
-        ],
-        [
-          100.540672,
-          13.727419
-        ],
-        [
-          100.540657,
-          13.727381
-        ],
-        [
-          100.540696,
-          13.727366
-        ],
-        [
-          100.540681,
-          13.727329
-        ],
-        [
-          100.54072,
-          13.727314
-        ],
-        [
-          100.540996,
-          13.727211
-        ],
-        [
-          100.541107,
-          13.727259
-        ],
-        [
-          100.54126,
-          13.727325
-        ],
-        [
-          100.541383,
-          13.727056
-        ],
-        [
-          100.540399,
-          13.726631
-        ],
-        [
-          100.540273,
-          13.726907
-        ],
-        [
-          100.540564,
-          13.727033
-        ],
-        [
-          100.540526,
-          13.727048
-        ],
-        [
-          100.540134,
-          13.727194
-        ]
-      ],
-      "lng": 100.54049151851851,
-      "lat": 13.727290888888888,
-      "tenantList": [
-        {
-          "name": "Summit Capital",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/d6b479c7-b21d-4c62-b082-ef333772cb56.1/jdpLogo"
         }
       ]
     },
@@ -31329,45 +30778,6 @@ const ASHTON_DATA = {
         {
           "name": "Visa",
           "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHAxoD4chKrgg/company-logo_100_100/B4EZfR2e4JHcAk-/0/1751572410148/visa_logo?e=2147483647&v=beta&t=mZYikLJ1nOM9RYXsRYavU2c7xuzCKWDqH8Q0UzAGrhw"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Aigen"
-      ],
-      "ring": [
-        [
-          100.575381,
-          13.78688
-        ],
-        [
-          100.575741,
-          13.78688
-        ],
-        [
-          100.575741,
-          13.78724
-        ],
-        [
-          100.575381,
-          13.78724
-        ],
-        [
-          100.575381,
-          13.78688
-        ]
-      ],
-      "lng": 100.575525,
-      "lat": 13.787023999999999,
-      "tenantList": [
-        {
-          "name": "Aigen",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/2cb49aff-8d7b-463d-b3a7-4a9b678d6226.1/jdpLogo"
         }
       ]
     },
@@ -31845,89 +31255,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "KFC"
-      ],
-      "ring": [
-        [
-          100.586837,
-          13.733169
-        ],
-        [
-          100.587197,
-          13.733169
-        ],
-        [
-          100.587197,
-          13.733529
-        ],
-        [
-          100.586837,
-          13.733529
-        ],
-        [
-          100.586837,
-          13.733169
-        ]
-      ],
-      "lng": 100.58698100000001,
-      "lat": 13.733313,
-      "tenantList": [
-        {
-          "name": "KFC",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQFY6aO473dEsg/company-logo_100_100/B56Z7LYeRfIMAM-/0/1781528651717/kfc_logo?e=2147483647&v=beta&t=xXGLzRfMHitFsNdpgOBSuJXD9o1wNo4NMdouYrZVVQI"
-        }
-      ]
-    },
-    {
-      "name": "G Tower",
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Krungthai-AXA Life",
-        "Noventiq Thailand"
-      ],
-      "ring": [
-        [
-          100.582447,
-          13.752792
-        ],
-        [
-          100.582807,
-          13.752792
-        ],
-        [
-          100.582807,
-          13.753152
-        ],
-        [
-          100.582447,
-          13.753152
-        ],
-        [
-          100.582447,
-          13.752792
-        ]
-      ],
-      "lng": 100.58259100000001,
-      "lat": 13.752936,
-      "tenantList": [
-        {
-          "name": "Krungthai-AXA Life",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/6d57e61e-592b-47e8-8727-053677e9b070.1/jdpLogo"
-        },
-        {
-          "name": "Noventiq Thailand",
-          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQFGBYX3pDkmjw/company-logo_100_100/company-logo_100_100/0/1681789599416/noventiq_thailand_logo?e=2147483647&v=beta&t=296LOPUUZUSiqKkaacbTqrGaN5bYGO5lMwyYCNEN_kA"
-        }
-      ]
-    },
-    {
       "name": "The Parq Building",
       "height": 33,
       "estimated": true,
@@ -32016,45 +31343,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "approx",
       "companies": [
-        "Neo Medical Enterprise"
-      ],
-      "ring": [
-        [
-          100.722702,
-          13.764866
-        ],
-        [
-          100.723062,
-          13.764866
-        ],
-        [
-          100.723062,
-          13.765226
-        ],
-        [
-          100.722702,
-          13.765226
-        ],
-        [
-          100.722702,
-          13.764866
-        ]
-      ],
-      "lng": 100.722846,
-      "lat": 13.76501,
-      "tenantList": [
-        {
-          "name": "Neo Medical Enterprise",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/ff2633a9-298e-439c-8f5f-b05bf48d7ee6.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
         "O S D"
       ],
       "ring": [
@@ -32124,45 +31412,6 @@ const ASHTON_DATA = {
         {
           "name": "PP Group",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/25e6dfc0-b9b6-4251-8ce6-b9f45d9f36d6.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Shopee"
-      ],
-      "ring": [
-        [
-          100.570218,
-          13.766263
-        ],
-        [
-          100.570578,
-          13.766263
-        ],
-        [
-          100.570578,
-          13.766623
-        ],
-        [
-          100.570218,
-          13.766623
-        ],
-        [
-          100.570218,
-          13.766263
-        ]
-      ],
-      "lng": 100.570362,
-      "lat": 13.766406999999997,
-      "tenantList": [
-        {
-          "name": "Shopee",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/7f1364e3-a4b0-4da9-bdfb-2e1267ddf464.1/jdpLogo"
         }
       ]
     },
@@ -32433,7 +31682,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Sathorn City Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -32979,7 +32228,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Green Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -33326,157 +32575,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": "King Power Duty Free Complex",
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Evolution Wellness"
-      ],
-      "ring": [
-        [
-          100.537109,
-          13.759625
-        ],
-        [
-          100.537376,
-          13.760144
-        ],
-        [
-          100.537694,
-          13.760001
-        ],
-        [
-          100.537776,
-          13.760162
-        ],
-        [
-          100.537491,
-          13.760305
-        ],
-        [
-          100.537661,
-          13.760659
-        ],
-        [
-          100.538113,
-          13.760453
-        ],
-        [
-          100.538044,
-          13.760301
-        ],
-        [
-          100.538321,
-          13.760163
-        ],
-        [
-          100.538337,
-          13.760206
-        ],
-        [
-          100.538356,
-          13.760238
-        ],
-        [
-          100.53838,
-          13.760265
-        ],
-        [
-          100.538411,
-          13.760291
-        ],
-        [
-          100.538451,
-          13.760313
-        ],
-        [
-          100.538498,
-          13.760327
-        ],
-        [
-          100.538553,
-          13.760332
-        ],
-        [
-          100.538615,
-          13.760321
-        ],
-        [
-          100.538674,
-          13.760292
-        ],
-        [
-          100.538721,
-          13.76025
-        ],
-        [
-          100.538751,
-          13.760204
-        ],
-        [
-          100.538768,
-          13.760155
-        ],
-        [
-          100.538773,
-          13.760102
-        ],
-        [
-          100.538765,
-          13.760052
-        ],
-        [
-          100.538743,
-          13.759999
-        ],
-        [
-          100.538712,
-          13.759958
-        ],
-        [
-          100.538674,
-          13.759926
-        ],
-        [
-          100.538626,
-          13.759901
-        ],
-        [
-          100.538576,
-          13.759888
-        ],
-        [
-          100.538519,
-          13.759887
-        ],
-        [
-          100.538473,
-          13.759897
-        ],
-        [
-          100.538084,
-          13.759148
-        ],
-        [
-          100.537893,
-          13.759241
-        ],
-        [
-          100.537109,
-          13.759625
-        ]
-      ],
-      "lng": 100.53827415151515,
-      "lat": 13.760079727272723,
-      "tenantList": [
-        {
-          "name": "Evolution Wellness",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/dffcf1da-e6d9-485c-a818-fb93d1dbd660.1/jdpLogo"
-        }
-      ]
-    },
-    {
       "name": "Trendy Condominiums",
       "height": 42.9,
       "estimated": false,
@@ -33521,7 +32619,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Panjathani Tower",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -33617,7 +32715,6 @@ const ASHTON_DATA = {
       "estimated": false,
       "footprint": "osm",
       "companies": [
-        "Hero Esports",
         "Shaw Ping"
       ],
       "ring": [
@@ -33709,10 +32806,6 @@ const ASHTON_DATA = {
       "lng": 100.52984147619047,
       "lat": 13.744610999999999,
       "tenantList": [
-        {
-          "name": "Hero Esports",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQEpVPWjSzcf1w/company-logo_100_100/B56Z7K6Yp0IQAI-/0/1781520763934/heroesportsofficial_logo?e=2147483647&v=beta&t=_DjaC1JS5dgHKSxGxaYjhFPL-LgWaUtH7vwOJyD0ttI"
-        },
         {
           "name": "Shaw Ping",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/9c0a223e-4f78-4e24-a869-4d008d1b7c86.2/jdpLogo"
@@ -34064,66 +33157,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Lee's Pharmaceutical (HK)"
-      ],
-      "ring": [
-        [
-          100.517554,
-          13.737604
-        ],
-        [
-          100.51778,
-          13.737512
-        ],
-        [
-          100.517833,
-          13.737541
-        ],
-        [
-          100.518075,
-          13.738111
-        ],
-        [
-          100.518048,
-          13.738112
-        ],
-        [
-          100.517864,
-          13.737974
-        ],
-        [
-          100.51788,
-          13.737931
-        ],
-        [
-          100.517769,
-          13.737677
-        ],
-        [
-          100.51761,
-          13.737743
-        ],
-        [
-          100.517554,
-          13.737604
-        ]
-      ],
-      "lng": 100.5177967,
-      "lat": 13.737780899999999,
-      "tenantList": [
-        {
-          "name": "Lee's Pharmaceutical (HK)",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/4bc2e410-c2fb-4b5b-9e09-6bd83778cc6f.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
+      "name": "One Bangkok Tower 4",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -34377,7 +33411,8 @@ const ASHTON_DATA = {
       "footprint": "osm",
       "companies": [
         "PALO IT",
-        "T.S.L. International"
+        "T.S.L. International",
+        "The Red Marker"
       ],
       "ring": [
         [
@@ -34423,6 +33458,10 @@ const ASHTON_DATA = {
         {
           "name": "T.S.L. International",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/6209e7c2-9224-465a-91a7-4c6d61a15353.2/jdpLogo"
+        },
+        {
+          "name": "The Red Marker",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/455d98dc-4145-4b1b-9fe1-b670438a4f16.2/jdpLogo"
         }
       ]
     },
@@ -34538,12 +33577,11 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Spring Tower",
       "height": 138.6,
       "estimated": false,
       "footprint": "osm",
       "companies": [
-        "PS Global Consulting",
         "TDCX"
       ],
       "ring": [
@@ -34572,95 +33610,8 @@ const ASHTON_DATA = {
       "lat": 13.7538546,
       "tenantList": [
         {
-          "name": "PS Global Consulting",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQGK_wphM3LFgA/company-logo_100_100/B56ZgMHYGtHsAY-/0/1752549917620/pointstar_consulting_logo?e=2147483647&v=beta&t=fXEUN-oa62xOCvzNGwPt8r2Xnkvws6Y4hJNCeg12ysw"
-        },
-        {
           "name": "TDCX",
           "logo": "https://media.licdn.com/dms/image/v2/D560BAQGp6WA9Pc7Amg/company-logo_100_100/B56Zo0_km8IsAU-/0/1761825672073/tdcxgroup_logo?e=2147483647&v=beta&t=5BacR41rMSv_TEGl7zlez8rOTgpOd-l0UyJMvxRhKY4"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Rabbit bytes"
-      ],
-      "ring": [
-        [
-          100.537786,
-          13.77858
-        ],
-        [
-          100.537949,
-          13.778484
-        ],
-        [
-          100.538011,
-          13.778575
-        ],
-        [
-          100.537952,
-          13.778617
-        ],
-        [
-          100.537981,
-          13.778656
-        ],
-        [
-          100.537861,
-          13.778731
-        ],
-        [
-          100.537606,
-          13.77888
-        ],
-        [
-          100.537542,
-          13.778794
-        ],
-        [
-          100.537566,
-          13.778768
-        ],
-        [
-          100.537531,
-          13.77871
-        ],
-        [
-          100.537593,
-          13.778664
-        ],
-        [
-          100.537619,
-          13.77871
-        ],
-        [
-          100.537724,
-          13.778643
-        ],
-        [
-          100.537708,
-          13.778601
-        ],
-        [
-          100.537767,
-          13.77857
-        ],
-        [
-          100.537786,
-          13.77858
-        ]
-      ],
-      "lng": 100.537748875,
-      "lat": 13.778660187499998,
-      "tenantList": [
-        {
-          "name": "Rabbit bytes",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/f7347cf6-07ca-41d3-8930-25eab0214e13.1/jdpLogo"
         }
       ]
     },
@@ -34920,7 +33871,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "อาคารพร้อมพันธุ์ 1",
       "height": 33,
       "estimated": true,
       "footprint": "osm",
@@ -35415,45 +34366,6 @@ const ASHTON_DATA = {
     },
     {
       "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Watsons"
-      ],
-      "ring": [
-        [
-          100.527925,
-          13.706314
-        ],
-        [
-          100.527683,
-          13.706369
-        ],
-        [
-          100.527638,
-          13.706195
-        ],
-        [
-          100.527884,
-          13.706145
-        ],
-        [
-          100.527925,
-          13.706314
-        ]
-      ],
-      "lng": 100.527811,
-      "lat": 13.706267400000002,
-      "tenantList": [
-        {
-          "name": "Watsons",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/b1306ad7-b85f-4d74-b2c5-dfff2f5f5af5.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
       "height": 6.6,
       "estimated": false,
       "footprint": "osm",
@@ -35488,45 +34400,6 @@ const ASHTON_DATA = {
         {
           "name": "ZUS Coffee",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/cb737f72-7553-4ea8-b0eb-8b474fcbb124.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Acteus"
-      ],
-      "ring": [
-        [
-          100.623902,
-          13.681134
-        ],
-        [
-          100.624262,
-          13.681134
-        ],
-        [
-          100.624262,
-          13.681494
-        ],
-        [
-          100.623902,
-          13.681494
-        ],
-        [
-          100.623902,
-          13.681134
-        ]
-      ],
-      "lng": 100.62404599999999,
-      "lat": 13.681278,
-      "tenantList": [
-        {
-          "name": "Acteus",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/c4d3014b-3533-4070-95c0-fa2f77ca9295.1/jdpLogo"
         }
       ]
     },
@@ -35687,7 +34560,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "อาคารแบงเทรดดิ้งกรุ๊ป",
       "height": 33,
       "estimated": true,
       "footprint": "approx",
@@ -35926,7 +34799,7 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
+      "name": "Interlink Tower บางนา",
       "height": 33,
       "estimated": true,
       "footprint": "approx",
@@ -36633,45 +35506,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "approx",
       "companies": [
-        "MR DIY Thailand"
-      ],
-      "ring": [
-        [
-          100.670692,
-          13.561085
-        ],
-        [
-          100.671052,
-          13.561085
-        ],
-        [
-          100.671052,
-          13.561445
-        ],
-        [
-          100.670692,
-          13.561445
-        ],
-        [
-          100.670692,
-          13.561085
-        ]
-      ],
-      "lng": 100.67083600000001,
-      "lat": 13.561229,
-      "tenantList": [
-        {
-          "name": "MR DIY Thailand",
-          "logo": "https://media.licdn.com/dms/image/v2/D560BAQElIJhOWx-n4g/company-logo_100_100/B56Z7QyD8IGsAM-/0/1781619245114?e=2147483647&v=beta&t=OWRczuZtxOHv6cRNRAlzMndsOIIBaOK-CCWUA0Ou4bI"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
         "NIST International School"
       ],
       "ring": [
@@ -36702,45 +35536,6 @@ const ASHTON_DATA = {
         {
           "name": "NIST International School",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/7d614861-c822-4580-902e-af4033224dde.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Nutrition Science Laboratory"
-      ],
-      "ring": [
-        [
-          100.603345,
-          13.874042
-        ],
-        [
-          100.603705,
-          13.874042
-        ],
-        [
-          100.603705,
-          13.874402
-        ],
-        [
-          100.603345,
-          13.874402
-        ],
-        [
-          100.603345,
-          13.874042
-        ]
-      ],
-      "lng": 100.603489,
-      "lat": 13.874186,
-      "tenantList": [
-        {
-          "name": "Nutrition Science Laboratory",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/83825ca0-d0d2-4974-b15a-628d0aa92d0b.2/jdpLogo"
         }
       ]
     },
@@ -36979,45 +35774,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": "True Digital Park",
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Siemens"
-      ],
-      "ring": [
-        [
-          100.610405,
-          13.686127
-        ],
-        [
-          100.610765,
-          13.686127
-        ],
-        [
-          100.610765,
-          13.686487
-        ],
-        [
-          100.610405,
-          13.686487
-        ],
-        [
-          100.610405,
-          13.686127
-        ]
-      ],
-      "lng": 100.610549,
-      "lat": 13.686271,
-      "tenantList": [
-        {
-          "name": "Siemens",
-          "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFK_4wGnzwPTQ/company-logo_100_100/company-logo_100_100/0/1719931174735/siemens_logo?e=2147483647&v=beta&t=iNZVOYYuYOnkz09IBCFrK9Ik8uTqP6ZDnhCEJjPouV4"
-        }
-      ]
-    },
-    {
       "name": null,
       "height": 33,
       "estimated": true,
@@ -37092,84 +35848,6 @@ const ASHTON_DATA = {
         {
           "name": "Tag",
           "logo": "https://media.licdn.com/dms/image/v2/D560BAQHIKbOoiYPjgA/company-logo_100_100/B56ZgOnNCeG4Ac-/0/1752591815236/tag_logo?e=2147483647&v=beta&t=2RGfeLNv6XJN5nbk4Tsw31YAdhLQtHRwspDMwrTDfuQ"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "TANTATAT CLINIC"
-      ],
-      "ring": [
-        [
-          100.547712,
-          13.739257
-        ],
-        [
-          100.548072,
-          13.739257
-        ],
-        [
-          100.548072,
-          13.739617
-        ],
-        [
-          100.547712,
-          13.739617
-        ],
-        [
-          100.547712,
-          13.739257
-        ]
-      ],
-      "lng": 100.547856,
-      "lat": 13.739401,
-      "tenantList": [
-        {
-          "name": "TANTATAT CLINIC",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/ba3ee1c4-71e3-4ea8-b4b0-ef0e829688cf.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Thai Glico"
-      ],
-      "ring": [
-        [
-          100.533381,
-          13.727651
-        ],
-        [
-          100.533741,
-          13.727651
-        ],
-        [
-          100.533741,
-          13.728011
-        ],
-        [
-          100.533381,
-          13.728011
-        ],
-        [
-          100.533381,
-          13.727651
-        ]
-      ],
-      "lng": 100.53352500000001,
-      "lat": 13.727795,
-      "tenantList": [
-        {
-          "name": "Thai Glico",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/9a10e1fa-9081-4acd-80f9-10100098b40a.1/jdpLogo"
         }
       ]
     },
@@ -38037,53 +36715,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": "Chit Lom BTS Station",
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "APRIL Assistance"
-      ],
-      "ring": [
-        [
-          100.542373,
-          13.744105
-        ],
-        [
-          100.542393,
-          13.744213
-        ],
-        [
-          100.542412,
-          13.744315
-        ],
-        [
-          100.543751,
-          13.744086
-        ],
-        [
-          100.543733,
-          13.743984
-        ],
-        [
-          100.543713,
-          13.743876
-        ],
-        [
-          100.542373,
-          13.744105
-        ]
-      ],
-      "lng": 100.542964,
-      "lat": 13.744097714285715,
-      "tenantList": [
-        {
-          "name": "APRIL Assistance",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/07162a51-feb8-440b-8bbd-fc7894cf9ab0.1/jdpLogo"
-        }
-      ]
-    },
-    {
       "name": "Yada Building",
       "height": 19.8,
       "estimated": false,
@@ -38167,45 +36798,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "osm",
       "companies": [
-        "Asia Global Aviation Maintenance"
-      ],
-      "ring": [
-        [
-          100.561067,
-          13.732616
-        ],
-        [
-          100.561287,
-          13.732566
-        ],
-        [
-          100.561257,
-          13.732414
-        ],
-        [
-          100.561052,
-          13.732428
-        ],
-        [
-          100.561067,
-          13.732616
-        ]
-      ],
-      "lng": 100.561146,
-      "lat": 13.732527999999999,
-      "tenantList": [
-        {
-          "name": "Asia Global Aviation Maintenance",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/6d9c4723-a49a-4fa7-ae92-da532a8a0d11.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
         "Aspire Technology"
       ],
       "ring": [
@@ -38236,61 +36828,6 @@ const ASHTON_DATA = {
         {
           "name": "Aspire Technology",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/6f0797ca-0fd8-451d-b98c-03a4f16c2530.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "ASSA ABLOY"
-      ],
-      "ring": [
-        [
-          100.618555,
-          13.804658
-        ],
-        [
-          100.618923,
-          13.804692
-        ],
-        [
-          100.618996,
-          13.804085
-        ],
-        [
-          100.618908,
-          13.804076
-        ],
-        [
-          100.618906,
-          13.804051
-        ],
-        [
-          100.618737,
-          13.804032
-        ],
-        [
-          100.618668,
-          13.804035
-        ],
-        [
-          100.618528,
-          13.804414
-        ],
-        [
-          100.618555,
-          13.804658
-        ]
-      ],
-      "lng": 100.61875288888888,
-      "lat": 13.804300111111111,
-      "tenantList": [
-        {
-          "name": "ASSA ABLOY",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/d96b4c69-0d1f-40cf-9ea8-6449747d200e.1/jdpLogo"
         }
       ]
     },
@@ -38802,93 +37339,6 @@ const ASHTON_DATA = {
         {
           "name": "Big C",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/d2e42139-bffd-47a6-808a-9a5d7dd44702.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": "The Market Bangkok",
-      "height": 105.6,
-      "estimated": false,
-      "footprint": "osm",
-      "companies": [
-        "Blackmores"
-      ],
-      "ring": [
-        [
-          100.541355,
-          13.748032
-        ],
-        [
-          100.541295,
-          13.747822
-        ],
-        [
-          100.541236,
-          13.747606
-        ],
-        [
-          100.542377,
-          13.747409
-        ],
-        [
-          100.542604,
-          13.74737
-        ],
-        [
-          100.542629,
-          13.747508
-        ],
-        [
-          100.542742,
-          13.748021
-        ],
-        [
-          100.542836,
-          13.748449
-        ],
-        [
-          100.542872,
-          13.748612
-        ],
-        [
-          100.542699,
-          13.74868
-        ],
-        [
-          100.542343,
-          13.748819
-        ],
-        [
-          100.542299,
-          13.748557
-        ],
-        [
-          100.542235,
-          13.748173
-        ],
-        [
-          100.542225,
-          13.748111
-        ],
-        [
-          100.542193,
-          13.747897
-        ],
-        [
-          100.541524,
-          13.748002
-        ],
-        [
-          100.541355,
-          13.748032
-        ]
-      ],
-      "lng": 100.5421658235294,
-      "lat": 13.748064705882353,
-      "tenantList": [
-        {
-          "name": "Blackmores",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/1c808288-79a5-4ff4-9bde-4c6b783475ee.1/jdpLogo"
         }
       ]
     },
@@ -41203,53 +39653,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": "Center One",
-      "height": 13.2,
-      "estimated": false,
-      "footprint": "osm",
-      "companies": [
-        "Kasikorn X"
-      ],
-      "ring": [
-        [
-          100.539565,
-          13.764193
-        ],
-        [
-          100.539341,
-          13.764299
-        ],
-        [
-          100.539317,
-          13.764294
-        ],
-        [
-          100.539262,
-          13.764283
-        ],
-        [
-          100.538946,
-          13.763756
-        ],
-        [
-          100.539198,
-          13.763608
-        ],
-        [
-          100.539565,
-          13.764193
-        ]
-      ],
-      "lng": 100.53931342857143,
-      "lat": 13.76408942857143,
-      "tenantList": [
-        {
-          "name": "Kasikorn X",
-          "logo": null
-        }
-      ]
-    },
-    {
       "name": null,
       "height": 151,
       "estimated": false,
@@ -41642,45 +40045,6 @@ const ASHTON_DATA = {
         {
           "name": "Maison Royal",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/0d158d1e-3a7e-4eef-948b-445b197158cf.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Matin HR Partners"
-      ],
-      "ring": [
-        [
-          100.544936,
-          13.734474
-        ],
-        [
-          100.545577,
-          13.734455
-        ],
-        [
-          100.54557,
-          13.734259
-        ],
-        [
-          100.54493,
-          13.734278
-        ],
-        [
-          100.544936,
-          13.734474
-        ]
-      ],
-      "lng": 100.5451898,
-      "lat": 13.734388000000001,
-      "tenantList": [
-        {
-          "name": "Matin HR Partners",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/1f59b86d-9fd0-425c-83dd-11333287791f.1/jdpLogo"
         }
       ]
     },
@@ -42581,65 +40945,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "osm",
-      "companies": [
-        "Perfetti Van Melle"
-      ],
-      "ring": [
-        [
-          100.538141,
-          13.692618
-        ],
-        [
-          100.538407,
-          13.692532
-        ],
-        [
-          100.538365,
-          13.692411
-        ],
-        [
-          100.538251,
-          13.692449
-        ],
-        [
-          100.538171,
-          13.692223
-        ],
-        [
-          100.538139,
-          13.692135
-        ],
-        [
-          100.538264,
-          13.692094
-        ],
-        [
-          100.538215,
-          13.691953
-        ],
-        [
-          100.537927,
-          13.692048
-        ],
-        [
-          100.538141,
-          13.692618
-        ]
-      ],
-      "lng": 100.5382021,
-      "lat": 13.6923081,
-      "tenantList": [
-        {
-          "name": "Perfetti Van Melle",
-          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQGH4Y24qw0Uzg/company-logo_100_100/company-logo_100_100/0/1718264194360/perfetti_van_melle_logo?e=2147483647&v=beta&t=0jAtXltWZMLRUVPeoCKD-tW-aL8m4dh8p641p9VwHgs"
-        }
-      ]
-    },
-    {
       "name": "Summer Hill",
       "height": 16.5,
       "estimated": false,
@@ -43482,7 +41787,8 @@ const ASHTON_DATA = {
       "estimated": false,
       "footprint": "osm",
       "companies": [
-        "Save the Children International"
+        "Save the Children International",
+        "APRIL Assistance"
       ],
       "ring": [
         [
@@ -43512,6 +41818,10 @@ const ASHTON_DATA = {
         {
           "name": "Save the Children International",
           "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFIMXYLtw-M2w/company-logo_100_100/company-logo_100_100/0/1666954663629/save_the_children_international_logo?e=2147483647&v=beta&t=MUxzIUD1o31ku0nP8xDN94gPi0rhezjF23h9L0TMLP0"
+        },
+        {
+          "name": "APRIL Assistance",
+          "logo": "https://bx-branding-gateway.cloud.seek.com.au/07162a51-feb8-440b-8bbd-fc7894cf9ab0.1/jdpLogo"
         }
       ]
     },
@@ -47015,45 +45325,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "approx",
       "companies": [
-        "Chawa Supply"
-      ],
-      "ring": [
-        [
-          100.505605,
-          13.741399
-        ],
-        [
-          100.505965,
-          13.741399
-        ],
-        [
-          100.505965,
-          13.741759
-        ],
-        [
-          100.505605,
-          13.741759
-        ],
-        [
-          100.505605,
-          13.741399
-        ]
-      ],
-      "lng": 100.50574900000001,
-      "lat": 13.741542999999998,
-      "tenantList": [
-        {
-          "name": "Chawa Supply",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/184a6a7e-b828-4819-9faf-8c39ef6fcd5d.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
         "Chememan"
       ],
       "ring": [
@@ -47093,45 +45364,6 @@ const ASHTON_DATA = {
       "estimated": true,
       "footprint": "approx",
       "companies": [
-        "Cleantech Solar"
-      ],
-      "ring": [
-        [
-          100.708904,
-          13.736882
-        ],
-        [
-          100.709264,
-          13.736882
-        ],
-        [
-          100.709264,
-          13.737242
-        ],
-        [
-          100.708904,
-          13.737242
-        ],
-        [
-          100.708904,
-          13.736882
-        ]
-      ],
-      "lng": 100.70904800000001,
-      "lat": 13.737026,
-      "tenantList": [
-        {
-          "name": "Cleantech Solar",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/42851cb5-c242-4664-ae13-eff480ed2146.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
         "Concordian International School"
       ],
       "ring": [
@@ -47162,45 +45394,6 @@ const ASHTON_DATA = {
         {
           "name": "Concordian International School",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/478a1ce0-f18f-4705-afbd-2eb959f100a9.1/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Confidential"
-      ],
-      "ring": [
-        [
-          100.524189,
-          13.727322
-        ],
-        [
-          100.524549,
-          13.727322
-        ],
-        [
-          100.524549,
-          13.727682
-        ],
-        [
-          100.524189,
-          13.727682
-        ],
-        [
-          100.524189,
-          13.727322
-        ]
-      ],
-      "lng": 100.524333,
-      "lat": 13.727465999999998,
-      "tenantList": [
-        {
-          "name": "Confidential",
-          "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHRS2rPVv9Obg/company-logo_100_100/B4EZfZYEx1HIAY-/0/1751698659371/confidential_company_page12_logo?e=2147483647&v=beta&t=lOyovIHcHm-AeCV-pR0FWRaB0s0Mo51NkMF82ProyjE"
         }
       ]
     },
@@ -47552,45 +45745,6 @@ const ASHTON_DATA = {
         {
           "name": "Diageo",
           "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQGsTOqv8kvX_Q/company-logo_100_100/company-logo_100_100/0/1701422230739/diageo_logo?e=2147483647&v=beta&t=jpYCP-hqT2R-pYLv5QFP4h5Hxl01FEqxbwe-NlWBG9o"
-        }
-      ]
-    },
-    {
-      "name": null,
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "DOCTOR MOM"
-      ],
-      "ring": [
-        [
-          100.618407,
-          13.949445
-        ],
-        [
-          100.618767,
-          13.949445
-        ],
-        [
-          100.618767,
-          13.949805
-        ],
-        [
-          100.618407,
-          13.949805
-        ],
-        [
-          100.618407,
-          13.949445
-        ]
-      ],
-      "lng": 100.618551,
-      "lat": 13.949589,
-      "tenantList": [
-        {
-          "name": "DOCTOR MOM",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/eabc5d73-e41f-43f8-9325-e88d43bd63a8.2/jdpLogo"
         }
       ]
     },
@@ -49775,45 +47929,6 @@ const ASHTON_DATA = {
         {
           "name": "Midea",
           "logo": "https://media.licdn.com/dms/image/v2/D560BAQGbN_32wbkl3g/company-logo_100_100/company-logo_100_100/0/1718263397343/mideagroup_logo?e=2147483647&v=beta&t=79O29Ezahu0uft7s1isYECggOGEv2uw0bzipTQDe-qk"
-        }
-      ]
-    },
-    {
-      "name": "AIA Sathorn Tower",
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Mitsubishi Electric"
-      ],
-      "ring": [
-        [
-          100.526721,
-          13.720028
-        ],
-        [
-          100.527081,
-          13.720028
-        ],
-        [
-          100.527081,
-          13.720388
-        ],
-        [
-          100.526721,
-          13.720388
-        ],
-        [
-          100.526721,
-          13.720028
-        ]
-      ],
-      "lng": 100.526865,
-      "lat": 13.720172,
-      "tenantList": [
-        {
-          "name": "Mitsubishi Electric",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/f996ab6b-8792-4eef-b57d-95f046d7f02c.1/jdpLogo"
         }
       ]
     },
@@ -52587,45 +50702,6 @@ const ASHTON_DATA = {
       ]
     },
     {
-      "name": "Serm-Mit Tower",
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "The Red Marker"
-      ],
-      "ring": [
-        [
-          100.561599,
-          13.741609
-        ],
-        [
-          100.561959,
-          13.741609
-        ],
-        [
-          100.561959,
-          13.741969
-        ],
-        [
-          100.561599,
-          13.741969
-        ],
-        [
-          100.561599,
-          13.741609
-        ]
-      ],
-      "lng": 100.561743,
-      "lat": 13.741753,
-      "tenantList": [
-        {
-          "name": "The Red Marker",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/455d98dc-4145-4b1b-9fe1-b670438a4f16.2/jdpLogo"
-        }
-      ]
-    },
-    {
       "name": "Ocean Tower",
       "height": 33,
       "estimated": true,
@@ -52856,45 +50932,6 @@ const ASHTON_DATA = {
         {
           "name": "TSI International School",
           "logo": "https://bx-branding-gateway.cloud.seek.com.au/1a4cfbb8-cf23-4f08-bd6b-be7a1c508eac.2/jdpLogo"
-        }
-      ]
-    },
-    {
-      "name": "Sindhorn Tower",
-      "height": 33,
-      "estimated": true,
-      "footprint": "approx",
-      "companies": [
-        "Ubon Bio Ethanol"
-      ],
-      "ring": [
-        [
-          100.544717,
-          13.735509
-        ],
-        [
-          100.545077,
-          13.735509
-        ],
-        [
-          100.545077,
-          13.735869
-        ],
-        [
-          100.544717,
-          13.735869
-        ],
-        [
-          100.544717,
-          13.735509
-        ]
-      ],
-      "lng": 100.544861,
-      "lat": 13.735653000000003,
-      "tenantList": [
-        {
-          "name": "Ubon Bio Ethanol",
-          "logo": "https://bx-branding-gateway.cloud.seek.com.au/8a7c12e3-f0d1-414e-a5c4-9e9ddcba5835.1/jdpLogo"
         }
       ]
     },
