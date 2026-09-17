@@ -1,19 +1,15 @@
 # รวมงานเว็บ md — static site, ไม่มีขั้นตอน build
 #
-# ── สถานะโฮสต์ ณ 16 ก.ย. 2026 ────────────────────────────────────────────
-# เว็บตัวจริงตอนนี้คือ Vercel:
-#   https://ratthai-kaona.vercel.app
+# ── สถานะโฮสต์ ณ 17 ก.ย. 2026 ────────────────────────────────────────────
+# เว็บตัวจริงตอนนี้เสิร์ฟจาก GitHub Pages:
+#   https://nuttapatchuajeen-hue.github.io/ratthai-kaona/
 # canonical/og ทุกหน้า (27 บรรทัด ใน 9 ไฟล์ html) ชี้มาที่นี่
 #
-# ทำไมถึงเป็น Vercel:
-#   · Netlify (thaigovernmentdata.netlify.app) โดนพัก production deploys เพราะทีมชนโควตา
-#     ไซต์ยัง live แต่ค้างที่ main@b58bb3f และ deploy ใหม่ไม่ได้จนกว่าโควตาจะคืน
-#   · GitHub Pages ใช้ไม่ได้ เพราะรีโปนี้เป็น private (Pages + private ต้องใช้แพลนเสียเงิน)
-#   · Vercel เป็นตัวเดียวที่ auto-deploy ได้ปกติกับ repo private
+# รีโปเป็น public และเปิดใช้งาน GitHub Pages จาก branch main / (root)
+# ส่วน Vercel (ratthai-kaona.vercel.app) ทำหน้าที่เป็น fallback host และ serverless API (/api/yt-search)
 #
-# ⚠️ ปัญหาที่ยังค้างและแก้ไม่ได้ตอนนี้:
-#   หน้าเวอร์ชันเก่าที่ค้างอยู่บน Netlify ประกาศ canonical เป็น github.io ซึ่ง 404
-#   แก้ไม่ได้เพราะ deploy ทับไม่ได้ — จะหายเองเมื่อโควตา Netlify คืนแล้ว build คอมมิตใหม่
+# Netlify (thaigovernmentdata.netlify.app):
+#   พักการ deploy จากโควตาเครดิต auto-deploy ค้างที่ main@b58bb3f
 #
 # ถ้าจะย้ายกลับ Netlify ตอนโควตาคืน ทำตามลำดับนี้:
 #   1) ปล่อยให้ Netlify build คอมมิตล่าสุดจนสำเร็จก่อน (auto publishing เปิดอยู่แล้ว)
