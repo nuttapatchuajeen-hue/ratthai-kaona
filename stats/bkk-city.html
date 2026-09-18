@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th" data-theme="dark">
 <head>
 <meta charset="utf-8">
@@ -2284,10 +2284,10 @@
 <!-- Luxury Header -->
 <div class="header">
   <div class="header-top">
-    <div class="brand">
+    <a href="../hub/index.html" class="brand" title="กลับหน้าแรก รัฐไทยก้าวหน้า" style="text-decoration:none">
       <span class="brand-title">กรุงเทพฯ ทะลุมิติ</span>
       <span class="brand-sub">เห็นเมืองกรุงทั้งใบ ทีละชั้น</span>
-    </div>
+    </a>
 
     <div class="header-actions">
       <!-- Mode Switcher Tabs (3D Real Estate vs 2D Thematic Analytics) -->
@@ -3065,6 +3065,9 @@
 <script src="bkk-brands-data.js"></script>
 <script src="bkk-brand-logos.js"></script>
 <script src="bkk-landmark-icons.js"></script>
+<script src="bkk-3d-host.js"></script>
+<script src="bkk-elevated.js"></script>
+<script src="bkk-rail3d.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -4150,6 +4153,16 @@
     // 🗺️ ชั้นผังสี กทม. & FAR/OSR Intel — โมดูลแยกใน bkk-zoning.js
     if (window.BKK_ZONING && window.BKK_ZONING.mount) {
       try { window.BKK_ZONING.mount(map); } catch (e) { console.warn("zoning layer:", e); }
+    }
+
+    // 🛣️ ทางด่วน/ทางยกระดับ 3 มิติ (three.js) — โมดูลแยกใน bkk-elevated.js, โหลด three.js + ข้อมูลเองทีหลัง
+    if (window.BKK_ELEVATED3D) {
+      try { window.BKK_ELEVATED3D.mount(map); } catch (e) { console.warn("elevated 3D layer:", e); }
+    }
+
+    // 🚈 รางรถไฟฟ้า สถานี และขบวนรถ 3 มิติ — โมดูลแยกใน bkk-rail3d.js (ใช้ฉากกลางร่วมกับทางด่วน)
+    if (window.BKK_RAIL3D) {
+      try { window.BKK_RAIL3D.mount(map); } catch (e) { console.warn("rail 3D layer:", e); }
     }
   }
 
@@ -6562,12 +6575,14 @@ window.MD_DATA_NOTICE = {
   after: 'body > .header',
   accent: 'var(--accent)',
   asof: 'ข้อมูลแผนที่ ณ กันยายน 2569',
-  detail: ' — ห้างร้าน/แบรนด์เก็บเมื่อ 9–10 ก.ย. 2569 · อาคาร 3 มิติจาก OpenStreetMap 3 ก.ย. 2569 · ร้านและโครงการเปลี่ยนแปลงได้ โปรดตรวจสอบก่อนนำไปอ้างอิง',
+  detail: ' — ห้างร้าน/แบรนด์เก็บเมื่อ 9–10 ก.ย. 2569 · อาคาร 3 มิติจาก OpenStreetMap 3 ก.ย. 2569 · ทางยกระดับและรางรถไฟฟ้า 3 มิติจาก OpenStreetMap 17–18 ก.ย. 2569 · ร้านและโครงการเปลี่ยนแปลงได้ โปรดตรวจสอบก่อนนำไปอ้างอิง',
   sub: 'แผนที่ 50 เขตกรุงเทพฯ บนแผนที่ถนนจริง พร้อมชั้นรถไฟฟ้า แลนด์มาร์ก ผังสี ศูนย์ข้อมูล และห้างร้านทั่วประเทศ — จัดทำเพื่อการศึกษา',
-  warn: '<b>มวลอาคารส่วนใหญ่เป็นปริมาตรจำลองจากขนาดที่ดิน ไม่ใช่แบบสถาปัตยกรรม</b><br>ศูนย์ข้อมูลวางบนพิกัดจริง แต่รอยอาคาร (ยกเว้น Telehouse) เป็นมวลจำลอง · ผังสีแสดง 22 โซนสำคัญอ้างอิงผังเมืองรวมกรุงเทพมหานคร — ใช้ตัดสินใจจริงโปรดตรวจสอบกับ กทม.',
+  warn: '<b>มวลอาคารส่วนใหญ่เป็นปริมาตรจำลองจากขนาดที่ดิน ไม่ใช่แบบสถาปัตยกรรม</b><br>ศูนย์ข้อมูลวางบนพิกัดจริง แต่รอยอาคาร (ยกเว้น Telehouse) เป็นมวลจำลอง · ผังสีแสดง 22 โซนสำคัญอ้างอิงผังเมืองรวมกรุงเทพมหานคร — ใช้ตัดสินใจจริงโปรดตรวจสอบกับ กทม. · ทางยกระดับ 3 มิติวางตามแนวเส้นทางจริง แต่ความสูง ตอม่อ และความชันทางลาดเป็นค่าประมาณจากลำดับชั้นใน OSM',
   sources: [
     { t: 'แผนที่ฐาน (vector tiles)', o: 'OpenFreeMap · © OpenStreetMap contributors (ODbL)', u: 'https://openfreemap.org' },
     { t: 'มวลอาคาร 3 มิติของแลนด์มาร์ก', o: 'OpenStreetMap ผ่าน Overpass API · ดึงข้อมูล 3 ก.ย. 2569 · ODbL', u: 'https://www.openstreetmap.org' },
+    { t: 'ทางด่วน ทางยกระดับ สะพานข้ามแยก 2,505 ช่วง (~1,439 กม.)', o: 'OpenStreetMap ผ่าน Overpass API · ดึงข้อมูล 17 ก.ย. 2569 · ODbL · วาดด้วย three.js', u: 'https://www.openstreetmap.org' },
+    { t: 'รางรถไฟฟ้ายกระดับ 10 สาย (~393 กม.) และสถานี 3 มิติ', o: 'แนวราง: OpenStreetMap ผ่าน Overpass API 18 ก.ย. 2569 (ODbL) · ชื่อ/รหัสสถานี: ชุดข้อมูลรถไฟฟ้าของหน้านี้ · ตัวสถานีเป็นแบบจำลองมาตรฐาน', u: 'https://www.openstreetmap.org' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },
     { t: 'ศูนย์ข้อมูล (Data Center)', o: 'พิกัด: PeeringDB + OpenStreetMap/Nominatim · สถิติผลกระทบ: กฟน., กปน., เครือข่าย JustPow, สำนักนายกฯ, BOI', u: 'https://www.peeringdb.com' },
