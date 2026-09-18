@@ -32,11 +32,18 @@
     light:  { asphalt: "#555c67", white: "rgba(255,255,255,.95)", yellow: "#f2c230" },
     sunset: { asphalt: "#4b4142", white: "rgba(255,244,236,.94)", yellow: "#f5b642" }
   };
+  // ช่วงที่ยังก่อสร้าง (OSM highway=construction) — คอนกรีตโทนส้มงานก่อสร้าง พื้นทางยังไม่ลาดยาง/ตีเส้น
+  var UC_PAL = {
+    dark:   { body: "#cf7a3e", top: "#7a4a2a" },
+    light:  { body: "#e8914a", top: "#b07448" },
+    sunset: { body: "#e0622c", top: "#8a4630" }
+  };
 
   var H = null;                 // BKK_3D
   var T = null, D = null, map = null;
   var visible = true, loading = null, failed = false;
   var group = null, model = null, topMats = {}, hoverMat = null, selMat = null, cableMat = null;
+  var ucMat = null, ucTopMat = null;
   var hoverIdx = -1, selIdx = -1, hoverMesh = null, selMesh = null;
   var uiBuilt = false;
 
@@ -44,6 +51,13 @@
   function ico(n) { return '<svg class="mdico"><use href="#i-' + n + '"></use></svg>'; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function fmt(v, d) { return Number(v).toLocaleString("th-TH", { maximumFractionDigits: d || 0 }); }
+  // แท็ก opening_date ของ OSM (2026-12-05 / 2026-12 / 2026) → "5 ธ.ค. 2569"
+  var TH_MON = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+  function thDate(s) {
+    var m = /^(\d{4})(?:-(\d{1,2}))?(?:-(\d{1,2}))?/.exec(s || "");
+    if (!m) return s;
+    return (m[3] ? +m[3] + " " : "") + (m[2] ? TH_MON[+m[2] - 1] + " " : "") + (+m[1] + 543);
+  }
   function lsGet() { try { return localStorage.getItem(LS_KEY); } catch (e) { return null; } }
   function lsSet(v) { try { localStorage.setItem(LS_KEY, v); } catch (e) {} }
   function loadScript(src) {
@@ -232,6 +246,23 @@
     return { c0: c0, c1: B.ci.length, key: key, t0: t0, t1: tIdx.length };
   }
 
+  // เงานุ่มบนพื้นใต้ทางยกระดับ (เลื่อนตามทิศแดดตามความสูง) — วัสดุเงากลางของ host ใช้ร่วมกับชั้นรถไฟฟ้า
+  function emitShadow(SH, R) {
+    var P = R.pts;
+    for (var i = 0; i < P.length - 1; i++) {
+      var a = P[i], b = P[i + 1];
+      if (a.h < 1.5 && b.h < 1.5) continue;
+      var dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy);
+      if (L < 0.01) continue;
+      var k = a.k, hw = (R.width / 2 + 2.2) * k, qx = -dy / L * hw, qy = dx / L * hw;
+      var sa = H.sunShift(a.h * 0.3), sb = H.sunShift(b.h * 0.3), z = 0.12 * k, s = SH.p.length / 3;
+      SH.p.push(a.x + sa[0] * k + qx, a.y + sa[1] * k + qy, z, b.x + sb[0] * k + qx, b.y + sb[1] * k + qy, z,
+                b.x + sb[0] * k - qx, b.y + sb[1] * k - qy, z, a.x + sa[0] * k - qx, a.y + sa[1] * k - qy, z);
+      SH.uv.push(0, 0, 0, 1, 1, 1, 1, 0);
+      SH.i.push(s, s + 1, s + 2, s, s + 2, s + 3);
+    }
+  }
+
   // ตอม่อ: ทุก ~30 ม. ตามแนวทาง (ข้ามแม่น้ำ 80 ม.) รวมตอม่อของทางคู่ขนานให้เป็นตัวเดียว
   function collectPiers(R, grid, list) {
     var SP = R.rec.x >= 0 && /^แม่น้ำ/.test(D.strings[R.rec.x] || "") ? 80 : 30, P = R.pts;
@@ -261,13 +292,14 @@
               q.span = dist / k + (q.span + R.width) / 2;
               q.x = (q.x + x) / 2; q.y = (q.y + y) / 2;
               q.top = Math.min(q.top, top);
+              q.uc = q.uc && !!R.rec.u;          // ตอม่อร่วมกับทางที่เปิดแล้ว = สีคอนกรีตปกติ
               q.m = true; merged = true;
               break;
             }
           }
         }
         if (!merged) {
-          var pier = { x: x, y: y, top: top, k: k, dx: dx, dy: dy, span: R.width, m: false };
+          var pier = { x: x, y: y, top: top, k: k, dx: dx, dy: dy, span: R.width, m: false, uc: !!R.rec.u };
           var key = cx + ":" + cy;
           (grid[key] = grid[key] || []).push(pier);
           list.push(pier);
@@ -373,15 +405,20 @@
       side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
     selMat = new T.MeshBasicMaterial({ color: pal.glow, transparent: true, opacity: 0.55, depthWrite: false,
       side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
+    var ucp = UC_PAL[H.theme()] || UC_PAL.dark;
+    ucMat = new T.MeshPhongMaterial({ color: ucp.body, flatShading: true, shininess: 0, specular: 0x000000, side: T.DoubleSide });
+    ucTopMat = new T.MeshPhongMaterial({ color: ucp.top, flatShading: true, shininess: 0, specular: 0x000000, side: T.DoubleSide });
 
     var chunks = {}, roads = [], grid = {}, piers = [];
     D.roads.forEach(function (rec, idx) {
       var R = decodeRoad(rec, idx);
       if (!R) { roads.push(null); return; }
       var mid = R.pts[R.pts.length >> 1];
-      var ck = Math.floor(mid.x / CHUNK_M) + ":" + Math.floor(mid.y / CHUNK_M);
-      var ch = chunks[ck] || (chunks[ck] = { B: new Builder(), roads: [] });
+      // ช่วงก่อสร้างแยกก้อนของตัวเอง → ใช้วัสดุสีส้มทั้งก้อน (คลิกเลือกยังไล่ตามก้อนเหมือนเดิม)
+      var ck = Math.floor(mid.x / CHUNK_M) + ":" + Math.floor(mid.y / CHUNK_M) + (rec.u ? ":uc" : "");
+      var ch = chunks[ck] || (chunks[ck] = { B: new Builder(), SH: { p: [], uv: [], i: [] }, roads: [], uc: !!rec.u });
       R.span = emitRoad(ch.B, R, 0);
+      if (H.shadowMaterial) emitShadow(ch.SH, R);
       ch.roads.push(R);
       roads.push(R);
       collectPiers(R, grid, piers);
@@ -394,7 +431,7 @@
       g.setAttribute("position", new T.Float32BufferAttribute(B.cp, 3));
       g.setIndex(new T.BufferAttribute(new Uint32Array(B.ci), 1));
       g.computeBoundingSphere();
-      var mesh = new T.Mesh(g, H.concrete());
+      var mesh = new T.Mesh(g, ch.uc ? ucMat : H.concrete());
       mesh.matrixAutoUpdate = false;
       group.add(mesh);
 
@@ -407,13 +444,25 @@
         offs[k] = idx.length;
         tg.addGroup(idx.length, src.length, mi);
         for (var i = 0; i < src.length; i++) idx.push(src[i]);
-        mlist.push(topMat(k));
+        mlist.push(ch.uc ? ucTopMat : topMat(k));
       });
       tg.setIndex(new T.BufferAttribute(new Uint32Array(idx), 1));
       tg.computeBoundingSphere();
       var tmesh = new T.Mesh(tg, mlist);
       tmesh.matrixAutoUpdate = false;
       group.add(tmesh);
+
+      if (ch.SH.i.length) {
+        var sg = new T.BufferGeometry();
+        sg.setAttribute("position", new T.Float32BufferAttribute(ch.SH.p, 3));
+        sg.setAttribute("uv", new T.Float32BufferAttribute(ch.SH.uv, 2));
+        sg.setIndex(new T.BufferAttribute(new Uint32Array(ch.SH.i), 1));
+        sg.computeBoundingSphere();
+        var sm = new T.Mesh(sg, H.shadowMaterial("strip"));
+        sm.matrixAutoUpdate = false;
+        group.add(sm);
+      }
+      ch.SH = null;
 
       var cp = g.attributes.position.array, ci = g.index.array;
       ch.roads.forEach(function (R) {
@@ -440,15 +489,15 @@
     var CAPH = 2.6;
     var byCell = {};
     piers.forEach(function (p) {
-      var key = Math.floor(p.x / CHUNK_M) + ":" + Math.floor(p.y / CHUNK_M);
+      var key = Math.floor(p.x / CHUNK_M) + ":" + Math.floor(p.y / CHUNK_M) + (p.uc ? ":uc" : "");
       (byCell[key] = byCell[key] || []).push(p);
     });
     var m4 = new T.Matrix4(), q = new T.Quaternion(), pos = new T.Vector3(), scl = new T.Vector3(), zAxis = new T.Vector3(0, 0, 1);
     var pierMeshes = [];
     Object.keys(byCell).forEach(function (key) {
-      var ps = byCell[key];
-      var cols = new T.InstancedMesh(box.clone(), H.concrete(), ps.length);
-      var caps = new T.InstancedMesh(head.clone(), H.concrete(), ps.length);
+      var ps = byCell[key], pmat = ps[0].uc ? ucMat : H.concrete();
+      var cols = new T.InstancedMesh(box.clone(), pmat, ps.length);
+      var caps = new T.InstancedMesh(head.clone(), pmat, ps.length);
       var cx = 0, cy = 0, cz = 0, rad = 0;
       ps.forEach(function (p, i) {
         var capH = Math.min(CAPH, Math.max(1.2, p.top * 0.45));
@@ -705,6 +754,8 @@
     var tags = [badge === kind ? CLASS_TH[R.cls] || R.cls : kind, "ชั้น (layer) " + rec.L,
       rec.v ? "โครงสร้างสะพานยาว (viaduct)" : "สะพาน", R.oneway ? "เดินรถทางเดียว" : "เดินรถสองทาง"];
     if (rec.t) tags.push("เก็บค่าผ่านทาง");
+    if (rec.u) tags.unshift("ยังไม่เปิดใช้");
+    var od = rec.u && rec.od != null ? S[rec.od] : "";
     card.innerHTML =
       '<div class="elv-head">' +
         '<div class="elv-type">' + ico("car") + " " + esc(badge) + '</div>' +
@@ -720,6 +771,7 @@
           '<div class="elv-cell"><div class="elv-k">ความกว้างราว</div><div class="elv-v">' + fmt(rec.w) + '<small>ม.</small></div></div>' +
         '</div>' +
         '<div class="elv-tags">' + tags.map(function (t) { return '<span class="elv-tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
+        (rec.u ? '<div class="elv-row"><b>สถานะ</b><span>กำลังก่อสร้าง ยังไม่เปิดให้รถวิ่ง' + (od ? ' · กำหนดเปิด ' + esc(thDate(od)) : '') + '</span></div>' : '') +
         (op ? '<div class="elv-row"><b>หน่วยงาน</b><span>' + esc(op) + '</span></div>' : '') +
         (rec.s ? '<div class="elv-row"><b>จำกัดความเร็ว</b><span>' + rec.s + ' กม./ชม.</span></div>' : '') +
         (rec.x >= 0 ? '<div class="elv-row"><b>ข้าม</b><span>' + esc(S[rec.x]) + '</span></div>' : '') +
@@ -805,6 +857,9 @@
         hoverMat.color.set(pal.glow);
         selMat.color.set(pal.glow);
         if (cableMat) cableMat.color.set(name === "light" ? "#8a93a0" : "#c9d3e0");
+        var ucp = UC_PAL[name] || UC_PAL.dark;
+        ucMat.color.set(ucp.body);
+        ucTopMat.color.set(ucp.top);
         Object.keys(topMats).forEach(function (k) {
           var m = topMats[k], p = k.split("|");
           if (m.map) m.map.dispose();

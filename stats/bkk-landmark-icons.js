@@ -322,8 +322,34 @@
 
   function theme() { return document.documentElement.getAttribute("data-theme") || "dark"; }
 
+  // ป๊อปอัปของ MapLibre มีพื้นขาวตายตัว แต่ตัวอักษรรับสีอ่อนของธีมมืดมา → อ่านไม่ออก ใช้ตัวแปรธีมของหน้าแทน
+  function injectCSS() {
+    if (document.getElementById("lmkPopupStyle")) return;
+    var css = document.createElement("style");
+    css.id = "lmkPopupStyle";
+    css.textContent = [
+      ".lmk-popup .maplibregl-popup-content{background:var(--card-bg);color:var(--text-main);",
+      "  border:1px solid var(--card-border);border-radius:12px;padding:10px 36px 11px 13px;",
+      "  box-shadow:0 10px 28px rgba(0,0,0,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-family:inherit}",
+      ".lmk-popup .lmk-en{font-size:11px;color:var(--text-muted);margin-top:2px}",
+      ".lmk-popup .lmk-g{font-size:10.5px;font-weight:700;color:var(--accent);margin-top:5px}",
+      ".lmk-popup .maplibregl-popup-close-button{top:7px;right:7px;width:22px;height:22px;padding:0;border:0;",
+      "  border-radius:6px;background:var(--accent-soft);color:var(--text-main);font-size:15px;line-height:22px}",
+      ".lmk-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,",
+      ".lmk-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,",
+      ".lmk-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip{border-top-color:var(--card-bg)}",
+      ".lmk-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip,",
+      ".lmk-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,",
+      ".lmk-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip{border-bottom-color:var(--card-bg)}",
+      ".lmk-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip{border-right-color:var(--card-bg)}",
+      ".lmk-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip{border-left-color:var(--card-bg)}"
+    ].join("\n");
+    document.head.appendChild(css);
+  }
+
   function mount(map) {
     curMap = map;
+    injectCSS();
     prepare().then(function () {
       try {
         Object.keys(images).forEach(function (id) {
@@ -376,8 +402,8 @@
         popup = new maplibregl.Popup({ offset: 12, closeButton: true, className: "lmk-popup" })
           .setLngLat([l.lo, l.la])
           .setHTML('<div style="font-family:inherit;min-width:160px"><b style="font-size:13px">' + l.th + '</b>' +
-                   '<div style="font-size:11px;opacity:.75;margin-top:2px">' + l.en + '</div>' +
-                   '<div style="font-size:10.5px;opacity:.6;margin-top:4px">' + (GROUP_TH[l.g] || "") + '</div></div>')
+                   '<div class="lmk-en">' + l.en + '</div>' +
+                   '<div class="lmk-g">' + (GROUP_TH[l.g] || "") + '</div></div>')
           .addTo(map);
         if (map.isMoving()) map.stop();
         map.flyTo({ center: [l.lo, l.la], zoom: Math.max(map.getZoom(), 15.8), pitch: 55, duration: 1600 });

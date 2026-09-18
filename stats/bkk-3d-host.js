@@ -21,11 +21,13 @@
   var MIN_ZOOM = 11;
 
   // แสงและสีคอนกรีตกลาง (โมดูลใช้ต่อได้ผ่าน BKK_3D.concrete())
+  // shadow = ความเข้มเงาบนพื้น (เงานุ่มใต้โครงสร้าง ให้ดูตั้งอยู่บนพื้นจริง ไม่ลอย)
   var PALETTE = {
-    dark:   { concrete: "#8a97aa", sky: "#d8e6ff", ground: "#1a2230", hemi: 0.72, sun: "#ffffff", sunI: 0.62, glow: "#00E5FF" },
-    light:  { concrete: "#c4cad3", sky: "#ffffff", ground: "#6b7280", hemi: 0.78, sun: "#ffffff", sunI: 0.55, glow: "#04788F" },
-    sunset: { concrete: "#cdb1a0", sky: "#ffe6cf", ground: "#5a4438", hemi: 0.78, sun: "#ffc08a", sunI: 0.62, glow: "#FF5C1A" }
+    dark:   { concrete: "#8a97aa", sky: "#d8e6ff", ground: "#1a2230", hemi: 0.72, sun: "#ffffff", sunI: 0.62, glow: "#00E5FF", shadow: 0.5 },
+    light:  { concrete: "#c4cad3", sky: "#ffffff", ground: "#6b7280", hemi: 0.78, sun: "#ffffff", sunI: 0.55, glow: "#04788F", shadow: 0.24 },
+    sunset: { concrete: "#cdb1a0", sky: "#ffe6cf", ground: "#5a4438", hemi: 0.78, sun: "#ffc08a", sunI: 0.62, glow: "#FF5C1A", shadow: 0.32 }
   };
+  var SUN = [0.45, -0.55, 0.7];          // ทิศแดด (มาจากตะวันออกเฉียงใต้ ค่อนข้างสูง) — ใช้ทั้งแสงและทิศเงา
 
   var LAT0 = ORIGIN[1] * Math.PI / 180, COS0 = Math.cos(LAT0);
   function mercX(lon) { return (180 + lon) / 360; }
@@ -64,7 +66,7 @@
         sun: new T.DirectionalLight(pal.sun, pal.sunI)
       };
       lights.hemi.position.set(0, 0, 1);
-      lights.sun.position.set(0.45, -0.55, 0.7);    // แดดจากทิศตะวันออกเฉียงใต้ ค่อนข้างสูง
+      lights.sun.position.set(SUN[0], SUN[1], SUN[2]);
       scene.add(lights.hemi, lights.sun);
       concreteMat = new T.MeshPhongMaterial({ color: pal.concrete, flatShading: true, shininess: 0, specular: 0x000000, side: T.DoubleSide });
       var s = 1 / UNIT;
@@ -215,9 +217,37 @@
     return headGeo;
   }
 
+  /* เงานุ่มบนพื้น: สี่เหลี่ยมดำโปร่งที่ขอบค่อย ๆ จาง · "rect" จางทั้งสี่ด้าน (ใต้สถานี) · "strip" จางเฉพาะด้านข้าง (ใต้ทางวิ่ง)
+     ไม่เขียน depth → ของที่วาดหลัง (ตึก 3 มิติ) ยังบังเงาได้ตามจริง */
+  var shadowMats = null;
+  function shadowMaterial(kind) {
+    if (!shadowMats) {
+      var mk = function (both) {
+        var cv = document.createElement("canvas"), N = 64;
+        cv.width = cv.height = N;
+        var g = cv.getContext("2d"), img = g.createImageData(N, N);
+        var f = function (x) { var a = Math.min(x, 1 - x) / 0.42; a = Math.max(0, Math.min(1, a)); return a * a * (3 - 2 * a); };
+        for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+          var a = f((x + 0.5) / N) * (both ? f((y + 0.5) / N) : 1);
+          img.data[(y * N + x) * 4 + 3] = Math.round(a * 255);
+        }
+        g.putImageData(img, 0, 0);
+        var tx = new T.CanvasTexture(cv);
+        return new T.MeshBasicMaterial({ color: 0x000000, map: tx, transparent: true, opacity: PALETTE[theme].shadow,
+          depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 });
+      };
+      shadowMats = { rect: mk(true), strip: mk(false) };
+    }
+    return shadowMats[kind] || shadowMats.rect;
+  }
+
   window.BKK_3D = {
     ensure: ensure,
     headGeometry: headGeometry,
+    shadowMaterial: shadowMaterial,
+    /* เงาของจุดที่สูง h ม. เลื่อนไปทางไหน (ม. ตะวันออก, ม. เหนือ) — ตามทิศแดด */
+    sunShift: function (h) { return [-SUN[0] / SUN[2] * h, -SUN[1] / SUN[2] * h]; },
+    renderer: function () { return renderer; },
     THREE: function () { return T; },
     scene: function () { return scene; },
     map: function () { return map; },
@@ -256,6 +286,7 @@
           lights.sun.color.set(pal.sun);
           lights.sun.intensity = pal.sunI;
           concreteMat.color.set(pal.concrete);
+          if (shadowMats) { shadowMats.rect.opacity = pal.shadow; shadowMats.strip.opacity = pal.shadow; }
           mods.forEach(function (x) { if (x.theme) x.theme(theme, pal); });
         }
         bindEvents();
