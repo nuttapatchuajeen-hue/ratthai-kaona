@@ -36,7 +36,7 @@
   var H = null, T = null, D = null, map = null;
   var visible = true, trainsOn = true, loading = null, failed = false;
   var group = null, model = null, uiBuilt = false;
-  var matColor = {}, matSteel = null, matDark = null, matRoof = null, hoverMat = null, selMat = null;
+  var matColor = {}, matSteel = null, matDark = null, hoverMat = null, selMat = null;
   var matPaint = null, matRoofTop = null, matGlass = null, matLouvre = null, matStair = null, matPSD = null;
   var TEX = {}, texList = [];
   var hoverKey = null, selKey = null, hoverMesh = null, selMesh = null;
@@ -234,13 +234,17 @@
      ขนาดทั้งหมดในส่วนนี้เป็น "เมตรในกรอบสถานี": t = ตามแนวราง · o = ขวางแนว (ซ้ายของทิศราง) · z = สูงจากพื้น */
   var EDGE = 1.65;            // ศูนย์กลางราง → ขอบชานชาลา (ตัวรถกว้าง 3.1 ม.)
   var COL_STEP = 12.5;        // ระยะเสาตามแนวสถานี
+  var FRAME_STEP = 25;        // ระยะโครงเสาคู่ใต้สถานี
+  var VERANDA = 2.4;          // พื้นชั้นขายตั๋วยื่นเลยตัวสถานีออกไปทั้งสองข้าง (ทางเดินรอบห้องขายตั๋ว)
+  var RISE_RUN = 1.65;        // บันได: ระยะราบต่อความสูง (≈ 31°)
+  var LANDING = 1.8, TOP_LANDING = 2.2;   // ชานพักกลาง/หัวบันได (ม.)
   // roof = ทรงหลังคา · L/W = ยาว/กว้างเมื่อ OSM ไม่มี · conc = สัดส่วนความยาวชั้นขายตั๋ว · side = ความกว้างชานชาลาข้าง
   // eave = ชายคาสูงเหนือพื้นชานชาลา · rise = ความโค้ง/ยกของหลังคา · sup = "center" เสากลางรับคานยื่น / "portal" เสาคู่
   // wall = ผนังชั้นชานชาลา · tint = สัดส่วนสีประจำสายบนหลังคา · cov = บันไดมีหลังคาคลุม
   var STYLE = {
-    bts:    { name: "BTS", roof: "barrel", L: 150, W: 24, conc: 0.56, side: 4.2, eave: 5.2, rise: 2.4, sup: "center", wall: "louvre", tint: 0.16, cov: true },
+    bts:    { name: "BTS", roof: "barrel", L: 150, W: 24, conc: 0.56, side: 4.2, eave: 5.2, rise: 2.4, sup: "portal", wall: "louvre", tint: 0.16, cov: true },
     gold:   { name: "BTS สายสีทอง", roof: "canopy", L: 80, W: 22, conc: 0.8, side: 4.0, eave: 4.4, rise: 0.9, sup: "center", wall: "glass", tint: 0.35, cov: true },
-    blue:   { name: "MRT สายสีน้ำเงิน (ยกระดับ)", roof: "clere", L: 110, W: 24, conc: 0.8, side: 4.4, eave: 5.4, rise: 2.4, sup: "portal", wall: "glass", tint: 0.2, cov: true },
+    blue:   { name: "MRT สายสีน้ำเงิน (ยกระดับ)", roof: "mrtx", base: "#c6cbd2", L: 110, W: 24, conc: 0.8, side: 4.4, eave: 5.4, rise: 2.4, sup: "portal", wall: "glass", tint: 0.06, cov: true },
     purple: { name: "MRT สายสีม่วง", roof: "skybarrel", L: 150, W: 23, conc: 0.7, side: 4.2, eave: 5.4, rise: 2.6, sup: "portal", wall: "glass", tint: 0.22, cov: true },
     mono:   { name: "โมโนเรล (ชมพู/เหลือง)", roof: "wing", L: 100, W: 28, conc: 0.8, side: 4.4, eave: 5.2, rise: 2.2, sup: "center", wall: "glass", tint: 0.3, cov: true },
     arl:    { name: "แอร์พอร์ต เรล ลิงก์", roof: "shell", L: 210, W: 24, conc: 0.5, side: 4.4, eave: 5.6, rise: 4.0, sup: "portal", wall: "glass", tint: 0.18, cov: true },
@@ -248,6 +252,25 @@
   };
   var LINE_STYLE = { "bts-sukhumvit": "bts", "bts-silom": "bts", "bts-gold": "gold", "mrt-blue": "blue", "mrt-purple": "purple",
     "mrt-pink": "mono", "mrt-yellow": "mono", "arl": "arl", "srt-dark-red": "red", "srt-light-red": "red" };
+  /* BTS ส่วนต่อขยาย: หลังคาจั่วขาว ไม่ใช่หลังคาโค้งลอนแบบสายเดิม (ตรวจจากภาพถ่ายดาวเทียมรายสถานี 2026-09)
+       ridge = แถบช่องแสงเขียวอมฟ้าตามสันหลังคา (N10–N24) · mid = แถบช่องแสงกลางหลังคาเฉพาะช่วงกลาง (S9–S12)
+       slot = ร่องช่องแสงสีเข้มกลางหลังคา (E15–E23) · ไม่มี = จั่วขาวเรียบ (S7 S8 N9 E10–E14)
+     MRT สายสีน้ำเงินยกระดับ: หลังคา 3 ช่วง — ช่วงกลางผนังกระจกยก (สีน้ำเงินเฉพาะ BLUE_CENTER) หัว-ท้ายจั่วเทาลาดเอียงสอบ */
+  function variant(base, o) { var r = {}, k; for (k in base) r[k] = base[k]; for (k in o) r[k] = o[k]; return r; }
+  STYLE.btsx = variant(STYLE.bts, { name: "BTS ส่วนต่อขยาย (หลังคาจั่วขาว)", roof: "gable", rise: 1.6, tint: 0.03 });
+  STYLE.btsxRidge = variant(STYLE.btsx, { name: "BTS ส่วนต่อขยายสายเหนือ (หลังคาขาว แถบช่องแสงตามสัน)", sky: "ridge" });
+  STYLE.btsxMid = variant(STYLE.btsx, { name: "BTS สายสีลมส่วนต่อขยาย (หลังคาขาว แถบช่องแสงกลางหลังคา)", sky: "mid" });
+  STYLE.btsxSlot = variant(STYLE.btsx, { name: "BTS ส่วนต่อขยายสมุทรปราการ (หลังคาขาว ร่องช่องแสงกลาง)", sky: "slot" });
+  var STATION_STYLE = (function () {
+    var m = {}, i;
+    for (i = 10; i <= 24; i++) m["N" + i] = "btsxRidge";
+    for (i = 9; i <= 12; i++) m["S" + i] = "btsxMid";
+    for (i = 15; i <= 23; i++) m["E" + i] = "btsxSlot";
+    ["S7", "S8", "N9", "E10", "E11", "E12", "E13", "E14"].forEach(function (c) { m[c] = "btsx"; });
+    return m;
+  })();
+  var BLUE_CENTER = { BL04: 1, BL34: 1 };   // บางขุนนนท์ บางหว้า — หลังคาช่วงกลางสีน้ำเงิน
+  var MRT_HOOD = 5;                         // หลังคา MRT ยื่นเลยปลายชานชาลา (หัวลาดเอียง)
   var ROOF_BASE = { dark: "#a9b3bf", light: "#eef1f4", sunset: "#e6d0c2" };   // สีหลังคา (คูณกับสีประจำสายต่อจุด)
   var TEX_TONE = { dark: "#c3cbd6", light: "#ffffff", sunset: "#f1dccd" };    // หรี่ผิวลายในธีมมืด
   var GLOW = { dark: 0.55, light: 0, sunset: 0.22 };                          // ไฟในอาคารส่องผ่านกระจกตอนกลางคืน
@@ -255,7 +278,8 @@
   function colors() {
     if (!COL) COL = {
       white: new T.Color("#ffffff"), steel: new T.Color("#7d8791"), dark: new T.Color("#3b424b"), frame: new T.Color("#5b636d"),
-      under: new T.Color("#e4e8ed"), edge: new T.Color("#f0c02f")
+      under: new T.Color("#e4e8ed"), edge: new T.Color("#f0c02f"),
+      skyTeal: new T.Color("#72b3a6"), skyPale: new T.Color("#a3c6be"), mrtBlue: new T.Color("#4652a8")
     };
     return COL;
   }
@@ -556,6 +580,7 @@
     });
     kept.forEach(function (S) { resolveStation(S, byLine); });
     resolveInterchanges(kept);
+    kept.forEach(function (S) { trackCuts(S, tracks); });
     kept.forEach(function (S) { finalizeStation(S); planAccess(S); });
     return kept;
   }
@@ -580,7 +605,7 @@
 
   function resolveStation(S, byLine) {
     var k = S.k, found = [];
-    S.style = STYLE[LINE_STYLE[S.line.id]] || STYLE.bts;
+    S.style = STYLE[(/^bts-/.test(S.line.id) && STATION_STYLE[S.st.code]) || LINE_STYLE[S.line.id]] || STYLE.bts;
     S.hub = /^srt/.test(S.line.id) && /กรุงเทพอภิวัฒน์/.test(S.st.name || "");
     // รางของสายในสถานีที่ตัดแนวขวางตรงกลางสถานี (t = 0) — ตำแหน่งขวางและระดับ
     S.lines.forEach(function (lid) {
@@ -643,6 +668,39 @@
     S.skip = [];
   }
 
+  /* รางสายอื่นที่พาดข้ามสถานีในระดับระหว่างชานชาลากับหลังคา (บางหว้า: MRT ข้ามเหนือชานชาลา BTS)
+     → ตัดหลังคา/ผนังช่วงนั้นออก (cuts เดียวกับสถานีร่วม) ไม่งั้นทางวิ่งทะลุหลังคา
+     ข้ามสูงพ้นหลังคา / ต่ำกว่าชานชาลา / ขนานกัน = ไม่ตัด */
+  function trackCuts(S, tracks) {
+    var st = S.style, top = S.levels[S.levels.length - 1];
+    var roofTop = top.floor + st.eave + st.rise + (st.roof === "clere" || st.roof === "mrtx" ? 2.1 : 0.5);
+    var tL = -S.L / 2 - 3, tR = S.L / 2 + 3, oL = S.o0 - 1.5, oR = S.o1 + 1.5;
+    tracks.forEach(function (R) {
+      if (!R || R.yard || S.lines.indexOf(R.line) >= 0) return;
+      for (var i = 0; i < R.pts.length - 1; i++) {
+        var a = R.pts[i], b = R.pts[i + 1];
+        if (Math.hypot(a.x - S.x, a.y - S.y) > 600 * S.k && Math.hypot(b.x - S.x, b.y - S.y) > 600 * S.k) continue;
+        var A = toFrame(S, a.x, a.y), B = toFrame(S, b.x, b.y), dT = B[0] - A[0], dO = B[1] - A[1];
+        // ตัดส่วนของเส้นกับกรอบสถานี (Liang–Barsky)
+        var u0 = 0, u1 = 1, ok = true;
+        [[-dT, A[0] - tL], [dT, tR - A[0]], [-dO, A[1] - oL], [dO, oR - A[1]]].forEach(function (c) {
+          if (!ok) return;
+          if (Math.abs(c[0]) < 1e-9) { if (c[1] < 0) ok = false; return; }
+          var r = c[1] / c[0];
+          if (c[0] < 0) { if (r > u1) ok = false; else if (r > u0) u0 = r; }
+          else { if (r < u0) ok = false; else if (r < u1) u1 = r; }
+        });
+        if (!ok || u1 - u0 < 1e-6) continue;
+        var len = Math.hypot(dT, dO) || 1, sin = Math.abs(dO) / len;
+        if (sin < 0.5) continue;                                    // วิ่งขนาน/เฉียงมาก = ไม่ใช่การข้าม
+        var h = a.h + (b.h - a.h) * (u0 + u1) / 2;
+        if (h - 2.3 > roofTop + 0.3 || h < top.floor + 2.5) continue;
+        var ta = A[0] + dT * u0, tb = A[0] + dT * u1, pad = 3 / sin;
+        S.cuts.push([Math.min(ta, tb) - pad, Math.max(ta, tb) + pad]);
+      }
+    });
+  }
+
   /* มุมรอยสถานีบนพื้น (พิกัดโลก) และการทับกันของสี่เหลี่ยมนูนสองรูป (separating axis) */
   function planRect(S, pad) {
     var F = frameOf(S), L2 = S.L / 2 + 3;
@@ -693,22 +751,23 @@
           lo.cuts.push([t0 - 1, t1 + 1]);
         }
         hi.noConc = true; hi.shareWith = lo; lo.crossWith = hi;
-        hi.skip.push(planRect(lo, 2));
+        hi.skip.push(planRect(lo, VERANDA + 0.8));
       } else {
         var d = (-(B.x - A.x) * A.uy + (B.y - A.y) * A.ux) / A.k;
         var along = ((B.x - A.x) * A.ux + (B.y - A.y) * A.uy) / A.k;
         if (Math.abs(d) < 4 || Math.abs(along) > (A.L + B.L) / 2) continue;
         var same = dot > 0, b0 = d + (same ? B.o0 : -B.o1), b1 = d + (same ? B.o1 : -B.o0);
+        // ด้านที่ติดกันไม่มีพื้นชั้นขายตั๋วยื่นออกไป (ไม่งั้นพื้นสองสถานีซ้อนกัน)
         if (d > 0 && A.o1 > b0) {
           var m = (A.o1 + b0) / 2;
-          A.o1 = Math.max(m - 0.4, A.e1 + 0.3);
+          A.o1 = Math.max(m - 0.4, A.e1 + 0.3); A.flushR = true;
           var nb0 = Math.min(m + 0.4, d + (same ? B.e0 : -B.e1) - 0.3);
-          if (same) B.o0 = nb0 - d; else B.o1 = d - nb0;
+          if (same) { B.o0 = nb0 - d; B.flushL = true; } else { B.o1 = d - nb0; B.flushR = true; }
         } else if (d < 0 && b1 > A.o0) {
           var m2 = (A.o0 + b1) / 2;
-          A.o0 = Math.min(m2 + 0.4, A.e0 - 0.3);
+          A.o0 = Math.min(m2 + 0.4, A.e0 - 0.3); A.flushL = true;
           var nb1 = Math.max(m2 - 0.4, d + (same ? B.e1 : -B.e0) + 0.3);
-          if (same) B.o1 = nb1 - d; else B.o0 = d - nb1;
+          if (same) { B.o1 = nb1 - d; B.flushR = true; } else { B.o0 = d - nb1; B.flushL = true; }
         }
       }
     }
@@ -717,17 +776,24 @@
   function finalizeStation(S) {
     var lv0 = S.levels[0], top = S.levels[S.levels.length - 1], st = S.style;
     S.eave = top.floor + st.eave;
-    S.roofTop = S.eave + st.rise + (st.roof === "clere" ? 2.1 : st.roof === "skybarrel" ? 0.8 : 0.3);
+    S.roofTop = S.eave + st.rise + (st.roof === "clere" || st.roof === "mrtx" ? 2.1 : st.roof === "skybarrel" ? 0.8 : 0.3);
+    S.tEnd = S.L / 2 + (st.roof === "mrtx" ? MRT_HOOD : 3);          // ปลายหลังคาตามแนวราง
+    S.midT = 0.14 * (S.L + 2 * MRT_HOOD);                             // ครึ่งความยาวหลังคาช่วงกลางของ MRT
     S.conc = S.hub ? 0.6 : Math.max(5.2, Math.min(11, lv0.rz - 7.4));
     S.concTop = lv0.rz - 1.5;
     if (S.concTop - S.conc < 3) S.noConc = true;
     S.Lc = S.hub ? S.L : Math.min(S.L, Math.max(36, st.conc * S.L));
     S.co0 = S.o0 - 0.6; S.co1 = S.o1 + 0.6;
+    // พื้นชั้นขายตั๋ว: ยาวเกือบเต็มสถานี กว้างเลยตัวสถานีออกไปเป็นทางเดินมีราวกันตก (ห้องขายตั๋วกระจกอยู่ตรงกลาง)
+    S.Ld = S.hub || S.noConc ? S.Lc : Math.max(S.Lc, S.L - 8);
+    S.do0 = S.noConc || S.hub ? S.co0 : S.o0 - (S.flushL ? 0.6 : VERANDA);
+    S.do1 = S.noConc || S.hub ? S.co1 : S.o1 + (S.flushR ? 0.6 : VERANDA);
     S.vaultT0 = -S.L / 2 - 3;
     S.vaultM = (S.L + 6) / Math.max(3, Math.round((S.L + 6) / 14));
     var lc = new T.Color(S.line.color || "#888888");
     S.lineCol = lc;
-    S.roofCol = COL.white.clone().lerp(lc, st.tint);
+    S.roofCol = (st.base ? new T.Color(st.base) : COL.white.clone()).lerp(lc, st.tint);
+    S.midCol = st.roof === "mrtx" && BLUE_CENTER[S.st.code] ? COL.mrtBlue : S.roofCol;
     S.canopyCol = COL.under.clone().lerp(lc, 0.18);
     // ช่วงหลังคา/ผนัง (ตัดช่วงที่สถานีสายอื่นพาดผ่านด้านบน)
     var segs = [[-S.L / 2 - 3, S.L / 2 + 3]];
@@ -743,20 +809,31 @@
     S.segs = segs;
     S.frame = frameOf(S);
     var box = new T.Box3(), v = new T.Vector3();
-    [[-S.L / 2 - 3, S.o0 - 1.5], [S.L / 2 + 3, S.o0 - 1.5], [S.L / 2 + 3, S.o1 + 1.5], [-S.L / 2 - 3, S.o1 + 1.5]].forEach(function (c) {
+    var bo0 = Math.min(S.o0, S.do0) - 1.5, bo1 = Math.max(S.o1, S.do1) + 1.5;
+    [[-S.tEnd, bo0], [S.tEnd, bo0], [S.tEnd, bo1], [-S.tEnd, bo1]].forEach(function (c) {
       [0, S.roofTop].forEach(function (z) { var p = S.frame(c[0], c[1], z); box.expandByPoint(v.set(p[0], p[1], p[2])); });
     });
     S.box = box;
   }
 
+  // ระยะจากจุด (กรอบสถานี) ถึงขอบพื้นชั้นขายตั๋ว
+  function deckDist(S, p) {
+    var h = S.Ld / 2;
+    return Math.hypot(Math.max(-h - p[0], 0, p[0] - h), Math.max(S.do0 - p[1], 0, p[1] - S.do1));
+  }
+
   /* ทางขึ้น-ลง: บันไดจาก OSM ก่อน → ทางออกที่ยังไม่มีบันไดรองรับ สร้างบันไดให้ → ไม่มีข้อมูลเลยใช้ 4 มุมแบบ BTS
-     หัวบันไดที่แตะทางเดินลอยฟ้าใช้ระดับทางเดินนั้น ที่เหลือขึ้นถึงชั้นขายตั๋ว (มีสะพานเชื่อมถ้าหัวบันไดอยู่นอกตัวอาคาร) */
+     หัวบันไดที่แตะทางเดินลอยฟ้าใช้ระดับทางเดินนั้น ที่เหลือขึ้นถึงชั้นขายตั๋ว (มีสะพานเชื่อมถ้าหัวบันไดอยู่นอกพื้นชั้นขายตั๋ว)
+     รูปแบบ (kind): "switch" = พับครึ่งมีชานพัก (ตั้งจากหัวบันได anchor "top" หรือจากตีนบันได "foot")
+                    "straight" = ตรงมีชานพักกลาง (OSM วาดยาวพอ) · "flight" = ช่วงเดียว (บันไดเลื่อน) */
   function planAccess(S) {
     S.stairs = []; S.lifts = [];
     if (S.noConc || S.hub) return;
-    var cz = S.conc, t0 = -S.Lc / 2, t1 = S.Lc / 2, o0 = S.co0, o1 = S.co1, st = S.style;
-    function dRect(p) { return Math.hypot(Math.max(t0 - p[0], 0, p[0] - t1), Math.max(o0 - p[1], 0, p[1] - o1)); }
+    var cz = S.conc, t0 = -S.Ld / 2, t1 = S.Ld / 2, o0 = S.do0, o1 = S.do1, st = S.style;
+    function dRect(p) { return deckDist(S, p); }
     function inside(p, m) { return p[0] > t0 - m && p[0] < t1 + m && p[1] > o0 - m && p[1] < o1 + m; }
+    // บันไดภายใน (ชั้นขายตั๋ว↔ชานชาลา) อยู่ในห้องขายตั๋ว
+    function inHall(p, m) { return p[0] > -S.Lc / 2 - m && p[0] < S.Lc / 2 + m && p[1] > S.co0 - m && p[1] < S.co1 + m; }
     // สถานีร่วมที่มีอีกสายข้าม: ทางออกเรียงไปตามถนนอีกเส้นด้วย → รับไกลขึ้นทางขวาง
     var side = S.crossWith ? 95 : 45;
     function nearStation(p) { return Math.abs(p[0]) < S.L / 2 + 70 && p[1] > S.o0 - side && p[1] < S.o1 + side; }
@@ -769,7 +846,7 @@
     });
     steps.forEach(function (w) {
       if (!nearStation(w.a) && !nearStation(w.b)) return;
-      if (inside(w.a, -0.5) && inside(w.b, -0.5)) return;             // บันไดภายในสถานี (ชั้นขายตั๋ว↔ชานชาลา)
+      if (inHall(w.a, -0.5) && inHall(w.b, -0.5)) return;             // บันไดภายในสถานี (ชั้นขายตั๋ว↔ชานชาลา)
       var up = w.fl & 4 ? w.b : w.fl & 8 ? w.a : (dRect(w.a) <= dRect(w.b) ? w.a : w.b);
       var lo = up === w.a ? w.b : w.a;
       var dUp = dRect(up), wp = S.frame(up[0], up[1], 0), wh = walkHeightAt(wp[0], wp[1], 8 * S.k), zt;
@@ -779,8 +856,13 @@
       else return;
       var len = Math.hypot(up[0] - lo[0], up[1] - lo[1]);
       if (len < 1) return;
-      if (len < zt * 1.5) { var ex = zt * 1.5 / len; lo = [up[0] + (lo[0] - up[0]) * ex, up[1] + (lo[1] - up[1]) * ex]; }
-      S.stairs.push({ b: lo, a: up, zt: zt, w: w.fl & 1 ? 1.5 : 2.4, esc: !!(w.fl & 1), cov: !!(w.fl & 2) || st.cov, link: zt === cz && dUp > 0.8, osm: true });
+      var esc = !!(w.fl & 1);
+      // OSM มักวาดบันไดแค่ช่วงเดียวสั้น ๆ → พับครึ่ง (ตั้งจากหัวบันได) · วาดยาวพอ = บันไดตรงมีชานพักกลาง
+      var kind = esc ? "flight" : len >= zt * 1.2 ? "straight" : "switch";
+      var need = kind === "flight" ? zt * 1.5 : kind === "straight" ? zt * RISE_RUN + LANDING : 0;
+      if (len < need) { var ex = need / len; lo = [up[0] + (lo[0] - up[0]) * ex, up[1] + (lo[1] - up[1]) * ex]; }
+      S.stairs.push({ b: lo, a: up, zt: zt, w: esc ? 1.5 : 2.4, esc: esc, cov: !!(w.fl & 2) || st.cov, link: zt === cz && dUp > 0.8, osm: true,
+        kind: kind, anchor: "top" });
     });
     exits.forEach(function (e) {
       if (!nearStation(e.p)) return;
@@ -801,17 +883,18 @@
       var c1, c2;
       if (farO > 12 && farO > farT) { c1 = [e.p[0], e.p[1] - run]; c2 = [e.p[0], e.p[1] + run]; }
       else { c1 = [e.p[0] - run, e.p[1]]; c2 = [e.p[0] + run, e.p[1]]; }
-      var top = dRect(c1) <= dRect(c2) ? c1 : c2;
-      S.stairs.push({ b: e.p, a: top, zt: cz, w: 2.4, esc: false, cov: st.cov, link: dRect(top) > 0.8, osm: true });
+      // ตีนบันไดอยู่ที่ทางออก · ช่วงแรกวิ่งออกห่างพื้นชั้นขายตั๋ว แล้วพับกลับ หัวบันไดจึงหันเข้าหาสถานี
+      var far = dRect(c1) <= dRect(c2) ? c2 : c1;
+      S.stairs.push({ b: e.p, a: far, zt: cz, w: 2.4, esc: false, cov: st.cov, link: true, osm: true, kind: "switch", anchor: "foot" });
     });
-    // OSM มีบันไดไม่ถึง 2 จุด → เติมบันไดมุมอาคารแบบ BTS (ข้ามมุมที่มีบันไดจริงอยู่ใกล้แล้ว)
+    // OSM มีบันไดไม่ถึง 2 จุด → เติมบันไดพับที่มุมพื้นชั้นขายตั๋วแบบ BTS (ข้ามมุมที่มีบันไดจริงอยู่ใกล้แล้ว)
     if (S.stairs.length < 2) {
-      var run2 = cz * 1.6, hl = S.Lc / 2, had = S.stairs.slice();
+      var hl = S.Ld / 2, had = S.stairs.slice();
       [-1, 1].forEach(function (sx) {
         [-1, 1].forEach(function (so) {
-          var o = so > 0 ? o1 + 1.9 : o0 - 1.9, b = [sx * (hl - 1.5 + run2), o], a = [sx * (hl - 1.5), o];
+          var o = so > 0 ? o1 + 1.6 : o0 - 1.6, b = [sx * (hl + 6), o], a = [sx * (hl - 6), o];
           if (had.some(function (s) { return Math.hypot(s.b[0] - b[0], s.b[1] - b[1]) < 25 || Math.hypot(s.a[0] - a[0], s.a[1] - a[1]) < 25; })) return;
-          S.stairs.push({ b: b, a: a, zt: cz, w: 2.4, esc: false, cov: st.cov, link: true });
+          S.stairs.push({ b: b, a: a, zt: cz, w: 2.4, esc: false, cov: st.cov, link: true, kind: "switch", anchor: "top" });
         });
         if (S.lifts.length < 2) S.lifts.push([sx * hl * 0.35, sx > 0 ? o1 + 2.2 : o0 - 2.2]);
       });
@@ -820,11 +903,39 @@
 
   /* ------------------------------------------------------ วาดสถานี */
   function roofGeom(S) { var oL = S.o0 - 1.2, oR = S.o1 + 1.2; return { oL: oL, oR: oR, om: (oL + oR) / 2, hw: (oR - oL) / 2 }; }
+  // หลังคา MRT: ครึ่งความกว้างที่ระยะ at จากกลางสถานี — สอบเข้าเหลือครึ่งหนึ่งช่วงหัวหลังคา (1 ม. ก่อนปลายชานชาลา → ปลายหลังคา)
+  function mrtHW(S, g, at) {
+    var ta = S.L / 2 - 1;
+    return at <= ta ? g.hw : g.hw * (1 - 0.5 * Math.min(1, (at - ta) / (S.tEnd - ta)));
+  }
+  // หน้าตัดขวางของหลังคาที่ตำแหน่ง t (n ช่วง) — ใช้ทำซี่โครงใต้หลังคาที่รูปทรงเปลี่ยนตามแนวยาว
+  function profAt(S, g, t, n) {
+    var hw = S.style.roof === "mrtx" ? mrtHW(S, g, Math.abs(t)) : g.hw, out = [];
+    for (var i = 0; i <= n; i++) { var o = g.om - hw + 2 * hw * i / n; out.push([o, roofZ(S, o, t)]); }
+    return out;
+  }
+  // แผ่นระนาบ 3–4 จุด (กรอบสถานี [t, o, z]) · normal เดียวทั้งแผ่นชี้ขึ้น → สันหลังคาคม · ลายตะเข็บตามแนว t
+  function face(B, F, P, col) {
+    var ax = P[1][0] - P[0][0], ay = P[1][1] - P[0][1], az = P[1][2] - P[0][2];
+    var bx = P[2][0] - P[0][0], by = P[2][1] - P[0][1], bz = P[2][2] - P[0][2];
+    var nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx, l = Math.hypot(nx, ny, nz) || 1;
+    if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    var N = B.n ? F.n(nx / l, ny / l, nz / l) : null, s = B.p.length / 3;
+    P.forEach(function (q) { B.v(F(q[0], q[1], q[2]), q[0] / 0.8, q[1] / 6, col, N); });
+    B.i.push(s, s + 1, s + 2);
+    if (P.length === 4) B.i.push(s, s + 2, s + 3);
+  }
   // ระดับผิวหลังคาที่ตำแหน่งขวาง o (และตามแนว t สำหรับหลังคาลอนสายสีแดง)
   function roofZ(S, o, t) {
     var g = roofGeom(S), s = Math.max(-1, Math.min(1, (o - g.om) / g.hw)), a = Math.abs(s), e = S.eave, r = S.style.rise;
     switch (S.style.roof) {
       case "clere": return a >= 0.22 ? e + 0.75 * r * (1 - (a - 0.22) / 0.78) : e + 0.75 * r + 1.7;
+      case "gable": return e + r * (1 - a);
+      case "mrtx":
+        var at = Math.abs(t || 0);
+        if (at <= S.midT) return a >= 0.22 ? e + 0.75 * r * (1 - (a - 0.22) / 0.78) : e + 0.75 * r + 1.7;
+        var u = Math.min(1, Math.abs(o - g.om) / mrtHW(S, g, at)), v = Math.max(0, Math.min(1, (S.tEnd - at) / (MRT_HOOD + 1)));
+        return e + 0.75 * r * Math.min(1 - u, v);
       case "wing": return e + r * Math.pow(a, 1.4);
       case "shell": return e + r * Math.sqrt(Math.max(0, 1 - s * s));
       case "canopy": return e + r * (0.5 + 0.5 * s);
@@ -876,20 +987,11 @@
     var g = roofGeom(S), st = S.style, TH = 0.35;
     function prof(s0, s1, n, fn) { var out = []; for (var i = 0; i <= n; i++) { var s = s0 + (s1 - s0) * i / n; out.push([g.om + s * g.hw, fn(s)]); } return out; }
     function sz(s) { return roofZ(S, g.om + s * g.hw, 0); }
-    S.segs.forEach(function (sg) {
-      var t0 = sg[0], t1 = sg[1];
-      if (st.roof === "vaults") { emitVaults(C, F, S, g, t0, t1, TH); return; }
-      var pieces = [];
-      if (st.roof === "skybarrel") pieces.push({ p: prof(-1, -0.16, 12, sz), fl: 1 }, { p: prof(0.16, 1, 12, sz), fr: 1 });
-      else if (st.roof === "clere") {
-        var zc = S.eave + 0.75 * st.rise;
-        pieces.push({ p: prof(-1, -0.22, 6, sz), fl: 1 }, { p: prof(0.22, 1, 6, sz), fr: 1 });
-        pieces.push({ p: prof(-0.3, 0.3, 8, function (s) { return zc + 1.7 + 0.3 * (1 - Math.pow(s / 0.3, 2)); }), fl: 1, fr: 1 });
-      }
-      else if (st.roof === "canopy") pieces.push({ p: prof(-1, 1, 2, sz), fl: 1, fr: 1 });
-      else pieces.push({ p: prof(-1, 1, st.roof === "shell" ? 20 : 16, sz), fl: 1, fr: 1 });
+    function up(d) { return function (s) { return sz(s) + d; }; }
+    // ผิวบน (สีหลังคา + ตะเข็บ) · ท้องหลังคา · ปิดความหนาหัว-ท้าย · ขอบสีประจำสาย
+    function emitPieces(pieces, t0, t1, col) {
       pieces.forEach(function (pc) {
-        sweep(C.roof, F, pc.p, t0, t1, S.roofCol);
+        sweep(C.roof, F, pc.p, t0, t1, col);
         var under = pc.p.map(function (q) { return [q[0], q[1] - TH]; });
         sweep(C.paint, F, under, t0, t1, COL.under);
         caps(C.paint, F, pc.p, under, t0, COL.under);
@@ -898,21 +1000,126 @@
         if (pc.fl) fbox(C.paint, F, t0, t1, a[0] - 0.12, a[0] + 0.02, a[1] - TH - 0.75, a[1] + 0.04, S.lineCol);
         if (pc.fr) fbox(C.paint, F, t0, t1, b[0] - 0.02, b[0] + 0.12, b[1] - TH - 0.75, b[1] + 0.04, S.lineCol);
       });
+    }
+    // หลังคาผนังกระจกยกกลาง (แบบสถานีท่าพระ) — ใช้ทั้งทรง clere และช่วงกลางของหลังคา MRT
+    function clerePieces() {
+      var zc = S.eave + 0.75 * st.rise;
+      return [{ p: prof(-1, -0.22, 6, sz), fl: 1 }, { p: prof(0.22, 1, 6, sz), fr: 1 },
+        { p: prof(-0.3, 0.3, 8, function (s) { return zc + 1.7 + 0.3 * (1 - Math.pow(s / 0.3, 2)); }), fl: 1, fr: 1 }];
+    }
+    function clereGlass(t0, t1) {
+      var zc2 = S.eave + 0.75 * st.rise, oa2 = g.om - 0.22 * g.hw, ob2 = g.om + 0.22 * g.hw;
+      tquad(C.glass, F, [t0, oa2], [t1, oa2], zc2 - 0.2, zc2 + 1.75, 3, 0.55);
+      tquad(C.glass, F, [t0, ob2], [t1, ob2], zc2 - 0.2, zc2 + 1.75, 3, 0.55);
+    }
+    S.segs.forEach(function (sg) {
+      var t0 = sg[0], t1 = sg[1];
+      if (st.roof === "vaults") { emitVaults(C, F, S, g, t0, t1, TH); return; }
+      var pieces = [];
+      if (st.roof === "mrtx") {
+        // MRT สายสีน้ำเงิน: ช่วงกลางผนังกระจกยก (บางขุนนนท์/บางหว้าสีน้ำเงิน) + หัว-ท้ายจั่วเทาลาดเอียงสอบ
+        var m0 = Math.max(t0, -S.midT), m1 = Math.min(t1, S.midT);
+        if (m1 - m0 > 0.5) {
+          pieces = clerePieces();
+          emitPieces(pieces, m0, m1, S.midCol);
+          clereGlass(m0, m1);
+          if (m0 === -S.midT) mrtJunction(C, F, S, g, m0);
+          if (m1 === S.midT) mrtJunction(C, F, S, g, m1);
+        }
+        emitMrtEnds(C, F, S, g, t0, t1, TH);
+      } else {
+        if (st.roof === "skybarrel") pieces.push({ p: prof(-1, -0.16, 12, sz), fl: 1 }, { p: prof(0.16, 1, 12, sz), fr: 1 });
+        else if (st.roof === "clere") pieces = clerePieces();
+        else if (st.roof === "canopy") pieces.push({ p: prof(-1, 1, 2, sz), fl: 1, fr: 1 });
+        else if (st.roof === "gable") pieces.push({ p: prof(-1, 0, 1, sz), fl: 1 }, { p: prof(0, 1, 1, sz), fr: 1 });
+        else pieces.push({ p: prof(-1, 1, st.roof === "shell" ? 20 : 16, sz), fl: 1, fr: 1 });
+        emitPieces(pieces, t0, t1, S.roofCol);
+      }
       if (st.roof === "skybarrel") {                               // ช่องแสงกลางหลังคา (สายสีม่วง)
         var zs = sz(0.16), oa = g.om - 0.16 * g.hw, ob = g.om + 0.16 * g.hw;
         tquad(C.glass, F, [t0, oa], [t1, oa], zs - 0.2, zs + 0.5, 3, 0.25);
         tquad(C.glass, F, [t0, ob], [t1, ob], zs - 0.2, zs + 0.5, 3, 0.25);
         sweep(C.glass, F, [[oa - 0.3, zs + 0.45], [g.om, zs + 0.8], [ob + 0.3, zs + 0.45]], t0, t1, null, 3, 3);
       } else if (st.roof === "clere") {                            // ผนังกระจกยกสูงกลางหลังคา (แบบสถานีท่าพระ)
-        var zc2 = S.eave + 0.75 * st.rise, oa2 = g.om - 0.22 * g.hw, ob2 = g.om + 0.22 * g.hw;
-        tquad(C.glass, F, [t0, oa2], [t1, oa2], zc2 - 0.2, zc2 + 1.75, 3, 0.55);
-        tquad(C.glass, F, [t0, ob2], [t1, ob2], zc2 - 0.2, zc2 + 1.75, 3, 0.55);
+        clereGlass(t0, t1);
+      } else if (st.roof === "gable" && st.sky) {                  // แถบช่องแสงของหลังคาจั่ว BTS ส่วนต่อขยาย
+        if (st.sky === "ridge") [[-0.2, -0.05], [0.05, 0.2]].forEach(function (r) { sweep(C.paint, F, prof(r[0], r[1], 1, up(0.04)), t0 + 3, t1 - 3, COL.skyTeal); });
+        else if (st.sky === "mid") {
+          var ma = Math.max(t0 + 2, -0.3 * S.L), mb = Math.min(t1 - 2, 0.3 * S.L);
+          if (mb - ma > 2) sweep(C.paint, F, prof(-0.14, 0.14, 2, up(0.05)), ma, mb, COL.skyPale);
+        } else sweep(C.paint, F, prof(-0.05, 0.05, 2, up(0.03)), t0 + 1, t1 - 1, COL.dark);
       } else if (st.roof === "shell") {                            // ซี่โครงหลังคาทุก 9 ม. (แอร์พอร์ต เรล ลิงก์)
         for (var t = t0 + 4.5; t < t1 - 2; t += 9) sweep(C.paint, F, prof(-1, 1, 20, function (s) { return sz(s) + 0.14; }), t - 0.22, t + 0.22, COL.frame);
       } else if (st.roof === "wing") {                             // รางน้ำกลางหลังคาปีกผีเสื้อ (โมโนเรล)
         fbox(C.paint, F, t0, t1, g.om - 0.35, g.om + 0.35, S.eave - 0.45, S.eave + 0.08, COL.frame);
       }
+      // โครงหลังคา: ซี่โครงโค้งใต้หลังคาตรงแนวเสาทุกต้น (ชุดรายละเอียด — เห็นตอนซูมใกล้/มองเฉียง)
+      var tp0 = Math.max(t0, -S.L / 2), tp1 = Math.min(t1, S.L / 2), nr = Math.max(1, Math.round((tp1 - tp0) / COL_STEP)), ri;
+      if (tp1 - tp0 < 2) return;
+      if (C.dPaint) for (ri = 0; ri <= nr; ri++) {
+        var tr = tp0 + (tp1 - tp0) * ri / nr;
+        if (st.roof !== "mrtx") pieces.forEach(function (pc) { rib(C.dPaint, F, pc.p, tr, TH); });
+        else if (Math.abs(tr) < S.midT) clerePieces().slice(0, 2).forEach(function (pc) { rib(C.dPaint, F, pc.p, tr, TH); });
+        else rib(C.dPaint, F, profAt(S, g, tr, 8), tr, TH);
+      }
+      if (st.roof === "barrel") {                                  // BTS: ซี่โครงนูนบนหลังคา + แถบช่องแสงตามสันหลังคา
+        for (ri = 0; ri <= nr; ri++) {
+          var tq = tp0 + (tp1 - tp0) * ri / nr;
+          sweep(C.paint, F, prof(-1, 1, 12, function (s) { return sz(s) + 0.1; }), tq - 0.16, tq + 0.16, COL.steel);
+        }
+        sweep(C.glass, F, prof(-0.15, 0.15, 4, function (s) { return sz(s) + 0.05; }), t0 + 2.5, t1 - 2.5, null, 3, 3);
+      }
     });
+  }
+  /* หลังคา MRT ช่วงหัว-ท้าย (จากขอบหลังคาช่วงกลาง ±midT ไปถึงปลาย ±tEnd):
+       จั่วสองผืนสันกลาง → ช่วงหัว (1 ม. ก่อนปลายชานชาลาไปถึงปลายหลังคา) ผังสอบเหลือครึ่งกว้าง
+       ผืนหน้าลาดจากปลายสันลงถึงขอบปลาย + ผืนข้างสามเหลี่ยมสองผืน · ขอบชายคามีแถบสีประจำสายรอบ
+     ช่วงที่ถูกตัด (สถานีสายอื่นพาดผ่าน) วาดเฉพาะส่วนในช่วง [t0, t1] · หัวหลังคาวาดเมื่อช่วงนั้นถึงปลายเท่านั้น */
+  function emitMrtEnds(C, F, S, g, t0, t1, TH) {
+    var e = S.eave, R = 0.75 * S.style.rise, HW = g.hw, om = g.om, tj = S.midT, ta = S.L / 2 - 1, T = S.tEnd, hw1 = 0.5 * HW;
+    var lo = t0 <= -S.L / 2 - 2.9 ? -T : t0, hi = t1 >= S.L / 2 + 2.9 ? T : t1;
+    function sheet(P) {                                  // ผิวบน + ท้องหลังคา
+      face(C.roof, F, P, S.roofCol);
+      face(C.paint, F, P.map(function (q) { return [q[0], q[1], q[2] - TH]; }), COL.under);
+    }
+    function fascia(a, b) { panel(C.paint, F, [a[0], a[1]], e - TH - 0.7, [b[0], b[1]], e - TH - 0.7, TH + 0.74, S.lineCol); }
+    [[-ta, -tj], [tj, ta]].forEach(function (r) {
+      var p = Math.max(r[0], lo), q = Math.min(r[1], hi);
+      if (q - p < 0.3) return;
+      sheet([[p, om - HW, e], [q, om - HW, e], [q, om, e + R], [p, om, e + R]]);
+      sheet([[p, om, e + R], [q, om, e + R], [q, om + HW, e], [p, om + HW, e]]);
+      fascia([p, om - HW - 0.02], [q, om - HW - 0.02]);
+      fascia([p, om + HW + 0.02], [q, om + HW + 0.02]);
+    });
+    [-1, 1].forEach(function (sg) {
+      if (sg < 0 ? lo > -T + 0.01 : hi < T - 0.01) return;
+      var A = [sg * ta, om - HW, e], B = [sg * T, om - hw1, e], Cc = [sg * T, om + hw1, e], D = [sg * ta, om + HW, e], P = [sg * ta, om, e + R];
+      sheet([A, B, P]); sheet([B, Cc, P]); sheet([Cc, D, P]);
+      fascia(A, B); fascia(B, Cc); fascia(Cc, D);
+    });
+  }
+  // ผนังหน้าจั่วของหลังคาช่วงกลาง (สูงกว่าช่วงหัว-ท้าย) ที่รอยต่อ t = ±midT
+  function mrtJunction(C, F, S, g, t) {
+    var e = S.eave, r = S.style.rise, zc = e + 0.75 * r, R = 0.75 * r;
+    function side(a) { return e + 0.75 * r * (1 - (a - 0.22) / 0.78); }
+    function cap(s) { return zc + 1.7 + 0.3 * (1 - Math.pow(s / 0.3, 2)); }
+    var pts = [[-1, e], [-0.6, side(0.6)], [-0.22, zc], [-0.22, cap(0.22)], [0, cap(0)], [0.22, cap(0.22)], [0.22, zc], [0.6, side(0.6)], [1, e]];
+    var top = pts.map(function (q) { return [g.om + q[0] * g.hw, q[1]]; });
+    var under = pts.map(function (q) { return [g.om + q[0] * g.hw, e + R * (1 - Math.abs(q[0]))]; });
+    caps(C.paint, F, top, under, t, S.midCol);
+  }
+  // ซี่โครงโค้งใต้หลังคาที่ตำแหน่ง t: แผ่นตั้งลึก 0.55 ม. ตามผิวใต้หลังคา + ปีกล่างกว้าง 0.3 ม.
+  function rib(B, F, top, t, TH) {
+    var stp = Math.max(1, Math.ceil((top.length - 1) / 8)), pts = [], D = 0.55, base, n, i, p;
+    for (i = 0; i < top.length; i += stp) pts.push(top[i]);
+    if (pts[pts.length - 1] !== top[top.length - 1]) pts.push(top[top.length - 1]);
+    n = pts.length;
+    base = B.p.length / 3;
+    for (i = 0; i < n; i++) { B.v(F(t, pts[i][0], pts[i][1] - TH), 0, 0, COL.frame); B.v(F(t, pts[i][0], pts[i][1] - TH - D), 0, 0, COL.frame); }
+    for (i = 0; i < n - 1; i++) { p = base + i * 2; B.q(p, p + 2, p + 3, p + 1); }
+    base = B.p.length / 3;
+    for (i = 0; i < n; i++) { var zb = pts[i][1] - TH - D; B.v(F(t - 0.15, pts[i][0], zb), 0, 0, COL.frame); B.v(F(t + 0.15, pts[i][0], zb), 0, 0, COL.frame); }
+    for (i = 0; i < n - 1; i++) { p = base + i * 2; B.q(p, p + 2, p + 3, p + 1); }
   }
   // หลังคาลอนต่อเนื่องตามแนว (สายสีแดง)
   function emitVaults(C, F, S, g, t0, t1, TH) {
@@ -938,11 +1145,24 @@
     });
   }
 
-  // ชั้นขายตั๋ว: พื้น + หลังคาพื้น + ผนังกระจกรอบ + แถบสีประจำสาย
+  // ชั้นขายตั๋ว: พื้นคร่อมถนนยาวเกือบเต็มสถานี (ขอบคานมีแถบสีประจำสาย + ราวกันตกรอบ)
+  //   + ห้องขายตั๋วผนังกระจกตรงกลาง (เพดาน + แถบสีประจำสาย)
   function emitConcourse(C, F, S) {
     if (S.noConc) return;
     var t0 = -S.Lc / 2, t1 = S.Lc / 2, o0 = S.co0, o1 = S.co1, z0 = S.conc, z1 = S.concTop, zg = z1 - 1.0;
-    fbox(C.conc, F, t0, t1, o0, o1, z0 - 0.8, z0);
+    var h = S.Ld / 2, d0 = S.do0, d1 = S.do1;
+    fbox(C.conc, F, -h, h, d0, d1, z0 - 0.8, z0);
+    if (h > t1 + 1 || d0 < o0 - 0.5 || d1 > o1 + 0.5) {
+      // ด้านที่ติดกับสถานีข้าง ๆ (flushL/R) ไม่มีราว/แถบสี — ขอบพื้นตรงกับผนังกระจก
+      var rails = h > t1 + 1 ? [[-h, d0, -h + 0.18, d1], [h - 0.18, d0, h, d1]] : [];
+      if (!S.flushL) { rails.push([-h, d0, h, d0 + 0.18]); fbox(C.paint, F, -h, h, d0 - 0.06, d0, z0 - 0.62, z0 - 0.34, S.lineCol); }
+      if (!S.flushR) { rails.push([-h, d1 - 0.18, h, d1]); fbox(C.paint, F, -h, h, d1, d1 + 0.06, z0 - 0.62, z0 - 0.34, S.lineCol); }
+      // ราวกันตก: ผนังทึบเตี้ย + ราวเหล็กด้านบน
+      rails.forEach(function (r) {
+        fbox(C.conc, F, r[0], r[2], r[1], r[3], z0, z0 + 0.9);
+        fbox(C.paint, F, r[0] - 0.02, r[2] + 0.02, r[1] - 0.02, r[3] + 0.02, z0 + 0.9, z0 + 1.08, COL.steel);
+      });
+    }
     fbox(C.conc, F, t0, t1, o0, o1, z1 - 0.3, z1);
     [[t0, o0, t1, o0], [t1, o0, t1, o1], [t1, o1, t0, o1], [t0, o1, t0, o0]].forEach(function (e) {
       tquad(C.glass, F, [e[0], e[1]], [e[2], e[3]], z0, zg, 3, S.hub ? Math.max(1, Math.round((zg - z0) / 3.6)) : 1);
@@ -950,77 +1170,180 @@
     fbox(C.paint, F, t0 - 0.06, t1 + 0.06, o0 - 0.06, o1 + 0.06, zg, z1 - 0.3, S.lineCol);
   }
 
-  // เสารับ: "center" = เสากลางถนน + หัวเสาบานรับชั้นขายตั๋ว/พื้นชานชาลา · "portal" = เสาคู่ + คานขวาง
+  // เสากลม (แปดเหลี่ยม) รัศมี r จาก z0 ถึง z1 · ปิดหัวเสา (โคนอยู่บนพื้นไม่ต้องปิด)
+  function ocol(B, F, tc, oc, r, z0, z1) {
+    var b = B.p.length / 3, i;
+    for (i = 0; i < 8; i++) { var a = (i + 0.5) * Math.PI / 4; B.v(F(tc + r * Math.cos(a), oc + r * Math.sin(a), z0)); }
+    for (i = 0; i < 8; i++) { var a2 = (i + 0.5) * Math.PI / 4; B.v(F(tc + r * Math.cos(a2), oc + r * Math.sin(a2), z1)); }
+    for (i = 0; i < 8; i++) { var j = (i + 1) % 8; B.q(b + i, b + j, b + 8 + j, b + 8 + i); }
+    for (i = 1; i < 7; i++) B.i.push(b + 8, b + 8 + i, b + 9 + i);
+  }
+
+  // เสารับ: "center" = เสากลางถนน + หัวเสาบานรับชั้นขายตั๋ว/พื้นชานชาลา (โมโนเรล สายสีทอง)
+  //   "portal" = โครงเสาคู่ทุก ~25 ม.: เสากลม 2 ต้น + คานขวางลึกรับพื้นชั้นขายตั๋ว (ยื่นเรียวออกถึงขอบระเบียง)
+  //              + เสาช่วงบนทะลุชั้นขายตั๋ว + คานรับพื้นชานชาลา — ช่วงหัว-ท้ายที่ไม่มีชั้นขายตั๋ว คานรับพื้นชานชาลาตรง ๆ
   function emitSupports(C, F, S) {
     if (S.hub) return;
-    var L2 = S.L / 2, deckB = S.levels[0].rz - 1.5, n = Math.max(2, Math.round(S.L / COL_STEP));
-    var mid = (S.o0 + S.o1) / 2, hc = S.noConc ? -1 : S.Lc / 2 + 0.5;
+    var L2 = S.L / 2, deckB = S.levels[0].rz - 1.5, mid = (S.o0 + S.o1) / 2, i, t;
     function skipAt(t, o) {
       if (!S.skip.length) return false;
       var p = F(t, o, 0);
       return S.skip.some(function (q) { return pointInQuad(p, q); });
     }
-    for (var i = 0; i <= n; i++) {
-      var t = -L2 + 1.2 + (S.L - 2.4) * i / n, inC = Math.abs(t) <= hc;
-      if (S.style.sup === "center") {
+    if (S.style.sup === "center") {
+      var n = Math.max(2, Math.round(S.L / COL_STEP)), hc = S.noConc ? -1 : S.Ld / 2 + 0.5;
+      for (i = 0; i <= n; i++) {
+        t = -L2 + 1.2 + (S.L - 2.4) * i / n;
+        var inC = Math.abs(t) <= hc;
         if (skipAt(t, mid)) continue;
         var capTop = inC ? S.conc - 0.8 : deckB, capH = inC ? 1.6 : 2.2;
-        var hw = inC ? (S.co1 - S.co0) / 2 - 0.3 : (S.o1 - S.o0) / 2 - 0.3;
+        var hw = inC ? (S.do1 - S.do0) / 2 - 0.3 : (S.o1 - S.o0) / 2 - 0.3;
         fbox(C.conc, F, t - 1.0, t + 1.0, mid - 1.25, mid + 1.25, 0, capTop - capH + 0.02);
         taper(C.conc, F, t, mid, capTop - capH, capTop, 1.0, 1.25, 1.05, hw);
-      } else {
-        var zTop = inC ? S.conc - 0.8 : deckB, any = false;
-        [S.o0 + 1.5, S.o1 - 1.5].forEach(function (oc) {
-          if (skipAt(t, oc)) return;
-          any = true;
-          fbox(C.conc, F, t - 0.75, t + 0.75, oc - 0.75, oc + 0.75, 0, zTop);
-        });
-        if (any) fbox(C.conc, F, t - 0.65, t + 0.65, S.o0 + 0.8, S.o1 - 0.8, zTop - 1.1, zTop);
       }
+      return;
+    }
+    var nf = Math.max(2, Math.round((S.L - 2.4) / FRAME_STEP)), hd = S.noConc ? -1 : S.Ld / 2 - 0.8;
+    var cA = S.o0 + 2.4, cB = S.o1 - 2.4, TB = 0.7;
+    if (cB - cA < 6) { cA = mid - 3; cB = mid + 3; }
+    for (i = 0; i <= nf; i++) {
+      t = -L2 + 1.2 + (S.L - 2.4) * i / nf;
+      var inD = Math.abs(t) <= hd, zTop = inD ? S.conc - 0.8 : deckB, BD = inD ? 1.7 : 1.4;
+      var e0 = inD ? S.do0 : S.o0, e1 = inD ? S.do1 : S.o1;
+      var cols = [cA, cB].filter(function (oc) { return !skipAt(t, oc); });
+      if (!cols.length) continue;
+      cols.forEach(function (oc) {
+        ocol(C.conc, F, t, oc, 0.8, 0, zTop - BD + 0.02);
+        if (inD) fbox(C.conc, F, t - 0.42, t + 0.42, oc - 0.42, oc + 0.42, S.conc, deckB - 0.95);
+      });
+      // คานขวาง: ช่วงระหว่างเสาลึกเต็ม · ช่วงยื่นออกไปเรียวบางลงที่ปลาย
+      var lo = cols.length === 2 ? cA : cols[0] - 0.9, hi = cols.length === 2 ? cB : cols[0] + 0.9;
+      fbox(C.conc, F, t - TB, t + TB, lo, hi, zTop - BD, zTop);
+      if (cols.length === 2) {
+        prism(C.conc, F, [[t - TB, e0], [t + TB, e0], [t + TB, cA], [t - TB, cA]], [zTop - 0.55, zTop - 0.55, zTop - BD, zTop - BD], [zTop, zTop, zTop, zTop]);
+        prism(C.conc, F, [[t - TB, cB], [t + TB, cB], [t + TB, e1], [t - TB, e1]], [zTop - BD, zTop - BD, zTop - 0.55, zTop - 0.55], [zTop, zTop, zTop, zTop]);
+      }
+      if (inD) fbox(C.conc, F, t - 0.5, t + 0.5, S.o0 + 0.8, S.o1 - 0.8, deckB - 0.95, deckB);   // คานรับพื้นชานชาลา
     }
   }
 
-  // ทางเชื่อมจากหัวบันได/ลิฟต์เข้าชั้นขายตั๋ว (พื้น + ราวกันตก + หลังคา)
+  // หลังคาโค้งคลุมทางเดิน/บันได: จาก a (สูง za) ถึง b (สูง zb) กว้าง w โก่งกลาง rise
+  // ผิวเดียว (วัสดุสองหน้า) ลายตะเข็บตามแนวยาว + normal ตามความโค้งจริง แสงจึงไล่เนียนแบบหลังคาเหล็ก
+  function archCanopy(B, F, a, za, b, zb, w, rise, col) {
+    var dt = b[0] - a[0], dd = b[1] - a[1], L = Math.hypot(dt, dd);
+    if (L < 0.05) return;
+    var ut = dt / L, uo = dd / L, g = (zb - za) / L, base = B.p.length / 3, NS = 6, i;
+    for (i = 0; i <= NS; i++) {
+      var s = 2 * i / NS - 1, off = s * w / 2, dz = rise * (1 - s * s), sl = -4 * s * rise / w;
+      // normal = (แนวยาว ut,uo,g) × (แนวโค้ง -uo,ut,sl) — ชี้ขึ้นเสมอ
+      var nx = uo * sl - g * ut, ny = -g * uo - ut * sl, nl = Math.hypot(nx, ny, 1), N = B.n ? F.n(nx / nl, ny / nl, 1 / nl) : null;
+      B.v(F(a[0] - uo * off, a[1] + ut * off, za + dz), 0, i / NS, col, N);
+      B.v(F(b[0] - uo * off, b[1] + ut * off, zb + dz), L / 0.8, i / NS, col, N);
+    }
+    for (i = 0; i < NS; i++) { var p = base + i * 2; B.q(p, p + 1, p + 3, p + 2); }
+  }
+  // เสาเหล็กเล็ก (สี่ด้าน ไม่มีหัว-ท้าย — ประหยัดรูปทรง) และแผ่นตั้งบาง (ราวกันตก) จาก a (สูง za) ถึง b (สูง zb) สูง h
+  function post(B, F, t, o, z0, z1, r, col) {
+    var c = [[t - r, o - r], [t + r, o - r], [t + r, o + r], [t - r, o + r]], b = B.p.length / 3, i;
+    for (i = 0; i < 4; i++) { B.v(F(c[i][0], c[i][1], z0), 0, 0, col); B.v(F(c[i][0], c[i][1], z1), 0, 0, col); }
+    for (i = 0; i < 4; i++) { var j = (i + 1) % 4; B.q(b + i * 2, b + j * 2, b + j * 2 + 1, b + i * 2 + 1); }
+  }
+  function panel(B, F, a, za, b, zb, h, col) {
+    var s = B.v(F(a[0], a[1], za), 0, 0, col);
+    B.v(F(b[0], b[1], zb), 0, 0, col); B.v(F(b[0], b[1], zb + h), 0, 0, col); B.v(F(a[0], a[1], za + h), 0, 0, col);
+    B.q(s, s + 1, s + 2, s + 3);
+  }
+  // หลังคาคลุม (สูง 2.7 ม. เหนือผิวเดิน) + เสาเหล็กสองข้างทุก ~4.5 ม. (ชานพักไม่ต้องมีเสาเอง — ใช้เสาของช่วงบันไดที่มาชน)
+  function canopy(C, F, S, a, za, b, zb, w, noPosts) {
+    var CH = 2.7, dt = b[0] - a[0], dd = b[1] - a[1], L = Math.hypot(dt, dd) || 1, ut = dt / L, uo = dd / L;
+    archCanopy(C.dRoof, F, a, za + CH, b, zb + CH, w + 0.9, 0.5, S.roofCol);
+    if (noPosts) return;
+    var np = Math.max(1, Math.round(L / 4.5));
+    for (var i = 0; i <= np; i++) {
+      var f = i / np, pt = a[0] + dt * f, po = a[1] + dd * f, pz = za + (zb - za) * f;
+      for (var sg = -1; sg <= 1; sg += 2) post(C.dPaint, F, pt - uo * (w / 2 + 0.3) * sg, po + ut * (w / 2 + 0.3) * sg, pz, pz + CH + 0.1, 0.07, COL.steel);
+    }
+  }
+  // ช่วงบันไดหนึ่งช่วงจาก a (สูง za) ขึ้นไป b (สูง zb): ผิวขั้นบันได (ลาย) + ท้องบันได + ราวกันตกสองข้าง + หลังคาคลุม
+  function flight(C, F, S, a, za, b, zb, w, esc, cov) {
+    var dt = b[0] - a[0], dd = b[1] - a[1], L = Math.hypot(dt, dd) || 1, ut = dt / L, uo = dd / L;
+    var nt = -uo * w / 2, no = ut * w / 2, vr = Math.hypot(L, zb - za) / 0.6;
+    var B = C.stair, i0 = B.v(F(a[0] + nt, a[1] + no, za + 0.05), 0, 0);
+    B.v(F(a[0] - nt, a[1] - no, za + 0.05), 1, 0); B.v(F(b[0] - nt, b[1] - no, zb + 0.03), 1, vr); B.v(F(b[0] + nt, b[1] + no, zb + 0.03), 0, vr);
+    B.q(i0, i0 + 1, i0 + 2, i0 + 3);
+    slope(C.dConc, F, a, za + 0.02, b, zb, w, 0.5);
+    [-1, 1].forEach(function (sg) {
+      var ot = -uo * (w / 2 + 0.06) * sg, oo = ut * (w / 2 + 0.06) * sg;
+      panel(C.dPaint, F, [a[0] + ot, a[1] + oo], za, [b[0] + ot, b[1] + oo], zb, 1.05, esc ? COL.dark : COL.steel);
+    });
+    if (cov) canopy(C, F, S, a, za, b, zb, w);
+  }
+  // ชานพักจาก a ถึง b กว้าง w ที่ระดับ z + เสารับสองต้นที่ปลาย pe (ถ้ามี) + หลังคาคลุม
+  function landing(C, F, S, a, b, w, z, pe, cov) {
+    sbox(C.dConc, F, a, b, w, z - 0.5, z);
+    if (pe && z > 1.5) {
+      var dt = b[0] - a[0], dd = b[1] - a[1], L = Math.hypot(dt, dd) || 1, nt = -dd / L, no = dt / L, r = w / 2 - 0.35;
+      [-1, 1].forEach(function (sg) { post(C.dConc, F, pe[0] + nt * r * sg, pe[1] + no * r * sg, 0, z - 0.5, 0.22); });
+    }
+    if (cov) canopy(C, F, S, a, z, b, z, w - 0.5, true);
+  }
+  // ทางเชื่อมจากหัวบันได/ลิฟต์เข้าพื้นชั้นขายตั๋ว (พื้น + ราวกันตก + หลังคาโค้ง + เสารับทุก ~12 ม.)
   function linkTo(C, F, S, from, zt, w, cov) {
-    var q = [Math.max(-S.Lc / 2, Math.min(S.Lc / 2, from[0])), Math.max(S.co0, Math.min(S.co1, from[1]))];
+    var h = S.Ld / 2, q = [Math.max(-h, Math.min(h, from[0])), Math.max(S.do0, Math.min(S.do1, from[1]))];
     var d = Math.hypot(q[0] - from[0], q[1] - from[1]);
     if (d < 0.4) return;
     var dt = (q[0] - from[0]) / d, dd = (q[1] - from[1]) / d, ext = [q[0] + dt * 0.6, q[1] + dd * 0.6];
     sbox(C.dConc, F, from, ext, w, zt - 0.5, zt);
     [-1, 1].forEach(function (sg) {
       var ot = -dd * (w / 2 - 0.08) * sg, oo = dt * (w / 2 - 0.08) * sg;
-      sbox(C.dPaint, F, [from[0] + ot, from[1] + oo], [q[0] + ot, q[1] + oo], 0.14, zt, zt + 1.1, COL.steel);
+      panel(C.dPaint, F, [from[0] + ot, from[1] + oo], zt, [q[0] + ot, q[1] + oo], zt, 1.1, COL.steel);
     });
-    if (cov) sbox(C.dPaint, F, from, ext, w + 0.6, zt + 2.75, zt + 2.95, S.canopyCol);
+    for (var x = 12; x < d - 2; x += 12) post(C.dConc, F, from[0] + dt * x, from[1] + dd * x, 0, zt - 0.5, 0.3);
+    if (cov) canopy(C, F, S, from, zt, ext, zt, w - 0.3);
   }
-  // บันได/บันไดเลื่อน: ผิวขั้นบันได (ลาย) + ท้องบันได + ราวจับ + ชานพักหัวบันได + หลังคาคลุมและเสา
+  // บันได/บันไดเลื่อน ตามรูปแบบที่ planAccess เลือกไว้ (ดู kind/anchor)
   function emitStair(C, F, S, s) {
-    var a = s.b, b = s.a, zb = s.zt, w = s.w;
-    var dt = b[0] - a[0], dd = b[1] - a[1], L = Math.hypot(dt, dd) || 1, ut = dt / L, uo = dd / L;
-    var nt = -uo * w / 2, no = ut * w / 2, vr = Math.hypot(L, zb) / 0.6;
-    var B = C.stair, i0 = B.v(F(a[0] + nt, a[1] + no, 0.05), 0, 0);
-    B.v(F(a[0] - nt, a[1] - no, 0.05), 1, 0); B.v(F(b[0] - nt, b[1] - no, zb + 0.03), 1, vr); B.v(F(b[0] + nt, b[1] + no, zb + 0.03), 0, vr);
-    B.q(i0, i0 + 1, i0 + 2, i0 + 3);
-    slope(C.dConc, F, a, 0.02, b, zb, w, 0.5);
-    [-1, 1].forEach(function (sg) {
-      var ot = -uo * (w / 2 + 0.06) * sg, oo = ut * (w / 2 + 0.06) * sg;
-      slope(C.dPaint, F, [a[0] + ot, a[1] + oo], 1.0, [b[0] + ot, b[1] + oo], zb + 1.0, 0.12, 1.0, s.esc ? COL.dark : COL.steel);
-    });
-    var end = [b[0] + ut * 2.4, b[1] + uo * 2.4];
-    sbox(C.dConc, F, b, end, w + 0.4, zb - 0.5, zb);
-    if (s.cov) {
-      slope(C.dPaint, F, a, 2.95, b, zb + 2.95, w + 0.9, 0.18, S.canopyCol);
-      sbox(C.dPaint, F, b, end, w + 0.9, zb + 2.77, zb + 2.95, S.canopyCol);
-      var np = Math.max(1, Math.round(L / 4.5));
-      for (var i = 0; i <= np; i++) {
-        var f = i / np, pt = a[0] + dt * f, po = a[1] + dd * f, pz = zb * f;
-        for (var sg = -1; sg <= 1; sg += 2) {
-          var ot2 = -uo * (w / 2 + 0.3) * sg, oo2 = ut * (w / 2 + 0.3) * sg;
-          fbox(C.dPaint, F, pt + ot2 - 0.07, pt + ot2 + 0.07, po + oo2 - 0.07, po + oo2 + 0.07, pz, pz + 2.8, COL.steel);
-        }
+    var zt = s.zt, w = s.w, top, u;
+    function at(p, v, f) { return [p[0] + v[0] * f, p[1] + v[1] * f]; }
+    function unit(a, b) { var dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; }
+    if (s.kind === "switch") {
+      // พับครึ่ง: ช่วงล่างวิ่งตาม u ขึ้นถึงชานพักกลาง แล้วช่วงบนย้อนกลับในช่องข้าง ๆ มาถึงหัวบันได
+      var zm = zt / 2, r = zm * RISE_RUN, off = w + 0.35, n, Fp, Q0, sg;
+      if (s.anchor === "foot") {
+        Fp = s.b; u = unit(s.b, s.a); n = [-u[1], u[0]];
+        sg = deckDist(S, at(Fp, n, off)) <= deckDist(S, at(Fp, n, -off)) ? 1 : -1;   // ช่องบนอยู่ฝั่งใกล้สถานี
+        Q0 = at(Fp, n, sg * off);
+      } else {
+        u = unit(s.a, s.b); n = [-u[1], u[0]];
+        Q0 = at(s.a, u, TOP_LANDING);
+        sg = deckDist(S, at(Q0, n, -off)) >= deckDist(S, at(Q0, n, off)) ? 1 : -1;   // ช่องล่าง (ตีนบันได) อยู่ฝั่งไกลสถานี
+        Fp = at(Q0, n, -sg * off);
       }
+      // ช่องบนห้ามล้ำเข้าใต้พื้นชั้นขายตั๋ว → เลื่อนทั้งชุดออกไปทางฝั่งตีนบันได
+      var away = [-n[0] * sg, -n[1] * sg], need = w / 2 + 0.25, sh = 0;
+      while (sh < off + w && Math.min(deckDist(S, at(Q0, away, sh)), deckDist(S, at(at(Q0, u, r), away, sh))) < need) sh += 0.25;
+      if (sh) { Fp = at(Fp, away, sh); Q0 = at(Q0, away, sh); }
+      var P1 = at(Fp, u, r), Q1 = at(Q0, u, r), M0 = [(P1[0] + Q1[0]) / 2, (P1[1] + Q1[1]) / 2], M1 = at(M0, u, LANDING);
+      top = at(Q0, u, -TOP_LANDING);
+      flight(C, F, S, Fp, 0, P1, zm, w, false, s.cov);
+      flight(C, F, S, Q1, zm, Q0, zt, w, false, s.cov);
+      landing(C, F, S, M0, M1, off + w, zm, M1, s.cov);
+      landing(C, F, S, Q0, top, w + 0.4, zt, s.link ? top : null, s.cov);
+    } else {
+      // ตรง: บันไดเลื่อนช่วงเดียว · บันไดมีชานพักกลาง · หัวบันไดมีชานพักยื่นต่อ 2.4 ม.
+      var a = s.b, b = s.a, L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      u = unit(a, b);
+      if (s.kind === "flight") flight(C, F, S, a, 0, b, zt, w, s.esc, s.cov);
+      else {
+        var fl = (L - LANDING) / 2, m0 = at(a, u, fl), m1 = at(a, u, fl + LANDING);
+        flight(C, F, S, a, 0, m0, zt / 2, w, false, s.cov);
+        landing(C, F, S, m0, m1, w + 0.4, zt / 2, m1, s.cov);
+        flight(C, F, S, m1, zt / 2, b, zt, w, false, s.cov);
+      }
+      top = at(b, u, 2.4);
+      landing(C, F, S, b, top, w + 0.4, zt, s.link ? top : null, s.cov);
     }
-    if (s.link) linkTo(C, F, S, end, zb, w + 0.8, s.cov);
+    if (s.link) linkTo(C, F, S, top, zt, w + 0.8, s.cov);
   }
   // ลิฟต์: ปล่องกระจก + หัวปล่อง + สะพานเชื่อมชั้นขายตั๋ว
   function emitLift(C, F, S, p) {
@@ -1046,14 +1369,15 @@
     return {
       conc: new MB(), paint: new MB({ c: 1 }), roof: new MB({ uv: 1, c: 1, n: 1 }), glass: new MB({ uv: 1 }), louvre: new MB({ uv: 1 }),
       shadow: new MB({ uv: 1 }),
-      dConc: new MB(), dPaint: new MB({ c: 1 }), dGlass: new MB({ uv: 1 }), stair: new MB({ uv: 1 }), psd: new MB({ uv: 1 })
+      dConc: new MB(), dPaint: new MB({ c: 1 }), dGlass: new MB({ uv: 1 }), stair: new MB({ uv: 1 }), psd: new MB({ uv: 1 }),
+      dRoof: new MB({ uv: 1, c: 1, n: 1 })
     };
   }
   function flushStation(C, mass, det) {
     flushMB(C.conc, H.concrete(), mass); flushMB(C.paint, matPaint, mass); flushMB(C.roof, matRoofTop, mass);
     flushMB(C.glass, matGlass, mass); flushMB(C.louvre, matLouvre, mass); flushMB(C.shadow, H.shadowMaterial("rect"), mass);
     flushMB(C.dConc, H.concrete(), det); flushMB(C.dPaint, matPaint, det); flushMB(C.dGlass, matGlass, det);
-    flushMB(C.stair, matStair, det); flushMB(C.psd, matPSD, det);
+    flushMB(C.stair, matStair, det); flushMB(C.psd, matPSD, det); flushMB(C.dRoof, matRoofTop, det);
   }
   // C.stair/C.psd/C.shadow ไม่มี = วาดเฉพาะตัวอาคาร (ใช้ทำไฮไลต์ตอนชี้/คลิก)
   function emitStation(C, S) {
@@ -1089,7 +1413,7 @@
   }
 
   /* ------------------------------------------------- ทางเดินลอยฟ้า (skywalk) */
-  function emitWalks(BW, BR3) {
+  function emitWalks(BW, WR) {
     if (!D.walks) return 0;
     var n = 0;
     walkList().list.forEach(function (rec) {
@@ -1106,8 +1430,8 @@
         [-1, 1].forEach(function (sg) {                                          // ราวกันตก
           BW.box(mx + px * eo * sg, my + py * eo * sg, z, z + 1.1 * k, L, 0.16 * k, ux, uy);
         });
-        if (w.c) {                                                               // หลังคา (เฉพาะช่วงที่ OSM บอกว่ามีหลังคา)
-          BR3.box(mx, my, z + 2.7 * k, z + 2.9 * k, L, 4.6 * k, ux, uy);
+        if (w.c) {                                                               // หลังคาโค้ง (เฉพาะช่วงที่ OSM บอกว่ามีหลังคา)
+          archCanopy(WR, frameOf({ x: a.x, y: a.y, ux: ux, uy: uy, k: k }), [0, 0], h + 2.7, [L / k, 0], h + 2.7, 4.6, 0.6, COL.white);
           [-1, 1].forEach(function (sg) {
             BW.box(mx + px * eo * sg, my + py * eo * sg, z + 1.1 * k, z + 2.7 * k, 0.22 * k, 0.22 * k, ux, uy);
           });
@@ -1131,7 +1455,6 @@
     H.scene().add(group);
     matSteel = new T.MeshPhongMaterial({ color: "#6d747d", flatShading: true, shininess: 30, specular: 0x333333 });
     matDark = new T.MeshPhongMaterial({ color: "#20252c", flatShading: true, shininess: 10 });
-    matRoof = new T.MeshPhongMaterial({ color: H.theme() === "light" ? "#dfe4ea" : "#9aa5b1", flatShading: true, shininess: 4, side: T.DoubleSide });
     hoverMat = new T.MeshBasicMaterial({ color: pal.glow, transparent: true, opacity: 0.3, depthWrite: false, side: T.DoubleSide,
       polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
     selMat = new T.MeshBasicMaterial({ color: pal.glow, transparent: true, opacity: 0.55, depthWrite: false, side: T.DoubleSide,
@@ -1226,10 +1549,10 @@
     // ——— ทางเดินลอยฟ้าเชื่อมสถานี (แสดงตอนซูมเข้าเท่านั้น)
     var walkGroup = new T.Group();
     group.add(walkGroup);
-    var BW = new Builder(), BR3 = new Builder();
-    var walkCount = emitWalks(BW, BR3);
+    var BW = new Builder(), WR = new MB({ uv: 1, c: 1, n: 1 });
+    var walkCount = emitWalks(BW, WR);
     finish(BW, H.concrete(), walkGroup);
-    finish(BR3, matRoof, walkGroup);
+    flushMB(WR, matRoofTop, walkGroup);
 
     // ——— จุดจอดของแต่ละราง (ระยะตามแนวรางที่ตรงกับชานชาลา)
     tracks.forEach(function (R) {
@@ -1418,7 +1741,7 @@
     var k = S.k, ox = ray.origin.x - S.x, oy = ray.origin.y - S.y, dx = ray.direction.x, dy = ray.direction.y;
     var o = [(ox * S.ux + oy * S.uy) / k, (-ox * S.uy + oy * S.ux) / k, ray.origin.z / k];
     var d = [(dx * S.ux + dy * S.uy) / k, (-dx * S.uy + dy * S.ux) / k, ray.direction.z / k];
-    var lo = [-S.L / 2 - 3, S.o0 - 1.5, 0], hi = [S.L / 2 + 3, S.o1 + 1.5, S.roofTop];
+    var lo = [-S.tEnd, Math.min(S.o0, S.do0) - 1.5, 0], hi = [S.tEnd, Math.max(S.o1, S.do1) + 1.5, S.roofTop];
     var tmin = 0, tmax = Infinity;
     for (var a = 0; a < 3; a++) {
       if (Math.abs(d[a]) < 1e-12) { if (o[a] < lo[a] || o[a] > hi[a]) return null; continue; }
@@ -1781,7 +2104,6 @@
         if (!model) return;
         hoverMat.color.set(pal.glow);
         selMat.color.set(pal.glow);
-        matRoof.color.set(name === "light" ? "#dfe4ea" : "#9aa5b1");
         themeStationMaterials(name);
       },
       // ลายผิวคมขึ้นเมื่อมองเฉียง (anisotropic) — ตั้งได้เมื่อมี renderer แล้ว
