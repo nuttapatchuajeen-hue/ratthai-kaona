@@ -929,23 +929,27 @@
   }
 
   function getYtSearchUrl(query) {
-    var base = '';
-    if (location.hostname === 'thaigovernmentdata.netlify.app' || location.hostname === 'ratthai-kaona.vercel.app') {
-      base = '';
-    } else {
-      base = 'https://thaigovernmentdata.netlify.app';
-    }
+    // API ค้นหาคลิปมีที่ Vercel ที่เดียว (ตอบ CORS *) — โฮสต์อื่นต้องเรียกด้วย URL เต็ม
+    // ห้ามชี้กลับไป thaigovernmentdata.netlify.app: ไซต์นั้นปิดทั้งเว็บ (404 ทุกพาธ) ตั้งแต่ ก.ย. 2026
+    var base = location.hostname === 'ratthai-kaona.vercel.app' ? '' : 'https://ratthai-kaona.vercel.app';
     return base + '/api/yt-search?q=' + encodeURIComponent(query);
   }
 
   function renderYtNoResults(query, isError) {
     if (!dom.ytQueueList) return;
     var qEsc = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // isError = ต่อ /api/yt-search ไม่ได้ ไม่ใช่ว่า YouTube ไม่มีคลิป — อย่าบอกผู้ใช้ว่า "ไม่พบ"
+    var title = isError
+      ? 'ตอนนี้ค้นหาไม่ได้ ลองใหม่อีกครั้ง'
+      : 'ไม่พบผลการค้นหาสำหรับ &ldquo;' + qEsc + '&rdquo;';
+    var desc = isError
+      ? 'ระบบค้นหาคลิปไม่ตอบชั่วคราว ระหว่างนี้วางลิงก์ YouTube (เช่น https://youtu.be/...) ได้โดยตรง<br>หรือกดปุ่มค้นหาผ่านหน้าเว็บ YouTube'
+      : 'ลองค้นหาด้วยคำอื่น หรือวางลิงก์ YouTube (เช่น https://youtu.be/...) ได้โดยตรง<br>หรือกดปุ่มค้นหาผ่านหน้าเว็บ YouTube';
     dom.ytQueueList.innerHTML = [
       '<div class="bgm-yt-no-results">',
-      '  <div class="bgm-yt-no-res-icon">🔍</div>',
-      '  <div class="bgm-yt-no-res-title">ไม่พบผลการค้นหาสำหรับ &ldquo;' + qEsc + '&rdquo;</div>',
-      '  <div class="bgm-yt-no-res-desc">ลองค้นหาด้วยคำอื่น หรือวางลิงก์ YouTube (เช่น https://youtu.be/...) ได้โดยตรง<br>หรือกดปุ่มค้นหาผ่านหน้าเว็บ YouTube</div>',
+      '  <div class="bgm-yt-no-res-icon">' + (isError ? '⚠️' : '🔍') + '</div>',
+      '  <div class="bgm-yt-no-res-title">' + title + '</div>',
+      '  <div class="bgm-yt-no-res-desc">' + desc + '</div>',
       '  <a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(query) + '" target="_blank" rel="noopener" class="bgm-yt-search-btn">',
       '    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>',
       '    <span>เปิดค้นหาบน YouTube.com</span>',
@@ -955,7 +959,7 @@
     ].join('');
   }
 
-  function fallbackLocalYtSearch(query, autoPlayFirst) {
+  function fallbackLocalYtSearch(query, autoPlayFirst, isError) {
     var qLow = (query || '').toLowerCase().trim();
     var qTokens = qLow.split(/[\s,·\-_/]+/).filter(Boolean);
     var matches = YT_VIDEOS.filter(function (v) {
@@ -976,7 +980,7 @@
       }
       return;
     }
-    renderYtNoResults(query, false);
+    renderYtNoResults(query, !!isError);
   }
 
   function performYtLiveSearch(query, autoPlayFirst) {
@@ -1045,7 +1049,7 @@
       })
       .catch(function () {
         isSearchingYt = false;
-        fallbackLocalYtSearch(query, autoPlayFirst);
+        fallbackLocalYtSearch(query, autoPlayFirst, true);
       });
   }
 
