@@ -765,36 +765,44 @@
     model.bkkRanges = ranges;
   }
 
-  /* หอบังคับการบินสุวรรณภูมิ 132.2 ม. — แกนเรียวสูง บานออกรับห้องควบคุมกระจกรอบทิศ หลังคาและเสาอากาศ */
+  /* หอบังคับการบิน — หมุนรอบแกนตั้งตามโปรไฟล์ [รัศมี, ความสูง, สี] (สี null = กระจกห้องควบคุมเอียงออก)
+     · สุวรรณภูมิ 132.2 ม.: แกนเรียวสูง บานออกรับห้องควบคุมกระจกรอบทิศ หลังคาและเสาอากาศ
+     · ดอนเมือง TWR-S (~70 ม. ประมาณ): อาคารฐานทรงกลม + แกนกลม + ห้องควบคุมกลม หลังคาแผ่นกลม (ตามภาพดาวเทียม) + ไฟสัญญาณสนามบินบนยอด */
+  function towerProfile(tw) {
+    var conc = [0.83, 0.84, 0.86], dark = [0.45, 0.48, 0.52], H = tw.h;
+    if (tw.style === "bkk") return { mast: 129.5, top: 118, r: 13.3, prof: [[13, 0, dark], [13, 7, dark], [7.4, 7, conc], [6.3, 45, conc], [5.5, 98, conc], [5.4, 104, conc], [9.8, 112, conc],
+      [11.2, 114, dark], [12.9, 122.5, null], [13.3, 122.5, conc], [13.3, 124, conc], [7.2, 126, conc], [6.2, 129.5, dark], [0.8, 129.5, dark]] };
+    var white = [0.9, 0.9, 0.88];
+    return { mast: H - 2.2, top: H - 6, r: 9, prof: [[13, 0, dark], [13, 9, dark], [12, 10, conc], [4.4, 10, white], [4.1, H - 12, white], [7.6, H - 9, white],
+      [7.8, H - 8.6, dark], [8.6, H - 3.4, null], [9, H - 3.4, white], [9, H - 2.6, white], [5.5, H - 2.2, conc], [0.6, H - 2.2, conc]] };
+  }
   function buildTower(C, G, L) {
-    var tw = D.tower;
-    if (!tw) return;
-    var c = loc(tw.p[0], tw.p[1]), k = c.k, N = 24;
-    var conc = [0.83, 0.84, 0.86], dark = [0.45, 0.48, 0.52];
-    var prof = [[13, 0, dark], [13, 7, dark], [7.4, 7, conc], [6.3, 45, conc], [5.5, 98, conc], [5.4, 104, conc], [9.8, 112, conc],
-      [11.2, 114, dark], [12.9, 122.5, null], [13.3, 122.5, conc], [13.3, 124, conc], [7.2, 126, conc], [6.2, 129.5, dark], [0.8, 129.5, dark]];
-    function ringPt(r, t) { return { x: c.x + r * k * Math.cos(t), y: c.y + r * k * Math.sin(t) }; }
-    for (var i = 0; i < prof.length - 1; i++) {
-      var a = prof[i], b = prof[i + 1];
-      for (var s = 0; s < N; s++) {
-        var t0 = s / N * Math.PI * 2, t1 = (s + 1) / N * Math.PI * 2;
-        var p0 = ringPt(a[0], t0), p1 = ringPt(a[0], t1), p2 = ringPt(b[0], t1), p3 = ringPt(b[0], t0);
-        if (!b[2]) {                                        // ห้องควบคุม: กระจกเอียงออก
-          var u0 = s / N * 2 * Math.PI * 12 / 6, u1 = (s + 1) / N * 2 * Math.PI * 12 / 6;
-          G.quad(G.v(p0.x, p0.y, a[1] * k, u0, 0.1), G.v(p1.x, p1.y, a[1] * k, u1, 0.1), G.v(p2.x, p2.y, b[1] * k, u1, 0.9), G.v(p3.x, p3.y, b[1] * k, u0, 0.9));
-          continue;
+    model.towers = [];
+    (D.towers || []).forEach(function (tw) {
+      var c = loc(tw.p[0], tw.p[1]), k = c.k, N = 24, P = towerProfile(tw), prof = P.prof, dark = [0.45, 0.48, 0.52];
+      function ringPt(r, t) { return { x: c.x + r * k * Math.cos(t), y: c.y + r * k * Math.sin(t) }; }
+      for (var i = 0; i < prof.length - 1; i++) {
+        var a = prof[i], b = prof[i + 1];
+        for (var s2 = 0; s2 < N; s2++) {
+          var t0 = s2 / N * Math.PI * 2, t1 = (s2 + 1) / N * Math.PI * 2;
+          var p0 = ringPt(a[0], t0), p1 = ringPt(a[0], t1), p2 = ringPt(b[0], t1), p3 = ringPt(b[0], t0);
+          if (!b[2]) {                                      // ห้องควบคุม: กระจกเอียงออก
+            var u0 = s2 / N * 2 * Math.PI * b[0] / 6, u1 = (s2 + 1) / N * 2 * Math.PI * b[0] / 6;
+            G.quad(G.v(p0.x, p0.y, a[1] * k, u0, 0.1), G.v(p1.x, p1.y, a[1] * k, u1, 0.1), G.v(p2.x, p2.y, b[1] * k, u1, 0.9), G.v(p3.x, p3.y, b[1] * k, u0, 0.9));
+            continue;
+          }
+          var col = a[2];
+          C.quad(C.v(p0.x, p0.y, a[1] * k, col), C.v(p1.x, p1.y, a[1] * k, col), C.v(p2.x, p2.y, b[1] * k, col), C.v(p3.x, p3.y, b[1] * k, col));
         }
-        var col = a[2];
-        C.quad(C.v(p0.x, p0.y, a[1] * k, col), C.v(p1.x, p1.y, a[1] * k, col), C.v(p2.x, p2.y, b[1] * k, col), C.v(p3.x, p3.y, b[1] * k, col));
       }
-    }
-    // เสาอากาศบนยอด
-    var m0 = c;
-    C.quad(C.v(m0.x - 0.3 * k, m0.y, 129.5 * k, dark), C.v(m0.x + 0.3 * k, m0.y, 129.5 * k, dark), C.v(m0.x + 0.1 * k, m0.y, tw.h * k, dark), C.v(m0.x - 0.1 * k, m0.y, tw.h * k, dark));
-    C.quad(C.v(m0.x, m0.y - 0.3 * k, 129.5 * k, dark), C.v(m0.x, m0.y + 0.3 * k, 129.5 * k, dark), C.v(m0.x, m0.y + 0.1 * k, tw.h * k, dark), C.v(m0.x, m0.y - 0.1 * k, tw.h * k, dark));
-    light(L, c, tw.h * k, LC.red);
-    light(L, c, 126.5 * k, LC.red);
-    model.tower = { c: c, k: k, h: tw.h, r: 13.3 * k };
+      // เสาอากาศบนยอด
+      C.quad(C.v(c.x - 0.3 * k, c.y, P.mast * k, dark), C.v(c.x + 0.3 * k, c.y, P.mast * k, dark), C.v(c.x + 0.1 * k, c.y, tw.h * k, dark), C.v(c.x - 0.1 * k, c.y, tw.h * k, dark));
+      C.quad(C.v(c.x, c.y - 0.3 * k, P.mast * k, dark), C.v(c.x, c.y + 0.3 * k, P.mast * k, dark), C.v(c.x, c.y + 0.1 * k, tw.h * k, dark), C.v(c.x, c.y - 0.1 * k, tw.h * k, dark));
+      light(L, c, tw.h * k, LC.red);
+      if (tw.style === "dmk") light(L, { x: c.x + 1.5 * k, y: c.y }, (P.mast + 0.6) * k, LC.green);   // ไฟสัญญาณสนามบิน (ABN) บนยอด TWR-S
+      else light(L, c, 126.5 * k, LC.red);
+      model.towers.push({ tw: tw, c: c, k: k, h: tw.h, r: P.r * k, top: P.top * k });
+    });
   }
 
   function buildWindsocks(C) {
@@ -1339,21 +1347,11 @@
 
   /* ตึก 3 มิติของแผนที่ฐาน (city-buildings-3d) ยกอาคารสนามบินหลังเดียวกันซ้ำเป็นกล่องทื่อ ๆ โผล่ทะลุหลังคาเมมเบรน
      → ตัดทิ้งด้วย id ของ feature (vector tile ของ OpenFreeMap ใช้ id = OSM id × 10 + ชนิด) เฉพาะอาคารที่ชั้นนี้วาดเอง */
-  var exclOn = null, exclExpr = null;
+  var exclOn = null;
   function excludeCityBuildings(on) {
-    if (!map || !D || !map.getLayer("city-buildings-3d")) return;
-    if (!exclExpr) {
-      var ids = D.buildings.map(function (b) { return b.id; }).concat([D.terminal.osm]);
-      exclExpr = ["!", ["in", ["floor", ["/", ["to-number", ["id"], 0], 10]], ["literal", ids]]];
-    }
-    var cur = map.getFilter("city-buildings-3d"), tag = JSON.stringify(exclExpr);
-    var has = Array.isArray(cur) && cur[0] === "all" && JSON.stringify(cur[cur.length - 1]) === tag;
-    if (on === has) return;
-    try {
-      if (on) map.setFilter("city-buildings-3d", cur ? ["all", cur, exclExpr] : ["all", exclExpr]);
-      else map.setFilter("city-buildings-3d", cur.length === 3 ? cur[1] : null);
-    } catch (e) { console.warn("airport: building filter", e); }
+    if (!D || on === exclOn) return;
     exclOn = on;
+    H.excludeBuildings(MOD_ID, on ? D.buildings.map(function (b) { return b.id; }).concat([D.terminal.osm]) : null);
   }
 
   /* ------------------------------------------------------------ คลิก/ชี้ */
@@ -1414,7 +1412,7 @@
         take(rangeHit(b.r, ray), { type: "bld", b: b });
       });
       model.bkkRanges.forEach(function (R) { take(rangeHit(R.r, ray), R.hall ? { type: "hall" } : { type: "arm", A: R.arm }); });
-      if (model.tower) { var tw = model.tower; take(sphereHit(ray, tw.c.x, tw.c.y, 118 * tw.k, 16 * tw.k), { type: "tower" }); }
+      model.towers.forEach(function (tw) { take(sphereHit(ray, tw.c.x, tw.c.y, tw.top, tw.r * 1.2), { type: "tower", T: tw }); });
     }
     // พื้น: จุดที่เรย์ตัดระนาบ z = 0
     if (ray.direction.z < -1e-6) {
@@ -1449,6 +1447,7 @@
       case "bld": return "b" + h.b.rec.id;
       case "arm": return "a" + h.A.id;
       case "rwy": return "r" + h.F.R.id;
+      case "tower": return "w" + h.T.tw.id;
       case "taxi": return "t" + model.taxis.indexOf(h.t);
       case "stand": return "s" + D.stands.indexOf(h.s);
       case "apron": return "o" + D.aprons.indexOf(h.A);
@@ -1478,7 +1477,7 @@
     else if (h.type === "taxi") { B = new B0(); ribbon(B, h.t.P, (h.t.w + 4) * h.t.P[0].k, 0.3, true); g = toGeo(B); }
     else if (h.type === "stand") { var n = loc(h.s.p[0], h.s.p[1]); B = new B0(); disc(B, n.x, n.y, 9 * n.k, 0.3, 20); g = toGeo(B); }
     else if (h.type === "apron") { B = new B0(); fillPoly(B, h.A._P || decode(h.A.p), 0.3); g = toGeo(B); }
-    else if (h.type === "tower") { var tw = model.tower; B = new B0(); disc(B, tw.c.x, tw.c.y, 16 * tw.k, 0.4, 24); g = toGeo(B); }
+    else if (h.type === "tower") { var tw = h.T; B = new B0(); disc(B, tw.c.x, tw.c.y, tw.r * 1.2, 0.4, 24); g = toGeo(B); }
     if (!g) return null;
     var m = new T.Mesh(g, mats.hover);
     m.matrixAutoUpdate = false;
@@ -1736,9 +1735,18 @@
     }
     if (h.type === "apron") return head("ลานจอดอากาศยาน (Apron)", "plane", "ลานจอดอากาศยาน", esc(apName(h.A.a))) +
       '<div class="elv-body"><p class="elv-note">พื้นที่ลานจอดจาก OpenStreetMap</p></div>';
+    if (h.type === "tower" && h.T.tw.style === "dmk") {
+      return head("หอบังคับการบิน", "building-2", "หอบังคับการบินดอนเมือง (TWR-S)", "ศูนย์ควบคุมจราจรทางอากาศดอนเมือง · Don Mueang Tower South") +
+        '<div class="elv-body"><div class="elv-grid">' + cell("ความสูง (ประมาณ)", "~" + fmt(h.T.h), "ม.") + cell("ความถี่หอ", "118.1", "MHz") + '</div>' +
+        row("หน้าที่", "หอหลักให้บริการควบคุมจราจรทางอากาศในสนาม · บนยอดมีไฟสัญญาณสนามบิน") +
+        row("หอสำรอง", "TWR-N ในอาคาร AIS/MET ทางเหนือของอาคาร 1 (ยังไม่ได้วาด)") +
+        row("ผู้ดูแล", "บริษัท วิทยุการบินแห่งประเทศไทย จำกัด") + act +
+        '<p class="elv-note">OpenStreetMap ไม่มีหอนี้ — ตำแหน่งจากแผนผังสนามบินใน AIP ของ กพท. (AD 2.VTBD: ใต้ Pier 6 ติดสถานีดับเพลิง AOT แห่งที่ 2) ' +
+          'ยืนยันด้วยภาพดาวเทียม · ไม่มีข้อมูลความสูงที่เผยแพร่ ความสูงและรูปทรงจึงเป็นค่าประมาณจากภาพถ่าย</p></div>';
+    }
     if (h.type === "tower") {
       return head("หอบังคับการบิน", "building-2", "หอบังคับการบินสุวรรณภูมิ", "Suvarnabhumi Air Traffic Control Tower") +
-        '<div class="elv-body"><div class="elv-grid">' + cell("ความสูง", fmt(D.tower.h, 1), "ม.") + cell("เปิดใช้", "2549") + '</div>' +
+        '<div class="elv-body"><div class="elv-grid">' + cell("ความสูง", fmt(h.T.h, 1), "ม.") + cell("เปิดใช้", "2549") + '</div>' +
         row("ผู้ดูแล", "บริษัท วิทยุการบินแห่งประเทศไทย จำกัด") + row("จุดเด่น", "หนึ่งในหอบังคับการบินที่สูงที่สุดในโลก") + act +
         '<p class="elv-note">ความสูงจาก OpenStreetMap · รูปทรงเป็นแบบจำลองอย่างง่ายจากภาพถ่าย ไม่ใช่แบบสถาปัตยกรรมจริง</p></div>';
     }
@@ -1799,7 +1807,7 @@
     if (h.type === "rwy") {
       var mid = { x: (h.F.a.x + h.F.b.x) / 2, y: (h.F.a.y + h.F.b.y) / 2 };
       c = H.toLngLat(mid.x, mid.y); zoom = 14.1; bearing = brg(h.F, 0) + 70;
-    } else if (h.type === "tower") { c = H.toLngLat(model.tower.c.x, model.tower.c.y); zoom = 16.2; }
+    } else if (h.type === "tower") { c = H.toLngLat(h.T.c.x, h.T.c.y); zoom = h.T.tw.style === "dmk" ? 16.8 : 16.2; }
     else if (h.type === "hall" || h.type === "arm") {
       var P = h.type === "hall" ? model.bkkHall.P : model.bkkArms.filter(function (x) { return x.arm === h.A; })[0].P;
       c = H.toLngLat((P[0].x + P[2].x) / 2, (P[0].y + P[2].y) / 2); zoom = 15.6;

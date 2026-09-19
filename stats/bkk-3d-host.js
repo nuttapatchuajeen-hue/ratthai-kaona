@@ -209,6 +209,22 @@
     return _eye.set(-e[12], -e[13], -e[15]).applyMatrix3(_m3);
   }
 
+  /* ตึก 3 มิติของแผนที่ฐาน (city-buildings-3d) ที่โมดูลวาดเองแทน → ตัดออกด้วย id ของ feature
+     (vector tile ของ OpenFreeMap: id = OSM id × 10 + ชนิด) · รวมจากทุกโมดูลเป็นเงื่อนไขเดียว ไม่งั้นโมดูลหนึ่งเขียนทับของอีกโมดูล */
+  var exclude = {}, exclTag = null;
+  function applyExclusions() {
+    if (!map || !map.getLayer("city-buildings-3d")) return;
+    var ids = [];
+    Object.keys(exclude).forEach(function (k) { ids = ids.concat(exclude[k]); });
+    var cur = map.getFilter("city-buildings-3d"), base = cur;
+    if (exclTag && Array.isArray(cur) && cur[0] === "all" && JSON.stringify(cur[cur.length - 1]) === exclTag) base = cur.length === 3 ? cur[1] : null;
+    var ex = ids.length ? ["!", ["in", ["floor", ["/", ["to-number", ["id"], 0], 10]], ["literal", ids]]] : null;
+    var tag = ex ? JSON.stringify(ex) : null;
+    if (tag === exclTag && base !== cur) return;          // ตั้งไว้แล้ว
+    try { map.setFilter("city-buildings-3d", ex ? (base ? ["all", base, ex] : ["all", ex]) : base); exclTag = tag; }
+    catch (e) { console.warn("BKK_3D exclude:", e); }
+  }
+
   /* จุดในฉาก → พิกัดจอ (px ของ canvas) · null ถ้าอยู่หลังกล้อง — ใช้วางป้ายชื่อ HTML ตามวัตถุ 3 มิติ */
   var _pv = null;
   function project(x, y, z) {
@@ -272,6 +288,8 @@
     sunShift: function (h) { return [-SUN[0] / SUN[2] * h, -SUN[1] / SUN[2] * h]; },
     eye: eye,
     project: project,
+    /* เรย์จากพิกัดจอ (px ของ canvas) — ใช้ตรวจการคลิกตอนทดสอบ */
+    ray: function (px, py) { var r = rayAt(px, py); return r && r.clone(); },
     renderer: function () { return renderer; },
     THREE: function () { return T; },
     scene: function () { return scene; },
@@ -293,6 +311,11 @@
       if (map) map.triggerRepaint();
     },
     setAnim: function (id, on) { animOn[id] = !!on; if (map) map.triggerRepaint(); },
+    /* โมดูลบอกว่าตึก OSM id ไหนตัวเองวาดแทนแล้ว (null = เลิกตัด) */
+    excludeBuildings: function (id, ids) {
+      if (ids && ids.length) exclude[id] = ids; else delete exclude[id];
+      applyExclusions();
+    },
     repaint: function () { if (map) map.triggerRepaint(); },
     theme: function () { return theme; },
     palette: function () { return PALETTE[theme]; },
@@ -317,6 +340,7 @@
         bindEvents();
         syncLayer();
       }
+      applyExclusions();                  // style ใหม่ = city-buildings-3d ตัวใหม่ที่ยังไม่มีเงื่อนไขตัด
     },
     /* ให้โมดูลเรียกหลังสร้างกลุ่มเสร็จ */
     ready: function () { bindEvents(); syncLayer(); }
