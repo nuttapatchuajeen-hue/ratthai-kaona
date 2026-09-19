@@ -960,7 +960,7 @@
       capCargo += tmpList.length;
     });
     model.movers = mv;
-    model.cargoCap = capCargo + 4000;                    // + เผื่อตู้บนเรือตู้จริง (AIS)
+    model.cargoCap = capCargo + 8000;                    // + เผื่อตู้บนเรือตู้จริง (AIS) และเรือนิ่งเมื่อไม่มีเรือจริง
     model.cargoDyn = containerMesh([], model.cargoCap, true);
     model.cargoDyn.count = 0;
     model.moveGroup.add(model.cargoDyn);
@@ -1081,7 +1081,6 @@
       P.ships = pd.ships.map(function (s) { return addStatic(s, P); });
     });
     D.anchored.forEach(function (s) { addStatic(s, null); });
-    model.ships.forEach(function (sh) { if (sh.cargo) sh.cargo.forEach(function (c) { cset.list.push(c); }); });
     // ลานหน้าท่า เครน อาคาร ลานตู้
     model.ports.forEach(function (P) {
       buildGround(P);
@@ -1212,13 +1211,22 @@
     var cv = map.getCanvas(); model.cw = cv.clientWidth; model.ch = cv.clientHeight;
     var smallOn = z >= BOAT_ZOOM;
     var real = { bkk: regionLive("bkk"), lcb: regionLive("lcb") };
-    if (boatsOn) model.movers.forEach(function (m) {
-      var small = m.type === "route";
-      if (small && !smallOn) return;
-      if (!small && real[m.reg]) return;              // พื้นที่นี้มีเรือจริงแล้ว → ไม่ต้องมีเรือสินค้าจำลอง
-      stepMover(m, dt);
-      if (placeMover(m, dt, slots, cargo)) onScreen++;
-    });
+    if (boatsOn) {
+      model.movers.forEach(function (m) {
+        var small = m.type === "route";
+        if (small && !smallOn) return;
+        if (!small && real[m.reg]) return;              // พื้นที่นี้มีเรือจริงแล้ว → ไม่ต้องมีเรือสินค้าจำลอง
+        stepMover(m, dt);
+        if (placeMover(m, dt, slots, cargo)) onScreen++;
+      });
+      model.ships.forEach(function (sh) {
+        if (sh.hidden || !sh.cargo) return;
+        var sn = Math.sin(sh.h), cs = Math.cos(sh.h), ang = Math.PI / 2 - sh.h, k = sh.k;
+        sh.cargo.forEach(function (c) {
+          cargo.push([sh.x + (cs * c[0] + sn * c[1]) * k, sh.y + (-sn * c[0] + cs * c[1]) * k, ang, c[3], c[4], c[5], c[6], k, c[8]]);
+        });
+      });
+    }
     if (aisOn) onScreen += placeLive(dt, slots, cargo);
     model.fleets.forEach(function (F, i) { F.commit(slots[i]); });
     model.wakes.commit();
