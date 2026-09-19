@@ -683,17 +683,6 @@
     if (uiBuilt) return;
     uiBuilt = true;
     injectCSS();
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipElevated")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip";
-      chip.id = "chipElevated";
-      chip.title = "ทางด่วน ทางยกระดับ สะพานข้ามแยก และสะพานข้ามแม่น้ำ แบบ 3 มิติ (กดเพื่อเปิด/ปิด) — ซูมถึงระดับ 11 ขึ้นไปจึงเห็น";
-      chip.innerHTML = '<span>' + ico("car") + ' ทางยกระดับ 3 มิติ</span><span class="chip-count">–</span>';
-      chip.addEventListener("click", function () { setVisible(!visible); });
-      bar.insertBefore(chip, $("#btnThemeToggle") || null);
-    }
     var menu = $("#leftMenu");
     if (menu && !$("#btnElevatedToggle")) {
       var btn = document.createElement("button");

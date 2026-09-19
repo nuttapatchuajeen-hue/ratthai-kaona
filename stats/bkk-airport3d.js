@@ -1580,17 +1580,6 @@
   function buildUI() {
     if (uiBuilt) return;
     uiBuilt = true;
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipAirport3D")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip";
-      chip.id = "chipAirport3D";
-      chip.title = "ท่าอากาศยานดอนเมือง + สุวรรณภูมิ แบบ 3 มิติ พร้อมเครื่องบินจริงแบบสด (กดเพื่อเปิด/ปิด)";
-      chip.innerHTML = '<span>' + ico("plane") + ' สนามบิน 3 มิติ</span><span class="chip-count">–</span>';
-      chip.addEventListener("click", function () { setVisible(!visible); });
-      bar.insertBefore(chip, $("#btnThemeToggle") || null);
-    }
     var menu = $("#leftMenu");
     if (menu && !$("#btnAirport3DToggle")) {
       var btn = document.createElement("button");

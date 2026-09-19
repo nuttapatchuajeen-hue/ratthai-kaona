@@ -1700,15 +1700,6 @@
   function buildUI() {
     if (uiBuilt) return;
     uiBuilt = true;
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipPort3D")) {
-      var chip = document.createElement("button");
-      chip.type = "button"; chip.className = "chip"; chip.id = "chipPort3D";
-      chip.title = "ท่าเรือคลองเตย แหลมฉบัง ท่าเรือเอกชนริมเจ้าพระยา และท่าเรือโดยสาร แบบ 3 มิติ (กดเพื่อเปิด/ปิด)";
-      chip.innerHTML = '<span>' + ico("ship") + ' ท่าเรือ 3 มิติ</span><span class="chip-count">–</span>';
-      chip.addEventListener("click", function () { setVisible(!visible); });
-      bar.insertBefore(chip, $("#btnThemeToggle") || null);
-    }
     var menu = $("#leftMenu");
     if (menu && !$("#btnPort3DToggle")) {
       var mk = function (id, icon, label, title, fn) {

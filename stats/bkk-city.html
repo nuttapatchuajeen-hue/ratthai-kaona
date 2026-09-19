@@ -2313,9 +2313,6 @@
           <span>รถไฟฟ้า 10 สาย</span>
           <span class="chip-count">181</span>
         </button>
-        <button type="button" class="chip" id="chipDistricts">
-          <span>50 เขต</span>
-        </button>
         <button type="button" class="chip" id="chipNearStation" title="แลนด์มาร์กที่อยู่ในรัศมี 500 ม. จากสถานีรถไฟฟ้า — กดเพื่อกรอง">
           <span>ใกล้สถานี 500 ม.</span>
           <span class="chip-count" id="nearStationCount">–</span>
@@ -6065,27 +6062,34 @@
     });
 
     // 50 Districts Mode Toggle
-    $("#chipDistricts").addEventListener("click", function() {
-      if (STATE.appMode === "2d-districts") setAppMode("3d");
-      else setAppMode("2d-districts");
-    });
-    $("#btnDistrictsToggle").addEventListener("click", function() {
-      if (STATE.appMode === "2d-districts") setAppMode("3d");
-      else setAppMode("2d-districts");
-    });
+    if ($("#chipDistricts")) {
+      $("#chipDistricts").addEventListener("click", function() {
+        if (STATE.appMode === "2d-districts") setAppMode("3d");
+        else setAppMode("2d-districts");
+      });
+    }
+    if ($("#btnDistrictsToggle")) {
+      $("#btnDistrictsToggle").addEventListener("click", function() {
+        if (STATE.appMode === "2d-districts") setAppMode("3d");
+        else setAppMode("2d-districts");
+      });
+    }
 
     // Landmark Chip & Menu Toggle
     function toggleLandmarksLayer() {
       STATE.landmarks = !STATE.landmarks;
-      $("#chipLandmarks").classList.toggle("active", STATE.landmarks);
-      $("#btnLandmarksToggle").classList.toggle("active", STATE.landmarks);
+      if ($("#chipLandmarks")) $("#chipLandmarks").classList.toggle("active", STATE.landmarks);
+      if ($("#btnLandmarksToggle")) $("#btnLandmarksToggle").classList.toggle("active", STATE.landmarks);
       if (map.getLayer("landmarks-model")) {
         setLandmarkVisibility(STATE.landmarks ? "visible" : "none");
       }
+      if (window.BKK_LANDMARKS3D && window.BKK_LANDMARKS3D.setVisible) {
+        try { window.BKK_LANDMARKS3D.setVisible(STATE.landmarks); } catch (e) {}
+      }
       updatePins();
     }
-    $("#chipLandmarks").addEventListener("click", toggleLandmarksLayer);
-    $("#btnLandmarksToggle").addEventListener("click", toggleLandmarksLayer);
+    if ($("#chipLandmarks")) $("#chipLandmarks").addEventListener("click", toggleLandmarksLayer);
+    if ($("#btnLandmarksToggle")) $("#btnLandmarksToggle").addEventListener("click", toggleLandmarksLayer);
 
     // Transit Lines Chip & Menu Toggle
     function toggleTransitLayer() {

@@ -2214,17 +2214,6 @@
   function buildUI() {
     if (uiBuilt) return;
     uiBuilt = true;
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipRail3D")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip";
-      chip.id = "chipRail3D";
-      chip.title = "รางรถไฟฟ้ายกระดับ สถานี และขบวนรถ แบบ 3 มิติ (กดเพื่อเปิด/ปิด)";
-      chip.innerHTML = '<span>' + ico("train-front") + ' รถไฟฟ้า 3 มิติ</span><span class="chip-count">–</span>';
-      chip.addEventListener("click", function () { setVisible(!visible); });
-      bar.insertBefore(chip, $("#btnThemeToggle") || null);
-    }
     var menu = $("#leftMenu");
     if (menu && !$("#btnRail3DToggle")) {
       var btn = document.createElement("button");

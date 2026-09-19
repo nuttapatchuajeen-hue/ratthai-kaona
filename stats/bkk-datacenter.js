@@ -167,22 +167,7 @@
     var D = DATA();
     if (!D) return;
     injectCSS();
-
-    // 1) ชิปในแถบตัวกรองด้านบน
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipDataCenters")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip active";
-      chip.id = "chipDataCenters";
-      chip.title = "ศูนย์ข้อมูล (Data Center) ในกรุงเทพฯ — กดค้างที่ปุ่มเพื่อเปิด/ปิดชั้น";
-      chip.innerHTML = '<span>' + ico("building-2") + ' ศูนย์ข้อมูล</span><span class="chip-count">' +
-        D.rawList.length + '</span>';
-      chip.addEventListener("click", function() { openPanel("list"); });
-      bar.insertBefore(chip, bar.children[3] || null);
-    }
-
-    // 2) ปุ่มเปิด/ปิดชั้นในเมนูซ้าย
+    // 1) ปุ่มเปิด/ปิดชั้นในเมนูซ้าย
     var menu = $("#leftMenu");
     if (menu && !$("#btnDataCentersToggle")) {
       var btn = document.createElement("button");

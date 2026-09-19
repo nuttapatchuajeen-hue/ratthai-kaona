@@ -280,7 +280,7 @@
     else if (s === "ready" && M) cnt.textContent = M.items.length + " แห่ง";
   }
   function syncButtons() {
-    var chip = $("#chipLandmark3D"), btn = $("#btnLandmark3DToggle");
+    var chip = $("#chipLandmark3D"), btn = $("#btnLandmarksToggle") || $("#btnLandmark3DToggle");
     if (chip) chip.classList.toggle("active", visible);
     if (btn) btn.classList.toggle("active", visible);
   }
@@ -307,19 +307,8 @@
   function buildUI() {
     if (uiBuilt) return;
     uiBuilt = true;
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipLandmark3D")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip";
-      chip.id = "chipLandmark3D";
-      chip.title = "ตึกและสถานที่สำคัญแบบโมเดล 3 มิติ (กดเพื่อเปิด/ปิด)";
-      chip.innerHTML = '<span>' + ico("landmark") + ' แลนด์มาร์ก 3 มิติ</span><span class="chip-count">–</span>';
-      chip.addEventListener("click", function () { setVisible(!visible); });
-      bar.insertBefore(chip, $("#btnThemeToggle") || null);
-    }
     var menu = $("#leftMenu");
-    if (menu && !$("#btnLandmark3DToggle")) {
+    if (menu && !$("#btnLandmarksToggle") && !$("#btnLandmark3DToggle")) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "menu-btn";

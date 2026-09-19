@@ -171,21 +171,7 @@
     if (!D) return;
     injectCSS();
 
-    // 1) ชิปในแถบตัวกรองด้านบน
-    var bar = $(".filter-bar");
-    if (bar && !$("#chipZoning")) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip active";
-      chip.id = "chipZoning";
-      chip.title = "ผังสี กทม. — กดเพื่อเปิดแผงวิเคราะห์ FAR / OSR และศักยภาพที่ดิน";
-      chip.innerHTML = '<span>' + ico("map-pin") + ' ผังสี กทม.</span><span class="chip-count">' +
-        D.zones.length + ' โซน</span>';
-      chip.addEventListener("click", function() { openPanel("list"); });
-      bar.insertBefore(chip, bar.children[2] || null);
-    }
-
-    // 2) ปุ่มเปิด/ปิดชั้นในเมนูซ้าย
+    // 1) ปุ่มเปิด/ปิดชั้นในเมนูซ้าย
     var menu = $("#leftMenu");
     if (menu && !$("#btnZoningToggle")) {
       var btn = document.createElement("button");
