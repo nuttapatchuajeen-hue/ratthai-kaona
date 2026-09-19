@@ -1,7 +1,7 @@
 /**
  * bkk-3d-host.js
  * "ฉาก 3 มิติกลาง" ของ bkk-city.html — custom layer ของ MapLibre + three.js หนึ่งตัว ใช้ร่วมกันทุกโมดูล
- * (ตอนนี้มี bkk-elevated.js = ทางด่วน/ทางยกระดับ และ bkk-rail3d.js = รางรถไฟฟ้า)
+ * (ตอนนี้มี bkk-elevated.js = ทางด่วน/ทางยกระดับ · bkk-rail3d.js = รางรถไฟฟ้า · bkk-airport3d.js = สนามบิน)
  *
  * หน้าที่: โหลด three.js · สร้างฉาก/กล้อง/แสง · เพิ่ม-ย้ายชั้นให้อยู่ถูกที่ · แปลงพิกัด · ยิงเรย์หาสิ่งที่ถูกคลิก
  *
@@ -197,6 +197,29 @@
     if (map) map.getCanvas().style.cursor = mod ? "pointer" : "";
   }
 
+  /* ตำแหน่งกล้องในพิกัดฉาก — จุดที่ x, y, w ของ clip เป็นศูนย์พร้อมกัน (แถว 0, 1, 3 ของเมทริกซ์ฉาย) · ใช้เลือก LOD ตามระยะ */
+  var _m3 = null, _eye = null;
+  function eye() {
+    if (!mvpReady) return null;
+    if (!_m3) { _m3 = new T.Matrix3(); _eye = new T.Vector3(); }
+    var e = camera.projectionMatrix.elements;
+    _m3.set(e[0], e[4], e[8], e[1], e[5], e[9], e[3], e[7], e[11]);
+    if (_m3.determinant() === 0) return null;
+    _m3.invert();
+    return _eye.set(-e[12], -e[13], -e[15]).applyMatrix3(_m3);
+  }
+
+  /* จุดในฉาก → พิกัดจอ (px ของ canvas) · null ถ้าอยู่หลังกล้อง — ใช้วางป้ายชื่อ HTML ตามวัตถุ 3 มิติ */
+  var _pv = null;
+  function project(x, y, z) {
+    if (!mvpReady) return null;
+    if (!_pv) _pv = new T.Vector4();
+    _pv.set(x, y, z, 1).applyMatrix4(camera.projectionMatrix);
+    if (_pv.w <= 0) return null;
+    var cv = map.getCanvas();
+    return { x: (_pv.x / _pv.w + 1) / 2 * cv.clientWidth, y: (1 - _pv.y / _pv.w) / 2 * cv.clientHeight, d: _pv.w };
+  }
+
   /* หัวเสาแบบบานออก (ทรงกรวยสี่เหลี่ยม) — เสาตอม่อจริงของไทยคอดที่โคนแล้วบานรับพื้นทาง
      หน่วยกล่อง 1×1×1: x = ตามแนวทาง, y = ขวางแนว (สเกลด้วยความกว้างที่ต้องรับ), z = 0 ที่โคนหัวเสา ถึง 1 ที่ใต้พื้นทาง */
   var headGeo = null;
@@ -247,6 +270,8 @@
     shadowMaterial: shadowMaterial,
     /* เงาของจุดที่สูง h ม. เลื่อนไปทางไหน (ม. ตะวันออก, ม. เหนือ) — ตามทิศแดด */
     sunShift: function (h) { return [-SUN[0] / SUN[2] * h, -SUN[1] / SUN[2] * h]; },
+    eye: eye,
+    project: project,
     renderer: function () { return renderer; },
     THREE: function () { return T; },
     scene: function () { return scene; },

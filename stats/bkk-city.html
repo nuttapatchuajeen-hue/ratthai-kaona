@@ -3068,6 +3068,7 @@
 <script src="bkk-3d-host.js"></script>
 <script src="bkk-elevated.js"></script>
 <script src="bkk-rail3d.js"></script>
+<script src="bkk-airport3d.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -4165,6 +4166,11 @@
     // 🚈 รางรถไฟฟ้า สถานี และขบวนรถ 3 มิติ — โมดูลแยกใน bkk-rail3d.js (ใช้ฉากกลางร่วมกับทางด่วน)
     if (window.BKK_RAIL3D) {
       try { window.BKK_RAIL3D.mount(map); } catch (e) { console.warn("rail 3D layer:", e); }
+    }
+
+    // ✈️ สนามบินดอนเมือง + สุวรรณภูมิ 3 มิติ + เครื่องบินจริงแบบสด — โมดูลแยกใน bkk-airport3d.js (ฉากกลางเดียวกัน)
+    if (window.BKK_AIRPORT3D) {
+      try { window.BKK_AIRPORT3D.mount(map); } catch (e) { console.warn("airport 3D layer:", e); }
     }
   }
 
@@ -6585,6 +6591,8 @@ window.MD_DATA_NOTICE = {
     { t: 'มวลอาคาร 3 มิติของแลนด์มาร์ก', o: 'OpenStreetMap ผ่าน Overpass API · ดึงข้อมูล 3 ก.ย. 2569 · ODbL', u: 'https://www.openstreetmap.org' },
     { t: 'ทางด่วน ทางยกระดับ สะพานข้ามแยก 2,553 ช่วง (~1,504 กม. รวมช่วงที่กำลังก่อสร้าง)', o: 'OpenStreetMap ผ่าน Overpass API · ดึงข้อมูล 17–18 ก.ย. 2569 · ODbL · วาดด้วย three.js', u: 'https://www.openstreetmap.org' },
     { t: 'รางรถไฟฟ้ายกระดับ 10 สาย (~393 กม.) และสถานี 3 มิติ', o: 'แนวราง: OpenStreetMap ผ่าน Overpass API 18 ก.ย. 2569 (ODbL) · ชื่อ/รหัสสถานี: ชุดข้อมูลรถไฟฟ้าของหน้านี้ · ตัวสถานีเป็นแบบจำลองมาตรฐาน', u: 'https://www.openstreetmap.org' },
+    { t: 'สนามบินดอนเมือง + สุวรรณภูมิ 3 มิติ (ทางวิ่ง 5 เส้น ทางขับ อาคาร 568 หลัง หลุมจอด 193 หลุม)', o: 'OpenStreetMap ผ่าน Overpass API 19 ก.ย. 2569 (ODbL) · สีหลังคาและลายหลังคาอาคารผู้โดยสาร: ภาพดาวเทียม Esri World Imagery · สถานะทางวิ่งที่ 3: AIP ของ กพท. · เครื่องบินที่จอดเป็นภาพประกอบ', u: 'https://www.openstreetmap.org' },
+    { t: 'เที่ยวบินสด (ตำแหน่งเครื่องบินจริง)', o: 'ADS-B จากเครือข่ายอาสาสมัคร adsb.lol (ODbL) ผ่าน /api/flights ของเว็บนี้ · สำรอง adsb.fi · อัปเดตทุก 5 วินาที', u: 'https://adsb.lol' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },
     { t: 'ศูนย์ข้อมูล (Data Center)', o: 'พิกัด: PeeringDB + OpenStreetMap/Nominatim · สถิติผลกระทบ: กฟน., กปน., เครือข่าย JustPow, สำนักนายกฯ, BOI', u: 'https://www.peeringdb.com' },

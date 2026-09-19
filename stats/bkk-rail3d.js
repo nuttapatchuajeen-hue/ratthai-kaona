@@ -13,7 +13,9 @@
  *   - สถานี: แบบประจำสาย (หลังคา 7 ทรง) · ชานชาลาข้าง/เกาะกลาง/สองชั้นตามรางจริง · ชั้นขายตั๋วผนังกระจก
  *     · บันได บันไดเลื่อน ลิฟต์ ตามตำแหน่ง OSM · สถานีร่วมที่ข้ามกันคนละระดับ (ดูหัวข้อ "สถานี")
  *   - เงานุ่มบนพื้นใต้ทางวิ่งและสถานี
+ *   - ระบบจ่ายไฟเหนือหัว 25 kV ของสายสีแดงและ ARL: เสา แขนยื่น โครงข้ามราง และสาย (ดูหัวข้อ "ระบบจ่ายไฟเหนือหัว")
  *   - ขบวนรถ: วิ่งไปตามรางจริง (เปิด/ปิดได้) — เปิดเมื่อซูม ≥ 13 เท่านั้น
+ *     รูปทรง/ลายรถจริงรายสาย + จำนวนตู้ตามที่ให้บริการ จาก bkk-train-models.js (ซูมใกล้ = รายละเอียดเต็ม)
  *
  * ⚠ ระดับรางเป็นค่าประมาณรายสาย ไม่ใช่ค่าที่วัดจริง (ดูหมายเหตุในไฟล์ข้อมูล)
  */
@@ -21,6 +23,7 @@
   "use strict";
 
   var DATA_URL = "bkk-rail-data.js";
+  var MODELS_URL = "bkk-train-models.js";   // แบบรถไฟฟ้ารายสาย (รูปทรง + ลายรถ)
   var MOD_ID = "rail";
   var LS_KEY = "bkk-rail3d-on";
   var LS_TRAIN = "bkk-rail3d-trains";
@@ -31,12 +34,13 @@
   var TRAIN_SPEED = 19;         // ม./วินาที ≈ 68 กม./ชม.
   var TRAIN_ACC = 1.0;          // อัตราเร่ง/หน่วงเวลาเข้า-ออกสถานี (ม./วินาที²)
   var DWELL = 9;                // เวลาจอดรับ-ส่งผู้โดยสาร (วินาที)
-  var CAR_LEN = 20, CAR_W = 3.1, CAR_H = 3.5, CAR_GAP = 1.2;
+  var TRAIN_LOD_ZOOM = 15.8;    // ขบวนรายละเอียดเต็ม (โบกี้ ล้อ แอร์ แพนโทกราฟ) เมื่อซูมถึงระดับนี้
+  var TRAIN_LOD_REACH = 1.6;    // …และอยู่ไม่ไกลกว่า 1.6 เท่าของระยะกล้อง→กลางจอ (ไกลกว่านั้นใช้รูปทรงอย่างง่าย)
 
   var H = null, T = null, D = null, map = null;
   var visible = true, trainsOn = true, loading = null, failed = false;
   var group = null, model = null, uiBuilt = false;
-  var matColor = {}, matSteel = null, matDark = null, hoverMat = null, selMat = null;
+  var matColor = {}, matSteel = null, hoverMat = null, selMat = null;
   var matPaint = null, matRoofTop = null, matGlass = null, matLouvre = null, matStair = null, matPSD = null;
   var TEX = {}, texList = [];
   var hoverKey = null, selKey = null, hoverMesh = null, selMesh = null;
@@ -63,7 +67,8 @@
     setChipState("loading");
     loading = Promise.all([
       H.ensure(),
-      window.BKK_RAIL ? Promise.resolve() : loadScript(DATA_URL)
+      window.BKK_RAIL ? Promise.resolve() : loadScript(DATA_URL),
+      window.BKK_TRAIN_MODELS ? Promise.resolve() : loadScript(MODELS_URL)
     ]).then(function () {
       T = H.THREE(); D = window.BKK_RAIL;
       if (!T || !D) throw new Error("THREE/BKK_RAIL missing");
@@ -174,8 +179,16 @@
         BR.box(mx + px * off, my + py * off, z1, z1 + rh, L, 0.12 * k, ux, uy);
         BR.box(mx - px * off, my - py * off, z1, z1 + rh, L, 0.12 * k, ux, uy);
         var eo = (gw / 2 - 0.16) * k;
-        BL.box(mx + px * eo, my + py * eo, z1, z1 + 0.55 * k, L, 0.3 * k, ux, uy);
-        BL.box(mx - px * eo, my - py * eo, z1, z1 + 0.55 * k, L, 0.3 * k, ux, uy);
+        [1, -1].forEach(function (sg) {
+          if (!twinOverlap(R, sg, a.s, b.s)) { BL.box(mx + px * eo * sg, my + py * eo * sg, z1, z1 + 0.55 * k, L, 0.3 * k, ux, uy); return; }
+          // คานกว้างสายสีแดง: ช่วงที่มีคู่อยู่ด้านนี้ไม่มีราวด้านใน — ตัดราวเป็นท่อนละ ≤ 20 ม. แล้วเช็กทีละท่อน
+          var np = Math.max(1, Math.ceil((b.s - a.s) / 20));
+          for (var q = 0; q < np; q++) {
+            if (inTwin(R, sg, a.s + (b.s - a.s) * (q + 0.5) / np)) continue;
+            var fm = (q + 0.5) / np;
+            BL.box(a.x + (b.x - a.x) * fm + px * eo * sg, a.y + (b.y - a.y) * fm + py * eo * sg, z1, z1 + 0.55 * k, L / np, 0.3 * k, ux, uy);
+          }
+        });
       }
     }
     return { c0: c0, c1: BC.i.length };
@@ -1448,13 +1461,327 @@
   }
 
   /* --------------------------------------------------------------- โมเดล */
+  /* ——— ค้นรางตามแนวขวาง: ตารางช่วงราง 30 ม. → crossAt(P, u, nx, ny, k, W) คืนรางที่ตัดเส้นขวาง P + n·t
+         (t เป็นเมตร, |t| ≤ W) และวิ่งขนานกัน → [{R, t, h, s}] เรียงตาม t (ใช้ทั้งคานกว้างสายสีแดงและเสาไฟฟ้า) */
+  function trackGrid(list) {
+    var CELL = 30, sg = {};
+    list.forEach(function (R) {
+      for (var i = 0; i < R.pts.length - 1; i++) {
+        var a = R.pts[i], b = R.pts[i + 1], L = Math.hypot(b.x - a.x, b.y - a.y), n = Math.max(1, Math.ceil(L / (CELL / 2))), seen = {};
+        for (var j = 0; j <= n; j++) {
+          var key = Math.floor((a.x + (b.x - a.x) * j / n) / CELL) + ":" + Math.floor((a.y + (b.y - a.y) * j / n) / CELL);
+          if (seen[key]) continue;
+          seen[key] = 1;
+          (sg[key] = sg[key] || []).push([R, i]);
+        }
+      }
+    });
+    return function crossAt(P, u, nx, ny, k, W) {
+      var best = {}, done = {}, out = [];
+      // ก้าวละ 2 ม. — ถ้าก้าวยาว เส้นขวางที่เฉียดมุมช่องตารางจะข้ามช่องที่มีรางคู่ไป (เคยทำให้พื้นคานกว้างขาดเป็นช่อง)
+      for (var t = -W; t <= W + 1e-6; t += 2) {
+        var cell = sg[Math.floor((P.x + nx * t * k) / CELL) + ":" + Math.floor((P.y + ny * t * k) / CELL)];
+        if (!cell) continue;
+        cell.forEach(function (it) {
+          var R = it[0], i = it[1], id = R.idx + ":" + i;
+          if (done[id]) return;
+          done[id] = 1;
+          var A = R.pts[i], B = R.pts[i + 1], ex = B.x - A.x, ey = B.y - A.y, el2 = Math.hypot(ex, ey);
+          if (el2 < 1e-6 || Math.abs((ex * u[0] + ey * u[1]) / el2) < 0.93) return;
+          var Nx = nx * k, Ny = ny * k, den = Nx * ey - Ny * ex;
+          if (Math.abs(den) < 1e-9) return;
+          var ax = A.x - P.x, ay = A.y - P.y, tt = (ax * ey - ay * ex) / den, v = (ax * Ny - ay * Nx) / den;
+          if (v < 0 || v > 1 || Math.abs(tt) > W) return;
+          var b = best[R.idx];
+          if (!b || Math.abs(tt) < Math.abs(b.t)) best[R.idx] = { R: R, t: tt, h: A.h + (B.h - A.h) * v, s: A.s + (B.s - A.s) * v };
+        });
+      }
+      for (var id in best) out.push(best[id]);
+      return out.sort(function (a, b) { return a.t - b.t; });
+    };
+  }
+
+  /* ================================================= คานกว้างสายสีแดง (ทางคู่ + รางรถไฟทางไกลตรงกลาง)
+     OSM แยกรางสายสีแดงสองรางห่างกัน 8.5–16.5 ม. เพราะตรงกลางคือรางรถไฟทางไกลของ รฟท. (ไม่อยู่ใน 10 สายของหน้านี้)
+     ของจริงเป็นคานผืนเดียว → เติมพื้นคานระหว่างสองราง · ไม่วาดราวสีตามสายด้านใน · วางรางทางไกล (ทางเมตร) ตรงกลาง 1–2 ราง
+     ในรอยสถานีไม่เติม (สถานีจัดชานชาลาของตัวเอง) · เสาไฟฟ้าช่วงนี้เป็นโครงข้ามทั้งผืน (ดู buildOCS) */
+  var TWIN_LINES = { "srt-dark-red": 1, "srt-light-red": 1 };
+  var TWIN_MIN = 8.5, TWIN_MAX = 16.5, TWIN_STEP = 10, TWIN_DH = 1.5;
+  var DECK_HW = 2.3, DECK_D = 2.0, METRE = 1.0;
+
+  // สองรางจาก crossAt เป็นคู่บนคานกว้างเดียวกันหรือไม่
+  function isTwin(a, b) {
+    var d = Math.abs(a.t - b.t);
+    return !!(TWIN_LINES[a.R.line] && TWIN_LINES[b.R.line] && d >= TWIN_MIN && d <= TWIN_MAX && Math.abs(a.h - b.h) < TWIN_DH);
+  }
+  function twinOverlap(R, side, s0, s1) {
+    var iv = R.twinIv && R.twinIv[String(side)];
+    if (!iv) return false;
+    for (var i = 0; i < iv.length; i++) if (iv[i][0] <= s1 && iv[i][1] >= s0) return true;
+    return false;
+  }
+  function inTwin(R, side, s) {
+    var iv = R.twinIv && R.twinIv[String(side)];
+    if (!iv) return false;
+    for (var i = 0; i < iv.length; i++) if (s >= iv[i][0] && s <= iv[i][1]) return true;
+    return false;
+  }
+
+  /* เดินตามรางสายสีแดงทุก 10 ม. หาคู่แฝดซ้าย/ขวา → R.twinIv[side] = ช่วง s ที่ไม่มีราวด้านนั้น
+     คืนรายการ "ช่วงต่อเนื่อง" (นับจากรางที่ idx น้อยกว่าของคู่ จะได้ไม่เติมซ้ำ) */
+  function findTwins(tracks, inStation) {
+    var red = tracks.filter(function (R) { return TWIN_LINES[R.line] && !R.yard && R.len > 50; });
+    if (red.length < 2) return [];
+    var crossAt = trackGrid(red), o = {}, o2 = {}, runs = [];
+    red.forEach(function (R) {
+      R.twinIv = { "1": [], "-1": [] };
+      var cur = { "1": null, "-1": null };
+      for (var s = 0; s <= R.len + TWIN_STEP - 1e-6; s += TWIN_STEP) {
+        var ss = Math.min(s, R.len);
+        sampleTrack(R, Math.min(R.len, ss + 3), o);
+        sampleTrack(R, Math.max(0, ss - 3), o2);
+        var ux = o.x - o2.x, uy = o.y - o2.y, ul = Math.hypot(ux, uy);
+        if (ul < 1e-6) continue;
+        ux /= ul; uy /= ul;
+        sampleTrack(R, ss, o);
+        var P = { x: o.x, y: o.y, h: o.h, k: o.k }, nx = -uy, ny = ux;
+        var cs = crossAt(P, [ux, uy], nx, ny, o.k, TWIN_MAX + 1);
+        [1, -1].forEach(function (side) {
+          var key = String(side), near = null;
+          // รางที่ใกล้ที่สุดด้านนี้ต้องเป็นคู่แฝด (ไม่มีรางสายสีแดงอื่นคั่น)
+          cs.forEach(function (c) { if (c.R !== R && c.t * side > 0.5 && (!near || Math.abs(c.t) < Math.abs(near.t))) near = c; });
+          if (!near || !isTwin({ R: R, t: 0, h: P.h }, near)) { cur[key] = null; return; }
+          var smp = { s: ss, x: P.x, y: P.y, h: P.h, k: P.k, nx: nx, ny: ny, t: near.t, h2: near.h,
+            st: inStation(P.x + nx * near.t / 2 * P.k, P.y + ny * near.t / 2 * P.k) };
+          var iv = R.twinIv[key], last = iv[iv.length - 1];
+          if (cur[key] && cur[key].partner === near.R && ss - last[1] <= TWIN_STEP * 1.6) { last[1] = ss; cur[key].pts.push(smp); }
+          else {
+            iv.push([ss, ss]);
+            cur[key] = { R: R, partner: near.R, side: side, pts: [smp] };
+            if (R.idx < near.R.idx) runs.push(cur[key]);
+          }
+        });
+      }
+      // ขยายช่วงไปครึ่งก้าวทั้งสองปลาย ให้ราวด้านในหายต่อเนื่องถึงรอยต่อ
+      ["1", "-1"].forEach(function (key) { R.twinIv[key].forEach(function (iv) { iv[0] -= TWIN_STEP / 2; iv[1] += TWIN_STEP / 2; }); });
+    });
+    return runs;
+  }
+
+  // ลดจุดบนช่วงที่เกือบตรง (คลาดจากเส้นตรง < 0.1 ม. และระยะคู่เปลี่ยน < 0.15 ม.) → ท่อนคาน/รางยาวขึ้น สามเหลี่ยมน้อยลง
+  function simplifyTwin(P) {
+    var out = [P[0]], i0 = 0;
+    for (var j = 2; j < P.length; j++) {
+      var a = P[i0], b = P[j], dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1, bad = false;
+      for (var m = i0 + 1; m < j && !bad; m++) {
+        var q = P[m], f = (m - i0) / (j - i0);
+        if (Math.abs((q.x - a.x) * dy - (q.y - a.y) * dx) / L / q.k > 0.1 || Math.abs(q.t - (a.t + (b.t - a.t) * f)) > 0.15) bad = true;
+      }
+      if (bad) { out.push(P[j - 1]); i0 = j - 1; }
+    }
+    out.push(P[P.length - 1]);
+    return out;
+  }
+  function quad4(B, a, b, c, d) {
+    var s = B.p.length / 3;
+    B.v(a[0], a[1], a[2]); B.v(b[0], b[1], b[2]); B.v(c[0], c[1], c[2]); B.v(d[0], d[1], d[2]);
+    B.q(s, s + 1, s + 2, s + 3);
+  }
+  // พื้นคานระหว่างขอบในของสองราง + รางทางไกลตรงกลาง (ทางเมตร) ลงก้อนของพื้นที่นั้น
+  function emitTwinRun(run, P, chunkFor) {
+    var side = run.side, ch = chunkFor(P[0].x, P[0].y);
+    var pt = function (p, off, z) { return [p.x + p.nx * off * p.k, p.y + p.ny * off * p.k, z * p.k]; };
+    var rows = P.map(function (p) {
+      var e = side * DECK_HW, f = p.t - side * DECK_HW;
+      return { et: pt(p, e, p.h), ft: pt(p, f, p.h2), eb: pt(p, e, p.h - DECK_D), fb: pt(p, f, p.h2 - DECK_D) };
+    });
+    for (var i = 0; i + 1 < rows.length; i++) {
+      var A = rows[i], B = rows[i + 1];
+      quad4(ch.BC, A.et, B.et, B.ft, A.ft);
+      quad4(ch.BC, A.eb, A.fb, B.fb, B.eb);
+    }
+    [rows[0], rows[rows.length - 1]].forEach(function (r) { quad4(ch.BC, r.et, r.ft, r.fb, r.eb); });
+    var nm = Math.abs(P[0].t) >= 11 ? 2 : 1;
+    for (var q = 1; q <= nm; q++) {
+      var f = q / (nm + 1);
+      [-METRE / 2, METRE / 2].forEach(function (g) {
+        for (var i = 0; i + 1 < P.length; i++) {
+          var a = P[i], b = P[i + 1], pa = pt(a, a.t * f + g, 0), pb = pt(b, b.t * f + g, 0);
+          var dx = pb[0] - pa[0], dy = pb[1] - pa[1], L = Math.hypot(dx, dy);
+          if (L < 1e-3) continue;
+          var z = ((a.h + (a.h2 - a.h) * f) + (b.h + (b.h2 - b.h) * f)) / 2 * a.k;
+          ch.BR.box((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, z, z + 0.18 * a.k, L, 0.12 * a.k, dx / L, dy / L);
+        }
+      });
+    }
+    return P.length;
+  }
+  function emitTwinDecks(runs, chunkFor) {
+    var n = 0;
+    runs.forEach(function (run) {
+      var seg = [];
+      var flush = function () { if (seg.length >= 2) n += emitTwinRun(run, simplifyTwin(seg), chunkFor); seg = []; };
+      // เว้นรอยสถานี แต่ยื่นเข้าไปหนึ่งจุด (ซ่อนใต้ชานชาลา) ไม่ให้เหลือช่องโหว่ที่หัว-ท้ายสถานี
+      run.pts.forEach(function (p, i) {
+        if (p.st) { if (seg.length) { seg.push(p); flush(); } return; }
+        if (!seg.length && i && run.pts[i - 1].st) seg.push(run.pts[i - 1]);
+        seg.push(p);
+      });
+      flush();
+    });
+    return n;
+  }
+
+  /* ================================================= ระบบจ่ายไฟเหนือหัว 25 kV (สายสีแดง, ARL)
+     เสาเหล็กตั้งบนขอบคานทุก ~50 ม. · ทางคู่ = เสาริมนอกสองข้าง แต่ละต้นยื่นแขน (cantilever) ไปเหนือรางของตัวเอง
+     · ทางตั้งแต่ 3 รางขึ้นไป = โครงข้ามราง (portal) ห้อยตัวยึดสายลงเหนือแต่ละราง · ในสถานีไม่ปักเสา (สายแขวนจากหลังคา)
+     สาย: สายส่งไฟ (contact wire) สูงคงที่ + สายแขวน (messenger) ตกท้องช้างระหว่างจุดรับ + สายห้อย (dropper) — วาดเป็นเส้น 1 px */
+  var OCS_LINES = { "srt-dark-red": 1, "srt-light-red": 1, "arl": 1 };
+  var OCS_SPAN = 50;            // ระยะห่างเสา (ม.)
+  var OCS_CW = 5.5;             // สายส่งไฟ สูงจากหัวราง (แพนโทกราฟของรถแตะพอดี)
+  var OCS_MW = 6.9, OCS_SAG = 0.75;   // สายแขวน ณ จุดรับ / ตกท้องช้างกลางช่วง
+  var OCS_TOP = 7.7;            // ยอดเสา สูงจากหัวราง
+  var OCS_MAST = 2.2;           // ระยะเสาจากศูนย์กลางรางริมนอก (บนแนวราวขอบคาน)
+  var OCS_ZOOM = 13.6, WIRE_ZOOM = 15;
+  var WIRE_COLOR = { dark: "#8e9aa8", light: "#3c434b", sunset: "#5a4a40" };
+  var matOcs = null, matIns = null, matWire = null;
+
+  // แท่งเหลี่ยมจากจุด a ถึง b (พิกัดฉาก) หน้าตัด w×w · cap = ปิดหัว-ท้าย (เสา — มองจากบนจะเห็นยอด)
+  function beam(B, a, b, w, cap) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dx, dy, dz) || 1;
+    dx /= L; dy /= L; dz /= L;
+    var e1x = -dy, e1y = dx, l1 = Math.hypot(e1x, e1y);
+    if (l1 < 1e-6) { e1x = 1; e1y = 0; l1 = 1; }
+    e1x /= l1; e1y /= l1;
+    var e2x = -dz * e1y, e2y = dz * e1x, e2z = dx * e1y - dy * e1x;      // d × e1
+    var h = w / 2, c = [[-h, -h], [h, -h], [h, h], [-h, h]], s = B.p.length / 3, i;
+    for (i = 0; i < 4; i++) B.v(a[0] + e1x * c[i][0] + e2x * c[i][1], a[1] + e1y * c[i][0] + e2y * c[i][1], a[2] + e2z * c[i][1]);
+    for (i = 0; i < 4; i++) B.v(b[0] + e1x * c[i][0] + e2x * c[i][1], b[1] + e1y * c[i][0] + e2y * c[i][1], b[2] + e2z * c[i][1]);
+    for (i = 0; i < 4; i++) B.q(s + i, s + (i + 1) % 4, s + 4 + (i + 1) % 4, s + 4 + i);
+    if (cap) { B.q(s + 3, s + 2, s + 1, s); B.q(s + 4, s + 5, s + 6, s + 7); }
+  }
+
+  function buildOCS(tracks, inStation) {
+    var el = tracks.filter(function (R) { return OCS_LINES[R.line] && R.len > 30; });
+    if (!el.length) return null;
+    var th = H.theme();
+    matOcs = new T.MeshPhongMaterial({ color: "#a3acb6", flatShading: true, shininess: 40, specular: 0x444444, side: T.DoubleSide });
+    matIns = new T.MeshPhongMaterial({ color: "#6b5646", flatShading: true, shininess: 20, specular: 0x222222, side: T.DoubleSide });
+    matWire = new T.LineBasicMaterial({ color: WIRE_COLOR[th] || WIRE_COLOR.dark, transparent: true, opacity: 0.9 });
+
+    var crossAt = trackGrid(el);
+
+    var chunks = {}, contacts = {}, count = 0, o = {}, o2 = {};
+    function chunkOf(x, y) {
+      var ck = Math.floor(x / CHUNK_M) + ":" + Math.floor(y / CHUNK_M);
+      return chunks[ck] || (chunks[ck] = { B: new Builder(), BI: new Builder(), W: [] });
+    }
+    function near(R, s, d) {
+      var L = contacts[R.idx];
+      if (L) for (var i = 0; i < L.length; i++) if (Math.abs(L[i] - s) < d) return true;
+      return false;
+    }
+    // แขนยื่นจากเสา (ตำแหน่งขวาง m) ไปเหนือราง c: ลูกถ้วยฉนวนที่โคน + ท่อบน + ค้ำเฉียง + แขนยึดสายส่งไฟ
+    function cantilever(ch, F, m, c) {
+      var sg2 = c.t > m ? 1 : -1, r = c.rail, zUp = r + OCS_MW + 0.35, zLo = r + OCS_CW + 0.6, ti = m + sg2 * 0.75;
+      beam(ch.BI, F(m, zUp), F(ti, zUp), 0.15);
+      beam(ch.BI, F(m, zLo), F(ti, zLo), 0.15);
+      beam(ch.B, F(ti, zUp), F(c.t + sg2 * 0.35, zUp), 0.08);
+      beam(ch.B, F(ti, zLo), F(c.t, r + OCS_MW), 0.08);
+      beam(ch.B, F(c.t, zUp), F(c.t, r + OCS_MW), 0.06);
+      beam(ch.B, F(c.t - sg2 * 0.9, r + OCS_CW + 0.4), F(c.t, r + OCS_CW), 0.05);
+    }
+    el.slice().sort(function (a, b) { return b.len - a.len; }).forEach(function (R) {
+      var s0 = R.len < OCS_SPAN ? R.len / 2 : OCS_SPAN / 2;
+      for (var s = s0; s < R.len - 3; s += OCS_SPAN) {
+        if (near(R, s, 30)) continue;
+        sampleTrack(R, Math.min(R.len, s + 3), o);
+        sampleTrack(R, Math.max(0, s - 3), o2);
+        var ux = o.x - o2.x, uy = o.y - o2.y, ul = Math.hypot(ux, uy);
+        if (ul < 1e-6) continue;
+        ux /= ul; uy /= ul;
+        sampleTrack(R, s, o);
+        var P = { x: o.x, y: o.y }, k = o.k, h0 = o.h, nx = -uy, ny = ux;
+        var cs = crossAt(P, [ux, uy], nx, ny, k, 20), at = -1, i;
+        for (i = 0; i < cs.length; i++) if (cs[i].R === R) at = i;
+        if (at < 0) { cs = [{ R: R, t: 0, h: h0, s: s }]; at = 0; }
+        // กลุ่มรางบนคานเดียวกัน: ห่างกันไม่เกิน 7.5 ม. และระดับใกล้กัน…
+        var lo = at, hi = at;
+        // …หรือเป็นคู่สายสีแดงบนคานกว้าง (ห่าง 8.5–16.5 ม.)
+        while (lo > 0 && (cs[lo].t - cs[lo - 1].t <= 7.5 && Math.abs(cs[lo - 1].h - h0) < 3 || isTwin(cs[lo], cs[lo - 1]))) lo--;
+        while (hi < cs.length - 1 && (cs[hi + 1].t - cs[hi].t <= 7.5 && Math.abs(cs[hi + 1].h - h0) < 3 || isTwin(cs[hi], cs[hi + 1]))) hi++;
+        var cl = cs.slice(lo, hi + 1).map(function (c) { return { R: c.R, t: c.t, s: c.s, rail: c.h + 0.18 }; });
+        cl.forEach(function (c) { (contacts[c.R.idx] = contacts[c.R.idx] || []).push(c.s); });
+        if (inStation(P.x, P.y)) continue;                    // ในสถานี: สายแขวนจากโครงหลังคา ไม่ปักเสา
+        var F = function (t, z) { return [P.x + nx * t * k, P.y + ny * t * k, z * k]; };
+        var ch = chunkOf(P.x, P.y), n = cl.length, rMax = 0;
+        cl.forEach(function (c) { rMax = Math.max(rMax, c.rail); });
+        var mL = cl[0].t - OCS_MAST, mR = cl[n - 1].t + OCS_MAST;
+        var masts = n === 1 ? [[mL, cl[0]]] : [[mL, cl[0]], [mR, cl[n - 1]]];
+        masts.forEach(function (mm) { beam(ch.B, F(mm[0], mm[1].rail - 0.18), F(mm[0], rMax + OCS_TOP), 0.32, true); });
+        // ทางคู่ชิดกัน = แขนยื่นจากเสาริม · ตั้งแต่ 3 ราง หรือคู่บนคานกว้าง = โครงข้ามทั้งผืน
+        var wide = n >= 3 || (n === 2 && cl[1].t - cl[0].t > 7.5);
+        if (!wide) masts.forEach(function (mm) { cantilever(ch, F, mm[0], mm[1]); });
+        else {
+          // โครงข้ามราง: คานบน-ล่าง + ค้ำทแยง · ห้อยลูกถ้วยและตัวยึดสายลงเหนือแต่ละราง
+          var zt = rMax + OCS_TOP - 0.12, zb = zt - 0.7, span = mR - mL, nd = Math.max(2, Math.round(span / 2.5));
+          beam(ch.B, F(mL, zt), F(mR, zt), 0.2);
+          beam(ch.B, F(mL, zb), F(mR, zb), 0.16);
+          for (i = 0; i < nd; i++) beam(ch.B, F(mL + span * i / nd, i % 2 ? zt : zb), F(mL + span * (i + 1) / nd, i % 2 ? zb : zt), 0.07);
+          cl.forEach(function (c) {
+            beam(ch.BI, F(c.t, zb), F(c.t, zb - 0.55), 0.15);
+            beam(ch.B, F(c.t, zb - 0.55), F(c.t, c.rail + OCS_CW), 0.06);
+          });
+        }
+        count++;
+      }
+    });
+
+    // สาย: ช่วงระหว่างจุดรับ (รวมปลายราง) · สายแขวนตกท้องช้างตามความยาวช่วง · สายห้อยทุก ~8 ม.
+    el.forEach(function (R) {
+      var sup = contacts[R.idx];
+      if (!sup || !sup.length) return;
+      sup = [0].concat(sup.slice().sort(function (a, b) { return a - b; }), [R.len]);
+      var mid = R.pts[R.pts.length >> 1], W = chunkOf(mid.x, mid.y).W;
+      for (var j = 0; j + 1 < sup.length; j++) {
+        var a = sup[j], b = sup[j + 1], L = b - a;
+        if (L < 0.5) continue;
+        var nS = Math.max(2, Math.ceil(L / 8)), sag = OCS_SAG * Math.min(1, Math.pow(L / OCS_SPAN, 2)), prev = null;
+        for (var i = 0; i <= nS; i++) {
+          var f = i / nS;
+          sampleTrack(R, a + L * f, o);
+          var k = o.k, r = o.h + 0.18, zc = (r + OCS_CW) * k, zm = (r + OCS_MW - sag * 4 * f * (1 - f)) * k;
+          if (prev) W.push(prev[0], prev[1], prev[2], o.x, o.y, zc, prev[0], prev[1], prev[3], o.x, o.y, zm);
+          if (i > 0 && i < nS) W.push(o.x, o.y, zc, o.x, o.y, zm);
+          prev = [o.x, o.y, zc, zm];
+        }
+      }
+    });
+
+    var mastGroup = new T.Group(), wireGroup = new T.Group();
+    Object.keys(chunks).forEach(function (ck) {
+      var ch = chunks[ck];
+      finish(ch.B, matOcs, mastGroup);
+      finish(ch.BI, matIns, mastGroup);
+      if (ch.W.length) {
+        var g = new T.BufferGeometry();
+        g.setAttribute("position", new T.Float32BufferAttribute(ch.W, 3));
+        g.computeBoundingSphere();
+        var ls = new T.LineSegments(g, matWire);
+        ls.matrixAutoUpdate = false;
+        wireGroup.add(ls);
+      }
+    });
+    group.add(mastGroup); group.add(wireGroup);
+    return { masts: mastGroup, wires: wireGroup, count: count };
+  }
+
   function buildModel() {
     var pal = H.palette();
     group = new T.Group();
     group.visible = visible;
     H.scene().add(group);
     matSteel = new T.MeshPhongMaterial({ color: "#6d747d", flatShading: true, shininess: 30, specular: 0x333333 });
-    matDark = new T.MeshPhongMaterial({ color: "#20252c", flatShading: true, shininess: 10 });
     hoverMat = new T.MeshBasicMaterial({ color: pal.glow, transparent: true, opacity: 0.3, depthWrite: false, side: T.DoubleSide,
       polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
     selMat = new T.MeshBasicMaterial({ color: pal.glow, transparent: true, opacity: 0.55, depthWrite: false, side: T.DoubleSide,
@@ -1466,6 +1793,8 @@
     // สถานีคำนวณก่อน — ตอม่อทางวิ่งที่ตกในรอยสถานีจะได้ข้าม (สถานีมีเสารับของตัวเอง)
     var stations = buildStations(tracks);
     var inStation = stationLookup(stations);
+    // คู่รางสายสีแดงบนคานกว้าง (ต้องรู้ก่อนวาดราวขอบคาน)
+    var twinRuns = findTwins(tracks, inStation);
     // ——— คาน/ราง แบ่งเป็นก้อนตามพื้นที่ (+ เงาบนพื้นใต้ทางวิ่ง)
     var chunks = {}, grid = {}, piers = [];
     tracks.forEach(function (R) {
@@ -1475,6 +1804,11 @@
       R.span = emitTrack(ch.BC, ch.BR, (ch.lines[R.line] = ch.lines[R.line] || new Builder()), R, ch.SH);
       ch.tracks.push(R);
       collectPiers(R, grid, piers, inStation);
+    });
+    // คานกว้างสายสีแดง: เติมพื้นระหว่างรางคู่ + รางรถไฟทางไกลตรงกลาง
+    var twinCount = emitTwinDecks(twinRuns, function (x, y) {
+      var ck = Math.floor(x / CHUNK_M) + ":" + Math.floor(y / CHUNK_M);
+      return chunks[ck] || (chunks[ck] = { BC: new Builder(), BR: new Builder(), SH: new MB({ uv: 1 }), lines: {}, tracks: [] });
     });
     var pickChunks = [];
     Object.keys(chunks).forEach(function (ck) {
@@ -1554,6 +1888,9 @@
     finish(BW, H.concrete(), walkGroup);
     flushMB(WR, matRoofTop, walkGroup);
 
+    // ——— ระบบจ่ายไฟเหนือหัว (สายสีแดง, ARL): เสา แขนยื่น โครงข้ามราง และสาย
+    var ocs = buildOCS(tracks, inStation);
+
     // ——— จุดจอดของแต่ละราง (ระยะตามแนวรางที่ตรงกับชานชาลา)
     tracks.forEach(function (R) {
       R.stops = [];
@@ -1570,35 +1907,45 @@
       R.stops.sort(function (a, b) { return a - b; });
     });
 
-    // ——— ขบวนรถ (instanced ต่อสาย: ตัวรถ + แถบหน้าต่าง)
-    var trains = [];
-    var trainMeshes = {};
+    // ——— ขบวนรถ: แบบรถจริงรายสาย (bkk-train-models.js) · instanced ต่อ แบบรถ × ชนิดตู้ × LOD
+    //     ชนิดตู้: head (ไฟหน้า) · tail (หันกลับ ไฟท้ายแดง) · mid · midP (มีแพนโทกราฟ)
+    var TMS = window.BKK_TRAIN_MODELS, fleet = TMS.create(T, H.theme());
+    var trains = [], trainMeshes = {}, lays = {}, cap = {};
     tracks.forEach(function (R) {
       if (R.yard || R.len < 600) return;
-      var cars = 4;
+      var lay = lays[R.line] || (lays[R.line] = TMS.layout(R.line));
+      if (!lay) return;
       var count = Math.max(1, Math.floor(R.len / 3500));     // ~1 ขบวนต่อ 3.5 กม.
       for (var t = 0; t < count; t++) {
         var s0 = R.len * (t + 0.5) / count;
-        trains.push({ R: R, s: s0, v: TRAIN_SPEED, cars: cars, dwell: 0, si: nextStopIdx(R, s0) });
-        (trainMeshes[R.line] = trainMeshes[R.line] || { n: 0 }).n += cars;
+        trains.push({ R: R, lay: lay, s: s0, v: TRAIN_SPEED, dwell: 0, si: nextStopIdx(R, s0) });
+        lay.types.forEach(function (ty) { var key = lay.spec + "|" + ty; cap[key] = (cap[key] || 0) + 1; });
       }
     });
-    var carBox = new T.BoxGeometry(1, 1, 1);
-    carBox.translate(0, 0, 0.5);
-    Object.keys(trainMeshes).forEach(function (ln) {
-      var n = trainMeshes[ln].n;
-      var body = new T.InstancedMesh(carBox.clone(), lineMat(ln), n);
-      var band = new T.InstancedMesh(carBox.clone(), matDark, n);
-      body.frustumCulled = false; band.frustumCulled = false;
-      body.matrixAutoUpdate = false; band.matrixAutoUpdate = false;
-      group.add(body); group.add(band);
-      trainMeshes[ln] = { body: body, band: band, n: n, used: 0 };
+    Object.keys(cap).forEach(function (key) {
+      var sp = key.split("|"), n = cap[key], m = [];
+      for (var lod = 0; lod < 2; lod++) {
+        var im = new T.InstancedMesh(fleet.geometry(sp[0], sp[1], lod), fleet.material(sp[0]), n);
+        im.instanceMatrix.setUsage(T.DynamicDrawUsage);
+        im.frustumCulled = false;
+        im.matrixAutoUpdate = false;
+        im.count = 0;
+        im.visible = false;
+        group.add(im);
+        m.push(im);
+      }
+      trainMeshes[key] = { m: m, cap: n, used: [0, 0] };
+    });
+    fleet.textures.forEach(function (tx) {
+      var r = H.renderer();
+      if (r) tx.anisotropy = Math.min(8, r.capabilities.getMaxAnisotropy());
+      texList.push(tx);
     });
 
     model = { tracks: tracks, chunks: pickChunks, piers: pierMeshes, pierCount: piers.length,
       stations: stations, stGroup: stGroup, stDetail: stDetail,
       walkGroup: walkGroup, walkCount: walkCount,
-      trains: trains, trainMeshes: trainMeshes, t0: performance.now() };
+      trains: trains, trainMeshes: trainMeshes, fleet: fleet, ocs: ocs, twinRuns: twinRuns.length, twinCount: twinCount, t0: performance.now() };
     setTrainsVisible(trainsOn);
     H.ready();
     H.repaint();
@@ -1610,16 +1957,29 @@
     return -1;
   }
 
-  var _m4 = null, _q = null, _p = null, _s = null, _z = null;
-  function updateTrains(dt) {
+  // จุดบนราง ณ ระยะ s (ม.) → o.x o.y (หน่วยฉาก) o.h (ม.) o.k
+  function sampleTrack(R, s, o) {
+    var P = R.pts, lo = 0, hi = P.length - 1;
+    while (lo < hi - 1) { var mid = (lo + hi) >> 1; if (P[mid].s < s) lo = mid; else hi = mid; }
+    var a = P[lo], b = P[lo + 1], f = b.s > a.s ? Math.max(0, Math.min(1, (s - a.s) / (b.s - a.s))) : 0;
+    o.x = a.x + (b.x - a.x) * f; o.y = a.y + (b.y - a.y) * f; o.h = a.h + (b.h - a.h) * f; o.k = a.k;
+  }
+
+  var _m4 = null, _fa = { x: 0, y: 0, h: 0, k: 1 }, _fb = { x: 0, y: 0, h: 0, k: 1 };
+  function updateTrains(dt, z) {
     if (!model || !trainsOn) return;
-    if (!_m4) { _m4 = new T.Matrix4(); _q = new T.Quaternion(); _p = new T.Vector3(); _s = new T.Vector3(); _z = new T.Vector3(0, 0, 1); }
-    var mm = model.trainMeshes;
-    Object.keys(mm).forEach(function (ln) { mm[ln].used = 0; });
+    if (!_m4) _m4 = new T.Matrix4();
+    var mm = model.trainMeshes, key;
+    for (key in mm) { mm[key].used[0] = 0; mm[key].used[1] = 0; }
+    // LOD: รายละเอียดเต็มเฉพาะซูมใกล้ และตู้ที่อยู่ใกล้กล้องไม่เกิน TRAIN_LOD_REACH × ระยะกล้อง→กลางจอ
+    var E = z >= TRAIN_LOD_ZOOM ? H.eye() : null, reach2 = 0;
+    if (E) {
+      var cen = map.getCenter(), cl = H.toLocal(cen.lng, cen.lat);
+      reach2 = Math.pow(Math.hypot(E.x - cl.x, E.y - cl.y, E.z) * TRAIN_LOD_REACH, 2);
+    }
     model.trains.forEach(function (tr) {
-      var R = tr.R;
-      var trainLen = tr.cars * (CAR_LEN + CAR_GAP);
-      // จอดรับ-ส่งที่สถานี: ชะลอเข้าชานชาลา หยุดนิ่ง แล้วออกตัว (หัวขบวนเลยจุดจอดครึ่งความยาวขบวน)
+      var R = tr.R, lay = tr.lay;
+      // จอดรับ-ส่งที่สถานี: ชะลอเข้าชานชาลา หยุดนิ่ง แล้วออกตัว (กึ่งกลางขบวนตรงกลางชานชาลา)
       if (tr.dwell > 0) {
         tr.dwell -= dt;
         tr.v = 0;
@@ -1627,7 +1987,7 @@
       } else {
         var target = TRAIN_SPEED;
         if (tr.si >= 0) {
-          var goal = R.stops[tr.si] + trainLen / 2 - CAR_LEN / 2;
+          var goal = R.stops[tr.si] + lay.off[lay.cars - 1] / 2;
           var d = goal - tr.s;
           if (d <= 0.6) { tr.s = goal; tr.v = 0; tr.dwell = DWELL; }
           else target = Math.min(TRAIN_SPEED, Math.sqrt(2 * TRAIN_ACC * d));
@@ -1638,43 +1998,46 @@
           tr.s += tr.v * dt;
         }
       }
-      if (tr.s > R.len + trainLen) { tr.s = 0; tr.v = TRAIN_SPEED; tr.dwell = 0; tr.si = nextStopIdx(R, 0); }
-      var M = mm[R.line];
-      if (!M) return;
-      for (var c = 0; c < tr.cars; c++) {
-        var s = tr.s - c * (CAR_LEN + CAR_GAP);
-        if (s < CAR_LEN / 2 || s > R.len - CAR_LEN / 2) continue;
-        var P = R.pts, lo = 0, hi = P.length - 1;
-        while (lo < hi - 1) { var mid = (lo + hi) >> 1; if (P[mid].s < s) lo = mid; else hi = mid; }
-        var a = P[lo], b = P[lo + 1];
-        var f = b.s > a.s ? (s - a.s) / (b.s - a.s) : 0;
-        var x = a.x + (b.x - a.x) * f, y = a.y + (b.y - a.y) * f, h = a.h + (b.h - a.h) * f, k = a.k;
-        var dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
-        var ang = Math.atan2(dy / L, dx / L);
-        var base = R.mono ? h + 0.9 : h + 0.25;      // โมโนเรลคร่อมคาน รถไฟหนักวางบนราง
-        if (M.used >= M.n) break;
-        _q.setFromAxisAngle(_z, ang);
-        _p.set(x, y, base * k);
-        _s.set(CAR_LEN * k, CAR_W * k, CAR_H * k);
-        M.body.setMatrixAt(M.used, _m4.compose(_p, _q, _s));
-        _p.set(x, y, (base + CAR_H * 0.52) * k);
-        _s.set((CAR_LEN - 1.6) * k, (CAR_W + 0.12) * k, CAR_H * 0.34 * k);
-        M.band.setMatrixAt(M.used, _m4.compose(_p, _q, _s));
-        M.used++;
+      if (tr.s > R.len + lay.len) { tr.s = 0; tr.v = TRAIN_SPEED; tr.dwell = 0; tr.si = nextStopIdx(R, 0); }
+      for (var c = 0; c < lay.cars; c++) {
+        var sc = tr.s - lay.off[c], half = lay.lens[c] / 2;
+        if (sc - half < 0 || sc + half > R.len) continue;
+        // ตัวรถวางบนจุดโบกี้หน้า-หลัง → เลี้ยวโค้ง/ขึ้นลงเนินตามรางจริง (ปลายตู้ยื่นออกนอกโค้งแบบรถจริง)
+        var bb = half * 0.68;
+        sampleTrack(R, sc + bb, _fa);
+        sampleTrack(R, sc - bb, _fb);
+        var k = _fa.k, fx = _fa.x - _fb.x, fy = _fa.y - _fb.y, fz = (_fa.h - _fb.h) * k;
+        var fl = Math.hypot(fx, fy, fz) || 1;
+        fx /= fl; fy /= fl; fz /= fl;
+        if (lay.types[c] === "tail") { fx = -fx; fy = -fy; fz = -fz; }   // ตู้ท้ายหันหัวกลับ
+        var lx = -fy, ly = fx, ll = Math.hypot(lx, ly) || 1;               // ซ้าย = ขึ้นฟ้า × หน้า
+        lx /= ll; ly /= ll;
+        var ux = -fz * ly, uy = fz * lx, uz = fx * ly - fy * lx;           // บน = หน้า × ซ้าย
+        var px = (_fa.x + _fb.x) / 2, py = (_fa.y + _fb.y) / 2, pz = ((_fa.h + _fb.h) / 2 + lay.rail) * k;
+        var lod = E && (Math.pow(px - E.x, 2) + Math.pow(py - E.y, 2) + Math.pow(pz - E.z, 2) < reach2) ? 0 : 1;
+        var M = mm[lay.spec + "|" + lay.types[c]];
+        if (!M || M.used[lod] >= M.cap) continue;
+        _m4.set(fx * k, lx * k, ux * k, px,
+                fy * k, ly * k, uy * k, py,
+                fz * k, 0, uz * k, pz,
+                0, 0, 0, 1);
+        M.m[lod].setMatrixAt(M.used[lod]++, _m4);
       }
     });
-    Object.keys(mm).forEach(function (ln) {
-      var M = mm[ln];
-      M.body.count = M.used; M.band.count = M.used;
-      M.body.instanceMatrix.needsUpdate = true;
-      M.band.instanceMatrix.needsUpdate = true;
-    });
+    for (key in mm) {
+      var M = mm[key];
+      for (var l = 0; l < 2; l++) {
+        M.m[l].count = M.used[l];
+        M.m[l].visible = M.used[l] > 0;
+        M.m[l].instanceMatrix.needsUpdate = true;
+      }
+    }
   }
   function setTrainsVisible(on) {
     if (!model) return;
-    Object.keys(model.trainMeshes).forEach(function (ln) {
-      model.trainMeshes[ln].body.visible = on;
-      model.trainMeshes[ln].band.visible = on;
+    Object.keys(model.trainMeshes).forEach(function (key) {
+      var M = model.trainMeshes[key];
+      for (var l = 0; l < 2; l++) M.m[l].visible = on && M.used[l] > 0;
     });
   }
 
@@ -2044,6 +2407,7 @@
         loaded: !!model, visible: visible, trains: trainsOn,
         tracks: model ? model.tracks.length : 0, stations: model ? model.stations.length : 0,
         piers: model ? model.pierCount : 0, trainCount: model ? model.trains.length : 0,
+        ocsMasts: model && model.ocs ? model.ocs.count : 0,
         walks: model ? model.walkCount : 0,
         stairs: model ? model.stations.reduce(function (s, S) { return s + S.stairs.length; }, 0) : 0,
         lifts: model ? model.stations.reduce(function (s, S) { return s + S.lifts.length; }, 0) : 0,
@@ -2087,6 +2451,11 @@
         if (showD !== model.detShown) { model.detShown = showD; model.stDetail.visible = showD; }
         var showW = z >= WALK_ZOOM;
         if (showW !== model.walkShown) { model.walkShown = showW; model.walkGroup.visible = showW; }
+        if (model.ocs) {
+          var showO = z >= OCS_ZOOM, showL = z >= WIRE_ZOOM;
+          if (showO !== model.ocsShown) { model.ocsShown = showO; model.ocs.masts.visible = showO; }
+          if (showL !== model.wireShown) { model.wireShown = showL; model.ocs.wires.visible = showL; }
+        }
         var runTrains = trainsOn && z >= TRAIN_ZOOM;
         if (runTrains !== model.trainShown) {
           model.trainShown = runTrains;
@@ -2097,7 +2466,7 @@
           var now = performance.now();
           var dt = Math.min(0.12, (now - (last || now)) / 1000);
           last = now;
-          updateTrains(dt);
+          updateTrains(dt, z);
         }
       },
       theme: function (name, pal) {
@@ -2105,6 +2474,8 @@
         hoverMat.color.set(pal.glow);
         selMat.color.set(pal.glow);
         themeStationMaterials(name);
+        if (model.fleet) model.fleet.setTheme(name);
+        if (matWire) matWire.color.set(WIRE_COLOR[name] || WIRE_COLOR.dark);
       },
       // ลายผิวคมขึ้นเมื่อมองเฉียง (anisotropic) — ตั้งได้เมื่อมี renderer แล้ว
       rendererReady: function (r) {
