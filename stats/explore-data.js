@@ -1541,6 +1541,45 @@ var NAV = [
           { pane:"tr-rail",      ico:"<svg class='mdico'><use href='#i-train-front-tunnel'></use></svg>", label:"รถไฟฟ้า", existing:true },
           { pane:"tr-road",      ico:"<svg class='mdico'><use href='#i-bike'></use></svg>", label:"อุบัติเหตุทางถนน", existing:true },
           { pane:"tr-logistics", ico:"<svg class='mdico'><use href='#i-package'></use></svg>", label:"โลจิสติกส์", existing:true }
+      ]},
+      { id:"sciences", ico:"<svg class='mdico'><use href='#i-microscope'></use></svg>", label:"ศาสตร์ต่างๆ", subs:[
+          { pane:"sci-overview",   ico:"<svg class='mdico'><use href='#i-network'></use></svg>", label:"แผนผังโครงสร้างศาสตร์สากล", existing:true },
+          { pane:"sci-natural",    ico:"<svg class='mdico'><use href='#i-flask-conical'></use></svg>", label:"วิทยาศาสตร์ธรรมชาติ", existing:true },
+          { pane:"sci-applied",    ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"วิทยาศาสตร์ประยุกต์ & วิศวกรรม", existing:true },
+          { pane:"sci-social",     ico:"<svg class='mdico'><use href='#i-scale'></use></svg>", label:"สังคมศาสตร์ & พฤติกรรมศาสตร์", existing:true },
+          { pane:"sci-humanities", ico:"<svg class='mdico'><use href='#i-book-open'></use></svg>", label:"มนุษยศาสตร์ & ปรัชญา", existing:true },
+          { pane:"sci-cognitive",  ico:"<svg class='mdico'><use href='#i-brain'></use></svg>", label:"วิทยาการปัญญา & วิทยาการสมอง", existing:true },
+          { pane:"sci-interdis",   ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"ศาสตร์บูรณาการ & ข้ามศาสตร์", existing:true }
+      ]},
+      { id:"thenv", ico:"<svg class='mdico'><use href='#i-trees'></use></svg>", label:"สิ่งแวดล้อม & ความยั่งยืนไทย", subs:[
+          { pane:"env-forest",   ico:"<svg class='mdico'><use href='#i-trees'></use></svg>", label:"พื้นที่ป่าไม้ & ป่าอนุรักษ์ไทย", existing:true },
+          { pane:"env-water",    ico:"<svg class='mdico'><use href='#i-droplets'></use></svg>", label:"ทรัพยากรน้ำ & 25 ลุ่มน้ำไทย", existing:true },
+          { pane:"env-waste",    ico:"<svg class='mdico'><use href='#i-trash-2'></use></svg>", label:"การจัดการขยะ & มลพิษ", existing:true },
+          { pane:"env-netzero",  ico:"<svg class='mdico'><use href='#i-sprout'></use></svg>", label:"เส้นทางสู่ Net Zero 2065", existing:true }
+      ]},
+      { id:"thtourism", ico:"<svg class='mdico'><use href='#i-camera'></use></svg>", label:"การท่องเที่ยว & Soft Power", subs:[
+          { pane:"tour-stat",      ico:"<svg class='mdico'><use href='#i-plane'></use></svg>", label:"สถิติท่องเที่ยวสากล & ในประเทศ", existing:true },
+          { pane:"tour-softpower", ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"11 อุตสาหกรรม Soft Power ไทย", existing:true },
+          { pane:"tour-wellness",  ico:"<svg class='mdico'><use href='#i-heart'></use></svg>", label:"ท่องเที่ยวเชิงการแพทย์ & สุขภาพ", existing:true },
+          { pane:"tour-heritage",  ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"มรดกโลก UNESCO ในไทย", existing:true }
+      ]},
+      { id:"thlabor", ico:"<svg class='mdico'><use href='#i-briefcase'></use></svg>", label:"ตลาดแรงงาน & ทักษะอนาคต", subs:[
+          { pane:"labor-struct",  ico:"<svg class='mdico'><use href='#i-users'></use></svg>", label:"โครงสร้างกำลังแรงงานไทย", existing:true },
+          { pane:"labor-product", ico:"<svg class='mdico'><use href='#i-trending-up'></use></svg>", label:"ผลิตภาพแรงงาน (Productivity)", existing:true },
+          { pane:"labor-migrant", ico:"<svg class='mdico'><use href='#i-globe'></use></svg>", label:"แรงงานข้ามชาติ & ไทยต่างแดน", existing:true },
+          { pane:"labor-future",  ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"ผลกระทบ AI & ทักษะอนาคต", existing:true }
+      ]},
+      { id:"thspace", ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"เทคโนโลยีอวกาศ & วิจัยไทย", subs:[
+          { pane:"space-theos",       ico:"<svg class='mdico'><use href='#i-satellite'></use></svg>", label:"ดาวเทียมไทย & ภารกิจ THEOS-2", existing:true },
+          { pane:"space-astro",       ico:"<svg class='mdico'><use href='#i-compass'></use></svg>", label:"ดาราศาสตร์ไทย & หอดูดาวแห่งชาติ", existing:true },
+          { pane:"space-synchrotron", ico:"<svg class='mdico'><use href='#i-zap'></use></svg>", label:"แสงซินโครตรอน & เทคโนโลยีลึก", existing:true },
+          { pane:"space-innovation",  ico:"<svg class='mdico'><use href='#i-lightbulb'></use></svg>", label:"ระบบนิเวศนวัตกรรม & สิทธิบัตร", existing:true }
+      ]},
+      { id:"thhistory", ico:"<svg class='mdico'><use href='#i-scroll'></use></svg>", label:"ประวัติศาสตร์ & อารยธรรมไทย", subs:[
+          { pane:"hist-timeline",     ico:"<svg class='mdico'><use href='#i-hourglass'></use></svg>", label:"เส้นเวลาอารยธรรมจากโบราณสู่สยาม", existing:true },
+          { pane:"hist-reform",       ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"การปฏิรูปรัฐสมัยใหม่ รัชกาลที่ 5", existing:true },
+          { pane:"hist-boundary",     ico:"<svg class='mdico'><use href='#i-map'></use></svg>", label:"วิวัฒนาการแผนที่ & เส้นเขตแดนสยาม", existing:true },
+          { pane:"hist-constitution", ico:"<svg class='mdico'><use href='#i-vote'></use></svg>", label:"วิวัฒนาการรัฐธรรมนูญ & การเมืองไทย", existing:true }
       ]}
     ];
 
