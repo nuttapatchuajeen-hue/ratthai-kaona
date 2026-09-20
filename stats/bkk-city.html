@@ -312,6 +312,9 @@
     user-select: none;
     will-change: transform;
   }
+  .landmark-pin:hover {
+    z-index: 9999 !important;
+  }
 
   /* 🏷️ Developer Brand Badges (High-res Real Estate Logos) */
   .brand-badge {
@@ -392,6 +395,27 @@
 
   .brand-bdms { background: #0369A1; border-color: #BAE6FD; }
   .brand-bdms .b-txt { font-size: 13px; font-weight: 900; color: #E0F2FE; }
+
+  .brand-food { background: #EA580C; border-color: #FED7AA; }
+  .brand-food .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-travel { background: #7C3AED; border-color: #DDD6FE; }
+  .brand-travel .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-transit { background: #059669; border-color: #A7F3D0; }
+  .brand-transit .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-building { background: #0284C7; border-color: #BAE6FD; }
+  .brand-building .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-airport { background: #0284C7; border-color: #BAE6FD; }
+  .brand-airport .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-port { background: #0D9488; border-color: #99F6E4; }
+  .brand-port .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
+
+  .brand-outer { background: #15803D; border-color: #BBF7D0; }
+  .brand-outer .b-txt { font-size: 14px; font-weight: 900; color: #FFFFFF; }
 
   /* 📸 Floating Photo Card Pin Mode (Reference App Style) */
   .pin-photo-card {
@@ -482,6 +506,57 @@
     overflow-x: auto;
     border-radius: 10px;
   }
+  .category-chips-scroll {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+  }
+  .category-chips-scroll::-webkit-scrollbar { display: none; }
+  .cat-chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #334155;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.18s ease;
+  }
+  .cat-chip:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .cat-chip.active {
+    background: var(--accent);
+    color: #FFFFFF;
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  [data-theme="dark"] .cat-chip, [data-theme="sunset"] .cat-chip {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #CBD5E1;
+  }
+  [data-theme="dark"] .cat-chip:hover, [data-theme="sunset"] .cat-chip:hover {
+    background: rgba(51, 65, 85, 0.95);
+    color: #F8FAFC;
+  }
+  [data-theme="dark"] .cat-chip.active, [data-theme="sunset"] .cat-chip.active {
+    background: var(--accent);
+    color: #FFFFFF;
+    border-color: var(--accent);
+  }
+
   .brand-chips-scroll {
     display: flex;
     align-items: center;
@@ -2392,6 +2467,50 @@
         <button type="button" class="menu-btn zone-item" id="btnFitAll" title="มุมมองภาพรวมกรุงเทพฯ ทั้งหมด">
       <span><svg class="mdico"><use href="#i-target"></use></svg></span><span class="label-text"> ทั่วกรุงเทพฯ</span>
     </button>
+        <div style="border-top:1px solid rgba(255,255,255,0.15); margin:4px 0;"></div>
+        <button type="button" class="menu-btn zone-item" id="btnFlyThailand" title="มุมมองภาพรวมทั่วประเทศไทย">
+          <span><svg class="mdico"><use href="#i-globe"></use></svg></span><span class="label-text"> ทั่วประเทศไทย</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyPhuket" title="บินไปภูเก็ต (กมลา, บางเทา, เมืองภูเก็ต)">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> ภูเก็ต & อันดามัน</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyPattaya" title="บินไปพัทยา-ชลบุรี (วงศ์อมาตย์, จอมเทียน, บางแสน)">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> พัทยา & ชลบุรี</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyChiangMai" title="บินไปเชียงใหม่ (นิมมาน, ช้างคลาน, ท่าแพ)">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> เชียงใหม่ & ภาคเหนือ</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyHuaHin" title="บินไปหัวหิน-ชะอำ">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> หัวหิน & ชะอำ</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyIsan" title="บินไปขอนแก่น & โคราช">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> ขอนแก่น & โคราช</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyHatYai" title="บินไปหาดใหญ่ & สงขลา">
+          <span><svg class="mdico"><use href="#i-map-pin"></use></svg></span><span class="label-text"> หาดใหญ่ & สงขลา</span>
+        </button>
+        <div style="border-top:1px solid rgba(255,255,255,0.15); margin:4px 0;"></div>
+        <button type="button" class="menu-btn zone-item" id="btnFlyFood" title="บินชมย่านสตรีทฟู้ดดัง (เยาวราช & บรรทัดทอง)">
+          <span><svg class="mdico"><use href="#i-soup"></use></svg></span><span class="label-text"> 🍲 เยาวราช & บรรทัดทอง</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyCulture" title="บินชมเกาะรัตนโกสินทร์ (วัดพระแก้ว & วัดอรุณ)">
+          <span><svg class="mdico"><use href="#i-camera"></use></svg></span><span class="label-text"> ⛩️ เกาะรัตนโกสินทร์</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyTransit" title="บินชมฮับรถไฟฟ้าสยาม-อโศก">
+          <span><svg class="mdico"><use href="#i-train-front"></use></svg></span><span class="label-text"> 🚊 ฮับรถไฟฟ้าสยาม-อโศก</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyAirports" title="บินชมท่าอากาศยานสุวรรณภูมิ & ดอนเมือง">
+          <span><svg class="mdico"><use href="#i-plane"></use></svg></span><span class="label-text"> ✈️ สุวรรณภูมิ & ดอนเมือง</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyPorts" title="บินชมท่าเรือกรุงเทพ (คลองเตย) & ท่าเรือเจ้าพระยา">
+          <span><svg class="mdico"><use href="#i-ship"></use></svg></span><span class="label-text"> 🚢 ท่าเรือเจ้าพระยา & คลองเตย</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyOuter" title="บินชม กทม. รอบนอก & ปริมณฑล (บางนา-รังสิต-นนทบุรี-สมุทรปราการ)">
+          <span><svg class="mdico"><use href="#i-trees"></use></svg></span><span class="label-text"> 🌳 กทม. รอบนอก & ปริมณฑล</span>
+        </button>
+        <button type="button" class="menu-btn zone-item" id="btnFlyBangkae" title="บินชมย่านบางแค-เพชรเกษม (เดอะมอลล์, ซีคอน, ตลาดบางแค, MRT หลักสอง)">
+          <span><svg class="mdico"><use href="#i-shopping-basket"></use></svg></span><span class="label-text"> 🛍️ บางแค & เพชรเกษม</span>
+        </button>
       </div>
     </div>
     <button type="button" class="menu-btn btn-collapse-action" id="btnCollapseBars" title="ย่อแถบเครื่องมือและตัวกรองแบรนด์">
@@ -2402,11 +2521,19 @@
   <div class="glass-card floating-intel-pill" id="floatingIntelPill" title="เปิดแผงควบคุม Lifestyle 360° & Intelligence Layers">
     <span><svg class="mdico"><use href="#i-gem"></use></svg> ไลฟ์สไตล์ 360° และสิ่งอำนวยความสะดวก</span>
   </div>
-  <!-- 🏷️ Developer Brand Filter Toolbar -->
+  <!-- 🏷️ Developer Brand & Category Filter Toolbar -->
   <div class="brand-filter-bar glass-card" id="brandFilterBar">
-    <div class="brand-bar-title">
-      <span><svg class="mdico"><use href="#i-briefcase"></use></svg> ผู้พัฒนา:</span>
+    <div class="category-chips-scroll" id="categoryChipsContainer">
+      <button type="button" class="cat-chip active" data-cat="all">🌟 ทั้งหมด</button>
+      <button type="button" class="cat-chip" data-cat="airport_port">✈️ สนามบิน & ท่าเรือ</button>
+      <button type="button" class="cat-chip" data-cat="outer">🌳 กทม. รอบนอก</button>
+      <button type="button" class="cat-chip" data-cat="food">🍲 รีวิวอาหาร</button>
+      <button type="button" class="cat-chip" data-cat="travel">⛩️ ที่เที่ยว กทม.</button>
+      <button type="button" class="cat-chip" data-cat="transit">🚊 รถไฟฟ้า BTS/MRT</button>
+      <button type="button" class="cat-chip" data-cat="building">🏢 อาคาร & มิกซ์ยูส</button>
+      <button type="button" class="cat-chip" data-cat="condo">🏙️ อสังหาฯ</button>
     </div>
+    <div style="width:1px; height:20px; background:var(--card-border); margin:0 4px; flex-shrink:0;" id="filterDivider"></div>
     <div class="brand-chips-scroll" id="brandChipsContainer">
       <button type="button" class="brand-chip active" data-brand="all">ทุกแบรนด์</button>
       <button type="button" class="brand-chip" data-brand="ananda"><span class="brand-dot dot-ananda"></span> Ananda</button>
@@ -2420,8 +2547,8 @@
       <button type="button" class="brand-chip" data-brand="supalai"><span class="brand-dot dot-supalai"></span> Supalai</button>
     </div>
     <div class="pin-mode-toggle">
-      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> โลโก้</button>
-      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> รูปภาพ</button>
+      <button type="button" class="pin-mode-btn" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> โลโก้</button>
+      <button type="button" class="pin-mode-btn active" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> รูปภาพ</button>
     </div>
     <button type="button" class="brand-bar-collapse" id="btnBrandCollapse" title="ย่อตัวกรองแบรนด์" aria-label="ย่อตัวกรองแบรนด์">
       <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg>
@@ -3122,8 +3249,9 @@
     landmarks: true,
     transit: true,
     districts: false,
+    selectedCategory: "all",  // "all", "food", "travel", "building", "transit", "condo"
     selectedBrand: "all",
-    pinMode: "logo", // "logo" or "photo"
+    pinMode: "photo", // "logo" or "photo" (default to photo card mode)
     selectedProject: null,
     activeLines: {},
     pinElements: [],
@@ -3274,7 +3402,11 @@
         var d = haversineM(lm.lon, lm.lat, c[0], c[1]);
         if (d < best) { best = d; bestName = stations[i].properties.name; }
       }
-      if (best === Infinity) return;
+      if (best === Infinity || best > 25000) {
+        lm.distanceToStationMeters = null;
+        lm.nearestStation = null;
+        return;
+      }
       lm.distanceToStationMeters = Math.round(best);
       lm.nearestStation = bestName;
       nearest[lm.id] = { m: Math.round(best), name: bestName };
@@ -4193,7 +4325,28 @@
     var badgeClass = "brand-badge brand-" + brand;
     var letter = lm.badgeLetter || MDICO("star");
 
-    if (brand === "ananda") letter = "A";
+    if (lm.type === "airport" || brand === "airport") {
+      letter = MDICO("plane");
+      badgeClass = "brand-badge brand-airport";
+    } else if (lm.type === "port" || brand === "port") {
+      letter = MDICO("ship");
+      badgeClass = "brand-badge brand-port";
+    } else if (lm.type === "outer" || brand === "outer") {
+      letter = MDICO("trees");
+      badgeClass = "brand-badge brand-outer";
+    } else if (lm.type === "food" || brand === "food") {
+      letter = MDICO("soup");
+      badgeClass = "brand-badge brand-food";
+    } else if (lm.type === "travel" || brand === "travel") {
+      letter = MDICO("camera");
+      badgeClass = "brand-badge brand-travel";
+    } else if (lm.type === "transit" || brand === "transit") {
+      letter = MDICO("train-front");
+      badgeClass = "brand-badge brand-transit";
+    } else if (lm.type === "building" || brand === "building") {
+      letter = MDICO("building-2");
+      badgeClass = "brand-badge brand-building";
+    } else if (brand === "ananda") letter = "A";
     else if (brand === "ap") letter = "AP";
     else if (brand === "sansiri") letter = "S";
     else if (brand === "origin") letter = "O";
@@ -4209,19 +4362,33 @@
     else if (brand === "govt") letter = MDICO("landmark");
     else if (brand === "hilton") letter = "H";
     else if (brand === "bdms") letter = "B";
+    else if (brand === "raimon") letter = "RL";
+    else if (brand === "country") letter = "CG";
+    else if (brand === "nirvana") letter = "N";
 
     return '<div class="' + badgeClass + '" title="' + (lm.brandName || lm.name) + '"><span class="b-txt">' + letter + '</span></div>';
   }
 
   function getPhotoCardHTML(lm) {
     var brandTag = lm.brandName ? '<div class="photo-card-brand-tag">' + lm.brandName + '</div>' : '';
+    var fallbackImg = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80";
+    var imgSrc = lm.image || lm.badgeImage || fallbackImg;
     return '<div class="pin-photo-card">' +
-      '<div class="photo-card-thumb"><img src="' + (lm.image || lm.badgeImage) + '" alt="' + lm.name + '">' + brandTag + '</div>' +
+      '<div class="photo-card-thumb"><img src="' + imgSrc + '" alt="' + lm.name + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + fallbackImg + '\'">' + brandTag + '</div>' +
       '<div class="photo-card-info">' +
-        '<div class="photo-card-name">' + lm.name + '</div>' +
+        '<div class="photo-card-name" title="' + lm.name + '">' + lm.name + '</div>' +
         '<div class="photo-card-price">' + (lm.priceRange || "") + '</div>' +
       '</div>' +
     '</div>';
+  }
+
+  function isCategoryMatched(lm, cat) {
+    if (!cat || cat === "all") return true;
+    var t = lm.type || "condo";
+    if (cat === "airport_port") return t === "airport" || t === "port" || (lm.id && lm.id.startsWith("port-"));
+    if (cat === "outer") return t === "outer" || (lm.id && lm.id.startsWith("outer-"));
+    if (cat === "transit") return t === "transit" || t === "airport" || t === "port";
+    return t === cat;
   }
 
   /* 3D Projected DOM Pins */
@@ -4233,11 +4400,14 @@
     if (!window.BKK_LANDMARKS || !window.BKK_LANDMARKS.rawList) return;
 
     window.BKK_LANDMARKS.rawList.forEach(function(lm) {
-      var isVisible = (STATE.selectedBrand === "all" || lm.brandId === STATE.selectedBrand);
+      var catOk = isCategoryMatched(lm, STATE.selectedCategory);
+      var brandOk = (STATE.selectedBrand === "all" || lm.brandId === STATE.selectedBrand);
+      var isVisible = catOk && brandOk;
 
       var el = document.createElement("div");
       el.className = "landmark-pin";
       el.setAttribute("data-id", lm.id);
+      el.setAttribute("data-type", lm.type || "condo");
       el.setAttribute("data-brand", lm.brandId || "other");
       if (!isVisible) el.style.display = "none";
 
@@ -4273,7 +4443,7 @@
     var pitch = STATE.map.getPitch();
     var container = $("#pinContainer");
 
-    if (zoom < 12.0 || !STATE.landmarks) {
+    if (zoom < 6.0 || !STATE.landmarks) {
       container.style.display = "none";
       return;
     }
@@ -4283,16 +4453,23 @@
     var maxDist = STATE.transitDistFilter === "500" ? 500
                 : STATE.transitDistFilter === "1000" ? 1000 : Infinity;
 
+    var viewW = window.innerWidth || 1200;
+    var viewH = window.innerHeight || 800;
+
+    var visiblePins = [];
+
     STATE.pinElements.forEach(function(item) {
       var lm = item.data;
 
+      var catOk = isCategoryMatched(lm, STATE.selectedCategory);
       var brandOk = (STATE.selectedBrand === "all" || lm.brandId === STATE.selectedBrand);
       var distOk = maxDist === Infinity ||
                    (typeof lm.distanceToStationMeters === "number" && lm.distanceToStationMeters <= maxDist);
-      var want = (brandOk && distOk) ? "" : "none";
-      // เขียนเฉพาะตอนค่าเปลี่ยน — ฟังก์ชันนี้ถูกเรียกทุกเฟรมที่ render
-      if (item.el.style.display !== want) item.el.style.display = want;
-      if (want === "none") return;
+      var want = (catOk && brandOk && distOk) ? "" : "none";
+      if (want === "none") {
+        if (item.el.style.display !== "none") item.el.style.display = "none";
+        return;
+      }
 
       var pos = STATE.map.project([lm.lon, lm.lat]);
 
@@ -4302,7 +4479,72 @@
       var x = pos.x;
       var y = pos.y - heightPx;
 
-      item.el.style.transform = "translate3d(" + Math.round(x) + "px, " + Math.round(y) + "px, 0) translate(-50%, -100%)";
+      // Viewport culling: Don't render cards that are outside current view
+      if (x < -140 || x > viewW + 140 || y < -140 || y > viewH + 140) {
+        if (item.el.style.display !== "none") item.el.style.display = "none";
+        return;
+      }
+
+      visiblePins.push({ item: item, x: x, y: y, ox: 0, oy: 0 });
+    });
+
+    // Low-zoom proximity decimation: at low zoom (e.g. nationwide or province overview),
+    // show top prominent landmarks so cities don't get crowded with overlapping cards
+    var minDist = zoom < 7.5 ? 55 : (zoom < 9.5 ? 42 : (zoom < 11.2 ? 26 : 0));
+    var keptPins = [];
+    if (minDist > 0) {
+      var sorted = visiblePins.slice().sort(function(a, b) {
+        return (b.item.data.height || 0) - (a.item.data.height || 0);
+      });
+      var placed = [];
+      sorted.forEach(function(p) {
+        var collides = false;
+        for (var k = 0; k < placed.length; k++) {
+          var d = Math.hypot(p.x - placed[k].x, p.y - placed[k].y);
+          if (d < minDist) { collides = true; break; }
+        }
+        if (!collides) {
+          placed.push(p);
+          keptPins.push(p);
+        } else {
+          if (p.item.el.style.display !== "none") p.item.el.style.display = "none";
+        }
+      });
+    } else {
+      keptPins = visiblePins;
+    }
+
+    // Smart anti-collision spread for Photo Mode (prevents cards stacking directly on top of each other)
+    if (STATE.pinMode === "photo" && keptPins.length > 1) {
+      keptPins.sort(function(a, b) { return a.x - b.x; });
+      for (var i = 0; i < keptPins.length; i++) {
+        for (var j = i + 1; j < keptPins.length; j++) {
+          var dx = (keptPins[j].x + keptPins[j].ox) - (keptPins[i].x + keptPins[i].ox);
+          if (dx > 95) break; // outside horizontal collision threshold
+          var dy = (keptPins[j].y + keptPins[j].oy) - (keptPins[i].y + keptPins[i].oy);
+          if (Math.abs(dy) < 55) {
+            var pushX = (95 - dx) * 0.45;
+            keptPins[i].ox -= pushX;
+            keptPins[j].ox += pushX;
+            var pushY = (55 - Math.abs(dy)) * 0.25;
+            if (dy >= 0) {
+              keptPins[i].oy -= pushY;
+              keptPins[j].oy += pushY;
+            } else {
+              keptPins[i].oy += pushY;
+              keptPins[j].oy -= pushY;
+            }
+          }
+        }
+      }
+    }
+
+    keptPins.forEach(function(p) {
+      if (p.item.el.style.display !== "") p.item.el.style.display = "";
+      var finalX = Math.round(p.x + p.ox);
+      var finalY = Math.round(p.y + p.oy);
+      p.item.el.style.zIndex = Math.max(1, Math.min(1000, Math.round(p.y)));
+      p.item.el.style.transform = "translate3d(" + finalX + "px, " + finalY + "px, 0) translate(-50%, -100%)";
     });
   }
 
@@ -5416,16 +5658,38 @@
     var brandF = STATE.selectedBrand === "all"
       ? null : ["==", ["get", "brandId"], STATE.selectedBrand];
 
-    var dist = STATE.transitDistFilter;
-    if (dist !== "500" && dist !== "1000") {
-      setLandmarkFilter(brandF);
-      return;
+    var cat = STATE.selectedCategory;
+    var catF = null;
+    if (cat && cat !== "all") {
+      if (cat === "airport_port") {
+        catF = ["in", ["get", "type"], ["literal", ["airport", "port"]]];
+      } else if (cat === "outer") {
+        catF = ["==", ["get", "type"], "outer"];
+      } else if (cat === "transit") {
+        catF = ["in", ["get", "type"], ["literal", ["transit", "airport", "port"]]];
+      } else {
+        catF = ["==", ["get", "type"], cat];
+      }
     }
 
-    // ไม่มีค่าระยะ = ตัดออก ไม่ใช่ปล่อยผ่าน (ของเดิม default 400 ทำให้ผ่านหมดทุกหลัง)
-    var maxM = dist === "500" ? 500 : 1000;
-    var distF = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], maxM];
-    setLandmarkFilter(brandF ? ["all", brandF, distF] : distF);
+    var filters = [];
+    if (brandF) filters.push(brandF);
+    if (catF) filters.push(catF);
+
+    var dist = STATE.transitDistFilter;
+    if (dist === "500" || dist === "1000") {
+      var maxM = dist === "500" ? 500 : 1000;
+      var distF = ["<=", ["coalesce", ["get", "distanceToStationMeters"], 999999], maxM];
+      filters.push(distF);
+    }
+
+    if (filters.length === 0) {
+      setLandmarkFilter(null);
+    } else if (filters.length === 1) {
+      setLandmarkFilter(filters[0]);
+    } else {
+      setLandmarkFilter(["all"].concat(filters));
+    }
   }
   // ให้ชั้นแลนด์มาร์ก 3 มิติเรียกหลังเปลี่ยนรายชื่อตึกที่วาดแทน (window.BKK_LM3D_HIDE) และเปิดแผงข้อมูลโครงการเดิมได้
   window.BKK_applyLandmarkFilters = function () { applyLandmarkFilters(); };
@@ -5481,12 +5745,83 @@
     $("#drawerDeveloper").textContent = project.developer || "ผู้พัฒนาที่ตรวจสอบแล้ว";
     $("#drawerDevSite").href = project.developerSite || "#";
 
-    $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>ชั้น</small>';
-    $("#drawerUnits").innerHTML = (project.units || "-") + ' <small>ห้อง</small>';
-    $("#drawerParking").innerHTML = (project.parking || "-") + ' <small>คัน (' + (project.parkingRatio || "100%") + ')</small>';
-    $("#drawerLand").innerHTML = (project.landRai ? project.landRai.toFixed(2) : "-") + ' <small>ไร่</small>';
-    $("#drawerHeight").innerHTML = (project.height || "-") + ' <small>ม.</small>';
-    $("#drawerUnitsPerFloor").innerHTML = (project.priceRange || (project.unitsPerFloor ? project.unitsPerFloor + " u/fl" : "-"));
+    var type = project.type || "condo";
+    var headingEl = $("#unitTypesSection .section-heading");
+    var walkEl = $(".walkability-card");
+
+    if (type === "food") {
+      $("#drawerFloors").innerHTML = "ร้านอาหาร / สตรีทฟู้ด";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.8) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = project.priceRange ? (project.priceRange.split("·")[1] || "฿80-฿300").trim() : "฿80-฿300";
+      $("#drawerLand").innerHTML = project.district || "พระนคร";
+      $("#drawerHeight").innerHTML = "เปิดบริการทุกวัน";
+      $("#drawerUnitsPerFloor").innerHTML = "มิชลิน / เมนูยอดนิยม";
+      if (headingEl) headingEl.textContent = "เมนูเด็ดแนะนำ (Must-Try Signature Dishes)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "travel") {
+      $("#drawerFloors").innerHTML = "จุดเช็คอิน / ท่องเที่ยว";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.9) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = "เข้าชมได้ทุกวัน";
+      $("#drawerLand").innerHTML = project.district || "กรุงเทพฯ";
+      $("#drawerHeight").innerHTML = project.height ? project.height + " ม." : "จุดชมวิวพาโนรามา";
+      $("#drawerUnitsPerFloor").innerHTML = "มรดกวัฒนธรรม";
+      if (headingEl) headingEl.textContent = "ข้อมูล & จุดไฮไลท์ห้ามพลาด (Highlights)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "airport") {
+      $("#drawerFloors").innerHTML = "ท่าอากาศยานนานาชาติ";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.8) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = "เปิดตลอด 24 ชม.";
+      $("#drawerLand").innerHTML = project.district || "สมุทรปราการ/กทม.";
+      $("#drawerHeight").innerHTML = project.height ? project.height + " ม." : "หอบังคับการบิน";
+      $("#drawerUnitsPerFloor").innerHTML = "ฮับการบินพลเรือน AOT";
+      if (headingEl) headingEl.textContent = "อาคารผู้โดยสาร & ข้อมูลการบิน (Terminals & Info)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "port") {
+      $("#drawerFloors").innerHTML = "ท่าเรือขนส่ง / โดยสาร";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.8) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = "บริการเรือโดยสาร / ข้ามฟาก";
+      $("#drawerLand").innerHTML = project.district || "กรุงเทพฯ";
+      $("#drawerHeight").innerHTML = project.height ? project.height + " ม." : "ริมแม่น้ำเจ้าพระยา";
+      $("#drawerUnitsPerFloor").innerHTML = "การคมนาคมทางน้ำ";
+      if (headingEl) headingEl.textContent = "บริการเรือ & จุดเชื่อมต่อ (Boat Routes & Services)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "outer") {
+      $("#drawerFloors").innerHTML = project.floors ? project.floors + " ชั้น" : "ชานเมือง & ปริมณฑล";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.8) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = project.parking ? project.parking + " คัน" : "มีที่จอดรถบริการ";
+      $("#drawerLand").innerHTML = project.district || "ปริมณฑล";
+      $("#drawerHeight").innerHTML = project.height ? project.height + " ม." : "แลนด์มาร์กชานเมือง";
+      $("#drawerUnitsPerFloor").innerHTML = (project.priceRange ? project.priceRange.split("·")[0].trim() : "กทม. รอบนอก");
+      if (headingEl) headingEl.textContent = "ไฮไลท์ & โซนสำคัญ (Highlights & Key Zones)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "transit") {
+      $("#drawerFloors").innerHTML = "สถานีรถไฟฟ้า BTS/MRT";
+      $("#drawerUnits").innerHTML = "⭐ " + (project.rating || 4.8) + " <small>/ 5</small>";
+      $("#drawerParking").innerHTML = "06:00 - 24:00";
+      $("#drawerLand").innerHTML = project.district || "กรุงเทพฯ";
+      $("#drawerHeight").innerHTML = (project.floors || 3) + " ชั้น";
+      $("#drawerUnitsPerFloor").innerHTML = "ฮับเชื่อมต่อสำคัญ";
+      if (headingEl) headingEl.textContent = "เส้นทาง & จุดเชื่อมต่อหลัก (Lines & Connections)";
+      if (walkEl) walkEl.style.display = "none";
+    } else if (type === "building") {
+      $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>ชั้น</small>';
+      $("#drawerUnits").innerHTML = (project.height || "-") + ' <small>ม.</small>';
+      $("#drawerParking").innerHTML = (project.parking ? project.parking + ' คัน' : "อาคารแลนด์มาร์ก");
+      $("#drawerLand").innerHTML = project.district || "กรุงเทพฯ";
+      $("#drawerHeight").innerHTML = "⭐ " + (project.rating || 4.8);
+      $("#drawerUnitsPerFloor").innerHTML = (project.priceRange ? (project.priceRange.split("·")[0] || "").trim() : "มิกซ์ยูสระดับโลก");
+      if (headingEl) headingEl.textContent = "องค์ประกอบสำคัญ & โซนพื้นที่ (Key Zones)";
+      if (walkEl) walkEl.style.display = "none";
+    } else {
+      $("#drawerFloors").innerHTML = (project.floors || "-") + ' <small>ชั้น</small>';
+      $("#drawerUnits").innerHTML = (project.units || "-") + ' <small>ห้อง</small>';
+      $("#drawerParking").innerHTML = (project.parking || "-") + ' <small>คัน (' + (project.parkingRatio || "100%") + ')</small>';
+      $("#drawerLand").innerHTML = (project.landRai ? project.landRai.toFixed(2) : "-") + ' <small>ไร่</small>';
+      $("#drawerHeight").innerHTML = (project.height || "-") + ' <small>ม.</small>';
+      $("#drawerUnitsPerFloor").innerHTML = (project.priceRange || (project.unitsPerFloor ? project.unitsPerFloor + " u/fl" : "-"));
+      if (headingEl) headingEl.textContent = "ประเภทและขนาดห้อง";
+      if (walkEl) walkEl.style.display = "flex";
+    }
 
     $("#drawerDesc").textContent = project.desc || "";
 
@@ -6185,6 +6520,101 @@
       safeFly(map, { center: [100.532, 13.752], zoom: 11.2, pitch: 0, bearing: 0, duration: 1800 });
     });
 
+    if ($("#btnFlyThailand")) $("#btnFlyThailand").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [100.99, 13.75], zoom: 6.2, pitch: 20, bearing: 0, duration: 2500 });
+    });
+    if ($("#btnFlyPhuket")) $("#btnFlyPhuket").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [98.288, 7.965], zoom: 13.5, pitch: 58, bearing: 30, duration: 2400 });
+    });
+    if ($("#btnFlyPattaya")) $("#btnFlyPattaya").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [100.885, 12.925], zoom: 14.0, pitch: 58, bearing: 340, duration: 2400 });
+    });
+    if ($("#btnFlyChiangMai")) $("#btnFlyChiangMai").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [98.972, 18.795], zoom: 13.8, pitch: 55, bearing: 15, duration: 2400 });
+    });
+    if ($("#btnFlyHuaHin")) $("#btnFlyHuaHin").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [99.965, 12.555], zoom: 14.0, pitch: 55, bearing: 20, duration: 2400 });
+    });
+    if ($("#btnFlyIsan")) $("#btnFlyIsan").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [102.835, 16.435], zoom: 13.8, pitch: 55, bearing: 0, duration: 2400 });
+    });
+    if ($("#btnFlyHatYai")) $("#btnFlyHatYai").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [100.472, 7.008], zoom: 14.0, pitch: 55, bearing: 10, duration: 2400 });
+    });
+    if ($("#btnFlyFood")) $("#btnFlyFood").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var foodBtn = $("#categoryChipsContainer .cat-chip[data-cat='food']");
+        if (foodBtn) foodBtn.click();
+      }
+      safeFly(map, { center: [100.515, 13.742], zoom: 15.5, pitch: 58, bearing: 30, duration: 2200 });
+    });
+    if ($("#btnFlyCulture")) $("#btnFlyCulture").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var trvBtn = $("#categoryChipsContainer .cat-chip[data-cat='travel']");
+        if (trvBtn) trvBtn.click();
+      }
+      safeFly(map, { center: [100.491, 13.748], zoom: 15.2, pitch: 58, bearing: 350, duration: 2200 });
+    });
+    if ($("#btnFlyTransit")) $("#btnFlyTransit").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var trnBtn = $("#categoryChipsContainer .cat-chip[data-cat='transit']");
+        if (trnBtn) trnBtn.click();
+      }
+      safeFly(map, { center: [100.548, 13.741], zoom: 14.8, pitch: 58, bearing: 110, duration: 2200 });
+    });
+    if ($("#btnFlyAirports")) $("#btnFlyAirports").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var apBtn = $("#categoryChipsContainer .cat-chip[data-cat='airport_port']");
+        if (apBtn) apBtn.click();
+      }
+      safeFly(map, { center: [100.750, 13.690], zoom: 13.8, pitch: 56, bearing: 25, duration: 2400 });
+    });
+    if ($("#btnFlyPorts")) $("#btnFlyPorts").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var ptBtn = $("#categoryChipsContainer .cat-chip[data-cat='airport_port']");
+        if (ptBtn) ptBtn.click();
+      }
+      safeFly(map, { center: [100.560, 13.710], zoom: 14.2, pitch: 58, bearing: 330, duration: 2400 });
+    });
+    if ($("#btnFlyOuter")) $("#btnFlyOuter").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      if ($("#categoryChipsContainer")) {
+        var outBtn = $("#categoryChipsContainer .cat-chip[data-cat='outer']");
+        if (outBtn) outBtn.click();
+      }
+      safeFly(map, { center: [100.580, 13.780], zoom: 10.2, pitch: 48, bearing: 0, duration: 2400 });
+    });
+    if ($("#btnFlyBangkae")) $("#btnFlyBangkae").addEventListener("click", function() {
+      stopDroneTour();
+      closeProjectDrawer();
+      safeFly(map, { center: [100.4150, 13.7125], zoom: 15.2, pitch: 58, bearing: 300, duration: 2400 });
+    });
+
     // 3 Atmosphere Modes (Dark -> Light -> Sunset -> Dark)
     $("#btnThemeToggle").addEventListener("click", function() {
       if (STATE.theme === "dark") {
@@ -6258,6 +6688,29 @@
         $("#btnExpandBars").style.display = "none";
       });
     }
+
+    // 🏷️ Category Filter Chips (All, Food, Travel, Buildings, Transit, Condos)
+    $$("#categoryChipsContainer .cat-chip").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        $$("#categoryChipsContainer .cat-chip").forEach(function(b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        var cat = btn.getAttribute("data-cat") || "all";
+        STATE.selectedCategory = cat;
+
+        var brandWrap = $("#brandChipsContainer");
+        var divEl = $("#filterDivider");
+        if (cat !== "all" && cat !== "condo") {
+          if (brandWrap) brandWrap.style.display = "none";
+          if (divEl) divEl.style.display = "none";
+        } else {
+          if (brandWrap) brandWrap.style.display = "flex";
+          if (divEl) divEl.style.display = "block";
+        }
+
+        applyLandmarkFilters();
+        createDOMPins();
+      });
+    });
 
     // 🏷️ Developer Brand Filter Chips
     $$("#brandChipsContainer .brand-chip").forEach(function(btn) {
