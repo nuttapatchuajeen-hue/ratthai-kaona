@@ -3,8 +3,8 @@
  *
  * ต้นทาง: aisstream.io (WebSocket, ฟรีแต่ต้องมีคีย์ส่วนตัว)
  *   - คีย์: ตัวแปรแวดล้อม AISSTREAM_KEY (ตั้งใน Vercel) หรือไฟล์ ~/.aisstream-key (สำหรับเซิร์ฟเวอร์ในเครื่อง)
- *   - aisstream ไม่ยอมให้เบราว์เซอร์ต่อตรง (กันคีย์รั่ว) → ฟังก์ชันนี้เปิด WebSocket ~7 วินาที เก็บเรือที่ส่งสัญญาณเข้ามา
- *     แล้วรวมกับที่จำไว้ในหน่วยความจำ (ลืมเรือที่เงียบเกิน 15 นาที) · แคชที่ CDN 20 วินาที = ผู้ชมกี่คนก็เปิดต้นทางไม่เกิน ~3 ครั้ง/นาที
+ *   - aisstream ไม่ยอมให้เบราว์เซอร์ต่อตรง (กันคีย์รั่ว) → ฟังก์ชันนี้เปิด WebSocket ค้างไว้ระหว่างที่ยังมีคนเปิดหน้า
+ *     (ปิดเองเมื่อไม่มีคำขอ 2.5 นาที) เก็บเรือสะสมในหน่วยความจำ ลืมลำที่เงียบเกิน 15 นาที · แคช CDN 8 วินาที
  *
  * คืนค่า { ok, now, src, n, ships: [[mmsi, ชื่อ, lat, lon, sog(นอต), cog, heading, ชนิด, ยาว, กว้าง, สถานะเดินเรือ, อายุข้อมูล(วินาที), ปลายทาง]] }
  *   ไม่มีคีย์ → { ok: false, error: "no-key" }
@@ -96,10 +96,12 @@ function collect(key) {
   });
 }
 
-/* เซิร์ฟเวอร์ที่รันค้าง (static_server.js ในเครื่อง) → เปิด WebSocket ค้างไว้ตลอด รับทุกข้อความ (สถานีแถวนี้ส่งมาไม่ถี่ — เปิดทีละ 7 วินาทีตกหล่นเยอะ)
-   บน Vercel (serverless) ใช้แบบเปิดเป็นช่วงตามเดิม · AIS_WINDOW_MODE=1 บังคับแบบช่วง (สคริปต์ทดสอบ) */
-const PERSIST = !process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME && !process.env.AIS_WINDOW_MODE;
-let sock = null, sockErr = null, sockSince = 0, backoff = 2000;
+/* เปิด WebSocket ค้างไว้ระหว่างที่ยังมีคนเปิดหน้าอยู่ แล้วปิดเองเมื่อไม่มีคำขอเกิน IDLE_MS
+   (สถานีรับสัญญาณแถวนี้ส่งมาไม่ถี่ — เปิดทีละไม่กี่วินาทีต่อคำขอ เก็บเรือได้แค่ 2-3 ลำ)
+   ใช้ได้ทั้งเซิร์ฟเวอร์ในเครื่องและ Vercel (อินสแตนซ์ที่ยังอุ่นเก็บของต่อได้) · AIS_WINDOW_MODE=1 บังคับแบบเปิดเป็นช่วง (สคริปต์ทดสอบ) */
+const PERSIST = !process.env.AIS_WINDOW_MODE;
+const IDLE_MS = 150000;
+let sock = null, sockErr = null, sockSince = 0, backoff = 2000, lastReq = 0, lastMsg = 0, idleTimer = null;
 function ensureSocket(key) {
   if (sock) return;
   const W = WS();
@@ -115,15 +117,24 @@ function ensureSocket(key) {
     try { j = JSON.parse(txt); } catch (e) { return; }
     if (j.error) { sockErr = /key/i.test(j.error) ? 'bad-key' : j.error; try { ws.close(); } catch (e) {} return; }
     sockErr = null;
+    lastMsg = Date.now();
     ingest(j);
   };
   ws.onerror = () => {};
   ws.onclose = () => {
     sock = null;
+    if (Date.now() - lastReq > IDLE_MS) return;              // ไม่มีคนดูแล้ว — ไม่ต่อใหม่
     const t = setTimeout(() => ensureSocket(apiKey() || key), sockErr === 'bad-key' ? 60000 : backoff);
     if (t.unref) t.unref();
     backoff = Math.min(60000, backoff * 2);
   };
+  if (!idleTimer) {
+    // ไม่มีคำขอเข้ามานาน → ปิดท่อ (aisstream จำกัดการเชื่อมต่อ 3 ทางต่อคีย์)
+    idleTimer = setInterval(() => {
+      if (sock && Date.now() - lastReq > IDLE_MS) { try { sock.close(); } catch (e) {} sock = null; }
+    }, 30000);
+    if (idleTimer.unref) idleTimer.unref();
+  }
 }
 
 function snapshot() {
@@ -149,19 +160,25 @@ module.exports = async (req, res) => {
     return;
   }
   if (PERSIST) {
+    lastReq = Date.now();
+    // อินสแตนซ์ที่ถูกแช่ไว้ระหว่างคำขออาจเหลือท่อที่ตายแล้ว — เงียบเกิน 90 วินาที = ต่อใหม่
+    if (sock && lastMsg && Date.now() - lastMsg > 90000) { try { sock.close(); } catch (e) {} sock = null; }
     ensureSocket(key);
-    // เพิ่งเปิดท่อ → รอข้อความชุดแรกสักครู่
-    const wait = 7000 - (Date.now() - sockSince);
+    // เพิ่งเปิดท่อ → รอข้อความชุดแรกสักครู่ (ยังไม่มีเรือในมือ)
+    const wait = 8000 - (Date.now() - sockSince);
     if (wait > 0 && !mem.size) await new Promise(r => setTimeout(r, wait));
-    if (sockErr) {
-      res.statusCode = sockErr === 'bad-key' ? 401 : 502;
+    // คีย์ผิดและยังไม่เคยได้ข้อมูล = แจ้ง error · ที่เหลือส่งของที่เก็บไว้ไปก่อน (ต่อท่อใหม่เองอยู่แล้ว)
+    if (sockErr === 'bad-key' && !mem.size) {
+      res.statusCode = 401;
       res.setHeader('Cache-Control', 'no-store');
-      res.end(JSON.stringify({ ok: false, error: sockErr }));
+      res.end(JSON.stringify({ ok: false, error: 'bad-key' }));
       return;
     }
-    res.setHeader('Cache-Control', 'no-store');
+    const body = snapshot();
+    if (sockErr) body.warn = sockErr;
+    res.setHeader('Cache-Control', 'public, s-maxage=8, stale-while-revalidate=20');
     res.statusCode = 200;
-    res.end(JSON.stringify(snapshot()));
+    res.end(JSON.stringify(body));
     return;
   }
   try {
