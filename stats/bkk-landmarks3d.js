@@ -192,11 +192,19 @@
           var nm = (o.material && o.material.name || "solid").replace(/\.\d+$/, "");
           if (o.material && o.material.dispose) o.material.dispose();
           o.material = mats[nm] || mats.solid;
-          if (o.geometry.attributes.color && o.geometry.attributes.color.itemSize === 4) {
+          var a = o.geometry.attributes.color;
+          if (a) {
             // สีต่อจุดแบบ RGBA → ใช้แค่ RGB (ไม่ต้องเปิดโหมดโปร่งใส)
-            var a = o.geometry.attributes.color, rgb = new Float32Array(a.count * 3);
-            for (var i = 0; i < a.count; i++) { rgb[i * 3] = a.getX(i); rgb[i * 3 + 1] = a.getY(i); rgb[i * 3 + 2] = a.getZ(i); }
-            o.geometry.setAttribute("color", new T.BufferAttribute(rgb, 3));
+            // ⚠ three r128 ไม่ถอดสเกลค่า normalized ให้ (COLOR_0 ของ glTF เก็บเป็นจำนวนเต็ม 0–65535 หรือ 0–255)
+            //   ถ้าไม่หารเอง สีทุกจุดจะกลายเป็นค่ามหาศาล = ขาวโพลนทั้งหลัง
+            var mx = 0, i;
+            for (i = 0; i < a.count; i++) mx = Math.max(mx, a.getX(i), a.getY(i), a.getZ(i));
+            var sc = mx > 300 ? 1 / 65535 : mx > 1.5 ? 1 / 255 : 1;
+            if (sc !== 1 || a.itemSize === 4) {
+              var rgb = new Float32Array(a.count * 3);
+              for (i = 0; i < a.count; i++) { rgb[i * 3] = a.getX(i) * sc; rgb[i * 3 + 1] = a.getY(i) * sc; rgb[i * 3 + 2] = a.getZ(i) * sc; }
+              o.geometry.setAttribute("color", new T.BufferAttribute(rgb, 3));
+            }
           }
           o.userData.lm = I.it.id;
         });

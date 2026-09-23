@@ -1405,46 +1405,91 @@
     return el;
   }
   function removeLabel(o) { if (o && o.el) { o.el.remove(); o.el = null; } }
+  /* วางป้ายแบบไม่ให้ทับกัน: ป้ายที่สำคัญ/ใกล้กลางจอได้ที่ก่อน ป้ายที่ทับของเดิมถูกซ่อน
+     (ท่าเรือหลายท่าใน OSM เป็นคนละหมุดแต่ชื่อเดียวกัน เช่น "ท่าเรือสาทร" → ชื่อซ้ำในระยะใกล้ก็ซ่อน)
+     ขนาดป้ายวัดครั้งเดียวตอนสร้าง/เปลี่ยนข้อความ แล้วจำไว้ (อ่าน offsetWidth ทุกเฟรม = บังคับ reflow) */
+  var _placed = [], _names = [];
+  function fits(el, x, y, name) {
+    var w = el._w || 120, h = el._h || 26, r = { x0: x + el._ox - 2, y0: y + el._oy - 2, x1: x + el._ox + w + 2, y1: y + el._oy + h + 2 };
+    for (var i = 0; i < _placed.length; i++) {
+      var o = _placed[i];
+      if (r.x0 < o.x1 && r.x1 > o.x0 && r.y0 < o.y1 && r.y1 > o.y0) return false;
+    }
+    if (name) for (i = 0; i < _names.length; i++) {
+      if (_names[i].n === name && Math.hypot(_names[i].x - x, _names[i].y - y) < 150) return false;
+    }
+    _placed.push(r);
+    if (name) _names.push({ n: name, x: x, y: y });
+    return true;
+  }
+  function measure(el) { el._w = el.offsetWidth; el._h = el.offsetHeight; }
   function placeLabels(z) {
     var lay = labelLayer(), W = model.cw, Hh = model.ch;
     lay.style.display = visible ? "" : "none";
     if (!visible) return;
-    // ท่าเรือโดยสาร — เฉพาะที่อยู่ในจอ (ไม่เกิน 45 ป้าย ใกล้กลางจอก่อน)
-    var showT = z >= LABEL_ZOOM, cand = [];
-    model.terms.forEach(function (T2, i) {
-      var s = showT ? H.project(T2.p.x, T2.p.y, 5 * T2.k) : null;
-      if (s && s.x > -20 && s.x < W + 20 && s.y > -10 && s.y < Hh + 10) cand.push({ i: i, s: s, d: Math.hypot(s.x - W / 2, s.y - Hh / 2) });
-      else if (T2.el) T2.el.style.display = "none";
-    });
-    cand.sort(function (a, b) { return a.d - b.d; });
-    cand.forEach(function (c, n) {
-      var T2 = model.terms[c.i];
-      if (n >= 45) { if (T2.el) T2.el.style.display = "none"; return; }
-      if (!T2.el) {
-        T2.el = document.createElement("div");
-        T2.el.className = "prt-lbl prt-term";
-        T2.el.dataset.term = c.i;
-        var dots = (T2.t.l || "").split("").map(function (l) { return '<i style="background:' + (LINE_COL[l] || "#999") + '"></i>'; }).join("");
-        T2.el.innerHTML = '<b>' + esc(T2.t.n || T2.t.e || "ท่าเรือ") + (T2.t.r ? ' <small>' + esc(T2.t.r) + '</small>' : '') + '</b>' + (dots ? '<span class="prt-dots">' + dots + '</span>' : '');
-        lay.appendChild(T2.el);
-      }
-      T2.el.style.display = "";
-      T2.el.classList.toggle("sel", !!(selHit && selHit.type === "term" && selHit.T === T2));
-      T2.el.style.transform = "translate(" + Math.round(c.s.x) + "px," + Math.round(c.s.y) + "px)";
-    });
-    // เรือจริง
-    var showL = aisOn && z >= AIS_LABEL_ZOOM;
+    _placed.length = 0; _names.length = 0;
+    // เรือจริงได้ที่ก่อน (ขยับตลอด ถ้าโดนซ่อนจะกะพริบ)
+    var showL = aisOn && z >= AIS_LABEL_ZOOM, fresh = [];
     Object.keys(live.S).forEach(function (id) {
       var S = live.S[id];
       var s = showL && S.x != null ? H.project(S.x, S.y, shipDims(S.cls, S.L).H * S.k) : null;
       var on = s && s.x > -40 && s.x < W + 40 && s.y > -20 && s.y < Hh + 20;
       if (!on) { if (S.el) S.el.style.display = "none"; return; }
-      if (!S.el) { S.el = document.createElement("div"); S.el.className = "prt-lbl prt-ais"; S.el.dataset.mmsi = id; lay.appendChild(S.el); }
+      if (!S.el) {
+        S.el = document.createElement("div");
+        S.el.className = "prt-lbl prt-ais";
+        S.el.dataset.mmsi = id;
+        S.el._ox = 10; S.el._oy = -34;
+        lay.appendChild(S.el);
+      }
       var txt = '<b>' + esc(S.name || "MMSI " + id) + '</b><span>' + fmt(S.fix.sog, 1) + ' นอต</span>';
-      if (S.el._t !== txt) { S.el.innerHTML = txt; S.el._t = txt; }
+      if (S.el._t !== txt) { S.el.innerHTML = txt; S.el._t = txt; S.el._w = 0; }
       S.el.style.display = "";
+      if (!S.el._w) fresh.push(S.el);
       S.el.classList.toggle("sel", !!(selHit && selHit.type === "live" && selHit.S === S));
       S.el.style.transform = "translate(" + Math.round(s.x) + "px," + Math.round(s.y) + "px)";
+      S.el._x = s.x; S.el._y = s.y;
+    });
+    // ท่าเรือโดยสาร — ท่าสายหลัก (เรือด่วน) ก่อน แล้วไล่จากกลางจอออก
+    var showT = z >= LABEL_ZOOM, cand = [];
+    model.terms.forEach(function (T2, i) {
+      var s = showT ? H.project(T2.p.x, T2.p.y, 5 * T2.k) : null;
+      if (s && s.x > -20 && s.x < W + 20 && s.y > -10 && s.y < Hh + 10) {
+        cand.push({ i: i, s: s, big: /[OYGLTNM]/.test(T2.t.l || "") ? 0 : 1, d: Math.hypot(s.x - W / 2, s.y - Hh / 2) });
+      } else if (T2.el) T2.el.style.display = "none";
+    });
+    cand.sort(function (a, b) { return a.big - b.big || a.d - b.d; });
+    cand.forEach(function (c, n) {
+      var T2 = model.terms[c.i];
+      if (n >= 60) { if (T2.el) T2.el.style.display = "none"; return; }
+      if (!T2.el) {
+        T2.el = document.createElement("div");
+        T2.el.className = "prt-lbl prt-term";
+        T2.el.dataset.term = c.i;
+        T2.el._ox = -40; T2.el._oy = -30;
+        var dots = (T2.t.l || "").split("").map(function (l) { return '<i style="background:' + (LINE_COL[l] || "#999") + '"></i>'; }).join("");
+        T2.el.innerHTML = '<b>' + esc(T2.t.n || T2.t.e || "ท่าเรือ") + (T2.t.r ? ' <small>' + esc(T2.t.r) + '</small>' : '') + '</b>' + (dots ? '<span class="prt-dots">' + dots + '</span>' : '');
+        lay.appendChild(T2.el);
+        T2.el.style.display = "";
+        measure(T2.el);
+      }
+      T2.el.style.display = "";
+      T2.el.classList.toggle("sel", !!(selHit && selHit.type === "term" && selHit.T === T2));
+      T2.el.style.transform = "translate(" + Math.round(c.s.x) + "px," + Math.round(c.s.y) + "px)";
+      T2.el._x = c.s.x; T2.el._y = c.s.y;
+      cand[n].el = T2.el;
+    });
+    // วัดป้ายเรือที่เพิ่งเปลี่ยนข้อความ (รวบไว้ทีเดียว) แล้วค่อยตัดป้ายที่ทับกัน
+    fresh.forEach(measure);
+    Object.keys(live.S).forEach(function (id) {
+      var S = live.S[id];
+      if (!S.el || S.el.style.display === "none") return;
+      if (!fits(S.el, S.el._x, S.el._y, null)) S.el.style.display = "none";
+    });
+    cand.forEach(function (c) {
+      if (!c.el || c.el.style.display === "none") return;
+      var T2 = model.terms[c.i], nm = T2.t.n || T2.t.e || "";
+      if (!fits(c.el, c.el._x, c.el._y, nm)) c.el.style.display = "none";
     });
   }
   function hideLabels() { if (labels.el) labels.el.style.display = "none"; }

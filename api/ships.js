@@ -14,7 +14,7 @@ const path = require('path');
 const os = require('os');
 
 const BOX = [[12.85, 100.30], [14.05, 101.05]];     // [lat, lon] มุมใต้-ตะวันตก → เหนือ-ตะวันออก
-const WINDOW_MS = 7000;
+const WINDOW_MS = 9500;          // แบบเปิดเป็นช่วง (Vercel): เปิดท่อนานขึ้นอีกหน่อย เก็บเรือได้มากขึ้น
 const FORGET_MS = 15 * 60 * 1000;
 const TYPES = ['PositionReport', 'StandardClassBPositionReport', 'ExtendedClassBPositionReport', 'ShipStaticData', 'StaticDataReport'];
 
