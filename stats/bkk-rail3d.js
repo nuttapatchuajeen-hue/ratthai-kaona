@@ -268,7 +268,9 @@
   /* BTS ส่วนต่อขยาย: หลังคาจั่วขาว ไม่ใช่หลังคาโค้งลอนแบบสายเดิม (ตรวจจากภาพถ่ายดาวเทียมรายสถานี 2026-09)
        ridge = แถบช่องแสงเขียวอมฟ้าตามสันหลังคา (N10–N24) · mid = แถบช่องแสงกลางหลังคาเฉพาะช่วงกลาง (S9–S12)
        slot = ร่องช่องแสงสีเข้มกลางหลังคา (E15–E23) · ไม่มี = จั่วขาวเรียบ (S7 S8 N9 E10–E14)
-     MRT สายสีน้ำเงินยกระดับ: หลังคา 3 ช่วง — ช่วงกลางผนังกระจกยก (สีน้ำเงินเฉพาะ BLUE_CENTER) หัว-ท้ายจั่วเทาลาดเอียงสอบ */
+     MRT สายสีน้ำเงินยกระดับ (ตามภาพ render สถานีบางหว้า): ผืนเทาหัว-ท้าย "สูง" หน้าตัดจั่วสันคม ลาดลงแบบโค้งถึงปลายแหลมรูปตัว V
+       ปลายด้านในงุ้มลงทับผืนกลาง · ผืนกลาง "ต่ำ" เป็นจั่วโค้งขึ้นกลางสถานี มีแถบกระจกช่องแสงตามสัน (สีน้ำเงินเฉพาะ BLUE_CENTER)
+       สถานีส่วนใหญ่ใช้โมเดล Blender (STATION_GLB) · emitMrtRoof วาดทรงเดียวกันให้สถานีที่ต้องตัดหลังคาเป็นช่วง ๆ */
   function variant(base, o) { var r = {}, k; for (k in base) r[k] = base[k]; for (k in o) r[k] = o[k]; return r; }
   STYLE.btsx = variant(STYLE.bts, { name: "BTS ส่วนต่อขยาย (หลังคาจั่วขาว)", roof: "gable", rise: 1.6, tint: 0.03 });
   STYLE.btsxRidge = variant(STYLE.btsx, { name: "BTS ส่วนต่อขยายสายเหนือ (หลังคาขาว แถบช่องแสงตามสัน)", sky: "ridge" });
@@ -283,7 +285,23 @@
     return m;
   })();
   var BLUE_CENTER = { BL04: 1, BL34: 1 };   // บางขุนนนท์ บางหว้า — หลังคาช่วงกลางสีน้ำเงิน
-  var MRT_HOOD = 5;                         // หลังคา MRT ยื่นเลยปลายชานชาลา (หัวลาดเอียง)
+  /* สถานีที่ปั้นส่วนบน (หลังคา โครงเหล็ก ข้างชานชาลาเปิดโล่ง) ใน Blender: _geo/station3d/blender/build_station.py → stations3d/<code>.glb
+       ขนาดโมเดลดึงจากกรอบสถานีเดียวกันนี้ จึงวางทับได้พอดี · หน้าเว็บยังวาดพื้น ชานชาลา ชั้นขายตั๋ว บันไดเอง แต่ข้ามผนัง/เสา/หลังคาเดิม
+     MRT สายสีน้ำเงินยกระดับทุกสถานี ยกเว้นสถานีร่วมที่มีรางอีกสายพาดผ่าน (ท่าพระ BL01 · เตาปูน BL10) ซึ่งโมเดลยังไม่มีช่วงตัดหลังคา
+       → สถานีเหล่านั้นใช้ emitMrtRoof (ทรงเดียวกัน วาดในหน้าเว็บ) */
+  var STATION_GLB = {};
+  ["BL02", "BL03", "BL04", "BL05", "BL06", "BL07", "BL08", "BL09", "BL33", "BL34", "BL35", "BL36", "BL37", "BL38"]
+    .forEach(function (c) { STATION_GLB[c] = true; });
+  var GLB_MARGIN = 1500;                    // ม. รอบกรอบจอที่เริ่มโหลดโมเดลสถานีล่วงหน้า
+  var GLB_DIR = "stations3d/";
+  var THREE_EX = "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/";
+  var MRT_HOOD = 5;                         // ใช้คิดความยาวผืนกลาง (midT) — ค่าเดียวกับที่ใส่ใน _geo/station3d/input/stations.json
+  /* ขนาดหลังคา MRT (ม.) — ตรงกับ build_station.py
+       LAP ผืนกลางสอดใต้ผืนเทา · BW ผืนกลางโค้งขึ้นกลางสถานี · THm/FDm ความหนา/แผ่นปิดชายคาผืนกลาง · WM/WG ชายคายื่นเลยแนวผนัง (กลาง/เทา)
+       ZG0→ZG1 ชายคาข้างผืนเทาเหนือชายคาผืนกลาง ที่ปลายใน→ปลายแหลม · AC สันผืนเทาสูงกว่าชายคา · TK0→TK1 ความหนาผืนเทา
+       PROW ปลายแหลมยื่นเลยปลายชานชาลา · PRW ความลึกหัวตัว V · RN/AN ปลายงุ้ม (รัศมี/มุม) · SKW/SKH แถบกระจกตามสัน (ครึ่งกว้าง/สูง) */
+  var MRT_R = { LAP: 3, BW: 1.2, THm: 0.3, FDm: 0.6, WM: 1.2, WG: 1.8, ZG0: 3.4, ZG1: 0.4, AC: 1.1, TK0: 0.7, TK1: 0.15,
+    PROW: 8, PRW: 7, RN: 1.3, AN: 100, SKW: 2.4, SKH: 0.55 };
   var ROOF_BASE = { dark: "#a9b3bf", light: "#eef1f4", sunset: "#e6d0c2" };   // สีหลังคา (คูณกับสีประจำสายต่อจุด)
   var TEX_TONE = { dark: "#c3cbd6", light: "#ffffff", sunset: "#f1dccd" };    // หรี่ผิวลายในธีมมืด
   var GLOW = { dark: 0.55, light: 0, sunset: 0.22 };                          // ไฟในอาคารส่องผ่านกระจกตอนกลางคืน
@@ -388,6 +406,16 @@
       B.v(F(t, o, zf(t, o)), t / 0.8, o / 6, col, B.n ? F.n(-dzt / L, -dzo / L, 1 / L) : null);
     }
     for (i = 0; i < ts.length - 1; i++) for (j = 0; j < no - 1; j++) { var a = base + i * no + j; B.q(a, a + no, a + no + 1, a + 1); }
+  }
+  // แผ่นกระจกตั้งขวางที่ตำแหน่ง t ระหว่างโปรไฟล์ล่าง-บน (จุด o ตรงกัน) · ลายเดียวกับผนังช่องแสง (3 ม. ต่อลาย)
+  function glassBand(B, F, t, bot, top) {
+    for (var i = 0; i < bot.length - 1; i++) {
+      var s = B.v(F(t, bot[i][0], bot[i][1]), bot[i][0] / 3, 0);
+      B.v(F(t, bot[i + 1][0], bot[i + 1][1]), bot[i + 1][0] / 3, 0);
+      B.v(F(t, top[i + 1][0], top[i + 1][1]), top[i + 1][0] / 3, 0.55);
+      B.v(F(t, top[i][0], top[i][1]), top[i][0] / 3, 0.55);
+      B.q(s, s + 1, s + 2, s + 3);
+    }
   }
   // ปิดหน้าตัดหัว-ท้ายระหว่างผิวบนกับผิวล่างของหลังคา
   function caps(B, F, top, under, t, col) {
@@ -686,7 +714,7 @@
      ข้ามสูงพ้นหลังคา / ต่ำกว่าชานชาลา / ขนานกัน = ไม่ตัด */
   function trackCuts(S, tracks) {
     var st = S.style, top = S.levels[S.levels.length - 1];
-    var roofTop = top.floor + st.eave + st.rise + (st.roof === "clere" || st.roof === "mrtx" ? 2.1 : 0.5);
+    var roofTop = top.floor + st.eave + (st.roof === "mrtx" ? MRT_R.ZG0 + MRT_R.AC : st.rise + (st.roof === "clere" ? 2.1 : 0.5));
     var tL = -S.L / 2 - 3, tR = S.L / 2 + 3, oL = S.o0 - 1.5, oR = S.o1 + 1.5;
     tracks.forEach(function (R) {
       if (!R || R.yard || S.lines.indexOf(R.line) >= 0) return;
@@ -789,9 +817,12 @@
   function finalizeStation(S) {
     var lv0 = S.levels[0], top = S.levels[S.levels.length - 1], st = S.style;
     S.eave = top.floor + st.eave;
-    S.roofTop = S.eave + st.rise + (st.roof === "clere" || st.roof === "mrtx" ? 2.1 : st.roof === "skybarrel" ? 0.8 : 0.3);
-    S.tEnd = S.L / 2 + (st.roof === "mrtx" ? MRT_HOOD : 3);          // ปลายหลังคาตามแนวราง
-    S.midT = 0.14 * (S.L + 2 * MRT_HOOD);                             // ครึ่งความยาวหลังคาช่วงกลางของ MRT
+    S.roofTop = st.roof === "mrtx" ? S.eave + MRT_R.ZG0 + MRT_R.AC : S.eave + st.rise + (st.roof === "clere" ? 2.1 : st.roof === "skybarrel" ? 0.8 : 0.3);
+    S.tEnd = S.L / 2 + (st.roof === "mrtx" ? MRT_R.PROW : 3);        // ปลายหลังคาตามแนวราง (MRT = ปลายแหลม)
+    S.midT = 0.14 * (S.L + 2 * MRT_HOOD);                             // ครึ่งความยาวผืนกลางที่มองเห็นของ MRT
+    S.mrt = null;                                                     // ขนาดหลังคา MRT คิดใหม่เมื่อวาด (ความกว้างสถานีอาจถูกปรับตอนจัดสถานีร่วม)
+    // โมเดลจาก Blender ใช้เฉพาะสถานีเดี่ยว (ไม่มีสายอื่นพาดผ่าน/ไม่ใช่ชุดที่สอง) เพราะโมเดลไม่มีช่วงตัดหลังคา
+    S.glb = !!STATION_GLB[S.st.code] && st.roof === "mrtx" && !S.twin && !S.cuts.length;
     S.conc = S.hub ? 0.6 : Math.max(5.2, Math.min(11, lv0.rz - 7.4));
     S.concTop = lv0.rz - 1.5;
     if (S.concTop - S.conc < 3) S.noConc = true;
@@ -916,14 +947,35 @@
 
   /* ------------------------------------------------------ วาดสถานี */
   function roofGeom(S) { var oL = S.o0 - 1.2, oR = S.o1 + 1.2; return { oL: oL, oR: oR, om: (oL + oR) / 2, hw: (oR - oL) / 2 }; }
-  // หลังคา MRT: ครึ่งความกว้างที่ระยะ at จากกลางสถานี — สอบเข้าเหลือครึ่งหนึ่งช่วงหัวหลังคา (1 ม. ก่อนปลายชานชาลา → ปลายหลังคา)
-  function mrtHW(S, g, at) {
-    var ta = S.L / 2 - 1;
-    return at <= ta ? g.hw : g.hw * (1 - 0.5 * Math.min(1, (at - ta) / (S.tEnd - ta)));
+  /* ขนาดหลังคา MRT ของสถานี (กรอบสถานี) — ทรงเดียวกับโมเดล Blender
+       ผืนกลาง: ±tm ครึ่งกว้าง HWm · ผืนเทา: ปลายใน tin → ปลายแหลม T ครึ่งกว้าง HWg · u = |t| · y = ระยะขวางจากแกนหลังคา */
+  function mrtGeom(S) {
+    var g = roofGeom(S), K = MRT_R, E = S.eave, M = { om: g.om, HWm: g.hw, HWg: g.hw - 1.2 + K.WG, E: E, Rm: 0.75 * S.style.rise,
+      tin: S.midT, tm: S.midT + K.LAP, T: S.L / 2 + K.PROW };
+    M.tsk = M.tin - K.RN - 0.8;                                        // แถบกระจกตามสันผืนกลาง: ±tsk (ไม่ลอดใต้ปลายงุ้ม)
+    M.zMid = function (t, y) {
+      var q = Math.min(Math.abs(t), M.tm) / M.tm;
+      return E + M.Rm * (1 - Math.min(1, Math.abs(y) / M.HWm)) + K.BW * (1 - q * q);
+    };
+    M.nMid = function (t, s) {                                         // normal ผิวบนผืนกลาง (ครึ่งฝั่ง s) ในกรอบสถานี
+      var dt = Math.abs(t) < M.tm ? -2 * K.BW * t / (M.tm * M.tm) : 0, dy = -s * M.Rm / M.HWm, l = Math.hypot(dt, dy, 1);
+      return [-dt / l, -dy / l, 1 / l];
+    };
+    M.f = function (u) { return Math.max(0, Math.min(1, (u - M.tin) / (M.T - M.tin))); };
+    M.G = function (u) { return E + K.ZG0 - (K.ZG0 - K.ZG1) * Math.pow(M.f(u), 1.7); };
+    M.dG = function (u) { var f = M.f(u); return f <= 0 || f >= 1 ? 0 : -(K.ZG0 - K.ZG1) * 1.7 * Math.pow(f, 0.7) / (M.T - M.tin); };
+    M.tk = function (u) { var f = M.f(u); return K.TK0 + (K.TK1 - K.TK0) * f * f; };
+    M.zG = function (u, y) { return M.G(u) + K.AC * (1 - Math.min(1, Math.abs(y) / M.HWg)); };
+    M.nG = function (u, sg, s) {                                       // normal ผิวบนผืนเทา (ฝั่ง sg ตามแนวยาว · ครึ่ง s ตามขวาง)
+      var dt = sg * M.dG(u), dy = -s * K.AC / M.HWg, l = Math.hypot(dt, dy, 1);
+      return [-dt / l, -dy / l, 1 / l];
+    };
+    M.uEnd = function (s) { return M.T - K.PRW * Math.abs(s); };       // ปลายนอกที่ตำแหน่งขวาง s (−1..1) = หัวแหลมรูปตัว V
+    return M;
   }
   // หน้าตัดขวางของหลังคาที่ตำแหน่ง t (n ช่วง) — ใช้ทำซี่โครงใต้หลังคาที่รูปทรงเปลี่ยนตามแนวยาว
   function profAt(S, g, t, n) {
-    var hw = S.style.roof === "mrtx" ? mrtHW(S, g, Math.abs(t)) : g.hw, out = [];
+    var hw = g.hw, out = [];
     for (var i = 0; i <= n; i++) { var o = g.om - hw + 2 * hw * i / n; out.push([o, roofZ(S, o, t)]); }
     return out;
   }
@@ -945,10 +997,12 @@
       case "clere": return a >= 0.22 ? e + 0.75 * r * (1 - (a - 0.22) / 0.78) : e + 0.75 * r + 1.7;
       case "gable": return e + r * (1 - a);
       case "mrtx":
-        var at = Math.abs(t || 0);
-        if (at <= S.midT) return a >= 0.22 ? e + 0.75 * r * (1 - (a - 0.22) / 0.78) : e + 0.75 * r + 1.7;
-        var u = Math.min(1, Math.abs(o - g.om) / mrtHW(S, g, at)), v = Math.max(0, Math.min(1, (S.tEnd - at) / (MRT_HOOD + 1)));
-        return e + 0.75 * r * Math.min(1 - u, v);
+        // ผืนแรกที่อยู่เหนือจุดนี้ (เสา/ซี่โครงหยุดที่ผืนนั้น): ผืนกลางในช่วง ±tm · นอกนั้นผืนเทา
+        //   ผืนเทาหนากว่าที่ผู้เรียกหักออก (0.35) → คืน "ท้องผืนเทา + 0.35" ให้เสา/ซี่โครงชนท้องพอดี
+        var M = S.mrt || (S.mrt = mrtGeom(S)), at = Math.abs(t || 0), yy = o - M.om;
+        if (at <= M.tm && Math.abs(yy) <= M.HWm) return M.zMid(at, yy);
+        var uu = Math.max(at, M.tin);
+        return M.zG(uu, yy) - M.tk(uu) + 0.35;
       case "wing": return e + r * Math.pow(a, 1.4);
       case "shell": return e + r * Math.sqrt(Math.max(0, 1 - s * s));
       case "canopy": return e + r * (0.5 + 0.5 * s);
@@ -974,6 +1028,7 @@
         });
       });
     });
+    if (S.glb) return;                                        // ผนัง/เสาชั้นชานชาลาอยู่ในโมเดล Blender แล้ว
     var zb = S.levels[0].rz - 0.6, zt = S.eave, nl = S.levels.length, top = S.levels[nl - 1];
     var WB = S.style.wall === "louvre" ? C.louvre : C.glass;
     S.segs.forEach(function (sg) {
@@ -997,6 +1052,7 @@
 
   // หลังคาทรงประจำสาย: ผิวบน (สีหลังคาอมสีสาย + ตะเข็บ) · ท้องหลังคา · ขอบสีประจำสาย · ปิดหัวท้าย · กระจกช่องแสง
   function emitRoof(C, F, S) {
+    if (S.glb) return;                                        // หลังคาอยู่ในโมเดล Blender แล้ว
     var g = roofGeom(S), st = S.style, TH = 0.35;
     function prof(s0, s1, n, fn) { var out = []; for (var i = 0; i <= n; i++) { var s = s0 + (s1 - s0) * i / n; out.push([g.om + s * g.hw, fn(s)]); } return out; }
     function sz(s) { return roofZ(S, g.om + s * g.hw, 0); }
@@ -1014,7 +1070,7 @@
         if (pc.fr) fbox(C.paint, F, t0, t1, b[0] - 0.02, b[0] + 0.12, b[1] - TH - 0.75, b[1] + 0.04, S.lineCol);
       });
     }
-    // หลังคาผนังกระจกยกกลาง (แบบสถานีท่าพระ) — ใช้ทั้งทรง clere และช่วงกลางของหลังคา MRT
+    // หลังคาผนังกระจกยกกลาง (ทรง clere)
     function clerePieces() {
       var zc = S.eave + 0.75 * st.rise;
       return [{ p: prof(-1, -0.22, 6, sz), fl: 1 }, { p: prof(0.22, 1, 6, sz), fr: 1 },
@@ -1030,16 +1086,8 @@
       if (st.roof === "vaults") { emitVaults(C, F, S, g, t0, t1, TH); return; }
       var pieces = [];
       if (st.roof === "mrtx") {
-        // MRT สายสีน้ำเงิน: ช่วงกลางผนังกระจกยก (บางขุนนนท์/บางหว้าสีน้ำเงิน) + หัว-ท้ายจั่วเทาลาดเอียงสอบ
-        var m0 = Math.max(t0, -S.midT), m1 = Math.min(t1, S.midT);
-        if (m1 - m0 > 0.5) {
-          pieces = clerePieces();
-          emitPieces(pieces, m0, m1, S.midCol);
-          clereGlass(m0, m1);
-          if (m0 === -S.midT) mrtJunction(C, F, S, g, m0);
-          if (m1 === S.midT) mrtJunction(C, F, S, g, m1);
-        }
-        emitMrtEnds(C, F, S, g, t0, t1, TH);
+        // MRT สายสีน้ำเงิน: หลังคาซ้อน — ช่วงกลางโค้งตื้นยกลอย (บางขุนนนท์/บางหว้าสีน้ำเงิน) ทับหัว-ท้ายจั่วเทาลาดเอียงสอบ
+        emitMrtRoof(C, F, S, t0, t1);
       } else {
         if (st.roof === "skybarrel") pieces.push({ p: prof(-1, -0.16, 12, sz), fl: 1 }, { p: prof(0.16, 1, 12, sz), fr: 1 });
         else if (st.roof === "clere") pieces = clerePieces();
@@ -1072,7 +1120,6 @@
       if (C.dPaint) for (ri = 0; ri <= nr; ri++) {
         var tr = tp0 + (tp1 - tp0) * ri / nr;
         if (st.roof !== "mrtx") pieces.forEach(function (pc) { rib(C.dPaint, F, pc.p, tr, TH); });
-        else if (Math.abs(tr) < S.midT) clerePieces().slice(0, 2).forEach(function (pc) { rib(C.dPaint, F, pc.p, tr, TH); });
         else rib(C.dPaint, F, profAt(S, g, tr, 8), tr, TH);
       }
       if (st.roof === "barrel") {                                  // BTS: ซี่โครงนูนบนหลังคา + แถบช่องแสงตามสันหลังคา
@@ -1084,42 +1131,124 @@
       }
     });
   }
-  /* หลังคา MRT ช่วงหัว-ท้าย (จากขอบหลังคาช่วงกลาง ±midT ไปถึงปลาย ±tEnd):
-       จั่วสองผืนสันกลาง → ช่วงหัว (1 ม. ก่อนปลายชานชาลาไปถึงปลายหลังคา) ผังสอบเหลือครึ่งกว้าง
-       ผืนหน้าลาดจากปลายสันลงถึงขอบปลาย + ผืนข้างสามเหลี่ยมสองผืน · ขอบชายคามีแถบสีประจำสายรอบ
-     ช่วงที่ถูกตัด (สถานีสายอื่นพาดผ่าน) วาดเฉพาะส่วนในช่วง [t0, t1] · หัวหลังคาวาดเมื่อช่วงนั้นถึงปลายเท่านั้น */
-  function emitMrtEnds(C, F, S, g, t0, t1, TH) {
-    var e = S.eave, R = 0.75 * S.style.rise, HW = g.hw, om = g.om, tj = S.midT, ta = S.L / 2 - 1, T = S.tEnd, hw1 = 0.5 * HW;
-    var lo = t0 <= -S.L / 2 - 2.9 ? -T : t0, hi = t1 >= S.L / 2 + 2.9 ? T : t1;
-    function sheet(P) {                                  // ผิวบน + ท้องหลังคา
-      face(C.roof, F, P, S.roofCol);
-      face(C.paint, F, P.map(function (q) { return [q[0], q[1], q[2] - TH]; }), COL.under);
-    }
-    function fascia(a, b) { panel(C.paint, F, [a[0], a[1]], e - TH - 0.7, [b[0], b[1]], e - TH - 0.7, TH + 0.74, S.lineCol); }
-    [[-ta, -tj], [tj, ta]].forEach(function (r) {
-      var p = Math.max(r[0], lo), q = Math.min(r[1], hi);
-      if (q - p < 0.3) return;
-      sheet([[p, om - HW, e], [q, om - HW, e], [q, om, e + R], [p, om, e + R]]);
-      sheet([[p, om, e + R], [q, om, e + R], [q, om + HW, e], [p, om + HW, e]]);
-      fascia([p, om - HW - 0.02], [q, om - HW - 0.02]);
-      fascia([p, om + HW + 0.02], [q, om + HW + 0.02]);
+  /* แผ่นผิวบนหลังคา 4 จุด (กรอบสถานี) + normal ต่อจุด (ผิวโค้งเนียน) · เรียงจุดให้หันหน้าตาม normal
+     (วัสดุหลังคาวาดสองด้านและกลับ normal ตามด้านที่เห็น → ลำดับจุดผิดทิศ = แสงกลับด้าน) · ลายตะเข็บตามแนว t */
+  function roofQuad(B, F, P, N, col) {
+    var ax = P[1][0] - P[0][0], ay = P[1][1] - P[0][1], az = P[1][2] - P[0][2];
+    var bx = P[2][0] - P[0][0], by = P[2][1] - P[0][1], bz = P[2][2] - P[0][2];
+    var cx = ay * bz - az * by, cy = az * bx - ax * bz, cz = ax * by - ay * bx;
+    var nx = N[0][0] + N[2][0], ny = N[0][1] + N[2][1], nz = N[0][2] + N[2][2];
+    var ord = cx * nx + cy * ny + cz * nz >= 0 ? [0, 1, 2, 3] : [0, 3, 2, 1], s = B.p.length / 3;
+    ord.forEach(function (k) {
+      var q = P[k];
+      B.v(F(q[0], q[1], q[2]), q[0] / 0.8, q[1] / 6, col, B.n ? F.n(N[k][0], N[k][1], N[k][2]) : null);
     });
-    [-1, 1].forEach(function (sg) {
-      if (sg < 0 ? lo > -T + 0.01 : hi < T - 0.01) return;
-      var A = [sg * ta, om - HW, e], B = [sg * T, om - hw1, e], Cc = [sg * T, om + hw1, e], D = [sg * ta, om + HW, e], P = [sg * ta, om, e + R];
-      sheet([A, B, P]); sheet([B, Cc, P]); sheet([Cc, D, P]);
-      fascia(A, B); fascia(B, Cc); fascia(Cc, D);
-    });
+    B.i.push(s, s + 1, s + 2, s, s + 2, s + 3);
   }
-  // ผนังหน้าจั่วของหลังคาช่วงกลาง (สูงกว่าช่วงหัว-ท้าย) ที่รอยต่อ t = ±midT
-  function mrtJunction(C, F, S, g, t) {
-    var e = S.eave, r = S.style.rise, zc = e + 0.75 * r, R = 0.75 * r;
-    function side(a) { return e + 0.75 * r * (1 - (a - 0.22) / 0.78); }
-    function cap(s) { return zc + 1.7 + 0.3 * (1 - Math.pow(s / 0.3, 2)); }
-    var pts = [[-1, e], [-0.6, side(0.6)], [-0.22, zc], [-0.22, cap(0.22)], [0, cap(0)], [0.22, cap(0.22)], [0.22, zc], [0.6, side(0.6)], [1, e]];
-    var top = pts.map(function (q) { return [g.om + q[0] * g.hw, q[1]]; });
-    var under = pts.map(function (q) { return [g.om + q[0] * g.hw, e + R * (1 - Math.abs(q[0]))]; });
-    caps(C.paint, F, top, under, t, S.midCol);
+  // แผ่นกระจกช่องแสง 4 จุด (a,b ล่าง · c,d บน) ลายกระจก 3 ม. ต่อลาย
+  function glassQuad(B, F, a, b, c, d) {
+    var u0 = a[0] / 3, u1 = b[0] / 3, s = B.p.length / 3;
+    B.v(F(a[0], a[1], a[2]), u0, 0); B.v(F(b[0], b[1], b[2]), u1, 0);
+    B.v(F(c[0], c[1], c[2]), u1, 0.55); B.v(F(d[0], d[1], d[2]), u0, 0.55);
+    B.q(s, s + 1, s + 2, s + 3);
+  }
+  /* หลังคา MRT สายสีน้ำเงินยกระดับ — ทรงเดียวกับโมเดล Blender (mrtGeom) สำหรับสถานีที่ไม่มีโมเดล
+       ผืนกลาง (ต่ำ): จั่วโค้งขึ้นกลางสถานี + แผ่นปิดชายคา + แถบกระจกตามสัน
+       ผืนเทาหัว-ท้าย (สูง): จั่วสันคม ลาดลงถึงปลายแหลมรูปตัว V · ปลายในงุ้มลงทับผืนกลาง · ขอบหนาเรียวลงที่ปลาย
+     วาดเฉพาะส่วนในช่วง [t0, t1] (ช่วงที่ถูกตัดเพราะสถานีสายอื่นพาดผ่าน → ปิดหน้าตัดตรงรอยตัด ไม่มีปลายงุ้ม) */
+  function emitMrtRoof(C, F, S, t0, t1) {
+    var M = S.mrt || (S.mrt = mrtGeom(S)), K = MRT_R, om = M.om, i, j;
+    var lo = t0 <= -S.L / 2 - 2.9 ? -Infinity : t0, hi = t1 >= S.L / 2 + 2.9 ? Infinity : t1;   // ช่วงที่ถึงปลายสถานี = ถึงปลายแหลม
+    function under(P, d) { return P.map(function (q) { return [q[0], q[1], q[2] - d]; }); }
+
+    // ——— ผืนกลาง
+    var a0 = Math.max(lo, -M.tm), a1 = Math.min(hi, M.tm);
+    if (a1 - a0 > 0.3) {
+      var n = Math.max(2, Math.ceil((a1 - a0) / 2.5)), ts = [];
+      for (i = 0; i <= n; i++) ts.push(a0 + (a1 - a0) * i / n);
+      [-1, 1].forEach(function (s) {
+        for (var k = 0; k < n; k++) {
+          var A = ts[k], B2 = ts[k + 1];
+          var P = [[A, om + s * M.HWm, M.zMid(A, M.HWm)], [B2, om + s * M.HWm, M.zMid(B2, M.HWm)], [B2, om, M.zMid(B2, 0)], [A, om, M.zMid(A, 0)]];
+          roofQuad(C.roof, F, P, P.map(function (q) { return M.nMid(q[0], s); }), S.midCol);
+          face(C.paint, F, under(P, K.THm), COL.under);
+          panel(C.paint, F, [A, om + s * (M.HWm + 0.02)], P[0][2] - K.FDm, [B2, om + s * (M.HWm + 0.02)], P[1][2] - K.FDm, K.FDm + 0.04, S.midCol);
+        }
+      });
+      [a0, a1].forEach(function (t) {
+        var top = [[om - M.HWm, M.zMid(t, M.HWm)], [om, M.zMid(t, 0)], [om + M.HWm, M.zMid(t, M.HWm)]];
+        caps(C.paint, F, top, top.map(function (q) { return [q[0], q[1] - K.THm]; }), t, COL.under);
+      });
+      // แถบกระจกช่องแสงตามสัน (โคมหลังคายก SKH ลาดตามจั่ว)
+      var g0 = Math.max(a0, -M.tsk), g1 = Math.min(a1, M.tsk);
+      if (g1 - g0 > 1) {
+        var ng = Math.max(2, Math.ceil((g1 - g0) / 3)), gs = [];
+        for (i = 0; i <= ng; i++) gs.push(g0 + (g1 - g0) * i / ng);
+        for (i = 0; i < ng; i++) {
+          var p = gs[i], q = gs[i + 1];
+          [-1, 1].forEach(function (s) {
+            var y = om + s * K.SKW, zp = M.zMid(p, K.SKW), zq = M.zMid(q, K.SKW);
+            glassQuad(C.glass, F, [p, y, zp], [q, y, zq], [q, y, zq + K.SKH], [p, y, zp + K.SKH]);
+            glassQuad(C.glass, F, [p, y, zp + K.SKH], [q, y, zq + K.SKH], [q, om, M.zMid(q, 0) + K.SKH], [p, om, M.zMid(p, 0) + K.SKH]);
+          });
+        }
+        [g0, g1].forEach(function (t) {
+          var zs = M.zMid(t, K.SKW), zr = M.zMid(t, 0);
+          glassBand(C.glass, F, t, [[om - K.SKW, zs], [om, zr], [om + K.SKW, zs]], [[om - K.SKW, zs + K.SKH], [om, zr + K.SKH], [om + K.SKW, zs + K.SKH]]);
+        });
+      }
+    }
+
+    // ——— ผืนเทาหัว-ท้าย
+    var ss = [];
+    for (j = 0; j <= 12; j++) ss.push(-1 + j / 6);                     // มีจุด s = 0 (สัน) เสมอ
+    [-1, 1].forEach(function (sg) {
+      var u0 = Math.max(M.tin, sg > 0 ? lo : -hi), u1 = Math.min(M.T, sg > 0 ? hi : -lo);
+      if (u1 - u0 < 0.5) return;
+      var NU = Math.max(4, Math.ceil((u1 - u0) / 3));
+      // ตาราง: แถวขวาง j · จุดตามแนวยาว i จาก u0 ถึงปลายนอกของแถว (หัวแหลมรูปตัว V หรือรอยตัด)
+      var U = ss.map(function (s) { var e = Math.max(u0 + 0.05, Math.min(M.uEnd(s), u1)); return function (i) { return u0 + (e - u0) * i / NU; }; });
+      function P(i, j) { var u = U[j](i), y = ss[j] * M.HWg; return [sg * u, om + y, M.zG(u, y)]; }
+      function Pb(i, j) { var q = P(i, j); return [q[0], q[1], q[2] - M.tk(Math.abs(q[0]))]; }
+      for (i = 0; i < NU; i++) for (j = 0; j < 12; j++) {
+        var s = j < 6 ? -1 : 1;                                         // ครึ่งฝั่ง → normal แยกกันที่สัน (สันคม)
+        var Q = [P(i, j), P(i + 1, j), P(i + 1, j + 1), P(i, j + 1)];
+        roofQuad(C.roof, F, Q, Q.map(function (q) { return M.nG(Math.abs(q[0]), sg, s); }), S.roofCol);
+        face(C.paint, F, [Pb(i, j), Pb(i + 1, j), Pb(i + 1, j + 1), Pb(i, j + 1)], COL.under);
+      }
+      for (i = 0; i < NU; i++) [0, 12].forEach(function (j) {          // ขอบหนาด้านยาว
+        face(C.paint, F, [P(i, j), P(i + 1, j), Pb(i + 1, j), Pb(i, j)], S.roofCol);
+      });
+      for (j = 0; j < 12; j++) face(C.paint, F, [P(NU, j), P(NU, j + 1), Pb(NU, j + 1), Pb(NU, j)], S.roofCol);   // ขอบปลายนอก
+      if (u0 > M.tin + 0.01) {                                          // ถูกตัดด้านใน: ปิดหน้าตัด
+        for (j = 0; j < 12; j++) face(C.paint, F, [P(0, j), P(0, j + 1), Pb(0, j + 1), Pb(0, j)], S.roofCol);
+        return;
+      }
+      // ปลายด้านในงุ้มลงทับผืนกลาง: ผิวนอกรัศมี RN ต่อจากผิวบน · ผิวในรัศมี RN − TK0 ต่อจากท้องหลังคา
+      var angs = [];
+      for (i = 0; i <= 5; i++) angs.push(K.AN * Math.PI / 180 * i / 5);
+      var arcO = [], arcI = [];
+      ss.forEach(function (s) {
+        var y = s * M.HWg, cz = M.zG(M.tin, y) - K.RN, ri = K.RN - K.TK0;
+        arcO.push(angs.map(function (a) { return [sg * (M.tin - K.RN * Math.sin(a)), om + y, cz + K.RN * Math.cos(a)]; }));
+        arcI.push(angs.map(function (a) { return [sg * (M.tin - ri * Math.sin(a)), om + y, cz + ri * Math.cos(a)]; }));
+      });
+      for (j = 0; j < 12; j++) {
+        var hs = j < 6 ? -1 : 1, dy = -hs * K.AC / M.HWg;
+        for (var k = 0; k < 5; k++) {
+          var N = [angs[k], angs[k + 1], angs[k + 1], angs[k]].map(function (a) {
+            var nx = -sg * Math.sin(a), nz = Math.cos(a), ny = -dy * nz, l = Math.hypot(nx, ny, nz);
+            return [nx / l, ny / l, nz / l];
+          });
+          roofQuad(C.roof, F, [arcO[j][k], arcO[j][k + 1], arcO[j + 1][k + 1], arcO[j + 1][k]], N, S.roofCol);
+          face(C.paint, F, [arcI[j][k], arcI[j][k + 1], arcI[j + 1][k + 1], arcI[j + 1][k]], COL.under);
+        }
+        face(C.paint, F, [arcO[j][5], arcO[j + 1][5], arcI[j + 1][5], arcI[j][5]], S.roofCol);      // ขอบล่างปลายงุ้ม
+      }
+      [0, 12].forEach(function (j) {                                     // แก้มข้างปลายงุ้ม
+        for (var k = 0; k < 5; k++) face(C.paint, F, [arcO[j][k], arcO[j][k + 1], arcI[j][k + 1], arcI[j][k]], S.roofCol);
+      });
+    });
   }
   // ซี่โครงโค้งใต้หลังคาที่ตำแหน่ง t: แผ่นตั้งลึก 0.55 ม. ตามผิวใต้หลังคา + ปีกล่างกว้าง 0.3 ม.
   function rib(B, F, top, t, TH) {
@@ -1951,6 +2080,77 @@
     H.repaint();
   }
 
+  /* ------------------------------------------ โมเดลสถานีจาก Blender (โหลดครั้งแรกที่ตัวสถานีแสดง) */
+  var gltfP = null;
+  function ensureGltf() {
+    if (gltfP) return gltfP;
+    gltfP = (T.GLTFLoader ? Promise.resolve() : loadScript(THREE_EX + "loaders/GLTFLoader.js"))
+      .then(function () { return T.DRACOLoader ? null : loadScript(THREE_EX + "loaders/DRACOLoader.js"); })
+      .then(function () {
+        var l = new T.GLTFLoader();
+        l.setDRACOLoader(new T.DRACOLoader().setDecoderPath(THREE_EX + "libs/draco/"));
+        return l;
+      });
+    return gltfP;
+  }
+  // ⚠ three r128 ไม่ถอดสเกล COLOR_0 แบบ normalized (0–255/0–65535) ให้ → หารเอง ไม่งั้นขาวโพลน
+  //   uv: ตัวส่งออก glTF กลับแกน v (1 − v) → กลับคืนให้ลายกระจกตรงกับผนังที่วาดในหน้าเว็บ
+  function fixGlbGeometry(g) {
+    var a = g.attributes.color, i;
+    if (a) {
+      var mx = 0;
+      for (i = 0; i < a.count; i++) mx = Math.max(mx, a.getX(i), a.getY(i), a.getZ(i));
+      var sc = mx > 300 ? 1 / 65535 : mx > 1.5 ? 1 / 255 : 1, rgb = new Float32Array(a.count * 3);
+      for (i = 0; i < a.count; i++) { rgb[i * 3] = a.getX(i) * sc; rgb[i * 3 + 1] = a.getY(i) * sc; rgb[i * 3 + 2] = a.getZ(i) * sc; }
+      g.setAttribute("color", new T.BufferAttribute(rgb, 3));
+    }
+    var uv = g.attributes.uv;
+    if (uv) { for (i = 0; i < uv.count; i++) uv.setY(i, 1 - uv.getY(i)); uv.needsUpdate = true; }
+  }
+  // โหลดเฉพาะสถานีที่อยู่ในจอ (+GLB_MARGIN) · เรียกจาก frame() ไม่เกินทุก 0.5 วินาที
+  var glbChecked = 0;
+  function loadStationModels() {
+    if (!model || !map) return;
+    var now = performance.now();
+    if (now - glbChecked < 500) return;
+    glbChecked = now;
+    var b = map.getBounds(), a = H.toLocal(b.getWest(), b.getSouth()), c = H.toLocal(b.getEast(), b.getNorth());
+    var x0 = Math.min(a.x, c.x) - GLB_MARGIN, x1 = Math.max(a.x, c.x) + GLB_MARGIN;
+    var y0 = Math.min(a.y, c.y) - GLB_MARGIN, y1 = Math.max(a.y, c.y) + GLB_MARGIN;
+    var list = model.stations.filter(function (S) { return S.glb && !S.glbState && S.x >= x0 && S.x <= x1 && S.y >= y0 && S.y <= y1; });
+    if (!list.length) return;
+    list.forEach(function (S) { S.glbState = "loading"; });
+    ensureGltf().then(function (loader) {
+      list.forEach(function (S) {
+        loader.load(GLB_DIR + S.st.code + ".glb", function (gltf) {
+          // กรอบสถานี (t, o, z) → ฉาก: หมุนตามทิศราง · ย่อขยายตามสเกลเมอร์เคเตอร์ k ทั้งสามแกน (เหมือน frameOf)
+          var root = new T.Group();
+          root.position.set(S.x, S.y, 0);
+          root.rotation.z = Math.atan2(S.uy, S.ux);
+          root.scale.set(S.k, S.k, S.k);
+          var sc = gltf.scene;
+          sc.rotation.x = Math.PI / 2;                                        // glTF Y-up → ฉาก Z-up
+          sc.traverse(function (o) {
+            if (!o.isMesh) return;
+            var nm = (o.material && o.material.name || "paint").replace(/\.\d+$/, "");
+            if (o.material && o.material.dispose) o.material.dispose();
+            o.material = nm === "roof" ? matRoofTop : nm === "glass" ? matGlass : matPaint;
+            fixGlbGeometry(o.geometry);
+          });
+          root.add(sc);
+          model.stGroup.add(root);
+          root.updateMatrixWorld(true);
+          S.glbRoot = root;
+          S.glbState = "ready";
+          H.repaint();
+        }, undefined, function (err) { S.glbState = "error"; console.warn("station model " + S.st.code, err); });
+      });
+    }).catch(function (e) {
+      list.forEach(function (S) { S.glbState = "error"; });
+      console.warn("station model loader", e);
+    });
+  }
+
   /* ---------------------------------------------------- ขยับขบวนรถทุกเฟรม */
   function nextStopIdx(R, s) {
     for (var i = 0; i < R.stops.length; i++) if (R.stops[i] > s + 30) return i;
@@ -2134,6 +2334,18 @@
       // วาดตัวอาคารสถานีซ้ำเป็นรูปทรงเดียว (ชั้นชานชาลา หลังคา ชั้นขายตั๋ว) ไม่ใช่กล่องครอบ จะได้ไม่บังตัวสถานี
       var S0 = hit.S, SB = new MB();
       emitStation({ conc: SB, paint: SB, roof: SB, glass: SB, louvre: SB }, S0);
+      // สถานีที่มีโมเดล Blender: รวมรูปทรงของโมเดล (พิกัดฉาก) เข้าไปด้วย ไม่งั้นไฮไลต์ไม่มีหลังคา
+      if (S0.glbRoot) {
+        var gv = new T.Vector3();
+        S0.glbRoot.updateMatrixWorld(true);
+        S0.glbRoot.traverse(function (o) {
+          if (!o.isMesh) return;
+          var pa = o.geometry.attributes.position, ix = o.geometry.index, base = SB.p.length / 3, q;
+          for (q = 0; q < pa.count; q++) { gv.fromBufferAttribute(pa, q).applyMatrix4(o.matrixWorld); SB.p.push(gv.x, gv.y, gv.z); }
+          if (ix) for (q = 0; q < ix.count; q++) SB.i.push(base + ix.getX(q));
+          else for (q = 0; q < pa.count; q++) SB.i.push(base + q);
+        });
+      }
       var gs = new T.BufferGeometry();
       gs.setAttribute("position", new T.Float32BufferAttribute(SB.p, 3));
       gs.setIndex(new T.BufferAttribute(new Uint32Array(SB.i), 1));
@@ -2436,6 +2648,7 @@
         }
         var showS = z >= STATION_ZOOM;
         if (showS !== model.stShown) { model.stShown = showS; model.stGroup.visible = showS; }
+        if (showS) loadStationModels();
         var showD = z >= DETAIL_ZOOM;
         if (showD !== model.detShown) { model.detShown = showD; model.stDetail.visible = showD; }
         var showW = z >= WALK_ZOOM;
