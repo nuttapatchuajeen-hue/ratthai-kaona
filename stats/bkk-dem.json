@@ -1,0 +1,19 @@
+{
+ "bbox": [
+  100.15,
+  13.45,
+  100.95,
+  14.25
+ ],
+ "w": 1440,
+ "h": 1440,
+ "res_arcsec": 2,
+ "decode": "h_m = (R*256 + G) / 100 - 5 · pond_depth_m = B / 50 (แอ่งปิด: ระดับล้นออก − พื้น)",
+ "nodata_below": -2.5,
+ "min": -3,
+ "max": 34.17,
+ "vertical": "EGM2008 (≈ ระดับทะเลปานกลาง)",
+ "source": "FABDEM V1-2 — Hawker, Uhe, Paulo, Sosa, Savage, Sampson, Neal (2022), University of Bristol · CC BY-NC-SA 4.0",
+ "url": "https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn",
+ "built": "2026-09-27"
+}
