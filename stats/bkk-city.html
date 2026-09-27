@@ -3196,6 +3196,7 @@
 <script src="bkk-port3d.js"></script>
 <script src="bkk-bus3d.js"></script>
 <script src="bkk-flood.js"></script>
+<script src="bkk-fuel.js"></script>
 <script src="bkk-landmarks3d.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
@@ -4323,6 +4324,11 @@
     // 🌧 ฝน & น้ำท่วม — เรดาร์ฝน RainViewer + ระดับน้ำ/ฝนจาก thaiwater (สสน.) + Google Flood Hub — โมดูลแยกใน bkk-flood.js
     if (window.BKK_FLOOD) {
       try { window.BKK_FLOOD.mount(map); } catch (e) { console.warn("flood layer:", e); }
+    }
+
+    // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js
+    if (window.BKK_FUELMAP) {
+      try { window.BKK_FUELMAP.mount(map); } catch (e) { console.warn("fuel layer:", e); }
     }
 
     // 🏛 แลนด์มาร์ก 3 มิติ (โมเดล GLB จาก Blender) — โมดูลแยกใน bkk-landmarks3d.js · วาดแทนกล่องมวลอาคารเดิมหลังที่โหลดแล้ว
@@ -7083,8 +7089,12 @@ window.MD_DATA_NOTICE = {
     { t: 'โมเดลแลนด์มาร์ก 3 มิติ (มหานคร วัดอรุณ ฯลฯ)', o: 'ปั้นด้วย Blender จากผังและชิ้นส่วนอาคารใน OpenStreetMap (ODbL) + สัดส่วนจากภาพถ่าย · ไม่ใช่แบบสถาปัตยกรรมจริง', u: 'https://www.blender.org' },
     { t: 'รถเมล์กรุงเทพฯ-ปริมณฑล 1,327 สาย · ป้าย 15,491 ป้าย (ขสมก. ไทยสมายล์บัส รถร่วม รถตู้ สองแถว BRT)', o: 'เส้นทาง ป้าย ตารางความถี่ และค่าโดยสาร: GTFS ของสำนักงานนโยบายและแผนการขนส่งและจราจร (สนข.) ระบบ "นำทาง" รุ่น 22 ก.ย. 2569 · CC-BY 4.0 · ตำแหน่งรถเป็นการจำลองตามตาราง ไม่ใช่ GPS จริง', u: 'https://namtang-api.otp.go.th/opendata' },
     { t: 'เรดาร์ฝนย้อนหลัง ~2 ชม. (ชั้นฝน & น้ำท่วม)', o: 'RainViewer — ภาพเรดาร์รวมทุก 10 นาที (ไทล์ฟรีถึงซูม 7) · เรดาร์ละเอียดของสำนักการระบายน้ำ กทม. เป็นลิงก์ไปหน้าเว็บต้นทาง', u: 'https://www.rainviewer.com/api.html' },
+    { t: 'ฝนรายวันย้อนหลัง 90 วัน (ชั้นฝน & น้ำท่วม)', o: 'NASA GPM IMERG ผ่าน GIBS — ภาพอัตราฝนเฉลี่ยรายวันจากดาวเทียม กริด ~10 กม. ช้ากว่าความจริง ~1 วัน · ค่าในคำอธิบายสีเป็น มม./วัน โดยประมาณ (×24)', u: 'https://gpm.nasa.gov/data/imerg' },
     { t: 'ระดับน้ำแม่น้ำ/คลอง และฝนสะสม 24 ชม. รายสถานีทั่วประเทศ', o: 'คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) รวมข้อมูลจากหลายหน่วยงาน ผ่าน /api/thaiwater ของเว็บนี้ · อัปเดตทุก 10 นาที', u: 'https://www.thaiwater.net' },
     { t: 'คาดการณ์น้ำท่วมรายจุดวัดน้ำ', o: 'Google Flood Hub (Flood Forecasting API) — แสดงบนแผนที่เมื่อได้รับคีย์ API · ระหว่างนี้เป็นปุ่มเปิด Flood Hub ตรงพิกัดเดียวกัน', u: 'https://sites.research.google/floods/' },
+    { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
+    { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
+    { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },
     { t: 'เที่ยวบินสด (ตำแหน่งเครื่องบินจริง)', o: 'ADS-B จากเครือข่ายอาสาสมัคร adsb.lol (ODbL) ผ่าน /api/flights ของเว็บนี้ · สำรอง adsb.fi · อัปเดตทุก 5 วินาที', u: 'https://adsb.lol' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },

@@ -20,6 +20,11 @@
   var REMOTE = "https://ratthai-kaona.vercel.app";
   var RV_META = "https://api.rainviewer.com/public/weather-maps.json";
   var RV_ZMAX = 7;                       // ไทล์ฟรีของ RainViewer ถึงซูม 7
+  var LS_RMODE = "bkk-flood-rmode";      // "live" เรดาร์สด 2 ชม. · "days" ฝนรายวันย้อนหลัง 90 วัน
+  var IMERG = "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/IMERG_Precipitation_Rate/default/";
+  var DAYS = 90, DAY_OP = 0.78;
+  // แถบสีของภาพ IMERG (colormap GPM_Precipitation_Rate ของ GIBS, มม./ชม.) แปลงเป็นประมาณ มม./วัน (×24)
+  var DAY_LEG = [["#00764e", "2"], ["#1eb200", "9"], ["#aedf00", "21"], ["#f5e000", "34"], ["#ffa00c", "54"], ["#ff6522", "85"], ["#f30000", "215"], ["#900000", "540"]];
   var FLOODHUB = "https://sites.research.google/floods/l/";
   var BMA_RADAR = "https://weather.bangkok.go.th/radar/RadarHighResolution.aspx";
   var THAIWATER = "https://www.thaiwater.net/water/wl";
@@ -42,6 +47,8 @@
   var map = null, visible = false, uiBuilt = false, handlersBound = false;
   var sub = { radar: true, wl: true, rain: false, hub: true };
   var rv = { frames: [], host: "", idx: 0, playing: false, timer: null, at: 0, err: null };
+  var rmode = "live";
+  var dy = { dates: [], idx: 0, at: 0, err: null, avail: {}, ok: {}, buf: 0, shown: -1, token: 0, loading: null };
   var tw = { data: null, at: 0, err: null, busy: false };
   var hub = { data: null, at: 0, err: null, busy: false, enabled: null };
   var refreshTimer = null, popup = null;
@@ -99,7 +106,7 @@
         .concat(cast.map(function (f) { return { t: f.time * 1000, p: f.path, cast: true }; }));
       rv.idx = past.length ? past.length - 1 : 0;       // เริ่มที่ภาพล่าสุดที่เป็นของจริง (ไม่ใช่คาดการณ์)
       rv.at = Date.now(); rv.err = null;
-      addRadarLayers();
+      if (rmode === "live") addRadarLayers();
       renderPanel();
     }).catch(function (e) { rv.err = String(e.message || e); renderPanel(); });
   }
@@ -126,6 +133,7 @@
   }
 
   function refreshAll() {
+    if (rmode === "days") loadDays().then(function () { if (rmode === "days" && dy.shown < 0 && !map.getSource(dayId(0))) addRadarLayers(); });
     loadRadar();
     loadThaiwater();
     loadHub();
@@ -169,17 +177,23 @@
     return undefined;
   }
   function radarId(i) { return "flood-rv-" + i; }
+  function dayId(i) { return "flood-day-" + i; }
   function removeRadarLayers() {
     if (!map) return;
     for (var i = 0; i < 40; i++) {
       if (map.getLayer(radarId(i))) map.removeLayer(radarId(i));
       if (map.getSource(radarId(i))) map.removeSource(radarId(i));
     }
+    for (var k = 0; k < 2; k++) {
+      if (map.getLayer(dayId(k))) map.removeLayer(dayId(k));
+      if (map.getSource(dayId(k))) map.removeSource(dayId(k));
+    }
   }
   function addRadarLayers() {
     if (!map || !map.getStyle()) return;
     removeRadarLayers();
     if (!visible || !sub.radar) return;
+    if (rmode === "days") { addDayLayers(); return; }
     var bf = beforeId();
     rv.frames.forEach(function (f, i) {
       map.addSource(radarId(i), {
@@ -204,15 +218,117 @@
   function setPlaying(on) {
     rv.playing = !!on;
     clearTimeout(rv.timer);
-    var step = function () {
-      if (!rv.playing || !visible) return;
-      var last = rv.idx === rv.frames.length - 1;
-      showFrame(rv.idx + 1);
-      rv.timer = setTimeout(step, last ? 700 : rv.idx === rv.frames.length - 1 ? 1600 : 650);
-    };
+    var step;
+    if (rmode === "days") {
+      // รอให้ภาพวันถัดไปโหลดเสร็จก่อนค่อยเดินต่อ — ไม่งั้นภาพกระพริบว่าง
+      step = function () {
+        if (!rv.playing || !visible || rmode !== "days" || !dy.dates.length) return;
+        var next = (dy.idx + 1) % dy.dates.length;
+        showDay(next).then(function () {
+          if (rv.playing) rv.timer = setTimeout(step, next === dy.dates.length - 1 ? 1600 : 280);
+        });
+      };
+    } else {
+      step = function () {
+        if (!rv.playing || !visible) return;
+        var last = rv.idx === rv.frames.length - 1;
+        showFrame(rv.idx + 1);
+        rv.timer = setTimeout(step, last ? 700 : rv.idx === rv.frames.length - 1 ? 1600 : 650);
+      };
+    }
     if (rv.playing) rv.timer = setTimeout(step, 200);
     var b = $("#floodPlay");
     if (b) b.innerHTML = ico(rv.playing ? "pause" : "play");
+  }
+
+  /* ---------------- ฝนรายวันย้อนหลัง 90 วัน: NASA GPM IMERG ผ่าน GIBS (ไทล์โปร่งใส เปิด CORS ไม่ต้องใช้คีย์) ----------------
+     ภาพรายวัน = อัตราฝนเฉลี่ยทั้งวัน (มม./ชม.) · ×24 ≈ มม./วัน · กริด 0.1° (~10 กม.) · ข้อมูลช้ากว่าความจริง ~1 วัน
+     บางวันไม่มีภาพ (GIBS ตอบ 404) → ตรวจก่อนด้วยไทล์เดียวที่ครอบภาคกลาง แล้วค่อยสลับภาพ
+     วาดด้วยสองชั้นสลับกัน (โหลดวันใหม่ในชั้นที่ซ่อนอยู่ เสร็จแล้วค่อยสลับ) ภาพจึงไม่ว่างระหว่างเปลี่ยนวัน */
+  function dayUrl(d) { return IMERG + d + "/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png"; }
+  function ymd(t) { return new Date(t).toISOString().slice(0, 10); }
+  function probeDay(d) {
+    if (!dy.avail[d]) dy.avail[d] = fetch(IMERG + d + "/GoogleMapsCompatible_Level6/5/14/24.png")
+      .then(function (r) { return (dy.ok[d] = r.ok); }).catch(function () { return null; });   // null = เน็ตมีปัญหา ไม่ใช่ไม่มีข้อมูล
+    return dy.avail[d];
+  }
+  function loadDays() {
+    if (dy.dates.length && Date.now() - dy.at < 6 * 3600000) return Promise.resolve();
+    if (dy.loading) return dy.loading;
+    // หาวันล่าสุดที่มีภาพ (ปกติคือเมื่อวานตามเวลา UTC — ภาพวันนี้ยังไม่ครบวัน) ย้อนไปไม่เกิน 6 วัน
+    var k = 1, t0 = Date.now();
+    var tryNext = function () {
+      if (k > 6) throw new Error("ไม่พบภาพฝนล่าสุดจาก NASA");
+      var d = ymd(t0 - (k++) * 86400000);
+      return probeDay(d).then(function (ok) { return ok ? d : tryNext(); });
+    };
+    dy.loading = tryNext().then(function (latest) {
+      var end = Date.parse(latest + "T00:00:00Z");
+      dy.dates = [];
+      for (var i = DAYS - 1; i >= 0; i--) dy.dates.push(ymd(end - i * 86400000));
+      dy.idx = dy.dates.length - 1; dy.at = Date.now(); dy.err = null; dy.shown = -1;
+    }).catch(function (e) { dy.err = String(e.message || e); })
+      .then(function () { dy.loading = null; renderPanel(); });
+    return dy.loading;
+  }
+  function addDayLayers() {
+    if (!dy.dates.length) return;
+    var bf = beforeId(), d = dy.dates[dy.idx];
+    for (var k = 0; k < 2; k++) {
+      map.addSource(dayId(k), {
+        type: "raster", tileSize: 256, maxzoom: 6, tiles: [dayUrl(d)],
+        attribution: '<a href="https://gpm.nasa.gov/data/imerg" target="_blank" rel="noopener">NASA GPM IMERG</a> via <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">GIBS</a>'
+      });
+      map.addLayer({ id: dayId(k), type: "raster", source: dayId(k), paint: { "raster-opacity": k === 0 ? DAY_OP : 0, "raster-fade-duration": 0, "raster-resampling": "nearest" } }, bf);
+    }
+    dy.buf = 0; dy.shown = dy.idx;
+    probeDay(d).then(function (ok) { if (ok === false && dy.dates[dy.idx] === d) { setDayOpacity(-1); renderRadarTime(); } });
+  }
+  function setDayOpacity(which) {
+    for (var k = 0; k < 2; k++) if (map.getLayer(dayId(k))) map.setPaintProperty(dayId(k), "raster-opacity", k === which ? DAY_OP : 0);
+  }
+  function showDay(i) {
+    if (!dy.dates.length) return Promise.resolve();
+    dy.idx = Math.max(0, Math.min(dy.dates.length - 1, i));
+    renderRadarTime();
+    var d = dy.dates[dy.idx], tok = ++dy.token;
+    return probeDay(d).then(function (ok) {
+      if (tok !== dy.token || !map.getSource(dayId(0))) return;
+      renderRadarTime();
+      if (ok === false) { setDayOpacity(-1); dy.shown = -1; return; }
+      if (dy.shown === dy.idx) { setDayOpacity(dy.buf); return; }
+      var nb = 1 - dy.buf, src = map.getSource(dayId(nb));
+      src.setTiles([dayUrl(d)]);
+      return new Promise(function (done) {
+        var t = Date.now();
+        var poll = function () {
+          if (tok !== dy.token) return done();
+          if ((Date.now() - t > 80 && map.isSourceLoaded(dayId(nb))) || Date.now() - t > 3000) {
+            setDayOpacity(nb); dy.buf = nb; dy.shown = dy.idx;
+            return done();
+          }
+          map.triggerRepaint();
+          setTimeout(poll, 60);
+        };
+        setTimeout(poll, 60);
+      });
+    });
+  }
+  function setRainMode(m) {
+    if (m === rmode) return;
+    setPlaying(false);
+    rmode = m;
+    lsSet(LS_RMODE, m);
+    removeRadarLayers();
+    if (m === "days") {
+      // ภาพหยาบ ~10 กม. — ดูระดับภาค/ประเทศจึงเห็นกลุ่มฝนชัด
+      if (map.getZoom() > 8) map.easeTo({ zoom: 6.4, duration: 1200 });
+      loadDays().then(function () { if (rmode === "days") addRadarLayers(); });
+    } else {
+      addRadarLayers();
+      if (!rv.frames.length) loadRadar();
+    }
+    renderPanel();
   }
 
   function addPointLayers() {
@@ -355,6 +471,12 @@
     ".fl-rv{display:flex;align-items:center;gap:8px;margin:6px 0 0 22px}.fl-rv input{flex:1;accent-color:var(--accent)}",
     "#floodTime{font-variant-numeric:tabular-nums;font-weight:700;font-size:11.5px;white-space:nowrap}",
     ".fl-rvbar{display:flex;height:4px;border-radius:2px;margin:3px 0 0 54px;overflow:hidden;gap:1px}.fl-rvbar i{flex:1;background:rgba(127,127,127,.25)}.fl-rvbar i.cast{background:rgba(245,159,11,.5)}.fl-rvbar i.on{background:var(--accent)}",
+    ".fl-seg{display:flex;gap:0;margin:7px 0 0 22px;border:1px solid var(--card-border);border-radius:9px;overflow:hidden;width:max-content}",
+    ".fl-seg button{border:0;background:none;color:var(--text-muted);font:inherit;font-size:11.5px;padding:4px 11px;cursor:pointer}.fl-seg button.on{background:var(--accent-soft);color:var(--text-main);font-weight:700}",
+    ".fl-rvbar.days{gap:0}.fl-rvbar.days i{border-right:1px solid transparent}.fl-rvbar i.miss{background:rgba(239,68,68,.45)}",
+    ".fl-rvends{display:flex;justify-content:space-between;margin:2px 0 0 54px;font-size:10px;opacity:.6}",
+    ".fl-grad{height:8px;border-radius:4px;margin:8px 0 0 22px}",
+    ".fl-gradl{display:flex;justify-content:space-between;margin:2px 0 0 22px;font-size:10px;opacity:.75;font-variant-numeric:tabular-nums}",
     ".fl-links{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--card-border);padding-top:10px}",
     ".fl-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;border:1px solid var(--card-border);background:rgba(127,127,127,.07);color:var(--text-main);font:inherit;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;text-align:left}",
     ".fl-link:hover{border-color:var(--accent);background:var(--accent-soft)}.fl-link small{display:block;font-weight:500;opacity:.65;font-size:10.5px}.fl-link .mdico:last-child{margin-left:auto;opacity:.6}",
@@ -368,12 +490,50 @@
     "@media (max-width:760px){#floodPanel{bottom:86px;right:14px;left:14px;width:auto;max-height:38vh}.fl-note{display:none}.fl-ph{padding-top:8px}}"
   ].join("");
 
+  function thDay(d, yr) {
+    return new Date(d + "T00:00:00Z").toLocaleDateString("th-TH", { day: "numeric", month: "short", year: yr ? "2-digit" : undefined, timeZone: "UTC" });
+  }
   function renderRadarTime() {
     var t = $("#floodTime"), s = $("#floodSlider"), bar = $("#floodBar");
+    if (rmode === "days") {
+      var d = dy.dates[dy.idx];
+      if (t) t.innerHTML = d ? thDay(d, true) + (dy.ok[d] === false ? ' <span class="fl-warn">ไม่มีภาพ</span>' : "") : "–";
+      if (s) { s.max = Math.max(0, dy.dates.length - 1); s.value = dy.idx; }
+      if (bar) Array.prototype.forEach.call(bar.children, function (el, k) {
+        el.classList.toggle("on", k === dy.idx);
+        el.classList.toggle("miss", dy.ok[dy.dates[k]] === false);
+      });
+      return;
+    }
     var f = rv.frames[rv.idx];
     if (t) t.innerHTML = f ? hhmm(f.t) + " น." + (f.cast ? ' <span class="fl-warn">คาดการณ์</span>' : "") : "–";
     if (s) { s.max = Math.max(0, rv.frames.length - 1); s.value = rv.idx; }
     if (bar) Array.prototype.forEach.call(bar.children, function (el, k) { el.classList.toggle("on", k === rv.idx); });
+  }
+  function radarHTML() {
+    var days = rmode === "days";
+    var h = '<div class="fl-sec"><label><input type="checkbox" data-s="radar"' + (sub.radar ? " checked" : "") + '>' + ico("cloud-rain") + (days ? " ฝนรายวันจากดาวเทียม" : " เรดาร์ฝน") + '<small>' +
+      (days ? (dy.err ? '<span class="fl-warn">โหลดไม่สำเร็จ</span>' : dy.dates.length ? "ย้อนหลัง " + dy.dates.length + " วัน" : "กำลังโหลด…")
+        : (rv.err ? '<span class="fl-warn">โหลดไม่สำเร็จ</span>' : rv.frames.length ? "ทุก 10 นาที" : "กำลังโหลด…")) + '</small></label>';
+    if (!sub.radar) return h + '</div>';
+    h += '<div class="fl-seg" role="tablist"><button type="button" data-rm="live" class="' + (days ? "" : "on") + '">สด 2 ชม.</button>' +
+      '<button type="button" data-rm="days" class="' + (days ? "on" : "") + '">ย้อนหลัง ' + DAYS + ' วัน</button></div>';
+    var n = days ? dy.dates.length : rv.frames.length;
+    if (n) {
+      h += '<div class="fl-rv"><button type="button" class="fl-ib" id="floodPlay" title="เล่น/หยุด ภาพย้อนหลัง">' + ico(rv.playing ? "pause" : "play") + '</button>' +
+        '<input type="range" id="floodSlider" min="0" step="1" aria-label="' + (days ? "วันที่ของภาพฝน" : "เวลาภาพเรดาร์") + '"><span id="floodTime"></span></div>' +
+        '<div class="fl-rvbar' + (days ? " days" : "") + '" id="floodBar">' + (days ? dy.dates.map(function () { return "<i></i>"; }) :
+          rv.frames.map(function (f) { return '<i' + (f.cast ? ' class="cast"' : "") + '></i>'; })).join("") + '</div>';
+    }
+    if (days) {
+      if (n) h += '<div class="fl-rvends"><span>' + thDay(dy.dates[0]) + '</span><span>' + thDay(dy.dates[n - 1], true) + '</span></div>';
+      h += '<div class="fl-grad" style="background:linear-gradient(90deg,' + DAY_LEG.map(function (x) { return x[0]; }).join(",") + ')"></div>' +
+        '<div class="fl-gradl">' + DAY_LEG.map(function (x) { return "<span>" + x[1] + "</span>"; }).join("") + '</div>' +
+        '<p class="fl-note">ปริมาณฝนประมาณ มม./วัน จากดาวเทียม NASA GPM (IMERG) · ช่องละ ~10 กม. · ช้ากว่าความจริง ~1 วัน · กด ▶ ดูฝนเคลื่อนทั้งฤดู</p>';
+    } else {
+      h += '<p class="fl-note">ภาพรวมกลุ่มฝนย้อนหลัง ~2 ชม. (ความละเอียดประมาณระดับอำเภอ) · ดูรายเขตละเอียดกว่าที่เรดาร์ สนน. ด้านล่าง</p>';
+    }
+    return h + '</div>';
   }
   function renderPanel() {
     var p = $("#floodPanel");
@@ -383,17 +543,7 @@
     var body = p.querySelector(".fl-body");
     var sevCount = function (k) { return g.filter(function (r) { return r[3] === k; }).length; };
 
-    var h = "";
-    // เรดาร์
-    h += '<div class="fl-sec"><label><input type="checkbox" data-s="radar"' + (sub.radar ? " checked" : "") + '>' + ico("cloud-rain") + ' เรดาร์ฝน<small>' +
-      (rv.err ? '<span class="fl-warn">โหลดไม่สำเร็จ</span>' : rv.frames.length ? "ทุก 10 นาที" : "กำลังโหลด…") + '</small></label>';
-    if (sub.radar && rv.frames.length) {
-      h += '<div class="fl-rv"><button type="button" class="fl-ib" id="floodPlay" title="เล่น/หยุด ภาพย้อนหลัง">' + ico(rv.playing ? "pause" : "play") + '</button>' +
-        '<input type="range" id="floodSlider" min="0" step="1" aria-label="เวลาภาพเรดาร์"><span id="floodTime"></span></div>' +
-        '<div class="fl-rvbar" id="floodBar">' + rv.frames.map(function (f) { return '<i' + (f.cast ? ' class="cast"' : "") + '></i>'; }).join("") + '</div>' +
-        '<p class="fl-note">ภาพรวมกลุ่มฝนย้อนหลัง ~2 ชม. (ความละเอียดประมาณระดับอำเภอ) · ดูรายเขตละเอียดกว่าที่เรดาร์ สนน. ด้านล่าง</p>';
-    }
-    h += '</div>';
+    var h = radarHTML();
     // ระดับน้ำ
     h += '<div class="fl-sec"><label><input type="checkbox" data-s="wl"' + (sub.wl ? " checked" : "") + '>' + ico("waves") + ' ระดับน้ำ แม่น้ำ/คลอง<small>' +
       (tw.err && !tw.data ? '<span class="fl-warn">โหลดไม่สำเร็จ</span>' : tw.data ? fmt(wl.length) + " สถานี" : "กำลังโหลด…") + '</small></label>';
@@ -427,7 +577,7 @@
       '<a class="fl-link" href="' + BMA_RADAR + '" target="_blank" rel="noopener">' + ico("cloud-rain") + '<span>เรดาร์ฝน สนน. กทม. (ละเอียดสูง)<small>สำนักการระบายน้ำ อัปเดตทุก 5 นาที</small></span>' + ico("external-link") + '</a>' +
       '<a class="fl-link" href="' + THAIWATER + '" target="_blank" rel="noopener">' + ico("waves") + '<span>คลังข้อมูลน้ำแห่งชาติ<small>กราฟระดับน้ำย้อนหลังรายสถานี</small></span>' + ico("external-link") + '</a>' +
       '</div>';
-    h += '<p class="fl-src">เรดาร์: RainViewer · ระดับน้ำ/ฝน: คลังข้อมูลน้ำแห่งชาติ (สสน.) รวมจากหลายหน่วยงาน' +
+    h += '<p class="fl-src">เรดาร์: RainViewer · ฝนรายวัน: NASA GPM IMERG (GIBS) · ระดับน้ำ/ฝน: คลังข้อมูลน้ำแห่งชาติ (สสน.) รวมจากหลายหน่วยงาน' +
       (tw.at ? " · อัปเดต " + ago(tw.at) : "") + (hub.enabled ? " · Flood Hub: Google" : "") +
       '<br>ใช้ประกอบการติดตามสถานการณ์เท่านั้น — ประกาศเตือนภัยทางการให้ดูจากกรมอุตุนิยมวิทยา กรมชลประทาน ปภ. และ กทม.</p>';
     body.innerHTML = h;
@@ -463,6 +613,8 @@
         if (a && a.dataset.a === "close") { setVisible(false); return; }
         if (a && a.dataset.a === "min") { var m = !p.classList.contains("min"); p.classList.toggle("min", m); lsSet(LS_MIN, m ? "1" : "0"); return; }
         if (e.target.closest("#floodPlay")) { setPlaying(!rv.playing); return; }
+        var rm = e.target.closest("[data-rm]");
+        if (rm) { setRainMode(rm.dataset.rm); return; }
         if (e.target.closest("#floodOpenHub")) {
           var c = map.getCenter();
           // Google Maps ใช้ไทล์ 256 px — ซูมมากกว่า MapLibre (512 px) อยู่ 1 ขั้น
@@ -470,14 +622,19 @@
         }
       });
       p.addEventListener("input", function (e) {
-        if (e.target.id === "floodSlider") { setPlaying(false); showFrame(+e.target.value); }
+        if (e.target.id === "floodSlider") { setPlaying(false); if (rmode === "days") showDay(+e.target.value); else showFrame(+e.target.value); }
       });
       p.addEventListener("change", function (e) {
         var k = e.target.dataset && e.target.dataset.s;
         if (!k) return;
         sub[k] = e.target.checked;
         lsSet(LS_SUB, JSON.stringify(sub));
-        if (k === "radar") { if (!sub.radar) setPlaying(false); addRadarLayers(); if (sub.radar && !rv.frames.length) loadRadar(); }
+        if (k === "radar") {
+          if (!sub.radar) setPlaying(false);
+          addRadarLayers();
+          if (sub.radar && rmode === "days") loadDays().then(function () { if (rmode === "days" && !map.getSource(dayId(0))) addRadarLayers(); });
+          else if (sub.radar && !rv.frames.length) loadRadar();
+        }
         syncLayerVis();
         renderPanel();
       });
@@ -506,7 +663,8 @@
     bindHandlers();
     renderPanel();
     // ข้อมูลเก่าเกิน 10 นาทีค่อยดึงใหม่ · เปิดค้างไว้ก็ดึงใหม่ทุก 10 นาที
-    if (Date.now() - rv.at > 600000) loadRadar(); else addRadarLayers();
+    if (rmode === "days") loadDays().then(function () { if (visible && rmode === "days") addRadarLayers(); });
+    else if (Date.now() - rv.at > 600000) loadRadar(); else addRadarLayers();
     if (Date.now() - tw.at > 600000) loadThaiwater();
     if (hub.enabled == null || (hub.enabled && Date.now() - hub.at > 900000)) loadHub();
     refreshTimer = setInterval(function () { if (!document.hidden) refreshAll(); }, 600000);
@@ -518,6 +676,7 @@
   function mount(m) {
     map = m;
     try { var s = JSON.parse(lsGet(LS_SUB) || "null"); if (s) Object.keys(sub).forEach(function (k) { if (typeof s[k] === "boolean") sub[k] = s[k]; }); } catch (e) { }
+    if (lsGet(LS_RMODE) === "days") rmode = "days";
     buildUI();
     if (lsGet(LS_KEY) === "1" && !visible) { setVisible(true); return; }
     if (!visible) return;
@@ -532,6 +691,8 @@
     debug: function () {
       return {
         visible: visible, sub: sub, radarFrames: rv.frames.length, radarIdx: rv.idx, radarErr: rv.err,
+        rainMode: rmode, days: dy.dates.length, dayIdx: dy.idx, day: dy.dates[dy.idx], dayShown: dy.shown, dayErr: dy.err,
+        dayMissing: Object.keys(dy.ok).filter(function (k) { return dy.ok[k] === false; }),
         wl: tw.data ? tw.data.wl.length : 0, rain: tw.data ? tw.data.rain.length : 0, twErr: tw.err,
         hubEnabled: hub.enabled, hub: hub.data ? hub.data.g.length : 0, hubErr: hub.err
       };
