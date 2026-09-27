@@ -3197,6 +3197,7 @@
 <script src="bkk-bus3d.js"></script>
 <script src="bkk-flood.js"></script>
 <script src="bkk-fuel.js"></script>
+<script src="bkk-floodsim.js"></script>
 <script src="bkk-landmarks3d.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
@@ -4329,6 +4330,11 @@
     // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js
     if (window.BKK_FUELMAP) {
       try { window.BKK_FUELMAP.mount(map); } catch (e) { console.warn("fuel layer:", e); }
+    }
+
+    // 🌊 จำลองน้ำท่วม 3 มิติ (ผิวน้ำในฉากกลาง ตึกโผล่พ้นน้ำ) — โมดูลแยกใน bkk-floodsim.js
+    if (window.BKK_FLOODSIM) {
+      try { window.BKK_FLOODSIM.mount(map); } catch (e) { console.warn("floodsim layer:", e); }
     }
 
     // 🏛 แลนด์มาร์ก 3 มิติ (โมเดล GLB จาก Blender) — โมดูลแยกใน bkk-landmarks3d.js · วาดแทนกล่องมวลอาคารเดิมหลังที่โหลดแล้ว
@@ -7092,6 +7098,7 @@ window.MD_DATA_NOTICE = {
     { t: 'ฝนรายวันย้อนหลัง 90 วัน (ชั้นฝน & น้ำท่วม)', o: 'NASA GPM IMERG ผ่าน GIBS — ภาพอัตราฝนเฉลี่ยรายวันจากดาวเทียม กริด ~10 กม. ช้ากว่าความจริง ~1 วัน · ค่าในคำอธิบายสีเป็น มม./วัน โดยประมาณ (×24)', u: 'https://gpm.nasa.gov/data/imerg' },
     { t: 'ระดับน้ำแม่น้ำ/คลอง และฝนสะสม 24 ชม. รายสถานีทั่วประเทศ', o: 'คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) รวมข้อมูลจากหลายหน่วยงาน ผ่าน /api/thaiwater ของเว็บนี้ · อัปเดตทุก 10 นาที', u: 'https://www.thaiwater.net' },
     { t: 'คาดการณ์น้ำท่วมรายจุดวัดน้ำ', o: 'Google Flood Hub (Flood Forecasting API) — แสดงบนแผนที่เมื่อได้รับคีย์ API · ระหว่างนี้เป็นปุ่มเปิด Flood Hub ตรงพิกัดเดียวกัน', u: 'https://sites.research.google/floods/' },
+    { t: 'จำลองน้ำท่วม 3 มิติ (ภาพจำลอง ไม่ใช่การพยากรณ์)', o: 'ความลึกน้ำเท่ากันทั้งพื้นที่ตามที่ผู้ใช้เลือก — ไม่ได้คำนวณจากความสูงพื้นดิน เพราะข้อมูลความสูงแบบเปิด (SRTM) ในเมืองรวมความสูงตึกไว้ด้วย · ความสูงตึกจาก OpenStreetMap · ผลกระทบต่อคน/รถอ้างอิงคำเตือน Turn Around Don't Drown ของ NWS สหรัฐฯ', u: 'https://www.weather.gov/safety/flood-turn-around-dont-drown' },
     { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
     { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },
