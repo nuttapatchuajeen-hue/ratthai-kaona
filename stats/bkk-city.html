@@ -3197,6 +3197,7 @@
 <script src="bkk-bus3d.js"></script>
 <script src="bkk-flood.js"></script>
 <script src="bkk-fuel.js"></script>
+<script src="bkk-floodsim-extra.js"></script>
 <script src="bkk-floodsim.js"></script>
 <script src="bkk-landmarks3d.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
@@ -7099,6 +7100,9 @@ window.MD_DATA_NOTICE = {
     { t: 'ระดับน้ำแม่น้ำ/คลอง และฝนสะสม 24 ชม. รายสถานีทั่วประเทศ', o: 'คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) รวมข้อมูลจากหลายหน่วยงาน ผ่าน /api/thaiwater ของเว็บนี้ · อัปเดตทุก 10 นาที', u: 'https://www.thaiwater.net' },
     { t: 'คาดการณ์น้ำท่วมรายจุดวัดน้ำ', o: 'Google Flood Hub (Flood Forecasting API) — แสดงบนแผนที่เมื่อได้รับคีย์ API · ระหว่างนี้เป็นปุ่มเปิด Flood Hub ตรงพิกัดเดียวกัน', u: 'https://sites.research.google/floods/' },
     { t: 'จำลองน้ำท่วม 3 มิติ (ภาพจำลอง ไม่ใช่การพยากรณ์)', o: 'โหมดความลึกเท่ากัน: น้ำลึกเท่ากันทุกที่ตามที่ผู้ใช้เลือก · โหมดตามความสูงพื้นดิน: FABDEM V1-2 (Copernicus GLO-30 ที่ลบความสูงตึก/ต้นไม้ออก) © University of Bristol, CC BY-NC-SA 4.0 — ย่อเป็นกริด ~60 ม. กทม.-ปริมณฑล · แบบจำลองอ่างน้ำ ไม่คิดคันกั้นน้ำ/ระบบระบายน้ำ · น้ำลดรายวัน: อัตราน้ำลดเป็นสมมติฐานที่ผู้ใช้เลือก (5/10/20 ซม./วัน) แอ่งปิดคำนวณด้วย Priority-Flood จากความสูง FABDEM และสมมติให้น้ำในแอ่งลดช้ากว่าราว 1/3 · ความสูงตึกจาก OpenStreetMap · ผลกระทบต่อคน/รถอ้างอิงคำเตือน Turn Around Don’t Drown ของ NWS สหรัฐฯ', u: 'https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn' },
+    { t: 'น้ำท่วมจริงจากดาวเทียม ปี 2554–2567 (จำลองน้ำท่วม · ข้อมูลประกอบ)', o: 'GISTDA — พื้นที่น้ำท่วมซ้ำซาก (flood-freq) ผ่าน Disaster Platform ตามลิงก์บนพอร์ทัลข้อมูลเปิด · ดึงครั้งเดียวแล้วแปลงเป็นกริด ~60 ม. · 7 จังหวัด ไม่รวมอยุธยา', u: 'https://opendata.gistda.or.th/dataset/flood-disaster-data' },
+    { t: 'สถานีสูบน้ำและประตูระบายน้ำ กทม. 429 แห่ง', o: 'สำนักการระบายน้ำ กรุงเทพมหานคร — data.bangkok.go.th ชุดข้อมูลทางกายภาพและตำแหน่งของสถานีสูบน้ำและประตูระบายน้ำ', u: 'https://data.bangkok.go.th/dataset/water-station' },
+    { t: 'สถานที่สำคัญ ถนนสายหลัก และคันกั้นน้ำ (จำลองน้ำท่วม)', o: 'OpenStreetMap ผ่าน Overpass 28 ก.ย. 2569 (ODbL) · ความสูงพื้นใต้แต่ละจุดจาก FABDEM · คันกั้นน้ำใน OSM มีแค่บางส่วน', u: 'https://www.openstreetmap.org' },
     { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
     { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },

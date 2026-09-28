@@ -76,6 +76,7 @@
     add("zoom-in", '<circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/>');
     add("waves", '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>');
     add("mountain", '<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>');
+    add("crosshair", '<circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/>');
   }
 
   /* ================================================================ เชเดอร์ */
@@ -646,7 +647,14 @@
       zn.style.display = z < 11 ? "" : dm || z >= 13.5 ? "none" : "";
       zn.innerHTML = ico("zoom-in") + (z < 11 ? " ซูมเข้าอย่างน้อยระดับเมืองเพื่อให้เห็นผิวน้ำ" : " ซูมเข้าใกล้ขึ้นเพื่อให้เห็นตึก 3 มิติ");
     }
+    notifyExtra();
   }
+  // สถานะน้ำ ณ ตอนนี้สำหรับชั้นประกอบ: L = ระดับน้ำที่ไหลออกได้ · P = ระดับสูงสุด · drop = ส่วนที่แอ่งลดไปแล้ว
+  function simState() {
+    var L = rec ? curRecLevel() : (mode === "dem" ? level : depth);
+    return { visible: visible, mode: mode, L: L, P: rec ? rec.peak : L, drop: rec ? rate * POND_F * rec.dayF : 0, rec: !!rec };
+  }
+  function notifyExtra() { if (window.BKK_FLOODSIM_EXTRA) window.BKK_FLOODSIM_EXTRA.update(simState()); }
   function renderPanel() {
     var p = $("#fsPanel");
     if (!p || !visible) return;
@@ -678,6 +686,7 @@
     h += '<label class="fs-opt"><input type="checkbox" data-o="wave"' + (waves ? " checked" : "") + '> คลื่นและแสงสะท้อน <small style="opacity:.6">(ปิดเพื่อประหยัดแบตเตอรี่)</small></label>' +
       '<label class="fs-opt"><input type="checkbox" data-o="muddy"' + (style === "muddy" ? " checked" : "") + '> น้ำขุ่นแบบน้ำท่วมจริง</label>' +
       '<div class="fs-sec" id="fsRec">' + recHTML() + '</div>' +
+      (dm ? '<div class="fs-sec" id="fsExtra"></div>' : "") +
       '<div class="fs-sec" id="fsBld"></div>' +
       '<p class="fs-note" id="fsZoom" style="display:none"></p>';
     h += dm ?
@@ -688,6 +697,7 @@
       'ผลกระทบต่อคน/รถอ้างอิงคำเตือนของ NWS สหรัฐฯ · ติดตามประกาศจริงจาก ปภ. กรมอุตุฯ และ กทม.</div>';
     p.querySelector(".fs-body").innerHTML = h;
     if (rec) renderRecLive(); else renderLive();
+    if (dm && window.BKK_FLOODSIM_EXTRA) window.BKK_FLOODSIM_EXTRA.renderPanel($("#fsExtra"));
   }
   function setDepth(d, surge) {
     if (rec) { rec = null; setTimeout(renderPanel, 0); }
@@ -810,6 +820,7 @@
     if (!visible) {
       if (group) group.visible = false;
       if (H) { H.show(MOD_ID, false); H.setAnim(MOD_ID, false); }
+      notifyExtra();
       return;
     }
     placePanel();
@@ -845,6 +856,7 @@
     if (RATES.some(function (x) { return Math.abs(x[0] - rr) < 1e-6; })) rate = rr;
     if (lsGet(LS_MODE) === "dem") mode = "dem";
     buildUI();
+    if (window.BKK_FLOODSIM_EXTRA) window.BKK_FLOODSIM_EXTRA.mount(m);
     if (!mount._bound) {
       mount._bound = true;
       map.on("click", onMapClick);
@@ -862,6 +874,8 @@
     startRec: startRec,
     stopRec: stopRec,
     groundAt: groundAt,
+    dem: function () { return dem; },
+    state: simState,
     debug: function () {
       return {
         visible: visible, mode: mode, depth: depth, shown: shown, level: level, shownLevel: shownLevel, style: style, waves: waves, terrain: terrain,
