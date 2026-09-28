@@ -129,6 +129,49 @@
     flex-wrap: wrap;
   }
 
+  /* 📱 ปุ่มย่อหัวเว็บ — โผล่เฉพาะจอมือถือ (ดู @media 768px ท้ายสไตล์) */
+  .header-toggle {
+    display: none;
+    flex: none;
+    width: 34px; height: 34px;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 9px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+  }
+  .header-toggle:hover { color: var(--accent); border-color: var(--accent); }
+  .header-toggle svg { transform: rotate(-90deg); transition: transform 0.2s ease; }
+  .header.is-collapsed .header-toggle svg { transform: rotate(90deg); }
+
+  /* 🏠 ปุ่มกลับหน้าหลัก (hub) — จอคอมอยู่ขวาสุดของหัวเว็บ, มือถืออยู่แถวเดียวกับชื่อเว็บ (ดู @media 768px)
+     margin-left:auto ให้แท็บ/ค้นหา/ชิปยังชิดขวาเหมือนเดิม แทนที่จะลอยกลางระหว่างชื่อเว็บกับปุ่มนี้ */
+  .header-actions { margin-left: auto; }
+  .header-home {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .header-home:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  /* จอคอมขนาดกลาง: แท็บ/ค้นหา/ชิปกินเกือบเต็มแถวอยู่แล้ว (~1,200px) — เหลือแค่ไอคอนบ้าน กันหัวเว็บตกเป็น 2 แถว */
+  @media (min-width: 769px) and (max-width: 1359px) {
+    .header-home { width: 30px; padding: 0; justify-content: center; }
+    .header-home .lbl { display: none; }
+  }
+
   /* Filter Chips */
   .filter-bar {
     display: flex;
@@ -843,7 +886,14 @@
     gap: 4px;
     min-width: 208px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    /* .stage ตัดของที่ล้นทิ้ง (overflow: clip) — เมนูยาว 21 รายการจึงต้องเลื่อนในตัวเอง
+       JS (fitZoneMenu) ตั้ง max-height/left ให้พอดีขอบจอตอนเปิด; ค่านี้เป็นค่าสำรอง */
+    max-height: 70vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
+  .zone-dropdown > * { flex-shrink: 0; }
   .zone-dropdown .zone-item { width: 100%; justify-content: flex-start; }
   .zone-dropdown .zone-item .label-text { display: inline !important; }
   /* Collapse is a utility action — icon only, so the row keeps its width for real controls */
@@ -2058,6 +2108,13 @@
   /* Responsive */
   @media(max-width: 768px) {
     .header { padding: 8px 12px; }
+    /* แถวแรก = ชื่อเว็บ + ปุ่มหน้าหลัก + ปุ่มย่อ; แท็บ/ค้นหา/ชิปลงไปเต็มแถวข้างล่าง */
+    .header-top { flex-wrap: wrap; gap: 8px 12px; }
+    .brand { flex: 1 1 auto; min-width: 0; }
+    .header-home { order: 1; height: 34px; }
+    .header-toggle { display: grid; order: 2; }
+    .header-actions { flex: 1 1 100%; order: 3; margin-left: 0; }
+    .header.is-collapsed .header-actions { display: none; }
     .kpi-row { display: none; }
     .search-wrapper { min-width: 140px; }
     .left-menu { max-width: 100%; gap: 4px; }
@@ -2376,7 +2433,11 @@
       <span class="brand-sub">เห็นเมืองกรุงทั้งใบ ทีละชั้น</span>
     </a>
 
-    <div class="header-actions">
+    <button type="button" class="header-toggle" id="btnHeaderToggle" aria-controls="headerActions" aria-expanded="true" title="ย่อหัวเว็บ" aria-label="ย่อหัวเว็บ">
+      <svg class="mdico"><use href="#i-chevron-right"></use></svg>
+    </button>
+
+    <div class="header-actions" id="headerActions">
       <!-- Mode Switcher Tabs (3D Real Estate vs 2D Thematic Analytics) -->
       <div class="view-mode-tabs">
         <button type="button" class="view-mode-btn active" id="btnMode3D" title="โมเดลอสังหาฯ และรถไฟฟ้า 3 มิติ"><svg class="mdico"><use href="#i-building-2"></use></svg> อสังหาฯ 3 มิติ</button>
@@ -2409,6 +2470,10 @@
         </button>
       </div>
     </div>
+
+    <a href="../hub/index.html" class="header-home" title="กลับหน้าหลัก รัฐไทยก้าวหน้า" aria-label="กลับหน้าหลัก รัฐไทยก้าวหน้า">
+      <svg class="mdico"><use href="#i-house"></use></svg><span class="lbl">หน้าหลัก</span>
+    </a>
   </div>
 
   <!-- Live camera readout (the 24/181/50 counts live in the header chips above — no duplicate) -->
@@ -2418,6 +2483,31 @@
     </div>
   </div>
 </div>
+<script>
+/* 📱 ปุ่มย่อหัวเว็บ (มือถือ ≤768px) — จำค่าใน localStorage; วางติดใต้หัวเว็บให้ย่อก่อนวาดจอแรก จะได้ไม่กระพริบ
+   แผนที่ขยายตามเอง (MapLibre 5 มี ResizeObserver บนกล่องแผนที่) */
+(function () {
+  var KEY = "bkk-header-collapsed";
+  var header = document.querySelector(".header");
+  var btn = document.getElementById("btnHeaderToggle");
+  if (!header || !btn) return;
+  function apply(collapsed) {
+    header.classList.toggle("is-collapsed", collapsed);
+    btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    var label = collapsed ? "ขยายหัวเว็บ" : "ย่อหัวเว็บ";
+    btn.title = label;
+    btn.setAttribute("aria-label", label);
+  }
+  var saved = false;
+  try { saved = localStorage.getItem(KEY) === "1"; } catch (e) {}
+  apply(saved);
+  btn.addEventListener("click", function () {
+    var next = !header.classList.contains("is-collapsed");
+    apply(next);
+    try { localStorage.setItem(KEY, next ? "1" : "0"); } catch (e) {}
+  });
+})();
+</script>
 
 <div class="stage">
   <div id="map"></div>
@@ -6719,13 +6809,29 @@
         zoneWrap.classList.remove("open");
         $("#btnZoneMenu").setAttribute("aria-expanded", "false");
       };
+      // Keep the menu inside the map stage — it clips overflow, so on phones the lower
+      // items were cut off (unreachable) and the right edge ran off-screen
+      var fitZoneMenu = function() {
+        var dd = $("#zoneDropdown");
+        if (dd.hidden) return;
+        var PAD = 12;
+        var stage = document.querySelector(".stage").getBoundingClientRect();
+        dd.style.maxHeight = "";
+        dd.style.left = "";
+        var r = dd.getBoundingClientRect();
+        dd.style.maxHeight = Math.max(160, Math.floor(stage.bottom - r.top - PAD)) + "px";
+        var overRight = r.right - (stage.right - PAD);
+        if (overRight > 0) dd.style.left = -Math.max(0, Math.min(overRight, r.left - stage.left - PAD)) + "px";
+      };
       $("#btnZoneMenu").addEventListener("click", function(e) {
         e.stopPropagation();
         var willOpen = $("#zoneDropdown").hidden;
         $("#zoneDropdown").hidden = !willOpen;
         zoneWrap.classList.toggle("open", willOpen);
         this.setAttribute("aria-expanded", String(willOpen));
+        if (willOpen) { $("#zoneDropdown").scrollTop = 0; fitZoneMenu(); }
       });
+      window.addEventListener("resize", fitZoneMenu);
       // Fly somewhere, then get out of the way
       $("#zoneDropdown").addEventListener("click", function(e) {
         if (e.target.closest(".zone-item")) closeZoneMenu();
