@@ -3197,6 +3197,8 @@
 <script src="bkk-bus3d.js"></script>
 <script src="bkk-flood.js"></script>
 <script src="bkk-fuel.js"></script>
+<script src="bkk-dam.js"></script>
+<script src="bkk-warn.js"></script>
 <script src="bkk-floodsim-extra.js"></script>
 <script src="bkk-floodsim.js"></script>
 <script src="bkk-landmarks3d.js"></script>
@@ -4326,6 +4328,16 @@
     // 🌧 ฝน & น้ำท่วม — เรดาร์ฝน RainViewer + ระดับน้ำ/ฝนจาก thaiwater (สสน.) + Google Flood Hub — โมดูลแยกใน bkk-flood.js
     if (window.BKK_FLOOD) {
       try { window.BKK_FLOOD.mount(map); } catch (e) { console.warn("flood layer:", e); }
+    }
+
+    // 🏞 เขื่อน & อ่างเก็บน้ำ — ปริมาณน้ำรายวันจากกรมชลประทาน/สสน. + ผิวอ่าง สันเขื่อน 3 มิติ ทางน้ำท้ายเขื่อน (OSM) — โมดูลแยกใน bkk-dam.js
+    if (window.BKK_DAM) {
+      try { window.BKK_DAM.mount(map); } catch (e) { console.warn("dam layer:", e); }
+    }
+
+    // 🚩 ธงเตือนภัย — ธงแดง/เหลือง/เขียวรายหมู่บ้าน (กรมทรัพยากรน้ำ) + พื้นที่ประกาศ CAP กรมอุตุฯ + สัญญาณจากข้อมูล — โมดูลแยกใน bkk-warn.js
+    if (window.BKK_WARN) {
+      try { window.BKK_WARN.mount(map); } catch (e) { console.warn("warn layer:", e); }
     }
 
     // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js

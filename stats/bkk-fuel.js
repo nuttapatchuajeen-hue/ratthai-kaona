@@ -27,7 +27,13 @@
   FUELS.forEach(function (f) { FNAME[f[0]] = f[2]; });
   FNAME.ngv = "NGV";
   var FUEL_BITS = [[1, "ดีเซล"], [2, "แก๊สโซฮอล์ 95"], [4, "แก๊สโซฮอล์ 91"], [8, "E20"], [16, "E85"], [32, "เบนซิน 95"], [64, "LPG"], [128, "NGV"]];
-  var SHORT = { ptt: "PTT", bcp: "BCP", shell: "SHELL", caltex: "CALTEX", pt: "PT", susco: "SUSCO", pure: "PURE", cosmo: "COSMO", gas: "LPG", other: "" };
+  // ป้ายบนแผนที่ (ซูม ≥ 12): โลโก้ในวงกลม + ชื่ออังกฤษ (บรรทัดบน) + ชื่อไทย (บรรทัดล่าง) — โลโก้จาก bkk-fuel-logos.js
+  var LOGO_URL = "bkk-fuel-logos.js";
+  var PILL = {
+    ptt: ["PTT", "ปตท."], bcp: ["BANGCHAK", "บางจาก"], shell: ["SHELL", "เชลล์"], caltex: ["CALTEX", "คาลเท็กซ์"], pt: ["PT", "พีที"],
+    susco: ["SUSCO", "ซัสโก้"], pure: ["PURE", "เพียว"], cosmo: ["COSMO", "คอสโม"], gas: ["LPG/NGV", "ปั๊มแก๊ส"], other: ["อื่นๆ", "ปั๊มอิสระ"]
+  };
+  var PILL_Z = 12;
   var HOME = { center: [100.54, 13.75], zoom: 12.6, pitch: 0, bearing: 0 };
 
   var map = null, D = null, visible = false, uiBuilt = false, handlersBound = false, loading = null;
@@ -91,8 +97,100 @@
     });
   }
   function ensureData() {
-    if (!loading) loading = (window.BKK_FUEL ? Promise.resolve() : loadScript(DATA_URL)).then(function () { D = window.BKK_FUEL; });
+    if (!loading) loading = Promise.all([
+      window.BKK_FUEL ? Promise.resolve() : loadScript(DATA_URL),
+      window.BKK_FUEL_LOGOS ? Promise.resolve() : loadScript(LOGO_URL).catch(function () { })   // ไม่มีโลโก้ก็ยังวาดป้ายตัวอักษรได้
+    ]).then(function () { D = window.BKK_FUEL; });
     return loading;
+  }
+
+  /* ================================================================ ป้ายโลโก้ + ชื่อ (วาดด้วย canvas ครั้งเดียวต่อแบรนด์ แล้ว addImage) */
+  // ปั๊ม 8,700 แห่ง → ใช้ชั้น symbol + รูปที่วาดไว้ ไม่ใช้ HTML marker (ลื่นกว่ามาก)
+  var pills = null, pillsReady = null;
+  var PUMP_PATH = ["M3 22h12", "M4 9h10", "M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18", "M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"];
+  function pageFont() {
+    try { return getComputedStyle(document.body).fontFamily || "sans-serif"; } catch (e) { return "sans-serif"; }
+  }
+  function loadLogoImg(code) {
+    var L = window.BKK_FUEL_LOGOS && window.BKK_FUEL_LOGOS[code];
+    if (!L) return Promise.resolve(null);
+    return new Promise(function (ok) {
+      var im = new Image();
+      im.onload = function () { ok(im); };
+      im.onerror = function () { ok(null); };
+      im.src = L.src;
+    });
+  }
+  function rr(g, x, y, w, h, r) {
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  // หน่วยเป็นพิกเซลจอ × S (addImage ด้วย pixelRatio: S ให้คมบนจอความละเอียดสูง)
+  function drawPill(b, logo, cheap, font) {
+    var S = 2, code = b[0], names = PILL[code] || [b[1], ""];
+    var H = 30, D0 = 24, P = 3, TX = P + D0 + 6;
+    var c = document.createElement("canvas"), g = c.getContext("2d");
+    var f1 = "700 " + 11.5 * S + "px " + font, f2 = "500 " + 9.5 * S + "px " + font;
+    g.font = f1; var w1 = g.measureText(names[0]).width / S;
+    g.font = f2; var w2 = names[1] ? g.measureText(names[1]).width / S : 0;
+    var W = Math.ceil(TX + Math.max(w1, w2) + 10);
+    c.width = W * S; c.height = H * S;
+    g.scale(S, S);
+    // ตัวป้าย: พื้นเข้ม + ขอบสีแบรนด์ (ถูกสุด = ขอบเหลืองหนา)
+    rr(g, 1, 1, W - 2, H - 2, (H - 2) / 2);
+    g.fillStyle = "rgba(11,16,27,.93)"; g.fill();
+    g.lineWidth = cheap ? 2.4 : 1.4; g.strokeStyle = cheap ? "#facc15" : b[2]; g.stroke();
+    // วงโลโก้
+    var cx = P + D0 / 2 + 0.5, cy = H / 2;
+    g.beginPath(); g.arc(cx, cy, D0 / 2, 0, Math.PI * 2); g.fillStyle = "#fff"; g.fill();
+    if (logo) {
+      g.save(); g.beginPath(); g.arc(cx, cy, D0 / 2 - 1, 0, Math.PI * 2); g.clip();
+      var k = Math.min((D0 - 5) / logo.width, (D0 - 5) / logo.height), lw = logo.width * k, lh = logo.height * k;
+      g.drawImage(logo, cx - lw / 2, cy - lh / 2, lw, lh);
+      g.restore();
+    } else if (code === "gas" || code === "other") {
+      // ไอคอนหัวจ่าย (Lucide "fuel")
+      g.save(); g.translate(cx - 7.2, cy - 7.2); g.scale(0.6, 0.6);
+      g.lineWidth = 2.4; g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = b[2];
+      PUMP_PATH.forEach(function (d) { g.stroke(new Path2D(d)); });
+      g.restore();
+    } else {
+      g.fillStyle = b[2]; g.beginPath(); g.arc(cx, cy, D0 / 2 - 2, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "#fff"; g.font = "800 " + 12 + "px " + font; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(names[0].charAt(0), cx, cy + 0.5);
+      g.textAlign = "left";
+    }
+    // ชื่อ 2 บรรทัด
+    g.textBaseline = "alphabetic";
+    g.fillStyle = "#f3f6fb"; g.font = "700 11.5px " + font; g.fillText(names[0], TX, names[1] ? 13.5 : 19);
+    if (names[1]) { g.fillStyle = "rgba(214,223,236,.78)"; g.font = "500 9.5px " + font; g.fillText(names[1], TX, 24.5); }
+    return { width: c.width, height: c.height, data: g.getImageData(0, 0, c.width, c.height).data };
+  }
+  function makePills() {
+    if (pillsReady) return pillsReady;
+    var font = pageFont();
+    var fontsOk = document.fonts && document.fonts.load
+      ? Promise.all([document.fonts.load("700 12px " + font, "PTTปตท"), document.fonts.load("500 10px " + font, "บางจาก")]).catch(function () { })
+      : Promise.resolve();
+    pillsReady = fontsOk.then(function () {
+      return Promise.all(D.brands.map(function (b) { return loadLogoImg(b[0]); }));
+    }).then(function (imgs) {
+      pills = {};
+      D.brands.forEach(function (b, i) {
+        pills[b[0]] = drawPill(b, imgs[i], false, font);
+        pills[b[0] + "-ch"] = drawPill(b, imgs[i], true, font);
+      });
+    });
+    return pillsReady;
+  }
+  function ensurePillImages() {
+    if (!pills) return false;
+    Object.keys(pills).forEach(function (k) { if (!map.hasImage("fuel-pill-" + k)) map.addImage("fuel-pill-" + k, pills[k], { pixelRatio: 2 }); });
+    return true;
+  }
+  function brandMark(b) {
+    var L = window.BKK_FUEL_LOGOS && window.BKK_FUEL_LOGOS[b[0]];
+    return L ? '<img class="fu-logo" src="' + L.src + '" alt="" style="border-color:' + b[2] + '">' : '<i class="fu-dot" style="background:' + b[2] + '"></i>';
   }
   function loadPrice() {
     return getJSON(apiList("")).then(function (j) { price = j; priceErr = null; })
@@ -179,12 +277,14 @@
     for (var i = 0; i < D.s.length; i++) {
       var r = D.s[i], b = D.brands[r[2]], code = b[0];
       if (brandOff[code]) continue;
-      var e = est(r, fuel), lbl = SHORT[code] || "";
+      var e = est(r, fuel);
       var bp = price && price.brands[code] && price.brands[code][fuel];
-      if (e) lbl += (lbl ? "\n" : "") + (e.kind === "est" || e.kind === "bkk-only" ? "≈" : "") + baht(e.p);
       f.push({
         type: "Feature", geometry: { type: "Point", coordinates: [r[0], r[1]] },
-        properties: { i: i, c: b[2], l: lbl, ch: bp != null && bp <= cheap + 0.001 ? 1 : 0, hp: e ? 1 : 0 }
+        properties: {
+          i: i, c: b[2], b: code, ch: bp != null && bp <= cheap + 0.001 ? 1 : 0, hp: e ? 1 : 0,
+          pr: e ? (e.kind === "est" || e.kind === "bkk-only" ? "≈" : "") + baht(e.p) : ""   // ราคาใต้ป้าย
+        }
       });
     }
     return { type: "FeatureCollection", features: f };
@@ -199,23 +299,33 @@
       paint: {
         "circle-color": ["get", "c"],
         "circle-opacity": ["case", ["==", ["get", "hp"], 1], 1, 0.7],
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 1.6, 9, 3, 12, 5.5, 15, 8],
+        // ซูม ≥ 12 ป้ายโลโก้ขึ้นแทน → จุดเหลือเล็ก ๆ ไว้บอกตำแหน่งของปั๊มที่ป้ายถูกซ่อน (ป้ายชนกัน)
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 1.6, 9, 3, 11.9, 5.5, PILL_Z, 3, 16, 4],
         "circle-stroke-color": ["case", ["==", ["get", "ch"], 1], "#facc15", "rgba(255,255,255,.85)"],
         "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 5, 0.3, 11, ["case", ["==", ["get", "ch"], 1], 2.4, 1.2]]
       }
     });
-    if (!map.getLayer("fuel-lbl")) map.addLayer({
-      id: "fuel-lbl", type: "symbol", source: "fuel-st", minzoom: 13.2,
-      layout: {
-        "text-field": ["get", "l"], "text-font": ["Noto Sans Bold"], "text-size": 10.5, "text-offset": [0, 1.25], "text-anchor": "top",
-        "text-line-height": 1.1, "symbol-sort-key": ["-", 1, ["get", "ch"]], "text-padding": 1
-      },
-      paint: { "text-color": ["case", ["==", ["get", "ch"], 1], "#facc15", "#e5edf7"], "text-halo-color": "rgba(8,12,22,.92)", "text-halo-width": 1.6 }
+    makePills().then(function () {
+      if (!map.getStyle() || !map.getSource("fuel-st")) return;
+      ensurePillImages();
+      if (!map.getLayer("fuel-pill")) map.addLayer({
+        id: "fuel-pill", type: "symbol", source: "fuel-st", minzoom: PILL_Z,
+        layout: {
+          "icon-image": ["concat", "fuel-pill-", ["get", "b"], ["case", ["==", ["get", "ch"], 1], "-ch", ""]],
+          "icon-anchor": "center", "icon-padding": 1,
+          "icon-size": ["interpolate", ["linear"], ["zoom"], PILL_Z, 0.82, 14, 0.95, 16, 1.05],
+          "text-field": ["get", "pr"], "text-font": ["Noto Sans Bold"], "text-size": 10.5, "text-anchor": "top", "text-offset": [0, 1.45],
+          "text-optional": true, "text-padding": 1,
+          "symbol-sort-key": ["-", 1, ["get", "ch"]]   // ปั๊มราคาถูกสุดได้วางป้ายก่อน
+        },
+        paint: { "text-color": ["case", ["==", ["get", "ch"], 1], "#facc15", "#e5edf7"], "text-halo-color": "rgba(8,12,22,.92)", "text-halo-width": 1.6 }
+      });
+      syncVis();
     });
     syncVis();
   }
   function syncVis() {
-    ["fuel-st", "fuel-lbl"].forEach(function (id) { if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visible ? "visible" : "none"); });
+    ["fuel-st", "fuel-pill"].forEach(function (id) { if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visible ? "visible" : "none"); });
   }
 
   /* ================================================================ การ์ดปั๊ม */
