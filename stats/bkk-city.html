@@ -3211,6 +3211,7 @@
 <script src="bkk-fuel.js"></script>
 <script src="bkk-dam.js"></script>
 <script src="bkk-warn.js"></script>
+<script src="bkk-quake.js"></script>
 <script src="bkk-floodsim-extra.js"></script>
 <script src="bkk-floodsim.js"></script>
 <script src="bkk-landmarks3d.js"></script>
@@ -3650,6 +3651,8 @@
     if (!map || !STATE.autoTilt) return;
     if (STATE.appMode !== "3d" && !STATE.forceTilt) return;
     if (STATE.droneTourActive || map.isMoving()) return;
+    // กำลังเอียงดูจุดกำเนิดแผ่นดินไหวใต้ดิน (bkk-quake.js) — ไม่ต้องกดแผนที่กลับเป็นแบนตอนซูม
+    if (window.BKK_QUAKE && window.BKK_QUAKE.holdTilt()) return;
 
     // forceTilt = กำลังดูแท่งความสูงเขตอยู่ ต้องคาเอียงไว้ไม่ว่าซูมเท่าไหร่
     var want3D = STATE.forceTilt || map.getZoom() >= CAM.tiltZoom;
@@ -4350,6 +4353,11 @@
     // 🚩 ธงเตือนภัย — ธงแดง/เหลือง/เขียวรายหมู่บ้าน (กรมทรัพยากรน้ำ) + พื้นที่ประกาศ CAP กรมอุตุฯ + สัญญาณจากข้อมูล — โมดูลแยกใน bkk-warn.js
     if (window.BKK_WARN) {
       try { window.BKK_WARN.mount(map); } catch (e) { console.warn("warn layer:", e); }
+    }
+
+    // 〰 แผ่นดินไหว — จุดล่าสุด (กรมอุตุฯ + USGS) + รอยเลื่อนมีพลัง + เหตุ 28 มี.ค. 2568 + จุดกำเนิดใต้ดิน 3 มิติ — โมดูลแยกใน bkk-quake.js
+    if (window.BKK_QUAKE) {
+      try { window.BKK_QUAKE.mount(map); } catch (e) { console.warn("quake layer:", e); }
     }
 
     // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js
@@ -7140,6 +7148,9 @@ window.MD_DATA_NOTICE = {
     { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
     { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },
+    { t: 'แผ่นดินไหวล่าสุด (ชั้นแผ่นดินไหว)', o: 'กองเฝ้าระวังแผ่นดินไหว กรมอุตุนิยมวิทยา (data.tmd.go.th DailySeismicEvent + RSS) ผ่าน /api/quake ของเว็บนี้ · USGS Earthquake Catalog (FDSN) ดึงตรง · เหตุเดียวกันจากสองแหล่งรวมเป็นจุดเดียว · ความลึกใต้ดินในมุม 3 มิติขยายตามที่ผู้ใช้เลือก', u: 'https://earthquake.tmd.go.th' },
+    { t: 'รอยเลื่อนมีพลัง', o: 'ในไทย: กรมทรัพยากรธรณี ชุดข้อมูลกลุ่มรอยเลื่อนมีพลัง (CC BY) ดึง 28 ก.ย. 2569 · ประเทศเพื่อนบ้าน: GEM Global Active Faults Database (CC BY-SA 4.0) — ไม่มีชื่อรอยเลื่อน ยกเว้นช่วงรอยเลื่อนสะกายที่ทับแนวแตกปี 2568', u: 'https://data.go.th/dataset/2f32b01e-6ae7-4b66-aa2c-730a87051793' },
+    { t: 'แผ่นดินไหวเมียนมา M7.7 28 มี.ค. 2568', o: 'USGS: ShakeMap v23 (ความรุนแรง MMI), แนวแตก (Reitman และคณะ 2025), อาฟเตอร์ช็อก 3 เดือน · ตัวเลขผู้เสียชีวิตและข้อมูลอาคาร สตง.: วิกิพีเดีย', u: 'https://earthquake.usgs.gov/earthquakes/eventpage/us7000pn9s' },
     { t: 'เที่ยวบินสด (ตำแหน่งเครื่องบินจริง)', o: 'ADS-B จากเครือข่ายอาสาสมัคร adsb.lol (ODbL) ผ่าน /api/flights ของเว็บนี้ · สำรอง adsb.fi · อัปเดตทุก 5 วินาที', u: 'https://adsb.lol' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },
