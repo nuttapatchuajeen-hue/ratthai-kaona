@@ -398,6 +398,8 @@
     ".wn-leg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin-top:4px}.wn-leg span{display:inline-flex;align-items:center;gap:4px}",
     ".wn-src{margin:10px 0 0;font-size:10px;opacity:.62;line-height:1.5}",
     ".wn-warn{color:#f59f0b}",
+    ".wn-down{margin:4px 0 6px;padding:7px 9px;border-radius:9px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.45);font-size:11.5px;line-height:1.55}",
+    ".wn-down .mdico{width:12px;height:12px;vertical-align:-2px;color:#f59e0b}.wn-down a{color:var(--accent);font-weight:700;text-decoration:none}",
     ".wn-popup .maplibregl-popup-content{background:var(--card-bg);color:var(--text-main);border:1px solid var(--card-border);border-radius:12px;padding:11px 13px 9px;box-shadow:0 10px 30px rgba(0,0,0,.3);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);max-height:70vh;overflow:auto}",
     ".wn-popup .maplibregl-popup-tip{display:none}.wn-popup .maplibregl-popup-close-button{color:var(--text-muted);font-size:17px;right:4px;top:3px}",
     ".wn-pop{font-size:12px;line-height:1.5;min-width:240px}.wn-pop-t{margin:0 16px 5px 0;font-size:13px;line-height:1.45}.wn-pop-t small{opacity:.6;font-weight:500}",
@@ -424,17 +426,21 @@
       h += '<p class="wn-note">' + (W.err ? '<span class="wn-warn">โหลดข้อมูลไม่สำเร็จ (' + esc(W.err) + ')</span>' : "กำลังโหลดสถานะเตือนภัยจากกรมทรัพยากรน้ำและกรมอุตุนิยมวิทยา…") + '</p>';
     } else {
       var sm = d.sum || {};
+      // กรมทรัพยากรน้ำไม่ตอบเซิร์ฟเวอร์นอกประเทศ (Vercel) — ห้ามแสดงเป็น 0 หรือ "ไม่มีสถานีเตือน" เพราะจะเข้าใจผิดว่าปลอดภัย
+      var down = !!d.ewsErr && !d.st.length;
       var cnt = function (lv) { return d.st.filter(function (r) { return r[4] === lv; }).length; };
       h += '<div class="wn-sum">' + [3, 2, 1].map(function (lv) {
         var v = lv === 3 ? sm.evac : lv === 2 ? sm.warn : sm.watch;
-        return '<div style="border-color:' + LV[lv].c + '66"><b style="color:' + LV[lv].c + '">' + (v == null ? cnt(lv) : fmt(v)) + '</b><small>' + flagDot(lv) + ' ' + LV[lv].t + (v == null ? " สถานี" : " หมู่บ้าน") + '</small></div>';
+        return '<div style="border-color:' + LV[lv].c + '66"><b style="color:' + LV[lv].c + '">' + (down ? "–" : v == null ? cnt(lv) : fmt(v)) + '</b><small>' + flagDot(lv) + ' ' + LV[lv].t + (v == null ? " สถานี" : " หมู่บ้าน") + '</small></div>';
       }).join("") + '</div>';
-      h += '<p class="wn-meta">สถานีเตือนภัยล่วงหน้า ' + fmt(d.total) + ' สถานี · มีฝนตอนนี้ ' + fmt(d.rainSt) + ' สถานี' + (d.ewsErr ? ' · <span class="wn-warn">สถานะสดโหลดไม่ได้ ใช้ประวัติแทน</span>' : "") + '</p>';
+      h += down ? '<p class="wn-down">' + ico("triangle-alert") + ' <b>ดึงธงจากกรมทรัพยากรน้ำไม่ได้</b> — ระบบเตือนภัยล่วงหน้าของกรมฯ ไม่เปิดให้ดึงข้อมูลจากเซิร์ฟเวอร์นอกประเทศ แผนที่นี้จึงแสดงธงไม่ได้ ' +
+        '<b>ไม่ได้แปลว่าไม่มีการเตือนภัย</b> — ดูธงล่าสุดได้ที่ <a href="' + EWS_URL + '" target="_blank" rel="noopener">ews.dwr.go.th ' + ico("external-link") + '</a></p>'
+        : '<p class="wn-meta">สถานีเตือนภัยล่วงหน้า ' + fmt(d.total) + ' สถานี · มีฝนตอนนี้ ' + fmt(d.rainSt) + ' สถานี' + (d.ewsErr ? ' · <span class="wn-warn">สถานะสดโหลดไม่ได้ ใช้ประวัติแทน</span>' : "") + '</p>';
 
       // ธงปัจจุบัน
       var st = d.st.map(function (r, i) { return { r: r, i: i }; }).sort(function (a, b) { return b.r[4] - a.r[4] || (tms(b.r[11]) || 0) - (tms(a.r[11]) || 0); });
-      h += '<div class="wn-sec"><div class="wn-h">' + chk("flag", ico("flag") + " ธงที่กำลังเตือนตอนนี้", fmt(st.length) + " สถานี") + '</div>';
-      h += st.length ? '<div class="wn-list">' + st.map(function (x) {
+      h += '<div class="wn-sec"><div class="wn-h">' + chk("flag", ico("flag") + " ธงที่กำลังเตือนตอนนี้", down ? "ดึงไม่ได้" : fmt(st.length) + " สถานี") + '</div>';
+      h += down ? "" : st.length ? '<div class="wn-list">' + st.map(function (x) {
         var r = x.r, t = tms(r[11]);
         return '<button type="button" class="wn-it" data-k="st" data-i="' + x.i + '">' + flagDot(r[4]) + '<span><b>' + esc(r[1]) + '</b> · ' + LV[r[4]].t +
           '<small>ต.' + esc(r[5]) + ' อ.' + esc(r[6]) + ' จ.' + esc(r[7]) + '</small></span><em>' + (t ? ago(t) : "") + '</em></button>';
@@ -443,7 +449,7 @@
 
       // ย้อนหลัง
       var hr = histRows();
-      h += '<div class="wn-sec"><div class="wn-h">' + chk("hist", ico("history") + " เคยเตือนใน 36 ชม. (ตอนนี้ลดระดับแล้ว)", fmt(hr.length) + " สถานี") + '</div>';
+      h += '<div class="wn-sec"><div class="wn-h">' + chk("hist", ico("history") + " เคยเตือนใน 36 ชม. (ตอนนี้ลดระดับแล้ว)", down && !hr.length ? "ดึงไม่ได้" : fmt(hr.length) + " สถานี") + '</div>';
       if (hr.length) h += '<div class="wn-list">' + hr.map(function (x) {
         var r = x.h;
         return '<button type="button" class="wn-it old" data-k="h" data-i="' + x.i + '">' + flagDot(r[1]) + '<span><b>' + esc(r[2]) + '</b> · ' + LV[r[1]].t +

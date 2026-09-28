@@ -157,8 +157,10 @@
       .catch(function (e) { R.err = String(e.message || e); })
       .then(function () { R.busy = false; refresh(); });
     getJSON(apiList("warn")).then(function (j) {
-      W.st = (j.st || []).filter(function (r) { return r[8] === "rain"; }); W.at = Date.now(); refresh();
-    }).catch(function () { });
+      W.st = (j.st || []).filter(function (r) { return r[8] === "rain"; }); W.at = Date.now();
+      W.down = !!j.ewsErr && !(j.st || []).length;   // กรมทรัพยากรน้ำไม่ตอบเซิร์ฟเวอร์นอกประเทศ
+      refresh();
+    }).catch(function () { W.down = true; refresh(); });
   }
   function ensureData() {
     loadGeo();
@@ -713,7 +715,9 @@
       }).join("") + '</div>';
     } else if (R.data) h += '<p class="sl-note">ตอนนี้ไม่มีสถานีใดฝนเกิน 100 มม. ใน 24 ชม.</p>';
     h += '<div class="sl-leg"><span><i class="c" style="background:#38bdf8"></i>ฝน 24 ชม.</span><span><i class="c" style="border:2px solid #ff2d55"></i>เกิน 100 มม.</span><span><i class="c" style="border:2px solid #f59e0b"></i>สถานีเตือนภัย (กรมทรัพยากรน้ำ)</span></div>';
-    h += '<p class="sl-note">วงแดง = ฝนเกิน 100 มม./วัน ตามเกณฑ์กรมทรัพยากรธรณี และหมู่บ้านเสี่ยงในรัศมี 10 กม. — <b>คำนวณเอง ไม่ใช่ประกาศทางการ</b> ติดตามประกาศจากกรมทรัพยากรธรณีและ ปภ.</p></div>';
+    h += '<p class="sl-note">วงแดง = ฝนเกิน 100 มม./วัน ตามเกณฑ์กรมทรัพยากรธรณี และหมู่บ้านเสี่ยงในรัศมี 10 กม. — <b>คำนวณเอง ไม่ใช่ประกาศทางการ</b> ติดตามประกาศจากกรมทรัพยากรธรณีและ ปภ.</p>';
+    if (W.down) h += '<p class="sl-note sl-warn">สถานีเตือนภัยของกรมทรัพยากรน้ำดึงไม่ได้ (กรมฯ ไม่เปิดให้ดึงจากเซิร์ฟเวอร์นอกประเทศ) — <b>ไม่ได้แปลว่าไม่มีการเตือนภัย</b> ดูธงล่าสุดที่ <a href="https://ews.dwr.go.th/ews/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">ews.dwr.go.th</a></p>';
+    h += '</div>';
 
     // พื้นที่อ่อนไหว
     h += '<div class="sl-sec"><div class="sl-h">' + chk("risk", '<i style="width:12px;height:12px;border-radius:3px;background:linear-gradient(90deg,#fdd835,#fb8c00,#e53935);display:inline-block"></i> พื้นที่อ่อนไหวต่อดินถล่ม') + '</div>';
