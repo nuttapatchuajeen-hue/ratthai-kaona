@@ -802,10 +802,19 @@
     var p = $("#fsPanel"), ts = $("#toolbarStack") || $("#leftMenu"), stg = $(".stage");
     if (!p) return;
     if (ts && stg && window.innerWidth > 760) {
-      var r1 = ts.getBoundingClientRect(), r0 = stg.getBoundingClientRect();
-      p.style.left = Math.round(r1.right - r0.left + 10) + "px";
-      p.style.top = Math.round(Math.max(14, r1.top - r0.top)) + "px";
-    } else { p.style.left = ""; p.style.top = ""; }
+      // #toolbarStack กว้างเต็มจอ (แถวปุ่มแนวนอน) — วางด้านขวาของมันจะหลุดขอบจอ
+      // จึงวางถัดจากคอลัมน์ปุ่มซูมที่อยู่ใต้แถวปุ่ม (ไม่มีคอลัมน์ซูม → วางใต้แถบทั้งหมด)
+      var r0 = stg.getBoundingClientRect(), r1 = ts.getBoundingClientRect();
+      var zc = ts.querySelector(".map-zoom-controls");
+      var rz = zc && zc.offsetWidth ? zc.getBoundingClientRect() : null;
+      var left = rz ? rz.right - r0.left + 10 : r1.left - r0.left;
+      var top = rz ? rz.top - r0.top : r1.bottom - r0.top + 10;
+      left = Math.max(14, Math.min(left, r0.width - p.offsetWidth - 14));
+      top = Math.max(14, top);
+      p.style.left = Math.round(left) + "px";
+      p.style.top = Math.round(top) + "px";
+      p.style.maxHeight = Math.max(160, Math.round(r0.height - top - 14)) + "px";
+    } else { p.style.left = ""; p.style.top = ""; p.style.maxHeight = ""; }
   }
   function syncButtons() {
     var b = $("#btnFloodSim"), p = $("#fsPanel");
@@ -862,6 +871,9 @@
       map.on("click", onMapClick);
       map.on("zoomend", function () { if (visible) renderLive(); });
       window.addEventListener("resize", function () { if (visible) placePanel(); });
+      // ย่อ/ขยายแถบเครื่องมือ (.collapsed) ทำให้คอลัมน์ซูมเลื่อนขึ้น-ลง → วางแผงใหม่ตาม
+      var tsEl = $("#toolbarStack");
+      if (tsEl && window.ResizeObserver) new ResizeObserver(function () { if (visible) placePanel(); }).observe(tsEl);
     }
     if (lsGet(LS_ON) === "1" && !visible) setVisible(true, true);
   }

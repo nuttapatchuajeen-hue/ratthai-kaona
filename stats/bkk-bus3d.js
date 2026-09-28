@@ -1100,6 +1100,24 @@
     }).join("");
   }
   var statusTimer = null;
+  // วางแผงข้างคอลัมน์ปุ่มซูมใต้แถวปุ่ม (จอเล็กใช้ตำแหน่งจาก CSS) — #toolbarStack กว้างเต็มจอ
+  // วางด้านขวาของมันจะหลุดขอบจอ · ไม่มีคอลัมน์ซูม → วางใต้แถบทั้งหมด (สูตรเดียวกับ bkk-floodsim.js)
+  function placePanel() {
+    var p = $("#busPanel"), ts = $("#toolbarStack") || $("#leftMenu"), stg = $(".stage");
+    if (!p) return;
+    if (ts && stg && window.innerWidth > 760) {
+      var r0 = stg.getBoundingClientRect(), r1 = ts.getBoundingClientRect();
+      var zc = ts.querySelector(".map-zoom-controls");
+      var rz = zc && zc.offsetWidth ? zc.getBoundingClientRect() : null;
+      var left = rz ? rz.right - r0.left + 10 : r1.left - r0.left;
+      var top = rz ? rz.top - r0.top : r1.bottom - r0.top + 10;
+      left = Math.max(14, Math.min(left, r0.width - p.offsetWidth - 14));
+      top = Math.max(14, top);
+      p.style.left = Math.round(left) + "px";
+      p.style.top = Math.round(top) + "px";
+      p.style.maxHeight = Math.max(160, Math.round(r0.height - top - 14)) + "px";
+    } else { p.style.left = ""; p.style.top = ""; p.style.maxHeight = ""; }
+  }
   function togglePanel(force) {
     var p = $("#busPanel");
     if (!p) return;
@@ -1109,13 +1127,7 @@
     if (b) b.classList.toggle("active", open);
     clearInterval(statusTimer);
     if (open) {
-      // วางถัดจากแถบเครื่องมือด้านซ้าย (จอเล็กใช้ตำแหน่งจาก CSS)
-      var ts = $("#toolbarStack") || $("#leftMenu"), stg = $(".stage");
-      if (ts && stg && window.innerWidth > 760) {
-        var r1 = ts.getBoundingClientRect(), r0 = stg.getBoundingClientRect();
-        p.style.left = Math.round(r1.right - r0.left + 10) + "px";
-        p.style.top = Math.round(Math.max(14, r1.top - r0.top)) + "px";
-      } else { p.style.left = ""; p.style.top = ""; }
+      placePanel();
       ensureLoaded().then(function () { renderGroups(); renderResults(); panelStatus(); });
       statusTimer = setInterval(panelStatus, 5000);
       setTimeout(function () { var i = $("#busQ"); if (i) i.focus(); }, 50);
@@ -1265,6 +1277,11 @@
     if (!mount._bound) {
       mount._bound = true;
       map.on("dragstart", function () { if (follow) stopFollow(); });
+      // จอเปลี่ยนขนาด / ย่อ-ขยายแถบเครื่องมือ → วางแผงค้นหาใหม่ถ้ากำลังเปิดอยู่
+      var rePlace = function () { var p = $("#busPanel"); if (p && p.classList.contains("open")) placePanel(); };
+      window.addEventListener("resize", rePlace);
+      var tsEl = $("#toolbarStack");
+      if (tsEl && window.ResizeObserver) new ResizeObserver(rePlace).observe(tsEl);
     }
     if (!visible) return;
     var go = function () {

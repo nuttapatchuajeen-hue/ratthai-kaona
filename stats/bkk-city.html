@@ -250,7 +250,9 @@
   }
 
   /* ---------- Map Stage ---------- */
-  .stage { flex: 1 1 auto; position: relative; min-height: 0; }
+  /* overflow: clip — แผงเลื่อนขวาที่ปิดอยู่จอดนอกจอ (translateX 100%) ถ้าไม่ตัด หน้าจะกว้างเกินจอ
+     แล้วเบราว์เซอร์เลื่อนทั้งหน้าไปทางซ้ายได้ (body ซ่อนแถบเลื่อน → ผู้ใช้เลื่อนกลับไม่ได้) */
+  .stage { flex: 1 1 auto; position: relative; min-height: 0; overflow: hidden; overflow: clip; }
   #map { position: absolute; inset: 0; cursor: grab; }
   #map:active { cursor: grabbing; }
 
@@ -1840,6 +1842,16 @@
     -webkit-backdrop-filter: blur(20px);
   }
   .project-drawer.open { transform: translateX(0); }
+  /* แผงเลื่อนขวาทั้ง 3 ตัวตอนปิด: ซ่อนจริงหลังเลื่อนออกเสร็จ ไม่ให้รับโฟกัส/ปุ่ม Tab ได้
+     (.stage > #id เพื่อชนะ CSS ที่ bkk-datacenter.js / bkk-zoning.js ฉีดเข้ามาทีหลัง) */
+  .stage > .project-drawer, .stage > #dcxPanel, .stage > #znxPanel {
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.3s;
+  }
+  .stage > .project-drawer.open, .stage > #dcxPanel.open, .stage > #znxPanel.open {
+    visibility: visible;
+    transition-delay: 0s;
+  }
 
   .drawer-header {
     padding: 16px 20px 12px;
@@ -2547,8 +2559,8 @@
       <button type="button" class="brand-chip" data-brand="supalai"><span class="brand-dot dot-supalai"></span> Supalai</button>
     </div>
     <div class="pin-mode-toggle">
-      <button type="button" class="pin-mode-btn" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> โลโก้</button>
-      <button type="button" class="pin-mode-btn active" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> รูปภาพ</button>
+      <button type="button" class="pin-mode-btn active" id="btnModeLogo" title="แสดงหมุดโลโก้แบรนด์"><svg class="mdico"><use href="#i-store"></use></svg> โลโก้</button>
+      <button type="button" class="pin-mode-btn" id="btnModePhoto" title="แสดงการ์ดรูปภาพพรีวิวแบบลอย"><svg class="mdico"><use href="#i-camera"></use></svg> รูปภาพ</button>
     </div>
     <button type="button" class="brand-bar-collapse" id="btnBrandCollapse" title="ย่อตัวกรองแบรนด์" aria-label="ย่อตัวกรองแบรนด์">
       <svg class="mdico" style="transform:rotate(-90deg)"><use href="#i-chevron-right"></use></svg>
@@ -2925,12 +2937,12 @@
       <div class="ashton-section">
         <p class="ashton-sec-kicker">เมือง 3 มิติ และผู้พัฒนา</p>
         <div class="layer-btns-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 6px;">
-          <button type="button" class="menu-btn active" id="btn3DBuildings"><span><svg class="mdico"><use href="#i-building-2"></use></svg></span> อาคาร 3 มิติ</button>
-          <button type="button" class="menu-btn active" id="btnLandmarksToggle"><span><svg class="mdico"><use href="#i-sparkles"></use></svg></span> แลนด์มาร์ก 3 มิติ</button>
+          <button type="button" class="menu-btn active" data-proxy="btn3DBuildings"><span><svg class="mdico"><use href="#i-building-2"></use></svg></span> อาคาร 3 มิติ</button>
+          <button type="button" class="menu-btn active" data-proxy="btnLandmarksToggle"><span><svg class="mdico"><use href="#i-sparkles"></use></svg></span> แลนด์มาร์ก 3 มิติ</button>
         </div>
         <div class="explore-tools-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom: 8px;">
-          <button type="button" class="menu-btn" id="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> ทัวร์โดรน</button>
-          <button type="button" class="menu-btn" id="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> ค้นหาเส้นทาง</button>
+          <button type="button" class="menu-btn" data-proxy="btnDroneTour"><span><svg class="mdico"><use href="#i-clapperboard"></use></svg></span> ทัวร์โดรน</button>
+          <button type="button" class="menu-btn" data-proxy="btnRoutePlannerToggle"><span><svg class="mdico"><use href="#i-compass"></use></svg></span> ค้นหาเส้นทาง</button>
         </div>
         <!-- โหมดความสูงแลนด์มาร์ก และตัวกรองระยะถึงสถานี
              ทั้ง CSS (.height-chips-grid / .transit-dist-grid) และตัวจัดการเหตุการณ์มีอยู่แล้ว
@@ -2949,7 +2961,7 @@
           <button type="button" class="transit-dist-btn" data-dist="1000">ใน 1 กม.</button>
         </div>
 
-        <div class="brand-chips-wrap" id="brandChipsContainer" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+        <div class="brand-chips-wrap" id="brandChipsSidebar" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
           <button type="button" class="brand-chip active" data-brand="all">ทั้งหมด</button>
           <button type="button" class="brand-chip" data-brand="ananda">Ananda</button>
           <button type="button" class="brand-chip" data-brand="sansiri">Sansiri</button>
@@ -3258,7 +3270,7 @@
     districts: false,
     selectedCategory: "all",  // "all", "food", "travel", "building", "transit", "condo"
     selectedBrand: "all",
-    pinMode: "photo", // "logo" or "photo" (default to photo card mode)
+    pinMode: "logo", // "logo" or "photo" (default to logo pins)
     selectedProject: null,
     activeLines: {},
     pinElements: [],
@@ -6463,6 +6475,17 @@
     if ($("#chipLandmarks")) $("#chipLandmarks").addEventListener("click", toggleLandmarksLayer);
     if ($("#btnLandmarksToggle")) $("#btnLandmarksToggle").addEventListener("click", toggleLandmarksLayer);
 
+    // ปุ่มซ้ำในแผง Lifestyle 360° (data-proxy="id ปุ่มจริง") — ส่งการกดต่อให้ปุ่มจริงในเมนูซ้าย และสะท้อนสถานะเปิด/ปิด
+    // (ถ้าใช้ id ซ้ำ $() เจอแค่ปุ่มแรก ปุ่มในแผงจะกดไม่ติดและสถานะไม่ขยับ)
+    $$("[data-proxy]").forEach(function(b) {
+      var t = $("#" + b.getAttribute("data-proxy"));
+      if (!t) return;
+      var sync = function() { b.classList.toggle("active", t.classList.contains("active")); };
+      b.addEventListener("click", function() { t.click(); });
+      new MutationObserver(sync).observe(t, { attributes: true, attributeFilter: ["class"] });
+      sync();
+    });
+
     // Transit Lines Chip & Menu Toggle
     function toggleTransitLayer() {
       STATE.transit = !STATE.transit;
@@ -6726,6 +6749,10 @@
       });
     }
 
+    // ชิปแบรนด์มี 2 ชุด: แถบบน (#brandChipsContainer) + แผง Lifestyle 360° (#brandChipsSidebar, มีแค่ 7 แบรนด์)
+    var BRAND_WRAPS = "#brandChipsContainer, #brandChipsSidebar";
+    var BRAND_CHIPS = "#brandChipsContainer .brand-chip, #brandChipsSidebar .brand-chip";
+
     // 🏷️ Category Filter Chips (All, Food, Travel, Buildings, Transit, Condos)
     $$("#categoryChipsContainer .cat-chip").forEach(function(btn) {
       btn.addEventListener("click", function() {
@@ -6734,15 +6761,10 @@
         var cat = btn.getAttribute("data-cat") || "all";
         STATE.selectedCategory = cat;
 
-        var brandWrap = $("#brandChipsContainer");
+        var showBrands = cat === "all" || cat === "condo";
+        $$(BRAND_WRAPS).forEach(function(w) { w.style.display = showBrands ? "flex" : "none"; });
         var divEl = $("#filterDivider");
-        if (cat !== "all" && cat !== "condo") {
-          if (brandWrap) brandWrap.style.display = "none";
-          if (divEl) divEl.style.display = "none";
-        } else {
-          if (brandWrap) brandWrap.style.display = "flex";
-          if (divEl) divEl.style.display = "block";
-        }
+        if (divEl) divEl.style.display = showBrands ? "block" : "none";
 
         applyLandmarkFilters();
         createDOMPins();
@@ -6750,11 +6772,11 @@
     });
 
     // 🏷️ Developer Brand Filter Chips
-    $$("#brandChipsContainer .brand-chip").forEach(function(btn) {
+    $$(BRAND_CHIPS).forEach(function(btn) {
       btn.addEventListener("click", function() {
-        $$("#brandChipsContainer .brand-chip").forEach(function(b) { b.classList.remove("active"); });
-        btn.classList.add("active");
         var brand = btn.getAttribute("data-brand") || "all";
+        // ไฮไลต์แบรนด์เดียวกันทั้ง 2 ชุด (แบรนด์ที่แผงไม่มี เช่น MQDC → ชุดในแผงไม่มีชิปไหนติด)
+        $$(BRAND_CHIPS).forEach(function(b) { b.classList.toggle("active", (b.getAttribute("data-brand") || "all") === brand); });
         STATE.selectedBrand = brand;
 
         applyLandmarkFilters();

@@ -378,7 +378,9 @@
     H = window.BKK_3D;
     if (!H) { console.warn("bkk-landmarks3d: ต้องโหลด bkk-3d-host.js ก่อน"); return; }
     H.attach(m);
-    if (lsGet(LS_KEY) === "0") visible = false;
+    // bkk-city คุมปุ่ม #btnLandmarksToggle เอง (STATE.landmarks เริ่มเปิดเสมอ) — ถ้าจำค่า "ปิด" ไว้ตรงนี้
+    // ปุ่มจะขึ้นปิดทั้งที่หมุดแลนด์มาร์กเปิด และกดครั้งแรกกลายเป็นปิดหมุดแทน → จำค่าเฉพาะตอนใช้ปุ่มของโมดูลเอง
+    if (!$("#btnLandmarksToggle") && lsGet(LS_KEY) === "0") visible = false;
     buildUI();
     if (!mount._bound) {
       mount._bound = true;

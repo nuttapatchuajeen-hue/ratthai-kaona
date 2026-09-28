@@ -388,7 +388,7 @@
         '</div>' +
       '</div>' +
       '<div class="znx-checkbox-grp">' +
-        '<label style="display:block;font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:5px;">สิทธิประโยชน์โบนัส FAR (Bonus Rules):</label>' +
+        '<label style="display:block;font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:5px;">สิทธิประโยชน์โบนัส FAR (รวมกันได้ไม่เกิน 20%):</label>' +
         '<label class="znx-check-item"><input type="checkbox" id="chkBonusTOD" checked> <span>ใกล้สถานีรถไฟฟ้า ≤ 500 ม. (TOD +20%)</span></label>' +
         '<label class="znx-check-item"><input type="checkbox" id="chkBonusPublic"> <span>จัดลานพื้นที่โล่งสาธารณะระดับดิน (+20%)</span></label>' +
         '<label class="znx-check-item"><input type="checkbox" id="chkBonusGreen"> <span>อาคารเขียวอนุรักษ์พลังงาน LEED/TREES (+10%)</span></label>' +
@@ -412,28 +412,42 @@
       var totalWah = (rai * 400) + (ngan * 100) + wah;
       var totalM2 = totalWah * 4; // 1 ตร.ว. = 4 ตร.ม.
 
-      var baseFar = typeof z.far === "number" ? z.far : 5.0;
-      var baseOsr = typeof z.osr === "number" ? z.osr : 5.0;
+      var landRow = '<div class="znx-res-row"><span>ขนาดที่ดินรวม:</span><span class="znx-res-val">' + num(totalWah) + ' ตร.ว. (' + num(totalM2) + ' ตร.ม.)</span></div>';
 
-      var bonusPct = 0;
-      if ($("#chkBonusTOD").checked) bonusPct += 20;
-      if ($("#chkBonusPublic").checked) bonusPct += 20;
-      if ($("#chkBonusGreen").checked) bonusPct += 10;
-      if ($("#chkBonusWater").checked) bonusPct += 10;
-      bonusPct = Math.min(bonusPct, 20); // กฎหมายผังเมืองกำหนดโบนัสรวมสูงสุดไม่เกิน 20%
+      // โซน ส. (ราชการ) ไม่มี FAR/OSR ตายตัว — ไม่เดาตัวเลขขึ้นมาเอง
+      if (typeof z.far !== "number" || typeof z.osr !== "number") {
+        $("#simResultBox").innerHTML = landRow +
+          '<div style="font-size:12px;line-height:1.6;color:var(--text-muted);padding-top:8px;">' +
+            'โซน ' + z.code + ' ไม่มี FAR / OSR ตายตัว (' + z.far + ') จึงคำนวณพื้นที่ก่อสร้างไม่ได้' +
+          '</div>';
+        return;
+      }
+
+      var baseFar = z.far;
+      var baseOsr = z.osr;
+
+      var bonusRaw = 0;
+      if ($("#chkBonusTOD").checked) bonusRaw += 20;
+      if ($("#chkBonusPublic").checked) bonusRaw += 20;
+      if ($("#chkBonusGreen").checked) bonusRaw += 10;
+      if ($("#chkBonusWater").checked) bonusRaw += 10;
+      var bonusPct = Math.min(bonusRaw, 20); // กฎหมายผังเมืองกำหนดโบนัสรวมสูงสุดไม่เกิน 20%
 
       var effectiveFar = baseFar * (1 + bonusPct / 100);
       var maxGFA = totalM2 * effectiveFar;
-      var minOpenSpace = totalM2 * (baseOsr / 100);
+      var minOpenSpace = maxGFA * (baseOsr / 100); // OSR = พื้นที่ว่างต่อ "พื้นที่อาคารรวม" ไม่ใช่ต่อพื้นที่ดิน
       var footprintM2 = totalM2 - minOpenSpace;
+      // ชั้นเมื่อใช้ฐานอาคารกว้างสุด (~75% ของที่เหลือ) — อาคารที่ฐานเล็กกว่านี้จะสูงกว่านี้
       var estFloors = footprintM2 > 0 ? Math.ceil(maxGFA / (footprintM2 * 0.75)) : 1;
 
-      $("#simResultBox").innerHTML =
-        '<div class="znx-res-row"><span>ขนาดที่ดินรวม:</span><span class="znx-res-val">' + num(totalWah) + ' ตร.ว. (' + num(totalM2) + ' ตร.ม.)</span></div>' +
+      $("#simResultBox").innerHTML = landRow +
         '<div class="znx-res-row"><span>FAR ปกติ / โบนัส:</span><span class="znx-res-val">' + baseFar + ' → <b>' + effectiveFar.toFixed(2) + '</b> (+' + bonusPct + '%)</span></div>' +
+        (bonusRaw > bonusPct
+          ? '<div style="font-size:11px;color:var(--text-sub);padding:3px 0 4px;">ติ๊กรวม ' + bonusRaw + '% แต่โบนัสรวมกันได้ไม่เกิน 20%</div>'
+          : '') +
         '<div class="znx-res-row"><span>พื้นที่ก่อสร้างสูงสุด (Max GFA):</span><span class="znx-res-val" style="color:#10B981;font-size:15.5px;">' + num(maxGFA) + ' ตร.ม.</span></div>' +
         '<div class="znx-res-row"><span>พื้นที่ว่างเปิดโล่งขั้นต่ำ (OSR):</span><span class="znx-res-val">' + num(minOpenSpace) + ' ตร.ม. (' + baseOsr + '%)</span></div>' +
-        '<div class="znx-res-row"><span>ประมาณการความสูงสูงสุด:</span><span class="znx-res-val" style="color:var(--accent);">≈ ' + estFloors + ' ชั้น</span></div>';
+        '<div class="znx-res-row"><span>จำนวนชั้นโดยประมาณ (ฐานอาคารกว้างสุด):</span><span class="znx-res-val" style="color:var(--accent);">≈ ' + estFloors + ' ชั้น</span></div>';
     }
 
     ["simZoneSelect", "simRai", "simNgan", "simWah", "chkBonusTOD", "chkBonusPublic", "chkBonusGreen", "chkBonusWater"].forEach(function(id) {
