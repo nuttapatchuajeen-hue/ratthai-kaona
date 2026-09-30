@@ -1487,6 +1487,10 @@ body::before {
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
+  /* ปุ่มลิงก์ข้อความยาว (เช่น "เปิดศูนย์ข้อมูลโลก & ห้องทดลองคณิต-วิทย์ Interactive →") ห้ามบรรทัดเดียว
+     เดิมกว้าง ~440px ในกล่อง ~340px ล้นขอบจอทั้งสองข้าง ตัวหนังสือขาด → ให้ขึ้นบรรทัดใหม่ได้ */
+  .dash-link { white-space: normal; max-width: 100%; text-align: center; justify-content: center;
+    letter-spacing: 0.06em; padding: 0.8rem 1.1rem; }
   #scroll-container { height: 600vh; }
 
   /* ── มือถือ: ตรึง section ไว้กลางจอ (ไม่ให้ "ลอย" ตามตำแหน่ง absolute

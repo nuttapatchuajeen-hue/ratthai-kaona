@@ -385,6 +385,8 @@
 
   /* จอกว้าง: ซ่อนปุ่ม "กลับหน้าหลัก" แบบลอย (มีในแถบซ้ายแล้ว) */
   @media(min-width:1025px){ #hub-back-btn{display:none!important} }
+  /* จอแท็บเล็ต/มือถือ: ปุ่มเพลงลอยจอดมุมซ้ายล่าง (bottom ~16px) ที่เดียวกับปุ่ม "กลับหน้าหลัก" → ยกปุ่มนี้ขึ้นเหนือ */
+  @media(max-width:1024px){ #hub-back-btn{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important} }
   /* จอแท็บเล็ต/มือถือ: แถบซ้ายพับขึ้นบนสุด */
   @media(max-width:1024px){
     .shell{flex-direction:column;gap:14px;margin-top:0}

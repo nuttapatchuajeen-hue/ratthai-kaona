@@ -159,6 +159,12 @@
 
     // เมื่อย่อ หรือเมื่อเปิดแชต: ซ่อน hint ด้วย display:none
     "#mdai-fab-slot.mdai-tuck #mdai-fab-hint,#mdai-root.mdai-open #mdai-fab-hint{display:none !important}",
+    // มือถือ: ป้าย "ลองถาม…" กว้าง ~260px ทำให้กรอบปุ่มลอยทับปุ่มอื่นที่มุมล่าง (BB-8 · กลับหน้าหลัก · ปุ่มท้ายหน้า) → ซ่อน
+    "@media(max-width:860px){#mdai-fab-hint{display:none !important}}",
+    // ปุ่มย่อกลม 22px เล็กเกินนิ้ว → ขยายพื้นที่แตะด้วย ::after โดยไม่เปลี่ยนหน้าตา
+    // ขยายเฉพาะด้านนอก (บน/ล่าง/ฝั่งขอบจอ) ไม่ล้ำเข้าไปในตัวปุ่ม AI · ฝั่งซ้ายมี rotate(180deg) จึงกลับด้านให้เอง
+    // right:13px = ขอบขวาของ ::after หยุดตรงขอบซ้ายของปุ่ม AI พอดี (ปุ่มย่อกว้าง 22 ยื่นออกนอก 9 · ซ้อนในปุ่ม 13)
+    ".md-ai-min::after{content:'';position:absolute;inset:-9px 13px -9px -9px}",
 
     // โหมดสว่างสำหรับ hint
     'html:not([data-theme="dark"]) #mdai-fab-hint{background:rgba(255,255,255,.94);border-color:rgba(5,90,117,.3);box-shadow:0 6px 18px -4px rgba(20,30,60,.18),0 0 12px rgba(9,137,172,.15)}',
@@ -512,13 +518,36 @@
     // ---- ลากย้ายปุ่มได้ (Pointer Events) ยึดขอบมั่นคง ไม่ดันหลุดจอ ----
     var drag = { active: false, moved: false, touch: false, px: 0, py: 0, bx: 0, by: 0 };
 
+    /* ขอบบนสุดที่ปุ่มจอดได้ = ใต้แถบหัวเว็บที่ตรึงอยู่ด้านบน (ไม่ให้ลากไปทับปุ่มเมนู ☰ บนมือถือ) */
+    /* รวมแถบที่ซ้อนต่อใต้หัวเว็บ (แถบ ⓘ) · หน้าไหนมีของลอยใต้หัวอีก ตั้ง --fab-safe-top ใน CSS เอง (ใช้ร่วมกับ cyber-audio.js) */
+    function headerBottom() {
+      var W = window.innerWidth, best = 0, grew = true;
+      var els = document.querySelectorAll('header, nav, [class*="header"], [id*="header"], [class*="navbar"], #md-data-notice');
+      while (grew) {
+        grew = false;
+        for (var i = 0; i < els.length; i++) {
+          var el = els[i];
+          if (el.closest('#mdai-root,#cyber-bgm-root')) continue;   // ข้ามของในปุ่มลอยเอง (เช่น .bgm-queue-header ในแผงเพลงที่ซ่อนด้วย opacity)
+          var cs = getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          var r = el.getBoundingClientRect();
+          if (r.height <= 0 || r.height > 160 || r.width < W * 0.6 || r.top < -1 || r.top > best + 8) continue;
+          if (cs.position !== 'fixed' && cs.position !== 'sticky' && window.scrollY > 4) continue;
+          if (r.bottom > best + 0.5) { best = r.bottom; grew = true; }
+        }
+      }
+      var v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fab-safe-top'));
+      return (v - 8 > best) ? v - 8 : best;
+    }
+    function minTop() { var hb = headerBottom(); return hb ? Math.round(hb + 8) : 10; }
+
     function setDragPos(clientX, clientY) {
       var W = window.innerWidth, H = window.innerHeight;
       var dx = clientX - drag.px, dy = clientY - drag.py;
       var curX = drag.bx + dx, curY = drag.by + dy;
       var isL = curX + 100 < W / 2;
 
-      curY = Math.min(Math.max(10, curY), H - 90);
+      curY = Math.min(Math.max(minTop(), curY), H - 90);
 
       if (isL) {
         slot.style.left = Math.max(10, curX) + "px";
@@ -616,7 +645,9 @@
           slot.classList.remove("mdai-side-l");
         }
         if (typeof sp.top === "number" && sp.top > 0) {
-          slot.style.top = sp.top + "px";
+          var rt = Math.max(minTop(), sp.top), rH = window.innerHeight;
+          if (rH > 150) rt = Math.min(rt, rH - 90);   // innerHeight 0 (iframe ซ่อน) → อย่าดันปุ่มขึ้นไปนอกจอ
+          slot.style.top = rt + "px";
           slot.style.bottom = "auto";
         }
       }
@@ -629,8 +660,20 @@
       }
     } catch (err) {}
 
+    /* ปุ่มที่คืนตำแหน่งบน (inline top) ต้องไม่อยู่เหนือขอบล่างของหัวเว็บ — ตอนคืนค่าหัวเว็บอาจยังถูกหน้าโหลดซ่อนอยู่
+       จึงตรวจซ้ำตอนหน้าโหลดเสร็จ และทุกครั้งที่ขนาดจอเปลี่ยน */
+    function reclampTop() {
+      if (!slot.style.top) return;
+      var t = parseFloat(slot.style.top), mt = minTop();
+      if (!isNaN(t) && t < mt) slot.style.top = mt + "px";
+    }
+    function reclampAfterLoad() { reclampTop(); setTimeout(reclampTop, 1500); }
+    if (document.readyState === "complete") reclampAfterLoad();
+    else window.addEventListener("load", reclampAfterLoad);
+
     window.addEventListener("resize", function () {
       snap(false);
+      reclampTop();
       if (tucked) slot.style.setProperty("--mdai-tx", getTuckOffset());
       if (opened) placePanel();
     });

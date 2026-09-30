@@ -2471,6 +2471,39 @@ body {
   /* structure: the BB-8 toggle lives INSIDE the header (just left of the ครม. button) — small + in-flow,
      not a floating overlay. position:static side-steps the header's backdrop-filter containing block. */
   #header .bb8-toggle{ position:static; --toggle-size:6px; flex:0 0 auto; }
+
+  /* ===== มือถือ ≤640px — จัดปุ่มไม่ให้ทับกัน (ตรวจ UI มือถือ 30 ก.ย. 2569) =====
+     บล็อกนี้อยู่หลังกฎหลักทั้งหมด → ชนะด้วยลำดับ ใส่ !important เฉพาะที่ต้องทับกฎ !important เดิม */
+  @media (max-width: 640px) {
+    /* แถวหัว: .hd-center ถูกบีบเหลือ 2px → ปุ่ม "เมนู" ล้นไปทับปุ่ม "สุ่มสำรวจ" (แตะครึ่งขวาของเมนู = สุ่มหน่วยงาน)
+       → ให้ปุ่มเมนูกินที่ของตัวเอง ปุ่มขวาเบียดช่องไฟลง และปัดเลื่อนแนวนอนได้ถ้ายังไม่พอ (จอ 320px) */
+    .hd-center { flex: 0 0 auto !important; }
+    .hd-right { flex: 1 1 auto; min-width: 0; gap: 4px !important; overflow-x: auto; scrollbar-width: none; justify-content: flex-start !important; }
+    .hd-right::-webkit-scrollbar { display: none; }
+    /* overflow-x:auto ทำให้ overflow-y ตัดขอบด้วย → หัว/เสาอากาศ BB-8 ที่โผล่เหนือกล่อง ~8px โดนตัด
+       ขยายกล่องขึ้นไปในช่องว่างบนของหัวเว็บ (padding-top 8px) โดยไม่ขยับตำแหน่งปุ่ม */
+    .hd-right { padding-top: 8px; margin-top: -8px; }
+    .hd-right > * { flex-shrink: 0; }
+    /* ชิดขวาด้วย margin-left:auto แทน justify-content:flex-end — ถ้าล้น (จอ 320px) ส่วนเกินจะไปทางขวาที่ปัดเลื่อนได้ ไม่ล้นซ้ายไปใต้ปุ่มเมนู */
+    .hd-right > :first-child { margin-left: auto; }
+    /* แท็บ "คำอธิบายสัญลักษณ์": กฎ button{min-height:38px} ทำให้สูง 38px ล้นขึ้นไปทับปุ่มกลับหน้าหลัก → คืนเป็นแท็บเตี้ย */
+    #leg-toggle { min-height: 0 !important; }
+    /* ผู้ช่วย AI เคยทับแถบคำอธิบายล่าง (48px) + ปุ่มกรองพื้นที่ → ยกขึ้นแถวเดียวกับปุ่มกลับหน้าหลัก (bottom 72px) ชิดขวา */
+    body #mdai-fab-slot { top: auto !important; bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important; right: 12px !important; left: auto !important; }
+    /* ถูกตรึงขวาเสมอ แต่ถ้าเคยลากไว้ซ้าย (localStorage) สคริปต์ยังใส่ .mdai-side-l → ตอนย่อจะเลื่อนผิดทาง/ไอคอนหลุดจอ → บังคับแบบขวา (เหมือน election/style.css) */
+    body #mdai-fab-slot.mdai-tuck { --mdai-tx: 38px !important; }
+    body #mdai-fab-slot.mdai-side-l #mdai-fab.mdai-tuck { justify-content: flex-start; padding: 0 0 0 4px; }
+    body #mdai-fab-slot.mdai-side-l .md-ai-min { left: -9px; right: auto; transform: translateY(-50%); }
+    /* ปุ่มเพลง: ค่าเริ่มต้นซ้ายล่าง (bottom 16px) ทับแถบคำอธิบาย + ปุ่มกลับหน้าหลัก → เหนือปุ่มกลับหน้าหลัก
+       (ถ้าผู้ใช้ลากไปไว้เอง สคริปต์กันไม่ให้ขึ้นไปทับหัวเว็บ + แถบเครื่องมือบนแคนวาสด้วย --fab-safe-top) */
+    body #cyber-bgm-slot { bottom: calc(124px + env(safe-area-inset-bottom, 0px)); }
+    :root { --fab-safe-top: 208px; }
+    /* เมนูหลัก ▤ ที่กางลงมา ต้องอยู่เหนือปุ่มเพลง/ผู้ช่วย AI (z 99990–99998) ไม่ให้ปุ่มลอยทับขอบขวาของเมนู */
+    #sitenav-menu { z-index: 100000; }
+    /* ปุ่มซูมขยับขึ้นพ้นแถวปุ่มลอย — ระยะจริงตั้งใน resize() (inline !important ตามความสูงแถบคำอธิบาย)
+       เมนูกรองพื้นที่ที่เปิดข้างปุ่มซูม ขยับตาม */
+    #terr-menu { bottom: 188px !important; }
+  }
 </style>
 <script>
 function bb8SetTheme(dark){var h=document.documentElement,t=dark?'dark':'light';h.setAttribute('data-theme',t);try{localStorage.setItem('md-theme',t);}catch(e){}if(typeof refreshThemeCache==='function')refreshThemeCache();if(typeof draw==='function')draw();}
@@ -3552,9 +3585,13 @@ function resize() {
   // แถบคำอธิบายถูกพับอยู่ → คืนพื้นที่ให้ผืนผ้าใบเต็มความสูง
   const legH = document.body.classList.contains('leg-collapsed') ? 0 : (LEG ? LEG.offsetHeight : 72);
   // keep zoom controls / coords above the (possibly wrapped, taller) legend bar
+  // มือถือ (≤640px): เว้นแถวปุ่มลอย "กลับหน้าหลัก" + ผู้ช่วย AI (bottom 72px สูง ~48px) ไม่ให้ทับปุ่มซูมล่าง ๆ
+  // ใช้เป็น "พื้นขั้นต่ำ" 128px (72 + 48 + 8) ไม่ใช่บวกเพิ่ม — ตอนพับแถบคำอธิบาย (legH=0) ปุ่มซูมต้องไม่ตกลงไปอยู่ใต้ปุ่ม AI
+  // (#terr-menu bottom:188px ใน CSS อิงตำแหน่งนี้)
+  const fabFloor = window.matchMedia('(max-width:640px)').matches ? 128 : 0;
   ['zoom-ctrl','coords'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.style.setProperty('bottom', (legH + 16) + 'px', 'important');
+    if (el) el.style.setProperty('bottom', (id === 'zoom-ctrl' ? Math.max(legH + 16, fabFloor) : legH + 16) + 'px', 'important');
   });
   syncLegToggleBtn();
   const dpr = window.devicePixelRatio || 1;

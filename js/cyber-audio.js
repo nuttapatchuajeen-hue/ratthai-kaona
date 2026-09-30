@@ -1914,6 +1914,35 @@
       dom.card.style.right = 'auto';
     };
 
+    /* ขอบบนสุดที่ปุ่มจอดได้ = ใต้แถบหัวเว็บด้านบน
+       เดิม clamp แค่ margin 12px → ปุ่มเพลงที่ลาก/ดูดไปมุมขวาบนจอดทับปุ่มเมนู ☰ ของหัวเว็บพอดี
+       บนมือถือจึงเปิดเมนูไม่ได้ (แตะแล้วกลายเป็นเปิดเครื่องเล่นเพลง)
+       นับเฉพาะแถบกว้าง ≥60% จอ สูง ≤160px ที่ตรึงอยู่ (fixed/sticky) หรืออยู่ชิดขอบบนตอนนี้
+       รวมแถบที่ซ้อนต่อใต้หัวเว็บ (เช่นแถบ ⓘ #md-data-notice) · หน้าไหนมีของลอยใต้หัวอีก ตั้ง --fab-safe-top ใน CSS เอง */
+    function headerBottom() {
+      var W = window.innerWidth, best = 0, grew = true;
+      var els = document.querySelectorAll('header, nav, [class*="header"], [id*="header"], [class*="navbar"], #md-data-notice');
+      while (grew) {
+        grew = false;
+        for (var i = 0; i < els.length; i++) {
+          var el = els[i];
+          if (el.closest('#cyber-bgm-root,#mdai-root')) continue;   // ข้ามของในปุ่มลอยเอง (แผงเพลง/แผง AI)
+          var cs = getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          var r = el.getBoundingClientRect();
+          if (r.height <= 0 || r.height > 160 || r.width < W * 0.6 || r.top < -1 || r.top > best + 8) continue;
+          if (cs.position !== 'fixed' && cs.position !== 'sticky' && window.scrollY > 4) continue;
+          if (r.bottom > best + 0.5) { best = r.bottom; grew = true; }
+        }
+      }
+      var v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fab-safe-top'));
+      return (v - 8 > best) ? v - 8 : best;
+    }
+    function minTop(margin) {
+      var hb = headerBottom();
+      return hb ? Math.round(hb + 8) : margin;
+    }
+
     function snapToEdge(left, top, animate) {
       if (!dom.slot) return;
       var slotW = dom.slot.offsetWidth || 180;
@@ -1923,7 +1952,8 @@
       // ดูดติดขอบจอซ้าย หรือ ขวา ที่ใกล้ที่สุด (ไม่ลอยทับตัวหนังสือกลางจอ)
       var isL = (left + slotW / 2) < window.innerWidth / 2;
       var maxT = Math.max(margin, window.innerHeight - slotH - margin);
-      var clampedT = Math.max(margin, Math.min(maxT, top));
+      var minT = Math.min(minTop(margin), maxT);              // จอเตี้ย/คีย์บอร์ดเปิด: อยู่ในจอสำคัญกว่าหลบหัวเว็บ
+      var clampedT = Math.max(minT, Math.min(maxT, top));
 
       if (animate) {
         dom.slot.style.transition = 'left 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), right 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15), top 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.15)';
@@ -1963,9 +1993,10 @@
       var slotH = dom.slot.offsetHeight || 46;
       var maxL = Math.max(8, window.innerWidth - slotW - 8);
       var maxT = Math.max(8, window.innerHeight - slotH - 8);
+      var minT = Math.min(minTop(8), maxT);                   // ลากก็ห้ามขึ้นไปทับแถบหัวเว็บ (แต่ห้ามดันหลุดจอล่าง)
 
       var clampedL = Math.max(8, Math.min(maxL, left));
-      var clampedT = Math.max(8, Math.min(maxT, top));
+      var clampedT = Math.max(minT, Math.min(maxT, top));
 
       dom.slot.style.left = clampedL + 'px';
       dom.slot.style.top = clampedT + 'px';
@@ -1999,6 +2030,18 @@
       var rect = dom.slot.getBoundingClientRect();
       snapToEdge(rect.left, rect.top, false);
     });
+
+    /* ตอนสคริปต์นี้ทำงาน หัวเว็บ/แถบ ⓘ อาจยังถูกหน้าโหลด (preloader) ซ่อนอยู่ → headerBottom() ได้ 0
+       ปุ่มที่คืนตำแหน่งจากที่จำไว้จึงไปจอดทับปุ่มเมนูได้อีก → จัดตำแหน่งซ้ำเมื่อหน้าโหลดเสร็จ (+ อีกรอบหลังหน้าโหลดจางหาย)
+       ปุ่มที่ยังไม่เคยลาก (ไม่มี inline top = อยู่มุมล่างตาม CSS) ไม่ต้องยุ่ง */
+    function reclamp() {
+      if (!dom.slot || !dom.slot.style.top) return;
+      var rect = dom.slot.getBoundingClientRect();
+      snapToEdge(rect.left, rect.top, false);
+    }
+    function reclampAfterLoad() { reclamp(); setTimeout(reclamp, 1500); }
+    if (document.readyState === 'complete') reclampAfterLoad();
+    else window.addEventListener('load', reclampAfterLoad);
 
     dom.pill.addEventListener('pointerdown', function (e) {
       if (e.target.closest('#bgmBtnPlayPill') || e.target.closest('#bgmBtnDrawer')) {

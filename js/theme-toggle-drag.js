@@ -42,6 +42,9 @@
       ".md-tgl-min:hover{color:#CFE9F5;background:rgba(22,36,52,.98)}",
       ".md-tgl-min svg{width:13px;height:13px;display:block}",
       ".md-tgl-min.md-hide{display:none}",
+      // ปุ่มย่อ 22px เล็กเกินนิ้ว → ขยายพื้นที่แตะรอบปุ่มอีก 4px (หน้าตาเท่าเดิม)
+      // ไม่ขยายมากกว่านี้: ปุ่มคร่อมขอบ BB-8 อยู่ ถ้าใหญ่ไปแตะขอบ BB-8 จะกลายเป็นย่อแทนสลับธีม
+      ".md-tgl-min::after{content:'';position:absolute;inset:-4px;border-radius:50%}",
       // ⚠️ ห้ามใส่ :hover ที่ขยับตำแหน่งตอนย่อ — เมาส์แตะแล้วแถบเลื่อนหนี = hover หลุด → เด้งวนไม่จบ (เคยพลาดกับ FAB ผู้ช่วย AI)
       ".bb8-toggle.md-tgl-tuck{opacity:.92}",
       ".bb8-toggle.md-tgl-anim{transition:transform .26s cubic-bezier(.2,.8,.3,1.15)}",

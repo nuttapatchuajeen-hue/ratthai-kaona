@@ -358,6 +358,7 @@
     }
 
     @media (max-width: 768px) {
+      .back-link { padding: 8px 0; }   /* พื้นที่แตะสูงขึ้นบนมือถือ (เดิม 17px) — เดสก์ท็อปคงระยะเดิม */
       .video-title {
         font-size: 2rem;
       }
@@ -471,6 +472,7 @@
 
     .yt-search-input {
       width: 100%;
+      min-height: 36px;   /* เต็มความสูงแคปซูล — เดิมสูง 21px แตะขอบแคปซูลแล้วไม่โฟกัสช่องพิมพ์ */
       background: transparent;
       border: none;
       outline: none;
