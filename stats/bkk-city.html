@@ -3301,6 +3301,7 @@
 <script src="bkk-fuel.js"></script>
 <script src="bkk-dam.js"></script>
 <script src="bkk-warn.js"></script>
+<script src="bkk-cctv.js"></script>
 <script src="bkk-quake.js"></script>
 <script src="bkk-landslide.js"></script>
 <script src="bkk-floodsim-extra.js"></script>
@@ -4444,6 +4445,11 @@
     // 🚩 ธงเตือนภัย — ธงแดง/เหลือง/เขียวรายหมู่บ้าน (กรมทรัพยากรน้ำ) + พื้นที่ประกาศ CAP กรมอุตุฯ + สัญญาณจากข้อมูล — โมดูลแยกใน bkk-warn.js
     if (window.BKK_WARN) {
       try { window.BKK_WARN.mount(map); } catch (e) { console.warn("warn layer:", e); }
+    }
+
+    // 📹 กล้อง CCTV — ริมแม่น้ำ (กรมทรัพยากรน้ำ) เขื่อน กฟผ. หาดใหญ่ ถนน (iTIC/กรมทางหลวง) กทม. ชายฝั่ง (GISTDA) — โมดูลแยกใน bkk-cctv.js
+    if (window.BKK_CCTV) {
+      try { window.BKK_CCTV.mount(map); } catch (e) { console.warn("cctv layer:", e); }
     }
 
     // 〰 แผ่นดินไหว — จุดล่าสุด (กรมอุตุฯ + USGS) + รอยเลื่อนมีพลัง + เหตุ 28 มี.ค. 2568 + จุดกำเนิดใต้ดิน 3 มิติ — โมดูลแยกใน bkk-quake.js
@@ -6286,6 +6292,8 @@
     if (!e.features || !e.features.length) return;
     // กดวงกลุ่ม/โลโก้ห้างร้านที่ลอยอยู่เหนือเขต — ให้ชั้นห้างร้านจัดการเอง ไม่บินเข้าเขตซ้อน
     if (shopLayerHit(e.point)) return;
+    // กดหมุด/วงกลุ่มกล้อง CCTV — ให้ชั้นกล้องจัดการเอง
+    if (window.BKK_CCTV && window.BKK_CCTV.hit(e.point)) return;
     var p = e.features[0].properties;
     if (p.lon && p.lat) {
       safeFly(STATE.map, {
@@ -7265,6 +7273,7 @@ window.MD_DATA_NOTICE = {
     { t: 'ดินถล่ม — พื้นที่อ่อนไหว ร่องรอยดินถล่ม เหตุการณ์ในอดีต หมู่บ้านเสี่ยง จุดปลอดภัย สถานีเฝ้าระวัง', o: 'กรมทรัพยากรธรณี (ArcGIS gisportal.dmr.go.th · CC BY) — พื้นที่อ่อนไหวและร่องรอยดินถล่มขอภาพจากเซิร์ฟเวอร์กรมฯ โดยตรง ที่เหลือดึง 28 ก.ย. 2569 · ซ่อนชื่อ-นามสกุล บ้านเลขที่ และเบอร์โทรของบุคคลที่ปรากฏในข้อมูล · แก้วันที่เหตุน้ำก้อ (หล่มสัก) เป็น 11 ส.ค. 2544 ตามจังหวัดเพชรบูรณ์', u: 'https://gisportal.dmr.go.th/arcgis/rest/services/HAZARD' },
     { t: 'ดินถล่ม — ฝนตกหนักรายสถานี และเกณฑ์เฝ้าระวัง', o: 'ฝน 24 ชม. + สะสม 7 วัน: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) ผ่าน /api/slide ของเว็บนี้ · เกณฑ์ >100 มม./วัน ตามหน้าความรู้ดินถล่มของกรมทรัพยากรธรณี · สถานีเตือนภัย: กรมทรัพยากรน้ำ · ประเทศเพื่อนบ้าน: NASA Global Landslide Catalog (2550–2559) · ความชัน: AWS Terrain Tiles คำนวณด้วยสูตร Horn', u: 'https://www.dmr.go.th' },
     { t: 'แผ่นดินไหวเมียนมา M7.7 28 มี.ค. 2568', o: 'USGS: ShakeMap v23 (ความรุนแรง MMI), แนวแตก (Reitman และคณะ 2025), อาฟเตอร์ช็อก 3 เดือน · ตัวเลขผู้เสียชีวิตและข้อมูลอาคาร สตง.: วิกิพีเดีย', u: 'https://earthquake.usgs.gov/earthquakes/eventpage/us7000pn9s' },
+    { t: 'กล้อง CCTV ทั่วประเทศ (ชั้นกล้อง CCTV)', o: 'ริมแม่น้ำ: กรมทรัพยากรน้ำ (telemetry.dwr.go.th) · เขื่อน: กฟผ. (egatwater) · หาดใหญ่: Hat Yai City Climate · ถนน: iTIC + กรมทางหลวง ผ่าน Longdo Traffic · ทางแยก: BMA Traffic กทม. (ลิงก์) · ชายฝั่ง: GISTDA (ลิงก์ · รายชื่อจาก github.com/hs6uej/cctv) — ภาพ/วิดีโอดึงตรงจากหน่วยงานตอนเปิดดู ไม่เก็บไว้ ลิขสิทธิ์เป็นของหน่วยงานเจ้าของกล้อง', u: 'https://telemetry.dwr.go.th/reportCctv' },
     { t: 'เที่ยวบินสด (ตำแหน่งเครื่องบินจริง)', o: 'ADS-B จากเครือข่ายอาสาสมัคร adsb.lol (ODbL) ผ่าน /api/flights ของเว็บนี้ · สำรอง adsb.fi · อัปเดตทุก 5 วินาที', u: 'https://adsb.lol' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },
