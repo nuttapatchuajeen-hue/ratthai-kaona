@@ -45,7 +45,13 @@
   text-decoration:underline;text-underline-offset:3px;transition:color .15s}
 .sitefoot a:hover{color:var(--ink)}
 .sitefoot svg{flex:0 0 auto;opacity:.8}
-@media(max-width:860px){.sitefoot{margin-top:26px;padding:14px 14px 92px}}`;
+/* มือถือ: เว้นท้ายให้พ้นเมนูล่าง (68px) + แถวปุ่มลอยเพลง/AI (สูงถึง ~128px จากขอบล่าง) */
+@media(max-width:860px){.sitefoot{margin-top:26px;padding:14px 14px calc(140px + env(safe-area-inset-bottom,0px))}}
+/* หน้าแผนที่ (index) ตัวหน้าเป็นแผนที่เต็มจอ → แถบเครดิตย้ายไปอยู่ท้ายแผงรายชื่อแทน (เดิมจมอยู่หลังการ์ดค้นหา) */
+.panel .sitefoot{flex:0 0 auto;max-width:none;margin:0;padding:6px 14px 8px;gap:4px 12px;
+  background:var(--wash);font-size:.7rem}
+.panel .sitefoot span{display:none}
+@media(max-width:860px){.panel .sitefoot{padding:6px 14px 18px}}`;
 
   /* แผงเมนูหลักของเว็บ — 7 รายการเดียวกับ hub/structure (ส.ส. = เว็บที่กำลังดูอยู่) */
   var SITEMENU = `<div class="smveil" id="siteMenuVeil" hidden></div>
@@ -103,8 +109,11 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
 
     body.insertAdjacentHTML('afterbegin', NAVPILL);
     // แถบเครดิตต้องมาก่อน mobnav เพื่อให้อยู่ท้ายเนื้อหาจริง ไม่ใช่ท้ายสุดของ body
-    if (!document.querySelector('.sitefoot') && !/\/credits\.html$/.test(location.pathname))
-      body.insertAdjacentHTML('beforeend', SITEFOOT);
+    // หน้าแผนที่ (มี #panel) → ใส่ท้ายแผงรายชื่อแทน เพราะตัวหน้าถูกแผนที่เต็มจอ + การ์ดค้นหาบังอยู่
+    if (!document.querySelector('.sitefoot') && !/\/credits\.html$/.test(location.pathname)) {
+      var mapPanel = document.getElementById('panel');
+      (mapPanel || body).insertAdjacentHTML('beforeend', SITEFOOT);
+    }
     body.insertAdjacentHTML('beforeend', MOBNAV);
     body.insertAdjacentHTML('beforeend', SITEMENU);
 
@@ -172,7 +181,24 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
       detail: ' — เลือกตั้ง 8 ก.พ. 2569 นับครบ 100% · ปีก่อนหน้าเรียบเรียงจากวิกิพีเดีย โปรดตรวจสอบกับ กกต. ก่อนนำไปอ้างอิง',
       sub: 'ผลการเลือกตั้งสมาชิกสภาผู้แทนราษฎร 8 กุมภาพันธ์ 2569 — แบบแบ่งเขต 400 ที่นั่ง และบัญชีรายชื่อ 100 ที่นั่ง',
       warn: '<b>ผลปี 2569 เป็นผลอย่างเป็นทางการของ กกต. (ปรับปรุง 15 พ.ค. 2569)</b><br>ปีก่อนหน้าในเมนูเลือกปีเรียบเรียงจากวิกิพีเดีย · ' + EDU,
-      sources: sources
+      sources: sources,
+      group: 'r69'        // 4 หน้าที่ข้อความเดียวกัน กดปิดครั้งเดียวพอ (ไม่ต้องปิดซ้ำทุกหน้า)
+    };
+  }
+  /* ดูปีย้อนหลัง (?y=2562 ฯลฯ) → ข้อความต้องบอกปีนั้น ไม่ใช่ "ผล 2569 ตามประกาศ กกต."
+     year-switch.js (โหลดก่อน nav.js) ตั้ง window.EYEAR / EYID / EYEARS ไว้แล้ว */
+  function yearNotice(cfg) {
+    var y = window.EYEAR;
+    if (cfg.group !== 'r69' || !y || y === 2569) return cfg;
+    var yc = (window.EYEARS || []).filter(function (o) { return o.id === window.EYID; })[0] || {};
+    var keep = cfg.sources.filter(function (s) { return s === SRC.parl || s === SRC.maps; });
+    return {
+      asof: 'ผลเลือกตั้ง ส.ส. ' + y + ' · เรียบเรียงจากวิกิพีเดีย',
+      detail: ' — ' + (yc.date ? 'เลือกตั้ง ' + yc.date + ' · ' : '') + 'อ้างผลนับคะแนนของ กกต. ปีนั้น โปรดตรวจสอบกับ กกต. ก่อนนำไปอ้างอิง',
+      sub: 'ผลการเลือกตั้งสมาชิกสภาผู้แทนราษฎร พ.ศ. ' + y + (yc.date ? ' (' + yc.date + ')' : ''),
+      warn: '<b>ผลปี ' + y + ' เรียบเรียงจากวิกิพีเดีย</b> (อ้างผลนับคะแนน กกต.) · ผลอย่างเป็นทางการของ กกต. ในเว็บนี้มีเฉพาะปี 2569<br>' + EDU,
+      sources: [{ t: 'การเลือกตั้งสมาชิกสภาผู้แทนราษฎรไทยเป็นการทั่วไป พ.ศ. ' + y, o: 'วิกิพีเดีย', u: yc.wiki || SRC.wikiOld.u }, SRC.ect].concat(keep),
+      group: cfg.group
     };
   }
   var DATA_NOTICE = {
@@ -223,10 +249,17 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
     if (!/\.html$/.test(file)) file = 'index.html';
     var cfg = DATA_NOTICE[file];
     if (!cfg || window.MD_DATA_NOTICE) return;
-    cfg.key = 'md-election-notice-' + file.replace(/\.html$/, '');
+    cfg = yearNotice(cfg);
+    cfg.key = 'md-election-notice-' + (cfg.group || file.replace(/\.html$/, ''));
     cfg.accent = 'var(--orange)';     // --orange ของเว็บเลือกตั้ง = สีเงิน (เป็นกลางทางการเมือง)
     cfg.top = '128px';                // ใต้ navpill + ปุ่มเลือกปี (.yearbtn อยู่ top 78px)
-    cfg.above = '#panel';             // มือถือ: หน้าแผนที่มีชีตล่าง → ลอยเหนือชีต (หน้าที่ไม่มี #panel ข้ามเอง)
+    /* มือถือ: การ์ดลอยเหนือเมนูล่างเคยบังลิงก์ท้ายหน้า/ปุ่มในหน้า และชนปุ่มลอยเพลง·AI·BB-8
+       → วางเป็นแถบในเนื้อหาแทน: ใต้หัวหน้า (หน้าลูก) หรือท้ายแผงรายชื่อ (หน้าแผนที่) */
+    if (window.matchMedia && matchMedia('(max-width:860px)').matches) {
+      var anchor = document.getElementById('panelScroll') ? '#panelScroll'
+        : ['.pagehead', '.phead', '.cmt-head'].filter(function (s) { return document.querySelector(s); })[0];
+      if (anchor) cfg.after = anchor;
+    }
     cfg.more = cfg.more || { href: 'credits.html#election', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' };
     window.MD_DATA_NOTICE = cfg;
     var s = document.createElement('script');

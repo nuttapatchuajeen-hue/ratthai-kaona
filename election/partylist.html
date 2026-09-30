@@ -83,7 +83,7 @@
   html[data-theme="dark"] .td-pl-act-btn{background:var(--card)}
 
   /* ── แผงรายละเอียด (modal) ── */
-  .pl-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:18px}
+  .pl-modal{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px}
   .pl-modal[hidden]{display:none}
   .pl-modal__backdrop{position:absolute;inset:0;background:rgba(6,16,26,.55);backdrop-filter:blur(3px);animation:plmFade .18s ease}
   .pl-modal__card{position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--card);
@@ -397,9 +397,11 @@ mdSyncToggle();
 
   /* ---- แผงรายละเอียด (คลิกการ์ดหรือแถวตาราง) ---- */
   const modal=document.getElementById('pl-modal');
-  function openProfile(name){
+  let lastFocus=null;   // แถวที่กดเปิดแผง — ปิดแผงแล้วคืนโฟกัสให้แถวนี้
+  function openProfile(name,from){
     const r=recByName[name], p=getProf(name)||{};
     if(!r)return;
+    lastFocus=from||document.activeElement;
     const col=colorOf(r.code), ph=getPhoto(name);
     document.getElementById('plm-av').innerHTML=ph?`<img src="photos/${encodeURIComponent(ph)}" alt="">`:`<span class="plm-ini" style="background:${col}">${initialOf(name)}</span>`;
     const pt=document.getElementById('plm-party');
@@ -416,13 +418,17 @@ mdSyncToggle();
     modal.hidden=false;document.body.style.overflow='hidden';
     modal.querySelector('.pl-modal__x').focus();
   }
-  function closeModal(){modal.hidden=true;document.body.style.overflow='';}
+  function closeModal(){
+    modal.hidden=true;document.body.style.overflow='';
+    const f=lastFocus;lastFocus=null;
+    if(f&&f.isConnected&&typeof f.focus==='function')f.focus();
+  }
   
-  lGrid.addEventListener('click',e=>{const li=e.target.closest('li.has-bio');if(li)openProfile(li.dataset.name);});
-  lGrid.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const li=e.target.closest('li.has-bio');if(li){e.preventDefault();openProfile(li.dataset.name);}}});
+  lGrid.addEventListener('click',e=>{const li=e.target.closest('li.has-bio');if(li)openProfile(li.dataset.name,li);});
+  lGrid.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const li=e.target.closest('li.has-bio');if(li){e.preventDefault();openProfile(li.dataset.name,li);}}});
   
-  tableWrapEl.addEventListener('click',e=>{const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name)openProfile(row.dataset.name);});
-  tableWrapEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name){e.preventDefault();openProfile(row.dataset.name);}}});
+  tableWrapEl.addEventListener('click',e=>{const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name)openProfile(row.dataset.name,row);});
+  tableWrapEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')){const row=e.target.closest('.pl-table-row');if(row&&row.dataset.name){e.preventDefault();openProfile(row.dataset.name,row);}}});
 
   modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)closeModal();});

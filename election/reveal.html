@@ -134,6 +134,38 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
 @media(prefers-reduced-motion:reduce){
   .card,.card.in,.card.outL,.card.outR{transition-duration:.01ms!important;transform:none!important}
 }
+
+/* ===== มือถือ (≤860px): แถบควบคุมล่างไม่บังการ์ด + ปุ่มเพลงลอยไม่ทับปุ่มอื่น =====
+   --dockh = ความสูงจริงของ .dock (สคริปต์ท้ายหน้าวัดให้ทุกครั้งที่แถบเปลี่ยนขนาด) */
+@media(max-width:860px){
+  /* เวทีขึ้นก่อนราง → การ์ดชุดแรกโผล่ใต้หัวเรื่องทันที ไม่ไปตกอยู่ใต้รางนับที่นั่งจนโดนแถบควบคุมบัง */
+  .stage{order:-1;min-height:0;padding:0 0 4px;gap:8px}
+  .cards{gap:10px}
+  .card{width:calc(50% - 6px)}
+  /* เว้นท้ายหน้าให้พ้นแถบควบคุม + ปุ่มเพลง (~46px) ที่ลอยอยู่เหนือแถบ → หมายเหตุท้ายรางขวาเลื่อนขึ้นมาอ่านได้ครบ */
+  .stagewrap{padding-bottom:calc(var(--dockh,200px) + 72px)}
+  /* แถบควบคุมแบบกะทัดรัด: แถบคืบหน้า+ตัวนับอยู่แถวเดียวกัน · สไลเดอร์ยืดหดตามจอ */
+  .dock{padding:14px 12px calc(10px + env(safe-area-inset-bottom,0px))}
+  .dockin{gap:8px 10px}
+  .prog{flex:1 1 calc(100% - 100px)}
+  .cnt{flex:0 0 88px;min-width:0;text-align:right}
+  button.ctl,select.ctl{padding:7px 11px}
+  .sp{flex:1 1 140px;min-width:0}
+  .sp input{width:auto;min-width:48px;flex:1 1 auto}
+  #selSong{flex:1 1 150px;min-width:0;max-width:260px}
+  /* ปุ่มเพลงลอย (cyber-audio.js): ตรึงไว้เหนือแถบควบคุมพอดี ฝั่งที่ผู้ใช้ลากไป — ไม่ทับเมนูเพลงในแถบ
+     และไม่ขึ้นไปทับปุ่มกลับ/ปุ่มเลือกปีแถวบน · ต้อง !important เพราะสคริปต์เขียนตำแหน่งลง style="" ตรง ๆ
+     ตอนกำลังลาก (.is-dragging) ปล่อยให้ตามนิ้วตามเดิม */
+  #cyber-bgm-slot:not(.is-dragging){top:auto!important;bottom:calc(var(--dockh,200px) + 12px)!important}
+  #cyber-bgm-slot:not(.is-dragging):not(.bgm-side-r){left:12px!important;right:auto!important}
+  #cyber-bgm-slot.bgm-side-r:not(.is-dragging){right:12px!important;left:auto!important}
+}
+@media(max-width:560px){
+  /* การ์ดเตี้ยลงนิด → ชุดละ 8 ใบ (2×4) พอดีจอ 375×812 เหนือปุ่มเพลงและแถบควบคุม */
+  .card{padding:8px 10px}
+  .card .nme{font-size:.95rem;margin:2px 0 4px}
+  .card .vt{margin-top:3px}
+}
 </style>
   <script src="../js/icons.js"></script>
 </head>
@@ -403,6 +435,19 @@ body .yearmenu .y1 em,body .yearmenu .y2{color:var(--muted)}
     $('bPlay').disabled = true;
   }
   update();
+
+  /* ---------- ความสูงแถบควบคุมล่าง → ตัวแปร CSS --dockh ----------
+     มือถือ (≤860px) ใช้เว้นท้ายหน้าให้พ้นแถบ และวางปุ่มเพลงลอยไว้เหนือแถบพอดี (ดู CSS ท้าย <style>)
+     แถบสูงไม่คงที่ (จำนวนแถวที่ห่อ/ฟอนต์โหลดเสร็จ/หมุนจอ) จึงวัดใหม่ทุกครั้งที่ขนาดเปลี่ยน */
+  (function dockH() {
+    var dk = document.querySelector('.dock');
+    if (!dk) return;
+    var fit = function () { document.documentElement.style.setProperty('--dockh', dk.offsetHeight + 'px'); };
+    fit();
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(dk);
+    else window.addEventListener('resize', fit);
+    window.addEventListener('load', fit);
+  })();
 })();
 </script>
 <script src="../js/cyber-sfx.js?v=20260914_v14"></script>

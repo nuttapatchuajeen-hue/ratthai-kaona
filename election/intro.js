@@ -487,7 +487,7 @@
       var pn = document.getElementById('panel');
       var peek = pn ? parseFloat(getComputedStyle(pn).getPropertyValue('--peek')) : 0;
       if (!peek || isNaN(peek)) peek = 104;
-      bottom = 58 + peek + 10;
+      bottom = 58 + peek + 10 + 58;   // + แถวปุ่มลอยเพลง/AI ที่ยกไว้เหนือแผง (สูง ~48 + ช่องไฟ)
     }
     card.style.bottom = bottom + 'px';
 

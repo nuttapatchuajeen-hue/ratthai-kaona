@@ -429,5 +429,34 @@ html[data-theme="dark"] .lcontrols .search input{background:var(--card);color:va
 /* ===== BB-8 theme toggle — position override for election map pages =====
    (full styling in ../css/bb8-toggle.css; bumped up so it clears the zoom +/- controls) */
 body .bb8-toggle{right:16px;bottom:118px}
-/* mobile: clear the 83px bottom nav (mobnav) + the ผู้ช่วย AI FAB */
-@media(max-width:860px){body .bb8-toggle{right:10px;bottom:96px}}
+/* mobile: อยู่เหนือแถวปุ่มลอยเพลง/AI (bottom 80–128px) ซึ่งอยู่เหนือเมนูล่าง 68px อีกที */
+@media(max-width:860px){body .bb8-toggle{right:10px;bottom:calc(140px + env(safe-area-inset-bottom,0px))}}
+
+/* ===== มือถือ: โซนปุ่มลอย (ตรวจ UI มือถือ 29 ก.ย. 2569) =====
+   เดิมครั้งแรกที่เข้าเว็บ ปุ่มเพลง (ซ้ายล่าง bottom 16px) + ปุ่มผู้ช่วย AI และข้อความ "ลองถาม…" (ขวาล่าง)
+   ลอยทับเมนูล่างครบทั้ง 8 ปุ่ม → แตะ "รายเขต" กลายเป็นเปิดเครื่องเล่นเพลง
+   → ล็อกไว้แถวเดียวเหนือเมนูล่าง: เพลงชิดซ้าย · AI ชิดขวา (ตำแหน่งที่เคยลากไว้เป็น inline style จาก JS จึงต้อง !important) */
+@media(max-width:860px){
+  body:has(.mobnav) #cyber-bgm-slot{top:auto!important;bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+    left:12px!important;right:auto!important}
+  body:has(.mobnav) #mdai-fab-slot{top:auto!important;bottom:calc(80px + env(safe-area-inset-bottom,0px))!important;
+    right:12px!important;left:auto!important}
+  body:has(.mobnav) #mdai-fab-slot.mdai-tuck{--mdai-tx:38px!important}
+  body:has(.mobnav) #mdai-fab-hint{display:none!important}
+}
+
+/* ===== มือถือ: ปุ่ม/รายการในหน้าลูก ===== */
+/* "ตารางทำเนียบ": .listgrid{display:grid} ชนะ [hidden] → การ์ดไม่หาย ตารางไปโผล่ใต้การ์ดลึก ~6,000px */
+.listgrid[hidden]{display:none}
+@media(max-width:860px){
+  /* ตัวอักษร <16px → iPhone ซูมหน้าเองทุกครั้งที่แตะช่องค้นหา/เลือกพรรค */
+  .lcontrols .search input,.sel select{font-size:16px}
+  /* รายชื่อในการ์ดพรรคใหญ่เลื่อนแยกในกล่อง 330px → นิ้วติดเลื่อนกล่องแทนทั้งหน้า · มือถือกางเต็ม */
+  .pcard ol{max-height:none;overflow:visible}
+}
+@media (max-width:760px){
+  /* ชื่อเพลงเหลือ ~80px ถูกตัดเหลือไม่กี่ตัวอักษร → ปุ่ม YouTube เหลือแค่ไอคอน + ชื่อเพลงขึ้นได้ 2 บรรทัด */
+  .ytlink{font-size:0;gap:0;padding:8px}
+  .ytlink svg{width:18px;height:18px}
+  .sg-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}

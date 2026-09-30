@@ -178,7 +178,9 @@ html[data-theme="dark"] #standingsyt .ythead{background:linear-gradient(180deg,r
 #standingsyt .ytsp{flex:1 1 auto}
 #standingsyt .ytopen{font-family:'Kanit';font-weight:600;color:var(--green-deep);text-decoration:none}
 #standingsyt .ytopen:hover{text-decoration:underline}
-@media(max-width:860px){#standingsyt{width:270px;right:10px;bottom:12px}}
+/* มือถือ: ย้ายไปฝั่งซ้าย เหนือแถบเมนูล่าง + แถบปุ่มลอยเพลง/AI (80–128px) · กว้างไม่เกิน 100vw-136px
+   เพื่อไม่ทับ BB-8 ที่ชิดขวา (bottom 140–191px) รวมปุ่มย่อ .md-tgl-min ที่ยื่นออกซ้ายของ BB-8 อีก 11px */
+@media(max-width:860px){#standingsyt{width:min(270px,calc(100vw - 136px));left:10px;right:auto;bottom:calc(140px + env(safe-area-inset-bottom))}}
 </style>
 
 <script>
@@ -420,7 +422,15 @@ html[data-theme="dark"] #standingsyt .ythead{background:linear-gradient(180deg,r
 
   /* 1. สร้างแถว "เพลงประจำพรรค" */
   const wrap1 = document.getElementById('songs');
-  if (wrap1) {
+  // SONGS คือเพลงหาเสียงเลือกตั้ง 2569 (5 พรรคอันดับสูงสุดของปี 2569) — ปีอื่นซ่อนทั้งหัวข้อ + แผง
+  // (แบบเดียวกับที่ year-switch.js ซ่อนให้ปีเก่า) ไม่งั้นจะเหลือแค่บางพรรคใต้คำบรรยาย "5 พรรคอันดับสูงสุด"
+  const songsYear = !window.EYEAR || window.EYEAR === 2569;
+  if (wrap1 && !songsYear) {
+    const pb = wrap1.closest('.panelbox'), sh = pb && pb.previousElementSibling;
+    if (pb) pb.style.display = 'none';
+    if (sh && sh.classList.contains('sec-head')) sh.style.display = 'none';
+  }
+  if (wrap1 && songsYear) {
     SONGS.forEach(sg => {
       const m = PM[sg.code]; if (!m) return;
       const col = m.color;

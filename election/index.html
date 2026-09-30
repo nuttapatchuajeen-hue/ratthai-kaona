@@ -37,6 +37,20 @@
 .revealbtn svg{width:14px;height:14px;flex:0 0 auto}
 /* มือถือ: การ์ดค้นหาสูงขึ้นจากปุ่มนี้ → ขยับปุ่มเลือกปีของ year-switch.js ลงตาม (เฉพาะหน้านี้) */
 @media(max-width:860px){ body .yearbtn{top:188px} }
+/* ===== มือถือ: จัดของลอยบนหน้าแผนที่ (ตรวจ UI มือถือ 29 ก.ย. 2569) ===== */
+@media(max-width:860px){
+  /* แผนที่เดิมเต็มจอ → เหนือสุด (เชียงราย/พะเยา) จมใต้การ์ดค้นหา ใต้สุด (สตูล/ยะลา/นราฯ/ปัตตานี) จมใต้แผงล่าง
+     → จัดให้พอดีช่องระหว่างการ์ดค้นหา (ล่างสุด ~176px) กับแถวปุ่มลอยเหนือแผงรายชื่อ (58 + 104 + 58px) */
+  .maparea{top:176px;bottom:220px}
+  /* กางแผงรายชื่อแล้วขอบบนเคยทับปุ่ม "ไล่เผยผลทีละชุด" → หยุดใต้การ์ดค้นหา */
+  .panel{max-height:min(78vh,calc(100vh - 240px))}
+  /* แถวปุ่มลอยเพลง/AI: ยกขึ้นเหนือแผงรายชื่อตอนย่อ (ไม่ทับหัวแผง "เลือกจังหวัด") */
+  body:has(#panel) #cyber-bgm-slot,body:has(#panel) #mdai-fab-slot{bottom:calc(174px + env(safe-area-inset-bottom,0px))!important}
+  /* BB-8: คอลัมน์ขวาเต็มแล้ว (ปุ่มปี · ซูม · ปุ่มเสียง) → ย้ายไปซ้ายบน ใต้การ์ดค้นหา */
+  body:has(#panel) .bb8-toggle{left:10px;right:auto;top:186px;bottom:auto}
+  /* กางแผงรายชื่อ = โหมดอ่าน → ซ่อนของลอยที่เคยทับการ์ดผู้สมัคร (ย่อแผงแล้วกลับมา) */
+  body:has(.panel.expanded) :is(#cyber-bgm-slot,#mdai-fab-slot,.bb8-toggle,.yearbtn,#eintrodock,#eintroyt){visibility:hidden}
+}
 </style>
   <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>

@@ -199,6 +199,13 @@
     '    max-width: none;',
     '    padding: 14px;',
     '  }',
+    '}',
+    /* หน้าที่มีเมนูล่างมือถือ (.mobnav เช่นเว็บเลือกตั้ง) — ยกแถบขึ้นเหนือเมนู ไม่บังปุ่มเมนูตอนเข้าเว็บครั้งแรก
+       + ขยายพื้นที่กดของปุ่ม ✕ (เดิม ~24×22px) ด้วย ::after โดยไม่เปลี่ยนเลย์เอาต์ */
+    '@media (max-width: 860px) {',
+    '  body:has(.mobnav) #cyber-cookie-banner { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }',
+    '  .cyber-cookie-close { position: relative; }',
+    '  .cyber-cookie-close::after { content: ""; position: absolute; inset: -11px -10px; }',
     '}'
   ].join('\n');
 

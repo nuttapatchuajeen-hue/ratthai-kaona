@@ -313,8 +313,8 @@ html[data-theme="dark"] #bkkyt .ythead{background:linear-gradient(180deg,rgba(25
 .dotgrid .dot .dtip small{display:block;font-size:.68rem;opacity:.72;margin-top:1px;font-weight:400}
 .dotgrid .dot .dtip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#12161d}
 .dotgrid .dot:hover .dtip,.dotgrid .dot:focus-visible .dtip{opacity:1;transform:translate(-50%,0) scale(1)}
-/* ส.ก. profile card (modal) */
-.skcard-ov{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(8,11,16,.58);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .18s ease}
+/* ส.ก. profile card (modal) — z-index 100000 = เหนือปุ่มลอยทั้งหมด (เพลง/ผู้ช่วย AI 99990–99998 · การ์ดเพลง 9990 · BB-8 1000) */
+.skcard-ov{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(8,11,16,.58);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .18s ease}
 .skcard-ov.on{opacity:1;pointer-events:auto}
 .skcard{position:relative;width:min(400px,100%);max-height:92vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.42);transform:translateY(14px) scale(.97);transition:transform .2s ease}
 .skcard-ov.on .skcard{transform:none}
@@ -336,7 +336,7 @@ html[data-theme="dark"] #bkkyt .ythead{background:linear-gradient(180deg,rgba(25
 .skcard-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
 @media(max-width:480px){.skcard-stats{flex-wrap:wrap}.skcard-stats>div{min-width:calc(33% - 6px)}}
 /* ผู้ว่าฯ กทม. profile card (modal) */
-.govcard-ov{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,11,16,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .18s ease}
+.govcard-ov{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,11,16,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .18s ease}
 .govcard-ov.on{opacity:1;pointer-events:auto}
 .govcard{position:relative;width:min(480px,100%);max-height:90vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.45);transform:translateY(14px) scale(.97);transition:transform .2s cubic-bezier(.2,.9,.3,1)}
 .govcard-ov.on .govcard{transform:none}
@@ -525,6 +525,28 @@ html[data-theme="dark"] #histView .hbtn:hover{color:#081019}
   #histView .hrow.left .hev,#histView .hrow.right .hev{transform:translateY(18px)}
   #histView .hrow.is-visible .hcard,#histView .hrow.is-visible .hev{transform:translateY(0)}
 }
+
+/* ===== มือถือ/จอสัมผัส — แก้จากการตรวจ UI บนโทรศัพท์ ===== */
+/* ปุ่ม ＋/−/⤢ ของ js/mapzoom.js ลอยมุมขวาล่างของ .mapwrap — จอ ≤900px การ์ด .mapside ลงมาต่อใต้แผนที่
+   ปุ่มเลยไปทับคอลัมน์ % ของตารางคะแนน (แท็บ ส.ก. ทับคะแนนรายแถว) → จัด .mapwrap เป็นกริด
+   ให้แผนที่กับปุ่มอยู่ช่องเดียวกัน (ปุ่มชิดมุมขวาล่างของแผนที่) ส่วนการ์ดอยู่แถวถัดไป */
+@media(max-width:900px){
+  .mapwrap{display:grid;grid-template-columns:minmax(0,1fr)}
+  .mapwrap>#bkkmap{grid-area:1/1;align-self:start}
+  .mapwrap>.mapside{grid-area:2/1}
+  .mapwrap>.mz-ctl{grid-area:1/1;align-self:end;justify-self:end;position:relative;right:auto;bottom:auto;margin:0 8px 8px 0}
+}
+/* รายชื่อ ส.ก.: ชื่อ/พรรคยาว (nowrap) ดันความกว้างขั้นต่ำของช่องกริด (1fr = minmax(auto,1fr)) จนการ์ดล้น
+   แล้วโดน .chamber{overflow:hidden} ตัดขอบขวา → ให้ช่องหดได้ แล้วข้อความตัดเป็น … ตามที่ตั้งไว้ */
+.roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ritem{min-width:0}
+@media(max-width:640px){.roster-grid{grid-template-columns:minmax(0,1fr)}}
+/* จอสัมผัส: ป้าย .dtip ของจุดในหน้าสรุปคะแนนโผล่ด้วย hover เท่านั้น แต่ตัวที่ซ่อน (opacity 0) ยังยื่นล้นขอบขวา
+   แตะจุดก็เปิดการ์ด ส.ก. อยู่แล้ว → ถอดป้ายออกจากเลย์เอาต์ */
+@media(hover:none){.dotgrid .dot .dtip{display:none}}
+/* แผนผังสภา: ที่นั่งเหลือ ~8px บนจอโทรศัพท์ → ขยายพื้นที่แตะด้วยเส้นขอบโปร่งใส
+   (รัศมีรวม 15 หน่วย · แถวห่างกัน 32 หน่วย จึงไม่ทับที่นั่งข้างเคียง) */
+@media(max-width:860px){.hemi-wrap .cseat,html[data-theme="dark"] .hemi-wrap .cseat{stroke:transparent;stroke-width:12}}
 </style>
 <script src="../js/icons.js"></script>
 <script src="../js/preloader.js"></script>
@@ -643,7 +665,9 @@ const GEO=window.BKKGEO, D=window.BKKDATA, SK=D.sk, GOV=D.gov;
 const YEAR=window.BKKYEAR||2569;        // ปีที่กำลังดูอยู่ (ปุ่มเลือกปี = bkk-years.js)
 const HASGOV=!!(GOV&&GOV.candidates&&GOV.candidates.length);   // บางปีเลือกเฉพาะ ส.ก. (เช่น 2553)
 const GWIN=HASGOV?GOV.candidates[0]:null;   // ผู้ชนะ = รายการแรก (ข้อมูลเรียงคะแนนมาก→น้อย)
-const SWEEP=!!(GOV&&GOV.sweep);         // true = มีแหล่งอ้างอิงว่าชนะครบทั้ง 50 เขต
+/* true = มีแหล่งอ้างอิงผลรายเขตยืนยันว่าชนะครบทั้ง 50 เขต — ต้องมี GOV.sweepSrc (ชื่อ/ลิงก์แหล่งรายเขต) ด้วย
+   ไม่งั้นป้ายทุกจุดใช้คำว่า "ผู้ชนะทั้ง กทม." แทน (ปี 2569 มี sweep:true แต่ไม่มีผลแยกรายเขต → ห้ามอ้างว่ากวาด 50 เขต) */
+const SWEEP=!!(GOV&&GOV.sweep&&GOV.sweepSrc);
 /* ปีที่มี "ผลผู้ว่าฯ แยกรายเขต" จริง (2556) → แผนที่แท็บผู้ว่าฯ ระบายสีตามผู้ชนะของแต่ละเขต
    ปีอื่น กกต. ไม่ได้ประกาศแยกรายเขต → ระบายสีเดียวทั้ง กทม. ตามผู้ชนะรวม */
 const GDIST=(HASGOV&&GOV.byDistrict&&GOV.districts)?GOV.districts:null;
@@ -751,13 +775,30 @@ function initSongCard(){
   let bub=load(BKEY, matchMedia('(max-width:860px)').matches?'1':'0')==='1';
   let minimized=false;
 
-  /* มือถือมีแถบเมนูล่าง (.mobnav) ลอยทับอยู่ — เว้นที่ให้ ไม่งั้นการ์ดไปนั่งใต้แถบจนกดไม่ได้ */
+  /* มือถือมีของลอยอยู่ล่างจอหลายชั้น — เว้นที่ให้ ไม่งั้นการ์ดไปนั่งทับจนกดไม่ได้
+     แถบเมนูล่าง (.mobnav 68px) · แถบปุ่มลอย (เพลงชิดซ้าย / ผู้ช่วย AI ชิดขวา ราว 80–128px จากขอบล่าง)
+     · BB-8 สลับธีมชิดขอบขวา (ราว 140–191px)
+     ขั้นต่ำ: ขอบล่างของการ์ดสูงจากขอบจอ ≥ 140px (+ safe area ซึ่งรวมอยู่ในความสูง .mobnav แล้ว)
+     แล้ววัดของลอยจริงที่จอดอยู่ครึ่งล่างของจอในแนวเดียวกับการ์ดซ้ำอีกชั้น (ผู้ใช้ลากปุ่มพวกนี้ย้ายข้างได้)
+     ค่าที่คืน = ระยะที่ต้องเว้นใต้การ์ด ไม่นับ M (place() บวก M ให้เอง) · เดสก์ท็อป (ไม่มี .mobnav) = 0 เหมือนเดิม */
+  const FLOATS='#cyber-bgm-slot,#mdai-fab-slot,label.bb8-toggle,.yearbtn,#md-data-notice';
   function botGap(){
     const n=document.querySelector('.mobnav');
     if(!n)return 0;
     const cs=getComputedStyle(n);
     if(cs.display==='none'||cs.visibility==='hidden'||cs.position!=='fixed')return 0;
-    return n.getBoundingClientRect().height+8;
+    let gap=n.getBoundingClientRect().height+72-M;      // 68 + 72 = 140px เหนือขอบล่าง
+    const w=card.getBoundingClientRect().width;
+    const x0=side==='l'?M:innerWidth-w-M, x1=x0+w;       // แนวที่การ์ดจะไปจอด (ซ้าย/ขวา)
+    document.querySelectorAll(FLOATS).forEach(f=>{
+      const s=getComputedStyle(f);
+      if(s.display==='none'||s.visibility==='hidden'||s.position!=='fixed')return;   // ของในเนื้อหา (เช่นปุ่มปีบนหัวหน้า) ไม่นับ
+      const r=f.getBoundingClientRect();
+      if(!r.width||!r.height||r.top<innerHeight/2||r.top>=innerHeight)return;       // เฉพาะของที่จอดอยู่ครึ่งล่าง
+      if(r.right<=x0||r.left>=x1)return;                                           // อยู่คนละแนวกับการ์ด
+      gap=Math.max(gap,innerHeight-r.top+8-M);
+    });
+    return gap;
   }
   function place(){
     const b=card.getBoundingClientRect();          // ใช้ค่าทศนิยมจริง ไม่ใช่ offsetWidth/Height ที่ปัดเศษ
@@ -946,12 +987,20 @@ function tipHTML(name){
     `<div class="tp"><span class="sw" style="background:${skColor(name)}"></span>${d.winner||'—'} · ${d.grp||d.party}</div>`+
     (d.votes?`<div class="tp" style="opacity:.85">${fmt(d.votes)} คะแนน (${d.pct}%)</div>`:'');
 }
-function onEnter(name,e){ if(paths[name].classList.contains('dim'))return; tip.innerHTML=tipHTML(name); tip.classList.add('on'); moveTip(e); }
+/* จอสัมผัส: แตะเขตแล้วเบราว์เซอร์ยิง mouseenter จำลองมา แต่เลื่อนหน้าไม่มี mouseleave → กล่อง (position:fixed) ค้างกลางจอ
+   จำชนิดนิ้ว/เมาส์จาก pointerover ล่าสุด ถ้ามาจากนิ้ว (หรือเครื่องไม่มี hover) ให้ซ่อนเองเมื่อเลื่อนหน้าหรือครบ 2.5 วิ
+   เมาส์บนเดสก์ท็อปทำงานเหมือนเดิม */
+let tipTouch=false, tipT=0;
+const noHover=()=>!!(window.matchMedia&&matchMedia('(hover:none)').matches);
+svg.addEventListener('pointerover',e=>{ tipTouch=e.pointerType!=='mouse'; });
+addEventListener('scroll',()=>{ if(tipTouch||noHover()) onLeave(); },{passive:true});
+function onEnter(name,e){ if(paths[name].classList.contains('dim'))return; tip.innerHTML=tipHTML(name); tip.classList.add('on'); moveTip(e);
+  clearTimeout(tipT); if(tipTouch||noHover()) tipT=setTimeout(onLeave,2500); }
 function moveTip(e){ const pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
   let x=e.clientX+pad, y=e.clientY+pad;
   if(x+w>innerWidth-8) x=e.clientX-w-pad; if(y+h>innerHeight-8) y=e.clientY-h-pad;
   tip.style.left=x+'px'; tip.style.top=y+'px'; }
-function onLeave(){ tip.classList.remove('on'); }
+function onLeave(){ clearTimeout(tipT); tip.classList.remove('on'); }
 function onClick(name){
   // แตะเขตเดิมซ้ำ = ยกเลิกการเลือก → recolor() จะสั่งบินกลับมุมมองเต็ม (ทางออกจากสภาพซูมค้าง)
   if(state.view==='sk'||(state.view==='gov'&&GDIST)){ state.sel=(state.sel===name)?null:name; renderPanel(); recolor(); }
@@ -1507,7 +1556,7 @@ window.setView=function(v){
       ? (GDIST
           ? `แผนที่นี้เป็น<strong>ผลผู้ว่าฯ แยกรายเขตจริง</strong> ${Object.keys(GDIST).length} เขต — สีของแต่ละเขตคือผู้สมัครที่ได้คะแนนสูงสุดในเขตนั้น (ที่มา: ตารางผลรายเขตของวิกิพีเดีย อ้างเว็บไซต์ กทม. election56)`
           : SWEEP
-          ? `แผนที่แสดง<strong>ผู้ชนะรายเขต</strong> ซึ่ง${GWIN.name} (เบอร์ ${GWIN.no}) ชนะทั้ง 50 เขต — คะแนนผู้ว่าฯ เป็นการนับรวมทั้งกรุงเทพมหานคร กกต. ไม่ได้ประกาศแยกเป็นรายเขต`
+          ? `แผนที่ระบายสีทั้ง กทม. ด้วยสีของ<strong>${GWIN.name}</strong> (เบอร์ ${GWIN.no}) ซึ่งแหล่งอ้างอิงรายเขต (${GOV.sweepSrc}) ระบุว่าได้คะแนนสูงสุดครบทั้ง 50 เขต — ตัวเลขคะแนนผู้ว่าฯ ที่แสดงเป็นผลรวมทั้งกรุงเทพมหานคร`
           : (GNOMAP
               ? `การเลือกตั้งครั้งนี้<strong>ไม่มีผลแยกรายเขต</strong>ในแหล่งอ้างอิง แผนที่จึงเว้นสีเทาไว้ — ดูรายชื่อผู้สมัครทั้ง ${GOV.candidates.length} คนพร้อมคะแนนได้ที่แผงด้านขวา`
               : `แผนที่ระบายสีทั้ง กทม. ด้วยสีของ<strong>ผู้ชนะรวมทั้งกรุงเทพมหานคร</strong> คือ ${GWIN.name} (เบอร์ ${GWIN.no}) — กกต. ไม่ได้ประกาศผลผู้ว่าฯ แยกเป็นรายเขต จึงไม่ใช่ผลรายเขตจริง`))

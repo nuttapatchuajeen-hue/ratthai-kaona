@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-<title>ประชามติรัฐธรรมนูญ · เลือกตั้ง 2569</title>
+<title>ประชามติรัฐธรรมนูญ 2569 · ผลรายจังหวัด</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -286,6 +286,11 @@ html[data-theme="dark"] .dsrc.real{color:#3FD68F}
   .tbl-head,.trow{grid-template-columns:30px minmax(96px,130px) minmax(0,1fr);gap:9px}
   .tbl-head .num-h,.trow .nums{display:none}
   .panelbox{padding:18px}
+}
+/* มือถือ: เลือกจังหวัดจากตาราง/ช่องค้นหา → เลื่อนการ์ดผล (#mapdetail) ขึ้นมาให้เห็นเต็มใบ
+   ขอบล่างเผื่อเมนูล่าง + ปุ่มเพลง/AI (สูงถึง ~128px) ไม่ให้บังท้ายการ์ด */
+@media(max-width:860px){
+  .mapdetail{scroll-margin-top:12px;scroll-margin-bottom:calc(140px + env(safe-area-inset-bottom,0px))}
 }
 </style>
   <script src="../js/icons.js"></script>
@@ -797,6 +802,14 @@ mdSyncToggle();
     applyMap();renderDetail();
   });
 
+  /* มือถือ (≤860px) แผนที่กับการ์ดผลเรียงคอลัมน์เดียว — การ์ดผลอยู่ใต้แผนที่ที่สูงราว 600px จึงตกขอบจอ
+     → เลื่อนให้การ์ดผลโผล่เต็มใบเหนือเมนูล่าง (ท้ายแผนที่ที่ซูมจังหวัดอยู่ยังเห็นด้านบน) · จอกว้างคืน false ให้ทำแบบเดิม */
+  function revealDetailMobile(){
+    if(!(window.matchMedia && matchMedia('(max-width:860px)').matches)) return false;
+    document.getElementById('mapdetail').scrollIntoView({behavior:'smooth',block:'end'});
+    return true;
+  }
+
   /* ค้นหาจังหวัดบนแผนที่ */
   const inp=document.getElementById('mapsearch'), sg=document.getElementById('sugg');
   function hideSugg(){sg.classList.remove('on');sg.innerHTML='';}
@@ -811,7 +824,7 @@ mdSyncToggle();
     sg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
       q='';inp.value='';hideSugg();
       state={type:'prov',name:b.dataset.n};applyMap();renderDetail();
-      document.getElementById('refmap').scrollIntoView({behavior:'smooth',block:'center'});
+      if(!revealDetailMobile()) document.getElementById('refmap').scrollIntoView({behavior:'smooth',block:'center'});
     });
   });
   document.addEventListener('click',e=>{if(!e.target.closest('.mapsearch'))hideSugg();});
@@ -851,7 +864,7 @@ mdSyncToggle();
     else apply();
     trows.querySelectorAll('.trow').forEach(row=>row.onclick=()=>{
       state={type:'prov',name:row.dataset.n};applyMap();renderDetail();
-      document.querySelector('.maplay').scrollIntoView({behavior:'smooth',block:'start'});
+      if(!revealDetailMobile()) document.querySelector('.maplay').scrollIntoView({behavior:'smooth',block:'start'});
     });
   }
   ['tsearch','tregion','tsort'].forEach(id=>document.getElementById(id).addEventListener('input',renderTable));

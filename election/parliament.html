@@ -264,6 +264,30 @@ html[data-theme="dark"]{--sim-ok:#31D8A0;--sim-ok-soft:rgba(49,216,160,.13);--si
 #bundleG path{fill:none;stroke-linecap:round}
 #bundleG circle.bn{stroke:var(--card);stroke-width:1.1}   /* จุดพรรค — ไม่รวมดุมกลาง (ดุมกำหนดสีเองใน JS) */
 #bundleG text{font-family:'Kanit';font-weight:600;font-size:10px;text-anchor:middle;pointer-events:none}
+
+/* ===== มือถือ/แท็บเล็ต — แตะที่นั่งแล้วเห็นข้อมูลทันที ===== */
+/* ชิปตำแหน่ง ๑–๖ ใต้ผัง (บล็อกบนบัลลังก์ในผังเล็กเกินแตะบนมือถือ) — จอกว้างซ่อน ใช้บล็อกในผังตามเดิม */
+.daisbar{display:none}
+@media(max-width:980px){
+  /* placeDetail() ย้าย #detail จากคอลัมน์ข้าง (ลึกลงไปเกือบ 2,000px) มาอยู่ใต้ผังในการ์ดห้องประชุม */
+  .chamber>#detail{margin:10px 12px 0;background:var(--paper);box-shadow:none;scroll-margin:80px 0 24px}
+  .hemiwrap{scroll-margin-top:80px}
+}
+@media(max-width:860px){
+  /* ขอบล่างเผื่อเมนูล่าง + ปุ่มเพลง/AI (สูงถึง ~128px) ไม่ให้บังการ์ดตอนเลื่อนมาให้เห็น */
+  .chamber>#detail{scroll-margin:12px 0 calc(140px + env(safe-area-inset-bottom,0px))}
+  .hemiwrap{scroll-margin-top:12px}
+  .daisbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0}
+  .daisbar .lchip{min-height:36px;padding:5px 11px;font-size:.78rem}
+  .daisbar .lchip b{color:var(--orange-deep)}
+}
+/* จอแคบมาก (≤360px): แท็บ ส.ส./สว./ประชุมร่วม/กมธ. กว้างเกินจอ (nowrap) → หน้าเลื่อนออกด้านข้าง ~11px ที่ 320px */
+@media(max-width:360px){
+  .tabs{gap:2px;padding:4px;flex-wrap:wrap}
+  .tabs button{font-size:.76rem;padding:8px 4px;gap:4px}
+}
+/* ชื่อพรรคยาวในการ์ด "พรรคเรียงตามโซน" ห้ามดันคอลัมน์กริดกว้างเกินจอ — ให้ตัดด้วย … ตามที่ .zn ตั้งใจไว้ */
+@media(max-width:920px){.sdgrid{grid-template-columns:minmax(0,1fr)}}
 </style>
   <script src="../js/icons.js"></script>
   <script src="../js/preloader.js"></script>
@@ -366,6 +390,7 @@ mdSyncToggle();
           <button type="button" id="pzReset" class="pz-reset" aria-label="คืนขนาดเต็มผัง">⤢</button>
         </div>
       </div>
+      <div class="daisbar" id="daisbar" role="group" aria-label="ตำแหน่งบนบัลลังก์ ๑–๖"></div>
       <div class="offbar" id="offbar"></div>
       <div class="legendwrap" id="legend"></div>
       <div class="chamber-note" id="chNote"></div>
@@ -879,6 +904,21 @@ const COALITION = new Set();     // รหัสพรรคที่ผู้�
 const $ = id => document.getElementById(id);
 const seatsG = $('seatsG'), daisG = $('daisG'), bgG = $('bgG'), bundleG = $('bundleG'), tip = $('ptip');
 
+/* ── มือถือ/แท็บเล็ต (≤980px): การ์ด "รายละเอียดที่นั่ง" อยู่ใต้ผังทันที ──
+   เดิมอยู่ท้ายคอลัมน์ข้าง (หลังผัง + โหมดจำลอง) ลึกลงไปเกือบ 2,000px → แตะที่นั่งแล้วไม่เห็นอะไรเปลี่ยน */
+const NARROW = window.matchMedia('(max-width:980px)');
+function placeDetail(){
+  const det = $('detail');
+  if(NARROW.matches) $('daisbar').before(det);           // ใต้ผัง (ก่อนชิป ๑–๖ / แถบผู้ดำรงตำแหน่ง)
+  else $('sresults').parentNode.after(det);             // จอกว้าง: กลับที่เดิม ใต้กล่องค้นหาในคอลัมน์ข้าง
+}
+placeDetail();
+if(NARROW.addEventListener) NARROW.addEventListener('change', placeDetail); else if(NARROW.addListener) NARROW.addListener(placeDetail);
+// เลื่อนการ์ดรายละเอียดเข้ามาในจอ (เฉพาะจอแคบ — จอกว้างการ์ดติดข้างผังอยู่แล้ว)
+function revealDetail(){
+  if(NARROW.matches) $('detail').scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+
 /* ── บล็อกพรรคใน MEMBERS.mp (สมาชิกของแต่ละพรรคเรียงติดกันอยู่แล้วจาก mpMembers) ── */
 const MP_BLOCKS = (() => {
   const out = []; let cur = null;
@@ -963,7 +1003,7 @@ function drawOfficerBar(){
     });
     // มีบล็อกบนบัลลังก์ → กระโดดไปที่นั่งจริง · ไม่มีบล็อก (เช่น ผู้นำฝ่ายค้าน) → เปิดการ์ดหน้าที่
     const hasBlock = DAIS_LAYOUT.some(d => d.id === o.dais && d.views.includes(view));
-    chip.onclick = hasBlock ? () => select(officerSeatIdx(view, o), true) : () => selectDais(o.dais);
+    chip.onclick = hasBlock ? () => select(officerSeatIdx(view, o), true) : () => { selectDais(o.dais); revealDetail(); };
     ob.appendChild(chip);
   });
 }
@@ -988,8 +1028,9 @@ function render(){
     c.setAttribute('fill', gradFor(memberColor(m)));
     c.setAttribute('class', 'seat');
     c.dataset.i = i;
-    c.addEventListener('click', ev => { ev.stopPropagation(); select(i, false); });
-    c.addEventListener('mousemove', ev => showTip(ev, m));
+    c.addEventListener('click', ev => { ev.stopPropagation(); select(i, false); revealDetail(); });
+    // ป้ายลอยเฉพาะเมาส์/ปากกา — นิ้วแตะเคยปล่อย mousemove จำลองออกมา ป้ายจึงค้างกลางจอ/หลุดขอบซ้าย
+    c.addEventListener('pointermove', ev => { if(ev.pointerType !== 'touch') showTip(ev, m); });
     c.addEventListener('mouseleave', hideTip);
     seatsG.appendChild(c);
     seatEls.push(c);
@@ -1174,9 +1215,14 @@ function drawDais(){
         g.appendChild(nm);
       }
     }
-    g.addEventListener('click', ev => { ev.stopPropagation(); selectDais(d.id); });
+    g.addEventListener('click', ev => { ev.stopPropagation(); selectDais(d.id); revealDetail(); });
     daisG.appendChild(g);
   });
+  // มือถือ: ชิปตำแหน่ง ๑–๖ ใต้ผัง (บล็อกในผังกว้างแค่ ~22–45px บนจอ 375px) — จอกว้างซ่อนด้วย CSS
+  const DB_ORDER = ['president','vice1','vice2','pm','cabinet','committee','secretary'];
+  $('daisbar').innerHTML = DAIS_LAYOUT.filter(d => d.views.includes(view))
+    .sort((a,b) => DB_ORDER.indexOf(a.id) - DB_ORDER.indexOf(b.id))
+    .map(d => `<button type="button" class="lchip" data-d="${d.id}"><b>${d.num}</b>${(d.labels && d.labels[view]) || d.label}</button>`).join('');
 }
 
 function drawLegend(){
@@ -1361,10 +1407,12 @@ function showTip(ev, m){
   const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
   let x = ev.clientX + pad, y = ev.clientY - h - 6;
   if(x + w > innerWidth - 8) x = ev.clientX - w - pad;
+  x = Math.max(8, Math.min(x, innerWidth - w - 8));   // จอแคบ: พลิกซ้ายแล้วอาจติดลบ → หนีบให้อยู่ในจอ
   if(y < 8) y = ev.clientY + pad;
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
 function hideTip(){ tip.classList.remove('on'); }
+window.addEventListener('scroll', hideTip, { passive:true });   // ป้ายเป็น position:fixed — เลื่อนหน้าแล้วไม่ค้างลอยผิดที่
 
 /* ── เลือกสมาชิก ── */
 function select(i, flash){
@@ -1379,7 +1427,7 @@ function select(i, flash){
       + `<span class="chip"><span class="sw" style="background:${c}"></span>${window.EYMP||'ส.ส.'} · แบบแบ่งเขต</span></div></div>`
       + `<div class="mrows"><div class="mrow"><span>ปีนี้ยังไม่มีข้อมูลรายชื่อ ส.ส. รายบุคคลรวมศูนย์ — ผังแสดง<b>สัดส่วนที่นั่งรายพรรค</b></span></div>`
       + `<div class="mrow"><span>ดูจำนวนที่นั่งรายพรรคแบบเต็มได้ที่หน้า <a class="mlink" style="display:inline" href="standings.html?y=${window.EYID||''}">คะแนนพรรค</a></span></div></div>`;
-    if(flash){ const el = seatEls[i]; if(el){ el.classList.remove('flash'); void el.getBoundingClientRect(); el.classList.add('flash'); el.scrollIntoView({block:'nearest',behavior:'smooth'}); } }
+    if(flash){ const el = seatEls[i]; if(el){ el.classList.remove('flash'); void el.getBoundingClientRect(); el.classList.add('flash'); flashScrollTarget(el).scrollIntoView({block:'nearest',behavior:'smooth'}); } }
     return;
   }
   const col = memberColor(m);
@@ -1419,10 +1467,13 @@ function select(i, flash){
     const el = seatEls[i];
     el.classList.remove('flash'); void el.getBoundingClientRect();
     el.classList.add('flash');
-    el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+    flashScrollTarget(el).scrollIntoView({ block:'nearest', behavior:'smooth' });
     if(window.__zoomToSeat) window.__zoomToSeat(+el.getAttribute('cx'), +el.getAttribute('cy'));
   }
 }
+/* กระโดดไปที่นั่ง (ค้นหา/ชิปผู้ดำรงตำแหน่ง): จอแคบเลื่อนทั้งผังเข้ามา (ผังจะซูมไปกลางที่นั่งเอง + การ์ดอยู่ใต้ผัง)
+   — ถ้าเลื่อนตามจุดที่นั่งเล็ก ๆ จุดนั้นชิดขอบบน พอซูมแล้วที่นั่งอาจหลุดขึ้นไปนอกจอ */
+function flashScrollTarget(el){ return (NARROW.matches && el.closest('.hemiwrap')) || el; }
 
 function selectDais(id){
   selected = -1; applyFilter();
@@ -1518,6 +1569,12 @@ $('psearch').addEventListener('input', function(){
   });
 });
 
+/* ชิปตำแหน่ง ๑–๖ (มือถือ) → เปิดการ์ดหน้าที่ แบบเดียวกับกดบล็อกในผัง */
+$('daisbar').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-d]');
+  if(b){ selectDais(b.dataset.d); revealDetail(); }
+});
+
 /* คลิกพื้นว่าง = ล้างการเลือก */
 $('hemi').addEventListener('click', () => {
   selected = -1; applyFilter();
@@ -1528,7 +1585,8 @@ $('hemi').addEventListener('click', () => {
 (function(){
   const HEMI = $('hemi');
   const VB0 = { x:0, y:0, w:1000, h:574 }, AR = VB0.h / VB0.w;
-  const MIN_W = 230, OVX = 120, OVY = 70;     // ซูมเข้าได้สูงสุด ≈ 4.3× + ระยะล้นขอบที่ยอมให้เลื่อน
+  // ซูมเข้าได้สูงสุด ≈ 4.3× (มือถือ ≈ 6.7× — ผังกว้างแค่ ~350px ที่นั่งจึงเล็กมาก) + ระยะล้นขอบที่ยอมให้เลื่อน
+  const MIN_W = innerWidth < 600 ? 150 : 230, OVX = 120, OVY = 70;
   let vb = { ...VB0 }, raf = null;
   const resetBtn = $('pzReset');
   function clamp(v){
@@ -1563,7 +1621,14 @@ $('hemi').addEventListener('click', () => {
   window.__zoomToSeat = function(cx, cy){ const w = 330; tween(clamp({ x:cx-w/2, y:cy-w*AR/2, w, h:w*AR }), 460); };
   window.__resetZoom  = function(){ cancelAnimationFrame(raf); tween({ ...VB0 }, 400); };
   function btnZoom(f){ const r = HEMI.getBoundingClientRect(); zoomAround(r.left + r.width/2, r.top + r.height/2, f); }
-  $('pzIn').onclick = () => btnZoom(1.6);
+  /* + ครั้งแรก (ยังไม่ซูม): เล็งที่นั่งที่เลือกอยู่ หรือกลางแนวโค้งที่นั่งด้านบน
+     — เดิมซูมรอบกลางผัง = พื้นที่อภิปรายว่าง ๆ กด + ซ้ำอีก 1–2 ครั้งก็ไม่เหลือที่นั่งในกรอบ */
+  $('pzIn').onclick = () => {
+    if(vb.w < VB0.w - 1) return btnZoom(1.6);
+    const s = seatEls[selected], c = CFG[view], w = VB0.w / 1.6;
+    const fx = s ? +s.getAttribute('cx') : CX, fy = s ? +s.getAttribute('cy') : CY - (c.r0 + c.r1) / 2;
+    tween(clamp({ x:fx - w/2, y:fy - w*AR/2, w, h:w*AR }), 300);
+  };
   $('pzOut').onclick = () => btnZoom(1/1.6);
   resetBtn.onclick = () => window.__resetZoom();
   HEMI.addEventListener('wheel', e => { e.preventDefault(); zoomAround(e.clientX, e.clientY, e.deltaY < 0 ? 1.18 : 1/1.18); }, { passive:false });

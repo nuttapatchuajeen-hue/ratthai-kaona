@@ -108,9 +108,16 @@
     + '.yearmenu .yb.on .ymap{background:rgba(255,255,255,.22);color:#fff}'
     + '.yearveil{position:fixed;inset:0;z-index:60;background:transparent;display:none}'
     + '.yearveil.open{display:block}'
-    /* มือถือ: มุมขวาบนโดนแท็บ/เมนูกิน → ย้ายปุ่มลงมุมซ้ายล่างแบบลอย */
-    + '@media(max-width:860px){.yearbtn{top:auto;bottom:82px;left:10px;right:auto;padding:8px 11px}'
-    + '.yearmenu{top:auto;bottom:130px;left:10px;right:10px;width:auto;max-height:56vh}}';
+    /* มือถือ (≤860px): มุมขวาบนโดนแท็บ/เมนูกิน และมุมล่างเป็นที่จอดของแถบเมนูล่าง (68px) + ปุ่มเพลง/ผู้ช่วย AI
+       (ราว 80–128px) + BB-8 (ขวา 140–191px) → dock() ย้ายปุ่มเข้าแถวหัวหน้า (.phead) เป็นเนื้อหาปกติ ไม่ลอยทับใคร
+       ถ้าหา .phead ไม่เจอ ปุ่มจะลอยซ้ายล่างเหนือแถบปุ่มลอย (bottom 140px) แทน
+       เมนูปีเป็นชีตเหนือแถบเมนูล่าง และอยู่เหนือปุ่มลอยทั้งหมด (z 99990–99998) */
+    + '@media(max-width:860px){.yearbtn{top:auto;bottom:calc(140px + env(safe-area-inset-bottom,0px));left:10px;right:auto;padding:8px 11px}'
+    + '.phead>.yearbtn{position:static;flex:0 0 auto;margin-left:auto;box-shadow:var(--shadow,0 4px 14px -8px rgba(10,40,60,.3))}'
+    + '.phead>.bt{flex:1 1 0;min-width:0}'
+    + '.yearveil{z-index:100000}'
+    + '.yearmenu{top:auto;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:auto;max-height:56vh;z-index:100001}}'
+    + '@media(max-width:480px){.phead>.yearbtn .yl{display:none}}';
 
   function mount() {
     window.BKKSKYEAR = !!(window.BKKDATA && window.BKKDATA.sk && window.BKKDATA.sk.districts);
@@ -161,6 +168,24 @@
     document.body.appendChild(veil);
     document.body.appendChild(btn);
     document.body.appendChild(menu);
+
+    /* มือถือ: ย้ายปุ่มเข้าแถวหัวหน้า (.phead หลังชื่อหน้า ก่อนแถบแท็บ) · เดสก์ท็อป: คืนกลับ body (ลอยมุมขวาบนเหมือนเดิม)
+       ฟังการเปลี่ยนขนาด/หมุนจอด้วย matchMedia เพื่อย้ายกลับไปมาได้ */
+    var mq = window.matchMedia ? window.matchMedia('(max-width:860px)') : null;
+    function dock() {
+      var head = document.querySelector('.phead');
+      if (mq && mq.matches && head) {
+        var tabs = head.querySelector('.tabs');
+        if (btn.parentNode !== head) head.insertBefore(btn, (tabs && tabs.parentNode === head) ? tabs : null);
+      } else if (btn.parentNode !== document.body) {
+        document.body.insertBefore(btn, menu);
+      }
+    }
+    dock();
+    if (mq) {
+      if (mq.addEventListener) mq.addEventListener('change', dock);
+      else if (mq.addListener) mq.addListener(dock);
+    }
 
     /* ---------- หัวเรื่อง/ชื่อหน้า ให้ตรงปี ---------- */
     if (y !== DEFAULT) {

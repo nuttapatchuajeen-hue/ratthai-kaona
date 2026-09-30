@@ -96,7 +96,8 @@
     + 'transform:rotate(45deg) translate(-2px,-2px);opacity:.6;transition:transform .18s}'
     + '.yearbtn[aria-expanded="true"] .yc{transform:rotate(-135deg) translate(-3px,-3px)}'
     /* เมนูปี */
-    + '.yearmenu{position:fixed;top:124px;right:14px;z-index:61;width:250px;max-height:min(72vh,520px);overflow:auto;'
+    /* z สูงกว่าปุ่มลอยเพลง/AI (99990–99998) — เมนูเปิดอยู่ต้องไม่มีอะไรลอยทับ */
+    + '.yearmenu{position:fixed;top:124px;right:14px;z-index:100001;width:250px;max-height:min(72vh,520px);overflow:auto;'
     + 'background:var(--paper,#fff);border:1px solid var(--line,#dbe4ea);border-radius:16px;'
     + 'box-shadow:var(--shadow-lg,0 18px 44px -16px rgba(10,40,60,.45));padding:7px;display:none}'
     + '.yearmenu.open{display:block}'
@@ -111,7 +112,7 @@
     + '.yearmenu .y1 em{font-style:normal;font-size:.68rem;font-weight:400;color:var(--muted,#7b8b98)}'
     + '.yearmenu .yb.on .y1 em{color:rgba(255,255,255,.75)}'
     + '.yearmenu .y2{font-size:.71rem;color:var(--muted,#7b8b98);line-height:1.45;margin-top:1px}'
-    + '.yearveil{position:fixed;inset:0;z-index:60;background:transparent;display:none}'
+    + '.yearveil{position:fixed;inset:0;z-index:100000;background:transparent;display:none}'
     + '.yearveil.open{display:block}'
     /* แบนเนอร์ปีเก่าบนหน้าคะแนนพรรค */
     + '.eybanner{background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:12px;'
@@ -120,7 +121,13 @@
     /* มือถือ: การ์ดค้นหากินพื้นที่บนสุด (สูง ~116px) → วางปุ่มใต้การ์ด บนพื้นที่แผนที่ */
     + '@media(max-width:860px){.yearbtn{top:134px;right:10px;padding:8px 11px}'
     + '.yearbtn .yl{display:none}'
-    + '.yearmenu{top:auto;bottom:14px;left:10px;right:10px;width:auto;max-height:62vh}}';
+    /* หน้าลูก: ปุ่มอยู่ในแถวหัวหน้า (ไม่ลอยทับหัวข้อ/กล่องตัวเลขตอนเลื่อน) · ซ่อนป้ายบัตร "เลือกตั้ง ✕" ที่เป็นแค่ของตกแต่ง */
+    + '.yearbtn.yb-inhead{position:static;margin-left:auto;flex:0 0 auto}'
+    + '.pagehead:has(.yb-inhead) .ballot{display:none}'
+    + '.phead:has(> .yb-inhead) > .bt{flex:1 1 0;min-width:0}'
+    /* เดิม bottom:14px → 54px ล่างจมใต้เมนูล่าง (mobnav สูง 68px) ปีสุดท้าย (2476) จึงกดไม่ได้ */
+    + '.yearmenu{top:auto;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:auto;'
+    + 'max-height:min(62vh,calc(100vh - 170px))}}';
 
   function mount() {
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
@@ -165,14 +172,25 @@
       var u = new URL(location.href); u.searchParams.set('y', ny); location.href = u.toString();
     });
     document.body.appendChild(veil);
-    document.body.appendChild(btn);
+    // มือถือ + หน้าลูกที่มีแถวหัวหน้า (บัญชีรายชื่อ/คะแนนพรรค/รัฐสภา) → วางปุ่มในแถวหัว แทนการลอยทับเนื้อหา
+    var headRow = document.querySelector('.pagehead, .phead');
+    if (headRow && window.matchMedia && matchMedia('(max-width:860px)').matches) {
+      btn.classList.add('yb-inhead');
+      var hbt = headRow.querySelector(':scope > .bt');     // วางถัดจากชื่อหน้า (แถวเดียวกับหัวเรื่อง ไม่ตกไปอยู่ใต้แท็บ)
+      if (hbt) hbt.insertAdjacentElement('afterend', btn); else headRow.appendChild(btn);
+    } else document.body.appendChild(btn);
     document.body.appendChild(menu);
 
     /* ปรับหัวเรื่อง/ที่มา ให้ตรงปี */
     var cur = YEARS.filter(function (o) { return o.y === y; })[0] || {};
     var info = window.EYEARINFO || { year: y, note: cur.note, wiki: cur.wiki };
     var bt = document.querySelector('.bt');
-    if (bt) {
+    if (bt && SET === 'parliament') {
+      // หน้ารัฐสภามีหัวเรื่องของตัวเอง ("รัฐสภาไทย — ผังที่นั่งกดดูได้") — แก้แค่บรรทัดรองให้ตรงปี ไม่ทับหัวเรื่อง
+      var psm = bt.querySelector('small');
+      if (psm && y !== 2569) psm.textContent = psm.textContent
+        .replace(/(ว่าที่ )?ส\.ส\. เลือกตั้ง 2569/, 'ส.ส. เลือกตั้ง ' + y).replace(/วุฒิสภา \(ชุด 2567\)/, 'วุฒิสภา');
+    } else if (bt) {
       // จำนวน ส.ส. ไม่เท่ากันทุกปี (2550 = 480 · 2539 = 393)
       var head = (y === 2569 ? 'ว่าที่ ส.ส. ' : 'ส.ส. ') + (cur.total || 500);
       if (bt.firstChild && bt.firstChild.nodeType === 3) bt.firstChild.nodeValue = head;

@@ -186,6 +186,12 @@ html[data-theme="dark"] .anpbtn{color:#081019}
 .anlgd span[data-k]{cursor:default}
 .anlgd i{width:13px;height:4px;border-radius:2px;flex:none}
 .anlgd.dim span:not(.hot){opacity:.32}
+
+/* มือถือ: ปี (.yr) ต้องไหลอยู่เหนือการ์ด — กฎ .tlrow.left .yr / .tlrow.right .yr ด้านบน (0,3,0) ชนะ .tlrow .yr
+   ในบล็อก @media(max-width:768px) เดิม → .yr ยังลอยออกนอกการ์ด ทำหน้ากว้าง ~484px บนจอ 375px จึงเขียนทับด้วยตัวเลือกเท่ากันไว้ท้ายไฟล์ */
+@media(max-width:768px){
+  .tlrow.left .yr, .tlrow.right .yr{position:static;width:auto;text-align:left;margin-bottom:6px}
+}
 </style>
 </head>
 <body>
@@ -336,6 +342,13 @@ mdSyncToggle();
     });
     ov.appendChild(b);
   });
+  // จอแคบแถบนี้ล้นแนวนอน → เปิดมาให้เห็นปีล่าสุด (ขวาสุด) ก่อน ไม่ใช่ปีเก่าสุด · จอกว้างไม่ล้น = ไม่มีผล
+  function ovToEnd() {
+    var sb = ov.style.scrollBehavior; ov.style.scrollBehavior = 'auto';   // กระโดดทันที ไม่ไหลช้า ๆ (.ovscroll ตั้ง smooth ไว้)
+    ov.scrollLeft = ov.scrollWidth; ov.style.scrollBehavior = sb;
+  }
+  ovToEnd();
+  window.addEventListener('load', function () { if (ov.scrollLeft < 1) ovToEnd(); });
   document.getElementById('ovlgd').innerHTML =
     '<span><i style="background:#27AAE1"></i>ประชาธิปัตย์</span>'
     + '<span><i style="background:#E30613"></i>ไทยรักไทย/เพื่อไทย</span>'
@@ -583,7 +596,13 @@ mdSyncToggle();
     svg.querySelectorAll('[data-k]').forEach(function (el) { el.style.opacity = el.getAttribute('data-k') === k ? '1' : '0.14'; });
   }
 
-  function drawTo(idx) { chart.innerHTML = buildSVG(curKey, idx); }
+  function drawTo(idx) {
+    chart.innerHTML = buildSVG(curKey, idx);
+    // จอแคบกราฟกว้างกว่ากล่อง (svg min-width 560px) → เลื่อนตามหัวเส้นที่กำลังเล่น ให้หัวอยู่ราว 3/4 ของกรอบ
+    // จอกว้างไม่ล้น (over = 0) = ไม่มีผล
+    var over = chart.scrollWidth - chart.clientWidth;
+    if (over > 0) chart.scrollLeft = Math.max(0, Math.min(over, xAt(idx) / W * chart.scrollWidth - chart.clientWidth * 0.75));
+  }
   function setFrame(idx) { cur = idx; if (+scrub.value !== idx) scrub.value = idx; drawTo(idx); readout(curKey, idx); }
   function setBtn() { btn.innerHTML = playing ? MDICO('pause')+' หยุด' : MDICO('play')+' เล่นไล่ปี'; }
 
