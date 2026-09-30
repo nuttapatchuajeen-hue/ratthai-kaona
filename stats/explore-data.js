@@ -1524,6 +1524,18 @@ var NAV = [
           { pane:"dg-ai",      ico:"<svg class='mdico'><use href='#i-bot'></use></svg>", label:"ความพร้อมด้าน AI", existing:true },
           { pane:"dg-pay",     ico:"<svg class='mdico'><use href='#i-hand-coins'></use></svg>", label:"การชำระเงินดิจิทัล", existing:true }
       ]},
+      { id:"aihow", ico:"<svg class='mdico'><use href='#i-brain'></use></svg>", label:"หลักการทำงาน AI", subs:[
+          { pane:"ai-neural",    ico:"<svg class='mdico'><use href='#i-network'></use></svg>", label:"นิวรอนเทียม & โครงข่ายประสาท", existing:true },
+          { pane:"ai-learn",     ico:"<svg class='mdico'><use href='#i-trending-down'></use></svg>", label:"AI เรียนรู้ยังไง (Backpropagation)", existing:true },
+          { pane:"ai-token",     ico:"<svg class='mdico'><use href='#i-scissors'></use></svg>", label:"Token: AI อ่านข้อความยังไง", existing:true },
+          { pane:"ai-embed",     ico:"<svg class='mdico'><use href='#i-compass'></use></svg>", label:"Embedding: คำกลายเป็นพิกัด", existing:true },
+          { pane:"ai-attn",      ico:"<svg class='mdico'><use href='#i-eye'></use></svg>", label:"Attention: คำไหนสนใจคำไหน", existing:true },
+          { pane:"ai-mlp",       ico:"<svg class='mdico'><use href='#i-brain'></use></svg>", label:"MLP: AI จำข้อเท็จจริงยังไง", existing:true },
+          { pane:"ai-next",      ico:"<svg class='mdico'><use href='#i-shuffle'></use></svg>", label:"ทำนายคำถัดไป & ความสุ่ม", existing:true },
+          { pane:"ai-train",     ico:"<svg class='mdico'><use href='#i-graduation-cap'></use></svg>", label:"ฝึก ChatGPT 3 ขั้น", existing:true },
+          { pane:"ai-diffusion", ico:"<svg class='mdico'><use href='#i-sparkles'></use></svg>", label:"AI สร้างภาพ (Diffusion)", existing:true },
+          { pane:"ai-limits",    ico:"<svg class='mdico'><use href='#i-shield-alert'></use></svg>", label:"ข้อจำกัด & AI ยุคใหม่", existing:true }
+      ]},
       { id:"gov", ico:"<svg class='mdico'><use href='#i-landmark'></use></svg>", label:"ธรรมาภิบาล & การเมือง", subs:[
           { pane:"gov-cpi",       ico:"<svg class='mdico'><use href='#i-user-search'></use></svg>", label:"ดัชนีคอร์รัปชัน (CPI)", existing:true },
           { pane:"gov-press",     ico:"<svg class='mdico'><use href='#i-newspaper'></use></svg>", label:"เสรีภาพสื่อ", existing:true },

@@ -7702,6 +7702,301 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       </div>
     </section>
 
+    <!-- ================= หลักการทำงาน AI (10 หัวข้อ) =================
+         เอนจิน: ai-how.js · ai-how-2.js · ai-how-3.js (window.AIH) — โหลดตอนเปิดหมวดนี้ครั้งแรก
+         ข้อมูลจริง: ai-how-data.js — โครงข่าย MNIST ที่ฝึกเอง · เวกเตอร์ GloVe · โมเดล diffusion ที่ฝึกเอง · ค่าภายใน GPT-2 small
+         แรงบันดาลใจจากซีรีส์ Neural Networks ของ 3Blue1Brown — ภาพทุกชิ้นวาดใหม่ด้วยโค้ดจากตัวเลขจริง ไม่ได้ตัดจากคลิป -->
+    <section class="tabpane" id="pane-ai-neural" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-network"></use></svg> นิวรอนเทียม &amp; โครงข่ายประสาท</h2></div>
+      <nav class="aih-route" aria-label="เส้นทางการอ่าน 10 ขั้น">
+        <a href="#pane-ai-neural"><b>1</b>โครงข่ายประสาท</a><a href="#pane-ai-learn"><b>2</b>การเรียนรู้</a><a href="#pane-ai-token"><b>3</b>Token</a><a href="#pane-ai-embed"><b>4</b>Embedding</a><a href="#pane-ai-attn"><b>5</b>Attention</a><a href="#pane-ai-mlp"><b>6</b>MLP จำความรู้</a><a href="#pane-ai-next"><b>7</b>ทายคำถัดไป</a><a href="#pane-ai-train"><b>8</b>ฝึก 3 ขั้น</a><a href="#pane-ai-diffusion"><b>9</b>สร้างภาพ</a><a href="#pane-ai-limits"><b>10</b>ข้อจำกัด</a>
+      </nav>
+      <p class="aih-lead">AI ยุคนี้ไม่ได้ "คิด" แบบคน — มันคือ<b>ตัวเลขหลายล้านตัว (น้ำหนัก)</b> ที่ถูกปรับจนคำนวณออกมาเป็นคำตอบที่ถูก หัวข้อนี้เริ่มจากโครงข่ายเล็กที่สุดที่ยังทำงานได้จริง: รับภาพลายมือขนาด 28×28 จุด แล้วทายว่าเป็นเลขอะไร — เราฝึกโครงข่ายนี้เองด้วยภาพจริง 60,000 ภาพ และทุกเส้นที่เห็นด้านล่างคือน้ำหนักจริงของมัน</p>
+      <div class="kpis">
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-target"></use></svg> ทายถูก (ภาพที่ไม่เคยเห็น)</div><div class="k-num">96.0<span class="u">%</span></div><div class="k-sub">วัดกับภาพทดสอบ MNIST ทั้งหมด 10,000 ภาพ</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> น้ำหนัก + ไบแอส</div><div class="k-num">13,002<span class="u">ตัว</span></div><div class="k-sub">784×16 + 16×16 + 16×10 เส้น และไบแอส 42 ตัว</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-layers"></use></svg> โครงสร้าง</div><div class="k-num">784→16→16→10</div><div class="k-sub">ขนาดเดียวกับตัวอย่างในคลิป 3Blue1Brown</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-bot"></use></svg> เทียบ GPT-2 small</div><div class="k-num">9,569<span class="u">เท่า</span></div><div class="k-sub">GPT-2 มีน้ำหนัก 124,412,160 ตัว (หัวข้อ 5–7 ใช้ตัวนี้)</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-pencil"></use></svg> วาดตัวเลข แล้วดูโครงข่ายคิด</h2><span class="tag">โมเดลจริง · คำนวณสดในเครื่องคุณ</span></div>
+        <p class="sub">วาดเลข 0–9 ในช่องสีดำ (หรือกด <b>สุ่มภาพจริง</b> จากชุดทดสอบ) — ภาพถูกย่อเป็น 784 จุด แล้วส่งผ่าน 3 ชั้น · <b style="color:var(--aih-pos)">เส้นสีฟ้า</b> = น้ำหนักบวก (ส่งเสริม) · <b style="color:var(--aih-neg)">เส้นสีส้มแดง</b> = น้ำหนักลบ (หักล้าง) · เส้นยิ่งสว่าง = ส่งสัญญาณแรงในภาพนี้ · วงกลมยิ่งสว่าง = นิวรอนทำงานแรง · ชี้ที่วงกลมเพื่อดูค่า</p>
+        <div class="aih-mount" id="aihNeural"><div class="state-msg">กำลังโหลดโครงข่ายจริง…</div></div>
+        <div class="src">ภาพฝึก/ทดสอบ: <a href="https://yann.lecun.com/exdb/mnist/" target="_blank" rel="noopener">MNIST — LeCun, Cortes &amp; Burges ↗</a> · ฝึกเอง 20 รอบ (18,740 ก้าว, ครั้งละ 64 ภาพ, Adam) ด้วยสคริปต์ JavaScript · แนวคิดภาพ: <a href="https://www.3blue1brown.com/topics/neural-networks" target="_blank" rel="noopener">3Blue1Brown — Neural Networks ↗</a> · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="grid2 equal">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-eye"></use></svg> นิวรอน 16 ตัวของชั้นแรก "มอง" อะไร</h2><span class="tag">น้ำหนักจริง 784 ตัว/นิวรอน</span></div>
+          <p class="sub">แต่ละช่องคือน้ำหนัก 784 ตัวของนิวรอนหนึ่งตัว จัดเรียงเป็นภาพ 28×28 · ฟ้า = อยากให้จุดนั้นมีหมึก · ส้มแดง = ไม่อยากให้มี · กดเลือกเพื่อดูการคำนวณทางขวา — สังเกตว่าไม่ได้ออกมาเป็น "เส้นขอบ" สวย ๆ อย่างที่หลายคนคาด (3Blue1Brown พบแบบเดียวกัน)</p>
+          <div class="aih-mount" id="aihNeuralW"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-calculator"></use></svg> นิวรอน 1 ตัว คำนวณอะไร</h2><span class="tag">a = ReLU(Σ w·x + b)</span></div>
+          <p class="sub">ภาพที่ป้อน × น้ำหนักของนิวรอน = คะแนนรายจุด แล้วบวกรวมทั้ง 784 จุด บวกไบแอส ถ้าติดลบให้เป็น 0 (ReLU) — แค่นี้เองคือ "นิวรอนเทียม"</p>
+          <div class="aih-mount" id="aihNeuralOne"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-learn" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-trending-down"></use></svg> AI เรียนรู้ยังไง (Backpropagation)</h2></div>
+      <p class="aih-lead">ตอนเริ่ม น้ำหนักทุกตัวเป็นเลขสุ่ม — โครงข่ายทายมั่วเกือบหมด การ "เรียนรู้" คือวนทำ 4 อย่างซ้ำเป็นหมื่นรอบ: <b>① ทาย → ② วัดว่าผิดแค่ไหน (loss) → ③ ไล่ย้อนหลังหาว่าน้ำหนักแต่ละตัวควรขยับทางไหน (backpropagation = กฎลูกโซ่ของแคลคูลัส) → ④ ขยับน้ำหนักทุกตัวนิดเดียวไปทางที่ผิดน้อยลง (gradient descent)</b> · สูตรคณิตเต็ม ๆ อยู่ที่หัวข้อ <a href="#pane-math-ai">คณิตศาสตร์ › AI &amp; แมชชีนเลิร์นนิง</a></p>
+      <div class="kpis">
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-repeat"></use></svg> รอบปรับน้ำหนัก</div><div class="k-num">18,740<span class="u">ก้าว</span></div><div class="k-sub">20 รอบข้อมูล × 937 ก้าว (ก้าวละ 64 ภาพ)</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-eye"></use></svg> ภาพที่ผ่านตา</div><div class="k-num">1.2<span class="u">ล้านภาพ</span></div><div class="k-sub">ภาพชุดเดิม 60,000 ภาพ วนซ้ำ 20 รอบ</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-trending-up"></use></svg> ความแม่นยำหลัง 3,200 ภาพ</div><div class="k-num">55<span class="u">%</span></div><div class="k-sub">จาก 15% (มั่ว) — เร็วมากในช่วงแรก</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-target"></use></svg> จบการฝึก</div><div class="k-num">96.0<span class="u">%</span></div><div class="k-sub">ภาพทดสอบ 10,000 ภาพ (ไม่เคยใช้ฝึก)</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-play"></use></svg> ดูโครงข่ายเรียนรู้สด ๆ</h2><span class="tag">ฝึกจริงในเบราว์เซอร์</span></div>
+        <p class="sub">โจทย์: แยกจุด<b style="color:var(--aih-pos)">ฟ้า</b>กับจุด<b style="color:var(--aih-neg)">ส้ม</b>ออกจากกัน โครงข่าย 2→8→8→1 เริ่มจากน้ำหนักสุ่ม กด <b>▶ ฝึก</b> แล้วดูว่า (ซ้าย) เส้นแบ่งเขตค่อย ๆ โค้งตามข้อมูล (กลาง) เส้นน้ำหนักเปลี่ยนสี/ความหนา และแต่ละนิวรอนค่อย ๆ เรียนรู้ "รูปแบบย่อย" ของตัวเอง (ขวา) ค่าความผิดพลาดลดลง · ลองโจทย์เกลียวที่ยากสุด หรือเร่งอัตราการเรียนรู้จนมันสั่นไม่ลงเอย</p>
+        <div class="aih-mount" id="aihPlay"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">อัลกอริทึม: backpropagation (<a href="https://www.nature.com/articles/323533a0" target="_blank" rel="noopener">Rumelhart, Hinton &amp; Williams 1986 ↗</a>) + ตัวปรับ Adam (<a href="https://arxiv.org/abs/1412.6980" target="_blank" rel="noopener">Kingma &amp; Ba 2015 ↗</a>) — เขียนใหม่ทั้งหมดใน JavaScript · แนวคิดหน้าจอจาก <a href="https://playground.tensorflow.org/" target="_blank" rel="noopener">TensorFlow Playground ↗</a></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-trending-up"></use></svg> บันทึกการฝึกจริงของโครงข่าย MNIST</h2><span class="tag">81 จุดบันทึก</span></div>
+          <p class="sub">ความแม่นยำบนภาพทดสอบ 2,000 ภาพแรก (ชุดที่ยากกว่าค่าเฉลี่ย) เทียบกับจำนวนภาพที่โครงข่ายเห็นไปแล้ว — แกนนอนเป็นสเกล log เพราะช่วงแรกเรียนเร็วมาก</p>
+          <div class="plot" id="aihLearnLog"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">ที่มา: บันทึกจากการฝึกโครงข่ายในหัวข้อ 1 (ข้อมูล MNIST)</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-hourglass"></use></svg> ย้อนดูคำทายระหว่างฝึก</h2><span class="tag">เลื่อนเวลา</span></div>
+          <p class="sub">ภาพทดสอบ 12 ภาพเดิม — เลื่อนแถบเพื่อดูว่า ณ แต่ละช่วงของการฝึก โครงข่ายทายว่าเป็นเลขอะไร (<b style="color:var(--green)">ถูก</b> / <b style="color:var(--red)">ผิด</b>) และมั่นใจกี่ %</p>
+          <div class="aih-mount" id="aihLearnWatch"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-token" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-scissors"></use></svg> Token: AI อ่านข้อความยังไง</h2></div>
+      <p class="aih-lead">โมเดลภาษาไม่ได้อ่านเป็นตัวอักษรหรือเป็นคำ แต่อ่านเป็น<b>"โทเคน"</b> — ชิ้นข้อความที่ถูกหั่นตามความถี่ที่พบในข้อมูลฝึก แต่ละชิ้นมีเลขประจำตัว เช่น <code>" world"</code> = 995 ในพจนานุกรมของ GPT-2 · ภาษาที่มีในข้อมูลฝึกน้อย (อย่างภาษาไทยในยุคแรก) จะถูกหั่นละเอียดจนเหลือระดับไบต์ ทำให้ใช้โทเคนเยอะกว่า = ช้ากว่าและเสียค่าใช้จ่ายมากกว่า</p>
+      <div class="kpis">
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-book-open"></use></svg> คลังโทเคน GPT-2 (2562)</div><div class="k-num">50,257</div><div class="k-sub">ชุดตัดคำ r50k_base</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-book-open"></use></svg> คลังโทเคน GPT-4o (2567)</div><div class="k-num" id="aihTokVocab">~200,000</div><div class="k-sub">ชุดตัดคำ o200k_base — ใหญ่ขึ้น ~4 เท่า</div></div>
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-scale"></use></svg> ประโยคไทยใช้โทเคน (GPT-2)</div><div class="k-num" id="aihTokRatio2">—</div><div class="k-sub" id="aihTokRatio2s">เทียบประโยคเดียวกันภาษาอังกฤษ · คำนวณสด</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-scale"></use></svg> ประโยคไทยใช้โทเคน (GPT-4o)</div><div class="k-num" id="aihTokRatio4">—</div><div class="k-sub" id="aihTokRatio4s">ชุดตัดคำใหม่เข้าใจภาษาไทยดีขึ้นมาก</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-scissors"></use></svg> พิมพ์ข้อความ แล้วดูว่าถูกหั่นยังไง</h2><span class="tag">ตัวตัดคำจริงของ OpenAI</span></div>
+        <p class="sub">แต่ละสีคือ 1 โทเคน (ชี้ดูเลขประจำตัว) · <b>·</b> = ช่องว่างที่ติดมากับโทเคน · กล่องมีเส้นประและป้าย <b>×2 ×3</b> = ตัวอักษรไทย 1 ตัวที่ต้องใช้หลายโทเคน (ถูกหั่นเป็นไบต์ UTF-8) · เทียบ 2 รุ่นพร้อมกัน</p>
+        <div class="aih-mount" id="aihTok"><div class="state-msg">กำลังโหลดตัวตัดคำ (~3 MB)…</div></div>
+        <div class="src">ตัวตัดคำ: ไลบรารี <a href="https://github.com/niieani/gpt-tokenizer" target="_blank" rel="noopener">gpt-tokenizer ↗</a> (ถอดจาก tiktoken ของ OpenAI) ชุด r50k_base (GPT-2/GPT-3) และ o200k_base (GPT-4o) · โหลดผ่าน jsDelivr · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-puzzle"></use></svg> โทเคนมาจากไหน: อัลกอริทึม BPE ทีละก้าว</h2><span class="tag">คำนวณสด</span></div>
+        <p class="sub">Byte Pair Encoding เริ่มจากตัวอักษรเดี่ยว แล้ว <b>หาคู่ที่อยู่ติดกันบ่อยที่สุดในคลังข้อความ → รวมเป็นโทเคนใหม่</b> ทำซ้ำไปเรื่อย ๆ จนได้คลังโทเคนตามขนาดที่ต้องการ · ตัวอย่างนี้ใช้คลังข้อความไทยเล็ก ๆ กด <b>รวมคู่ถัดไป</b> ทีละครั้ง (◌ = สระ/วรรณยุกต์ที่ยังไม่มีพยัญชนะให้เกาะ)</p>
+        <div class="aih-mount" id="aihBpe"></div>
+        <div class="src">อัลกอริทึม: <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">Sennrich, Haddow &amp; Birch (2016) — Subword Units ↗</a> · GPT-2 ใช้รุ่นระดับไบต์ (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener">Radford et al. 2019 ↗</a>)</div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-embed" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-compass"></use></svg> Embedding: คำกลายเป็นพิกัด</h2></div>
+      <p class="aih-lead">พอหั่นเป็นโทเคนแล้ว แต่ละโทเคนจะถูกแปลงเป็น<b>รายการตัวเลขยาว ๆ (เวกเตอร์)</b> เหมือนพิกัดในแผนที่ที่มีหลายร้อยมิติ คำที่ความหมายใกล้กันจะอยู่ใกล้กัน และที่น่าทึ่งคือ<b>"ทิศทาง"</b>ในแผนที่นี้มีความหมาย — ทิศจาก man ไป woman เกือบขนานกับทิศจาก king ไป queen จนเอาเวกเตอร์มาบวกลบกันได้ · ข้อมูลในหัวข้อนี้คือเวกเตอร์ GloVe จริง 300 มิติ ของคำ 225 คำ</p>
+      <div class="kpis">
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-crown"></use></svg> king − man + woman</div><div class="k-num">queen</div><div class="k-sub">คำที่ใกล้ที่สุด ความคล้าย (cosine) 0.69</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-map-pin"></use></svg> paris − france + thailand</div><div class="k-num">bangkok</div><div class="k-sub">ความคล้าย 0.75 — ความสัมพันธ์ "เมืองหลวงของ"</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-ruler"></use></svg> มิติของเวกเตอร์</div><div class="k-num">300<span class="u">มิติ</span></div><div class="k-sub">GloVe · GPT-2 ใช้ 768 · โมเดลใหญ่ใช้หลายพัน</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-book-open"></use></svg> ฝึกจากข้อความ</div><div class="k-num">6,000<span class="u">ล้านโทเคน</span></div><div class="k-sub">Wikipedia 2014 + Gigaword 5 · คลังคำ 400,000 คำ</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-map"></use></svg> แผนที่ความหมาย</h2><span class="tag">ย่อ 300 มิติ → 2 มิติ (PCA สด)</span></div>
+        <p class="sub">เลือกชุดคำ — ระบบจะหา 2 ทิศทางที่คำในชุดกระจายตัวมากที่สุด (PCA) แล้ววาดลงระนาบ · ลูกศรเชื่อมคู่ความสัมพันธ์เดียวกัน ถ้าลูกศรขนานกันแปลว่าโมเดลเก็บ "ความสัมพันธ์" เป็นทิศทางจริง · ชี้ที่คำเพื่อดูเพื่อนบ้านที่ใกล้ที่สุดใน 300 มิติ (ไม่ใช่แค่บนภาพ 2 มิติ)</p>
+        <div class="aih-mount" id="aihEmbedMap"><div class="state-msg">กำลังโหลดเวกเตอร์…</div></div>
+        <div class="src">เวกเตอร์: <a href="https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener">GloVe 6B 300d — Pennington, Socher &amp; Manning (2014) ↗</a> อ่านทีละแถวจากไฟล์ของ <a href="https://huggingface.co/sentence-transformers/average_word_embeddings_glove.6B.300d" target="_blank" rel="noopener">Hugging Face ↗</a> · การบวกลบเวกเตอร์คำ: <a href="https://arxiv.org/abs/1301.3781" target="_blank" rel="noopener">Mikolov et al. (2013) ↗</a> · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-calculator"></use></svg> เครื่องคิดเลขความหมาย</h2><span class="tag">A − B + C = ?</span></div>
+          <p class="sub">เอาเวกเตอร์มาบวกลบกันจริง ๆ ทั้ง 300 มิติ แล้วหาคำที่อยู่ใกล้ผลลัพธ์ที่สุด (ค้นในคลัง 225 คำของหน้านี้ ไม่นับ 3 คำที่ป้อน)</p>
+          <div class="aih-mount" id="aihEmbedCalc"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> คำ 1 คำ = ตัวเลข 300 ตัว</h2><span class="tag">เวกเตอร์จริง</span></div>
+          <p class="sub">แต่ละแถบคือตัวเลข 300 ตัวของคำหนึ่งคำ (ฟ้า = บวก · ส้ม = ลบ) — คำที่ความหมายใกล้กันมีลวดลายคล้ายกัน ตัวเลขทางขวาคือความคล้ายกับแถวแรก</p>
+          <div class="aih-mount" id="aihEmbedStrip"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-attn" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-eye"></use></svg> Attention: คำไหนสนใจคำไหน</h2></div>
+      <p class="aih-lead">เวกเตอร์ของแต่ละคำตอนเริ่มยังไม่รู้บริบท — คำว่า "it" ยังไม่รู้ว่าหมายถึงอะไร กลไก <b>Attention</b> (หัวใจของสถาปัตยกรรม Transformer) ให้ทุกคำ "ถาม" (Query) และทุกคำ "ประกาศตัว" (Key) ถ้าตรงกันก็ดึงข้อมูล (Value) ของอีกคำมาผสม · GPT-2 small มีกลไกนี้ <b>12 ชั้น × 12 หัว = 144 หัว</b> แต่ละหัวถนัดความสัมพันธ์คนละแบบ — ทุกเส้นด้านล่างคือค่าจริงที่คำนวณจาก GPT-2</p>
+      <div class="kpis">
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-layers"></use></svg> หัว attention</div><div class="k-num">144<span class="u">หัว</span></div><div class="k-sub">12 ชั้น × 12 หัว · หัวละ 64 มิติ</div></div>
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-link"></use></svg> "it" → "animal" (หัว 4.3)</div><div class="k-num">85<span class="u">%</span></div><div class="k-sub">น้ำหนักความสนใจของ it ที่ส่งไปคำว่า animal</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-footprints"></use></svg> หัว 4.11 มองคำก่อนหน้า</div><div class="k-num">99.9<span class="u">%</span></div><div class="k-sub">แทบทั้งหมดส่งไปที่คำติดกันทางซ้าย</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-repeat"></use></svg> หัว 5.5 "ลอกแบบ" (induction)</div><div class="k-num">50<span class="u">%</span></div><div class="k-sub">ในประโยคซ้ำ มองไปที่คำที่เคยตามมาครั้งก่อน</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-eye"></use></svg> ดูเส้นความสนใจของ GPT-2 จริง</h2><span class="tag">เลือกชั้น &amp; หัว</span></div>
+        <p class="sub">เลือกประโยค แล้วเลือกชั้น (0–11) กับหัว (0–11) หรือกดปุ่ม <b>หัวเด่น</b> · ซ้าย = คำที่ "มองจาก" · ขวา = คำที่ "ถูกมอง" · เส้นยิ่งหนา = สนใจมาก · ชี้ที่คำทางซ้ายเพื่อดูเฉพาะเส้นของคำนั้น · GPT-2 มองได้แค่คำก่อนหน้า (ห้ามแอบดูอนาคต) ตารางจึงเป็นสามเหลี่ยม · หลายหัวทุ่มความสนใจไว้ที่คำแรกเป็น "ที่พัก" เมื่อไม่มีอะไรน่าดู</p>
+        <div class="aih-mount" id="aihAttn"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">ค่าจริงจาก GPT-2 small (<a href="https://huggingface.co/openai-community/gpt2" target="_blank" rel="noopener">openai-community/gpt2 ↗</a>) คำนวณด้วย forward pass ที่เขียนเองใน JavaScript · กลไก: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Vaswani et al. (2017) Attention Is All You Need ↗</a> · หัวมองคำก่อนหน้า 4.11 และหัว induction 5.5 ตรงกับที่ <a href="https://arxiv.org/abs/2211.00593" target="_blank" rel="noopener">Wang et al. (2022) ↗</a> และ <a href="https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html" target="_blank" rel="noopener">Olsson et al. (2022) ↗</a> รายงานไว้ · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> ทั้ง 144 หัวในภาพเดียว</h2><span class="tag">กดเพื่อเลือก</span></div>
+        <p class="sub">ช่องละ 1 หัว (แถว = ชั้น 0→11 · คอลัมน์ = หัว 0→11) แต่ละช่องคือตารางความสนใจของประโยคที่เลือก · ลายเส้นทแยงชิดขอบ = มองคำก่อนหน้า · แถบแนวตั้งซ้ายสุด = พักที่คำแรก · ลายทแยงเยื้อง (ในประโยคซ้ำ) = induction head</p>
+        <div class="aih-mount" id="aihAttnGrid"></div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-mlp" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-brain"></use></svg> MLP: AI จำข้อเท็จจริงยังไง</h2></div>
+      <p class="aih-lead">ถ้าพิมพ์ <code>Michael Jordan plays the sport of</code> แล้ว GPT-2 ตอบ <b>basketball</b> — ความรู้ว่า "จอร์แดนเล่นบาส" ต้องถูกเก็บไว้ที่ไหนสักแห่งในน้ำหนัก 124 ล้านตัว งานวิจัยชี้ว่าส่วนใหญ่อยู่ใน <b>MLP</b> (ชั้นนิวรอนธรรมดาแบบหัวข้อ 1 ที่คั่นระหว่าง attention ทุกชั้น) ซึ่งกินพารามิเตอร์ราว 2 ใน 3 ของโมเดล · หัวข้อนี้<b>ทดลองจริงกับ GPT-2</b> เพื่อหาว่าความรู้นี้อยู่ตรงไหน</p>
+      <div class="kpis">
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-trophy"></use></svg> P(basketball) — Michael Jordan</div><div class="k-num">13.5<span class="u">%</span></div><div class="k-sub">อันดับ 1 จาก 50,257 คำ</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-user"></use></svg> P(basketball) — Michael Smith</div><div class="k-num">3.0<span class="u">%</span></div><div class="k-sub">ชื่อคนทั่วไป → โมเดลเดา football แทน</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-network"></use></svg> นิวรอน MLP ทั้งโมเดล</div><div class="k-num">36,864<span class="u">ตัว</span></div><div class="k-sub">3,072 ตัว/ชั้น × 12 ชั้น</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-scale"></use></svg> สัดส่วนพารามิเตอร์ใน MLP</div><div class="k-num">66.6<span class="u">%</span></div><div class="k-sub">56.7 ล้าน จาก 85.0 ล้าน (ไม่นับตาราง embedding)</div></div>
+      </div>
+      <div class="card full aih-dark-card">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-sparkles"></use></svg> ภายในชั้น MLP ขณะคิดถึง "<span id="aihMlpName">Michael Jordan</span>"</h2><span class="tag">น้ำหนัก &amp; ค่ากระตุ้นจริง</span></div>
+        <p class="sub">ภาพแบบในคลิป 3Blue1Brown แต่เป็นตัวเลขจริงของ GPT-2: <b>ซ้าย</b> = 8 มิติของเวกเตอร์ขาเข้าที่ส่งแรงสุด · <b>กลาง</b> = 16 นิวรอน (จาก 3,072) ที่ดันคำตอบไปทางกีฬาเป้าหมายแรงสุดในชั้นนั้น · <b>ขวา</b> = กีฬา 7 ชนิดพร้อมความน่าจะเป็นจริง · เส้นซ้ายไปกลาง = น้ำหนัก × ค่าขาเข้า · เส้นกลางไปขวา = นิวรอนนั้นดันกีฬาไหนขึ้น (ฟ้า) หรือกดลง (ส้ม) เทียบกับกีฬาอื่น · กด <b>▶ ส่งสัญญาณ</b></p>
+        <div class="aih-mount" id="aihMlpNet"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">ค่าจริงจาก GPT-2 small ที่ตำแหน่งคำสุดท้าย (" of") · เลือกชั้นที่ MLP ดันกีฬาเป้าหมายแรงสุดแบบอัตโนมัติ · แนวคิดภาพ: <a href="https://www.3blue1brown.com/lessons/mlp" target="_blank" rel="noopener">3Blue1Brown — How might LLMs store facts ↗</a> · MLP เป็นหน่วยความจำแบบ key-value: <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">Geva et al. (2021) ↗</a></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-flask-conical"></use></svg> ทดลองแบบนักวิจัย: สลับชิ้นส่วนสมองของ Jordan กับ Smith</h2><span class="tag">Activation patching</span></div>
+        <p class="sub">รันประโยค Jordan ตามปกติ แต่<b>สลับผลลัพธ์ของชั้นเดียว</b>ให้เป็นค่าที่ได้จากประโยค Smith แล้วดูว่า P(basketball) ตกลงแค่ไหน — ถ้าตกมาก แปลว่าชิ้นนั้นเก็บความรู้ "จอร์แดน = บาส" ไว้ · ผลจริง: <b>MLP ชั้นต้น–กลางที่ตำแหน่งคำว่า Jordan</b> สำคัญ (สลับชั้น 0–4 พร้อมกันเหลือ 4.3% เกือบเท่า Smith) ส่วน <b>attention ชั้น 9–11 ที่คำสุดท้าย</b>เป็นตัวขนความรู้นั้นมาที่ตำแหน่งตอบ</p>
+        <div class="aih-mount" id="aihMlpPatch"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">วิธีทดลองตามแนว <a href="https://arxiv.org/abs/2202.05262" target="_blank" rel="noopener">Meng et al. (2022) ROME — Locating and Editing Factual Associations in GPT ↗</a> และ <a href="https://arxiv.org/abs/2304.14767" target="_blank" rel="noopener">Geva et al. (2023) Dissecting Recall of Factual Associations ↗</a> · ทำซ้ำเองกับ GPT-2 small · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="grid2 equal">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-trending-up"></use></svg> คำตอบก่อตัวทีละชั้น (logit lens)</h2><span class="tag">อันดับของคำตอบ</span></div>
+          <p class="sub">แอบถอดความคิดของโมเดลหลังแต่ละชั้นออกมาเป็นคำ — คำตอบที่ถูกไต่อันดับจากหลักหมื่นขึ้นมาอันดับ 1 ราวชั้น 9 (Michael Smith ไม่เคยขึ้นถึงอันดับ 1)</p>
+          <div class="plot" id="aihMlpLens"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">เทคนิค: <a href="https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens" target="_blank" rel="noopener">nostalgebraist (2020) — the logit lens ↗</a></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-chart-column"></use></svg> แต่ละชั้นดันคำตอบเท่าไร (ที่คำสุดท้าย)</h2><span class="tag">เทียบกับกีฬาอื่น</span></div>
+          <p class="sub">แยกคะแนน "กีฬาเป้าหมาย − ค่าเฉลี่ยกีฬาอื่น" ออกเป็นส่วนที่แต่ละชั้นเขียนลงเวกเตอร์ของคำสุดท้าย (แยกได้พอดีเพราะทุกชั้นเขียนแบบบวกทบ) · <span class="aih-sel" id="aihMlpDlaSel"></span></p>
+          <div class="plot" id="aihMlpDla"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+          <div class="src">วิธีแยกส่วน: direct logit attribution ผ่าน LayerNorm สุดท้าย (คำนวณเองจากน้ำหนักจริง)</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-next" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-shuffle"></use></svg> ทำนายคำถัดไป &amp; ความสุ่ม</h2></div>
+      <p class="aih-lead">ทั้งหมดที่ผ่านมา (โทเคน → เวกเตอร์ → attention + MLP 12 รอบ) จบลงที่งานเดียว: <b>ให้คะแนนโทเคนทุกตัวในคลัง 50,257 ตัว ว่าน่าจะเป็นตัวถัดไปแค่ไหน</b> แล้วเลือกมา 1 ตัว ต่อท้ายข้อความ แล้ววนทำใหม่ทั้งหมด — แชตบอตทุกตัวเขียนคำตอบด้วยวิธีนี้ทีละโทเคน · <b>Temperature</b> คือปุ่มปรับว่าจะเลือกแบบเซฟ (ต่ำ) หรือแบบกล้าเสี่ยง (สูง)</p>
+      <div class="kpis">
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-book-open"></use></svg> ตัวเลือกทุกก้าว</div><div class="k-num">50,257<span class="u">โทเคน</span></div><div class="k-sub">ทุกตัวได้ความน่าจะเป็นเสมอ แม้จะน้อยมาก</div></div>
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-thermometer"></use></svg> ความน่าจะเป็นคำแรก</div><div class="k-num" id="aihNextTop">—</div><div class="k-sub" id="aihNextTopS">ที่ temperature ปัจจุบัน</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-shuffle"></use></svg> ความไม่แน่นอน (entropy)</div><div class="k-num" id="aihNextEnt">—</div><div class="k-sub">เทียบเท่า "สุ่มจากกี่คำที่โอกาสเท่ากัน" (perplexity จากคลังเต็ม)</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-flag"></use></svg> Tiger Woods plays the sport of</div><div class="k-num">golf<span class="u">61.5%</span></div><div class="k-sub">ตัวอย่างที่โมเดลมั่นใจมาก (T = 1)</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> ปรับ temperature แล้วสุ่มคำถัดไป</h2><span class="tag">logits จริงของ GPT-2</span></div>
+        <p class="sub">แท่ง = ความน่าจะเป็นของโทเคนถัดไป คำนวณจากคะแนนดิบ (logit) จริงของ GPT-2 หารด้วย temperature แล้วทำ softmax บนคลังเต็ม 50,257 ตัว (ใช้ค่ารวมทั้งคลังที่คำนวณไว้ล่วงหน้า จึงแม่นยำทุกค่า T) · <b>Top-p</b> = ตัดหางออก เก็บเฉพาะคำที่รวมความน่าจะเป็นถึง p · กด <b>สุ่ม</b> เพื่อทอยจริง หรือ <b>สุ่ม 200 ครั้ง</b> เพื่อดูว่าผลออกตามแท่งไหม</p>
+        <div class="aih-mount" id="aihNext"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">ค่าจริงจาก GPT-2 small · การสุ่มแบบ top-p (nucleus): <a href="https://arxiv.org/abs/1904.09751" target="_blank" rel="noopener">Holtzman et al. (2020) ↗</a> · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-pencil"></use></svg> เขียนทีละโทเคน (autoregressive)</h2><span class="tag">14 ก้าวจริง</span></div>
+        <p class="sub">เริ่มจาก <code>Once upon a time, there was a</code> แล้วให้ GPT-2 ต่อทีละโทเคน · <b>แบบเลือกตัวที่ชัวร์สุดเสมอ (T→0)</b> มักวนซ้ำจืด ๆ · <b>แบบสุ่มที่ T = 0.9</b> หลากหลายกว่าแต่บางทีก็หลุดเรื่อง — กดเล่นหรือเลื่อนดูทีละก้าว พร้อมตัวเลือก 8 อันดับแรกของแต่ละก้าว</p>
+        <div class="aih-mount" id="aihChain"></div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-train" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-graduation-cap"></use></svg> ฝึก ChatGPT 3 ขั้น</h2></div>
+      <p class="aih-lead">GPT-2 ในหัวข้อก่อน ๆ คือโมเดล<b>ขั้นที่ 1</b> — เก่งการต่อข้อความให้เหมือนข้อความบนเว็บ แต่ไม่ได้ถูกสอนให้ "ตอบคำถาม" หรือ "ช่วยเหลือ" ผู้ช่วยอย่าง ChatGPT/Claude ต้องผ่านอีก 2 ขั้น ลองดูคำตอบจริงของ GPT-2 ด้านล่าง แล้วจะเข้าใจว่าทำไมขั้น 2–3 ถึงจำเป็น</p>
+      <div class="kpis">
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-book-open"></use></svg> ขั้น 1 · GPT-3 อ่านข้อความ</div><div class="k-num">300<span class="u">พันล้านโทเคน</span></div><div class="k-sub">Brown et al. 2020 · Llama 3 (2567) ใช้ 15 ล้านล้าน</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-pencil"></use></svg> ขั้น 2 · ตัวอย่างที่คนเขียน</div><div class="k-num">~13,000<span class="u">คำถาม</span></div><div class="k-sub">ชุด SFT ของ InstructGPT</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-scale"></use></svg> ขั้น 3 · คนจัดอันดับคำตอบ</div><div class="k-num">~33,000<span class="u">คำถาม</span></div><div class="k-sub">ใช้ฝึก reward model · PPO อีก ~31,000</div></div>
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-trophy"></use></svg> ผลของขั้น 2–3</div><div class="k-num">1.3B &gt; 175B</div><div class="k-sub">คนชอบคำตอบ InstructGPT 1.3B มากกว่า GPT-3 ที่ใหญ่กว่า 100 เท่า</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-graduation-cap"></use></svg> เส้นทางจากโมเดลดิบสู่ผู้ช่วย AI</h2><span class="tag">กดแต่ละขั้น</span></div>
+        <div class="aih-mount" id="aihTrainFlow"></div>
+        <div class="src">ตัวเลขขั้น 2–3: <a href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener">Ouyang et al. (2022) — Training language models to follow instructions with human feedback (InstructGPT) ↗</a> · ขั้น 1: <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">Brown et al. (2020) GPT-3 ↗</a> · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-bot"></use></svg> โมเดลขั้น 1 ตอบยังไง — คำตอบจริงของ GPT-2</h2><span class="tag">ไม่ได้แต่ง</span></div>
+        <p class="sub">ป้อนคำถามให้ GPT-2 แล้วให้มันต่อข้อความ (เลือกโทเคนที่น่าจะเป็นสุดทุกก้าว) — มันไม่ได้ "ตอบ" แต่ "ต่อข้อความให้ดูเหมือนเว็บ" จึงมั่ว วนซ้ำ หรือแต่งคำถามต่อเอง · ตัวเลขใต้แต่ละข้อคือ 5 ตัวเลือกแรกของโทเคนแรกที่ตอบ</p>
+        <div class="aih-mount" id="aihTrainBase"><div class="state-msg">กำลังโหลด…</div></div>
+        <div class="src">ค่าจริงจาก GPT-2 small (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener">Radford et al. 2019 ↗</a>) — ฝึกด้วยข้อความเว็บ WebText ราว 40 GB ถึงปี 2560 ไม่เคยผ่านขั้น 2–3</div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-trending-up"></use></svg> ข้อมูลฝึกขั้นที่ 1 โตเร็วแค่ไหน</h2><span class="tag">จำนวนโทเคน · สเกล log</span></div>
+        <p class="sub">ปริมาณข้อความที่ใช้ฝึกโมเดลภาษาขนาดใหญ่ตามที่เปิดเผยในรายงานของแต่ละรุ่น — 5 ปีเพิ่มขึ้นราว 50 เท่า</p>
+        <div class="plot" id="aihTrainData"><div class="state-msg">กำลังวาดกราฟ…</div></div>
+        <div class="src">ที่มา: <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">GPT-3 (Brown et al. 2020) ↗</a> · <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener">Chinchilla (Hoffmann et al. 2022) ↗</a> · <a href="https://arxiv.org/abs/2302.13971" target="_blank" rel="noopener">LLaMA (Touvron et al. 2023) ↗</a> · <a href="https://arxiv.org/abs/2307.09288" target="_blank" rel="noopener">Llama 2 (2023) ↗</a> · <a href="https://ai.meta.com/blog/meta-llama-3/" target="_blank" rel="noopener">Meta Llama 3 (2024) ↗</a> · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-diffusion" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-sparkles"></use></svg> AI สร้างภาพ (Diffusion)</h2></div>
+      <p class="aih-lead">AI สร้างภาพอย่าง Stable Diffusion, Midjourney หรือ DALL·E 3 ทำงานกลับด้านกับการทำภาพเสีย: ตอนฝึก เอาภาพจริงมา<b>โรยสัญญาณรบกวนทีละนิด</b>จนเหลือแต่ความเละ แล้วฝึกโมเดลให้<b>ทายว่าสัญญาณรบกวนที่โรยไปคืออะไร</b> · ตอนสร้าง เริ่มจากความเละล้วน ๆ แล้วให้โมเดลค่อย ๆ ลบสัญญาณรบกวนออกทีละก้าวจนเกิดภาพใหม่ที่ไม่เคยมีมาก่อน — ด้านล่างคือ<b>โมเดล diffusion จิ๋วที่เราฝึกเอง</b> สร้างจุดให้เรียงเป็นคำว่า "AI"</p>
+      <div class="kpis">
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-footprints"></use></svg> ก้าวลบสัญญาณรบกวน</div><div class="k-num">50<span class="u">ก้าว</span></div><div class="k-sub">งานต้นฉบับ DDPM (2020) ใช้ 1,000 ก้าว</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-sliders-horizontal"></use></svg> ขนาดโมเดลจิ๋ว</div><div class="k-num">23,714<span class="u">น้ำหนัก</span></div><div class="k-sub">MLP 3 ชั้น ชั้นละ 96 นิวรอน</div></div>
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-target"></use></svg> จุดที่สร้างแล้วตกบนตัวอักษร</div><div class="k-num">98.3<span class="u">%</span></div><div class="k-sub">ทดสอบ 1,000 จุด (ห่างเส้นไม่เกิน 4% ของกรอบ)</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-monitor"></use></svg> Stable Diffusion ทำงานบน</div><div class="k-num">64×64<span class="u">ช่อง</span></div><div class="k-sub">ย่อภาพ 512×512 ลง 8 เท่าก่อน (latent) แล้วค่อยขยายกลับ</div></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-sparkles"></use></svg> สร้างจากความเละ — โมเดลจริงคำนวณสดทีละก้าว</h2><span class="tag">DDPM · 700 จุด</span></div>
+        <p class="sub">กด <b>▶ สร้างใหม่</b> — จุด 700 จุดเริ่มกระจายมั่วแบบสุ่ม (ก้าว 50) แล้วทุกก้าวโมเดลจะทายสัญญาณรบกวนของแต่ละจุดและลบออกนิดหนึ่ง (บวกความสุ่มกลับเล็กน้อยตามสูตร DDPM) จนถึงก้าว 0 · เปิด <b>ลูกศร</b> เพื่อดูว่า ณ ก้าวนั้นโมเดล "ผลัก" จุดตรงไหนไปทางไหน · ทุกครั้งได้ผลไม่ซ้ำ แต่เป็นรูป "AI" เสมอ</p>
+        <div class="aih-mount" id="aihDiff"><div class="state-msg">กำลังโหลดโมเดล…</div></div>
+        <div class="src">อัลกอริทึม: <a href="https://arxiv.org/abs/2006.11239" target="_blank" rel="noopener">Ho, Jain &amp; Abbeel (2020) DDPM ↗</a> · ตารางสัญญาณรบกวนแบบ cosine: <a href="https://arxiv.org/abs/2102.09672" target="_blank" rel="noopener">Nichol &amp; Dhariwal (2021) ↗</a> · ฝึกเอง 16,000 ก้าว (ก้าวละ 128 จุด) ด้วยสคริปต์ JavaScript</div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-camera"></use></svg> ขาไป: โรยสัญญาณรบกวนลงภาพ</h2><span class="tag">สูตรเดียวกับตอนฝึก</span></div>
+          <p class="sub">เลื่อนแถบก้าว t: ภาพ = √ᾱₜ × ภาพจริง + √(1−ᾱₜ) × สัญญาณรบกวน — ถึงก้าว 50 ภาพหายไปหมด นี่คือสิ่งที่โมเดลต้องเรียนรู้ที่จะ "ย้อนกลับ"</p>
+          <div class="aih-mount" id="aihDiffFwd"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-layers"></use></svg> ของจริงต่างจากตัวจิ๋วตรงไหน</h2><span class="tag">ภาพรวม</span></div>
+          <div class="aih-mount" id="aihDiffReal"></div>
+          <div class="src">Latent diffusion: <a href="https://arxiv.org/abs/2112.10752" target="_blank" rel="noopener">Rombach et al. (2022) ↗</a> · สั่งด้วยข้อความผ่านตัวเข้ารหัสภาพ–ข้อความ: <a href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener">CLIP (Radford et al. 2021) ↗</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabpane" id="pane-ai-limits" role="tabpanel">
+      <div class="ph-head"><span class="ph-crumb">หลักการทำงาน AI</span><h2 class="ph-title"><svg class="mdico"><use href="#i-shield-alert"></use></svg> ข้อจำกัด &amp; AI ยุคใหม่</h2></div>
+      <p class="aih-lead">เพราะโมเดลภาษาถูกฝึกให้<b>"ต่อข้อความให้น่าเชื่อ"</b> ไม่ใช่ "พูดแต่ความจริง" มันจึงแต่งเรื่องได้อย่างมั่นใจ (hallucination) และรู้แค่ถึงวันที่เก็บข้อมูลฝึก · AI ยุคใหม่แก้ด้วย 2 วิธีหลัก: <b>RAG</b> — ค้นเอกสารจริงมาแปะให้อ่านก่อนตอบ และ <b>Agent</b> — ให้ AI เรียกใช้เครื่องมือ (ค้นเว็บ รันโค้ด เครื่องคิดเลข) เองเป็นวงรอบ · ทุกตัวอย่างด้านล่างคือผลจริงจาก GPT-2</p>
+      <div class="kpis">
+        <div class="kpi accent"><div class="k-top"><svg class="mdico"><use href="#i-rocket"></use></svg> "คนแรกที่เดินบนดาวอังคาร"</div><div class="k-num">Neil<span class="u">11%</span></div><div class="k-sub">ยังไม่มีมนุษย์คนไหนไปดาวอังคาร — แต่โมเดลตอบชื่อทันที</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-calendar"></use></svg> นายกฯ ไทยในความรู้ GPT-2</div><div class="k-num">Ying…<span class="u">45.5%</span></div><div class="k-sub">ความรู้หยุดที่ข้อมูลฝึกราวปี 2560</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-file-text"></use></svg> แปะข่าว 1 บรรทัด (RAG)</div><div class="k-num">An…<span class="u">17.7%</span></div><div class="k-sub">จาก 0.19% → ขึ้นอันดับ 1 · "Ying" เหลือ 0.59%</div></div>
+        <div class="kpi"><div class="k-top"><svg class="mdico"><use href="#i-calculator"></use></svg> ถาม 2+2 (โมเดลดิบ)</div><div class="k-num">"2"<span class="u">21.7%</span></div><div class="k-sub">คำตอบ "4" ไม่ติด 8 อันดับแรกด้วยซ้ำ</div></div>
+      </div>
+      <div class="grid2 equal">
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-triangle-alert"></use></svg> หลอน: ตอบอย่างมั่นใจแม้ไม่มีคำตอบ</h2><span class="tag">ผลจริง GPT-2</span></div>
+          <div class="aih-mount" id="aihLimMars"><div class="state-msg">กำลังโหลด…</div></div>
+          <div class="src">สำรวจปรากฏการณ์หลอน: <a href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener">Ji et al. (2023) Survey of Hallucination in NLG ↗</a></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2><svg class="mdico"><use href="#i-search"></use></svg> ความรู้หมดอายุ → แก้ด้วย RAG</h2><span class="tag">ผลจริง GPT-2</span></div>
+          <div class="aih-mount" id="aihLimRag"></div>
+          <div class="src">RAG: <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">Lewis et al. (2020) Retrieval-Augmented Generation ↗</a> · ข้อมูลนายกรัฐมนตรี: ครม. คณะที่ 66 (อนุทิน ชาญวีรกูล) · สืบค้นเมื่อ 30 ก.ย. 2569</div>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-refresh-cw"></use></svg> Agent: AI ที่คิด-ลงมือ-ดูผล เป็นวงรอบ</h2><span class="tag">กด ▶ ดูทีละขั้น</span></div>
+        <p class="sub">แทนที่จะตอบจากความจำอย่างเดียว agent จะ<b>คิดว่าต้องรู้อะไรเพิ่ม → เรียกเครื่องมือ → อ่านผล → คิดต่อ</b> จนได้คำตอบ ตัวอย่างนี้เป็นภาพจำลองขั้นตอน (ไม่ได้เรียกเครื่องมือจริง) เพื่อให้เห็นลำดับการทำงาน</p>
+        <div class="aih-mount" id="aihLimAgent"></div>
+        <div class="src">แนวคิดคิดสลับลงมือ: <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">Yao et al. (2023) ReAct ↗</a> · การเรียกใช้เครื่องมือ: <a href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noopener">Schick et al. (2023) Toolformer ↗</a></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h2><svg class="mdico"><use href="#i-circle-check"></use></svg> ใช้ AI ให้ปลอดภัย: 5 ข้อที่ได้จากการเห็นกลไกจริง</h2><span class="tag">สรุป</span></div>
+        <div class="aih-tips">
+          <div><b>1 · มันทายคำ ไม่ได้ค้นความจริง</b><span>ความมั่นใจสูงไม่ได้แปลว่าถูก (หัวข้อ 7, 10) — ข้อเท็จจริงสำคัญให้ตรวจกับแหล่งต้นทางเสมอ</span></div>
+          <div><b>2 · ความรู้มีวันหมดอายุ</b><span>ถามเรื่องล่าสุดให้เลือกโหมดที่ค้นเว็บได้ หรือแปะเอกสารให้อ่าน (RAG)</span></div>
+          <div><b>3 · ภาษาไทยกินโทเคนมากกว่า</b><span>ข้อความยาวเท่ากันใช้ทรัพยากรมากกว่าภาษาอังกฤษ (หัวข้อ 3) — โมเดลรุ่นใหม่ดีขึ้นมากแล้ว</span></div>
+          <div><b>4 · ให้บริบทชัด ได้คำตอบดีกว่า</b><span>attention ดึงข้อมูลจากสิ่งที่อยู่ในข้อความ (หัวข้อ 5, 10) — ยิ่งให้รายละเอียดตรงประเด็น ยิ่งแม่น</span></div>
+          <div><b>5 · ขอให้อ้างอิงและตรวจซ้ำ</b><span>ให้ AI บอกที่มา แล้วเปิดดูจริง โดยเฉพาะเรื่องสุขภาพ กฎหมาย และการเงิน</span></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ธรรมาภิบาล · ดัชนีคอร์รัปชัน ============ -->
     <section class="tabpane" id="pane-gov-cpi" role="tabpanel">
       <div class="ph-head"><span class="ph-crumb">ธรรมาภิบาล &amp; การเมือง</span><h2 class="ph-title"><svg class="mdico"><use href="#i-user-search"></use></svg> ดัชนีคอร์รัปชัน (CPI)</h2></div>
@@ -17064,7 +17359,28 @@ html.v21-nofx .en-chip,html.v21-nofx .tl-btn{transition:none !important}
       tsuLoad();
     }
 
-    function renderAll(){ renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderDrift(); renderTsunami(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
+    /* ===== หมวด "หลักการทำงาน AI" (pane-ai-*) =====
+       เอนจิน ai-how.js / ai-how-2.js / ai-how-3.js (window.AIH) + ข้อมูลจริง ai-how-data.js (~500 KB)
+       โหลดครั้งเดียวตอนเปิดหมวดนี้ครั้งแรก · หลังจากนั้น AIH.renderAll() วาดเฉพาะแผงที่เปิดอยู่
+       และหยุดอนิเมชันของแผงที่ปิดไปแล้วเอง */
+    var aih = { loading:false, err:null };
+    function renderAiHowAll(){
+      if(window.AIH && window.AIH.ready){ window.AIH.renderAll(); return; }
+      if(aih.loading || aih.err) return;
+      var on = $$('.tabpane[id^="pane-ai-"]').some(function(p){ return p.classList.contains("active"); });
+      if(!on) return;
+      aih.loading = true;
+      loadScriptOnce("ai-how-data.js")
+        .then(function(){ return loadScriptOnce("ai-how.js"); })
+        .then(function(){ return Promise.all([loadScriptOnce("ai-how-2.js"), loadScriptOnce("ai-how-3.js")]); })
+        .then(function(){ aih.loading = false; window.AIH.ready = true; window.AIH.renderAll(); })
+        .catch(function(e){
+          aih.loading = false; aih.err = e;
+          $$('.tabpane[id^="pane-ai-"] .aih-mount').forEach(function(m){ m.innerHTML = '<div class="state-msg">โหลดส่วนนี้ไม่สำเร็จ: '+(e && e.message ? e.message : e)+' — ลองรีเฟรชหน้า</div>'; });
+        });
+    }
+
+    function renderAll(){ renderAiHowAll(); renderGistempMap(); renderCo2Year(); renderTemp(); renderDis(); renderCo2Ppm(); renderEarthIndex(); renderCo2Timelapse(); renderSeaLevel(); renderRisk(); renderArctic(); renderIceMass(); renderHeatField(); renderHotDays(); renderPmField(); renderPm25(); renderAseanAll(); renderFinanceAll(); renderEnergyAll(); renderBkkAll(); renderGpoAll(); renderTeAll(); renderEduAll(); renderFloodBiv(); renderWorldOcean(); renderThcAll(); renderQuake(); renderDrift(); renderTsunami(); renderEnsoBlock(); renderFiscalAll(); renderPopAll(); renderHealthAll(); renderIneqAll(); renderDigitalAll(); renderGovAll(); renderAgriAll(); renderTransAll(); renderMathAll(); renderMathEduAll(); renderSolarAll(); afterPaint(zoomifyMaps); }
 
     /* ===== คลิกประเทศ/จังหวัดบนแผนที่ → บินเข้าไปหา (ไอเดียจาก past-election-map.elect.in.th) =====
        แผนที่ในหน้านี้เป็น Plot.geo ล้วน ๆ ไม่มีสถานะ "เลือกอยู่" ให้ยึด จึงจับที่ตัวรูปโดยตรง:
