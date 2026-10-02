@@ -1,4 +1,4 @@
-# ews-relay-task.ps1 — ตั้งเวลาให้ Windows รัน scripts/ews-relay.js ทุก 15 นาที (ธงเตือนภัยกรมทรัพยากรน้ำ → เว็บจริง)
+﻿# ews-relay-task.ps1 — ตั้งเวลาให้ Windows รัน scripts/ews-relay.js ทุก 15 นาที (ธงเตือนภัยกรมทรัพยากรน้ำ → เว็บจริง)
 #
 #   ติดตั้ง:  powershell -ExecutionPolicy Bypass -File scripts\ews-relay-task.ps1
 #   ถอนออก:  powershell -ExecutionPolicy Bypass -File scripts\ews-relay-task.ps1 -Remove
