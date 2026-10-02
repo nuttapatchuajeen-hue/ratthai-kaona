@@ -3298,6 +3298,7 @@
 <script src="bkk-port3d.js"></script>
 <script src="bkk-bus3d.js"></script>
 <script src="bkk-flood.js"></script>
+<script src="bkk-rivers.js"></script>
 <script src="bkk-fuel.js"></script>
 <script src="bkk-dam.js"></script>
 <script src="bkk-warn.js"></script>
@@ -5232,6 +5233,7 @@
       map.on("click", "shops-cluster", function (e) {
         var f = e.features && e.features[0];
         if (!f) return;
+        if (window.BKK_CCTV && window.BKK_CCTV.hit(e.point)) return;   // หมุดกล้อง CCTV อยู่บนสุด — ให้ชั้นกล้องจัดการ
         var center = f.geometry.coordinates.slice();
         Promise.resolve(map.getSource("shops-src").getClusterExpansionZoom(f.properties.cluster_id))
           .then(function (z) { safeEase(map, { center: center, zoom: Math.min(z + 0.4, 15), duration: 900 }); })
@@ -5240,6 +5242,7 @@
       map.on("click", "shops-point", function (e) {
         var f = e.features && e.features[0];
         if (!f) return;
+        if (window.BKK_CCTV && window.BKK_CCTV.hit(e.point)) return;
         var idx = f.properties.i;
         var p = window.BKK_BRANDS.places[idx];
         if (!p) return;
@@ -6295,6 +6298,8 @@
     if (shopLayerHit(e.point)) return;
     // กดหมุด/วงกลุ่มกล้อง CCTV — ให้ชั้นกล้องจัดการเอง
     if (window.BKK_CCTV && window.BKK_CCTV.hit(e.point)) return;
+    // กดจุดสถานีน้ำเหนือ/น้ำทะเลหนุน (ชั้นฝน & น้ำท่วม) — เปิดการ์ดสถานี ไม่บินเข้าเขต
+    if (window.BKK_RIVERS && window.BKK_RIVERS.hit(e.point)) return;
     var p = e.features[0].properties;
     if (p.lon && p.lat) {
       safeFly(STATE.map, {
@@ -7274,7 +7279,10 @@ window.MD_DATA_NOTICE = {
     { t: 'ดินถล่ม — พื้นที่อ่อนไหว ร่องรอยดินถล่ม เหตุการณ์ในอดีต หมู่บ้านเสี่ยง จุดปลอดภัย สถานีเฝ้าระวัง', o: 'กรมทรัพยากรธรณี (ArcGIS gisportal.dmr.go.th · CC BY) — พื้นที่อ่อนไหวและร่องรอยดินถล่มขอภาพจากเซิร์ฟเวอร์กรมฯ โดยตรง ที่เหลือดึง 28 ก.ย. 2569 · ซ่อนชื่อ-นามสกุล บ้านเลขที่ และเบอร์โทรของบุคคลที่ปรากฏในข้อมูล · แก้วันที่เหตุน้ำก้อ (หล่มสัก) เป็น 11 ส.ค. 2544 ตามจังหวัดเพชรบูรณ์', u: 'https://gisportal.dmr.go.th/arcgis/rest/services/HAZARD' },
     { t: 'ดินถล่ม — ฝนตกหนักรายสถานี และเกณฑ์เฝ้าระวัง', o: 'ฝน 24 ชม. + สะสม 7 วัน: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) ผ่าน /api/slide ของเว็บนี้ · เกณฑ์ >100 มม./วัน ตามหน้าความรู้ดินถล่มของกรมทรัพยากรธรณี · สถานีเตือนภัย: กรมทรัพยากรน้ำ · ประเทศเพื่อนบ้าน: NASA Global Landslide Catalog (2550–2559) · ความชัน: AWS Terrain Tiles คำนวณด้วยสูตร Horn', u: 'https://www.dmr.go.th' },
     { t: 'แผ่นดินไหวเมียนมา M7.7 28 มี.ค. 2568', o: 'USGS: ShakeMap v23 (ความรุนแรง MMI), แนวแตก (Reitman และคณะ 2025), อาฟเตอร์ช็อก 3 เดือน · ตัวเลขผู้เสียชีวิตและข้อมูลอาคาร สตง.: วิกิพีเดีย', u: 'https://earthquake.usgs.gov/earthquakes/eventpage/us7000pn9s' },
-    { t: 'กล้อง CCTV ทั่วประเทศ (ชั้นกล้อง CCTV)', o: 'ริมแม่น้ำ: กรมทรัพยากรน้ำ (telemetry.dwr.go.th) · เขื่อน: กฟผ. (egatwater) · หาดใหญ่: Hat Yai City Climate · ถนน: iTIC + กรมทางหลวง ผ่าน Longdo Traffic · ทางแยก: BMA Traffic กทม. (ลิงก์) · ชายฝั่ง: GISTDA (ลิงก์ · รายชื่อจาก github.com/hs6uej/cctv) — ภาพ/วิดีโอดึงตรงจากหน่วยงานตอนเปิดดู ไม่เก็บไว้ ลิขสิทธิ์เป็นของหน่วยงานเจ้าของกล้อง', u: 'https://telemetry.dwr.go.th/reportCctv' },
+    { t: 'น้ำเหนือ และน้ำทะเลหนุน (ชั้นฝน & น้ำท่วม)', o: 'สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) ระบบคาดการณ์ FEWS — ปริมาณน้ำไหลรายสถานีกรมชลประทาน (ค่าตรวจวัด + คาดการณ์ 7 วัน + เกณฑ์เฝ้าระวัง/เตือนภัย/วิกฤต) ระดับน้ำคาดการณ์ และตารางน้ำขึ้น-ลงคาดการณ์ 28 สถานีชายฝั่ง · ดึงสดตอนเปิด', u: 'https://www.thaiwater.net/' },
+    { t: 'พื้นที่น้ำท่วมจากดาวเทียม และพื้นที่น้ำท่วมซ้ำซาก (ชั้นฝน & น้ำท่วม)', o: 'GISTDA — ไทล์น้ำท่วม 1/3/7/30 วันล่าสุด และพื้นที่น้ำท่วมซ้ำซาก 2554–2567 ผ่าน API ตามลิงก์บนพอร์ทัลข้อมูลเปิด', u: 'https://opendata.gistda.or.th/dataset/flood-disaster-data' },
+    { t: 'เส้นแม่น้ำ/คลอง และทิศน้ำไหล (ชั้นฝน & น้ำท่วม)', o: 'ชั้น waterway ของแผนที่ฐาน OpenFreeMap (OpenMapTiles) · © OpenStreetMap contributors (ODbL) — ทิศขีดวิ่งตามทิศการวาดเส้นแม่น้ำใน OSM', u: 'https://openfreemap.org' },
+    { t: 'กล้อง CCTV ทั่วประเทศ (ชั้นกล้อง CCTV)', o: 'ริมแม่น้ำ: กรมทรัพยากรน้ำ (telemetry.dwr.go.th) · เขื่อน: กฟผ. (egatwater) · หาดใหญ่: Hat Yai City Climate · รังสิต: เทศบาลนครรังสิต (กล้องวัดระดับน้ำคลอง) · ถนน: iTIC + กรมทางหลวง ผ่าน Longdo Traffic · ทางแยก: BMA Traffic กทม. (ลิงก์) · ชายฝั่ง: GISTDA (ลิงก์ · รายชื่อจาก github.com/hs6uej/cctv) — ภาพ/วิดีโอดึงตรงจากหน่วยงานตอนเปิดดู ไม่เก็บไว้ ลิขสิทธิ์เป็นของหน่วยงานเจ้าของกล้อง', u: 'https://telemetry.dwr.go.th/reportCctv' },
     { t: 'เที่ยวบินสด (ตำแหน่งเครื่องบินจริง)', o: 'ADS-B จากเครือข่ายอาสาสมัคร adsb.lol (ODbL) ผ่าน /api/flights ของเว็บนี้ · สำรอง adsb.fi · อัปเดตทุก 5 วินาที', u: 'https://adsb.lol' },
     { t: 'ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง', o: 'Google Maps (ชื่อ/พิกัด/เรตติ้ง/ที่อยู่) · เก็บเมื่อ 9–10 ก.ย. 2569', u: 'https://www.google.com/maps' },
     { t: 'รายชื่อสาขาโรงภาพยนตร์ (ใช้ตรวจความครบ)', o: 'Major Cineplex', u: 'https://www.majorcineplex.com/cinema' },

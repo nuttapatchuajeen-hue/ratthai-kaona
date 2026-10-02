@@ -166,6 +166,8 @@
       if (e.target !== map.getCanvas()) return;
       if (downAt && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 5) return;
       var rect = map.getCanvas().getBoundingClientRect();
+      // กดโดนหมุด/วงกลุ่มกล้อง CCTV (วาดทับฉาก 3 มิติ) — ปล่อยให้ชั้นกล้องจัดการ ไม่ดักคลิกไว้
+      if (window.BKK_CCTV && window.BKK_CCTV.hit({ x: e.clientX - rect.left, y: e.clientY - rect.top })) return;
       var got = pickAll(e.clientX - rect.left, e.clientY - rect.top);
       if (got) {
         e.stopPropagation();

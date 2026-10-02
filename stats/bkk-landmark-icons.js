@@ -395,6 +395,7 @@
       map.on("click", "lmk-icons", function (e) {
         var f = e.features && e.features[0];
         if (!f) return;
+        if (window.BKK_CCTV && window.BKK_CCTV.hit(e.point)) return;   // หมุดกล้อง CCTV อยู่บนสุด — ให้ชั้นกล้องจัดการ
         if (map.getZoom() >= 12 && f.properties.g === "mall") return;   // ซ่อนอยู่ — ให้หมุดห้างรับไป
         var l = LM.filter(function (x) { return x.id === f.properties.id; })[0];
         if (!l) return;

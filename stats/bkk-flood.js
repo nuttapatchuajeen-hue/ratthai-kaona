@@ -10,6 +10,7 @@
  *   - Google Flood Hub: /api/floodhub (ต้องมีคีย์ Flood Forecasting API บนเซิร์ฟเวอร์) · ไม่มีคีย์ = แสดงแค่ปุ่มเปิด Flood Hub ตรงพิกัดเดียวกัน
  *
  * วาดด้วยชั้น MapLibre ธรรมดา (raster + circle) ไม่ใช้ฉาก three.js กลาง
+ * ส่วนเสริม bkk-rivers.js (window.BKK_RIVERS): แม่น้ำ/คลอง + ทิศน้ำไหล, น้ำเหนือ (สสน.), พื้นที่น้ำท่วม (GISTDA), น้ำทะเลหนุน — เรียกผ่าน hook ใน renderPanel/setVisible/mount
  */
 (function () {
   "use strict";
@@ -559,6 +560,8 @@
       (tw.data ? fmt(rain.length) + " สถานีมีฝน" : "") + '</small></label>';
     if (sub.rain) h += '<div class="fl-leg">' + RAIN.map(function (b) { return '<span>' + chip(b[1], "") + b[2] + ' <small>' + b[3] + '</small></span>'; }).join("") + '<span><small>มม.</small></span></div>';
     h += '</div>';
+    // แม่น้ำ/คลอง + น้ำเหนือ + พื้นที่น้ำท่วม + น้ำทะเลหนุน — ส่วนเสริมใน bkk-rivers.js
+    if (window.BKK_RIVERS) h += window.BKK_RIVERS.panelHTML();
     // Flood Hub
     h += '<div class="fl-sec">';
     if (hub.enabled) {
@@ -582,6 +585,7 @@
       '<br>ใช้ประกอบการติดตามสถานการณ์เท่านั้น — ประกาศเตือนภัยทางการให้ดูจากกรมอุตุนิยมวิทยา กรมชลประทาน ปภ. และ กทม.</p>';
     body.innerHTML = h;
     renderRadarTime();
+    if (window.BKK_RIVERS) window.BKK_RIVERS.afterRender(body);
   }
 
   function buildUI() {
@@ -657,10 +661,12 @@
       if (popup) { popup.remove(); popup = null; }
       removeRadarLayers();
       syncLayerVis();
+      if (window.BKK_RIVERS) window.BKK_RIVERS.setActive(false);
       return;
     }
     addPointLayers();
     bindHandlers();
+    if (window.BKK_RIVERS) window.BKK_RIVERS.setActive(true);
     renderPanel();
     // ข้อมูลเก่าเกิน 10 นาทีค่อยดึงใหม่ · เปิดค้างไว้ก็ดึงใหม่ทุก 10 นาที
     if (rmode === "days") loadDays().then(function () { if (visible && rmode === "days") addRadarLayers(); });
@@ -675,6 +681,7 @@
   /* ================================================================ mount — เรียกซ้ำทุกครั้งที่เปลี่ยนสไตล์แผนที่ */
   function mount(m) {
     map = m;
+    if (window.BKK_RIVERS) window.BKK_RIVERS.mount(m);
     try { var s = JSON.parse(lsGet(LS_SUB) || "null"); if (s) Object.keys(sub).forEach(function (k) { if (typeof s[k] === "boolean") sub[k] = s[k]; }); } catch (e) { }
     if (lsGet(LS_RMODE) === "days") rmode = "days";
     buildUI();
