@@ -275,23 +275,6 @@
   .search-row:hover { background: var(--accent-soft); color: var(--accent); }
   .search-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--card-border); color: var(--text-muted); }
 
-  /* KPI Row */
-  .kpi-row {
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    font-size: 12px;
-    color: var(--text-muted);
-    padding-top: 2px;
-  }
-  .kpi-item { display: flex; align-items: baseline; gap: 5px; }
-  .kpi-num {
-    font-family: "Archivo", sans-serif;
-    font-weight: 800;
-    font-size: 15px;
-    color: var(--text-main);
-  }
-
   /* ---------- Map Stage ---------- */
   /* overflow: clip — แผงเลื่อนขวาที่ปิดอยู่จอดนอกจอ (translateX 100%) ถ้าไม่ตัด หน้าจะกว้างเกินจอ
      แล้วเบราว์เซอร์เลื่อนทั้งหน้าไปทางซ้ายได้ (body ซ่อนแถบเลื่อน → ผู้ใช้เลื่อนกลับไม่ได้) */
@@ -2115,7 +2098,6 @@
     .header-toggle { display: grid; order: 2; }
     .header-actions { flex: 1 1 100%; order: 3; margin-left: 0; }
     .header.is-collapsed .header-actions { display: none; }
-    .kpi-row { display: none; }
     .search-wrapper { min-width: 140px; }
     .left-menu { max-width: 100%; gap: 4px; }
     .menu-btn span.label-text { display: none; }
@@ -2474,13 +2456,6 @@
     <a href="../hub/index.html" class="header-home" title="กลับหน้าหลัก รัฐไทยก้าวหน้า" aria-label="กลับหน้าหลัก รัฐไทยก้าวหน้า">
       <svg class="mdico"><use href="#i-house"></use></svg><span class="lbl">หน้าหลัก</span>
     </a>
-  </div>
-
-  <!-- Live camera readout (the 24/181/50 counts live in the header chips above — no duplicate) -->
-  <div class="kpi-row">
-    <div class="kpi-item">
-      <span id="coordTag" style="font-size: 11px; font-variant-numeric: tabular-nums;">แนวสีลม–สาทร–พระราม 4</span>
-    </div>
   </div>
 </div>
 <script>
@@ -3310,6 +3285,8 @@
 <script src="bkk-sealevel.js"></script>
 <script src="bkk-floodsim.js"></script>
 <script src="bkk-landmarks3d.js"></script>
+<script src="bkk-menu-cats.js"></script>
+<script src="bkk-bldg-legend.js"></script>
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script>
 (function() {
@@ -3805,11 +3782,7 @@
   }
 
   function updateCameraInfo() {
-    var z = STATE.map.getZoom().toFixed(1);
-    var p = Math.round(STATE.map.getPitch());
     var b = Math.round(STATE.map.getBearing());
-    $("#coordTag").textContent = "z" + z + " · " + p + "° pitch · " + b + "° bearing";
-    
     var compass = $("#btnResetCompass");
     if (compass) compass.style.transform = "rotate(" + (-b) + "deg)";
     
@@ -4478,6 +4451,11 @@
     // 🏛 แลนด์มาร์ก 3 มิติ (โมเดล GLB จาก Blender) — โมดูลแยกใน bkk-landmarks3d.js · วาดแทนกล่องมวลอาคารเดิมหลังที่โหลดแล้ว
     if (window.BKK_LANDMARKS3D) {
       try { window.BKK_LANDMARKS3D.mount(map); } catch (e) { console.warn("landmarks 3D layer:", e); }
+    }
+
+    // 🎨 ปุ่ม "สีตึก" — คำอธิบายสีของชั้นที่เปิดอยู่ — โมดูลแยกใน bkk-bldg-legend.js
+    if (window.BKK_BLDG_LEGEND) {
+      try { window.BKK_BLDG_LEGEND.mount(map); } catch (e) { console.warn("building legend:", e); }
     }
   }
 
