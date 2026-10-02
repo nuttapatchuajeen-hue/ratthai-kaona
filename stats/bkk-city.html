@@ -3276,6 +3276,7 @@
 <script src="bkk-flood.js"></script>
 <script src="bkk-rivers.js"></script>
 <script src="bkk-fuel.js"></script>
+<script src="bkk-ev.js"></script>
 <script src="bkk-dam.js"></script>
 <script src="bkk-warn.js"></script>
 <script src="bkk-cctv.js"></script>
@@ -4456,6 +4457,11 @@
     // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js
     if (window.BKK_FUELMAP) {
       try { window.BKK_FUELMAP.mount(map); } catch (e) { console.warn("fuel layer:", e); }
+    }
+
+    // ⚡ จุดชาร์จรถยนต์ไฟฟ้า (OSM — ยังไม่ครบ) + จุดชาร์จใกล้ฉัน — โมดูลแยกใน bkk-ev.js
+    if (window.BKK_EVMAP) {
+      try { window.BKK_EVMAP.mount(map); } catch (e) { console.warn("ev layer:", e); }
     }
 
     // 🌊 จำลองน้ำท่วม 3 มิติ (ผิวน้ำในฉากกลาง ตึกโผล่พ้นน้ำ) — โมดูลแยกใน bkk-floodsim.js
@@ -7290,6 +7296,7 @@ window.MD_DATA_NOTICE = {
     { t: 'สถานที่สำคัญ ถนนสายหลัก และคันกั้นน้ำ (จำลองน้ำท่วม)', o: 'OpenStreetMap ผ่าน Overpass 28 ก.ย. 2569 (ODbL) · ความสูงพื้นใต้แต่ละจุดจาก FABDEM · คันกั้นน้ำใน OSM มีแค่บางส่วน', u: 'https://www.openstreetmap.org' },
     { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
+    { t: 'จุดชาร์จรถยนต์ไฟฟ้า (ชั้นจุดชาร์จ EV)', o: 'OpenStreetMap ผ่าน Overpass API 2 ต.ค. 2569 (ODbL) — มีแค่ราว 290 จุดในไทย จากของจริงหลายพันจุด · แยกสีตามผู้ให้บริการจากแท็ก network/operator/brand (ไม่ใช้โลโก้) · ลิงก์ PlugShare และเว็บผู้ให้บริการสำหรับข้อมูลที่ครบกว่า', u: 'https://www.openstreetmap.org' },
     { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },
     { t: 'แผ่นดินไหวล่าสุด (ชั้นแผ่นดินไหว)', o: 'กองเฝ้าระวังแผ่นดินไหว กรมอุตุนิยมวิทยา (data.tmd.go.th DailySeismicEvent + RSS) ผ่าน /api/quake ของเว็บนี้ · USGS Earthquake Catalog (FDSN) ดึงตรง · เหตุเดียวกันจากสองแหล่งรวมเป็นจุดเดียว · ความลึกใต้ดินในมุม 3 มิติขยายตามที่ผู้ใช้เลือก', u: 'https://earthquake.tmd.go.th' },
     { t: 'รอยเลื่อนมีพลัง', o: 'ในไทย: กรมทรัพยากรธรณี ชุดข้อมูลกลุ่มรอยเลื่อนมีพลัง (CC BY) ดึง 28 ก.ย. 2569 · ประเทศเพื่อนบ้าน: GEM Global Active Faults Database (CC BY-SA 4.0) — ไม่มีชื่อรอยเลื่อน ยกเว้นช่วงรอยเลื่อนสะกายที่ทับแนวแตกปี 2568', u: 'https://data.go.th/dataset/2f32b01e-6ae7-4b66-aa2c-730a87051793' },
