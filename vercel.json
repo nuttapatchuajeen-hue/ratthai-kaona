@@ -1,5 +1,10 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "regions": ["sin1"]
+  "regions": ["sin1"],
+  "git": {
+    "deploymentEnabled": {
+      "ews-data": false
+    }
+  }
 }

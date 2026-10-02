@@ -435,7 +435,9 @@
       }).join("") + '</div>';
       h += down ? '<p class="wn-down">' + ico("triangle-alert") + ' <b>ดึงธงจากกรมทรัพยากรน้ำไม่ได้</b> — ระบบเตือนภัยล่วงหน้าของกรมฯ ไม่เปิดให้ดึงข้อมูลจากเซิร์ฟเวอร์นอกประเทศ แผนที่นี้จึงแสดงธงไม่ได้ ' +
         '<b>ไม่ได้แปลว่าไม่มีการเตือนภัย</b> — ดูธงล่าสุดได้ที่ <a href="' + EWS_URL + '" target="_blank" rel="noopener">ews.dwr.go.th ' + ico("external-link") + '</a></p>'
-        : '<p class="wn-meta">สถานีเตือนภัยล่วงหน้า ' + fmt(d.total) + ' สถานี · มีฝนตอนนี้ ' + fmt(d.rainSt) + ' สถานี' + (d.ewsErr ? ' · <span class="wn-warn">สถานะสดโหลดไม่ได้ ใช้ประวัติแทน</span>' : "") + '</p>';
+        : '<p class="wn-meta">สถานีเตือนภัยล่วงหน้า ' + fmt(d.total) + ' สถานี · มีฝนตอนนี้ ' + fmt(d.rainSt) + ' สถานี' + (d.ewsErr ? ' · <span class="wn-warn">สถานะสดโหลดไม่ได้ ใช้ประวัติแทน</span>' : "") +
+          // เซิร์ฟเวอร์เว็บดึงกรมฯ ตรงไม่ได้ → ใช้ชุดที่เครื่องในไทยถ่ายทอดขึ้นมา (scripts/ews-relay.js) บอกเวลาให้รู้ว่าไม่ใช่วินาทีนี้
+          (d.ewsSrc === "relay" && d.ewsAt ? ' · ข้อมูล ณ ' + new Date(d.ewsAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok" }) + ' น. (ถ่ายทอดจากเครื่องในไทย)' : "") + '</p>';
 
       // ธงปัจจุบัน
       var st = d.st.map(function (r, i) { return { r: r, i: i }; }).sort(function (a, b) { return b.r[4] - a.r[4] || (tms(b.r[11]) || 0) - (tms(a.r[11]) || 0); });

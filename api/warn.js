@@ -67,7 +67,7 @@ const capMemo = new Map();   // ไฟล์ CAP แต่ละฉบับไ�
 function request(url, opts, body) {
   return new Promise((resolve, reject) => {
     const extra = url.indexOf('https://www.tmd.go.th/') === 0 ? { ca: TMD_CA } : {};
-    const req = https.request(url, Object.assign({ timeout: 25000 }, extra, opts, {
+    const req = https.request(url, Object.assign({ timeout: +process.env.EWS_TIMEOUT_MS || 25000 }, extra, opts, {   // เครื่องถ่ายทอดตั้งให้รอนานขึ้นได้ (EWS บางทีตอบช้า >25 วิ)
       headers: Object.assign({ 'User-Agent': UA }, (opts && opts.headers) || {})
     }), (res) => {
       if (res.statusCode !== 200) { res.resume(); return reject(new Error('HTTP ' + res.statusCode + ' ' + url)); }
@@ -199,12 +199,14 @@ function capOut(list) {
     return Object.assign({}, c, { active, poly: active ? c.poly : [] });
   });
 }
-async function build() {
-  const [ews, rss, cap] = await Promise.all([
-    ewsStations().catch(e => ({ err: String(e.message || e) })),
-    ewsRss().catch(() => []),
-    tmdCap().then(l => { capErr = null; return (lastCap = l); }).catch(e => { capErr = String(e.message || e); return lastCap; })   // โหลดไม่ได้ = ใช้ชุดล่าสุดที่เคยได้
-  ]).then(r => [r[0], r[1], capOut(r[2])]);
+// ---------------------------------------------------------------- ธงกรมทรัพยากรน้ำ (สด หรือผ่านเครื่องถ่ายทอดในไทย)
+// ews.dwr.go.th ไม่ตอบเซิร์ฟเวอร์นอกประเทศ (Vercel ทั้ง iad1 และ sin1 = ETIMEDOUT) → เครื่องในไทยรัน scripts/ews-relay.js
+// ทุก ~15 นาที ดึงชุดเดียวกันนี้แล้วดันขึ้น branch ews-data ของเรโป · ที่นี่อ่านไฟล์นั้นแทนเมื่อดึงตรงไม่ได้
+const RELAY = process.env.EWS_RELAY_URL || 'https://raw.githubusercontent.com/nuttapatchuajeen-hue/ratthai-kaona/ews-data/ews.json';
+const RELAY_MAX_AGE = 2 * 3600000;   // เก่ากว่านี้ถือว่าเครื่องถ่ายทอดหยุด (ปิดเครื่อง) — ไม่แสดงธงค้าง
+
+async function ewsBundle() {
+  const [ews, rss] = await Promise.all([ewsStations(), ewsRss().catch(() => [])]);
   const all = ews.all || [];
   const byName = new Map();
   for (const s of all) byName.set(stName(s.name) + '|' + clean(s.province), s);
@@ -220,10 +222,29 @@ async function build() {
     const s = byName.get(h[2] + '|' + h[5]);
     return h.concat([s ? num(s.latitude, 5) : null, s ? num(s.longitude, 5) : null, s ? +s.status : null]);
   });
-  if (!st.length && !hist.length && !cap.length && ews.err) throw new Error(ews.err);
+  return { at: Date.now(), sum: ews.sum || null, st, hist, rainSt: all.filter(s => String(s.status) === '9').length, total: all.length };
+}
+async function ewsFromRelay() {
+  const j = JSON.parse((await get(RELAY)).body);
+  if (!j || !j.at || !Array.isArray(j.st)) throw new Error('relay: bad file');
+  if (Date.now() - j.at > RELAY_MAX_AGE) throw new Error('relay: เก่า ' + Math.round((Date.now() - j.at) / 60000) + ' นาที');
+  return j;
+}
+
+async function build() {
+  // บน Vercel ดึงตรงไม่ได้แน่นอน (รอ timeout เปล่า ๆ ~25 วินาที) → อ่านไฟล์ถ่ายทอดอย่างเดียว · เครื่องในไทย (เซิร์ฟเวอร์พรีวิว) ดึงตรงก่อน
+  const direct = process.env.VERCEL ? Promise.reject(new Error('ews: บล็อกเซิร์ฟเวอร์นอกประเทศ')) : ewsBundle();
+  const [ews, cap] = await Promise.all([
+    direct.then(b => ({ b, src: 'direct' }))
+      .catch(e => ewsFromRelay().then(b => ({ b, src: 'relay' }))
+        .catch(e2 => ({ err: String(e.message || e) + ' · ' + String(e2.message || e2) }))),
+    tmdCap().then(l => { capErr = null; return (lastCap = l); }).catch(e => { capErr = String(e.message || e); return lastCap; })   // โหลดไม่ได้ = ใช้ชุดล่าสุดที่เคยได้
+  ]).then(r => [r[0], capOut(r[1])]);
+  const b = ews.b || { sum: null, st: [], hist: [], rainSt: 0, total: 0 };
+  if (!b.st.length && !b.hist.length && !cap.length && ews.err) throw new Error(ews.err);
   return {
-    now: Date.now(), sum: ews.sum || null, st, hist, cap, ewsErr: ews.err || null, capErr,
-    rainSt: all.filter(s => String(s.status) === '9').length, total: all.length
+    now: Date.now(), sum: b.sum, st: b.st, hist: b.hist, cap, ewsErr: ews.err || null, ewsSrc: ews.src || null, ewsAt: b.at || null, capErr,
+    rainSt: b.rainSt, total: b.total
   };
 }
 
@@ -239,7 +260,7 @@ async function load() {
   }
 }
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
@@ -253,3 +274,7 @@ module.exports = async (req, res) => {
     res.end(JSON.stringify({ error: String(e && e.message || e) }));
   }
 };
+
+module.exports = handler;
+// ให้ scripts/ews-relay.js (เครื่องถ่ายทอดในไทย) เรียกชุดเดียวกันได้
+module.exports.ewsBundle = ewsBundle;
