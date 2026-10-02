@@ -141,13 +141,15 @@
       mosaic: new T.MeshPhongMaterial({ vertexColors: true, map: mosaicTex(), flatShading: true, shininess: 30, specular: 0x333333 }),
       gold: new T.MeshPhongMaterial({ color: 0xd9a441, shininess: 90, specular: 0xffe29a, flatShading: true }),
       roof: new T.MeshPhongMaterial({ vertexColors: true, flatShading: true, shininess: 24, specular: 0x222222 }),
+      // กระจกย้อมสีตามตึก (ใบหยก 2 สีทอง ฯลฯ) — ลายหน้าต่าง/ไฟในห้องชุดเดียวกับ glass แต่คูณสีต่อจุด
+      tglass: new T.MeshPhongMaterial({ vertexColors: true, color: 0xffffff, map: g.map, emissiveMap: g.em, emissive: 0x000000, shininess: 90, specular: 0x667788, flatShading: true }),
       hover: new T.MeshBasicMaterial({ color: new T.Color(H.palette().glow), transparent: true, opacity: 0.32, depthWrite: false }),
       sel: new T.MeshBasicMaterial({ color: new T.Color(H.palette().glow), transparent: true, opacity: 0.5, depthWrite: false })
     };
     mats.glass.userData.tex = [g.map, g.em];
     // โมเดลอาคารเด่นของชั้นท่าเรือมีหน้าที่พันทิศไม่สม่ำเสมอ (หลังคาซ้อนชั้น ผ้าใบ ทางเดินโค้ง) → วาดสองด้าน
     // flatShading คิด normal จาก dFdx/dFdy จึงไม่มีปัญหาแสงกลับด้าน
-    ["glass", "solid", "led", "mosaic", "gold", "roof"].forEach(function (k) { mats[k].side = T.DoubleSide; });
+    ["glass", "solid", "led", "mosaic", "gold", "roof", "tglass"].forEach(function (k) { mats[k].side = T.DoubleSide; });
     theme(H.theme());
   }
   function theme(name) {
@@ -157,6 +159,8 @@
     mats.mosaic.color.set(night ? "#958e82" : name === "light" ? "#f2eee6" : TONE[name] || TONE.dark);
     mats.glass.color.set(night ? "#8190a6" : "#ffffff");
     mats.glass.emissive.set(night ? "#ffffff" : dusk ? "#5a4a35" : "#000000");
+    mats.tglass.color.set(night ? "#9aa6b8" : "#ffffff");
+    mats.tglass.emissive.set(night ? "#ffffff" : dusk ? "#5a4a35" : "#000000");
     mats.led.color.set(night ? "#ffffff" : dusk ? "#d9dde4" : "#9aa3ad");
     mats.mosaic.emissive.set(night ? "#221809" : "#000000");        // ไฟส่องอาคารสีทองตอนกลางคืน (อ่อน ๆ ให้ยังเห็นเงาแต่ละชั้น)
     mats.gold.emissive.set(night ? "#4a3208" : dusk ? "#2a1c05" : "#000000");
@@ -230,7 +234,8 @@
   function updateHides() {
     var on = visible && !!group;
     var ready = on ? items.filter(function (I) { return I.state === "ready"; }) : [];
-    window.BKK_LM3D_HIDE = ready.map(function (I) { return I.it.lm; }).filter(Boolean);
+    // lm = กล่องโครงการเดิมของหน้า (ปุ่ม "ข้อมูลโครงการ") · lmHide = กล่องอื่นที่โมเดลนี้วาดทับด้วย (เช่น ไอคอนสยามมี 3 กล่อง)
+    window.BKK_LM3D_HIDE = ready.reduce(function (a, I) { return a.concat([I.it.lm], I.it.lmHide || []); }, []).filter(Boolean);
     if (window.BKK_applyLandmarkFilters) { try { window.BKK_applyLandmarkFilters(); } catch (e) { console.warn(e); } }
     var ids = [];
     ready.forEach(function (I) { ids = ids.concat(I.it.osm || []); });
