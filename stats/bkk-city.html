@@ -2627,6 +2627,7 @@
   <div class="brand-filter-bar glass-card" id="brandFilterBar">
     <div class="category-chips-scroll" id="categoryChipsContainer">
       <button type="button" class="cat-chip active" data-cat="all">🌟 ทั้งหมด</button>
+      <button type="button" class="cat-chip" data-cat="none" title="ซ่อนหมุดโครงการ ป้ายชื่อ และวงตัวเลขห้างร้านทั้งหมด — แผนที่โล่งไว้ดูชั้นอื่น (ตึก 3 มิติยังอยู่)">🚫 ไม่แสดง</button>
       <button type="button" class="cat-chip" data-cat="airport_port">✈️ สนามบิน & ท่าเรือ</button>
       <button type="button" class="cat-chip" data-cat="outer">🌳 กทม. รอบนอก</button>
       <button type="button" class="cat-chip" data-cat="food">🍲 รีวิวอาหาร</button>
@@ -4545,6 +4546,7 @@
 
   function isCategoryMatched(lm, cat) {
     if (!cat || cat === "all") return true;
+    if (cat === "none") return false;            // ชิป "ไม่แสดง": ซ่อนหมุด/ป้ายทุกตัว
     var t = lm.type || "condo";
     if (cat === "airport_port") return t === "airport" || t === "port" || (lm.id && lm.id.startsWith("port-"));
     if (cat === "outer") return t === "outer" || (lm.id && lm.id.startsWith("outer-"));
@@ -5823,7 +5825,8 @@
 
     var cat = STATE.selectedCategory;
     var catF = null;
-    if (cat && cat !== "all") {
+    // "ไม่แสดง" ซ่อนแค่หมุด/ป้าย — ตัวตึกแลนด์มาร์ก 3 มิติเป็นอาคารจริงของเมือง จึงไม่กรองออก
+    if (cat && cat !== "all" && cat !== "none") {
       if (cat === "airport_port") {
         catF = ["in", ["get", "type"], ["literal", ["airport", "port"]]];
       } else if (cat === "outer") {
@@ -6893,7 +6896,18 @@
         $$("#categoryChipsContainer .cat-chip").forEach(function(b) { b.classList.remove("active"); });
         btn.classList.add("active");
         var cat = btn.getAttribute("data-cat") || "all";
+        var wasNone = STATE.selectedCategory === "none";
         STATE.selectedCategory = cat;
+
+        // "ไม่แสดง" ปิดวงตัวเลขห้างร้านด้วย (ชั้นนี้เปิดเองตอนโหลดหน้า ปุ่มปิดอยู่ลึกในแผงไลฟ์สไตล์)
+        // แล้วเปิดคืนเมื่อเลือกหมวดอื่น — เฉพาะกรณีที่ก่อนหน้านั้นเปิดอยู่
+        if (cat === "none" && !wasNone) {
+          STATE.shopsBeforeNone = !!STATE.layers.shops;
+          if (STATE.layers.shops) setShopsLayer(false);
+        } else if (cat !== "none" && wasNone) {
+          if (STATE.shopsBeforeNone && !STATE.layers.shops) setShopsLayer(true);
+          STATE.shopsBeforeNone = false;
+        }
 
         var showBrands = cat === "all" || cat === "condo";
         $$(BRAND_WRAPS).forEach(function(w) { w.style.display = showBrands ? "flex" : "none"; });
@@ -7267,7 +7281,12 @@ window.MD_DATA_NOTICE = {
     { t: 'ฝนรายวันย้อนหลัง 90 วัน (ชั้นฝน & น้ำท่วม)', o: 'NASA GPM IMERG ผ่าน GIBS — ภาพอัตราฝนเฉลี่ยรายวันจากดาวเทียม กริด ~10 กม. ช้ากว่าความจริง ~1 วัน · ค่าในคำอธิบายสีเป็น มม./วัน โดยประมาณ (×24)', u: 'https://gpm.nasa.gov/data/imerg' },
     { t: 'ระดับน้ำแม่น้ำ/คลอง และฝนสะสม 24 ชม. รายสถานีทั่วประเทศ', o: 'คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) รวมข้อมูลจากหลายหน่วยงาน ผ่าน /api/thaiwater ของเว็บนี้ · อัปเดตทุก 10 นาที', u: 'https://www.thaiwater.net' },
     { t: 'คาดการณ์น้ำท่วมรายจุดวัดน้ำ', o: 'Google Flood Hub (Flood Forecasting API) — แสดงบนแผนที่เมื่อได้รับคีย์ API · ระหว่างนี้เป็นปุ่มเปิด Flood Hub ตรงพิกัดเดียวกัน', u: 'https://sites.research.google/floods/' },
-    { t: 'จำลองน้ำท่วม 3 มิติ (ภาพจำลอง ไม่ใช่การพยากรณ์)', o: 'โหมดความลึกเท่ากัน: น้ำลึกเท่ากันทุกที่ตามที่ผู้ใช้เลือก · โหมดตามความสูงพื้นดิน: FABDEM V1-2 (Copernicus GLO-30 ที่ลบความสูงตึก/ต้นไม้ออก) © University of Bristol, CC BY-NC-SA 4.0 — ย่อเป็นกริด ~60 ม. กทม.-ปริมณฑล · แบบจำลองอ่างน้ำ ไม่คิดคันกั้นน้ำ/ระบบระบายน้ำ · น้ำลดรายวัน: อัตราน้ำลดเป็นสมมติฐานที่ผู้ใช้เลือก (5/10/20 ซม./วัน) แอ่งปิดคำนวณด้วย Priority-Flood จากความสูง FABDEM และสมมติให้น้ำในแอ่งลดช้ากว่าราว 1/3 · ความสูงตึกจาก OpenStreetMap · ผลกระทบต่อคน/รถอ้างอิงคำเตือน Turn Around Don’t Drown ของ NWS สหรัฐฯ', u: 'https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn' },
+    { t: 'จำลองน้ำท่วม 3 มิติ (ภาพจำลอง ไม่ใช่การพยากรณ์)', o: 'โหมดความลึกเท่ากัน: น้ำลึกเท่ากันทุกที่ตามที่ผู้ใช้เลือก · โหมดตามความสูงพื้นดิน: FABDEM V1-2 (Copernicus GLO-30 ที่ลบความสูงตึก/ต้นไม้ออก) © University of Bristol, CC BY-NC-SA 4.0 — ย่อเป็นกริด ~60 ม. กทม.-ปริมณฑล · แบบจำลองอ่างน้ำ ไม่คิดคันกั้นน้ำ/ระบบระบายน้ำ · น้ำลดรายวัน: อัตราน้ำลดเป็นสมมติฐานที่ผู้ใช้เลือก (5/10/20 ซม./วัน) แอ่งปิดคำนวณด้วย Priority-Flood จากความสูง FABDEM และสมมติให้น้ำในแอ่งลดช้ากว่าราว 1/3 · ความสูงตึกจาก OpenStreetMap · ผลกระทบต่อคน/รถอ้างอิงคำเตือน Turn Around Don’t Drown ของ NWS สหรัฐฯ · แปลงความสูง EGM2008 เป็น ม.รทก. ด้วย −0.87 ม. (ผลทดสอบหมุด GNSS/ระดับในพื้นที่ราบ, Engineering Journal 2021)', u: 'https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn' },
+    { t: 'น้ำทะเลหนุน 2050–2100 — ความสูงพื้นดินชายฝั่ง (จำลองน้ำท่วม · โหมดน้ำทะเลหนุน)', o: 'DeltaDTM v1.1 — Pronk et al. (2024) Scientific Data 11:273 · CC BY 4.0 · Produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA · ย่อเป็นกริด ~90 ม. 100.0–101.1°E 13.0–14.3°N', u: 'https://doi.org/10.4121/21997565.v4' },
+    { t: 'น้ำทะเลหนุน — ข้อมูลเก่าสำหรับเทียบ (SRTM ก.พ. 2543)', o: 'NASA JPL SRTMGL1 v3 (doi:10.5067/MEASURES/SRTM/SRTMGL1.003) ผ่าน AWS Terrain Tiles — SRTM terrain data courtesy of the U.S. Geological Survey · แปลง EGM96→EGM2008 ด้วยกริดจีออยด์ GeographicLib', u: 'https://registry.opendata.aws/terrain-tiles/' },
+    { t: 'น้ำทะเลหนุน — ระดับน้ำทะเลในอนาคตตามฉากทัศน์ IPCC AR6', o: 'IPCC AR6 Sea Level Projections สถานีเกาะสีชัง (PSMSL 449) ส่วนจากภูมิอากาศล้วน · Fox-Kemper et al. 2021; Kopp et al. 2023 (FACTS); Garner et al. 2021 (Zenodo, CC BY 4.0) · ขอบคุณ NASA Sea Level Change Team ผู้ทำ IPCC AR6 Sea Level Projection Tool', u: 'https://doi.org/10.5281/zenodo.5914709' },
+    { t: 'น้ำทะเลหนุน — อัตราแผ่นดินทรุดจากดาวเทียม', o: 'Ohenhen et al. (2026) Nature — Global subsidence of river deltas · กริด Sentinel-1 ก.ย. 2559 – พ.ค. 2566 (IGS14) · CC BY 4.0 · ชายฝั่งชลบุรีนอกกริดใช้ค่าสมมติจากสถานี GNSS QBNP (Nevada Geodetic Laboratory)', u: 'https://doi.org/10.5281/zenodo.15015923' },
+    { t: 'น้ำทะเลหนุน — ระดับน้ำขึ้นสูงเฉลี่ยรายวัน และระดับอ้างอิง', o: 'ตารางน้ำ 2569 กรมอุทกศาสตร์ กองทัพเรือ (ป้อมพระจุลจอมเกล้า) · น้ำหนุนสูงสุดที่วัดได้จริง: สสน./กรมอุทกศาสตร์ · ค่าแปลง ม.รทก.↔EGM2008: ผลทดสอบหมุด GNSS/ระดับ (Engineering Journal 2021; Dumrongchai et al., ACRS 2012) · เขตจังหวัด: OCHA/HDX COD-AB · วิธีแบบเดียวกับ Kulp & Strauss (2019) Nature Communications (Climate Central)', u: 'https://hydro.navy.mi.th/waterlaveltable' },
     { t: 'น้ำท่วมจริงจากดาวเทียม ปี 2554–2567 (จำลองน้ำท่วม · ข้อมูลประกอบ)', o: 'GISTDA — พื้นที่น้ำท่วมซ้ำซาก (flood-freq) ผ่าน Disaster Platform ตามลิงก์บนพอร์ทัลข้อมูลเปิด · ดึงครั้งเดียวแล้วแปลงเป็นกริด ~60 ม. · 7 จังหวัด ไม่รวมอยุธยา', u: 'https://opendata.gistda.or.th/dataset/flood-disaster-data' },
     { t: 'สถานีสูบน้ำและประตูระบายน้ำ กทม. 429 แห่ง', o: 'สำนักการระบายน้ำ กรุงเทพมหานคร — data.bangkok.go.th ชุดข้อมูลทางกายภาพและตำแหน่งของสถานีสูบน้ำและประตูระบายน้ำ', u: 'https://data.bangkok.go.th/dataset/water-station' },
     { t: 'สถานที่สำคัญ ถนนสายหลัก และคันกั้นน้ำ (จำลองน้ำท่วม)', o: 'OpenStreetMap ผ่าน Overpass 28 ก.ย. 2569 (ODbL) · ความสูงพื้นใต้แต่ละจุดจาก FABDEM · คันกั้นน้ำใน OSM มีแค่บางส่วน', u: 'https://www.openstreetmap.org' },
@@ -7290,7 +7309,7 @@ window.MD_DATA_NOTICE = {
     { t: 'ผังสี กทม.', o: 'ผังเมืองรวมกรุงเทพมหานคร', u: 'https://www.bangkok.go.th' },
     { t: 'แรงบันดาลใจ & ต้นแบบระบบ 3D GIS', o: 'Phattaraphon Chomchaiyaphum (โปรเจกต์ PHATTRA / Ashton · Claude Thailand Community)', u: '../election/credits.html#ytdev' }
   ],
-  more: { href: '../election/credits.html', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' }
+  more: { href: '../election/credits.html#bkkcity', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' }
 };
 </script>
 <script src="../js/data-notice.js"></script>

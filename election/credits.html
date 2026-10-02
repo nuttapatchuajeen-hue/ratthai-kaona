@@ -168,6 +168,7 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
     <button type="button" class="cr-tab" data-cat="opendata">🔍 การหาข้อมูล & ชุดข้อมูลเปิด</button>
     <button type="button" class="cr-tab" data-cat="ytdev">💡 สื่อ เทค &amp; ครีเอเตอร์ YT</button>
     <button type="button" class="cr-tab" data-cat="climate">🌍 ศูนย์ข้อมูลโลก &amp; สภาพภูมิอากาศ (NASA Climate)</button>
+    <button type="button" class="cr-tab" data-cat="bkkcity">🗺️ กรุงเทพฯ ทะลุมิติ (แผนที่ 3 มิติ)</button>
     <button type="button" class="cr-tab" data-cat="nationalstats">📊 สถิติประเทศไทย &amp; นโยบายสาธารณะ</button>
     <button type="button" class="cr-tab" data-cat="stem">🔬 แบบจำลอง STEM &amp; วิทยาการคำนวณ</button>
     <button type="button" class="cr-tab" data-cat="referendum">🗳️ ประชามติ 2569 (ล่าสุด)</button>
@@ -1990,6 +1991,355 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
     </div>
   </div>
 
+  <!-- 3.5 หมวดกรุงเทพฯ ทะลุมิติ (stats/bkk-city.html) — แผนที่ 3 มิติ ภัยพิบัติ น้ำท่วม และน้ำทะเลหนุน -->
+  <div class="cr-sec cr-sec-data" data-cat="bkkcity" id="bkkcity">
+    <h2>🗺️ กรุงเทพฯ ทะลุมิติ — แผนที่ 3 มิติ ภัยพิบัติ น้ำท่วม และน้ำทะเลหนุน<span class="cnt">20 แหล่งข้อมูล</span></h2>
+    <p class="sub">ใช้ในหน้ากรุงเทพฯ ทะลุมิติ (stats/bkk-city.html) — แผนที่เมือง 3 มิติ รถไฟฟ้า สนามบิน ท่าเรือ รถเมล์ ชั้นฝน &amp; น้ำท่วม แม่น้ำและน้ำเหนือ จำลองน้ำท่วม 3 มิติ (รวมโหมดน้ำทะเลหนุน 2050–2100 แบบแผนที่ NYT/Climate Central) แผ่นดินไหว ดินถล่ม กล้อง CCTV และปั๊มน้ำมัน · รายละเอียดรายชั้นดูได้จากปุ่ม ⓘ บนหน้าแผนที่</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">OpenStreetMap และแผนที่ฐาน OpenFreeMap</div>
+            <div class="cr-card-org">OpenStreetMap contributors · OpenFreeMap / OpenMapTiles</div>
+          </div>
+          <span class="lic">ODbL 1.0</span>
+        </div>
+        <div class="cr-card-body">
+          แผนที่ฐานแบบเวกเตอร์ทั้งหน้า และข้อมูลที่ดึงผ่าน Overpass API: มวลอาคารแลนด์มาร์ก (3 ก.ย. 2569), ทางด่วนและทางยกระดับ 2,553 ช่วง ~1,504 กม. (17–18 ก.ย.), แนวรางรถไฟฟ้า 10 สาย ~393 กม. (18 ก.ย.), สนามบินดอนเมืองและสุวรรณภูมิ (19 ก.ย.), ปั๊มน้ำมัน ~8,700 แห่ง (27 ก.ย.), สถานที่สำคัญ ถนนสายหลัก และคันกั้นน้ำของจำลองน้ำท่วม (28 ก.ย.) รวมถึงเส้นแม่น้ำ/คลองและทิศน้ำไหล
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">OSM / Overpass API</span>
+          <a class="cr-card-link" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">DeltaDTM v1.1 — ความสูงพื้นดินชายฝั่ง (โหมดน้ำทะเลหนุน)</div>
+            <div class="cr-card-org">Pronk et al. (2024) Scientific Data 11:273 · 4TU.ResearchData</div>
+          </div>
+          <span class="lic">CC BY 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          ความสูงพื้นดินจริงที่ลบตึกและต้นไม้ออก ความละเอียด 1 ฟิลิปดา อ้างอิงจีออยด์ EGM2008 ใช้ในโหมด "น้ำทะเลหนุน 2050–2100" ของจำลองน้ำท่วม 3 มิติ ย่อเป็นกริด ~90 ม. ครอบ 100.0–101.1°E 13.0–14.3°N · Produced using Copernicus WorldDEM-30 © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018 provided under COPERNICUS by the European Union and ESA; all rights reserved.
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">doi:10.4121/21997565.v4</span>
+          <a class="cr-card-link" href="https://doi.org/10.4121/21997565.v4" target="_blank" rel="noopener">DeltaDTM ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">FABDEM V1-2 — ความสูงพื้นดิน (โหมดตามความสูงพื้นดิน)</div>
+            <div class="cr-card-org">Hawker et al. (2022) · University of Bristol</div>
+          </div>
+          <span class="lic">CC BY-NC-SA 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          Copernicus GLO-30 ที่ลบความสูงตึก/ต้นไม้ออก ใช้ในโหมด "ตามพื้นดิน" กริด ~60 ม. กทม.-ปริมณฑล (ใช้เพื่อการศึกษา ไม่แสวงกำไร) · แปลงจาก EGM2008 เป็น ม.รทก. ด้วย −0.87 ม.
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">doi:10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn</span>
+          <a class="cr-card-link" href="https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn" target="_blank" rel="noopener">FABDEM ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">SRTM (ก.พ. 2543) ผ่าน AWS Terrain Tiles</div>
+            <div class="cr-card-org">NASA JPL · U.S. Geological Survey · Mapzen</div>
+          </div>
+          <span class="lic">Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          ข้อมูลความสูงรุ่นเก่า (นับหลังคาตึกและยอดไม้) ใช้เป็นภาพเทียบ "ข้อมูลเก่า vs ใหม่" แบบรูปของ NYT ในโหมดน้ำทะเลหนุน แปลง EGM96→EGM2008 ด้วยกริดจีออยด์ GeographicLib และใช้คำนวณความชันในชั้นดินถล่ม (สูตร Horn) · SRTM terrain data courtesy of the U.S. Geological Survey
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">doi:10.5067/MEASURES/SRTM/SRTMGL1.003</span>
+          <a class="cr-card-link" href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">IPCC AR6 Sea Level Projections</div>
+            <div class="cr-card-org">Fox-Kemper et al. 2021 · Kopp et al. 2023 (FACTS) · Garner et al. 2021</div>
+          </div>
+          <span class="lic">CC BY 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          ระดับน้ำทะเลสัมพัทธ์ตามฉากทัศน์ SSP1-2.6 / SSP2-4.5 / SSP5-8.5 (และกรณีความเชื่อมั่นต่ำ p95) ปี 2020–2100 ที่สถานีเกาะสีชัง (PSMSL 449) ใช้ส่วนจากภูมิอากาศล้วน (total − vertical land motion) เพราะแผ่นดินทรุดคิดแยกจากดาวเทียม · We thank the projection authors for developing and making the sea-level rise projections available, multiple funding agencies for supporting the development of the projections, and the NASA Sea Level Change Team for developing and hosting the IPCC AR6 Sea Level Projection Tool.
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">doi:10.5281/zenodo.5914709</span>
+          <a class="cr-card-link" href="https://doi.org/10.5281/zenodo.5914709" target="_blank" rel="noopener">IPCC AR6 Sea Level (Zenodo) ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">อัตราแผ่นดินทรุดจากดาวเทียม (ลุ่มเจ้าพระยา)</div>
+            <div class="cr-card-org">Ohenhen et al. (2026) Nature — Global subsidence of river deltas</div>
+          </div>
+          <span class="lic">CC BY 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          กริดอัตราการเคลื่อนตัวแนวดิ่งจาก Sentinel-1 ก.ย. 2559 – พ.ค. 2566 (กรอบ IGS14) ~0.9 กม. ใช้คิดแผ่นดินทรุดถึงปีที่เลือก · ชายฝั่งชลบุรีนอกกริดใช้ค่าสมมติจากสถานี GNSS QBNP (Nevada Geodetic Laboratory, MIDAS)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">doi:10.5281/zenodo.15015923</span>
+          <a class="cr-card-link" href="https://doi.org/10.5281/zenodo.15015923" target="_blank" rel="noopener">Zenodo ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ตารางน้ำขึ้น-ลง และระดับอ้างอิง ม.รทก.</div>
+            <div class="cr-card-org">กรมอุทกศาสตร์ กองทัพเรือ · งานทดสอบหมุด GNSS/ระดับ</div>
+          </div>
+          <span class="lic">ข้อมูลเผยแพร่ราชการ</span>
+        </div>
+        <div class="cr-card-body">
+          ค่าพยากรณ์น้ำรายชั่วโมงปี 2569 สถานีป้อมพระจุลจอมเกล้า ใช้หาระดับน้ำขึ้นสูงเฉลี่ยรายวัน (MHHW ~1.14 ม.รทก.) · ค่าแปลง ม.รทก.↔EGM2008 จากผลทดสอบหมุด GNSS/ระดับ (Engineering Journal 2021; Dumrongchai et al., ACRS 2012) · วิธีแบบเดียวกับ Kulp &amp; Strauss (2019) Nature Communications · เขตจังหวัดสำหรับนับพื้นที่: OCHA/HDX COD-AB
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">hydro.navy.mi.th</span>
+          <a class="cr-card-link" href="https://hydro.navy.mi.th/waterlaveltable" target="_blank" rel="noopener">ตารางน้ำ กรมอุทกศาสตร์ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">คลังข้อมูลน้ำแห่งชาติ และระบบคาดการณ์ FEWS</div>
+            <div class="cr-card-org">สถาบันสารสนเทศทรัพยากรน้ำ (สสน.)</div>
+          </div>
+          <span class="lic">ข้อมูลเปิดภาครัฐ</span>
+        </div>
+        <div class="cr-card-body">
+          ระดับน้ำแม่น้ำ/คลองและฝนสะสม 24 ชม. รายสถานีทั่วประเทศ (อัปเดตทุก 10 นาที) · ปริมาณน้ำไหลรายสถานีกรมชลประทาน ค่าตรวจวัด + คาดการณ์ 7 วัน พร้อมเกณฑ์เฝ้าระวัง/เตือนภัย/วิกฤต · ระดับน้ำคาดการณ์ · ตารางน้ำขึ้น-ลงคาดการณ์ 28 สถานีชายฝั่ง · ฝนรายสถานีสำหรับชั้นดินถล่ม
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">thaiwater.net</span>
+          <a class="cr-card-link" href="https://www.thaiwater.net" target="_blank" rel="noopener">thaiwater.net ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">น้ำท่วมจากดาวเทียม และพื้นที่น้ำท่วมซ้ำซาก</div>
+            <div class="cr-card-org">สำนักงานพัฒนาเทคโนโลยีอวกาศและภูมิสารสนเทศ (GISTDA)</div>
+          </div>
+          <span class="lic">Open Data (GISTDA)</span>
+        </div>
+        <div class="cr-card-body">
+          ไทล์พื้นที่น้ำท่วม 1/3/7/30 วันล่าสุด และพื้นที่น้ำท่วมซ้ำซาก 2554–2567 ผ่าน API ตามลิงก์บนพอร์ทัลข้อมูลเปิด · ข้อมูลน้ำท่วมรายปีสำหรับเทียบกับแบบจำลองในจำลองน้ำท่วม 3 มิติ · รายชื่อเรดาร์ชายฝั่ง (ลิงก์)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">opendata.gistda.or.th</span>
+          <a class="cr-card-link" href="https://opendata.gistda.or.th/dataset/flood-disaster-data" target="_blank" rel="noopener">GISTDA Open Data ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">เรดาร์ฝน ฝนจากดาวเทียม และคาดการณ์น้ำท่วม</div>
+            <div class="cr-card-org">RainViewer · NASA GPM IMERG (GIBS) · Google Flood Hub</div>
+          </div>
+          <span class="lic">Free API / Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          เรดาร์ฝนรวมย้อนหลัง ~2 ชม. ทุก 10 นาทีจาก RainViewer · ฝนรายวันย้อนหลัง 90 วันจากดาวเทียม NASA GPM IMERG ผ่าน GIBS (กริด ~10 กม.) · คาดการณ์น้ำท่วมรายจุดวัดน้ำของ Google Flood Hub (เปิดที่เว็บต้นทาง) · เรดาร์ละเอียดของสำนักการระบายน้ำ กทม. เป็นลิงก์ไปหน้าเว็บต้นทาง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">RainViewer / NASA GIBS</span>
+          <a class="cr-card-link" href="https://gpm.nasa.gov/data/imerg" target="_blank" rel="noopener">NASA GPM IMERG ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">สถานีสูบน้ำและประตูระบายน้ำ กทม. 429 แห่ง</div>
+            <div class="cr-card-org">สำนักการระบายน้ำ กรุงเทพมหานคร</div>
+          </div>
+          <span class="lic">Open Government Data</span>
+        </div>
+        <div class="cr-card-body">
+          ตำแหน่ง ประเภท และกำลังสูบของสถานีสูบน้ำ/ประตูระบายน้ำ จากชุดข้อมูลบน data.bangkok.go.th ใช้ในข้อมูลประกอบของจำลองน้ำท่วม
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">data.bangkok.go.th</span>
+          <a class="cr-card-link" href="https://data.bangkok.go.th/dataset/water-station" target="_blank" rel="noopener">ชุดข้อมูล water-station ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แผ่นดินไหว และรอยเลื่อนมีพลัง</div>
+            <div class="cr-card-org">กรมอุตุนิยมวิทยา · USGS · กรมทรัพยากรธรณี · GEM</div>
+          </div>
+          <span class="lic">Open Data · CC BY · CC BY-SA 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          แผ่นดินไหวล่าสุดจากกองเฝ้าระวังแผ่นดินไหว กรมอุตุนิยมวิทยา และ USGS Earthquake Catalog (รวมเหตุเดียวกันเป็นจุดเดียว) · รอยเลื่อนมีพลังในไทยของกรมทรัพยากรธรณี (CC BY) · ประเทศเพื่อนบ้าน: GEM Global Active Faults (CC BY-SA 4.0) · เหตุ M7.7 เมียนมา 28 มี.ค. 2568: USGS ShakeMap v23 แนวแตก (Reitman และคณะ 2025) อาฟเตอร์ช็อก 3 เดือน · ตัวเลขผู้เสียชีวิตและข้อมูลอาคาร สตง. จากวิกิพีเดีย
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">TMD / USGS</span>
+          <a class="cr-card-link" href="https://earthquake.usgs.gov/earthquakes/eventpage/us7000pn9s" target="_blank" rel="noopener">USGS M7.7 2025 ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ดินถล่ม — พื้นที่เสี่ยงและเหตุการณ์ในอดีต</div>
+            <div class="cr-card-org">กรมทรัพยากรธรณี · กรมทรัพยากรน้ำ · NASA</div>
+          </div>
+          <span class="lic">CC BY · Public Domain</span>
+        </div>
+        <div class="cr-card-body">
+          พื้นที่อ่อนไหว ร่องรอยดินถล่ม เหตุการณ์ในอดีต หมู่บ้านเสี่ยง จุดปลอดภัย จาก ArcGIS ของกรมทรัพยากรธรณี (ซ่อนข้อมูลส่วนบุคคลที่ปรากฏในข้อมูล) · เกณฑ์ฝน &gt;100 มม./วัน ตามหน้าความรู้ของกรมฯ · สถานีเตือนภัยของกรมทรัพยากรน้ำ · ประเทศเพื่อนบ้าน: NASA Global Landslide Catalog (2550–2559)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">gisportal.dmr.go.th</span>
+          <a class="cr-card-link" href="https://www.dmr.go.th" target="_blank" rel="noopener">กรมทรัพยากรธรณี ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">กล้อง CCTV ทั่วประเทศ</div>
+            <div class="cr-card-org">กรมทรัพยากรน้ำ · กฟผ. · Hat Yai City Climate · เทศบาลนครรังสิต · iTIC/กรมทางหลวง (Longdo Traffic) · BMA Traffic</div>
+          </div>
+          <span class="lic">ลิขสิทธิ์ของหน่วยงานเจ้าของกล้อง</span>
+        </div>
+        <div class="cr-card-body">
+          ภาพ/วิดีโอดึงตรงจากหน่วยงานตอนเปิดดู ไม่เก็บไว้ในเว็บนี้ · กล้องทางแยก กทม. และเรดาร์ชายฝั่ง GISTDA เป็นลิงก์ไปหน้าเว็บต้นทาง · รายชื่อกล้องชายฝั่งจาก github.com/hs6uej/cctv
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">telemetry.dwr.go.th</span>
+          <a class="cr-card-link" href="https://telemetry.dwr.go.th/reportCctv" target="_blank" rel="noopener">กล้องกรมทรัพยากรน้ำ ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">รถเมล์กรุงเทพฯ-ปริมณฑล (GTFS)</div>
+            <div class="cr-card-org">สำนักงานนโยบายและแผนการขนส่งและจราจร (สนข.) · ระบบ "นำทาง"</div>
+          </div>
+          <span class="lic">CC BY 4.0</span>
+        </div>
+        <div class="cr-card-body">
+          เส้นทาง 1,327 สาย ป้าย 15,491 ป้าย ตารางความถี่และค่าโดยสาร (ขสมก. ไทยสมายล์บัส รถร่วม รถตู้ สองแถว BRT) รุ่น 22 ก.ย. 2569 · ตำแหน่งรถบนแผนที่เป็นการจำลองตามตาราง ไม่ใช่ GPS จริง
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">namtang-api.otp.go.th</span>
+          <a class="cr-card-link" href="https://namtang-api.otp.go.th/opendata" target="_blank" rel="noopener">GTFS สนข. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">เที่ยวบินสด (ADS-B)</div>
+            <div class="cr-card-org">เครือข่ายอาสาสมัคร adsb.lol · สำรอง adsb.fi</div>
+          </div>
+          <span class="lic">ODbL</span>
+        </div>
+        <div class="cr-card-body">
+          ตำแหน่งเครื่องบินจริงอัปเดตทุก 5 วินาที ผ่าน /api/flights ของเว็บนี้ ใช้ในชั้นสนามบิน 3 มิติ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">adsb.lol</span>
+          <a class="cr-card-link" href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ราคาน้ำมันและสถานะปั๊ม</div>
+            <div class="cr-card-org">ปตท. (PTT OR) · บางจาก · api.chnwt.dev · Thai Pump Radar</div>
+          </div>
+          <span class="lic">ข้อมูลเผยแพร่สาธารณะ</span>
+        </div>
+        <div class="cr-card-body">
+          ราคาขายปลีกวันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอจาก ปตท. และบางจาก แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม · สถานะน้ำมันหมดไม่มีข้อมูลเปิด จึงลิงก์ไป Thai Pump Radar ที่ประชาชนช่วยกันรายงาน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">pttor.com</span>
+          <a class="cr-card-link" href="https://www.pttor.com/th/oil_price" target="_blank" rel="noopener">ราคาน้ำมัน ปตท. ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ห้างร้าน แบรนด์ และโรงภาพยนตร์ 4,591 แห่ง</div>
+            <div class="cr-card-org">Google Maps · Major Cineplex</div>
+          </div>
+          <span class="lic">© Google (อ้างอิง)</span>
+        </div>
+        <div class="cr-card-body">
+          ชื่อ พิกัด เรตติ้ง และที่อยู่ เก็บเมื่อ 9–10 ก.ย. 2569 · รายชื่อสาขาโรงภาพยนตร์ของ Major Cineplex ใช้ตรวจความครบ
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Google Maps</span>
+          <a class="cr-card-link" href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ข้อมูลประกอบอื่น ๆ</div>
+            <div class="cr-card-org">PeeringDB · Esri · ผังเมืองรวม กทม. · Blender</div>
+          </div>
+          <span class="lic">ตามสัญญาของแต่ละแหล่ง</span>
+        </div>
+        <div class="cr-card-body">
+          ศูนย์ข้อมูล (Data Center): พิกัดจาก PeeringDB + OpenStreetMap/Nominatim สถิติผลกระทบจาก กฟน. กปน. JustPow สำนักนายกฯ และ BOI · สีหลังคาอาคารสนามบินจากภาพดาวเทียม Esri World Imagery และสถานะทางวิ่งจาก AIP ของ กพท. · ผังสีจากผังเมืองรวมกรุงเทพมหานคร · โมเดลแลนด์มาร์ก 3 มิติปั้นด้วย Blender จากผังใน OpenStreetMap (ไม่ใช่แบบสถาปัตยกรรมจริง)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">หลายแหล่ง</span>
+          <a class="cr-card-link" href="https://www.peeringdb.com" target="_blank" rel="noopener">PeeringDB ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แรงบันดาลใจและต้นแบบระบบ 3D GIS</div>
+            <div class="cr-card-org">Phattaraphon Chomchaiyaphum (โปรเจกต์ PHATTRA / Ashton · Claude Thailand Community)</div>
+          </div>
+          <span class="lic">Inspiration</span>
+        </div>
+        <div class="cr-card-body">
+          แนวคิดแผนที่เมือง 3 มิติแบบรวมหลายชั้นข้อมูลที่เป็นต้นแบบของหน้านี้
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">Claude Thailand Community</span>
+          <a class="cr-card-link" href="#ytdev">ดูในหมวดสื่อ เทค &amp; ครีเอเตอร์ ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- 4. หมวดสถิติประเทศไทย เศรษฐกิจ สังคม และนโยบายสาธารณะ (จากหน้า stats/explore.html) -->
   <div class="cr-sec cr-sec-data" data-cat="nationalstats" id="nationalstats">
     <h2>📊 สถิติประเทศไทย เศรษฐกิจ สังคม และนโยบายสาธารณะ (National Statistics &amp; Economy)<span class="cnt">13 แหล่งข้อมูลระดับชาติ</span></h2>
@@ -3040,12 +3390,17 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
       activateCat(btn.dataset.cat);
     });
 
-    if(window.location.hash){
+    const fromHash = () => {
       const h = window.location.hash.replace('#', '');
-      if(tabContainer.querySelector(`.cr-tab[data-cat="${h}"]`)){
+      if(h && tabContainer.querySelector(`.cr-tab[data-cat="${h}"]`)){
         activateCat(h);
+        return true;
       }
-    }
+      return false;
+    };
+    fromHash();
+    // ลิงก์ภายในหน้า (เช่น การ์ดที่ชี้ไป #ytdev) — เปลี่ยน hash แล้วสลับแท็บให้ด้วย
+    window.addEventListener('hashchange', () => { if(fromHash()) tabContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   }
 })();
 </script>
