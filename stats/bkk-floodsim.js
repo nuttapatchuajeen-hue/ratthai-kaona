@@ -12,6 +12,12 @@
  *           ⚠ แบบ "อ่างน้ำ" (bathtub): ไม่คิดคันกั้นน้ำ ระบบสูบ/ระบายน้ำ ทิศทางการไหล — เห็นว่าที่ไหนต่ำ ไม่ใช่พยากรณ์
  *
  * ตำแหน่งแผ่นน้ำโหมด dem: จุดยอดวางตามพิกัดจริงทีละจุด (ละติจูดบนเมอร์เคเตอร์ไม่เป็นเส้นตรง ถ้ายืดแผ่นเดียวจะคลาดกลางภาพ ~40 ม.)
+ *
+ *   "sea"   น้ำทะเลหนุนตามปี/ฉากทัศน์ IPCC + แผ่นดินทรุด (แบบแผนที่ NYT/Climate Central) — โมดูลแยก bkk-sealevel.js
+ *           ไฟล์นี้แค่ส่งต่อ: แผง · ทุกเฟรม · คลิก · เปิด-ปิด · ใช้เชเดอร์น้ำและกลุ่มในฉากร่วมกัน
+ *
+ * ระดับอ้างอิงความสูง: FABDEM อ้างอิงจีออยด์ EGM2008 ซึ่งสูงกว่า "ม.รทก." (หมุดเกาะหลัก) ราว 0.87 ม. ในที่ราบภาคกลาง
+ *   → แปลงเป็น ม.รทก. ครั้งเดียวตอนโหลด (DATUM) ทุกตัวเลข/ระดับน้ำในโหมด dem จึงเป็น ม.รทก. จริง
  */
 (function () {
   "use strict";
@@ -20,7 +26,10 @@
   var LS_ON = "bkk-floodsim-on", LS_DEPTH = "bkk-floodsim-depth", LS_STYLE = "bkk-floodsim-style", LS_WAVE = "bkk-floodsim-wave";
   var LS_MODE = "bkk-floodsim-mode", LS_LEVEL = "bkk-floodsim-level", LS_TERR = "bkk-floodsim-terrain";
   var DEM_PNG = "bkk-dem.png", DEM_JSON = "bkk-dem.json";
-  var MAX_DEPTH = 6, MIN_LEVEL = 0, MAX_LEVEL = 5;
+  // EGM2008 − ม.รทก. (Kolak-1915): +0.869 ± 0.064 ม. จากหมุด GNSS/ระดับ 20 จุดในพื้นที่ราบ (Engineering Journal, tuengr V12 2021)
+  var DATUM = 0.87;
+  var NODATA = -9, NODATA_TEST = -5;       // ทะเล/ไม่มีข้อมูล หลังแปลงเป็น รทก. (พื้นจริงต่ำสุดในกรอบ ~ −3.9)
+  var MAX_DEPTH = 6, MIN_LEVEL = 0, MAX_LEVEL = 4;
   var FLOOR_H = 3.2;                       // ความสูงชั้นโดยประมาณ (ม.)
   var SEG = 480;                           // ตารางจุดยอดของแผ่นน้ำโหมด dem (~185 ม./ช่อง) — ขอบน้ำละเอียดตามภาพความสูง (~60 ม.) ในเฟรกเมนต์
   var HOME = { center: [100.5305, 13.7265], zoom: 16.3, pitch: 62, bearing: -28 };   // สีลม-สาทร: ตึกหลายระดับให้เห็นระดับน้ำชัด
@@ -132,7 +141,7 @@
     "void main(){",
     "  vUv = uv;",
     "  vec2 hf = texture2D(uDem, uv).rg;",
-    "  float d = hf.r < -2.5 ? 0.0 : max(surf(hf) - hf.r, 0.0);",
+    "  float d = hf.r < -5.0 ? 0.0 : max(surf(hf) - hf.r, 0.0);",
     "  vec4 w = modelMatrix * vec4(position.xy, d * uK + 0.03, 1.0);",
     "  vW = w.xyz;",
     "  gl_Position = projectionMatrix * viewMatrix * w;",
@@ -147,7 +156,7 @@
     "void main(){",
     "  vec2 hf = texture2D(uDem, vUv).rg;",
     "  float h = hf.r;",
-    "  if (h < -2.5) discard;",
+    "  if (h < -5.0) discard;",
     "  float d = surf(hf) - h;",
     "  if (d < 0.01) {",
     // หลังน้ำลด: ที่เคยท่วมแต่แห้งแล้ว = คราบโคลนจาง ๆ
@@ -169,7 +178,7 @@
     "varying vec2 vUv;",
     "void main(){",
     "  float h = texture2D(uDem, vUv).r;",
-    "  if (h < -2.5) discard;",
+    "  if (h < -5.0) discard;",
     "  vec3 c = uC[0];",
     "  for (int i = 1; i < 8; i++) c = mix(c, uC[i], clamp((h - uT[i - 1]) / (uT[i] - uT[i - 1]), 0.0, 1.0));",
     "  gl_FragColor = vec4(c, uAlpha);",
@@ -202,6 +211,7 @@
       m.uniforms.uSky.value.set(st.sky);
       m.uniforms.uOpacity.value = st.op;
     });
+    if (window.BKK_SEALEVEL) window.BKK_SEALEVEL.applyStyle(st);
   }
 
   /* ================================================================ ข้อมูลความสูงพื้นดิน (FABDEM) */
@@ -233,15 +243,18 @@
       var h = new Float32Array(n), fl = new Float32Array(n), half = new Uint16Array(n * 2), land = [];
       for (var i = 0; i < n; i++) {
         var v = (px[i * 4] * 256 + px[i * 4 + 1]) / 100 - 5;
+        v = v > x.meta.nodata_below ? v - DATUM : NODATA;    // EGM2008 → ม.รทก.
         var f = v + px[i * 4 + 2] / 50;          // B = ความลึกแอ่งปิด (หน่วย 2 ซม.)
         h[i] = v; fl[i] = f;
         half[i * 2] = toHalf(v); half[i * 2 + 1] = toHalf(f);
-        if (v > x.meta.nodata_below) land.push(v);
+        if (v > NODATA_TEST) land.push(v);
       }
       var sorted = Float32Array.from(land).sort();
       var b = x.meta.bbox, midLat = (b[1] + b[3]) / 2;
       var cellKm2 = (x.meta.res_arcsec / 3600 * 111.32 * Math.cos(midLat * Math.PI / 180)) * (x.meta.res_arcsec / 3600 * 110.57);
-      dem = { meta: x.meta, W: W, H: Hh, h: h, fill: fl, half: half, sorted: sorted, cellKm2: cellKm2 };
+      // ชั้นประกอบ (floodsim-extra) อ่าน meta.nodata_below → ให้ตรงกับค่าหลังแปลงระดับอ้างอิง
+      var meta = Object.assign({}, x.meta, { nodata_below: NODATA_TEST, vertical: "ม.รทก. (แปลงจาก EGM2008 − " + DATUM + " ม.)" });
+      dem = { meta: meta, W: W, H: Hh, h: h, fill: fl, half: half, sorted: sorted, cellKm2: cellKm2 };
       demErr = null;
       return dem;
     }).catch(function (e) { demErr = String(e.message || e); demLoading = null; throw e; });
@@ -389,6 +402,15 @@
     if (!mesh) return;
     var now = performance.now(), dt = Math.min(0.1, (now - (lastT || now)) / 1000);
     lastT = now;
+    if (mode === "sea") {
+      // โหมดน้ำทะเลหนุน: ซ่อนแผ่นน้ำของสองโหมดเดิม ให้ bkk-sealevel.js วาดผิวน้ำของตัวเอง (เชเดอร์น้ำชุดเดียวกัน)
+      mesh.visible = false;
+      if (demMesh) { demMesh.visible = false; terrMesh.visible = false; }
+      var SL = window.BKK_SEALEVEL;
+      var mv = SL ? SL.frame(z, { time: waves ? (now - t0) / 1000 : 0, wave: waves ? 0.55 : 0.12, eye: H.eye() }) : false;
+      H.setAnim(MOD_ID, visible && (waves || mv || (SL && SL.moving())));
+      return;
+    }
     var dem3 = mode === "dem" && demMesh;
     if (rec) {
       // น้ำลดวันต่อ ๆ ไป: เดินวันแบบต่อเนื่อง (เศษวันทำให้ผิวน้ำลดลื่น ๆ) · ตัวเลขบนแผงเปลี่ยนเมื่อขึ้นวันใหม่
@@ -454,6 +476,7 @@
       H.scene().add(group);
       H.register({ id: MOD_ID, group: group, frame: frame, theme: function () { } });
       H.ready();
+      if (window.BKK_SEALEVEL) window.BKK_SEALEVEL.attach3D({ T: T, H: H, group: group, waterUniforms: waterUniforms, WATER_LIGHT: WATER_LIGHT });
     });
     return loading;
   }
@@ -464,6 +487,7 @@
   /* ================================================================ คลิกบนแผนที่: ตึกที่เลือก + ความสูงพื้นดิน */
   function onMapClick(e) {
     if (!visible) return;
+    if (mode === "sea") { if (window.BKK_SEALEVEL) window.BKK_SEALEVEL.click(e); return; }
     pickedGround = dem ? { lon: e.lngLat.lng, lat: e.lngLat.lat, h: groundAt(e.lngLat.lng, e.lngLat.lat), pond: fillAt(e.lngLat.lng, e.lngLat.lat) || 0 } : null;
     picked = null;
     if (map.getLayer("city-buildings-3d")) {
@@ -630,6 +654,7 @@
   }
 
   function renderLive() {
+    if (mode === "sea") { zoomNote(); notifyExtra(); return; }
     var dm = mode === "dem";
     var el = $("#fsDepthNow");
     if (el) el.textContent = m2(curValue());
@@ -641,13 +666,21 @@
     Array.prototype.forEach.call(document.querySelectorAll("#fsPanel [data-d]"), function (b) { b.classList.toggle("on", Math.abs(+b.dataset.d - (dm ? level : depth)) < 1e-6); });
     var bl = $("#fsBld"); if (bl) bl.innerHTML = pickHTML();
     var ar = $("#fsArea"); if (ar) ar.innerHTML = dm ? areaHTML() : "";
-    var zn = $("#fsZoom");
-    if (zn) {
-      var z = map ? map.getZoom() : 20;
-      zn.style.display = z < 11 ? "" : dm || z >= 13.5 ? "none" : "";
-      zn.innerHTML = ico("zoom-in") + (z < 11 ? " ซูมเข้าอย่างน้อยระดับเมืองเพื่อให้เห็นผิวน้ำ" : " ซูมเข้าใกล้ขึ้นเพื่อให้เห็นตึก 3 มิติ");
-    }
+    zoomNote();
     notifyExtra();
+  }
+  function zoomNote() {
+    var zn = $("#fsZoom");
+    if (!zn) return;
+    var z = map ? map.getZoom() : 20;
+    if (mode === "sea") {                  // ซูมออกเห็นภาพ 2 มิติทั้งอ่าวอยู่แล้ว — บอกเฉพาะว่าซูมเข้าจะเห็นผิวน้ำ 3 มิติ/ตึกจม
+      zn.style.display = z >= 13.5 ? "none" : "";
+      zn.innerHTML = ico("zoom-in") + (z < 11 ? " ซูมเข้าถึงระดับเมืองเพื่อดูผิวน้ำ 3 มิติ" : " ซูมเข้าใกล้ขึ้นเพื่อดูตึกจมน้ำ");
+      return;
+    }
+    var dm = mode === "dem";
+    zn.style.display = z < 11 ? "" : dm || z >= 13.5 ? "none" : "";
+    zn.innerHTML = ico("zoom-in") + (z < 11 ? " ซูมเข้าอย่างน้อยระดับเมืองเพื่อให้เห็นผิวน้ำ" : " ซูมเข้าใกล้ขึ้นเพื่อให้เห็นตึก 3 มิติ");
   }
   // สถานะน้ำ ณ ตอนนี้สำหรับชั้นประกอบ: L = ระดับน้ำที่ไหลออกได้ · P = ระดับสูงสุด · drop = ส่วนที่แอ่งลดไปแล้ว
   function simState() {
@@ -660,14 +693,25 @@
     if (!p || !visible) return;
     var dm = mode === "dem";
     var h = '<div class="fs-seg" role="tablist">' +
-      '<button type="button" data-m="flat" class="' + (dm ? "" : "on") + '">ความลึกเท่ากันทุกที่<small>ดูว่าน้ำลึก X ม. เป็นแบบไหน</small></button>' +
-      '<button type="button" data-m="dem" class="' + (dm ? "on" : "") + '">ตามความสูงพื้นดิน<small>ที่ต่ำท่วมก่อน (FABDEM)</small></button></div>';
+      '<button type="button" data-m="flat" class="' + (mode === "flat" ? "on" : "") + '">ความลึกเท่ากัน<small>น้ำลึก X ม. เป็นแบบไหน</small></button>' +
+      '<button type="button" data-m="dem" class="' + (dm ? "on" : "") + '">ตามพื้นดิน<small>ที่ต่ำท่วมก่อน</small></button>' +
+      (window.BKK_SEALEVEL ? '<button type="button" data-m="sea" class="' + (mode === "sea" ? "on" : "") + '">น้ำทะเลหนุน<small>ปี 2050–2100</small></button>' : "") + '</div>';
+    if (mode === "sea") {
+      h += '<div id="slBody"></div>' +
+        '<label class="fs-opt"><input type="checkbox" data-o="wave"' + (waves ? " checked" : "") + '> คลื่นและแสงสะท้อน (ตอนซูมเข้า) <small style="opacity:.6">(ปิดเพื่อประหยัดแบตเตอรี่)</small></label>' +
+        '<label class="fs-opt"><input type="checkbox" data-o="muddy"' + (style === "muddy" ? " checked" : "") + '> น้ำขุ่นแบบน้ำท่วมจริง</label>' +
+        '<p class="fs-note" id="fsZoom" style="display:none"></p>';
+      p.querySelector(".fs-body").innerHTML = h;
+      window.BKK_SEALEVEL.renderPanel($("#slBody"));
+      zoomNote();
+      return;
+    }
     h += '<div class="fs-top"><span id="fsPerson">' + personSVG(dm ? 0 : depth) + '</span><div><div class="fs-big"><span id="fsDepthNow">' + m2(dm ? level : depth) + '</span> <small>' +
-      (dm ? "ระดับน้ำ (เหนือระดับทะเลปานกลาง)" : "ลึกจากพื้น") + '</small></div>' +
+      (dm ? "ระดับน้ำ ม.รทก. (เหนือระดับทะเลปานกลาง)" : "ลึกจากพื้น") + '</small></div>' +
       '<div class="fs-imp" id="fsImpact"></div></div></div>';
     if (dm) {
       h += '<input type="range" id="fsSlider" min="' + MIN_LEVEL + '" max="' + MAX_LEVEL + '" step="0.05" value="' + level + '" aria-label="ระดับน้ำ (เมตร รทก.)">' +
-        '<div class="fs-scale"><span>0</span><span>1 ม.</span><span>2 ม.</span><span>3 ม.</span><span>4 ม.</span><span>5 ม.</span></div>' +
+        '<div class="fs-scale"><span>0</span><span>1 ม.</span><span>2 ม.</span><span>3 ม.</span><span>4 ม.</span></div>' +
         '<div class="fs-chips">' + LEVELS.map(function (x) { return '<button type="button" class="fs-chip" data-d="' + x + '">' + x + ' ม.</button>'; }).join("") + '</div>' +
         '<div id="fsArea"></div>';
     } else {
@@ -681,7 +725,7 @@
     if (dm) {
       h += '<label class="fs-opt"><input type="checkbox" data-o="terrain"' + (terrain ? " checked" : "") + '> แสดงสีความสูงพื้นดิน</label>';
       if (terrain) h += '<div class="fs-grad" style="background:linear-gradient(90deg,' + TERR.map(function (t) { return t[1]; }).join(",") + ')"></div>' +
-        '<div class="fs-gradl">' + TERR.map(function (t) { return "<span>" + t[0] + "</span>"; }).join("") + '</div><p class="fs-note" style="margin-top:2px">ม. เหนือระดับทะเลปานกลาง</p>';
+        '<div class="fs-gradl">' + TERR.map(function (t) { return "<span>" + t[0] + "</span>"; }).join("") + '</div><p class="fs-note" style="margin-top:2px">ม.รทก. (เหนือระดับทะเลปานกลาง)</p>';
     }
     h += '<label class="fs-opt"><input type="checkbox" data-o="wave"' + (waves ? " checked" : "") + '> คลื่นและแสงสะท้อน <small style="opacity:.6">(ปิดเพื่อประหยัดแบตเตอรี่)</small></label>' +
       '<label class="fs-opt"><input type="checkbox" data-o="muddy"' + (style === "muddy" ? " checked" : "") + '> น้ำขุ่นแบบน้ำท่วมจริง</label>' +
@@ -692,6 +736,7 @@
     h += dm ?
       '<div class="fs-warn"><b>แบบจำลองอย่างง่าย ("อ่างน้ำ") — เห็นว่าที่ไหนต่ำ ไม่ใช่พยากรณ์</b> — ทุกที่ที่ต่ำกว่าระดับน้ำถือว่าท่วม ไม่คิดคันกั้นน้ำ/แนวป้องกันริมเจ้าพระยา ระบบสูบและระบายน้ำ หรือทิศทางการไหล · ' +
       'ความสูงพื้นดินจาก FABDEM (Copernicus 30 ม. ที่ลบตึก/ต้นไม้ออก) คลาดเคลื่อนได้ราว 1–2 ม. และยังมีเศษความสูงตึกบางย่าน เช่น สีลม · ข้อมูลดาวเทียมเก็บราวปี 2554–2558 ไม่รวมการทรุดตัวของดินหลังจากนั้น · ' +
+      'แปลงจากระดับอ้างอิง EGM2008 เป็น ม.รทก. ด้วย −' + DATUM + ' ม. (ผลทดสอบหมุด GNSS/ระดับในพื้นที่ราบ) · ' +
       'ข้อมูล: <a href="https://doi.org/10.5523/bris.s5hqmjcdj8yo2ibzi9b4ew3sn" target="_blank" rel="noopener">FABDEM V1-2</a> © University of Bristol, CC BY-NC-SA 4.0 (ใช้เพื่อการศึกษา ไม่แสวงกำไร)</div>' :
       '<div class="fs-warn"><b>ภาพจำลองเพื่อเห็นภาพเท่านั้น</b> — น้ำลึกเท่ากันทุกที่ ไม่ได้คำนวณจากความสูงพื้นดินหรือทางน้ำจริง (ดูโหมด "ตามความสูงพื้นดิน" สำหรับว่าที่ไหนต่ำ) · ' +
       'ผลกระทบต่อคน/รถอ้างอิงคำเตือนของ NWS สหรัฐฯ · ติดตามประกาศจริงจาก ปภ. กรมอุตุฯ และ กทม.</div>';
@@ -715,12 +760,19 @@
   }
   function setMode(m, fly) {
     rec = null;
-    if (m !== "dem") m = "flat";
+    if (m !== "dem" && !(m === "sea" && window.BKK_SEALEVEL)) m = "flat";
+    var SL = window.BKK_SEALEVEL;
+    if (SL && m !== "sea") SL.deactivate();
     mode = m;
     lsSet(LS_MODE, m);
     surgeFrom = null;
     renderPanel();
-    if (m === "dem") {
+    if (m === "sea") {
+      ensureLoaded().then(function () {
+        if (mode !== "sea" || !visible) return;
+        return SL.activate(fly).then(function () { if (mode === "sea") renderPanel(); });
+      }).catch(function (e) { console.warn("floodsim sea:", e); renderPanel(); });
+    } else if (m === "dem") {
       ensureDem().then(function () {
         if (mode !== "dem") return;
         shownLevel = level;
@@ -829,6 +881,7 @@
     if (!visible) {
       if (group) group.visible = false;
       if (H) { H.show(MOD_ID, false); H.setAnim(MOD_ID, false); }
+      if (window.BKK_SEALEVEL) window.BKK_SEALEVEL.deactivate();
       notifyExtra();
       return;
     }
@@ -838,7 +891,7 @@
       if (!visible) return;
       H.show(MOD_ID, true);
       H.setAnim(MOD_ID, true);
-      if (mode === "dem") { setMode("dem", !noFly); return; }
+      if (mode === "dem" || mode === "sea") { setMode(mode, !noFly); return; }
       var c = map.getCenter(), far = c.lng < 100.2 || c.lng > 100.95 || c.lat < 13.45 || c.lat > 14.15;
       if (!noFly && (far || map.getZoom() < 14)) {
         map.flyTo(Object.assign({ duration: 2200 }, HOME));
@@ -864,8 +917,10 @@
     var rr = parseFloat(lsGet(LS_RATE));
     if (RATES.some(function (x) { return Math.abs(x[0] - rr) < 1e-6; })) rate = rr;
     if (lsGet(LS_MODE) === "dem") mode = "dem";
+    if (lsGet(LS_MODE) === "sea" && window.BKK_SEALEVEL) mode = "sea";
     buildUI();
     if (window.BKK_FLOODSIM_EXTRA) window.BKK_FLOODSIM_EXTRA.mount(m);
+    if (window.BKK_SEALEVEL) window.BKK_SEALEVEL.mount(m);
     if (!mount._bound) {
       mount._bound = true;
       map.on("click", onMapClick);
@@ -879,6 +934,7 @@
   }
 
   window.BKK_FLOODSIM = {
+    DATUM: DATUM,
     mount: mount,
     setVisible: setVisible,
     setDepth: setDepth,

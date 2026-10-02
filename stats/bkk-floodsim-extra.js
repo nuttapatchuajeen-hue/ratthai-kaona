@@ -48,6 +48,8 @@
     if (D) return Promise.resolve(D);
     if (!loading) loading = (window.BKK_FLOODSIM_DATA ? Promise.resolve() : loadScript(DATA_URL)).then(function () {
       var R = window.BKK_FLOODSIM_DATA, q = R.q;
+      // ความสูงพื้นในไฟล์ข้อมูลเป็น EGM2008 (จาก FABDEM) → แปลงเป็น ม.รทก. ให้ตรงกับตัวจำลอง
+      var dz = (window.BKK_FLOODSIM && window.BKK_FLOODSIM.DATUM) || 0.87;
       var dec = function (flat) {
         var out = [], x = 0, y = 0;
         for (var i = 0; i < flat.length; i += 2) { x = i ? x + flat[i] : flat[i]; y = i ? y + flat[i + 1] : flat[i + 1]; out.push([x / q, y / q]); }
@@ -58,10 +60,10 @@
         var c = dec(r[3]), len = 0;
         for (var k = 1; k < c.length; k++) len += Math.hypot((c[k][0] - c[k - 1][0]) * 108, (c[k][1] - c[k - 1][1]) * 110.6);
         km += len;
-        roads.push({ type: "Feature", geometry: { type: "LineString", coordinates: c }, properties: { i: i, c: r[0], g: r[1] / 100, p: r[2] / 100, len: len } });
+        roads.push({ type: "Feature", geometry: { type: "LineString", coordinates: c }, properties: { i: i, c: r[0], g: r[1] / 100 - dz, p: r[2] / 100, len: len } });
       });
       var places = R.places.map(function (p, i) {
-        return { type: "Feature", geometry: { type: "Point", coordinates: [p[0] / q, p[1] / q] }, properties: { i: i, c: p[2], n: p[3], g: p[4] / 100, p: p[5] / 100 } };
+        return { type: "Feature", geometry: { type: "Point", coordinates: [p[0] / q, p[1] / q] }, properties: { i: i, c: p[2], n: p[3], g: p[4] / 100 - dz, p: p[5] / 100 } };
       });
       var pumps = R.pumps.map(function (p, i) {
         return { type: "Feature", geometry: { type: "Point", coordinates: [p[0] / q, p[1] / q] }, properties: { i: i, t: p[2], cap: p[5] || 0 } };
@@ -364,7 +366,7 @@
     popup = new maplibregl.Popup({ closeButton: true, maxWidth: "290px", className: "fl-popup", offset: 10 }).setLngLat(ll).setHTML(html).addTo(map);
   }
   function openPlace(i, fly) {
-    var p = D.raw.places[i], q = D.raw.q, ll = [p[0] / q, p[1] / q], g = p[4] / 100, d = depthOf(g, p[5] / 100);
+    var p = D.raw.places[i], q = D.raw.q, ll = [p[0] / q, p[1] / q], g = D.places[i].properties.g, d = depthOf(g, p[5] / 100);
     if (fly) map.flyTo({ center: ll, zoom: Math.max(map.getZoom(), 15.5), pitch: 55, duration: 1600 });
     openPopup(ll, '<div class="fl-pop"><b class="fl-pop-t">' + esc(p[3] || D.raw.cats[p[2]][1]) + ' <small>' + esc(D.raw.cats[p[2]][1]) + '</small></b>' +
       '<div class="fl-row"><span>พื้นดิน</span><b>' + g.toFixed(2) + ' ม. รทก.</b></div>' +
