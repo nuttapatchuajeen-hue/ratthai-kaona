@@ -3281,6 +3281,7 @@
 <script src="bkk-cctv.js"></script>
 <script src="bkk-quake.js"></script>
 <script src="bkk-landslide.js"></script>
+<script src="bkk-air.js"></script>
 <script src="bkk-floodsim-extra.js"></script>
 <script src="bkk-sealevel.js"></script>
 <script src="bkk-floodsim.js"></script>
@@ -3725,6 +3726,8 @@
     if (STATE.droneTourActive || map.isMoving()) return;
     // กำลังเอียงดูจุดกำเนิดแผ่นดินไหวใต้ดิน (bkk-quake.js) — ไม่ต้องกดแผนที่กลับเป็นแบนตอนซูม
     if (window.BKK_QUAKE && window.BKK_QUAKE.holdTilt()) return;
+    // ชั้นฝุ่น PM2.5 เปิดอยู่ — แท่งค่าฝุ่นต้องดูแบบเอียง แม้ซูมออกดูทั้งเมือง (bkk-air.js)
+    if (window.BKK_AIR && window.BKK_AIR.holdTilt()) return;
 
     // forceTilt = กำลังดูแท่งความสูงเขตอยู่ ต้องคาเอียงไว้ไม่ว่าซูมเท่าไหร่
     var want3D = STATE.forceTilt || map.getZoom() >= CAM.tiltZoom;
@@ -4436,6 +4439,11 @@
     // ⛰ ดินถล่ม — ฝนตกหนักใกล้หมู่บ้านเสี่ยง + พื้นที่อ่อนไหว/เหตุในอดีต/จุดปลอดภัย (กรมทรัพยากรธรณี) + เงาภูเขา/ความชัน — โมดูลแยกใน bkk-landslide.js
     if (window.BKK_SLIDE) {
       try { window.BKK_SLIDE.mount(map); } catch (e) { console.warn("landslide layer:", e); }
+    }
+
+    // 🌫 ฝุ่น PM2.5 รายสถานี (Air4Thai กรมควบคุมมลพิษ + กทม.) — เฉลี่ย 24 ชม. + ย้อนดูรายชั่วโมง — โมดูลแยกใน bkk-air.js
+    if (window.BKK_AIR) {
+      try { window.BKK_AIR.mount(map); } catch (e) { console.warn("air layer:", e); }
     }
 
     // ⛽ ปั๊มน้ำมันทั่วประเทศ + ราคาวันนี้/พรุ่งนี้ + กราฟย้อนหลัง + ปั๊มถูกสุดใกล้ฉัน — โมดูลแยกใน bkk-fuel.js
@@ -7275,6 +7283,7 @@ window.MD_DATA_NOTICE = {
     { t: 'รอยเลื่อนมีพลัง', o: 'ในไทย: กรมทรัพยากรธรณี ชุดข้อมูลกลุ่มรอยเลื่อนมีพลัง (CC BY) ดึง 28 ก.ย. 2569 · ประเทศเพื่อนบ้าน: GEM Global Active Faults Database (CC BY-SA 4.0) — ไม่มีชื่อรอยเลื่อน ยกเว้นช่วงรอยเลื่อนสะกายที่ทับแนวแตกปี 2568', u: 'https://data.go.th/dataset/2f32b01e-6ae7-4b66-aa2c-730a87051793' },
     { t: 'ดินถล่ม — พื้นที่อ่อนไหว ร่องรอยดินถล่ม เหตุการณ์ในอดีต หมู่บ้านเสี่ยง จุดปลอดภัย สถานีเฝ้าระวัง', o: 'กรมทรัพยากรธรณี (ArcGIS gisportal.dmr.go.th · CC BY) — พื้นที่อ่อนไหวและร่องรอยดินถล่มขอภาพจากเซิร์ฟเวอร์กรมฯ โดยตรง ที่เหลือดึง 28 ก.ย. 2569 · ซ่อนชื่อ-นามสกุล บ้านเลขที่ และเบอร์โทรของบุคคลที่ปรากฏในข้อมูล · แก้วันที่เหตุน้ำก้อ (หล่มสัก) เป็น 11 ส.ค. 2544 ตามจังหวัดเพชรบูรณ์', u: 'https://gisportal.dmr.go.th/arcgis/rest/services/HAZARD' },
     { t: 'ดินถล่ม — ฝนตกหนักรายสถานี และเกณฑ์เฝ้าระวัง', o: 'ฝน 24 ชม. + สะสม 7 วัน: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) ผ่าน /api/slide ของเว็บนี้ · เกณฑ์ >100 มม./วัน ตามหน้าความรู้ดินถล่มของกรมทรัพยากรธรณี · สถานีเตือนภัย: กรมทรัพยากรน้ำ · ประเทศเพื่อนบ้าน: NASA Global Landslide Catalog (2550–2559) · ความชัน: AWS Terrain Tiles คำนวณด้วยสูตร Horn', u: 'https://www.dmr.go.th' },
+    { t: 'ฝุ่น PM2.5 รายสถานี (ชั้นฝุ่น PM2.5)', o: 'Air4Thai กรมควบคุมมลพิษ (รวมสถานีของ กทม.) ผ่าน /api/air ของเว็บนี้ · ค่าเฉลี่ย 24 ชม. และระดับ AQI ตามที่กรมฯ ประกาศ + ค่ารายชั่วโมงย้อนหลัง 24 ชม. · อัปเดตทุกชั่วโมง · คำแนะนำสุขภาพสรุปจากเกณฑ์ AQI ของกรมฯ', u: 'https://air4thai.pcd.go.th/webV3/' },
     { t: 'แผ่นดินไหวเมียนมา M7.7 28 มี.ค. 2568', o: 'USGS: ShakeMap v23 (ความรุนแรง MMI), แนวแตก (Reitman และคณะ 2025), อาฟเตอร์ช็อก 3 เดือน · ตัวเลขผู้เสียชีวิตและข้อมูลอาคาร สตง.: วิกิพีเดีย', u: 'https://earthquake.usgs.gov/earthquakes/eventpage/us7000pn9s' },
     { t: 'น้ำเหนือ และน้ำทะเลหนุน (ชั้นฝน & น้ำท่วม)', o: 'สถาบันสารสนเทศทรัพยากรน้ำ (สสน.) ระบบคาดการณ์ FEWS — ปริมาณน้ำไหลรายสถานีกรมชลประทาน (ค่าตรวจวัด + คาดการณ์ 7 วัน + เกณฑ์เฝ้าระวัง/เตือนภัย/วิกฤต) ระดับน้ำคาดการณ์ และตารางน้ำขึ้น-ลงคาดการณ์ 28 สถานีชายฝั่ง · ดึงสดตอนเปิด', u: 'https://www.thaiwater.net/' },
     { t: 'พื้นที่น้ำท่วมจากดาวเทียม และพื้นที่น้ำท่วมซ้ำซาก (ชั้นฝน & น้ำท่วม)', o: 'GISTDA — ไทล์น้ำท่วม 1/3/7/30 วันล่าสุด และพื้นที่น้ำท่วมซ้ำซาก 2554–2567 ผ่าน API ตามลิงก์บนพอร์ทัลข้อมูลเปิด', u: 'https://opendata.gistda.or.th/dataset/flood-disaster-data' },
