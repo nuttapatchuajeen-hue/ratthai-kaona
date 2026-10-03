@@ -1,8 +1,9 @@
 /**
  * bkk-ev.js
- * ชั้น "จุดชาร์จ EV" ของ bkk-city.html — สถานีชาร์จรถยนต์ไฟฟ้าแยกสีตามผู้ให้บริการ + หัวชาร์จ/กำลัง + จุดชาร์จใกล้ฉัน
+ * ชั้น "จุดชาร์จ EV" ของ bkk-city.html — สถานีชาร์จรถยนต์ไฟฟ้าแยกโลโก้/สีตามผู้ให้บริการ + หัวชาร์จ/กำลัง + จุดชาร์จใกล้ฉัน
  *
  * ข้อมูล: bkk-ev-data.js (window.BKK_EV) จาก _geo/build-bkk-ev.js ← OpenStreetMap (ODbL)
+ * โลโก้: img/ev-logos/<op>.webp = ไอคอนแอปของผู้ให้บริการจาก App Store (128px, ต.ค. 2569) — "car"/"other" ไม่มีโลโก้ ใช้วงสี + ⚡
  *   ⚠ ต.ค. 2569 OSM มีจุดชาร์จในไทยแค่ราว 300 จุด จากของจริงหลายพันจุด → แผงบอกผู้ใช้ชัด ๆ และมีลิงก์ไปแผนที่ที่ครบกว่า
  *   แหล่งเปิดที่ครบกว่า (Open Charge Map) ต้องใช้คีย์ API — ยังไม่ได้ต่อ
  */
@@ -19,8 +20,9 @@
     ["https://www.egat.co.th", "กฟผ. (EleXA)", "เว็บผู้ให้บริการ"]
   ];
   var ZAP = "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z";
+  var LOGO_DIR = "img/ev-logos/", LOGOS = { ptt: 1, ea: 1, pea: 1, egat: 1, bcp: 1, tesla: 1 };
 
-  var map = null, D = null, visible = false, uiBuilt = false, bound = false, loading = null, off = {}, popup = null;
+  var map = null, D = null, visible = false, uiBuilt = false, bound = false, loading = null, off = {}, popup = null, logoImg = {};
 
   function $(s) { return document.querySelector(s); }
   function ico(n) { return '<svg class="mdico"><use href="#i-' + n + '"></use></svg>'; }
@@ -57,8 +59,27 @@
       document.head.appendChild(s);
     });
   }
+  function logoUrl(k) { return LOGOS[k] ? LOGO_DIR + k + ".webp" : ""; }
+  // ป้ายผู้ให้บริการในแผง/ป๊อปอัป — โลโก้ในวงสีแบรนด์ ถ้าไม่มีโลโก้ใช้จุดสี
+  function opMark(o) {
+    return LOGOS[o[0]] ? '<img class="ev-lg" src="' + logoUrl(o[0]) + '" alt="" style="--c:' + o[2] + '">' : '<i style="background:' + o[2] + '"></i>';
+  }
+  // โหลดโลโก้เป็น Image (same-origin) ไว้วาดลง canvas ของไอคอนบนแผนที่ — โหลดไม่ขึ้นก็ใช้ไอคอน ⚡ เดิม
+  function loadLogos() {
+    return Promise.all(Object.keys(LOGOS).map(function (k) {
+      return new Promise(function (ok) {
+        var im = new Image();
+        im.onload = function () { logoImg[k] = im; ok(); };
+        im.onerror = function () { ok(); };
+        im.src = logoUrl(k);
+      });
+    }));
+  }
   function ensureData() {
-    if (!loading) loading = (window.BKK_EV ? Promise.resolve() : loadScript(DATA_URL)).then(function () { D = window.BKK_EV; if (!D) throw new Error("no data"); });
+    if (!loading) loading = Promise.all([
+      (window.BKK_EV ? Promise.resolve() : loadScript(DATA_URL)).then(function () { D = window.BKK_EV; if (!D) throw new Error("no data"); }),
+      loadLogos()
+    ]);
     return loading;
   }
   function geo() {
@@ -70,25 +91,46 @@
     });
     return { type: "FeatureCollection", features: f };
   }
-  function makeIcon(color) {
-    var S = 2, R = 12, N = (R * 2 + 4) * S, cv = document.createElement("canvas");
+  // ไอคอนบนแผนที่: มีโลโก้ = วงแหวนสีแบรนด์ + ขอบขาว + โลโก้ตัดวงกลม + ป้าย ⚡ มุมขวาล่าง · ไม่มีโลโก้ = วงสี + ⚡ ขาว
+  var ICON_S = 3;
+  function makeIcon(color, img) {
+    var S = ICON_S, R = img ? 15 : 12, P = img ? 3 : 2, C = R + P, N = C * 2 * S, cv = document.createElement("canvas");
     cv.width = cv.height = N;
     var g = cv.getContext("2d");
     g.scale(S, S);
-    g.beginPath(); g.arc(R + 2, R + 2, R, 0, Math.PI * 2);
+    g.beginPath(); g.arc(C, C, R, 0, Math.PI * 2);
     g.fillStyle = color; g.fill();
     g.lineWidth = 1.6; g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke();
-    g.save(); g.translate(R + 2 - 8.4, R + 2 - 8.4); g.scale(0.7, 0.7);
-    g.fillStyle = "#fff";
-    try { g.fill(new Path2D(ZAP)); } catch (e) { }
-    g.restore();
+    if (img) {
+      g.beginPath(); g.arc(C, C, R - 2.6, 0, Math.PI * 2); g.fillStyle = "#fff"; g.fill();
+      var r = R - 3.7;
+      g.save(); g.beginPath(); g.arc(C, C, r, 0, Math.PI * 2); g.clip();
+      g.imageSmoothingQuality = "high";
+      g.drawImage(img, C - r, C - r, r * 2, r * 2);
+      g.restore();
+      // เปิดจาก file:// รูปจะทำให้ canvas "tainted" อ่านพิกเซลไม่ได้ → ถอยไปใช้ไอคอน ⚡ ธรรมดา
+      try { g.getImageData(0, 0, 1, 1); } catch (e) { return makeIcon(color, null); }
+      var bx = C + R * 0.68, by = C + R * 0.68, br = 6;
+      g.beginPath(); g.arc(bx, by, br, 0, Math.PI * 2);
+      g.fillStyle = "#fbbf24"; g.fill();
+      g.lineWidth = 1.4; g.strokeStyle = "#fff"; g.stroke();
+      g.save(); g.translate(bx - 12 * 0.38, by - 12 * 0.38); g.scale(0.38, 0.38);
+      g.fillStyle = "#1f2937";
+      try { g.fill(new Path2D(ZAP)); } catch (e) { }
+      g.restore();
+    } else {
+      g.save(); g.translate(C - 8.4, C - 8.4); g.scale(0.7, 0.7);
+      g.fillStyle = "#fff";
+      try { g.fill(new Path2D(ZAP)); } catch (e) { }
+      g.restore();
+    }
     return { width: N, height: N, data: g.getImageData(0, 0, N, N).data };
   }
 
   var LAYERS = ["ev-dot", "ev-ico"];
   function addLayers() {
     if (!map || !map.getStyle() || !D) return;
-    D.ops.forEach(function (o) { if (!map.hasImage("ev-" + o[0])) map.addImage("ev-" + o[0], makeIcon(o[2]), { pixelRatio: 2 }); });
+    D.ops.forEach(function (o) { if (!map.hasImage("ev-" + o[0])) map.addImage("ev-" + o[0], makeIcon(o[2], logoImg[o[0]]), { pixelRatio: ICON_S }); });
     if (map.getSource("ev-st")) map.getSource("ev-st").setData(geo());
     else map.addSource("ev-st", { type: "geojson", data: geo() });
     if (!map.getLayer("ev-dot")) map.addLayer({
@@ -97,7 +139,7 @@
     });
     if (!map.getLayer("ev-ico")) map.addLayer({
       id: "ev-ico", type: "symbol", source: "ev-st", minzoom: 11,
-      layout: { "icon-image": ["concat", "ev-", ["get", "o"]], "icon-size": ["interpolate", ["linear"], ["zoom"], 11, 0.75, 15, 1], "icon-allow-overlap": true }
+      layout: { "icon-image": ["concat", "ev-", ["get", "o"]], "icon-size": ["interpolate", ["linear"], ["zoom"], 11, 0.72, 15, 0.95], "icon-allow-overlap": true }
     });
     syncVis();
     bindHandlers();
@@ -120,7 +162,7 @@
     var nav = "https://www.google.com/maps/dir/?api=1&destination=" + r[1] + "," + r[0];
     var osm = "https://www.openstreetmap.org/" + ({ n: "node", w: "way", r: "relation" }[r[9][0]] || "node") + "/" + r[9].slice(1);
     var sub = [r[3] ? o[1] : "", where].filter(Boolean).join(" · ");
-    return '<div class="ev-pop"><div class="ev-h"><i style="background:' + o[2] + '"></i><div><b>' + esc(r[3] || o[1]) + '</b><small>' + esc(sub) + '</small></div></div>' +
+    return '<div class="ev-pop"><div class="ev-h">' + opMark(o) + '<div><b>' + esc(r[3] || o[1]) + '</b><small>' + esc(sub) + '</small></div></div>' +
       (facts.length ? '<ul class="ev-facts">' + facts.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join("") + '</ul>' : '<p class="ev-note">OSM ไม่ได้ระบุหัวชาร์จ/กำลังไฟ</p>') +
       '<div class="ev-acts"><a href="' + nav + '" target="_blank" rel="noopener">' + ico("navigation") + ' นำทาง</a></div>' +
       '<p class="ev-src">ข้อมูล: <a href="' + osm + '" target="_blank" rel="noopener">OpenStreetMap</a> — สถานะว่าง/เสีย ดูในแอปของผู้ให้บริการ</p></div>';
@@ -158,7 +200,7 @@
     out.innerHTML = '<p class="ev-note">' + (mine ? "จากตำแหน่งของคุณ" : "จากกลางแผนที่") + ' · ระยะเส้นตรง · เฉพาะจุดที่มีใน OSM</p>' + list.map(function (x) {
       var r = D.s[x.i], o = D.ops[r[2]];
       var sub = [r[3] ? o[1] : "", r[8] ? r[8] + " kW" : ""].filter(Boolean).join(" · ");
-      return '<button type="button" class="ev-row" data-i="' + x.i + '"><i style="background:' + o[2] + '"></i><span>' + esc(r[3] || o[1]) + (sub ? ' <small>' + esc(sub) + '</small>' : "") + '</span><em>' + fmtKm(x.d) + '</em></button>';
+      return '<button type="button" class="ev-row" data-i="' + x.i + '">' + opMark(o) + '<span>' + esc(r[3] || o[1]) + (sub ? ' <small>' + esc(sub) + '</small>' : "") + '</span><em>' + fmtKm(x.d) + '</em></button>';
     }).join("");
     if (list.length) openPopup(list[0].i, true);
   }
@@ -178,6 +220,9 @@
     ".ev-op{display:flex;align-items:center;gap:8px;width:100%;padding:4px 6px;border:0;border-radius:8px;background:none;color:var(--text-main);font:inherit;font-size:12px;cursor:pointer;text-align:left}",
     ".ev-op:hover{background:var(--accent-soft)}.ev-op.off{opacity:.38}.ev-op span{flex:1}.ev-op b{font-variant-numeric:tabular-nums}",
     ".ev-op i,.ev-row i,.ev-h i{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}",
+    ".ev-op i,.ev-row i{margin:0 3.5px}",
+    ".ev-lg{width:18px;height:18px;border-radius:50%;flex:none;object-fit:cover;background:#fff;border:1.5px solid #fff;box-shadow:0 0 0 1.5px var(--c)}",
+    ".ev-h .ev-lg{width:24px;height:24px;margin-top:0}",
     ".ev-sec{border-top:1px solid var(--card-border);padding:8px 0 4px}.ev-sec>b{display:flex;align-items:center;gap:6px;font-size:12.5px;margin-bottom:4px}",
     ".ev-btns{display:flex;gap:6px}.ev-btns button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px 8px;border-radius:9px;border:1px solid var(--card-border);background:rgba(127,127,127,.07);color:var(--text-main);font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}",
     ".ev-btns button:hover{border-color:var(--accent);background:var(--accent-soft)}.ev-btns .mdico{width:13px;height:13px}",
@@ -207,7 +252,7 @@
       var cnt = {};
       D.s.forEach(function (r) { var k = D.ops[r[2]][0]; cnt[k] = (cnt[k] || 0) + 1; });
       h += '<div class="ev-ops">' + D.ops.map(function (o) {
-        return '<button type="button" class="ev-op' + (off[o[0]] ? " off" : "") + '" data-o="' + o[0] + '"><i style="background:' + o[2] + '"></i><span>' + esc(o[1]) + '</span><b>' + (cnt[o[0]] || 0) + '</b></button>';
+        return '<button type="button" class="ev-op' + (off[o[0]] ? " off" : "") + '" data-o="' + o[0] + '">' + opMark(o) + '<span>' + esc(o[1]) + '</span><b>' + (cnt[o[0]] || 0) + '</b></button>';
       }).join("") + '</div>';
       h += '<div class="ev-sec"><b>' + ico("navigation") + ' จุดชาร์จใกล้ฉัน</b><div class="ev-btns">' +
         '<button type="button" data-a="near-me">' + ico("crosshair") + ' ตำแหน่งของฉัน</button>' +
@@ -216,7 +261,7 @@
     h += '<div class="ev-sec"><b>' + ico("external-link") + ' แผนที่จุดชาร์จที่ครบกว่า</b>' + LINKS.map(function (l) {
       return '<a class="ev-link" href="' + l[0] + '" target="_blank" rel="noopener">' + ico("plug-zap") + '<span>' + esc(l[1]) + '<small>' + esc(l[2]) + '</small></span>' + ico("external-link") + '</a>';
     }).join("") + '</div>';
-    h += '<p class="ev-src">จุดชาร์จ: OpenStreetMap (ODbL)' + (D && D.osm ? " ณ " + esc(String(D.osm).slice(0, 10)) : "") + ' · สีตามผู้ให้บริการ (ไม่ใช้โลโก้) · สถานะว่าง/เสียและราคาดูในแอปของผู้ให้บริการ</p>';
+    h += '<p class="ev-src">จุดชาร์จ: OpenStreetMap (ODbL)' + (D && D.osm ? " ณ " + esc(String(D.osm).slice(0, 10)) : "") + ' · โลโก้ = ไอคอนแอปของผู้ให้บริการ (ใช้เพื่อระบุผู้ให้บริการเท่านั้น) · สถานะว่าง/เสียและราคาดูในแอปของผู้ให้บริการ</p>';
     body.innerHTML = h;
   }
 
