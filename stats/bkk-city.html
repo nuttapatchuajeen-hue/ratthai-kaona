@@ -2106,6 +2106,24 @@
     .drone-tour-panel { min-width: 90%; }
   }
 
+  /* 📱 มือถือ — แถวปุ่มล่างซ้าย: ปุ่มเพลง (cyber-audio.js, fixed ล่างซ้าย bottom 16px) ทับปุ่ม "การเดินทาง" มิด
+     → ยกปุ่มการเดินทาง (ปุ่ม "สีตึก" วางต่อขวาเองใน bkk-bldg-legend.js) ขึ้นเหนือปุ่มเพลง
+     แล้วเลื่อนแผงของทุกชั้น (เดิม bottom 74–86px ตั้งในแต่ละโมดูล) ขึ้นให้พ้นแถวนี้ — โมดูลใส่ CSS ทีหลังจึงต้อง !important */
+  @media (max-width: 768px) {
+    #btnGettingAround { bottom: 70px; left: 12px; }
+    .transit-drawer { bottom: 114px; left: 12px; max-width: calc(100% - 24px); }
+    /* จุดแตะ ≥ 32 px โดยไม่ทำให้หัวเว็บสูงขึ้น: ขยายพื้นที่กดด้วย ::after โปร่งใส (แถวชิปที่เลื่อนแนวนอนตัดของล้น → ใช้ min-height แทน) */
+    .view-mode-btn, .header .chip, #md-data-notice .mddn-more, #md-data-notice .mddn-x { position: relative; }
+    .view-mode-btn::after, .header .chip::after, #md-data-notice .mddn-more::after, #md-data-notice .mddn-x::after { content: ""; position: absolute; inset: -4px -2px; }
+    #bgmBtnMin::after { content: ""; position: absolute; inset: -6px; }
+    .cat-chip { min-height: 32px; }
+  }
+  @media (max-width: 760px) {
+    #airPanel, #emerPanel, #evPanel, #fuelPanel, #floodPanel, #damPanel, #warnPanel, #quakePanel, #slidePanel, #fsPanel,
+    #shadowPanel, #busPill { bottom: 116px !important; }
+    #cctvPanel { bottom: 116px !important; max-height: calc(100% - 140px) !important; }
+  }
+
   
   /* 🏢 Corporate Tenant Logos & Office Towers (matching Image 6) */
   .ashton-employer-pin {

@@ -128,7 +128,7 @@
   function openPopup(i, fly) {
     var r = D.s[i];
     if (popup) popup.remove();
-    popup = new maplibregl.Popup({ closeButton: true, maxWidth: "290px", className: "ev-popup", offset: 12 }).setLngLat([r[0], r[1]]).setHTML(popupHTML(i)).addTo(map);
+    popup = new maplibregl.Popup({ closeButton: true, maxWidth: "min(290px, calc(100vw - 24px))", className: "ev-popup", offset: 12 }).setLngLat([r[0], r[1]]).setHTML(popupHTML(i)).addTo(map);
     if (fly) map.flyTo({ center: [r[0], r[1]], zoom: Math.max(map.getZoom(), 14.5), duration: 1200 });
     var pn = $("#evPanel");
     if (pn && window.innerWidth <= 760) pn.classList.add("min");

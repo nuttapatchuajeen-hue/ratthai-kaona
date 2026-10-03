@@ -274,7 +274,7 @@
     var s = D && D.st[i];
     if (!s) return;
     if (popup) popup.remove();
-    popup = new maplibregl.Popup({ closeButton: true, maxWidth: "320px", className: "aq-popup", offset: 12 })
+    popup = new maplibregl.Popup({ closeButton: true, maxWidth: "min(320px, calc(100vw - 24px))", className: "aq-popup", offset: 12 })
       .setLngLat([s[2], s[1]]).setHTML(popupHTML(s)).addTo(map);
     popup._airId = s[0];
     popup.on("close", function () { if (popup && popup._airId === s[0]) popup = null; });

@@ -88,7 +88,7 @@
     ".lmc-tab.on .lmc-n{background:rgba(255,255,255,.28);color:inherit}" +
     ".lmc-n[hidden]{display:none}" +
     "@media (max-width:1180px){.lmc-tab{padding:5px 8px;font-size:11px}}" +
-    "@media (max-width:768px){.lmc-tab .mdico{display:none}.lmc-tab .lmc-long{display:none}.lmc-tab .lmc-short{display:inline}" +
+    "@media (max-width:768px){.lmc-tab .mdico{display:none}.lmc-tab .lmc-long{display:none}.lmc-tab .lmc-short{display:inline}.lmc-tab{min-height:32px}" +
     "  .lmc-tab{padding:5px 8px}" +
     /* จอแคบ: แท็บเต็มแถวแรก เครื่องมือ (ไอคอน) ต่อท้ายปุ่มชั้นในแถวสอง — ไม่งั้นแตกเป็น 3 แถว */
     "  #leftMenu.lmc-on>.lmc-tool{order:95}#leftMenu.lmc-on>.lmc-tool-first{margin-left:0}}";
