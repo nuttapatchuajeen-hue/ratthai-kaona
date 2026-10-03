@@ -9,7 +9,8 @@
  *       node scripts/ews-relay.js --dry    ดึงแล้วเขียนไฟล์อย่างเดียว ไม่แตะ git
  * ตั้งเวลา: Windows Task Scheduler ทุก 15 นาที (ดู scripts/ews-relay-task.ps1) — ทำงานเฉพาะตอนเครื่องเปิด
  *
- * ⚠ branch ews-data ปิด deploy บน Vercel ไว้ใน vercel.json (git.deploymentEnabled) — ไม่งั้น push ทุก 15 นาทีจะกินโควตา deploy
+ * ⚠ branch ews-data มี vercel.json ของตัวเองที่ปิด deploy (git.deploymentEnabled=false) — Vercel อ่านจาก commit ของ branch นั้น
+ *   ไม่งั้น push ทุก 15 นาทีจะกินโควตา deploy (main ก็ตั้ง deploymentEnabled.ews-data=false ไว้ซ้ำอีกชั้น)
  */
 const fs = require('fs');
 const path = require('path');
@@ -54,7 +55,10 @@ function ensureWorktree() {
     '# ews-data\n\nไฟล์ข้อมูลอัตโนมัติ — ธงเตือนภัยจากระบบเตือนภัยล่วงหน้า กรมทรัพยากรน้ำ (ews.dwr.go.th)\n' +
     'ดึงจากเครื่องในไทยด้วย `scripts/ews-relay.js` บน branch main แล้วให้ `/api/warn` อ่านต่อ เพราะกรมฯ ไม่ตอบเซิร์ฟเวอร์นอกประเทศ\n\n' +
     'branch นี้มี commit เดียวเสมอ (amend + force push) — ห้าม merge เข้า main\n');
-  git(['add', 'ews.json', 'README.md'], WT);
+  // Vercel อ่าน vercel.json จาก commit ของ branch ที่ถูก push เอง (ไม่ใช่ของ main) → ปิด deploy ไว้ใน branch นี้ด้วย
+  // ไม่งั้น push ทุก 15 นาที = deploy ตัวอย่างวันละ ~96 ครั้ง (เกินโควตา Hobby 100/วัน แล้ว deploy ของ main จะติด)
+  fs.writeFileSync(path.join(WT, 'vercel.json'), JSON.stringify({ git: { deploymentEnabled: false } }, null, 2) + '\n');
+  git(['add', 'ews.json', 'README.md', 'vercel.json'], WT);
   const msg = 'ews: ' + new Date(b.at + 7 * 3600000).toISOString().slice(0, 16).replace('T', ' ') + ' (เวลาไทย) · เตือน ' + b.st.length + ' สถานี';
   let hasHead = true;
   try { git(['rev-parse', '--verify', 'HEAD'], WT); } catch (e) { hasHead = false; }
