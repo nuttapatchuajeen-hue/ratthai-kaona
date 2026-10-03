@@ -3287,6 +3287,7 @@
 <script src="bkk-landmark-icons.js"></script>
 <script src="bkk-3d-host.js"></script>
 <script src="bkk-elevated.js"></script>
+<script src="bkk-traffic.js"></script>
 <script src="bkk-rail3d.js"></script>
 <script src="bkk-airport3d.js"></script>
 <script src="bkk-port3d.js"></script>
@@ -4410,6 +4411,11 @@
     // 🛣️ ทางด่วน/ทางยกระดับ 3 มิติ (three.js) — โมดูลแยกใน bkk-elevated.js, โหลด three.js + ข้อมูลเองทีหลัง
     if (window.BKK_ELEVATED3D) {
       try { window.BKK_ELEVATED3D.mount(map); } catch (e) { console.warn("elevated 3D layer:", e); }
+    }
+
+    // 🚦 จราจรสด — สีถนนตามความเร็วรถ + จุดเกิดเหตุ (TomTom ผ่าน /api/traffic คีย์อยู่ฝั่งเซิร์ฟเวอร์) — โมดูลแยกใน bkk-traffic.js
+    if (window.BKK_TRAFFIC) {
+      try { window.BKK_TRAFFIC.mount(map); } catch (e) { console.warn("traffic layer:", e); }
     }
 
     // 🚈 รางรถไฟฟ้า สถานี และขบวนรถ 3 มิติ — โมดูลแยกใน bkk-rail3d.js (ใช้ฉากกลางร่วมกับทางด่วน)
@@ -7320,6 +7326,7 @@ window.MD_DATA_NOTICE = {
     { t: 'รอยเลื่อนมีพลัง', o: 'ในไทย: กรมทรัพยากรธรณี ชุดข้อมูลกลุ่มรอยเลื่อนมีพลัง (CC BY) ดึง 28 ก.ย. 2569 · ประเทศเพื่อนบ้าน: GEM Global Active Faults Database (CC BY-SA 4.0) — ไม่มีชื่อรอยเลื่อน ยกเว้นช่วงรอยเลื่อนสะกายที่ทับแนวแตกปี 2568', u: 'https://data.go.th/dataset/2f32b01e-6ae7-4b66-aa2c-730a87051793' },
     { t: 'ดินถล่ม — พื้นที่อ่อนไหว ร่องรอยดินถล่ม เหตุการณ์ในอดีต หมู่บ้านเสี่ยง จุดปลอดภัย สถานีเฝ้าระวัง', o: 'กรมทรัพยากรธรณี (ArcGIS gisportal.dmr.go.th · CC BY) — พื้นที่อ่อนไหวและร่องรอยดินถล่มขอภาพจากเซิร์ฟเวอร์กรมฯ โดยตรง ที่เหลือดึง 28 ก.ย. 2569 · ซ่อนชื่อ-นามสกุล บ้านเลขที่ และเบอร์โทรของบุคคลที่ปรากฏในข้อมูล · แก้วันที่เหตุน้ำก้อ (หล่มสัก) เป็น 11 ส.ค. 2544 ตามจังหวัดเพชรบูรณ์', u: 'https://gisportal.dmr.go.th/arcgis/rest/services/HAZARD' },
     { t: 'ดินถล่ม — ฝนตกหนักรายสถานี และเกณฑ์เฝ้าระวัง', o: 'ฝน 24 ชม. + สะสม 7 วัน: คลังข้อมูลน้ำแห่งชาติ (thaiwater.net) ผ่าน /api/slide ของเว็บนี้ · เกณฑ์ >100 มม./วัน ตามหน้าความรู้ดินถล่มของกรมทรัพยากรธรณี · สถานีเตือนภัย: กรมทรัพยากรน้ำ · ประเทศเพื่อนบ้าน: NASA Global Landslide Catalog (2550–2559) · ความชัน: AWS Terrain Tiles คำนวณด้วยสูตร Horn', u: 'https://www.dmr.go.th' },
+    { t: 'จราจรสด (ชั้นจราจรสด)', o: 'TomTom Traffic API (ภาพความเร็วเทียบตอนถนนโล่ง + จุดเกิดเหตุ/ปิดถนน) ผ่าน /api/traffic ของเว็บนี้ — คีย์อยู่ฝั่งเซิร์ฟเวอร์ · แพ็กเกจ Freemium · แคช 5 นาที', u: 'https://www.tomtom.com' },
     { t: 'เงาตึก & แสงแดดตามเวลา (ชั้นเงาตึก)', o: 'ตำแหน่งดวงอาทิตย์คำนวณตามสูตรของ SunCalc (Vladimir Agafonkin, BSD-2) ที่เวลาไทย · ความสูงตึกจาก OpenStreetMap (render_height ของ OpenMapTiles) และมวลตึกโครงการของหน้านี้ · เงาเป็นเปลือกนูนของตึกแต่ละหลัง ไม่คิดเมฆหรือภูมิประเทศ', u: 'https://github.com/mourner/suncalc' },
     { t: 'สถานที่ฉุกเฉิน ~4,700 แห่ง (โรงพยาบาล รพ.สต. ดับเพลิง ตำรวจ กู้ภัย จุดรวมพล)', o: 'OpenStreetMap ผ่าน Overpass API 2 ต.ค. 2569 (ODbL) — ยังไม่ครบทุกแห่ง โดยเฉพาะสถานีดับเพลิงของท้องถิ่นและศูนย์พักพิงชั่วคราว · ตัดจุดซ้ำและที่อยู่นอกประเทศ · อำเภอ/จังหวัดจากขอบเขตตำบล · ระยะ "ที่ใกล้ที่สุด" เป็นเส้นตรง', u: 'https://www.openstreetmap.org' },
     { t: 'ฝุ่น PM2.5 รายสถานี (ชั้นฝุ่น PM2.5)', o: 'Air4Thai กรมควบคุมมลพิษ (รวมสถานีของ กทม.) ผ่าน /api/air ของเว็บนี้ · ค่าเฉลี่ย 24 ชม. และระดับ AQI ตามที่กรมฯ ประกาศ + ค่ารายชั่วโมงย้อนหลัง 24 ชม. · อัปเดตทุกชั่วโมง · คำแนะนำสุขภาพสรุปจากเกณฑ์ AQI ของกรมฯ', u: 'https://air4thai.pcd.go.th/webV3/' },
