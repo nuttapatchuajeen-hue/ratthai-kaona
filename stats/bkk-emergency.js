@@ -3,14 +3,17 @@
  * ชั้น "สถานที่ฉุกเฉิน" ของ bkk-city.html — โรงพยาบาล รพ.สต. สถานีดับเพลิง สถานีตำรวจ รถพยาบาล/กู้ภัย จุดรวมพล/ศูนย์พักพิง ทั่วประเทศ
  *
  * ข้อมูล: bkk-emergency-data.js (window.BKK_EMERGENCY) จาก _geo/build-bkk-emergency.js ← OpenStreetMap (ODbL)
- *   ⚠ OSM ยังไม่ครบ โดยเฉพาะสถานีดับเพลิง (หลายแห่งเป็นของท้องถิ่น) และศูนย์พักพิงชั่วคราวที่เปิดตามสถานการณ์
+ *   + สถานีดับเพลิง กทม. 48 แห่งจาก data.bangkok.go.th (สปภ. กทม., 2566) แทนจุดของ OSM ใน กทม.
+ *   ⚠ OSM ยังไม่ครบ โดยเฉพาะสถานีดับเพลิงต่างจังหวัด (หลายแห่งเป็นของท้องถิ่น) และศูนย์พักพิงชั่วคราวที่เปิดตามสถานการณ์
+ * โลโก้: img/emer-logos/<key>.webp (D.logos) — ตรา สตช./สธ./กทม./สปภ./เหล่าทัพ/มหาวิทยาลัย + เครือ รพ.เอกชน
+ *   จับคู่จากชื่อตอน build (_geo/emergency-logos.js) จึงอาจผิดได้ · หมุดที่มีโลโก้ = วงแหวนสีหมวด + โลโก้ + ป้ายสัญลักษณ์หมวดมุมขวาล่าง
  * ฟีเจอร์: กรองหมวด · "ที่ใกล้ที่สุด" จากตำแหน่งของฉัน/กลางแผนที่/จุดที่คลิก (ระยะเส้นตรง) พร้อมเส้นโยง + ปุ่มนำทาง
  *          · เบอร์ฉุกเฉินกดโทรได้ · ใช้คู่กับชั้นฝน/น้ำท่วม/จำลองน้ำท่วม/ดินถล่ม
  */
 (function () {
   "use strict";
 
-  var DATA_URL = "bkk-emergency-data.js";
+  var DATA_URL = "bkk-emergency-data.js", LOGO_DIR = "img/emer-logos/";
   var LS_KEY = "bkk-emer-on", LS_MIN = "bkk-emer-min", LS_OFF = "bkk-emer-off";
   var LABEL_Z = 14;
   var HOME = { center: [100.54, 13.75], zoom: 12.4 };
@@ -29,7 +32,7 @@
   };
 
   var map = null, D = null, visible = false, uiBuilt = false, bound = false, loading = null;
-  var off = {}, popup = null, origin = null, picking = false;
+  var off = {}, popup = null, origin = null, picking = false, logoImg = {};
 
   function $(s) { return document.querySelector(s); }
   function ico(n) { return '<svg class="mdico"><use href="#i-' + n + '"></use></svg>'; }
@@ -68,15 +71,30 @@
       document.head.appendChild(s);
     });
   }
+  // โหลดโลโก้เป็น Image (same-origin) ไว้วาดลง canvas ของไอคอน — โหลดไม่ขึ้นก็ใช้ไอคอนสัญลักษณ์เดิม
+  function loadLogos(d) {
+    return Promise.all((d.logos || []).map(function (l) {
+      return new Promise(function (ok) {
+        var im = new Image();
+        im.onload = function () { logoImg[l[0]] = im; ok(); };
+        im.onerror = function () { ok(); };
+        im.src = LOGO_DIR + l[0] + ".webp";
+      });
+    }));
+  }
   function ensureData() {
-    if (!loading) loading = (window.BKK_EMERGENCY ? Promise.resolve() : loadScript(DATA_URL)).then(function () { D = window.BKK_EMERGENCY; if (!D) throw new Error("no data"); });
+    // ตั้ง D หลังโลโก้โหลดเสร็จ — ไม่งั้น mount() ตอนเปลี่ยนสไตล์ระหว่างรอจะใส่ไอคอนสำรองค้างไว้ใต้ id เดียวกัน
+    if (!loading) loading = (window.BKK_EMERGENCY ? Promise.resolve() : loadScript(DATA_URL))
+      .then(function () { var d = window.BKK_EMERGENCY; if (!d) throw new Error("no data"); return loadLogos(d).then(function () { D = d; }); });
     return loading;
   }
+  function logoKey(r) { return r[11] >= 0 && D.logos ? D.logos[r[11]][0] : ""; }
   function geo() {
     var f = [];
     D.s.forEach(function (r, i) {
-      if (off[D.cats[r[2]][0]]) return;
-      f.push({ type: "Feature", geometry: { type: "Point", coordinates: [r[0], r[1]] }, properties: { i: i, k: D.cats[r[2]][0], c: D.cats[r[2]][2], n: r[3], er: r[6] & 1 } });
+      var k = D.cats[r[2]][0], lg = logoKey(r);
+      if (off[k]) return;
+      f.push({ type: "Feature", geometry: { type: "Point", coordinates: [r[0], r[1]] }, properties: { i: i, k: k, c: D.cats[r[2]][2], n: r[3], er: r[6] & 1, ic: "emer-" + k + (lg ? "-" + lg : "") } });
     });
     return { type: "FeatureCollection", features: f };
   }
@@ -97,10 +115,50 @@
     g.restore();
     return { width: N, height: N, data: g.getImageData(0, 0, N, N).data };
   }
+  // หมุดโลโก้: วงแหวนสีหมวด + ขอบขาว + โลโก้ตัดวงกลม + ป้ายสัญลักษณ์หมวด (สีหมวด) มุมขวาล่าง — แบบเดียวกับจุดชาร์จ EV
+  var LOGO_S = 3;
+  function makeLogoIcon(color, img, paths) {
+    var S = LOGO_S, R = 15, P = 3, C = R + P, N = C * 2 * S, cv = document.createElement("canvas");
+    cv.width = cv.height = N;
+    var g = cv.getContext("2d");
+    g.scale(S, S);
+    g.beginPath(); g.arc(C, C, R, 0, Math.PI * 2);
+    g.fillStyle = color; g.fill();
+    g.lineWidth = 1.6; g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke();
+    g.beginPath(); g.arc(C, C, R - 2.6, 0, Math.PI * 2); g.fillStyle = "#fff"; g.fill();
+    var r = R - 3.7;
+    g.save(); g.beginPath(); g.arc(C, C, r, 0, Math.PI * 2); g.clip();
+    g.imageSmoothingQuality = "high";
+    g.drawImage(img, C - r, C - r, r * 2, r * 2);
+    g.restore();
+    // เปิดจาก file:// รูปจะทำให้ canvas "tainted" อ่านพิกเซลไม่ได้ → คืน null ให้ใช้ไอคอนธรรมดา
+    try { g.getImageData(0, 0, 1, 1); } catch (e) { return null; }
+    var bx = C + R * 0.68, by = C + R * 0.68, br = 6.2;
+    g.beginPath(); g.arc(bx, by, br, 0, Math.PI * 2);
+    g.fillStyle = color; g.fill();
+    g.lineWidth = 1.4; g.strokeStyle = "#fff"; g.stroke();
+    g.save(); g.translate(bx - 12 * 0.36, by - 12 * 0.36); g.scale(0.36, 0.36);
+    g.lineWidth = 2.6; g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = "#fff";
+    paths.forEach(function (d) { try { g.stroke(new Path2D(d)); } catch (e) { } });
+    g.restore();
+    return { width: N, height: N, data: g.getImageData(0, 0, N, N).data };
+  }
   function ensureImages() {
     D.cats.forEach(function (c) {
       var id = "emer-" + c[0];
       if (!map.hasImage(id)) map.addImage(id, makeIcon(c[2], GLYPH[c[0]] || GLYPH.h), { pixelRatio: 2 });
+    });
+    // คู่ หมวด×โลโก้ ที่มีจริงในข้อมูล (~40 รูป)
+    var seen = {};
+    D.s.forEach(function (r) {
+      var lg = logoKey(r);
+      if (!lg) return;
+      var c = D.cats[r[2]], id = "emer-" + c[0] + "-" + lg;
+      if (seen[id] || map.hasImage(id)) return;
+      seen[id] = 1;
+      var paths = GLYPH[c[0]] || GLYPH.h, ic = logoImg[lg] && makeLogoIcon(c[2], logoImg[lg], paths);
+      if (ic) map.addImage(id, ic, { pixelRatio: LOGO_S });
+      else map.addImage(id, makeIcon(c[2], paths), { pixelRatio: 2 });
     });
   }
 
@@ -127,7 +185,7 @@
     if (!map.getLayer("emer-ico")) map.addLayer({
       id: "emer-ico", type: "symbol", source: "emer-st", minzoom: 11.5,
       layout: {
-        "icon-image": ["concat", "emer-", ["get", "k"]],
+        "icon-image": ["get", "ic"],
         "icon-size": ["interpolate", ["linear"], ["zoom"], 11.5, 0.75, 15, 1],
         "icon-allow-overlap": true,
         "symbol-sort-key": ["match", ["get", "k"], "h", 0, "f", 1, "p", 2, "s", 3, "a", 4, 5],
@@ -151,6 +209,11 @@
 
   /* ================================================================ การ์ด */
   function catName(r) { return D.cats[r[2]][1]; }
+  // ป้ายหน้าชื่อในแผง/ป๊อปอัป — มีโลโก้ = รูปในวงสีหมวด · ไม่มี = จุดสี
+  function mark(r) {
+    var c = D.cats[r[2]], lg = logoKey(r);
+    return lg && logoImg[lg] ? '<img class="em-lg" src="' + LOGO_DIR + lg + '.webp" alt="" style="--c:' + c[2] + '">' : '<i style="background:' + c[2] + '"></i>';
+  }
   function popupHTML(i) {
     var r = D.s[i], c = D.cats[r[2]], prov = D.prov[r[4]] || "";
     var where = [r[5] && (prov === "กรุงเทพมหานคร" ? "เขต" : "อ.") + r[5], prov && (prov === "กรุงเทพมหานคร" ? prov : "จ." + prov)].filter(Boolean).join(" ");
@@ -159,17 +222,23 @@
     if (r[6] & 2) tags.push("รัฐ");
     if (r[6] & 4) tags.push("เอกชน");
     if (r[7]) tags.push(r[7] + " เตียง");
+    var lgo = r[11] >= 0 && D.logos ? D.logos[r[11]] : null, lgName = lgo ? lgo[1] : "";
     var nav = "https://www.google.com/maps/dir/?api=1&destination=" + r[1] + "," + r[0];
-    var osm = "https://www.openstreetmap.org/" + ({ n: "node", w: "way", r: "relation" }[r[9][0]] || "node") + "/" + r[9].slice(1);
+    var bma = /^bma:/.test(r[9]);
+    var src = bma ? '<a href="https://data.bangkok.go.th/dataset/firestations" target="_blank" rel="noopener">สปภ. กทม. (data.bangkok.go.th)</a>'
+      : '<a href="https://www.openstreetmap.org/' + ({ n: "node", w: "way", r: "relation" }[r[9][0]] || "node") + "/" + r[9].slice(1) + '" target="_blank" rel="noopener">OpenStreetMap</a>';
     var tel = r[8] ? r[8].replace(/[^\d+]/g, "") : "";
     var dist = origin ? '<p class="em-note">ห่างจากจุดที่เลือก ' + fmtKm(km(origin[0], origin[1], r[0], r[1])) + ' (เส้นตรง)</p>' : "";
-    return '<div class="em-pop"><div class="em-h"><i style="background:' + c[2] + '"></i><div><b>' + esc(r[3] || c[1] + " (ไม่มีชื่อใน OSM)") + '</b>' +
+    return '<div class="em-pop"><div class="em-h">' + mark(r) + '<div><b>' + esc(r[3] || c[1] + " (ไม่มีชื่อใน OSM)") + '</b>' +
       '<small>' + esc(c[1]) + (where ? " · " + esc(where) : "") + '</small></div></div>' +
+      (lgName ? '<p class="em-org" title="จับคู่โลโก้จากชื่อสถานที่โดยอัตโนมัติ อาจคลาดเคลื่อน">' + (r[2] === 1 ? "ตรา: " : lgo[2] === "p" ? "เครือ: " : "สังกัด: ") + esc(lgName) +
+        (r[2] === 1 ? ' <small>(บางแห่งถ่ายโอนให้ อบจ. แล้ว)</small>' : "") + '</p>' : "") +
       (tags.length ? '<div class="em-tags">' + tags.map(function (t) { return '<span>' + esc(t) + '</span>'; }).join("") + '</div>' : "") +
-      (r[10] ? '<p class="em-note">เวลาทำการ: ' + esc(r[10]) + '</p>' : "") + dist +
+      (r[10] ? '<p class="em-note">เวลาทำการ: ' + esc(r[10]) + '</p>' : "") +
+      (r[12] ? '<p class="em-note">' + esc(r[12]) + '</p>' : "") + dist +
       '<div class="em-acts"><a href="' + nav + '" target="_blank" rel="noopener">' + ico("navigation") + ' นำทาง</a>' +
       (tel ? '<a href="tel:' + esc(tel) + '">' + ico("phone") + ' ' + esc(r[8]) + '</a>' : "") + '</div>' +
-      '<p class="em-src">ข้อมูล: <a href="' + osm + '" target="_blank" rel="noopener">OpenStreetMap</a> — ก่อนเดินทางโปรดโทรยืนยัน · ฉุกเฉินโทร 1669</p></div>';
+      '<p class="em-src">ข้อมูล: ' + src + ' — ก่อนเดินทางโปรดโทรยืนยัน · ฉุกเฉินโทร ' + (r[2] === 2 ? "199" : r[2] === 3 ? "191" : "1669") + '</p></div>';
   }
   function openPopup(i, fly) {
     var r = D.s[i];
@@ -212,7 +281,7 @@
     var how = origin[2] === "me" ? "จากตำแหน่งของคุณ" : origin[2] === "click" ? "จากจุดที่คลิก" : "จากกลางแผนที่";
     var rows = NEAR_ORDER.filter(function (x) { return best[x[0]]; }).map(function (x) {
       var b = best[x[0]], r = D.s[b.i], c = D.cats[r[2]];
-      return '<button type="button" class="em-row" data-i="' + b.i + '"><i style="background:' + c[2] + '"></i><span><small>' + esc(x[1]) + '</small>' +
+      return '<button type="button" class="em-row" data-i="' + b.i + '">' + mark(r) + '<span><small>' + esc(x[1]) + '</small>' +
         esc(r[3] || c[1]) + '</span><em>' + fmtKm(b.d) + '</em></button>';
     });
     out.innerHTML = '<p class="em-note">' + how + ' · ระยะเส้นตรง ถนนจริงไกลกว่านี้</p>' +
@@ -287,6 +356,9 @@
     ".em-popup .maplibregl-popup-tip{display:none}.em-popup .maplibregl-popup-close-button{color:var(--text-muted);font-size:17px;right:4px;top:3px}",
     ".em-pop{font-size:12px;line-height:1.5;min-width:230px}.em-h{display:flex;gap:9px;align-items:flex-start;margin:0 16px 6px 0}.em-h i{width:12px;height:12px;border-radius:50%;flex:none;margin-top:4px}",
     ".em-h b{display:block;font-size:13px}.em-h small{opacity:.7}",
+    ".em-lg{width:18px;height:18px;border-radius:50%;flex:none;object-fit:cover;background:#fff;border:1.5px solid #fff;box-shadow:0 0 0 1.5px var(--c)}",
+    ".em-h .em-lg{width:28px;height:28px;margin-top:0}",
+    ".em-org{margin:0 0 4px;font-size:11.5px;font-weight:600}.em-org small{font-weight:400;opacity:.7}",
     ".em-tags{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 4px}.em-tags span{font-size:10.5px;padding:1px 7px;border-radius:999px;background:rgba(127,127,127,.14)}",
     ".em-acts{display:flex;gap:6px;margin-top:8px}.em-acts a{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px 8px;border-radius:9px;background:var(--accent-soft);border:1px solid var(--accent);color:var(--text-main);font-weight:700;font-size:11.5px;text-decoration:none}",
     ".em-acts .mdico{width:13px;height:13px}",
@@ -311,8 +383,11 @@
         '<button type="button" data-a="pick" class="' + (picking ? "on" : "") + '">' + ico("mouse-pointer-click") + (picking ? " คลิกบนแผนที่…" : " คลิกจุดบนแผนที่") + '</button></div>' +
         '<div id="emNear"></div></div>';
     }
-    h += '<p class="em-src">' + (D ? D.s.length.toLocaleString("th-TH") + " แห่งจาก OpenStreetMap (ODbL)" + (D.osm ? " ณ " + esc(String(D.osm).slice(0, 10)) : "") + " — " : "") +
-      'ยังไม่ครบทุกแห่ง โดยเฉพาะสถานีดับเพลิงของท้องถิ่นและศูนย์พักพิงชั่วคราว · ระยะเป็นเส้นตรง · ข้อมูลเพื่อประกอบการตัดสินใจ เหตุฉุกเฉินโทร 1669 / 191 / 199</p>';
+    var nBma = D ? D.s.filter(function (r) { return /^bma:/.test(r[9]); }).length : 0;
+    h += '<p class="em-src">' + (D ? (D.s.length - nBma).toLocaleString("th-TH") + " แห่งจาก OpenStreetMap (ODbL)" + (D.osm ? " ณ " + esc(String(D.osm).slice(0, 10)) : "") +
+      ' + สถานีดับเพลิง กทม. ' + nBma + ' แห่งจาก <a href="https://data.bangkok.go.th/dataset/firestations" target="_blank" rel="noopener">สปภ. กทม.</a> — ' : "") +
+      'ยังไม่ครบทุกแห่ง โดยเฉพาะสถานีดับเพลิงของท้องถิ่นต่างจังหวัดและศูนย์พักพิงชั่วคราว · โลโก้จับคู่จากชื่อสถานที่อัตโนมัติ อาจคลาดเคลื่อน · ' +
+      'ระยะเป็นเส้นตรง · ข้อมูลเพื่อประกอบการตัดสินใจ เหตุฉุกเฉินโทร 1669 / 191 / 199</p>';
     body.innerHTML = h;
     if (origin && D) nearest(origin[0], origin[1], origin[2], true);   // วาดรายการ/เส้นใหม่ ไม่ขยับกล้อง
   }
