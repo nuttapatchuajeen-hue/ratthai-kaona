@@ -297,17 +297,14 @@ function buildTimeline(type, children) {
 
 function initSections() {
   const totalH = scrollCont.offsetHeight;
-  // มือถือ: ใช้ "slide-reveal" ด้วย CSS (เลื่อนขึ้น+จาง ตาม class .is-visible)
-  // แทน GSAP timeline ของเดสก์ท็อป — ให้เนื้อหา "เลื่อนเข้าเป็นสไลด์" ไม่ใช่โผล่ทันที
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  // มือถือใช้ระบบเดียวกับเดสก์ท็อปทุกอย่าง (absolute + GSAP timeline + persist)
+  // ให้เนื้อหาเลื่อนขึ้นมาตามการเลื่อนจริง ไม่ใช่ "โผล่กลางจอ"
 
   document.querySelectorAll('.scroll-section').forEach((section) => {
     const enterPct = parseFloat(section.dataset.enter) / 100;
     const leavePct = parseFloat(section.dataset.leave) / 100;
     const midPct   = (enterPct + leavePct) / 2;
-    // มือถือ: ไม่ persist — เพราะ section ถูกตรึง fixed top:0 ถ้า persist ค้างไว้
-    // จะตรึงทับเนื้อหาด้านบน (เช่น logo slider) ตอนเลื่อนกลับขึ้น (เดสก์ท็อปเป็น absolute จึงไม่มีปัญหา)
-    const persist  = section.dataset.persist === 'true' && !isMobile;
+    const persist  = section.dataset.persist === 'true';
     const animType = section.dataset.animation || 'fade-up';
 
     // Position section at the midpoint of its scroll range
@@ -317,14 +314,10 @@ function initSections() {
     section.style.top = (midPct * scrollable + window.innerHeight / 2) + 'px';
     section.style.transform = 'translateY(-50%)';
 
-    // เดสก์ท็อปเท่านั้นที่สร้าง GSAP timeline (มือถือใช้ CSS slide แทน)
-    let tl = null;
-    if (!isMobile) {
-      const children = section.querySelectorAll(
-        '.section-label, .section-heading, .section-body, .section-note, .cta-heading, .cta-sub, .cta-button, .cta-button-ghost, .stat, .dash-link'
-      );
-      tl = buildTimeline(animType, children);
-    }
+    const children = section.querySelectorAll(
+      '.section-label, .section-heading, .section-body, .section-note, .cta-heading, .cta-sub, .cta-button, .cta-button-ghost, .stat, .dash-link'
+    );
+    const tl = buildTimeline(animType, children);
 
     let played = false;
 

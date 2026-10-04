@@ -1491,42 +1491,10 @@ body::before {
      เดิมกว้าง ~440px ในกล่อง ~340px ล้นขอบจอทั้งสองข้าง ตัวหนังสือขาด → ให้ขึ้นบรรทัดใหม่ได้ */
   .dash-link { white-space: normal; max-width: 100%; text-align: center; justify-content: center;
     letter-spacing: 0.06em; padding: 0.8rem 1.1rem; }
-  #scroll-container { height: 600vh; }
 
-  /* ── มือถือ: ตรึง section ไว้กลางจอ (ไม่ให้ "ลอย" ตามตำแหน่ง absolute
-        ที่ JS คำนวณไว้สำหรับเดสก์ท็อป ซึ่งทำให้เนื้อหาเลื่อนไปทับ header
-        บ้าง/ตรงบ้าง) — โชว์/ซ่อนด้วย opacity ตามเดิม จึงนิ่งทุกครั้ง ── */
-  .scroll-section {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0; right: 0;
-    bottom: auto !important;
-    height: 100vh;
-    height: 100dvh;
-    transform: none !important;
-    align-items: center;
-    /* คอนเทนเนอร์จาง in/out นุ่ม ๆ (เนื้อหาด้านในเลื่อนเป็นสไลด์ด้านล่าง) */
-    transition: opacity 0.55s ease;
-  }
-
-  /* ── เลื่อนเป็นสไลด์ (ไม่ใช่ "โผล่" ทันที) ──
-     ตอน section เข้าช่วง scroll → เนื้อหาเลื่อนขึ้น + จางเข้า ทีละนุ่ม
-     ทำงานคู่กับ initSections ที่ปิด GSAP timeline บนมือถือ (กันชนกัน) */
-  .scroll-section .section-inner,
-  .scroll-section .cta-inner,
-  .scroll-section .stats-grid {
-    opacity: 0;
-    transform: translateY(46px);
-    transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
-  }
-  .scroll-section.is-visible .section-inner,
-  .scroll-section.is-visible .cta-inner,
-  .scroll-section.is-visible .stats-grid {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  /* การเลื่อน/การโผล่ของ .scroll-section ใช้แบบเดียวกับเดสก์ท็อปทั้งหมด
+     (absolute ตามตำแหน่งที่ JS วาง + GSAP timeline ทีละชิ้น, #scroll-container 800vh)
+     — เดิมมือถือตรึง fixed กลางจอแล้วสลับ opacity จึงดู "โผล่กลางจอ" ไม่เหมือนคอม */
 
   .align-left, .align-right {
     /* เผื่อพื้นที่บน 5.5rem ให้พ้น header (4rem) เสมอ */
