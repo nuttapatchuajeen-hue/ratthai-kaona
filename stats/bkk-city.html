@@ -2631,6 +2631,7 @@
       <button type="button" class="cat-chip" data-cat="outer">🌳 กทม. รอบนอก</button>
       <button type="button" class="cat-chip" data-cat="food">🍲 รีวิวอาหาร</button>
       <button type="button" class="cat-chip" data-cat="travel">⛩️ ที่เที่ยว กทม.</button>
+      <button type="button" class="cat-chip" data-cat="nature" title="น้ำตก ถ้ำ ชายหาด เกาะ ภูเขา/ดอย จุดชมวิว และอุทยานแห่งชาติทั่วประเทศ">🏞️ ที่เที่ยวทั่วไทย</button>
       <button type="button" class="cat-chip" data-cat="transit">🚊 รถไฟฟ้า BTS/MRT</button>
       <button type="button" class="cat-chip" data-cat="building">🏢 อาคาร & มิกซ์ยูส</button>
       <button type="button" class="cat-chip" data-cat="condo">🏙️ อสังหาฯ</button>
@@ -3302,6 +3303,7 @@
 <script src="bkk-rivers.js"></script>
 <script src="bkk-fuel.js"></script>
 <script src="bkk-ev.js"></script>
+<script src="bkk-nature.js"></script>
 <script src="bkk-dam.js"></script>
 <script src="bkk-warn.js"></script>
 <script src="bkk-cctv.js"></script>
@@ -4492,6 +4494,11 @@
     // ⚡ จุดชาร์จรถยนต์ไฟฟ้า (OSM — ยังไม่ครบ) + จุดชาร์จใกล้ฉัน — โมดูลแยกใน bkk-ev.js
     if (window.BKK_EVMAP) {
       try { window.BKK_EVMAP.mount(map); } catch (e) { console.warn("ev layer:", e); }
+    }
+
+    // 🏞 ที่เที่ยวธรรมชาติทั่วไทย (น้ำตก ถ้ำ หาด เกาะ ดอย จุดชมวิว อุทยานฯ — OSM + รูป Commons) — ชิปในแถบไลฟ์สไตล์ — โมดูลแยกใน bkk-nature.js
+    if (window.BKK_NATURE_MAP) {
+      try { window.BKK_NATURE_MAP.mount(map); } catch (e) { console.warn("nature layer:", e); }
     }
 
     // 🌊 จำลองน้ำท่วม 3 มิติ (ผิวน้ำในฉากกลาง ตึกโผล่พ้นน้ำ) — โมดูลแยกใน bkk-floodsim.js
@@ -6930,18 +6937,23 @@
         $$("#categoryChipsContainer .cat-chip").forEach(function(b) { b.classList.remove("active"); });
         btn.classList.add("active");
         var cat = btn.getAttribute("data-cat") || "all";
-        var wasNone = STATE.selectedCategory === "none";
+        // "ไม่แสดง" และ "ที่เที่ยวทั่วไทย" ซ่อนวงตัวเลขห้างร้านทั่วประเทศ (ไม่งั้นทับไอคอนน้ำตก/เกาะ)
+        var hidesShops = function(c) { return c === "none" || c === "nature"; };
+        var wasNone = hidesShops(STATE.selectedCategory);
         STATE.selectedCategory = cat;
 
         // "ไม่แสดง" ปิดวงตัวเลขห้างร้านด้วย (ชั้นนี้เปิดเองตอนโหลดหน้า ปุ่มปิดอยู่ลึกในแผงไลฟ์สไตล์)
         // แล้วเปิดคืนเมื่อเลือกหมวดอื่น — เฉพาะกรณีที่ก่อนหน้านั้นเปิดอยู่
-        if (cat === "none" && !wasNone) {
+        if (hidesShops(cat) && !wasNone) {
           STATE.shopsBeforeNone = !!STATE.layers.shops;
           if (STATE.layers.shops) setShopsLayer(false);
-        } else if (cat !== "none" && wasNone) {
+        } else if (!hidesShops(cat) && wasNone) {
           if (STATE.shopsBeforeNone && !STATE.layers.shops) setShopsLayer(true);
           STATE.shopsBeforeNone = false;
         }
+
+        // 🏞 ที่เที่ยวทั่วไทย: ชิปย่อยประเภท (น้ำตก/ถ้ำ/…) มาแทนชิปแบรนด์ — bkk-nature.js
+        if (window.BKK_NATURE_MAP) window.BKK_NATURE_MAP.setActive(cat === "nature");
 
         var showBrands = cat === "all" || cat === "condo";
         $$(BRAND_WRAPS).forEach(function(w) { w.style.display = showBrands ? "flex" : "none"; });
@@ -7327,6 +7339,7 @@ window.MD_DATA_NOTICE = {
     { t: 'ปั๊มน้ำมันทั่วประเทศ ~8,700 แห่ง (ชั้นปั๊มน้ำมัน)', o: 'OpenStreetMap ผ่าน Overpass API 27 ก.ย. 2569 (ODbL) — ยังไม่ครบทุกปั๊ม · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'ราคาน้ำมันขายปลีก วันนี้/พรุ่งนี้/ย้อนหลัง/รายอำเภอ', o: 'ปตท. (PTT OR OilPrice web service) และบางจาก (ราคาทางการ) · แบรนด์อื่นจาก api.chnwt.dev (บริการรวบรวมราคาของบุคคลทั่วไป) ผ่าน /api/fuel ของเว็บนี้ · เป็นราคาประกาศของแบรนด์ ไม่ใช่ราคารายปั๊ม', u: 'https://www.pttor.com/th/oil_price' },
     { t: 'จุดชาร์จรถยนต์ไฟฟ้า (ชั้นจุดชาร์จ EV)', o: 'OpenStreetMap ผ่าน Overpass API 2 ต.ค. 2569 (ODbL) — มีแค่ราว 290 จุดในไทย จากของจริงหลายพันจุด · แยกผู้ให้บริการจากแท็ก network/operator/brand · โลโก้ = ไอคอนแอปของผู้ให้บริการจาก App Store (ใช้เพื่อระบุผู้ให้บริการเท่านั้น) · ลิงก์ PlugShare และเว็บผู้ให้บริการสำหรับข้อมูลที่ครบกว่า', u: 'https://www.openstreetmap.org' },
+    { t: 'ที่เที่ยวธรรมชาติทั่วไทย 3,367 จุด และอุทยานแห่งชาติ 132 แห่ง (ชิป "ที่เที่ยวทั่วไทย")', o: 'ตำแหน่งน้ำตก ถ้ำ ชายหาด เกาะ ภูเขา/ดอย จุดชมวิว และขอบเขตอุทยาน: OpenStreetMap ผ่าน Overpass API 4 ต.ค. 2569 (ODbL) — ขอบเขตอุทยานย่อรูปแล้ว ใช้ดูคร่าว ๆ · รูป: Wikimedia Commons ตามสัญญาอนุญาตของแต่ละภาพ (CC BY / CC BY-SA / สาธารณสมบัติ — ชื่อผู้ถ่ายอยู่ใต้รูป) ผ่าน Wikidata (CC0) · คำบรรยายที่เที่ยวยอดนิยม: ทีมเว็บเขียนเอง · อำเภอ/จังหวัดจากขอบเขตตำบล', u: 'https://www.openstreetmap.org' },
     { t: 'สถานะปั๊มน้ำมันหมด', o: 'ไม่มีข้อมูลเปิด — ลิงก์ไป Thai Pump Radar (ประชาชนช่วยกันรายงาน)', u: 'https://www.thaipumpradar.com' },
     { t: 'แผ่นดินไหวล่าสุด (ชั้นแผ่นดินไหว)', o: 'กองเฝ้าระวังแผ่นดินไหว กรมอุตุนิยมวิทยา (data.tmd.go.th DailySeismicEvent + RSS) ผ่าน /api/quake ของเว็บนี้ · USGS Earthquake Catalog (FDSN) ดึงตรง · เหตุเดียวกันจากสองแหล่งรวมเป็นจุดเดียว · ความลึกใต้ดินในมุม 3 มิติขยายตามที่ผู้ใช้เลือก', u: 'https://earthquake.tmd.go.th' },
     { t: 'รอยเลื่อนมีพลัง', o: 'ในไทย: กรมทรัพยากรธรณี ชุดข้อมูลกลุ่มรอยเลื่อนมีพลัง (CC BY) ดึง 28 ก.ย. 2569 · ประเทศเพื่อนบ้าน: GEM Global Active Faults Database (CC BY-SA 4.0) — ไม่มีชื่อรอยเลื่อน ยกเว้นช่วงรอยเลื่อนสะกายที่ทับแนวแตกปี 2568', u: 'https://data.go.th/dataset/2f32b01e-6ae7-4b66-aa2c-730a87051793' },
