@@ -245,7 +245,6 @@ html[data-theme="dark"] .dsrc.real{color:#3FD68F}
 .trow .rk{font-family:'Kanit';font-weight:600;color:var(--muted);text-align:center;font-size:.9rem}
 .trow .pv-n{min-width:0}
 .trow .pv-n .nm{font-weight:600;font-size:.93rem;display:flex;align-items:center;gap:6px}
-.trow .pv-n .nm .star{color:#E8A33D;font-size:.78rem}
 .trow .pv-n small{display:block;font-size:.7rem;color:var(--muted)}
 .ttrack{
   position:relative;display:flex;gap:3px;height:18px;background:var(--wash);
@@ -462,7 +461,7 @@ mdSyncToggle();
     <!-- ===== ตารางรายจังหวัด ===== -->
     <div class="sec-head">
       <div><span class="kick">All Provinces</span><h1>คะแนนราย<span class="o">จังหวัด</span> ทั้ง 77 จังหวัด</h1></div>
-      <p>★ = 5 จังหวัดที่มีสัดส่วนเสียงเห็นชอบสูงสุดของประเทศ (ข้อมูลจริงจาก iLaw)</p>
+      <p>ตัวเลขจริงจาก iLaw เฉพาะ 5 จังหวัดที่มีสัดส่วนเสียงเห็นชอบสูงสุดของประเทศ · จังหวัดอื่นเป็นประมาณการ</p>
     </div>
     <div class="lcontrols">
       <div class="search">
@@ -748,7 +747,7 @@ mdSyncToggle();
         <div class="dname">${state.name} <span class="vchip ${win?'y':'n'}">${win?'✓ ส่วนมากเห็นชอบ':'✕ ส่วนมากไม่เห็นชอบ'}</span></div>
         <div class="dmeta">${RG[o.r].name} · เขตเลือกตั้ง ${o.z} เขต · ผู้ลงคะแนน ${fmt(b)} คน</div>
         ${statRows(o,b)}
-        <div class="dsrc ${o.real?'real':''}">${o.real?'★ ตัวเลขจริงจากตาราง iLaw (5 อันดับเห็นชอบสูงสุด)':'ตัวเลขประมาณการ — ควบคุมผลรวมรายภาคให้ตรงรายงานจริง'}</div>`;
+        <div class="dsrc ${o.real?'real':''}">${o.real?'ตัวเลขจริงจากตาราง iLaw (5 อันดับเห็นชอบสูงสุด)':'ตัวเลขประมาณการ — ควบคุมผลรวมรายภาคให้ตรงรายงานจริง'}</div>`;
     }else if(state.type==='region'){
       const g=RG[state.key], b=g.yes+g.no+g.ab;
       d.innerHTML=`<div class="crumb">สรุปคะแนน › <b>${g.name}</b></div>
@@ -849,11 +848,11 @@ mdSyncToggle();
       const ap=100-r.y-r.no;
       return `<div class="trow" data-n="${r.n}">
         <div class="rk">${i+1}</div>
-        <div class="pv-n"><div class="nm">${r.o.real?'<span class="star">★</span>':''}${r.n}</div><small>${RG[r.o.r].name} · ${fmt(r.b)} คน</small></div>
+        <div class="pv-n"><div class="nm">${r.n}</div><small>${RG[r.o.r].name} · ${fmt(r.b)} คน</small></div>
         <div class="ttrack"><div class="tseg y" data-w="${r.y}"></div><div class="tseg n" data-w="${r.no}"></div><div class="tseg a" data-w="${ap}"></div></div>
         <div class="nums"><span class="gy">${r.y.toFixed(1)}%</span><span class="rd">${r.no.toFixed(1)}%</span><small>${fmt(r.o.yes)} / ${fmt(r.o.no)}</small></div>
       </div>`;}).join('');
-    tfoot.textContent=`แสดง ${rows.length} จาก 77 จังหวัด · ★ ตัวเลขจริงจาก iLaw · จังหวัดอื่นเป็นประมาณการให้ผลรวมรายภาคตรงรายงานจริง`;
+    tfoot.textContent=`แสดง ${rows.length} จาก 77 จังหวัด · 5 จังหวัดที่เห็นชอบสูงสุดเป็นตัวเลขจริงจาก iLaw · จังหวัดอื่นเป็นประมาณการให้ผลรวมรายภาคตรงรายงานจริง`;
     const apply=()=>{
       trows.querySelectorAll('.trow').forEach((row, i)=>{
         const delay = Math.min(i * 24, 450);
