@@ -3,12 +3,12 @@
  * ชั้น "กล้อง CCTV" ของ bkk-city.html — กล้องสาธารณะทั่วประเทศ เอาไว้ดูน้ำท่วม/ระดับน้ำ/สภาพถนน
  *
  * แหล่งกล้อง (ภาพ/วิดีโอดึงตรงจากเซิร์ฟเวอร์ของหน่วยงานตอนเปิดดู — ไม่เก็บภาพไว้เอง)
- *   dwr     ริมแม่น้ำ กรมทรัพยากรน้ำ 132 สถานี — ภาพนิ่งล่าสุด (กล้องส่งราวทุก 15 นาที) เป็นค่าเริ่มต้น + โหมด "สด"
+ *   dwr     ริมแม่น้ำ กรมทรัพยากรน้ำ 128 สถานี — ภาพนิ่งล่าสุด (กล้องส่งราวทุก 15 นาที) เป็นค่าเริ่มต้น + โหมด "สด" (ปิดอยู่ ดู DWR_LIVE)
  *           (MJPEG ที่เซิร์ฟเวอร์ตัดทุก ~5–16 วินาที → ต่อใหม่เองเป็นรอบ; ถ้าเซิร์ฟเวอร์ปฏิเสธ (403) กลับไปภาพนิ่ง)
  *   egat    เขื่อน กฟผ. 10 เขื่อน มุมละ 1–4 กล้อง — ภาพนิ่ง (บางมุมหยุดอัปเดต: ดูเวลาภาพจากตอนสร้างข้อมูล)
  *   hatyai  หาดใหญ่ (คลองอู่ตะเภา) — ภาพนิ่ง + ธงสถานะของ Hat Yai City Climate (รายชื่อดึงสด เปิด CORS)
  *   rangsit เทศบาลนครรังสิต 2 กล้องวัดระดับน้ำคลอง — ภาพนิ่งรีเฟรชทุก 10 วินาที
- *   road    ถนน iTIC + กรมทางหลวง ~250 กล้อง ผ่าน Longdo Traffic — วิดีโอสด HLS (hls.js โหลดตอนกดดูครั้งแรก)
+ *   road    ถนน iTIC ~160 กล้อง (กรมทางหลวงหายจาก Longdo ตั้งแต่ ต.ค. 2569) ผ่าน Longdo Traffic — วิดีโอสด HLS (hls.js โหลดตอนกดดูครั้งแรก)
  *   bma     ทางแยก กทม. (BMA Traffic) — ภาพต้องเปิดผ่านเว็บ กทม. (ต้องมี session) จึงเป็นลิงก์
  *   coast   เรดาร์ชายฝั่ง GISTDA — เว็บกันบอท (Incapsula) จึงเป็นลิงก์ไปหน้า live ของ GISTDA
  * รายชื่อ+พิกัดของ dwr/egat/rangsit/bma/coast อยู่ใน bkk-cctv-data.js (สร้างด้วย _geo/build-bkk-cctv.js · โหลดตอนเปิดชั้นครั้งแรก)
@@ -30,6 +30,8 @@
   var RANGSIT = "https://cdp.rangsitcity.go.th";
   var BMA = "http://www.bmatraffic.com/";
   var HOUR = 3600000, DAY = 24 * HOUR;
+  // ภาพสด MJPEG ของกรมทรัพยากรน้ำตอบ 403 ทุกสถานีตั้งแต่ 2 ต.ค. 2569 — ซ่อนแท็บ "สด" ไว้ (ไม่ยิงโฮสต์ที่บล็อกอยู่) · กลับมาใช้ได้เมื่อไหร่ค่อยเปลี่ยนเป็น true
+  var DWR_LIVE = false;
 
   // kind: live = มีวิดีโอสด · still = ภาพนิ่ง · link = ต้องเปิดที่เว็บต้นทาง (หมุดกลวง) — ค่าระดับแหล่ง กล้องรายตัวดู modesOf()
   var SRC = {
@@ -37,7 +39,7 @@
     egat: { t: "เขื่อน กฟผ.", o: "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย (กฟผ.)", c: "#60a5fa", kind: "still", home: "https://egatwater.egat.co.th/RealTimeCCTV" },
     hatyai: { t: "หาดใหญ่", o: "Hat Yai City Climate · คลองอู่ตะเภา", c: "#a78bfa", kind: "still", home: "https://hatyaicityclimate.org/" },
     rangsit: { t: "รังสิต", o: "เทศบาลนครรังสิต (ศูนย์ข้อมูลน้ำท่วม)", c: "#a3e635", kind: "still", home: RANGSIT + "/" },
-    road: { t: "ถนน", o: "iTIC · กรมทางหลวง ผ่าน Longdo Traffic", c: "#f59e0b", kind: "live", home: "https://traffic.longdo.com/" },
+    road: { t: "ถนน", o: "iTIC ผ่าน Longdo Traffic", c: "#f59e0b", kind: "live", home: "https://traffic.longdo.com/" },
     bma: { t: "กทม.", o: "BMA Traffic กรุงเทพมหานคร", c: "#34d399", kind: "link", home: BMA },
     coast: { t: "ชายฝั่ง", o: "GISTDA เรดาร์ชายฝั่ง", c: "#f472b6", kind: "link", home: "https://coastalradar.gistda.or.th/" }
   };
@@ -214,7 +216,7 @@
   }
   function selIdx() { var i = selKey ? IDX[selKey] : undefined; return i == null ? -1 : i; }
   function modesOf(c) {
-    if (c.s === "dwr") return ["still", "live"];
+    if (c.s === "dwr") return DWR_LIVE ? ["still", "live"] : ["still"];
     if (c.s === "road") return c.link ? ["link"] : c.hls ? (c.img ? ["live", "still"] : ["live"]) : ["still"];
     if (c.s === "egat" || c.s === "hatyai" || c.s === "rangsit") return ["still"];
     return ["link"];
@@ -232,7 +234,7 @@
     var m = modesOf(c)[0];
     if (m === "link") return "เปิดที่เว็บต้นทาง";
     if (m === "live") return "วิดีโอสด";
-    return (isStale(c) ? "ภาพเก่า" : "ภาพนิ่ง") + (c.s === "dwr" ? " · มีโหมดสด" : "");
+    return (isStale(c) ? "ภาพเก่า" : "ภาพนิ่ง") + (c.s === "dwr" && DWR_LIVE ? " · มีโหมดสด" : "");
   }
 
   /* ================================================================ ชั้นบนแผนที่ */
@@ -566,7 +568,7 @@
         var t = null, two = function (s) { return ("0" + s).slice(-2); };
         if (m) t = Date.parse(m[1] + "-" + two(m[2]) + "-" + two(m[3]) + "T" + two(m[4]) + ":" + two(m[5] || 0) + ":00+07:00");
         var when = t && isFinite(t) ? "ภาพเวลา " + thTime(t) + " (" + ago(t) + ")" : "";
-        setMeta(ico("image") + ' ภาพนิ่งล่าสุด (กล้องส่งภาพราวทุก 15 นาที)' + (when ? " · " + when : "") + ' · สถานี ' + esc(c.code) + ' · ข้อมูล: กรมทรัพยากรน้ำ');
+        setMeta(ico("image") + ' ภาพนิ่งล่าสุด (กล้องส่งภาพราวทุก 15 นาที)' + (when ? " · " + when : "") + ' · สถานี ' + esc(c.code) + (DWR_LIVE ? "" : ' · ภาพสดปิดชั่วคราวจากต้นทาง') + ' · ข้อมูล: กรมทรัพยากรน้ำ');
         var st = $("#cvStale");
         if (st) st.innerHTML = t && Date.now() - t > 3 * HOUR ? staleBanner("กล้องนี้ไม่ได้ส่งภาพใหม่ตั้งแต่ " + thTime(t) + " (" + ago(t) + ")") : "";
       }).catch(function (e) {
