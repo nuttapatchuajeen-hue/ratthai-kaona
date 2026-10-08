@@ -11,7 +11,7 @@
    artist เจ้าของผลงาน/ผู้ขับร้อง — แสดงเป็นเครดิตใต้ชื่อเพลง
    url    ลิงก์เต็มไว้ให้ผู้ใช้กด "ดูบน YouTube"                                        */
 window.INTRO_YOUTUBE = {
-  '2569':  { id:'H8iqtpm1w_Q', party:'ภูมิใจไทย',    title:'เพลงอนุทินเป็นนายก · นายกรัฐมนตรีคนที่ 32', artist:'Gongkung Music',            url:'https://youtu.be/H8iqtpm1w_Q' },
+  '2569':  { id:'H8iqtpm1w_Q', party:'ภูมิใจไทย',    title:'เพลงนายกอนุทิน', artist:'Gongkung Music',            url:'https://youtu.be/H8iqtpm1w_Q' },
   '2566':  { id:'99KfzrvfIns', party:'ก้าวไกล',      title:'ก้าวไกลก้าวหน้า',                      artist:'วงสามัญชน x ส.ส.คำพอง เทพาคำ',   url:'https://youtu.be/99KfzrvfIns' },
   '2562':  { id:'A3Fm138GC1Q', party:'เพื่อไทย',     title:'เพื่อไทยแลนด์สไลด์ (Official MV)',     artist:'พรรคเพื่อไทย',                   url:'https://youtu.be/A3Fm138GC1Q' },
   '2554':  { id:'A3Fm138GC1Q', party:'เพื่อไทย',     title:'เพื่อไทยแลนด์สไลด์ (Official MV)',     artist:'พรรคเพื่อไทย',                   url:'https://youtu.be/A3Fm138GC1Q' },
