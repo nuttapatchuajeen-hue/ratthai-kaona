@@ -4,7 +4,8 @@
    (committees.html เป็นหน้าลูกของรัฐสภา → ไฮไลต์ "รัฐสภา")
 
    ปุ่มแรกของทั้ง 2 แถบ = "เว็บหลัก" เปิดแผงเมนูหลักของ รัฐไทยก้าวหน้า ครบ 7 รายการ
-   (เดสก์ท็อป = ดรอปดาวน์ใต้พิล · มือถือ = ชีตเหนือแถบล่าง) แผง+สไตล์ฉีดจากไฟล์นี้ทั้งหมด */
+   (เดสก์ท็อป = ดรอปดาวน์ใต้พิล · มือถือ = ชีตเหนือแถบล่าง) แผง+สไตล์ฉีดจากไฟล์นี้ทั้งหมด
+   ปุ่มสุดท้าย = "เลือกตั้งอื่น ▾" (มือถือ "อื่นๆ") เปิดแผงแบบเดียวกัน รวม บอร์ดประกันสังคม / กทม. / ประชามติ */
 (function () {
   var NAVPILL = `<nav class="navpill">
   <a href="#" class="smbtn" role="button" aria-expanded="false" aria-controls="siteMenuPop" style="border-right:1px solid var(--line);border-radius:11px 4px 4px 11px;margin-right:2px;" title="เมนูหลัก รัฐไทยก้าวหน้า"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>เว็บหลัก</a>
@@ -13,8 +14,7 @@
   <a href="standings.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนนพรรค</a>
   <a href="parliament.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
   <a href="timeline.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</a>
-  <a href="referendum.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
-  <a href="bangkok.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/><path d="M9 11h.01M15 11h.01"/></svg>กทม.</a>
+  <a href="#" class="nmbtn" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="navMorePop"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>เลือกตั้งอื่น<svg class="nmcaret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m6 9 6 6 6-6"/></svg></a>
 </nav>`;
 
   var MOBNAV = `<nav class="mobnav" aria-label="เมนูหลัก">
@@ -24,9 +24,19 @@
   <a href="standings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>คะแนน</a>
   <a href="parliament.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19a8 8 0 0 1 16 0"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="7.5" cy="9" r="1.2" fill="currentColor"/><circle cx="16.5" cy="9" r="1.2" fill="currentColor"/></svg>รัฐสภา</a>
   <a href="timeline.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ประวัติ</a>
-  <a href="referendum.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg>ประชามติ</a>
-  <a href="bangkok.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg>กทม.</a>
+  <a href="#" class="nmbtn" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="navMorePop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>อื่นๆ</a>
 </nav>`;
+
+  /* เมนู "เลือกตั้งอื่น ▾" — รวมการเลือกตั้งที่ไม่ใช่ ส.ส. ไว้ปุ่มเดียว (ใหม่สุดอยู่บน)
+     เพิ่มการเลือกตั้งอื่นในอนาคต (สว., อบจ. ฯลฯ) = เพิ่มแถวในนี้ + ชื่อไฟล์ใน MORE_PAGES */
+  var MORE_PAGES = ['sso.html', 'bangkok.html', 'referendum.html'];
+  var NAVMORE = `<div class="smveil" id="navMoreVeil" hidden></div>
+<div class="smpop nmpop" id="navMorePop" role="menu" aria-label="การเลือกตั้งอื่น" hidden>
+  <div class="smhead">การเลือกตั้งอื่น</div>
+  <a class="smlink" role="menuitem" href="sso.html"><span class="smico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 9.5 4-1.1 7-5.1 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="nmtx">บอร์ดประกันสังคม<small>นายจ้าง + ผู้ประกันตน · 11 ต.ค. 2569</small></span></a>
+  <a class="smlink" role="menuitem" href="bangkok.html"><span class="smico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/><path d="M9 11h.01M15 11h.01"/></svg></span><span class="nmtx">เลือกตั้ง กทม.<small>ผู้ว่าฯ + ส.ก. · 28 มิ.ย. 2569</small></span></a>
+  <a class="smlink" role="menuitem" href="referendum.html"><span class="smico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2.5h8.5L19 7v14.5H6Z"/><path d="M14.5 2.5V7H19"/><path d="m9 14 2.2 2.2L15 12.4"/></svg></span><span class="nmtx">ประชามติรัฐธรรมนูญ<small>14 ก.พ. 2569</small></span></a>
+</div>`;
 
   /* แถบเครดิตท้ายหน้า — แหล่งที่มาข้อมูลและสัญญาอนุญาตของทั้งเว็บ */
   var SITEFOOT = `<footer class="sitefoot">
@@ -87,6 +97,22 @@
 .smlink.cur:hover{background:var(--ink);color:#fff}
 .smnow{margin-left:auto;font-family:'Sarabun',sans-serif;font-size:.68rem;font-weight:400;opacity:.72}
 html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{background:var(--orange);color:#081019}
+/* เมนู "เลือกตั้งอื่น ▾" — ใช้แผงแบบเดียวกับเมนูหลัก (smpop) แต่วางใต้ปุ่มของตัวเอง (JS ตั้ง right ตอนเปิด) */
+.navpill .nmbtn[aria-expanded="true"]{background:var(--orange-soft);color:var(--orange-deep)}
+.navpill .nmbtn.active[aria-expanded="true"]{background:var(--ink);color:#fff}
+.navpill .nmcaret{margin-left:-3px;opacity:.7;transition:transform .18s}
+.navpill .nmbtn[aria-expanded="true"] .nmcaret{transform:rotate(180deg)}
+.nmpop{width:288px}
+.nmtx{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.nmtx small{font-family:'Sarabun',sans-serif;font-weight:400;font-size:.72rem;color:var(--muted);margin-top:1px}
+.smlink:hover .nmtx small{color:inherit;opacity:.75}
+.smlink.cur .nmtx small{color:inherit;opacity:.72}
+.mobnav .nmbtn[aria-expanded="true"]{color:var(--orange-deep);background:var(--orange-soft)}
+/* ปุ่มสลับภาษา TH | EN — สีตามธีมเว็บเลือกตั้ง */
+.navpill .md-lang,.smlang .md-lang{--md-lang-line:var(--line);--md-lang-bg:transparent;--md-lang-accent:var(--orange);--md-lang-on:#fff;--md-lang-fg:var(--ink-2)}
+.navpill .md-lang{margin:0 2px 0 4px;align-self:center}
+.smlang{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;padding:10px 12px 4px;
+  border-top:1px solid var(--line);font-family:'Sarabun',sans-serif;font-size:.74rem;color:var(--muted)}
 /* มือถือ: แผงกลายเป็นชีตเหนือแถบล่าง (mobnav สูง ~83px) */
 @media(max-width:860px){
   .smveil{background:rgba(6,20,30,.42);backdrop-filter:blur(2px)}
@@ -116,6 +142,7 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
     }
     body.insertAdjacentHTML('beforeend', MOBNAV);
     body.insertAdjacentHTML('beforeend', SITEMENU);
+    body.insertAdjacentHTML('beforeend', NAVMORE);
 
     var page = (location.pathname.split('/').pop() || 'index.html');
     if (!/\.html$/.test(page)) page = 'index.html';
@@ -128,39 +155,83 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
         links[i].setAttribute('aria-current', 'page');
       }
     }
-
-    /* ---- แผงเมนูหลัก: เปิด/ปิด ---- */
-    var pop = document.getElementById('siteMenuPop');
-    var veil = document.getElementById('siteMenuVeil');
-    var btns = document.querySelectorAll('.smbtn');
-    var open = false;
-
-    function setOpen(v) {
-      if (v === open) return;
-      open = v;
-      for (var j = 0; j < btns.length; j++) btns[j].setAttribute('aria-expanded', v ? 'true' : 'false');
-      if (v) {
-        pop.hidden = false; veil.hidden = false;
-        // บังคับ reflow ก่อนติดคลาส ไม่งั้นทรานซิชันไม่วิ่ง (เพิ่งเลิก hidden)
-        void pop.offsetWidth;
-        pop.classList.add('open'); veil.classList.add('open');
-      } else {
-        pop.classList.remove('open'); veil.classList.remove('open');
-        setTimeout(function () { if (!open) { pop.hidden = true; veil.hidden = true; } }, 200);
+    /* หน้าในเมนู "เลือกตั้งอื่น" → ไฮไลต์ปุ่มเมนู + แถวของหน้านั้นในแผง */
+    if (MORE_PAGES.indexOf(page) >= 0) {
+      var nmb = document.querySelectorAll('.nmbtn');
+      for (var b = 0; b < nmb.length; b++) nmb[b].classList.add('active');
+      var cur = document.querySelector('#navMorePop a[href="' + page + '"]');
+      if (cur) {
+        cur.classList.add('cur');
+        cur.setAttribute('aria-current', 'page');
+        cur.insertAdjacentHTML('beforeend', '<span class="smnow">อยู่ที่นี่</span>');
       }
     }
 
-    for (var k = 0; k < btns.length; k++) {
-      btns[k].addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        setOpen(!open);
-      });
+    /* ---- แผงเมนู 2 อัน (เมนูหลัก / เลือกตั้งอื่น): เปิด/ปิด — เปิดได้ทีละอัน ---- */
+    function makePop(pop, veil, btns, place) {
+      var ctl = { open: false };
+      ctl.set = function (v) {
+        if (v === ctl.open) return;
+        ctl.open = v;
+        for (var j = 0; j < btns.length; j++) btns[j].setAttribute('aria-expanded', v ? 'true' : 'false');
+        if (v) {
+          if (place) place();
+          pop.hidden = false; veil.hidden = false;
+          // บังคับ reflow ก่อนติดคลาส ไม่งั้นทรานซิชันไม่วิ่ง (เพิ่งเลิก hidden)
+          void pop.offsetWidth;
+          pop.classList.add('open'); veil.classList.add('open');
+        } else {
+          pop.classList.remove('open'); veil.classList.remove('open');
+          setTimeout(function () { if (!ctl.open) { pop.hidden = true; veil.hidden = true; } }, 200);
+        }
+      };
+      for (var k = 0; k < btns.length; k++) {
+        btns[k].addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var v = !ctl.open;
+          if (v) for (var x = 0; x < pops.length; x++) if (pops[x] !== ctl) pops[x].set(false);
+          ctl.set(v);
+        });
+      }
+      veil.addEventListener('click', function () { ctl.set(false); });
+      return ctl;
     }
-    veil.addEventListener('click', function () { setOpen(false); });
+    var pops = [];
+    var pop = document.getElementById('siteMenuPop');
+    pops.push(makePop(pop, document.getElementById('siteMenuVeil'), document.querySelectorAll('.smbtn')));
+    /* เดสก์ท็อป: แผงชิดขอบขวาของปุ่ม "เลือกตั้งอื่น" · มือถือ: เป็นชีตเหนือแถบล่างตาม CSS ของ .smpop */
+    var morePop = document.getElementById('navMorePop');
+    var moreCtl = makePop(morePop, document.getElementById('navMoreVeil'), document.querySelectorAll('.nmbtn'), placeMore);
+    pops.push(moreCtl);
+    // หมุนจอ/ย่อหน้าต่างตอนแผงเปิดอยู่ → วางตำแหน่งใหม่ (ไม่งั้น top ของเดสก์ท็อปค้างทับชีตมือถือ)
+    window.addEventListener('resize', function () { if (moreCtl.open) placeMore(); });
+    function placeMore() {
+      var pb = document.querySelector('.navpill .nmbtn');
+      var desk = !(window.matchMedia && matchMedia('(max-width:860px)').matches);
+      if (desk && pb && pb.offsetParent) {
+        var r = pb.getBoundingClientRect();
+        morePop.style.top = Math.round(r.bottom + 10) + 'px';
+        // fixed + right อ้างกับความกว้างที่ไม่รวมแถบเลื่อน → ใช้ clientWidth ไม่ใช่ innerWidth
+        morePop.style.right = Math.max(10, Math.round(document.documentElement.clientWidth - r.right)) + 'px';
+        morePop.style.transformOrigin = 'top right';
+      } else {
+        morePop.style.top = morePop.style.right = morePop.style.transformOrigin = '';
+      }
+    }
     document.addEventListener('keydown', function (e) {
-      if ((e.key === 'Escape' || e.key === 'Esc') && open) setOpen(false);
+      if (e.key === 'Escape' || e.key === 'Esc') for (var x = 0; x < pops.length; x++) pops[x].set(false);
     });
+
+    /* ปุ่มสลับภาษา TH | EN (../js/i18n.js) — ท้ายพิลบนเดสก์ท็อป + แถวล่างสุดของแผงเมนูหลัก (มือถือเข้าถึงทางนี้) */
+    if (window.MDI18N) {
+      MDI18N.mount(document.querySelector('.navpill'), 'append');
+      var row = document.createElement('div');
+      row.className = 'smlang';
+      row.innerHTML = '<span translate="no">ภาษา · Language</span>';
+      pop.appendChild(row);
+      MDI18N.mount(row, 'append');
+    }
   }
 
   /* แถบ ⓘ "ข้อมูล ณ …" + กล่องที่มาข้อมูล — ตัวแถบอยู่ใน ../js/data-notice.js ข้อความแยกตามหน้า
@@ -241,6 +312,18 @@ html[data-theme="dark"] .smlink.cur,html[data-theme="dark"] .smlink.cur:hover{ba
         { t: 'ผลนับคะแนนคืนเลือกตั้ง', o: 'Thai PBS / ไทยรัฐ (bkkelection69)' },
         SRC.ect
       ]
+    },
+    // ตัวเลขในหน้าอัปเดตเองทุก 3 นาที (ผ่าน /api/sso) — เวลาข้อมูลจริงดูที่แถบสถานะในหน้า ไม่ใส่ในแถบนี้
+    'sso.html': {
+      asof: 'เลือกตั้งบอร์ดประกันสังคม 11 ต.ค. 2569 · ผลอย่างไม่เป็นทางการ',
+      detail: ' — ดึงจาก Dashboard ของสำนักงานประกันสังคมทุก 3 นาที (เวลาข้อมูลดูที่แถบสถานะในหน้า) โปรดตรวจสอบกับประกาศอย่างเป็นทางการก่อนนำไปอ้างอิง',
+      sub: 'ผลนับคะแนนเลือกตั้งผู้แทนฝ่ายนายจ้างและฝ่ายผู้ประกันตนในคณะกรรมการประกันสังคม 11 ตุลาคม 2569',
+      warn: '<b>ไม่ใช่ผลที่ประกาศรับรองอย่างเป็นทางการ</b><br>' + EDU,
+      sources: [
+        { t: 'ผลการนับคะแนนเลือกตั้งคณะกรรมการประกันสังคม (อย่างไม่เป็นทางการ)', o: 'สำนักงานประกันสังคม', u: 'https://sbe2.sso.go.th/inter/report/dashboard-sbe0304' },
+        SRC.maps
+      ],
+      more: { href: 'credits.html#sso', label: 'ดูแหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด' }
     }
   };
 

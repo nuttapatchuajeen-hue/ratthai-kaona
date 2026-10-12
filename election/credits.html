@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- สลับภาษา ไทย/อังกฤษ (ต้องอยู่ต้น <head> และห้ามใส่ defer) -->
+<script src="../js/i18n.js" data-dicts="election" data-mount-mode="none" data-switch="reload"></script>
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>แหล่งที่มาข้อมูลและสัญญาอนุญาตทั้งหมด · รัฐไทยก้าวหน้า</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../hub/images/favicon-32.png">
@@ -174,7 +176,8 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
     <button type="button" class="cr-tab" data-cat="bkkcity">🗺️ กรุงเทพฯ ทะลุมิติ (แผนที่ 3 มิติ)</button>
     <button type="button" class="cr-tab" data-cat="nationalstats">📊 สถิติประเทศไทย &amp; นโยบายสาธารณะ</button>
     <button type="button" class="cr-tab" data-cat="stem">🔬 แบบจำลอง STEM &amp; วิทยาการคำนวณ</button>
-    <button type="button" class="cr-tab" data-cat="referendum">🗳️ ประชามติ 2569 (ล่าสุด)</button>
+    <button type="button" class="cr-tab" data-cat="sso">🛡️ บอร์ดประกันสังคม 2569 (ล่าสุด)</button>
+    <button type="button" class="cr-tab" data-cat="referendum">🗳️ ประชามติ 2569</button>
     <button type="button" class="cr-tab" data-cat="election">🏛️ รัฐสภา & การเลือกตั้ง</button>
     <button type="button" class="cr-tab" data-cat="gov">👑 ครม. & โครงสร้าง 20 กระทรวง</button>
     <button type="button" class="cr-tab" data-cat="nasa">🛰️ อวกาศ & นาซา (NASA)</button>
@@ -2897,9 +2900,52 @@ html[data-theme="dark"] .cr-tab.active{background:var(--green);color:#020508;bor
     </div>
   </div>
 
+  <!-- 2a. หมวดเลือกตั้งบอร์ดประกันสังคม 2569 -->
+  <div class="cr-sec cr-sec-data" data-cat="sso">
+    <h2>🛡️ เลือกตั้งคณะกรรมการประกันสังคม 2569 (SSO Board 2569 — ล่าสุด)<span class="cnt">2 แหล่งข้อมูล</span></h2>
+    <p class="sub">ใช้ในหน้าผลนับคะแนนเลือกตั้งบอร์ดประกันสังคม 11 ตุลาคม 2569 (sso.html)</p>
+    <div class="cr-grid">
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">ผลการนับคะแนนเลือกตั้งคณะกรรมการประกันสังคม (อย่างไม่เป็นทางการ)</div>
+            <div class="cr-card-org">สำนักงานประกันสังคม กระทรวงแรงงาน</div>
+          </div>
+          <span class="lic">ข้อมูลทางการ</span>
+        </div>
+        <div class="cr-card-body">
+          คะแนนผู้สมัครฝ่ายนายจ้าง 78 คน และฝ่ายผู้ประกันตน 102 คน รายประเทศและรายจังหวัด ยอดผู้มีสิทธิ ผู้มาใช้สิทธิ บัตรที่นับแล้ว จำนวนหน่วยเลือกตั้งที่รายงานผล และรูปผู้สมัคร — ดึงจาก Dashboard SBE0304 ผ่านฟังก์ชันตัวกลางบน Vercel ทุก 3 นาที และสำรองไว้ในไฟล์ด้วยสคริปต์ sso-fetch.js (ไม่ได้เก็บเลขประจำตัวประชาชนของผู้สมัคร)
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">สปส. / SSO</span>
+          <a class="cr-card-link" href="https://sbe2.sso.go.th/inter/report/dashboard-sbe0304" target="_blank" rel="noopener">Dashboard ผลนับคะแนน ↗</a>
+        </div>
+      </div>
+
+      <div class="cr-card">
+        <div class="cr-card-head">
+          <div>
+            <div class="cr-card-title">แผนที่พิกัดจังหวัดประเทศไทย (SVG GIS Map)</div>
+            <div class="cr-card-org">SimpleMaps Thailand</div>
+          </div>
+          <span class="lic">Free with Attribution</span>
+        </div>
+        <div class="cr-card-body">
+          โครงร่างเวกเตอร์ 77 จังหวัดชุดเดียวกับหน้าประชามติ ระบายสีตามสัดส่วนผู้มาใช้สิทธิและความคืบหน้าการนับคะแนน
+        </div>
+        <div class="cr-card-foot">
+          <span class="cr-tag">SimpleMaps / GIS</span>
+          <a class="cr-card-link" href="https://simplemaps.com/gis/country/th" target="_blank" rel="noopener">SimpleMaps Thailand GIS ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- 2. หมวดประชามติ 2569 -->
   <div class="cr-sec cr-sec-data" data-cat="referendum">
-    <h2>🗳️ ประชามติรัฐธรรมนูญ 2569 (Referendum 2569 — ล่าสุด)<span class="cnt">3 แหล่งข้อมูล</span></h2>
+    <h2>🗳️ ประชามติรัฐธรรมนูญ 2569 (Referendum 2569)<span class="cnt">3 แหล่งข้อมูล</span></h2>
     <p class="sub">ใช้ในหน้าสรุปผลประชามติร่างรัฐธรรมนูญฉบับใหม่ 14 กุมภาพันธ์ 2569 (referendum.html)</p>
     <div class="cr-grid">
 
