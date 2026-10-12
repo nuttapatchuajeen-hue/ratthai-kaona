@@ -5,12 +5,12 @@
    วิธีใช้ (จากโฟลเดอร์ election/):   node sso-fetch.js            ดึงข้อมูล + รูปที่ยังไม่มี
                                      node sso-fetch.js --no-photos ดึงเฉพาะตัวเลข
 
-   ตัวดึง/แปลงข้อมูลอยู่ที่ ../api/sso.js (build) ตัวเดียวกับฟังก์ชัน Vercel ที่หน้าเว็บเรียกสด
+   ตัวดึง/แปลงข้อมูลอยู่ที่ ../api/_lib/sso.js (build) ตัวเดียวกับฟังก์ชัน Vercel ที่หน้าเว็บเรียกสด
    ⚠️ ฟิลด์ profilePictureFile ของต้นทางมีเลขประจำตัวประชาชนอยู่ในชื่อไฟล์ → ห้ามเก็บลงไฟล์ใด ๆ */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const sso = require('../api/sso.js');
+const sso = require('../api/_lib/sso.js');
 
 const OUT = path.join(__dirname, 'sso-data.js');
 const PHOTO_DIR = path.join(__dirname, 'sso-photos');

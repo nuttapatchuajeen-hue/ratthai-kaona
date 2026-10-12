@@ -145,5 +145,4 @@ module.exports = async (req, res) => {
 };
 module.exports.build = build;
 module.exports.API = API;
-// ดึง 78 หน้าใช้ราว 5–8 วินาที — เผื่อเวลาไว้
-module.exports.config = { maxDuration: 60 };
+// ดึง 78 หน้าใช้ราว 5–8 วินาที — เพดานเวลาตั้งที่ api/[name].js (ฟังก์ชันรวม) แล้ว
