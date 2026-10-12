@@ -8,7 +8,8 @@
 
 /* ── สถานะ ─────────────────────────────────────────────────────────── */
 const S = {
-  lang: 'th',
+  // ภาษาเริ่มต้นตามที่เลือกไว้ทั้งเว็บ (localStorage 'md-lang' — ปุ่ม TH|EN ของหน้าอื่น ๆ)
+  lang: (() => { try { return localStorage.getItem('md-lang') === 'en' ? 'en' : 'th'; } catch (e) { return 'th'; } })(),
   time: Date.now(),
   tzMode: 'local',
   live: true,
@@ -7350,7 +7351,11 @@ function initUI() {
   $('#q').addEventListener('input', e => renderFind(e.target.value));
   document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
   document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) closeSheets(); }));
-  $('#btnLang').addEventListener('click', () => { S.lang = S.lang === 'th' ? 'en' : 'th'; applyLang(); });
+  $('#btnLang').addEventListener('click', () => {
+    S.lang = S.lang === 'th' ? 'en' : 'th';
+    try { localStorage.setItem('md-lang', S.lang); } catch (e) {}   // จำไว้ให้หน้าอื่นของเว็บใช้ภาษาเดียวกัน
+    applyLang();
+  });
 
   addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {

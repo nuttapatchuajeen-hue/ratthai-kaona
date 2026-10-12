@@ -410,6 +410,8 @@
       }
       if (!hintTextEl) return;
       var cur = WORDS[wordIdx % WORDS.length];
+      // โหมดอังกฤษ: แปลทั้งประโยคก่อนพิมพ์ทีละตัว (ไม่งั้นช่วงพิมพ์ค้างจะโผล่เป็นไทยครึ่ง ๆ กลาง ๆ)
+      if (window.MDI18N) cur = MDI18N.t(cur);
 
       if (!isDeleting) {
         charIdx++;
@@ -954,6 +956,9 @@
       b.appendChild(ic);
       b.appendChild(document.createTextNode(" "));
     }
+    // ข้อความที่ผู้ใช้พิมพ์/คำตอบของ AI ห้ามระบบสลับภาษา (js/i18n.js) ไปแก้
+    // (ข้อความของเว็บเอง — คำทักทายที่มีไอคอน และข้อความแจ้งข้อผิดพลาด — ยังแปลได้)
+    if (!isErr && !icon) b.setAttribute("translate", "no");
     if (who !== "me" && !isErr) b.appendChild(mdRender(text));
     else b.appendChild(document.createTextNode(text));
     row.appendChild(b);
@@ -1064,13 +1069,19 @@
     showThinking();
     showTyping();
 
+    // เว็บโหมดอังกฤษ (ปุ่ม TH|EN) → ขอให้ตอบเป็นอังกฤษ (ใส่เฉพาะในคำขอรอบนี้ ไม่เก็บลงประวัติ)
+    var payload = messages;
+    if (window.MDI18N && MDI18N.lang === "en") {
+      payload = messages.slice(0, -1).concat({ role: "user", content: text + "\n\n(Please reply in English.)" });
+    }
+
     fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(
         model
-          ? { messages: messages, model: model, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
-          : { messages: messages, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
+          ? { messages: payload, model: model, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
+          : { messages: payload, max_tokens: MAX_TOKENS, temperature: TEMPERATURE }
       ),
     })
       .then(function (r) {
