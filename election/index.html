@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- สลับภาษา ไทย/อังกฤษ (ต้องอยู่ต้น <head> และห้ามใส่ defer) -->
+<script src="../js/i18n.js" data-dicts="election" data-mount-mode="none" data-switch="reload"></script>
 <script>(function(){try{var k='md-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>รายเขต · ว่าที่ ส.ส. 500 · เลือกตั้ง 2569</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../hub/images/favicon-32.png">
@@ -191,6 +193,9 @@ mdSyncToggle();
                    [7,'#3D7FA6','5–7 คน'],[Infinity,'#1F5478','8 คนขึ้นไป']];
   const heatColor=n=>{for(const b of HEAT_BINS)if(n<=b[0])return b[1];return HEAT_BINS[HEAT_BINS.length-1][1];};
   const fillOf=st=>HEAT?heatColor(st.seats):colorOf(st.winner);
+  /* แท็บ "ท้องถิ่น" (local.js): ใช้แผนที่/แผงชุดเดียวกัน แต่ข้อมูลเป็น นายก อบจ./เทศบาล/อบต.
+     ตอนเปิดแท็บนี้ local.js ตั้ง ELLOCAL.active=true แล้วรับช่วงการวาดแผง ทูลทิป และการแตะแผนที่ผ่านจุดที่เรียก LM() */
+  const LM=()=>(window.ELLOCAL&&window.ELLOCAL.active)?window.ELLOCAL:null;
 
   /* ---- build SVG ---- */
   const svg=document.createElementNS(NS,'svg');
@@ -375,12 +380,12 @@ mdSyncToggle();
     else if(pointers.size===1){const id=[...pointers.keys()][0],q=pointers.get(id);panState={x:q.x,y:q.y,tx,ty,id};}
     if(tap && downEl){
       lastTapTime=Date.now();
-      const mk=downEl.closest&&downEl.closest('.mk');
-      if(mk){flashCard(mk.dataset.no);}
-      else if(downEl.classList&&downEl.classList.contains('tam')){flashCard(downEl.dataset.z);}
+      const mk=downEl.closest&&downEl.closest('.mk'), lm=LM();
+      if(mk){lm?lm.tapMarker(mk.dataset.no):flashCard(mk.dataset.no);}
+      else if(downEl.classList&&downEl.classList.contains('tam')){lm?lm.tapTambon(downEl):flashCard(downEl.dataset.z);}
       // แตะจังหวัดเดิมซ้ำ = ถอยกลับไปมุมมองทั้งประเทศ (ทางออกจากสภาพซูมค้าง — เหมือนเว็บอ้างอิง)
       else if(downEl.classList&&downEl.classList.contains('pv')){const th=en2th[downEl.dataset.en];
-        if(th&&provStats[th]){ if(curProvince===th) backToAll(); else selectProvince(th); }}
+        if(th&&(lm?lm.canSelect(th):provStats[th])){ if(curProvince===th) backToAll(); else selectProvince(th); }}
     }
     if(pointers.size===0&&pinching){pinching=false;maybeExitProvince();}
   }
@@ -390,8 +395,8 @@ mdSyncToggle();
   const tip=document.getElementById('maptip');
   // จังหวัดที่ยังไม่ตั้งในปีนั้น (เช่น บึงกาฬ ก่อนปี 2554) — บอกว่าตอนนั้นเป็นส่วนหนึ่งของจังหวัดใด
   const exProv=(window.EYEARINFO&&window.EYEARINFO.exProv)||{};
-  function showTip(en,evt){const th=en2th[en],st=th?provStats[th]:null;
-    tip.innerHTML=st?`<div class="tt-prov">${th}</div><div class="tt-win"><span class="sw" style="background:${fillOf(st)}"></span>${
+  function showTip(en,evt){const th=en2th[en],st=th?provStats[th]:null,lm=LM();
+    tip.innerHTML=lm?lm.provTip(th||en):st?`<div class="tt-prov">${th}</div><div class="tt-win"><span class="sw" style="background:${fillOf(st)}"></span>${
         HEAT?`ส.ส. ${st.seats} คน`:`${shortOf(st.winner)} · ${st.seats} ${NOZONE?'คน':'เขต'}`}</div>`
         /* ปีเก่าไม่มีคะแนนรายคน จังหวัดที่ที่นั่งเท่ากันจึงบอกไว้ว่าเสมอ (สีเลือกจากพรรคที่ใหญ่กว่าทั้งประเทศ) */
         +(st.tie?`<div class="tt-mix">เสมอกัน ${st.tie.map(c=>shortOf(c)).join(' · ')} — ลงสีตามพรรคที่ใหญ่กว่าระดับประเทศ</div>`:'')
@@ -406,7 +411,7 @@ mdSyncToggle();
       p.addEventListener('mousemove',moveTip);
       p.addEventListener('mouseleave',()=>tip.classList.remove('on'));
     }
-    p.addEventListener('click',()=>{if(moved||Date.now()-lastTapTime<500)return;const th=en2th[p.dataset.en];if(th&&provStats[th])selectProvince(th);});
+    p.addEventListener('click',()=>{if(moved||Date.now()-lastTapTime<500)return;const th=en2th[p.dataset.en],lm=LM();if(th&&(lm?lm.canSelect(th):provStats[th]))selectProvince(th);});
   });
   function highlight(th){Object.entries(pathEls).forEach(([en,p])=>{const m=th&&en2th[en]===th;p.classList.toggle('sel',!!th&&m);p.classList.toggle('dim',!!th&&!m);});}
   // กลับไปหน้าเลือกจังหวัด: บนมือถือต้องพับ bottom sheet ลงด้วย ไม่งั้นแผ่นจะค้างบานเต็มจอบังแผนที่จนแพน/ซูมไม่ได้
@@ -633,11 +638,13 @@ mdSyncToggle();
       <span class="zc"><b>${st.seats}</b> ${NOZONE?'คน':'เขต'}</span>
       <svg class="arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>`;}
   function renderList(){
+    if(LM())return LM().renderList();
     // ปีเก่าจังหวัดยังไม่ครบ 77 (บึงกาฬ ตั้งปี 2554 · สระแก้ว/หนองบัวลำภู/อำนาจเจริญ ปี 2536 ฯลฯ)
     panelScroll.innerHTML=`<div class="list-head">เลือกจังหวัด <span class="cnt">${provNames.length} จังหวัด</span></div>`+provNames.map(provinceRow).join('');
     bindRows();
   }
   function renderDetail(th){
+    if(LM())return LM().renderDetail(th);
     const st=provStats[th], recs=zoneRecs.filter(r=>r.prov===th).sort((a,b)=>(+a.no)-(+b.no));
     panelScroll.innerHTML=`<div class="dback" id="dback">‹ กลับไปทุกจังหวัด</div>
       <div class="dhead"><div class="dn">${th}</div><div class="dmeta"><span>${NOZONE?`ส.ส. ${st.seats} คน`:`${st.seats} เขตเลือกตั้ง`}</span>
@@ -656,7 +663,8 @@ mdSyncToggle();
     row.onmouseenter=()=>{const p=pathEls[th2en[row.dataset.prov]];if(p&&!curProvince)p.classList.add('sel');};
     row.onmouseleave=()=>{const p=pathEls[th2en[row.dataset.prov]];if(p&&!curProvince)p.classList.remove('sel');};});}
   function selectProvince(th){curProvince=th;highlight(th);zoomToProvince(th);renderDetail(th);if(isMobile())expandSheet(true);}
-  function renderSearch(q){q=q.trim().toLowerCase();
+  function renderSearch(q){if(LM())return LM().renderSearch(q);
+    q=q.trim().toLowerCase();
     if(!q){curProvince?renderDetail(curProvince):renderList();return;}
     clearMarkers();
     const hits=zoneRecs.filter(r=>r.name.toLowerCase().includes(q)||r.prov.toLowerCase().includes(q)||areaOf(r).toLowerCase().includes(q));
@@ -731,9 +739,21 @@ mdSyncToggle();
     el.addEventListener('pointercancel',sheetUp);
   });
 
+  /* ---- ช่องให้ local.js (แท็บ "ท้องถิ่น") ใช้แผนที่ ซูม แผงข้อมูล ชุดเดียวกับหน้านี้ ---- */
+  // ฐานจังหวัดเป็นกลาง + ซ่อนป้ายชื่อจังหวัด ก่อนวาดโมเสกตำบล (clearMarkers คืนค่าให้เองตอนออก)
+  function prepDistrict(th){const en=th2en[th],pe=pathEls[en];if(pe){pe.style.fill='#e9eff3';distProv=th;}
+    const lab=labelEls.find(l=>l.en===en);if(lab){lab.el.style.display='none';hiddenLabel=lab.el;}}
+  window.ELMAP={NS,svg,dg,mkG,pathEls,en2th,th2en,tip,moveTip,canHover,panelScroll,search,legendbar,
+    clearMarkers,ensureDistrict,getDist,prepDistrict,scaleMarkers,updateLabels,mkRadius:N=>mkR(N,fitScale),
+    selectProvince,backToAll,expandSheet,isMobile,initialOf,fmtN,
+    get curProvince(){return curProvince;}};
+
   apply();
 })();
 </script>
+<!-- แท็บ "ท้องถิ่น": นายก อบจ. / นายกเทศมนตรี / นายก อบต. + สภา (ข้อมูล local/<จังหวัด>.js สร้างด้วย fetch-local.js) -->
+<script src="local/index.js"></script>
+<script src="local.js"></script>
 <!-- ฉากเปิด: แผงพรรคอันดับ 1/2 เลื่อนเข้าซ้าย-ขวา ค้างไว้แล้วเลื่อนออกเผยแผนที่ -->
 <script src="intro-data.js"></script>
 <script src="intro-seats.js"></script>

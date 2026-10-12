@@ -460,3 +460,63 @@ body .bb8-toggle{right:16px;bottom:118px}
   .ytlink svg{width:18px;height:18px}
   .sg-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 }
+
+/* ===== แท็บ "ท้องถิ่น" (local.js): นายก อบจ./เทศบาล/อบต. ในหน้ารายเขต ===== */
+.modeseg{display:flex;gap:4px;margin:10px 12px 10px;padding:4px;background:var(--wash);border:1px solid var(--line);border-radius:12px;flex:0 0 auto}
+.modeseg button{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:'Kanit';font-weight:500;font-size:.86rem;
+  color:var(--muted);background:none;border:0;border-radius:9px;padding:7px 8px;cursor:pointer;transition:background .15s,color .15s}
+.modeseg button:hover{color:var(--ink)}
+.modeseg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.modeseg .new{font-size:.58rem;font-weight:600;color:var(--orange-ink);background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:999px;padding:0 6px;line-height:1.55}
+@media(max-width:860px){.modeseg{margin:0 12px 8px}}
+.lm-intro{font-size:.8rem;color:var(--ink-2);line-height:1.6;padding:6px 12px 10px}
+.lm-intro b{display:block;font-family:'Kanit';font-weight:600;font-size:1rem;color:var(--ink);margin-bottom:2px}
+.lm-cnts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.lm-cnt{display:inline-flex;align-items:center;gap:5px;font-family:'Kanit';font-size:.74rem;color:var(--muted);background:var(--wash);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.lm-cnt i{width:8px;height:8px;border-radius:2px}
+.lm-cnt b{color:var(--ink);font-weight:600}
+.lm-colorby{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:4px 12px 8px;font-family:'Kanit';font-size:.74rem;color:var(--muted)}
+.lm-colorby button{font-family:'Kanit';font-size:.74rem;color:var(--ink-2);background:var(--paper);border:1px solid var(--line-2);border-radius:999px;padding:3px 11px;cursor:pointer;transition:.12s}
+.lm-colorby button:hover{border-color:var(--orange-line);background:var(--orange-soft)}
+.lm-colorby button.on{background:var(--ink-2);border-color:var(--ink-2);color:var(--paper)}
+.lm-legend{display:flex;flex-wrap:wrap;gap:5px 10px;padding:2px 12px 10px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.lm-legend .li{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;color:var(--ink-2)}
+.lm-legend .li .sw{width:10px;height:10px;border-radius:3px}
+.lm-legend .li b{font-family:'Kanit';font-weight:600;color:var(--muted);font-size:.7rem}
+.lm-mkdot{width:15px;height:15px;border-radius:50%;background:var(--muted);color:#fff;font-family:'Kanit';font-size:.58rem;font-weight:600;display:grid;place-items:center;box-shadow:0 0 0 1.5px #fff}
+.lm-lnote{flex-basis:100%;font-size:.68rem;color:var(--muted);line-height:1.55}
+.lm-sec{display:flex;align-items:baseline;gap:8px;font-family:'Kanit';font-weight:600;font-size:.82rem;color:var(--ink-2);padding:12px 12px 7px}
+.lm-sec span{margin-left:auto;font-weight:400;font-size:.72rem;color:var(--muted)}
+.lm-amp{position:sticky;top:-8px;z-index:1;display:flex;background:var(--paper);font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--muted);padding:9px 12px 6px}
+.lm-amp span{margin-left:auto;font-size:.7rem;font-weight:400}
+.lm-org .cbot{gap:7px;min-width:0}
+.lm-tb{flex:0 0 auto;font-family:'Kanit';font-size:.64rem;font-weight:600;color:#fff;background:var(--c);border-radius:5px;padding:0 6px;line-height:1.65}
+.lm-on{font-size:.84rem;color:var(--ink-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-org .cvt{flex:0 0 auto}
+.lm-flag{margin-top:6px;font-family:'Kanit';font-size:.7rem;color:var(--ink-2);background:rgba(227,179,65,.14);border:1px solid rgba(227,179,65,.5);border-radius:7px;padding:3px 8px;line-height:1.45}
+.lm-why{margin-top:4px;font-family:'Kanit';font-size:.7rem;color:var(--muted)}
+.lm-more{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-family:'Kanit';font-size:.7rem;color:var(--muted);cursor:pointer}
+.lm-more:hover{color:var(--orange-ink)}
+.lm-more svg{width:12px;height:12px;transition:transform .18s}
+.lm-more.open svg{transform:rotate(180deg)}
+.lm-grp{font-size:.8rem;color:var(--ink-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-badge{flex:0 0 auto;font-family:'Kanit';font-size:.62rem;font-weight:600;color:var(--orange-ink);background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:999px;padding:0 7px;line-height:1.6}
+.lm-paov{margin-top:4px;font-family:'Kanit';font-size:.74rem;color:var(--muted)}
+.lm-unof{margin-left:6px;font-size:.6rem;border:1px dashed var(--line-2);border-radius:5px;padding:0 5px}
+.lm-tg{margin-bottom:9px}
+.lm-th{font-family:'Kanit';font-weight:600;font-size:.7rem;color:var(--muted);margin:2px 0 4px}
+.lm-p{display:flex;align-items:baseline;gap:8px;font-size:.76rem;padding:3px 0;border-bottom:1px dashed var(--line)}
+.lm-pp{flex:0 0 7.4em;font-family:'Kanit';font-size:.66rem;color:var(--muted)}
+.lm-pn{flex:1 1 auto;min-width:0;color:var(--ink)}
+.lm-ps{flex:0 0 auto;font-family:'Kanit';font-size:.62rem;color:var(--muted);white-space:nowrap}
+.lm-mh{font-family:'Kanit';font-size:.68rem;color:var(--muted);margin:7px 0 3px}
+.lm-mem{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:.74rem;color:var(--ink)}
+.lm-info{font-family:'Kanit';font-size:.68rem;color:var(--muted);margin-top:4px}
+.lm-note{margin-top:7px;font-size:.66rem;line-height:1.55;color:var(--muted)}
+.cdtab .gp{display:block;font-size:.6rem;font-weight:400;color:var(--muted)}
+.dg .lm-tam.lm-hl{fill-opacity:1;stroke:var(--ink);stroke-width:2.2}
+.lm-prow .pn small{display:block;font-size:.72rem;font-weight:400;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-full{flex:0 0 auto;font-family:'Kanit';font-size:.62rem;font-weight:600;color:var(--orange-ink);background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:999px;padding:0 7px;line-height:1.6}
+.lm-grp .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legendbar .lm-lb{font-family:'Kanit';font-weight:600;color:var(--ink-2)}
+.lm-plegend{margin-bottom:2px}

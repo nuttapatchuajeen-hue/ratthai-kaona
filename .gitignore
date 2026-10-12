@@ -36,3 +36,6 @@ __pycache__/
 # repo นี้เป็น public — ไม่ต้องการให้เนื้อหา ticket ขึ้น GitHub
 .scratch/
 .vercel
+
+# แคชดิบจาก NLC/ไทยพีบีเอส ของ election/fetch-local.js (~7,900 ไฟล์ สร้างใหม่ได้)
+.local-cache/
