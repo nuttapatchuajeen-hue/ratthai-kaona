@@ -1,5 +1,27 @@
 /* คำแปลอังกฤษ ชุด d-election-bkk-2543 — สร้างโดย i18n/tools/merge.js (แก้คำแปลได้ตรงนี้ หรือผ่าน .scratch/i18n/out/direct-*.json) */
 MDI18N.add("d-election-bkk-2543",{"d":{
+"เลือกตั้งผู้ว่าฯ กทม. 2543":"Bangkok Governor Election 2543",
+"ผู้ว่าราชการกรุงเทพมหานคร · ครั้งที่ 6 · 23 กรกฎาคม 2543":"Governor of Bangkok · No. 6 · 23 July 2543",
 "23 กรกฎาคม 2543":"23 July 2543",
-"อิสระ":"Independent"
+"ผลการเลือกตั้งผู้ว่าฯ กทม. ครั้งที่ 6 · ผู้สมัคร 23 คน (ไม่มีผลแยกรายเขต)":"Election Results for Bangkok Governor No. 6 · 23 Candidates (no results by district)",
+"th.wikipedia.org — การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร พ.ศ. 2543":"th.wikipedia.org — Governor of Bangkok Election B.E. 2543",
+"วินัย สมพงษ์":"Winai Somphong",
+"กลุ่มคนรักเมืองหลวง":"Capital City Lovers Group",
+"กลุ่มกรุงเทพฯ สดใส":"Bright Bangkok Group",
+"วิวัฒน์ ศัลยกำธร":"Wiwat Salyakamthorn",
+"กลุ่มกรุงเทพฯ สามัคคี":"United Bangkok Group",
+"ประจักษ์ สว่างจิตร":"Prachak Sawangchit",
+"กลุ่มสนองคุณแผ่นดินไทย":"Gratitude to Thai Land Group",
+"จิตติพร อภิบาลภูวนาท":"Chittiporn Aphibanphuwanat",
+"อิสระ":"Independent",
+"กานต์ เทียนแก้ว":"Kan Thienkaeo",
+"สมิตร สมิทธินันท์":"Samit Samitthinan",
+"ดำริห์ รินวงษ์":"Damri Rinwong",
+"ชัยพร ประเสริฐเวชยากร":"Chaiyaporn Prasertwetchayakorn",
+"ทรงพล สุวรรณกูฎ":"Songphon Suwankut",
+"กิตติศักดิ์ ถิรวิศิษฎ์":"Kittisak Thirawisit",
+"ชัยรัตน์ รัตนหนุ่มน้อย":"Chairat Rattananoomnoi",
+"สุชาติ เกิดผล":"Suchart Koedphol",
+"กุลภัทร กูรมะโรหิต":"Kullapat Kuramarohit",
+"ณัฐธวัฒณ์ เรือนเรือง":"Natthawat Ruenrueang"
 },"w":1});

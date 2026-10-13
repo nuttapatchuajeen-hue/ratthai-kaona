@@ -1,6 +1,26 @@
 /* คำแปลอังกฤษ ชุด d-election-bkk-2547 — สร้างโดย i18n/tools/merge.js (แก้คำแปลได้ตรงนี้ หรือผ่าน .scratch/i18n/out/direct-*.json) */
 MDI18N.add("d-election-bkk-2547",{"d":{
+"เลือกตั้งผู้ว่าฯ กทม. 2547":"Bangkok Governor Election 2547",
+"ผู้ว่าราชการกรุงเทพมหานคร · ครั้งที่ 7 · 29 สิงหาคม 2547":"Governor of Bangkok · No. 7 · 29 August 2547",
 "29 สิงหาคม 2547":"29 August 2547",
+"ผลการเลือกตั้งผู้ว่าฯ กทม. ครั้งที่ 7 · ผู้สมัคร 22 คน (ไม่มีผลแยกรายเขต)":"Bangkok Governor Election Results No. 7 · 22 Candidates (Results By District: None)",
+"th.wikipedia.org — การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร พ.ศ. 2547":"th.wikipedia.org — Election of the Governor of Bangkok B.E. 2547",
+"ต้นตระกูลไทย":"Ton Trakun Thai",
 "อิสระ":"Independent",
-"กลุ่มมดงาน":"Mot Ngan Group"
+"กลุ่มมดงาน":"Mot Ngan Group",
+"การุญ จันทรางศุ":"Karun Chanthrangsu",
+"วุฒิพงษ์ เพรียบจริยวัฒน์":"Wutthiphong Phriapchariyawat",
+"กอบศักดิ์ ชุติกุล":"Kobsak Chutikul",
+"พีระพงศ์ ถนอมพงษ์พันธุ์":"Phiraphong Thanomphongphan",
+"กลุ่ม ฅ.คนรักกรุงเทพ":"Khon Rak Bangkok Group",
+"เมตตา เต็มชำนาญ":"Metta Temchamnan",
+"กลุ่มเมตตาธรรม":"Metta Tham Group",
+"สุชาติ เกิดผล":"Suchart Koedphol",
+"วิทยา จังกอบพัฒนา":"Witthaya Changkopphatthana",
+"สุเมธ ตันธนาศิริกุล":"Sumet Tanthanasirikun",
+"กลุ่มกรุงเทพ ฯ พัฒนา":"Bangkok Phatthana Group",
+"กิตติศักดิ์ ถิรวิศิษฎ์":"Kittisak Thirawisit",
+"โชคชัย เลาหชินบัญชร":"Chokchai Laohachinbanchon",
+"วีระศักดิ์ อุปถัมภ์":"Wirasak Uppatham",
+"''ลีนา จังจรรจา''":"''Leena Jangjanja''"
 },"w":1});
