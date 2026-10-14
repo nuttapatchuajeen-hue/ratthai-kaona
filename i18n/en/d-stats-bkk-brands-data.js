@@ -1234,6 +1234,7 @@ MDI18N.add("d-stats-bkk-brands-data",{"d":{
 "ห้างฟรายเดย์ อุตรดิตถ์":"Friday Mall Uttaradit",
 "172 ถนน บรมอาสน์":"172 Borom At Road",
 "ฟินลี่แลนด์ พลาซ่า พิษณุโลก":"Finlyland Plaza Phitsanulok",
+"ท่าโพธิ์":"Tha Pho",
 "ท็อปเเลนด์อาเขต":"Topland Arcade",
 "R787+GJC บรมไตรโลกนารถ ซอย 3":"R787+GJC Borom Trailokkanat Soi 3",
 "โลตัส หล่มสัก":"Lotus's Lom Sak",

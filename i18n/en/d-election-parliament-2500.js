@@ -54,6 +54,7 @@ MDI18N.add("d-election-parliament-2500",{"d":{
 "ไสว สวัสดิสาร":"Sawai Sawattisan",
 "เปี่ยม บุณยะโชติ":"Piam Bunyachot",
 "น้อม อุปรมัย":"Nom Uparamai",
+"สวัสดิ์ คำประกอบ":"Sawat Khamprakob",
 "พิชัย มากคุณ":"Phichai Makkhun",
 "วสันต์ อินทรสูต":"Wasan Inthrasut",
 "ใหญ่ ศวิตชาติ":"Yai Sawittachat",

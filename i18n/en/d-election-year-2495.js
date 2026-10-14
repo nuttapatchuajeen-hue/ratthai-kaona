@@ -50,6 +50,7 @@ MDI18N.add("d-election-year-2495",{"d":{
 "น้อม อุปรมัย":"Nom Uparamai",
 "ทอง ศิริเวชพันธ์":"Thong Siriwetchaphan",
 "ปลื้ม กมุกะมกุล":"Pluem Kamukamukun",
+"สวัสดิ์ คำประกอบ":"Sawat Khamprakob",
 "สุนีรัตน์ เตลาน":"Suneerat Telan",
 "ขุนวิวรณ์สุขวิทยา":"Khun Wiwonsukhawitthaya",
 "หลวงราชเวชชพิศาล":"Luang Ratchawetchaphisan",

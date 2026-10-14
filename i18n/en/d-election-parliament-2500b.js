@@ -55,6 +55,7 @@ MDI18N.add("d-election-parliament-2500b",{"d":{
 "ปรีดา ด่านตระกูล":"Preda Dantrakul",
 "ขุนวิวรณ์สุขวิทยา":"Khun Wiwonsukhawitthaya",
 "ใหญ่ ศวิตชาติ":"Yai Sawittachat",
+"สวัสดิ์ คำประกอบ":"Sawat Khamprakob",
 "อวยชัย ธนศรี":"Uaichai Thanasri",
 "ทนง นิยมะสินธุ":"Thanong Niyomasinthu",
 "โสภณ เอี่ยมอิทธิพล":"Sophon Iam-itthiphon",

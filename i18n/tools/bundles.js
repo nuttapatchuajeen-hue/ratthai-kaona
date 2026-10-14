@@ -13,7 +13,7 @@ module.exports = {
     election: [
       "election/index.html", "election/bangkok.html", "election/committees.html", "election/credits.html",
       "election/demo-intro-youtube.html", "election/parliament.html", "election/partylist.html",
-      "election/referendum.html", "election/reveal.html", "election/standings.html", "election/timeline.html",
+      "election/referendum.html", "election/reveal.html", "election/sso.html", "election/standings.html", "election/timeline.html",
       "election/nav.js", "election/intro.js", "election/intro-seats.js", "election/intro-youtube.js",
       "election/intro-music.js", "election/glow.js", "election/year-switch.js", "election/index-geo.js",
       "election/bangkok-geo.js", "election/timeline-data.js", "election/intro-data.js", "election/referendum-data.js",

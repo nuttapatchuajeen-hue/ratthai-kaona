@@ -7,6 +7,7 @@ MDI18N.add("d-election-bkk-2539",{"d":{
 "th.wikipedia.org — การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร พ.ศ. 2539":"th.wikipedia.org — Governor of Bangkok Election B.E. 2539",
 "อิสระ":"Independent",
 "อากร ฮุนตระกูล":"Akorn Hoontrakul",
+"วรัญชัย โชคชนะ":"Waranchai Chokchana",
 "สมิตร สมิทธินันท์":"Samit Samitthinan",
 "ดำริห์ รินวงษ์":"Damri Rinwong",
 "สุธี สุทธิศิริวัฒนะ":"Suthee Sutthisiriwatthana",

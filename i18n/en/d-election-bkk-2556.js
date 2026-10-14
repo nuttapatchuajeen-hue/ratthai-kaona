@@ -29,9 +29,11 @@ MDI18N.add("d-election-bkk-2556",{"d":{
 "ธรณี ฤทธีธรรมรงค์":"Thorani Rittithammarong",
 "สมิตร สมิทธินันท์":"Samit Samitthinan",
 "วศิน ภิรมย์":"Wasin Phirom",
+"วรัญชัย โชคชนะ":"Waranchai Chokchana",
 "นันท์นภัส โกไศยกานนท์":"Nannaphat Kosaiyakanont",
 "ศุภชัย เขษมวงศ์":"Suphachai Khasemwong",
 "พันตำรวจเอก ขจรศักดิ์ โกษะโยธิน":"Police Colonel Khachonsak Kosayothin",
+"กฤษณ์ สุริยผล":"Krit Suriyaphon",
 "วิทยา จังกอบพัฒนา":"Witthaya Changkopphatthana",
 "รวิวรรณ สุทธวิรีสรรค์":"Rawiwan Suthawirisan"
 },"w":1});

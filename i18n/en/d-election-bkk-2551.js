@@ -18,6 +18,7 @@ MDI18N.add("d-election-bkk-2551",{"d":{
 "กลุ่มกรุงเทพ ฯ พัฒนา":"Bangkok Phatthana Group",
 "ธรณี ฤทธีธรรมรงค์":"Thorani Rittithammarong",
 "ภพศักดิ์ ปานสีทอง":"Phopphasak Pansithong",
+"อุดม วิบูลเทพาชาติ":"Udom Wibunthephachat",
 "สมชาย ไพบูลย์":"Somchai Phaibun",
 "ว่าที่พันตรี นิพนธ์ ซิ้มประยูร":"Acting Major Niphon Simprayun"
 },"w":1});

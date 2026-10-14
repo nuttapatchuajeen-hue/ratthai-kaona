@@ -20,5 +20,6 @@ MDI18N.add("d-election-bkk-2552",{"d":{
 "ธรณี ฤทธีธรรมรงค์":"Thorani Rittithammarong",
 "เมตตา เต็มชำนาญ":"Metta Temchamnan",
 "กลุ่มเมตตาธรรม":"Metta Tham Group",
-"อิสระ อมรเวช":"Itsara Amornwet"
+"อิสระ อมรเวช":"Itsara Amornwet",
+"อุดม วิบูลเทพาชาติ":"Udom Wibunthephachat"
 },"w":1});

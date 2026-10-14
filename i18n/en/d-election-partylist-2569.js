@@ -44,6 +44,7 @@ MDI18N.add("d-election-partylist-2569",{"d":{
 "นายเกรียงยศ สุดลาภา":"Mr. Kriangyot Sudlapa",
 "นายธนกร วังบุญคงชนะ":"Mr. Thanakorn Wangboonkongchana",
 "นางสาวรินทร์ลิตา อดิษะ":"Ms. Rinlita Adisa",
+"นายไพโรจน์ โล่ห์สุนทร":"Mr. Pairoj Losunthorn",
 "นายวิสุทธิ์ ไชยณรุณ":"Mr. Wisut Chaiyanarun",
 "นายสุชาติ ธาดาธำรงเวช":"Mr. Suchart Thadathamrongvej",
 "นางสาวสุดาวรรณ หวังศุภกิจโกศล":"Ms. Sudawan Wangsupakitkosol",

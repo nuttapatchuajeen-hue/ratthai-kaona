@@ -5,6 +5,7 @@ MDI18N.add("d-election-bkk-2543",{"d":{
 "23 กรกฎาคม 2543":"23 July 2543",
 "ผลการเลือกตั้งผู้ว่าฯ กทม. ครั้งที่ 6 · ผู้สมัคร 23 คน (ไม่มีผลแยกรายเขต)":"Election Results for Bangkok Governor No. 6 · 23 Candidates (no results by district)",
 "th.wikipedia.org — การเลือกตั้งผู้ว่าราชการกรุงเทพมหานคร พ.ศ. 2543":"th.wikipedia.org — Governor of Bangkok Election B.E. 2543",
+"ธวัชชัย สัจจกุล":"Thawatchai Sachakul",
 "วินัย สมพงษ์":"Winai Somphong",
 "กลุ่มคนรักเมืองหลวง":"Capital City Lovers Group",
 "กลุ่มกรุงเทพฯ สดใส":"Bright Bangkok Group",
@@ -14,6 +15,7 @@ MDI18N.add("d-election-bkk-2543",{"d":{
 "กลุ่มสนองคุณแผ่นดินไทย":"Gratitude to Thai Land Group",
 "จิตติพร อภิบาลภูวนาท":"Chittiporn Aphibanphuwanat",
 "อิสระ":"Independent",
+"มณฑล ชาติสุวรรณ":"Monthon Chatsuwan",
 "กานต์ เทียนแก้ว":"Kan Thienkaeo",
 "สมิตร สมิทธินันท์":"Samit Samitthinan",
 "ดำริห์ รินวงษ์":"Damri Rinwong",
@@ -21,7 +23,10 @@ MDI18N.add("d-election-bkk-2543",{"d":{
 "ทรงพล สุวรรณกูฎ":"Songphon Suwankut",
 "กิตติศักดิ์ ถิรวิศิษฎ์":"Kittisak Thirawisit",
 "ชัยรัตน์ รัตนหนุ่มน้อย":"Chairat Rattananoomnoi",
+"อุดม วิบูลเทพาชาติ":"Udom Wibunthephachat",
+"วรัญชัย โชคชนะ":"Waranchai Chokchana",
 "สุชาติ เกิดผล":"Suchart Koedphol",
 "กุลภัทร กูรมะโรหิต":"Kullapat Kuramarohit",
-"ณัฐธวัฒณ์ เรือนเรือง":"Natthawat Ruenrueang"
+"ณัฐธวัฒณ์ เรือนเรือง":"Natthawat Ruenrueang",
+"ขจร ชูแก้ว":"Khachon Chukaew"
 },"w":1});
